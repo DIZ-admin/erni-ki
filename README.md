@@ -29,6 +29,7 @@ This starter project includes the following tooling and applications.
 
 - **[Cloudflare](https://www.cloudflare.com/)**: Platform providing anonymous proxying and SSL certificates
 - **[ComfyUI](https://www.comfy.org/)**: Platform for generating node based images
+- **[Docling](https://github.com/docling-project/docling-serve)**: Simplifies document processing, parsing diverse formats — including advanced PDF understanding — and providing seamless integrations with the gen AI ecosystem. (created by IBM)
 - **[Edge TTS](https://github.com/rany2/edge-tts)**: Python module that using Microsoft Edge's online text-to-speech service
 - **[Nginx](https://nginx.org/)**: Web server, reverse proxy, load balancer, mail proxy, and HTTP cache
 - **[Ollama](https://ollama.com/)**: Local service API serving open source large language models
@@ -37,7 +38,6 @@ This starter project includes the following tooling and applications.
 - **[Redis](https://redis.io/)**: An open source-available, in-memory storage, used as a distributed, in-memory key–value database, cache and message broker, with optional durability
 - **[Searxng](https://docs.searxng.org/)**: Free internet metasearch engine for open webui tool integration
 - **[Sqlite](https://www.sqlite.org/index.html)**: A C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine
-- **[Tika](https://tika.apache.org/)**: A toolkit that detects and extracts metadata and text from over a thousand different file types
 - **[Watchtower](https://github.com/containrrr/watchtower)**: Automated Docker container for updating container images automatically
 
 
@@ -67,6 +67,7 @@ cp env/auth.example env/auth.env
 cp env/cloudflared.example env/cloudflared.env
 cp env/comfyui.example env/comfyui.env
 cp env/db.example env/db.env
+cp env/docling.example env/docling.env
 cp env/edgetts.example env/edgetts.env
 cp env/ollama.example env/ollama.env
 cp env/openwebui.example env/openwebui.env

@@ -1,8 +1,3 @@
-upstream comfyuiUpstream {
-  server comfyui:8188 max_fails=0 fail_timeout=10s;
-  keepalive 512;
-}
-
 upstream docsUpstream {
   server openwebui:8080 max_fails=0 fail_timeout=10s;
   keepalive 512;
@@ -18,11 +13,6 @@ upstream searxngUpstream {
   keepalive 512;
 }
 
-upstream tikaUpstream {
-  server tika:9998 max_fails=0 fail_timeout=10s;
-  keepalive 512;
-}
-
 upstream authUpstream {
   server auth:9090 max_fails=0 fail_timeout=10s;
   keepalive 512;
@@ -33,7 +23,7 @@ server {
   listen 80;
   server_name <domain-name>;
 
-  location ~ ^/(docs|comfyui|redis|searxng|tika) {
+  location ~ ^/(docs|redis|searxng) {
     auth_request /auth-server/validate;
     auth_request_set $auth_status $upstream_status;
 
