@@ -9,14 +9,18 @@ services:
     restart: unless-stopped
 
   cloudflared:
-    env_file: env/cloudflared.env
     command: tunnel --no-autoupdate run
+    depends_on:
+      - watchtower
+    env_file: env/cloudflared.env
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
     volumes:
       - ./conf/cloudflare/config:/home/nonroot/.cloudflared
 
   comfyui:
+    depends_on:
+      - watchtower
     deploy: &gpu-deploy
       resources:
         reservations:
@@ -34,13 +38,29 @@ services:
       - ./conf/comfyui/runner-scripts/download-models.txt:/runner-scripts/download-models.txt
 
   db:
+    depends_on:
+      - watchtower
     env_file: env/db.env
     image: pgvector/pgvector:pg15
     restart: unless-stopped
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
 
+  docling:
+    env_file: env/docling.env
+    deploy: &gpu-deploy
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    image: quay.io/docling-project/docling-serve:latest
+    restart: unless-stopped
+
   edgetts:
+    depends_on:
+      - watchtower
     deploy: &gpu-deploy
       resources:
         reservations:
@@ -62,9 +82,8 @@ services:
 
   nginx:
     depends_on:
-      - auth
       - cloudflared
-      - openwebui
+      - watchtower
     image: nginx:latest
     ports:
       - 80:80
@@ -74,6 +93,8 @@ services:
       - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
 
   ollama:
+    depends_on:
+      - watchtower
     deploy: *gpu-deploy
     env_file: env/ollama.env
     image: ollama/ollama:latest
@@ -85,10 +106,14 @@ services:
 
   openwebui:
     depends_on:
+      - auth
+      - docling
       - db
       - edgetts
+      - nginx
       - ollama
       - searxng
+      - watchtower
     deploy: *gpu-deploy
     env_file: env/openwebui.env
     extra_hosts:
@@ -98,15 +123,9 @@ services:
     volumes:
       - ./data/openwebui:/app/backend/data
 
-  pipelines:
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    image: ghcr.io/open-webui/pipelines:main
-    restart: unless-stopped
-    volumes:
-      - ./data/pipelines:/app/pipelines
-
   redis:
+    depends_on:
+      - watchtower
     env_file: env/redis.env
     image: redis/redis-stack:latest
     restart: unless-stopped
@@ -124,6 +143,7 @@ services:
     env_file: env/searxng.env
     depends_on:
       - redis
+      - watchtower
     image: searxng/searxng:latest
     logging:
       driver: "json-file"
@@ -135,14 +155,8 @@ services:
       - ./conf/searxng/settings.yml:/etc/searxng/settings.yml:rw
       - ./conf/searxng/uwsgi.ini:/etc/searxng/uwsgi.ini:rw
 
-  tika:
-    image: apache/tika:latest-full
-    restart: unless-stopped
-
   watchtower:
     command: --cleanup --debug --interval 300
-    depends_on:
-      - openwebui
     env_file: env/watchtower.env
     image: containrrr/watchtower
     restart: unless-stopped
