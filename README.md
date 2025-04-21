@@ -137,7 +137,7 @@ Update the [env/cloudflared.env](http://github.com/iamobservable/open-webui-star
 
 ### Add your domain name
 
-Update the [conf/nginx/default.conf](https://github.com/iamobservable/open-webui-starter/blob/main/conf/nginx/default.example#L34) file with your domain name. The link provided will show you the specific line in the file to change.
+Update the [conf/nginx/conf.d/default.conf](https://github.com/iamobservable/open-webui-starter/blob/main/conf/nginx/conf.d/default.example#L24) file with your domain name. The link provided will show you the specific line in the file to change.
 
 ### Start your docker container environment from a terminal
 
@@ -166,7 +166,7 @@ Once the containers are started, and your model downloaded, you are ready to acc
 
 ### Adding models to ComfyUI
 
-The starter makes use of the docker image [yanwk/comfyui-boot:cu124-slim](https://github.com/YanWenKun/ComfyUI-Docker/tree/main/cu124-slim) for building the ComfyUI container.  This image has a special file [download-models.txt](https://github.com/iamobservable/open-webui-starter/blob/main/conf/comfyui/runner-scripts/model-downloads.txt.example). The file is responsible for configuring model downloads during the initial startup. It has a structure that allows you to provide a download image, directory path (dir), and a file name (out) in a list based row format. The models are listed with their name, link and file size.
+The starter makes use of the docker image [yanwk/comfyui-boot:cu124-slim](https://github.com/YanWenKun/ComfyUI-Docker/tree/main/cu124-slim) for building the ComfyUI container.  This image has a special file [download-models.txt](https://github.com/iamobservable/open-webui-starter/blob/main/conf/comfyui/runner-scripts/download-models.txt.example). The file is responsible for configuring model downloads during the initial startup. It has a structure that allows you to provide a download image, directory path (dir), and a file name (out) in a list based row format. The models are listed with their name, link and file size.
 
 **Format definition**
 
@@ -195,7 +195,7 @@ The starter follows the [Open WebUI docs](https://docs.openwebui.com/tutorials/i
 
 ***The models will take a considerable amount of time to download, depending on your internet connection, and will not be immediately ready to use when you first start your containers.***
 
-If you want to add additional models to your container, update the [conf/comfyui/runner-scripts/download-models.txt](https://github.com/iamobservable/open-webui-starter/blob/main/conf/comfyui/runner-scripts/model-downloads.txt.example) file located in your project directory.
+If you want to add additional models to your container, update the [conf/comfyui/runner-scripts/download-models.txt](https://github.com/iamobservable/open-webui-starter/blob/main/conf/comfyui/runner-scripts/download-models.txt.example) file located in your project directory.
 
 
 ### Watchtower and Notifications
@@ -221,9 +221,14 @@ docker compose down watchtower && docker compose up watchtower -d
 
 ### Legacy migration for Sqlite to Postgresql
 
-For installations where the environment was already setup to use Sqlite. If you want to move to Postgresql, you can follow along below. There is also another solution, created by [Taylor Wilsdon](https://github.com/taylorwilsdon), that can be found on his github repository [open-webui-postgres-migration](https://github.com/taylorwilsdon/open-webui-postgres-migration) that looks pretty nice.
+***Please note, this project does not use Sqlite for storage. Postgresql is 
+configured by default. For installations where the environment was already 
+setup to use Sqlite. If you want to move to Postgresql, you can follow along 
+below. There is also another solution, created by [Taylor Wilsdon](https://github.com/taylorwilsdon), 
+that can be found on his github repository [open-webui-postgres-migration](https://github.com/taylorwilsdon/open-webui-postgres-migration) 
+that looks pretty nice.
 
-*** Tested using node v22.12.0 ***
+***Tested using node v22.12.0***
 
 Depending on your setup, you may need to expose your postgresql (db) container 
 port before proceeding. By default, this project's db container is not exposing 
