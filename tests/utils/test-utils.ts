@@ -9,17 +9,17 @@ const createMockRequest = <
   TQuery = Record<string, string | string[] | undefined>,
   TParams = Record<string, string>,
 >(
-    options: Partial<MockRequest<TBody, TQuery, TParams>> = {},
-  ): MockRequest<TBody, TQuery, TParams> => ({
-    headers: {},
-    query: {} as TQuery,
-    params: {} as TParams,
-    body: {} as TBody,
-    cookies: {},
-    method: 'GET',
-    url: '/',
-    ...options,
-  });
+  options: Partial<MockRequest<TBody, TQuery, TParams>> = {},
+): MockRequest<TBody, TQuery, TParams> => ({
+  headers: {},
+  query: {} as TQuery,
+  params: {} as TParams,
+  body: {} as TBody,
+  cookies: {},
+  method: 'GET',
+  url: '/',
+  ...options,
+});
 
 const createChainableStub = <TArgs extends unknown[], TBody>(response: MockResponse<TBody>) =>
   vi.fn<(..._args: TArgs) => MockResponse<TBody>>().mockImplementation(() => response);
