@@ -9,23 +9,23 @@ const createMockRequest = <
   TQuery = Record<string, string | string[] | undefined>,
   TParams = Record<string, string>,
 >(
-    options: Partial<MockRequest<TBody, TQuery, TParams>> = {},
-  ): MockRequest<TBody, TQuery, TParams> => ({
-    headers: {},
-    query: {} as TQuery,
-    params: {} as TParams,
-    body: {} as TBody,
-    cookies: {},
-    method: 'GET',
-    url: '/',
-    ...options,
-  });
+  options: Partial<MockRequest<TBody, TQuery, TParams>> = {}
+): MockRequest<TBody, TQuery, TParams> => ({
+  headers: {},
+  query: {} as TQuery,
+  params: {} as TParams,
+  body: {} as TBody,
+  cookies: {},
+  method: 'GET',
+  url: '/',
+  ...options,
+});
 
 const createChainableStub = <TArgs extends unknown[], TBody>(response: MockResponse<TBody>) =>
   vi.fn<(..._args: TArgs) => MockResponse<TBody>>().mockImplementation(() => response);
 
 const createMockResponse = <TBody = unknown>(
-  options: Partial<MockResponse<TBody>> = {},
+  options: Partial<MockResponse<TBody>> = {}
 ): MockResponse<TBody> => {
   const response = {
     statusCode: options.statusCode ?? 200,
@@ -44,10 +44,10 @@ const createMockResponse = <TBody = unknown>(
   response.json = createChainableStub<[TBody], TBody>(response);
   response.send = createChainableStub<[TBody], TBody>(response);
   response.cookie = createChainableStub<[string, string, Record<string, unknown>?], TBody>(
-    response,
+    response
   );
   response.header = createChainableStub<[string, string | number | readonly string[]], TBody>(
-    response,
+    response
   );
   response.redirect = vi
     .fn<(url: string, status?: number) => MockResponse<TBody>>()
