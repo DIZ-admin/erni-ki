@@ -9,7 +9,7 @@ const createMockRequest = <
   TQuery = Record<string, string | string[] | undefined>,
   TParams = Record<string, string>,
 >(
-  options: Partial<MockRequest<TBody, TQuery, TParams>> = {}
+  options: Partial<MockRequest<TBody, TQuery, TParams>> = {},
 ): MockRequest<TBody, TQuery, TParams> => ({
   headers: {},
   query: {} as TQuery,

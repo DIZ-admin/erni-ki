@@ -460,13 +460,13 @@ Object.entries(fixtures).forEach(([label, path]) => {
       // Попробуем найти любые элементы, связанные с файлами
       const fileRelated = await page
         .locator(
-          '[class*="file"], [class*="upload"], [class*="document"], [id*="file"], [id*="upload"]'
+          '[class*="file"], [class*="upload"], [class*="document"], [id*="file"], [id*="upload"]',
         )
         .count();
       console.log(`Found ${fileRelated} file-related elements`);
 
       throw new Error(
-        `Could not find upload mechanism for ${label}. Check debug screenshot and logs.`
+        `Could not find upload mechanism for ${label}. Check debug screenshot and logs.`,
       );
     }
 
@@ -773,7 +773,7 @@ test('RAG performance benchmark', async ({ page }) => {
 
       results.push({ query: test.query, time: duration, success });
       console.log(
-        `✅ Query completed in ${duration}ms (target: ${test.maxTime}ms) - ${success ? 'PASS' : 'FAIL'}`
+        `✅ Query completed in ${duration}ms (target: ${test.maxTime}ms) - ${success ? 'PASS' : 'FAIL'}`,
       );
 
       expect(duration).toBeLessThanOrEqual(test.maxTime);

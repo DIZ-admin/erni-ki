@@ -5,8 +5,6 @@
  * @author Альтэон Шульц (Tech Lead)
  * @version 1.0.0
  */
-/* eslint-disable comma-dangle */
-
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -220,20 +218,20 @@ class GPUMonitor {
     console.log('='.repeat(50));
     console.log(
       `🎮 GPU утилизация: ${summary.gpu.min}% - ${summary.gpu.max}% ` +
-        `(среднее: ${summary.gpu.avg}%)`
+        `(среднее: ${summary.gpu.avg}%)`,
     );
     console.log(
       `💾 Память: ${summary.memory.min}% - ${summary.memory.max}% ` +
-        `(среднее: ${summary.memory.avg}%)`
+        `(среднее: ${summary.memory.avg}%)`,
     );
     console.log(`📈 Пиковое использование памяти: ${summary.memory.peakUsedMB} MB`);
     console.log(
       `🌡️  Температура: ${summary.temperature.min}°C - ${summary.temperature.max}°C ` +
-        `(среднее: ${summary.temperature.avg}°C)`
+        `(среднее: ${summary.temperature.avg}°C)`,
     );
     console.log(
       `⚡ Энергопотребление: ${summary.power.min}W - ${summary.power.max}W ` +
-        `(среднее: ${summary.power.avg}W)`
+        `(среднее: ${summary.power.avg}W)`,
     );
     console.log('='.repeat(50));
   }
