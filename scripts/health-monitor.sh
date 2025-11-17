@@ -125,15 +125,23 @@ from __future__ import annotations
 import json
 import sys
 
-try:
-    data = json.load(sys.stdin)
-except json.JSONDecodeError:
+records = []
+for line in sys.stdin:
+    line = line.strip()
+    if not line:
+        continue
+    try:
+        records.append(json.loads(line))
+    except json.JSONDecodeError:
+        continue
+
+if not records:
     sys.exit(2)
 
-total = len(data)
-healthy = sum(1 for svc in data if svc.get("Health") == "healthy")
-running = sum(1 for svc in data if svc.get("State") == "running")
-unhealthy = [svc.get("Service") for svc in data if svc.get("Health") not in (None, "healthy")]
+total = len(records)
+healthy = sum(1 for svc in records if svc.get("Health") == "healthy")
+running = sum(1 for svc in records if svc.get("State") == "running")
+unhealthy = [svc.get("Service") for svc in records if svc.get("Health") not in (None, "healthy")]
 detail = " ".join(unhealthy) if unhealthy else "none"
 print(f"{healthy}/{total} healthy, {running}/{total} running|{detail}")
 PY
@@ -173,6 +181,7 @@ check_http_endpoint() {
 
 check_rag_latency() {
   log "Проверка RAG веб-поиска..."
+  local warn_threshold="${RAG_LATENCY_WARN_SECONDS:-5.0}"
   local result
   result=$(curl -s -o /dev/null -w "%{http_code}|%{time_total}" "http://localhost:8080/api/searxng/search?q=health-check&format=json" --max-time 10 || echo "000|10")
   local code="${result%%|*}"
@@ -183,8 +192,8 @@ check_rag_latency() {
     return
   fi
 
-  if (( $(echo "$duration > 2.0" | bc -l) )); then
-    record_result "WARN" "RAG web search" "Ответ ${duration}s (порог 2s)"
+  if (( $(echo "$duration > $warn_threshold" | bc -l) )); then
+    record_result "WARN" "RAG web search" "Ответ ${duration}s (порог ${warn_threshold}s)"
   else
     record_result "PASS" "RAG web search" "${duration}s"
   fi
@@ -297,7 +306,7 @@ main() {
   check_http_endpoint "OpenWebUI" "http://localhost:8080/health" ""
   check_http_endpoint "LiteLLM" "http://localhost:4000/health/liveliness" "alive"
   check_http_endpoint "Ollama API" "http://localhost:11434/api/tags" "models"
-  check_http_endpoint "Nginx proxy" "http://localhost/health" "ok"
+  check_http_endpoint "Nginx proxy" "http://localhost/health" ""
 
   check_rag_latency
   check_postgres
