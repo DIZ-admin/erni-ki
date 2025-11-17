@@ -1,3 +1,4 @@
+/* eslint indent: ["error", 4, { "SwitchCase": 1 }] */
 import { vi } from 'vitest';
 
 import type { MockRequest, MockResponse, TestUtils } from '../../types/testing';
