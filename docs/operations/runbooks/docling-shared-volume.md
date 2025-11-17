@@ -32,6 +32,11 @@ Shared volume `./data/docling/shared` используется сервисам�
 - Для read-only аудиторов создаём группу `docling-readonly` и выдаём `chmod 750`
   на `exports/`.
 
+> Автоматизация: выполни
+> `./scripts/maintenance/enforce-docling-shared-policy.sh` (по необходимости
+> выстави `DOC_SHARED_OWNER`, `DOC_SHARED_GROUP`, `DOC_SHARED_READONLY_GROUP`).
+> Скрипт создаёт группы, выравнивает владельца и задаёт ACL для `exports/`.
+
 Контейнеры Docling/OpenWebUI обращаются к тому же каталогу по UID 1000 (по
 умолчанию). При необходимости более строгого разграничения используйте ACL:
 
@@ -71,12 +76,21 @@ sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply \
 
 Рекомендуемый cron (ежедневно в 02:10):
 
-```cron
+````cron
 10 2 * * * cd /home/konstantin/Documents/augment-projects/erni-ki && \
   sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply >> logs/docling-shared-cleanup.log 2>&1
 
 > **Важно:** используйте `sudo -E` (с NOPASSWD в sudoers) либо запускайте cron под пользователем,
 > который владеет `data/docling`. Иначе задача снова упрётся в Permission denied.
+
+Сгенерировать готовый sudoers-файл можно так:
+
+```bash
+./scripts/maintenance/render-docling-cleanup-sudoers.sh | sudo tee /etc/sudoers.d/docling-cleanup
+````
+
+По умолчанию в правила добавляются нужные `env_keep`, поэтому cron/systemd могут
+передавать `DOC_SHARED_*` переменные без ручного редактирования `/etc/sudoers`.
 
 ### 3.3 Systemd unit
 
@@ -89,14 +103,27 @@ sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply \
 - `scripts/maintenance/install-docling-cleanup-unit.sh`
 
 **Порядок включения**
-1. Скопируйте `ops/sudoers/docling-cleanup.sudoers` в `/etc/sudoers.d/docling-cleanup`, подставив реального пользователя и путь к репозиторию (NOPASSWD).
-2. Выполните `./scripts/maintenance/install-docling-cleanup-unit.sh` — unit-файлы попадут в `~/.config/systemd/user`, создастся `~/.config/docling-cleanup.env`, таймер `docling-cleanup.timer` включится автоматически.
-3. Отредактируйте `~/.config/docling-cleanup.env` (пример прилагается), чтобы задать владельца/группу и путь к shared volume. По умолчанию запуск в 02:10 CET, `RandomizedDelaySec=300`.
 
-> Для system-level установки перенесите unit-файлы в `/etc/systemd/system`, добавьте `User=docling-maint` в `.service` и включите таймер через `systemctl enable --now docling-cleanup.timer`.
+1. Скопируйте `ops/sudoers/docling-cleanup.sudoers` в
+   `/etc/sudoers.d/docling-cleanup`, подставив реального пользователя и путь к
+   репозиторию (NOPASSWD).
+2. Выполните `./scripts/maintenance/install-docling-cleanup-unit.sh` —
+   unit-файлы попадут в `~/.config/systemd/user`, создастся
+   `~/.config/docling-cleanup.env`, таймер `docling-cleanup.timer` включится
+   автоматически.
+3. Отредактируйте `~/.config/docling-cleanup.env` (пример прилагается), чтобы
+   задать владельца/группу и путь к shared volume. По умолчанию запуск в 02:10
+   CET, `RandomizedDelaySec=300`.
+
+> Для system-level установки перенесите unit-файлы в `/etc/systemd/system`,
+> добавьте `User=docling-maint` в `.service` и включите таймер через
+> `systemctl enable --now docling-cleanup.timer`.
 
 Добавьте мониторинг лога (Fluent Bit → Loki) и алерт, если в выходе появится
-`WARNING: shared volume size ... exceeds`.
+`WARNING: shared volume size ... exceeds`. Скрипт
+`scripts/monitoring/docling-cleanup-permission-metric.sh` публикует метрику
+`erni_docling_cleanup_permission_denied`; включите его в cron/systemd и
+Alertmanager, чтобы срабатывать при повторных `Permission denied`.
 
 ## 4. Инцидентные процедуры
 
@@ -115,4 +142,7 @@ sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply \
 - Archon документ `ERNI-KI Минимальное описание проекта` — содержит summary и
   риски.
 - Скрипт очистки: `scripts/maintenance/docling-shared-cleanup.sh`.
+
+```
+
 ```

@@ -49,8 +49,10 @@ ERNI-KI monitoring system includes:
   (`/run/secrets/pagerduty_routing_key`), маршруты содержат ссылки на runbook и
   владельца.
 - **Docling shared volume** — `scripts/maintenance/docling-shared-cleanup.sh`
-  гарантирует очистку `data/docling/shared/uploads` и уведомления при ошибках
-  прав.
+  гарантирует очистку `data/docling/shared/uploads`, а
+  `scripts/monitoring/docling-cleanup-permission-metric.sh` публикует метрику
+  `erni_docling_cleanup_permission_denied`, чтобы Alertmanager ловил повторные
+  Permission denied.
 - **Redis fragmentation** —
   `scripts/maintenance/redis-fragmentation-watchdog.sh` выполняет `memory purge`
   и включает `activedefrag` при ratio >4, журнал —
@@ -162,7 +164,19 @@ ERNI-KI monitoring system includes:
 > есть тег `[auto-cleanup]`. Для долгоживущих suppress записывайте уникальные
 > комментарии и снимайте их вручную командой
 > `docker compose exec alertmanager amtool silence expire <id>` после
-> стабилизации.
+> стабилизации. Рекомендуется добавить systemd timer/cron, который запускает
+> `alertmanager-queue-cleanup.sh` каждые 5 минут:
+
+```bash
+*/5 * * * * PROMETHEUS_URL=http://localhost:9091 \
+  ALERTMANAGER_URL=http://localhost:9093 \
+  ALERTMANAGER_AUTO_SILENCE_TAG="[auto-cleanup]" \
+  ALERTMANAGER_QUEUE_HARD_LIMIT=500 \
+  /home/erni/scripts/monitoring/alertmanager-queue-cleanup.sh
+```
+
+> Timer должен логировать вывод в `.config-backup/logs/alertmanager-queue.log` и
+> отправлять уведомление ответственному, если cleanup перезапускает AM.
 
 ### Alert Response Cheat Sheet {#alert-response}
 

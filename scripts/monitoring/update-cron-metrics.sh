@@ -47,3 +47,5 @@ for job in "${!SLA[@]}"; do
 done
 
 mv "$tmp_file" "$METRIC_FILE"
+
+"$PROJECT_DIR"/scripts/monitoring/docling-cleanup-permission-metric.sh

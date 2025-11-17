@@ -62,10 +62,38 @@ configure_openai_keys() {
   export AUDIO_STT_OPENAI_API_KEY="${AUDIO_STT_OPENAI_API_KEY:-$api_key}"
 }
 
+apply_openwebui_patches() {
+  local patch_dir="/opt/erni/openwebui-patches"
+  local target_dir="/app/backend"
+
+  if [[ ! -d "${patch_dir}" ]]; then
+    return
+  fi
+
+  local patch_applied=false
+  shopt -s nullglob
+  for patch in "${patch_dir}"/*.patch; do
+    if [[ -f "${patch}" ]]; then
+      log "applying patch ${patch}"
+      if patch -p1 -d "${target_dir}" --forward <"${patch}" >/dev/null; then
+        patch_applied=true
+      else
+        log "warning: failed to apply ${patch} (already applied?)"
+      fi
+    fi
+  done
+  shopt -u nullglob
+
+  if [[ "${patch_applied}" == true ]]; then
+    log "applied OpenWebUI patches"
+  fi
+}
+
 main() {
   configure_postgres_urls
   configure_webui_secret
   configure_openai_keys
+  apply_openwebui_patches
 
   if [[ $# -gt 0 ]]; then
     exec "$@"
