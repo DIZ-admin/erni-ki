@@ -33,10 +33,10 @@ export interface TestUtils {
     TQuery = Record<string, string | string[] | undefined>,
     TParams = Record<string, string>,
   >(
-    options?: Partial<MockRequest<TBody, TQuery, TParams>>
+    options?: Partial<MockRequest<TBody, TQuery, TParams>>,
   ) => MockRequest<TBody, TQuery, TParams>;
   createMockResponse: <TBody = unknown>(
-    options?: Partial<MockResponse<TBody>>
+    options?: Partial<MockResponse<TBody>>,
   ) => MockResponse<TBody>;
   waitFor: (fn: WaitForPredicate, timeout?: number) => Promise<void>;
   sleep: (ms: number) => Promise<void>;
