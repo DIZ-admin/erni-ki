@@ -81,6 +81,20 @@ groups:
           description: "Disk usage is above 90% on {{ $labels.instance }} ({{ $labels.mountpoint }}). Current usage: {{ $value | humanizePercentage }}. Immediate action required!"
           runbook: "docs/operations/monitoring-guide.md#low-disk"
 
+      - alert: DoclingCleanupPermissionDenied
+        expr: erni_docling_cleanup_permission_denied > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: observability
+          service: docling
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Docling cleanup cannot access shared volume"
+          description: "Docling cleanup log still reports Permission denied. Check sudoers, ownership and ACLs for data/docling/shared."
+          runbook: "docs/operations/runbooks/docling-shared-volume.md"
+
   # Правила для контейнеров Docker
   - name: container.rules
     rules:

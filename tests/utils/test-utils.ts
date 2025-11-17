@@ -25,7 +25,7 @@ const createChainableStub = <TArgs extends unknown[], TBody>(response: MockRespo
   vi.fn<(..._args: TArgs) => MockResponse<TBody>>().mockImplementation(() => response);
 
 const createMockResponse = <TBody = unknown>(
-  options: Partial<MockResponse<TBody>> = {},
+  options: Partial<MockResponse<TBody>> = {}
 ): MockResponse<TBody> => {
   const response = {
     statusCode: options.statusCode ?? 200,
@@ -44,10 +44,10 @@ const createMockResponse = <TBody = unknown>(
   response.json = createChainableStub<[TBody], TBody>(response);
   response.send = createChainableStub<[TBody], TBody>(response);
   response.cookie = createChainableStub<[string, string, Record<string, unknown>?], TBody>(
-    response,
+    response
   );
   response.header = createChainableStub<[string, string | number | readonly string[]], TBody>(
-    response,
+    response
   );
   response.redirect = vi
     .fn<(url: string, status?: number) => MockResponse<TBody>>()

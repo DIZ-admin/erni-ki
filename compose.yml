@@ -478,6 +478,7 @@ services:
     volumes:
       - ./data/openwebui:/app/backend/data
       - ./data/docling/shared:/app/backend/data/docling-shared
+      - ./patches/openwebui:/opt/erni/openwebui-patches:ro
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
       # Shared volume для передачи файлов в Docling (mount по умолчанию для обмена)
       # Entry-point wrapper подставляет секреты из Docker secrets

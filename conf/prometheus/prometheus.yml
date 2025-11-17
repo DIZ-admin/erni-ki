@@ -228,11 +228,9 @@ scrape_configs:
       module: [http_2xx_no_redirect]
     static_configs:
       - targets:
-          - http://nginx/
           - http://openwebui:8080/health
           - http://auth:9090/health
           - http://ollama:11434/api/version
-          - http://redis:8001/
           - http://searxng:8080/
     relabel_configs:
       - source_labels: [__address__]
@@ -423,15 +421,18 @@ scrape_configs:
   # Fluent Bit (Prometheus exposition via Service HTTP)
   - job_name: "fluent-bit"
     static_configs:
-      - targets: ["fluent-bit:2021"]
+      - targets: ["fluent-bit:2020"]
     scrape_interval: 30s
-    metrics_path: /metrics
+    metrics_path: /api/v1/metrics/prometheus
     scrape_timeout: 10s
 
   # Loki internal metrics for Grafana panels
   - job_name: "loki"
     static_configs:
       - targets: ["loki:3100"]
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
     scrape_interval: 30s
     metrics_path: /metrics
     scrape_timeout: 10s
