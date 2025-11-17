@@ -20,7 +20,7 @@ record_status() {
 trap 'record_status failure "Redis watchdog failed"' ERR
 
 DRY_RUN=false
-THRESHOLD="${REDIS_FRAGMENTATION_THRESHOLD:-4.0}"
+THRESHOLD="${REDIS_FRAGMENTATION_THRESHOLD:-6.0}"
 LOG_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.log"
 STATE_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.state"
 COOLDOWN="${REDIS_FRAGMENTATION_COOLDOWN_SECONDS:-600}"
@@ -28,6 +28,7 @@ MAX_PURGES="${REDIS_FRAGMENTATION_MAX_PURGES:-6}"
 AUTOSCALE_ENABLED="${REDIS_AUTOSCALE_ENABLED:-true}"
 AUTOSCALE_STEP_MB="${REDIS_AUTOSCALE_STEP_MB:-256}"
 AUTOSCALE_MAX_GB="${REDIS_AUTOSCALE_MAX_GB:-4}"
+MIN_USED_MEMORY_BYTES="${REDIS_FRAGMENTATION_MIN_USED_BYTES:-5242880}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -99,7 +100,7 @@ rss="$(awk -F':' '/^used_memory_rss:/ {gsub(/\r/,"", $2); print $2}' <<<"$info")
 peak="$(awk -F':' '/^used_memory_peak:/ {gsub(/\r/,"", $2); print $2}' <<<"$info")"
 
 load_state() {
-  [[ -f "$STATE_FILE" ]] || return
+  [[ -f "$STATE_FILE" ]] || return 0
   # shellcheck disable=SC1090
   source "$STATE_FILE"
 }
@@ -122,6 +123,12 @@ now="$(date +%s)"
 
 if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
   log "Fragmentation ratio ${ratio} > threshold ${THRESHOLD} (used=${used:-0} rss=${rss:-0} peak=${peak:-0})"
+
+  if (( used < MIN_USED_MEMORY_BYTES )); then
+    log "Used memory ${used}B меньше MIN_USED_MEMORY_BYTES=${MIN_USED_MEMORY_BYTES}B; пропускаю purge как ложноположительный"
+    reset_state
+    exit 0
+  fi
 
   if (( now - LAST_ACTION_TS < COOLDOWN )); then
     log "Previous purge executed $((now - LAST_ACTION_TS))s ago (<${COOLDOWN}s). Skipping duplicate action."
