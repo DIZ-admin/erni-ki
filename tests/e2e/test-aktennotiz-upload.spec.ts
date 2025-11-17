@@ -104,7 +104,7 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
   const loginSuccess = await tryLogin(page).catch(() => false);
   const loginEndTime = Date.now();
   log(
-    `${loginSuccess ? '✅' : '⚠️'} Login ${loginSuccess ? 'successful' : 'skipped'} (${loginEndTime - loginStartTime}ms)`
+    `${loginSuccess ? '✅' : '⚠️'} Login ${loginSuccess ? 'successful' : 'skipped'} (${loginEndTime - loginStartTime}ms)`,
   );
 
   await page.waitForTimeout(2000);
@@ -288,7 +288,7 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
   log(`✅ Upload method: ${uploadMethod}`);
   log(`✅ File size: ${(fileStats.size / 1024).toFixed(2)} KB`);
   log(
-    `${processingTime < 10000 ? '✅' : '⚠️'} Processing time ${processingTime < 10000 ? 'meets' : 'exceeds'} target (<10s)`
+    `${processingTime < 10000 ? '✅' : '⚠️'} Processing time ${processingTime < 10000 ? 'meets' : 'exceeds'} target (<10s)`,
   );
   log(`${errors.length === 0 ? '✅' : '❌'} Console errors: ${errors.length}`);
 
