@@ -81,6 +81,10 @@ AI платформы ERNI-KI.
 - `update-critical-services.sh` - Критические обновления (единый сценарий)
 - `comprehensive-audit.sh` - Полный аудит системы
 - `quick-audit.sh` - Быстрая проверка
+- `enforce-docling-shared-policy.sh` - Автоматическое выравнивание прав/ACL для
+  `data/docling/shared`
+- `render-docling-cleanup-sudoers.sh` - Генерация сниппета
+  `/etc/sudoers.d/docling-cleanup`
 
 #### **diagnostics/** - Диагностика и устранение неполадок
 
@@ -101,6 +105,8 @@ AI платформы ERNI-KI.
 - `backrest-health-monitor.sh` - Мониторинг резервных копий
 - `log-volume-analysis.sh` - Анализ объема логов
 - `monitor-rate-limiting.sh` - Мониторинг rate limiting
+- `docling-cleanup-permission-metric.sh` - Экспорт метрики
+  `erni_docling_cleanup_permission_denied`
 - `watchtower-performance-monitor.sh` - Мониторинг Watchtower
 
 #### **backup/** - Резервное копирование

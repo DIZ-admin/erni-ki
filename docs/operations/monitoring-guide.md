@@ -49,8 +49,10 @@ ERNI-KI monitoring system includes:
   (`/run/secrets/pagerduty_routing_key`), маршруты содержат ссылки на runbook и
   владельца.
 - **Docling shared volume** — `scripts/maintenance/docling-shared-cleanup.sh`
-  гарантирует очистку `data/docling/shared/uploads` и уведомления при ошибках
-  прав.
+  гарантирует очистку `data/docling/shared/uploads`, а
+  `scripts/monitoring/docling-cleanup-permission-metric.sh` публикует метрику
+  `erni_docling_cleanup_permission_denied`, чтобы Alertmanager ловил повторные
+  Permission denied.
 - **Redis fragmentation** —
   `scripts/maintenance/redis-fragmentation-watchdog.sh` выполняет `memory purge`
   и включает `activedefrag` при ratio >4, журнал —
