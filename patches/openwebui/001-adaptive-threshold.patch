@@ -1,11 +1,11 @@
---- open_webui/retrieval/utils.py	2025-11-17 12:07:18.113779383 +0100
-+++ open_webui/retrieval/utils.py	2025-11-17 12:07:55.135167405 +0100
+--- a/open_webui/retrieval/utils.py	2025-11-06 19:41:16.000000000 +0100
++++ b/open_webui/retrieval/utils.py	2025-11-17 13:49:20.546807682 +0100
 @@ -158,6 +158,8 @@
      k_reranker: int,
      r: float,
      hybrid_bm25_weight: float,
 +    enable_relevance_fallback: bool = False,
-+    fallback_r: Optional[float] = None,
++    fallback_r: float | None = None,
  ) -> dict:
      try:
          if (
@@ -43,43 +43,19 @@
      r: float,
      hybrid_bm25_weight: float,
 +    enable_relevance_fallback: bool = False,
-+    fallback_r: Optional[float] = None,
++    fallback_r: float | None = None,
  ) -> dict:
      results = []
      error = False
-@@ -413,18 +439,20 @@
- 
-     def process_query(collection_name, query):
-         try:
--            result = query_doc_with_hybrid_search(
--                collection_name=collection_name,
--                collection_result=collection_results[collection_name],
--                query=query,
--                embedding_function=embedding_function,
--                k=k,
--                reranking_function=reranking_function,
--                k_reranker=k_reranker,
--                r=r,
--                hybrid_bm25_weight=hybrid_bm25_weight,
--            )
--            return result, None
-+                result = query_doc_with_hybrid_search(
-+                    collection_name=collection_name,
-+                    collection_result=collection_results[collection_name],
-+                    query=query,
-+                    embedding_function=embedding_function,
-+                    k=k,
-+                    reranking_function=reranking_function,
-+                    k_reranker=k_reranker,
-+                    r=r,
-+                    hybrid_bm25_weight=hybrid_bm25_weight,
-+                    enable_relevance_fallback=enable_relevance_fallback,
-+                    fallback_r=fallback_r,
-+                )
-+                return result, None
+@@ -423,6 +449,8 @@
+                 k_reranker=k_reranker,
+                 r=r,
+                 hybrid_bm25_weight=hybrid_bm25_weight,
++                enable_relevance_fallback=enable_relevance_fallback,
++                fallback_r=fallback_r,
+             )
+             return result, None
          except Exception as e:
-             log.exception(f"Error when querying the collection with hybrid_search: {e}")
-             return None, e
 @@ -752,6 +780,8 @@
                                  k_reranker=k_reranker,
                                  r=r,
@@ -89,8 +65,8 @@
                              )
                          except Exception as e:
                              log.debug(
---- open_webui/config.py	2025-11-17 12:07:18.114599327 +0100
-+++ open_webui/config.py	2025-11-17 12:08:19.609973200 +0100
+--- a/open_webui/config.py	2025-11-06 19:41:16.000000000 +0100
++++ b/open_webui/config.py	2025-11-17 13:49:33.760694755 +0100
 @@ -2496,6 +2496,16 @@
      "rag.relevance_threshold",
      float(os.environ.get("RAG_RELEVANCE_THRESHOLD", "0.0")),
@@ -108,18 +84,9 @@
  RAG_HYBRID_BM25_WEIGHT = PersistentConfig(
      "RAG_HYBRID_BM25_WEIGHT",
      "rag.hybrid_bm25_weight",
---- open_webui/main.py	2025-11-17 12:07:18.115403972 +0100
-+++ open_webui/main.py	2025-11-17 12:09:06.181603356 +0100
-@@ -231,6 +231,8 @@
-     RAG_TOP_K,
-     RAG_TOP_K_RERANKER,
-     RAG_RELEVANCE_THRESHOLD,
-+    RAG_ENABLE_RELEVANCE_FALLBACK,
-+    RAG_FALLBACK_RELEVANCE_THRESHOLD,
-     RAG_HYBRID_BM25_WEIGHT,
-     RAG_ALLOWED_FILE_EXTENSIONS,
-     RAG_FILE_MAX_COUNT,
-@@ -826,6 +828,8 @@
+--- a/open_webui/main.py	2025-11-06 19:41:16.000000000 +0100
++++ b/open_webui/main.py	2025-11-17 13:49:50.496551792 +0100
+@@ -826,6 +826,8 @@
  app.state.config.TOP_K = RAG_TOP_K
  app.state.config.TOP_K_RERANKER = RAG_TOP_K_RERANKER
  app.state.config.RELEVANCE_THRESHOLD = RAG_RELEVANCE_THRESHOLD
