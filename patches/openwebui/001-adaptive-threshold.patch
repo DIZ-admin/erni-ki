@@ -1,6 +1,6 @@
---- a/open_webui/retrieval/utils.py	2025-11-06 19:41:16.000000000 +0100
-+++ b/open_webui/retrieval/utils.py	2025-11-17 13:49:20.546807682 +0100
-@@ -158,6 +158,8 @@
+--- a/open_webui/utils.py
++++ b/open_webui/utils.py
+@@ -158,6 +158,8 @@ def query_doc_with_hybrid_search(
      k_reranker: int,
      r: float,
      hybrid_bm25_weight: float,
@@ -9,7 +9,7 @@
  ) -> dict:
      try:
          if (
-@@ -211,6 +213,28 @@
+@@ -211,6 +213,28 @@ def query_doc_with_hybrid_search(
  
          result = compression_retriever.invoke(query)
  
@@ -38,7 +38,7 @@
          distances = [d.metadata.get("score") for d in result]
          documents = [d.page_content for d in result]
          metadatas = [d.metadata for d in result]
-@@ -389,6 +413,8 @@
+@@ -389,6 +413,8 @@ def query_doc_multi_with_hybrid_search(
      k_reranker: int,
      r: float,
      hybrid_bm25_weight: float,
@@ -47,7 +47,7 @@
  ) -> dict:
      results = []
      error = False
-@@ -423,6 +449,8 @@
+@@ -423,6 +449,8 @@ def query_doc_multi_with_hybrid_search(
                  k_reranker=k_reranker,
                  r=r,
                  hybrid_bm25_weight=hybrid_bm25_weight,
@@ -56,7 +56,7 @@
              )
              return result, None
          except Exception as e:
-@@ -752,6 +780,8 @@
+@@ -752,6 +780,8 @@ async def api_query_doc_multi(
                                  k_reranker=k_reranker,
                                  r=r,
                                  hybrid_bm25_weight=hybrid_bm25_weight,
@@ -65,9 +65,9 @@
                              )
                          except Exception as e:
                              log.debug(
---- a/open_webui/config.py	2025-11-06 19:41:16.000000000 +0100
-+++ b/open_webui/config.py	2025-11-17 13:49:33.760694755 +0100
-@@ -2496,6 +2496,16 @@
+--- a/open_webui/config.py
++++ b/open_webui/config.py
+@@ -2496,6 +2496,16 @@ RAG_RELEVANCE_THRESHOLD = PersistentConfig(
      "rag.relevance_threshold",
      float(os.environ.get("RAG_RELEVANCE_THRESHOLD", "0.0")),
  )
@@ -84,14 +84,21 @@
  RAG_HYBRID_BM25_WEIGHT = PersistentConfig(
      "RAG_HYBRID_BM25_WEIGHT",
      "rag.hybrid_bm25_weight",
---- a/open_webui/main.py	2025-11-06 19:41:16.000000000 +0100
-+++ b/open_webui/main.py	2025-11-17 13:49:50.496551792 +0100
-@@ -826,6 +826,8 @@
+--- a/open_webui/main.py
++++ b/open_webui/main.py
+@@ -230,6 +230,8 @@ from open_webui.config import (
+     RAG_EMBEDDING_BATCH_SIZE,
+     RAG_TOP_K,
+     RAG_TOP_K_RERANKER,
++    RAG_ENABLE_RELEVANCE_FALLBACK,
++    RAG_FALLBACK_RELEVANCE_THRESHOLD,
+     RAG_RELEVANCE_THRESHOLD,
+     RAG_HYBRID_BM25_WEIGHT,
+     RAG_ALLOWED_FILE_EXTENSIONS,
+@@ -828,6 +830,8 @@ def start_app() -> FastAPI:
  app.state.config.TOP_K = RAG_TOP_K
  app.state.config.TOP_K_RERANKER = RAG_TOP_K_RERANKER
  app.state.config.RELEVANCE_THRESHOLD = RAG_RELEVANCE_THRESHOLD
 +app.state.config.ENABLE_RELEVANCE_FALLBACK = RAG_ENABLE_RELEVANCE_FALLBACK
 +app.state.config.FALLBACK_RELEVANCE_THRESHOLD = RAG_FALLBACK_RELEVANCE_THRESHOLD
  app.state.config.HYBRID_BM25_WEIGHT = RAG_HYBRID_BM25_WEIGHT
- 
- 
