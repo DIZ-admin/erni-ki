@@ -134,7 +134,7 @@
 
 ## Наблюдаемость и безопасность
 
-- **LLM & Model Context**: LiteLLM v1.77.3-stable, MCP Server 8000 и RAG API
+- **LLM & Model Context**: LiteLLM v1.80.0.rc.1, MCP Server 8000 и RAG API
   (`/api/mcp/*`, `/api/search`) используют PostgreSQL + Redis для context
   storage; `docs/reference/api-reference.md` и
   `docs/operations/operations-handbook.md` содержат маршруты, SLA и список

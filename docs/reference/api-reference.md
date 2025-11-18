@@ -26,7 +26,7 @@ ERNI-KI предоставляет RESTful API для интеграции с в
 
 ## ⚙️ LiteLLM Context7 Gateway
 
-LiteLLM v1.77.3-stable выступает в роли Context Engineering слоя, объединяя
+LiteLLM v1.80.0.rc.1 выступает в роли Context Engineering слоя, объединяя
 Context7 thinking tokens, MCP инструменты и локальные модели Ollama.
 
 | Компонент           | Значение                                                    |
