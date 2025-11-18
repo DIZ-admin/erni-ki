@@ -2,43 +2,44 @@
   "uid": "sla-error-budgets",
   "title": "SLA & Error Budgets",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "1m",
   "time": {"from": "now-7d", "to": "now"},
   "panels": [
     {
-      "type": "stat",
-      "title": "SLO Compliance (OpenWebUI)",
+      "type": "timeseries",
+      "title": "SLO Compliance (Ingress)",
       "id": 1,
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 0},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "1 - sum(rate(nginx_http_requests_total{status=~\"5..\", upstream=\"openwebui\"}[7d])) / sum(rate(nginx_http_requests_total{upstream=\"openwebui\"}[7d]))", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "1 - sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 1)", "legendFormat": "Availability", "refId": "A"}
       ],
       "fieldConfig": {"defaults": {"unit": "percent"}}
     },
     {
       "type": "timeseries",
-      "title": "Error Budget Burn",
+      "title": "Burn Rate (1h / 6h)",
       "id": 2,
-      "gridPos": {"h": 8, "w": 18, "x": 6, "y": 0},
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 0},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / sum(rate(nginx_http_requests_total[1h]))) / 0.005", "legendFormat": "Burn Rate", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 1)) / 0.005", "legendFormat": "1h", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 1)) / 0.005", "legendFormat": "6h", "refId": "B"}
       ]
     },
     {
       "type": "timeseries",
-      "title": "Authentication Failures",
+      "title": "Authentication Failures (401)",
       "id": 3,
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 6},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(litellm_proxy_auth_failures_total[5m]))", "legendFormat": "Auth Failures", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m]))", "legendFormat": "401 req/s", "refId": "A"}
       ]
     },
     {
       "type": "table",
-      "title": "Recent Alerts",
+      "title": "Active Alerts",
       "id": 4,
-      "gridPos": {"h": 10, "w": 12, "x": 12, "y": 8},
+      "gridPos": {"h": 10, "w": 12, "x": 12, "y": 6},
       "targets": [
         {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "ALERTS{alertstate=\"firing\"}", "format": "table", "refId": "A"}
       ],
