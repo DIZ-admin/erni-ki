@@ -1,6 +1,6 @@
 # 🤖 ERNI-KI — Production AI Platform
 
-**ERNI-KI** — стэк из 30 сервисов вокруг OpenWebUI v0.6.34 и Ollama 0.12.3 с
+**ERNI-KI** — стэк из 30 сервисов вокруг OpenWebUI v0.6.36 и Ollama 0.12.3 с
 GPU-ускорением, Context7/LiteLLM gateway и полной обсервабилити.
 
 <!-- STATUS_SNIPPET_START -->
