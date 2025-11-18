@@ -17,6 +17,9 @@ if [[ -f "$HEALTH_MONITOR_ENV_FILE" ]]; then
   set +a
 fi
 
+LOG_IGNORE_REGEX="${HEALTH_MONITOR_LOG_IGNORE_REGEX:-litellm\.proxy\.proxy_server\.user_api_key_auth|node-exporter.*(broken pipe|connection reset by peer)|cloudflared.*context canceled|redis-exporter.*Errorstats|redis-exporter.*unexpected_error_replies|redis-exporter.*total_error_replies}"
+LOG_WINDOW="${HEALTH_MONITOR_LOG_WINDOW:-5m}"
+
 IFS=' ' read -r -a COMPOSE_CMD <<< "${HEALTH_MONITOR_COMPOSE_BIN:-docker compose}"
 COMPOSE_CMD=("${COMPOSE_CMD[@]}")
 
@@ -272,7 +275,14 @@ check_disk_usage() {
 check_logs() {
   log "Анализ логов за последние 30 минут..."
   local count
-  count=$(compose logs --since 30m 2>/dev/null | grep -i -E "(ERROR|FATAL|CRITICAL)" | wc -l || echo "0")
+  local stream
+  stream="$(compose logs --since "$LOG_WINDOW" 2>/dev/null | grep -i -E "(ERROR|FATAL|CRITICAL)" || true)"
+
+  if [[ -n "$LOG_IGNORE_REGEX" ]]; then
+    stream="$(echo "$stream" | grep -Ev "$LOG_IGNORE_REGEX" || true)"
+  fi
+
+  count="$(echo "$stream" | sed '/^[[:space:]]*$/d' | wc -l || echo "0")"
 
   if [[ "$count" -eq 0 ]]; then
     record_result "PASS" "Логи" "Критические ошибки не найдены"

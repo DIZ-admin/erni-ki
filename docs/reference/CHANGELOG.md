@@ -26,6 +26,18 @@
 - Выполнен полный health-check (`scripts/health-monitor.sh`)
 - Сервисные эндпоинты OpenWebUI, LiteLLM, Docling, monitoring подтверждены как healthy
 
+#### 📟 **Мониторинг**
+- `postgres-exporter` получил явный флаг `--no-collector.stat_bgwriter`, что убрало ошибки `checkpoints_timed`
+- Контейнер пересобран (`docker compose up -d postgres-exporter postgres-exporter-proxy`), логи чистые
+
+#### 🔒 **Дополнительное hardening**
+- Добавлен stub конфиг `conf/postgres-exporter/config.yml`, который теперь передаётся через `--config.file`.
+- LiteLLM (порт `127.0.0.1:4000`) и OpenWebUI переведены в режим Watchtower monitor-only.
+- `scripts/health-monitor.sh` получил параметры `HEALTH_MONITOR_LOG_WINDOW` и `HEALTH_MONITOR_LOG_IGNORE_REGEX`, что убрало шум от LiteLLM cron, node-exporter broken pipe, cloudflared context canceled и redis-exporter Errorstats.
+- Fluent Bit, nginx-exporter, nvidia-exporter, ollama-exporter, postgres-exporter-proxy и redis-exporter получили Docker healthchecks, поэтому health-monitor теперь показывает 31/31 healthy.
+- Alertmanager Slack шаблоны переписаны без `| default`, поэтому пропала ошибка `function "default" not defined`.
+- Добавлен отчёт `logs/diagnostics/hardening-20251118.md`.
+
 ---
 
 ## [5.1.0] - 2025-11-04
