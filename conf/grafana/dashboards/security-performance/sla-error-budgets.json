@@ -12,7 +12,7 @@
       "id": 1,
       "gridPos": {"h": 6, "w": 12, "x": 0, "y": 0},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "1 - sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 1)", "legendFormat": "Availability", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(1 - sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 1)) or vector(0)", "legendFormat": "Availability", "refId": "A"}
       ],
       "fieldConfig": {"defaults": {"unit": "percent"}}
     },
@@ -22,8 +22,8 @@
       "id": 2,
       "gridPos": {"h": 6, "w": 12, "x": 12, "y": 0},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 1)) / 0.005", "legendFormat": "1h", "refId": "A"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 1)) / 0.005", "legendFormat": "6h", "refId": "B"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 1)) / 0.005) or vector(0)", "legendFormat": "1h", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 1)) / 0.005) or vector(0)", "legendFormat": "6h", "refId": "B"}
       ]
     },
     {
@@ -32,7 +32,7 @@
       "id": 3,
       "gridPos": {"h": 6, "w": 12, "x": 0, "y": 6},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m]))", "legendFormat": "401 req/s", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m])) or vector(0)", "legendFormat": "401 req/s", "refId": "A"}
       ]
     },
     {

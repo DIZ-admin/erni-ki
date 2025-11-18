@@ -29,7 +29,7 @@
       "targets": [
         {
           "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum(rate(nginx_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(nginx_http_requests_total[5m])), 1)",
+          "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(nginx_http_requests_total[5m])), 1)) or vector(0)",
           "legendFormat": "5xx",
           "refId": "A"
         }
@@ -83,7 +83,7 @@
       "id": 7,
       "gridPos": {"h": 6, "w": 12, "x": 0, "y": 10},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(redis_keyspace_hits_total[5m])) / clamp_min(sum(rate(redis_keyspace_hits_total[5m])) + sum(rate(redis_keyspace_misses_total[5m])), 1)", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(redis_keyspace_hits_total[5m])) / clamp_min(sum(rate(redis_keyspace_hits_total[5m])) + sum(rate(redis_keyspace_misses_total[5m])), 1)) or vector(0)", "refId": "A"}
       ],
       "fieldConfig": {"defaults": {"unit": "percent"}}
     },
