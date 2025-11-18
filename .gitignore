@@ -160,6 +160,7 @@ conf/**/*.conf
 conf/**/*.ini
 conf/**/*.json
 conf/**/*.yml
+!conf/grafana/dashboards/**/*.json
 !conf/postgres-exporter/config.yml
 !conf/**/*.example
 !conf/**/*.template

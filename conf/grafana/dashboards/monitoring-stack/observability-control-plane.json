@@ -1,0 +1,109 @@
+{
+  "uid": "observability-control-plane",
+  "title": "Observability Control Plane",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "1m",
+  "time": {"from": "now-12h", "to": "now"},
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Prometheus Scrape Success",
+      "id": 1,
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "avg(prometheus_target_interval_length_seconds{job=\"prometheus\"})",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Prometheus Target Health",
+      "id": 2,
+      "gridPos": {"h": 8, "w": 18, "x": 6, "y": 0},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "sum by (job) (prometheus_target_sync_length_seconds{phase=\"total\"})",
+          "legendFormat": "{{job}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Loki Distributor Throughput",
+      "id": 3,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "sum(rate(loki_distributor_bytes_received_total[5m]))",
+          "legendFormat": "Bytes/s",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}}
+    },
+    {
+      "type": "heatmap",
+      "title": "Alert Firing Duration",
+      "id": 4,
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "sum by (alertname) (increase(ALERTS_FOR_STATE{state=\"firing\"}[6h]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Fluent Bit Input Lag",
+      "id": 5,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "sum(rate(fluentbit_input_record_total[5m]))",
+          "legendFormat": "Records/s",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Failed Alertmanager Notifications",
+      "id": 6,
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "increase(alertmanager_notifications_failed_total[6h])",
+          "format": "table",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "logs",
+      "title": "Grafana Errors",
+      "id": 7,
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 20},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {
+          "datasource": {"type": "loki", "uid": "loki"},
+          "expr": "{container_name=\"grafana\"} |= \"level=error\"",
+          "refId": "A"
+        }
+      ],
+      "options": {"showLabels": true}
+    }
+  ]
+}
