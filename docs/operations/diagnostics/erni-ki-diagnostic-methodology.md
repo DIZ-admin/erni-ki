@@ -115,10 +115,70 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info se
 
 ### 📄 Docling - Document Processing
 
-**❌ НЕПРАВИЛЬНО:**
+**✅ ПРАВИЛЬНО:**
 
-> Docling сервис удалён из платформы (ноябрь 2025). Используйте Apache Tika или
-> внешние OCR-пайплайны для обработки документов.
+1. Убедиться, что контейнер действительно использует GPU.
+
+   ```bash
+   docker compose exec docling nvidia-smi
+   docker compose exec docling python - <<'PY'
+   import torch
+   print("CUDA:", torch.cuda.is_available(), "device:", torch.cuda.get_device_name(0))
+   PY
+   ```
+
+   Оба вызова должны выполняться без ошибок. Если GPU не виден, задайте
+   `DOCLING_GPU_VISIBLE_DEVICES`/`DOCLING_CUDA_VISIBLE_DEVICES` в `.env` и
+   перезапустите стек.
+
+2. Конфигурация `env/docling.env`:
+   - `DOCLING_DEVICE=cuda:0`, `DOCLING_NUM_THREADS=4`.
+   - `EASYOCR_GPU=true`, `EASYOCR_FORCE_CPU=false` — EasyOCR работает на CUDA.
+   - `DOCLING_SERVE_ENABLE_REMOTE_SERVICES=true` — разрешает VLM/LLM вызовы.
+   - `DOCLING_SHARED_VOLUME_PATH=/docling-shared`,
+     `DOCLING_SERVE_ARTIFACTS_PATH=/docling-artifacts` (модели берутся из
+     примонтированного кэшa).
+
+   После изменения переменных выполните `docker compose up -d docling`.
+
+3. Для описания изображений активируйте блок **Документы → Опишите изображения**
+   в OpenWebUI (админ-панель `/admin/settings/documents`). В поле конфигурации
+   укажите API Ollama/VLLM, совместимый с OpenAI:
+
+   ```json
+   {
+     "url": "http://ollama:11434/v1/chat/completions",
+     "params": {
+       "model": "llava:latest",
+       "max_tokens": 800,
+       "temperature": 0.1
+     },
+     "prompt": "Analyze this image in detail. Describe text, objects, layout and relations. Languages: English, German, French, Italian."
+   }
+   ```
+
+   Docling автоматически подставит `picture_description_api` и будет вызывать
+   llava через Ollama, если пользователь в UI отмечает «Опишите изображения».
+
+4. Smoke-тест:
+
+   ```bash
+   curl -s -X POST http://docling:5001/v1/convert/file \
+     -F files=@sample.pdf \
+     -F 'options={"do_picture_description": true, "picture_description_api": {"url": "http://ollama:11434/v1/chat/completions","params":{"model":"llava:latest"}}}' \
+     | jq '.status,.document.picture_descriptions[0].summary'
+   ```
+
+   `status` должен быть `success`, а массив `picture_descriptions` — непустой.
+
+5. При обработке объёмных документов включён асинхронный режим: в
+   `env/openwebui.env` задано `DOCLING_USE_ASYNC=true`, поэтому OpenWebUI
+   отправляет файл через `/v1/convert/file/async`, далее каждые
+   `DOCLING_POLL_INTERVAL` секунд (по умолчанию 3) опрашивает
+   `/v1/status/poll/{task_id}` максимум `DOCLING_MAX_POLL_ATTEMPTS` раз
+   (значение 600 ≈ 30 минут). После статуса `success` результат считывается
+   через `/v1/result/{task_id}`. Если требуется сократить время ожидания или
+   уменьшить нагрузку, скорректируйте эти параметры и перезапустите OpenWebUI.
 
 ---
 

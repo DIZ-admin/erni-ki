@@ -44,33 +44,68 @@ analyze_rate_limiting() {
     log "Анализ rate limiting за последние $time_window"
 
     # Получение логов nginx за указанный период
-    local nginx_logs
+    local nginx_logs=""
     nginx_logs=$($COMPOSE_BIN -f "$PROJECT_ROOT/compose.yml" logs nginx --since "$time_window" 2>/dev/null || echo "")
 
     if [[ -z "$nginx_logs" && -f "$NGINX_ACCESS_LOG" ]]; then
-        nginx_logs=$(tail -n 2000 "$NGINX_ACCESS_LOG" | grep "$(date -u +"%d/%b/%Y:%H:%M")" || true)
+        local since_epoch
+        local minutes_window="$time_window"
+        if [[ "$minutes_window" == *m ]]; then
+            minutes_window="${minutes_window%m}"
+        fi
+        since_epoch=$(date -u -d "${minutes_window:-1} minutes ago" +%s)
+        nginx_logs=$(python3 - "$NGINX_ACCESS_LOG" "$since_epoch" <<'PY'
+import collections
+import datetime as dt
+import sys
+
+if len(sys.argv) < 3:
+    sys.exit(0)
+
+path = sys.argv[1]
+since = int(sys.argv[2])
+
+buffer = collections.deque(maxlen=5000)
+
+try:
+    with open(path, "r", encoding="utf-8", errors="ignore") as log_file:
+        for line in log_file:
+            buffer.append(line)
+except FileNotFoundError:
+    sys.exit(0)
+
+for line in buffer:
+    try:
+        ts = line.split('[', 1)[1].split(']', 1)[0]
+        parsed = dt.datetime.strptime(ts, "%d/%b/%Y:%H:%M:%S %z")
+    except (IndexError, ValueError):
+        continue
+
+    if int(parsed.timestamp()) >= since:
+        sys.stdout.write(line)
+PY
+        )
     fi
 
     if [[ -z "$nginx_logs" ]]; then
-        log "Нет логов nginx за указанный период"
-        return 0
+        log "Нет логов nginx за указанный период, считаю блокировки равными 0"
     fi
 
     # Подсчет rate limiting ошибок
     local total_blocks
-    total_blocks=$(echo "$nginx_logs" | grep -c "limiting requests" | tr -d '\n' || echo "0")
+    total_blocks=$(printf '%s\n' "$nginx_logs" | grep -c "limiting requests" || true)
 
     # Анализ по зонам
     local zones_stats
-    zones_stats=$(echo "$nginx_logs" | grep "limiting requests" | grep -o 'zone "[^"]*"' | sort | uniq -c || echo "")
+    zones_stats=$(printf '%s\n' "$nginx_logs" | grep "limiting requests" | grep -o 'zone "[^"]*"' | sort | uniq -c || echo "")
 
     # Анализ по IP адресам
     local ip_stats
-    ip_stats=$(echo "$nginx_logs" | grep "limiting requests" | grep -o 'client: [^,]*' | sort | uniq -c | head -10 || echo "")
+    ip_stats=$(printf '%s\n' "$nginx_logs" | grep "limiting requests" | grep -o 'client: [^,]*' | sort | uniq -c | head -10 || echo "")
 
     # Максимальное превышение
     local max_excess
-    max_excess=$(echo "$nginx_logs" | grep "limiting requests" | grep -o 'excess: [0-9.]*' | sort -n | tail -1 | tr -d '\n' || echo "0")
+    max_excess=$(printf '%s\n' "$nginx_logs" | grep "limiting requests" | grep -o 'excess: [0-9.]*' | sort -n | tail -1 | tr -d '\n' || echo "0")
 
     # Создание JSON отчета
     local report

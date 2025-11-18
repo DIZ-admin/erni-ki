@@ -1,6 +1,5 @@
 # ============================================================================
 # 4-УРОВНЕВАЯ СТРАТЕГИЯ ЛОГГИРОВАНИЯ ERNI-KI
-# Обновлено: 2025-08-22 - Оптимизированная система согласно аудиту
 # ============================================================================
 
 # УРОВЕНЬ 1 - Критически важные сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx)
@@ -1006,6 +1005,9 @@ services:
     container_name: erni-ki-fluent-bit
     logging: *monitoring-logging
     restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: "0.5"
     volumes:
       # Обновленная конфигурация Fluent Bit для Loki интеграции
       - ./conf/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
@@ -1019,6 +1021,8 @@ services:
       - erni-ki-fluent-db:/fluent-bit/db
       # Доступ к Docker socket для сбора логов контейнеров
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Доступ к json-файлам Docker контейнеров (tail input)
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
     ports:
       - "127.0.0.1:2020:2020" # HTTP API и health checks
       - "127.0.0.1:2021:2021" # Prometheus метрики (Фаза 2)
@@ -1027,6 +1031,10 @@ services:
       # Разрешить автообновление для Fluent Bit
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=logging-stack"
+    networks:
+      default:
+        aliases:
+          - fluent-bit
 
   # RAG Exporter - метрики SLA RAG (latency, sources)
   rag-exporter:
