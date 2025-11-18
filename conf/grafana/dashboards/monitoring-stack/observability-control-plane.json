@@ -68,12 +68,7 @@
       "id": 5,
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
       "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum(rate(fluentbit_input_record_total[5m]))",
-          "legendFormat": "Records/s",
-          "refId": "A"
-        }
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_records_total[5m]))", "legendFormat": "Records/s", "refId": "A"}
       ]
     },
     {
