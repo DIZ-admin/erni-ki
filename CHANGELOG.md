@@ -11,6 +11,7 @@
 - Пересобрали compose-стек без тома `patches/openwebui`.
 - Актуализировали документацию (README, architecture/overview, локализации).
 - Выполнили полный `scripts/health-monitor.sh` после обновления.
+- Отключили `stat_bgwriter` collector у Postgres Exporter, чтобы убрать шум `checkpoints_timed`.
 
 ### 🔧 Реализация
 
@@ -22,7 +23,17 @@
 3. **Документация**
    - README, docs/index.md, docs/overview.md и все status snippets обновлены до v0.6.36.
    - Архитектурные гайды (RU/DE) отражают новую версию и дату обновления.
-4. **Проверки**
+4. **Monitoring**
+   - У `postgres-exporter` выключен сборщик `stat_bgwriter` через `--no-collector.stat_bgwriter`, контейнер пересобран (`docker compose up -d postgres-exporter postgres-exporter-proxy`).
+   - Повторные логи `checkpoints_timed` исчезли (`docker compose logs postgres-exporter --since 5m` пуст).
+5. **Hardening & Diagnostics**
+   - Добавлен stub-конфиг `conf/postgres-exporter/config.yml` и `compose.yml` теперь передаёт `--config.file` во время запуска.
+   - LiteLLM и OpenWebUI переведены в monitor-only режим Watchtower, а порт `4000` проброшен только на `127.0.0.1`.
+   - `scripts/health-monitor.sh` получил настраиваемые `HEALTH_MONITOR_LOG_WINDOW` и `HEALTH_MONITOR_LOG_IGNORE_REGEX`, чтобы фильтровать шум (`litellm cron`, node-exporter broken pipe, cloudflared context canceled, redis-exporter Errorstats).
+   - Для fluent-bit, nginx-exporter, nvidia-exporter, ollama-exporter, postgres-exporter-proxy и redis-exporter добавлены Docker healthcheck’и → `docker compose ps` и health-monitor показывают 31/31 healthy.
+   - Alertmanager Slack шаблоны переписаны без `| default`, чтобы не генерировать Go template ошибки.
+   - Отчёт `logs/diagnostics/hardening-20251118.md` добавлен в артефакты.
+6. **Проверки**
    - `scripts/health-monitor.sh --report` выполнен: контейнеры, HTTP healthchecks и метрики без ошибок.
 
 ### 📊 Диагностика

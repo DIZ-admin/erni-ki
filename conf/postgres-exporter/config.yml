@@ -1,0 +1,6 @@
+# Placeholder configuration for postgres-exporter.
+#
+# The exporter expects a YAML file when --config.file is provided.
+# We intentionally keep it empty (no custom queries) to silence the
+# \"config file not found\" warning while still allowing future overrides.
+{}

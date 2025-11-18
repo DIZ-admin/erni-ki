@@ -160,7 +160,7 @@ services:
 
     # Порт для API (внутренний Docker network)
     ports:
-      - "4000:4000" # LiteLLM Proxy API
+      - "127.0.0.1:4000:4000" # LiteLLM Proxy API (localhost only)
     expose:
       - "9109" # Prometheus metrics for PublicAI provider
 
@@ -210,7 +210,8 @@ services:
       - "com.erni-ki.service=litellm"
       - "com.erni-ki.version=main-stable"
       - "com.erni-ki.description=Context Engineering Gateway"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=ai-services"
     secrets:
       - litellm_db_password
@@ -487,7 +488,8 @@ services:
     # Используем стандартную Docker bridge сеть
     labels:
       # Разрешить автообновление для OpenWebUI
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=web-interface"
 
   # Docling OCR/ingestion pipeline (GPU aware)
@@ -497,7 +499,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: ghcr.io/docling-project/docling-serve:v1.8.0
+    image: docling-serve:gpu
     runtime: nvidia
     mem_limit: 12g
     mem_reservation: 8g
@@ -774,16 +776,19 @@ services:
       - PG_EXPORTER_DISABLE_SETTINGS_METRICS=true
       - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
       - PG_EXPORTER_EXCLUDE_DATABASES=template0,template1,postgres
-      - PG_EXPORTER_COLLECTOR_STAT_BGWRITER=false
     volumes:
       - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
       - ./secrets/postgres_exporter_dsn.txt:/etc/postgres_exporter_dsn.txt:ro
+      - ./conf/postgres-exporter/config.yml:/etc/postgres_exporter.yml:ro
     # Публикуем порт 9188 для socat proxy (2025-11-07)
     ports:
       - "127.0.0.1:9188:9188"
     restart: unless-stopped
     entrypoint:
       - /entrypoint/postgres-exporter.sh
+    command:
+      - --config.file=/etc/postgres_exporter.yml
+      - --no-collector.stat_bgwriter
     logging: *monitoring-logging
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1"]
@@ -813,6 +818,12 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep socat"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   # NVIDIA GPU Exporter - мониторинг GPU
   nvidia-exporter:
@@ -825,6 +836,12 @@ services:
       - "127.0.0.1:9445:9445"
     restart: unless-stopped
     logging: *monitoring-logging
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ': < /dev/tcp/localhost/9445'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     # Health check отключен: минимальный образ не содержит wget/curl/nc
     # Сервис мониторится через Prometheus scrape успешность
     labels:
@@ -878,6 +895,12 @@ services:
       - "127.0.0.1:9121:9121"
     restart: unless-stopped
     logging: *monitoring-logging
+    healthcheck:
+      test: ["CMD", "/redis_exporter", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     # Health check отключен: минимальный образ не содержит wget/curl/nc
     # Сервис мониторится через Prometheus scrape успешность
     labels:
@@ -905,17 +928,16 @@ services:
       - "127.0.0.1:9778:9778"
     restart: unless-stopped
     logging: *monitoring-logging
-    # Health check отключен для минимального образа без wget/curl
-    # healthcheck:
-    #   test:
-    #     [
-    #       "CMD-SHELL",
-    #       "wget --no-verbose --tries=1 --spider http://localhost:9778/metrics || exit 1",
-    #     ]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 15s
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://localhost:9778/metrics'', timeout=5).read()"',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
@@ -935,9 +957,12 @@ services:
       - "127.0.0.1:9113:9113"
     restart: unless-stopped
     logging: *monitoring-logging
-    # Health check отключен: минимальный образ не содержит wget/curl/nc
-    # Сервис мониторится через Prometheus scrape успешность
-    # Метрики доступны на http://localhost:9113/metrics
+    healthcheck:
+      test: ["CMD", "/usr/bin/nginx-prometheus-exporter", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
@@ -1026,6 +1051,12 @@ services:
       - "127.0.0.1:2020:2020" # HTTP API и health checks
       - "127.0.0.1:2021:2021" # Prometheus метрики (Фаза 2)
       - "127.0.0.1:24224:24224" # Fluentd forward protocol
+    healthcheck:
+      test: ["CMD", "/fluent-bit/bin/fluent-bit", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     labels:
       # Разрешить автообновление для Fluent Bit
       - "com.centurylinklabs.watchtower.enable=true"
