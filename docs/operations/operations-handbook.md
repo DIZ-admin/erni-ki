@@ -101,7 +101,7 @@
 
 ## 9. LiteLLM Context & RAG контроль
 
-- LiteLLM v1.77.3-stable обслуживает Context Engineering и Context7 (Thinking
+- LiteLLM v1.80.0.rc.1 обслуживает Context Engineering и Context7 (Thinking
   tokens, `/lite/api/v1/think`). Убедитесь, что gateway доступен на
   `http://localhost:4000/health/liveliness`.
 - `scripts/monitor-litellm-memory.sh` — cron/Ad-hoc проверка потребления памяти

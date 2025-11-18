@@ -141,8 +141,8 @@ services:
   # LiteLLM Context Engineering Gateway (оптимизированная сетевая конфигурация)
   litellm:
     # Используем последнюю версию LiteLLM с поддержкой thinking tokens
-    # Обновлено: 2025-10-02 с v1.77.2.rc.1 до v1.77.3-stable для стабильности
-    image: ghcr.io/berriai/litellm:v1.77.3-stable
+    # Обновлено: 2025-11-18 до v1.80.0.rc.1 (routing fixes + security patches)
+    image: ghcr.io/berriai/litellm:v1.80.0.rc.1
     container_name: erni-ki-litellm
 
     # Зависимости - запускаем после критически важных сервисов
@@ -390,7 +390,7 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
-    image: ollama/ollama:0.12.9 # Обновлено до последней стабильной версии (2025-11-04) - Fix performance regression, Qwen3-VL, MiniMax-M2 support
+    image: ollama/ollama:0.12.11 # Обновлено до 0.12.11 (2025-11-18) - upstream security fixes и стабильность GPU
     logging: *critical-logging
     ports:
       - 11434:11434
