@@ -6,7 +6,7 @@
 ## 1. Цель
 
 - Поддерживать 30 production-сервисов Healthy (см. `README.md`).
-- Обеспечить идентичность по версиям (OpenWebUI v0.6.34, Prometheus v3.0.1,
+- Обеспечить идентичность по версиям (OpenWebUI v0.6.36, Prometheus v3.0.1,
   Grafana v11.6.6).
 - Поддерживать response targets по 27 активным alert rules и ежедневным
   cron-скриптам.

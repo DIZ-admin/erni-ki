@@ -7,7 +7,7 @@
 > - Контейнеры: 30/30 контейнеров healthy
 > - Графана: 18/18 Grafana дашбордов
 > - Алерты: 27 Prometheus alert rules активны
-> - AI/GPU: Ollama 0.12.3 + OpenWebUI v0.6.34 (GPU)
+> - AI/GPU: Ollama 0.12.3 + OpenWebUI v0.6.36 (GPU)
 > - Context & RAG: LiteLLM v1.77.3-stable + Context7, Docling, Tika, EdgeTTS
 > - Мониторинг: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
 >   v3.2.0, Alertmanager v0.28.0
@@ -38,7 +38,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | **Здоровье сервисов**       | 30/30 контейнеров healthy (см. [`README.md`](../README.md) и [`services-overview.md`](architecture/services-overview.md)) |
 | **Мониторинг**              | Prometheus v3.0.1, Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0                                  |
-| **GPU & AI стэк**           | OpenWebUI v0.6.34, Ollama 0.12.3, LiteLLM v1.77.3-stable, MCP Server, RAG через SearXNG                                   |
+| **GPU & AI стэк**           | OpenWebUI v0.6.36, Ollama 0.12.3, LiteLLM v1.77.3-stable, MCP Server, RAG через SearXNG                                   |
 | **Автоматизация**           | Cron: PostgreSQL VACUUM (вс. 03:00), Docker cleanup (вс. 04:00), Backrest бэкапы (ежедневно 01:30)                        |
 | **Безопасность**            | JWT Auth сервис, Nginx WAF (rate limiting + security headers), Cloudflare Zero Trust (5 доменов)                          |
 | **Документация & процессы** | Обновлённые гайды по архитектуре, операциям, мониторингу, runbook’и и security policy                                     |
@@ -50,7 +50,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 
 ### 3.1 AI & ML слой
 
-- **OpenWebUI v0.6.34** — основной UI, CUDA runtime, интеграция с MCP.
+- **OpenWebUI v0.6.36** — основной UI, CUDA runtime, интеграция с MCP.
 - **Ollama 0.12.3** — LLM-сервер с ограничением 4GB VRAM (GPU активен).
 - **LiteLLM v1.77.3-stable** — Context Engineering gateway
   (`conf/litellm/config.yaml`), поддержка thinking tokens и Context7.

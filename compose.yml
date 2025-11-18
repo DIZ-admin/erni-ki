@@ -452,7 +452,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: ghcr.io/open-webui/open-webui:v0.6.35 # Обновлено: 2025-11-07 до v0.6.35 (последняя стабильная версия)
+    image: ghcr.io/open-webui/open-webui:v0.6.36 # Обновлено: 2025-11-18 до v0.6.36 (последняя стабильная версия)
     runtime: nvidia
     mem_limit: 8g
     mem_reservation: 4g
@@ -477,7 +477,6 @@ services:
     volumes:
       - ./data/openwebui:/app/backend/data
       - ./data/docling/shared:/app/backend/data/docling-shared
-      - ./patches/openwebui:/opt/erni/openwebui-patches:ro
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
       # Shared volume для передачи файлов в Docling (mount по умолчанию для обмена)
       # Entry-point wrapper подставляет секреты из Docker secrets

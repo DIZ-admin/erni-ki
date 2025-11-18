@@ -10,7 +10,7 @@
 
 ERNI-KI ist eine moderne Microservice-basierte AI-Plattform, die auf den
 Prinzipien der Containerisierung, Sicherheit und Skalierbarkeit aufbaut. Das
-System besteht aus **30 Microservices**: OpenWebUI v0.6.34, Ollama 0.12.3 (GPU),
+System besteht aus **30 Microservices**: OpenWebUI v0.6.36, Ollama 0.12.3 (GPU),
 MCP Server, Watchtower und vollständigem Observability-Stack (Prometheus v3.0.1,
 Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0, 8
 Exporter + RAG Exporter). Externer Zugriff über Cloudflare-Tunnel (5 Domains).
@@ -29,7 +29,7 @@ Exporter + RAG Exporter). Externer Zugriff über Cloudflare-Tunnel (5 Domains).
 
 - **System vollständig stabilisiert**:
   - 30/30 Container im Status Healthy (100% Verfügbarkeit)
-  - OpenWebUI v0.6.34 mit GPU-Beschleunigung (aktualisiert 2025-11-04)
+  - OpenWebUI v0.6.36 mit GPU-Beschleunigung (aktualisiert 2025-11-18)
   - Ollama 0.12.3 mit optimiertem VRAM (4GB Limit)
   - LiteLLM v1.77.3-stable mit erhöhtem Speicher (12GB)
   - Watchtower 1.7.1 mit selektiven Auto-Updates
@@ -72,7 +72,7 @@ Exporter + RAG Exporter). Externer Zugriff über Cloudflare-Tunnel (5 Domains).
 
 **AI & ML Services:**
 
-- **OpenWebUI v0.6.34**: Haupt-AI-Interface mit CUDA-Unterstützung, GPU runtime
+- **OpenWebUI v0.6.36**: Haupt-AI-Interface mit CUDA-Unterstützung, GPU runtime
   (aktualisiert 2025-11-04)
 - **Ollama 0.12.3**: Lokaler LLM-Server mit GPU-Beschleunigung (4GB VRAM Limit)
 - **LiteLLM v1.77.3-stable**: Context Engineering Gateway (12GB Memory Limit)
@@ -148,7 +148,7 @@ graph TB
 
     %% AI & ML Services
     subgraph "🤖 AI & ML Services"
-        WEBUI[OpenWebUI v0.6.34<br/>:8080 GPU<br/>✅ Healthy]
+        WEBUI[OpenWebUI v0.6.36<br/>:8080 GPU<br/>✅ Healthy]
         OLLAMA[Ollama 0.12.3<br/>:11434 GPU<br/>4GB VRAM Limit<br/>✅ Healthy]
         LITELLM[LiteLLM v1.77.3-stable<br/>:4000<br/>12GB Memory<br/>✅ Healthy]
         MCP[MCP Server<br/>:8000<br/>4 Tools<br/>✅ Healthy]
