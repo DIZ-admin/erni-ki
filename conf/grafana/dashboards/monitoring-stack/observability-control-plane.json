@@ -22,13 +22,13 @@
     },
     {
       "type": "timeseries",
-      "title": "Prometheus Target Health",
+      "title": "Prometheus Targets",
       "id": 2,
       "gridPos": {"h": 8, "w": 18, "x": 6, "y": 0},
       "targets": [
         {
           "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum by (job) (prometheus_target_sync_length_seconds{phase=\"total\"})",
+          "expr": "sum by (job) (prometheus_target_scrape_pool_targets)",
           "legendFormat": "{{job}}",
           "refId": "A"
         }
@@ -57,7 +57,7 @@
       "targets": [
         {
           "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum by (alertname) (increase(ALERTS_FOR_STATE{state=\"firing\"}[6h]))",
+          "expr": "sum by (alertname) (increase(ALERTS_FOR_STATE{state=\"firing\"}[6h])) or vector(0)",
           "refId": "A"
         }
       ]
@@ -68,7 +68,7 @@
       "id": 5,
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_records_total[5m]))", "legendFormat": "Records/s", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_records_total[5m])) or vector(0)", "legendFormat": "Records/s", "refId": "A"}
       ]
     },
     {
