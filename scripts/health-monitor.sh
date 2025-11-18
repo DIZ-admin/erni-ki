@@ -9,6 +9,17 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 REPORT_PATH=""
 REPORT_FORMAT="markdown"
 
+HEALTH_MONITOR_ENV_FILE="${HEALTH_MONITOR_ENV_FILE:-$PROJECT_DIR/env/health-monitor.env}"
+if [[ -f "$HEALTH_MONITOR_ENV_FILE" ]]; then
+  # shellcheck disable=SC1090
+  set -a
+  source "$HEALTH_MONITOR_ENV_FILE"
+  set +a
+fi
+
+IFS=' ' read -r -a COMPOSE_CMD <<< "${HEALTH_MONITOR_COMPOSE_BIN:-docker compose}"
+COMPOSE_CMD=("${COMPOSE_CMD[@]}")
+
 RESULTS=()
 FAILED=0
 WARNINGS=0
@@ -94,7 +105,7 @@ record_result() {
 }
 
 compose() {
-  (cd "$PROJECT_DIR" && docker compose "$@")
+  (cd "$PROJECT_DIR" && "${COMPOSE_CMD[@]}" "$@")
 }
 
 load_env_value() {
@@ -118,18 +129,29 @@ load_env_value() {
 check_compose_services() {
   log "Проверка статуса контейнеров..."
 
+  local compose_json compose_err tmp_err
+  tmp_err=$(mktemp)
+  if ! compose_json="$(compose ps --format json 2>"$tmp_err")"; then
+    compose_err="$(cat "$tmp_err")"
+    rm -f "$tmp_err"
+    record_result "FAIL" "Контейнеры" "Не удалось получить docker compose ps (${compose_err:-unknown error})"
+    return
+  fi
+  compose_err="$(cat "$tmp_err")"
+  rm -f "$tmp_err"
+
   local parsed
   if ! parsed="$(
-    compose ps --format json 2>/dev/null | python3 - <<'PY'
+    COMPOSE_JSON_PAYLOAD="$compose_json" python3 <<'PY'
 from __future__ import annotations
 import json
+import os
 import sys
 
+payload = os.environ.get("COMPOSE_JSON_PAYLOAD", "")
+lines = [line.strip() for line in payload.splitlines() if line.strip()]
 records = []
-for line in sys.stdin:
-    line = line.strip()
-    if not line:
-        continue
+for line in lines:
     try:
         records.append(json.loads(line))
     except json.JSONDecodeError:
@@ -146,7 +168,7 @@ detail = " ".join(unhealthy) if unhealthy else "none"
 print(f"{healthy}/{total} healthy, {running}/{total} running|{detail}")
 PY
   )"; then
-    record_result "FAIL" "Контейнеры" "Не удалось получить docker compose ps"
+    record_result "FAIL" "Контейнеры" "Не удалось разобрать вывод docker compose ps"
     return
   fi
 

@@ -17,6 +17,26 @@ OWNER="${DOC_SHARED_OWNER:-}"
 GROUP="${DOC_SHARED_GROUP:-}"
 PERMS="${DOC_SHARED_PERMS:-770}"
 SUDO_HELPER="${DOC_SHARED_USE_SUDO:-true}"
+SUDO_MODE="${DOC_SHARED_SUDO_MODE:-noninteractive}"
+
+use_sudo() {
+  [[ "$SUDO_HELPER" == "true" ]] || return 1
+  command -v sudo >/dev/null 2>&1 || return 1
+
+  local sudo_cmd=(sudo)
+  if [[ "$SUDO_MODE" == "noninteractive" ]]; then
+    sudo_cmd+=(-n)
+  fi
+
+  if "${sudo_cmd[@]}" "$@"; then
+    return 0
+  fi
+
+  if [[ "$SUDO_MODE" == "noninteractive" ]]; then
+    log "ERROR: sudo -n $* failed (configure passwordless sudo via scripts/maintenance/render-docling-cleanup-sudoers.sh or set DOC_SHARED_USE_SUDO=false)."
+  fi
+  return 1
+}
 
 ensure_dir() {
   local dir="$1"
@@ -28,13 +48,8 @@ ensure_dir() {
 
   if mkdir -p "$dir" >/dev/null 2>&1; then
     :
-  elif [[ "$SUDO_HELPER" == "true" && $(command -v sudo) ]]; then
-    if sudo mkdir -p "$dir"; then
-      log "Created $dir via sudo"
-    else
-      log "ERROR: sudo mkdir -p $dir failed"
-      exit 1
-    fi
+  elif use_sudo mkdir -p "$dir"; then
+    log "Created $dir via sudo"
   else
     log "ERROR: cannot create $dir (permission denied)"
     exit 1
@@ -52,8 +67,8 @@ ensure_perms() {
     [[ -n "$group" ]] && target="${target}:$group"
 
     if ! chown "$target" "$dir" >/dev/null 2>&1; then
-      if [[ "$SUDO_HELPER" == "true" && $(command -v sudo) ]]; then
-        sudo chown "$target" "$dir" || log "WARN: sudo chown failed for $dir"
+      if use_sudo chown "$target" "$dir"; then
+        :
       else
         log "WARN: cannot chown $dir to $target"
       fi
