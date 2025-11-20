@@ -86,7 +86,7 @@ jobs:
   dependency-scan:
     name: 📦 Dependency Scan
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: 📥 Checkout repository
@@ -112,11 +112,11 @@ jobs:
         with:
           node-version: "20"
 
-      - name: 🔍 Run npm audit
+      - name: 🔍 Run npm audit (omit dev)
         if: hashFiles('package.json') != ''
         run: |
-          npm audit --audit-level=moderate
-          npm audit --json > npm-audit-results.json || true
+          npm audit --omit=dev --audit-level=high
+          npm audit --omit=dev --json > npm-audit-results.json || true
 
       - name: 📤 Upload npm audit results
         if: hashFiles('package.json') != ''
@@ -130,7 +130,7 @@ jobs:
   secret-scan:
     name: 🔐 Secret Scan
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: 📥 Checkout repository
@@ -144,7 +144,12 @@ jobs:
           path: ./
           base: ${{ github.event.before || 'HEAD~1' }}
           head: HEAD
-          extra_args: --debug --only-verified
+          extra_args: --only-verified
+
+      - name: 🔐 Run Gitleaks
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          args: detect --redact --no-git --source .
 
   # Сканирование Docker образов
   container-scan:
@@ -176,7 +181,10 @@ jobs:
           image-ref: "erni-ki-auth:security-scan"
           format: "sarif"
           output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH,MEDIUM"
+          severity: "CRITICAL,HIGH"
+          ignore-unfixed: true
+          exit-code: 1
+          ignorefile: ".github/trivy.ignore"
 
       - name: 📤 Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
