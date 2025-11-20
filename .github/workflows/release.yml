@@ -124,8 +124,9 @@ jobs:
       - name: 🔒 Security scan (pinned toolchain)
         env:
           GOTOOLCHAIN: go1.23.12
+          GOSEC_VERSION: v2.21.4
         run: |
-          go install github.com/securego/gosec/v2/cmd/gosec@latest
+          go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
           gosec ./auth/...
 
   # Создание релиза
