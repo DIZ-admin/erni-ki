@@ -1,5 +1,45 @@
 # 📋 CHANGELOG - ERNI-KI Documentation
 
+## [5.2.0] - 2025-11-18
+
+### 🚀 OpenWebUI Update
+
+#### ✅ **OpenWebUI v0.6.34 → v0.6.36**
+- **Дата обновления**: 2025-11-18
+- **Версия**: v0.6.34 → v0.6.36
+- **Статус**: ✅ Успешно обновлено
+- **Downtime**: 0 минут (rolling update)
+- **Совместимость**: LiteLLM, Docling, RAG и MCP интеграции сохранены
+
+#### 🧹 **Удалены устаревшие патчи**
+- Папка `patches/openwebui` очищена – контейнер теперь работает без локальных патчей
+- Скрипт `scripts/entrypoints/openwebui.sh` больше не пытается применять патчи
+- `compose.yml` больше не монтирует директорию патчей
+
+#### 📝 **Документация синхронизирована**
+- ✅ README.md / docs/index.md / docs/overview.md – статус-блоки обновлены на v0.6.36
+- ✅ docs/architecture/* (RU/DE) – диаграммы и описания обновлены
+- ✅ docs/reference/status*.md/yml – общие сниппеты теперь указывают v0.6.36
+- ✅ docs/operations/operations-handbook.md – цели по версиям обновлены
+
+#### 🧪 **Проверка после обновления**
+- Выполнен полный health-check (`scripts/health-monitor.sh`)
+- Сервисные эндпоинты OpenWebUI, LiteLLM, Docling, monitoring подтверждены как healthy
+
+#### 📟 **Мониторинг**
+- `postgres-exporter` получил явный флаг `--no-collector.stat_bgwriter`, что убрало ошибки `checkpoints_timed`
+- Контейнер пересобран (`docker compose up -d postgres-exporter postgres-exporter-proxy`), логи чистые
+
+#### 🔒 **Дополнительное hardening**
+- Добавлен stub конфиг `conf/postgres-exporter/config.yml`, который теперь передаётся через `--config.file`.
+- LiteLLM (порт `127.0.0.1:4000`) и OpenWebUI переведены в режим Watchtower monitor-only.
+- `scripts/health-monitor.sh` получил параметры `HEALTH_MONITOR_LOG_WINDOW` и `HEALTH_MONITOR_LOG_IGNORE_REGEX`, что убрало шум от LiteLLM cron, node-exporter broken pipe, cloudflared context canceled и redis-exporter Errorstats.
+- Fluent Bit, nginx-exporter, nvidia-exporter, ollama-exporter, postgres-exporter-proxy и redis-exporter получили Docker healthchecks, поэтому health-monitor теперь показывает 31/31 healthy.
+- Alertmanager Slack шаблоны переписаны без `| default`, поэтому пропала ошибка `function "default" not defined`.
+- Добавлен отчёт `logs/diagnostics/hardening-20251118.md`.
+
+---
+
 ## [5.1.0] - 2025-11-04
 
 ### 🚀 OpenWebUI Update

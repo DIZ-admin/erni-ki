@@ -128,6 +128,8 @@ cd erni-ki
 ```bash
 # Копирование примеров конфигураций (оптимизированная структура)
 cp env/*.example env/
+# Однократно скачайте модели Docling (OCR)
+./scripts/maintenance/download-docling-models.sh
 # Удалите расширение .example из скопированных файлов
 
 # Редактирование основных настроек
@@ -486,7 +488,8 @@ nvidia-smi
 
 ## 📞 Поддержка
 
-- **📖 Документация:** [docs/operations/troubleshooting.md](troubleshooting.md)
+- **📖 Документация:**
+  [docs/operations/troubleshooting.md](../operations/troubleshooting.md)
 - **🐛 Issues:** [GitHub Issues](https://github.com/DIZ-admin/erni-ki/issues)
 - **💬 Discussions:**
   [GitHub Discussions](https://github.com/DIZ-admin/erni-ki/discussions)

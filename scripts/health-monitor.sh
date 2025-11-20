@@ -9,6 +9,20 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 REPORT_PATH=""
 REPORT_FORMAT="markdown"
 
+HEALTH_MONITOR_ENV_FILE="${HEALTH_MONITOR_ENV_FILE:-$PROJECT_DIR/env/health-monitor.env}"
+if [[ -f "$HEALTH_MONITOR_ENV_FILE" ]]; then
+  # shellcheck disable=SC1090
+  set -a
+  source "$HEALTH_MONITOR_ENV_FILE"
+  set +a
+fi
+
+LOG_IGNORE_REGEX="${HEALTH_MONITOR_LOG_IGNORE_REGEX:-litellm\.proxy\.proxy_server\.user_api_key_auth|node-exporter.*(broken pipe|connection reset by peer)|cloudflared.*context canceled|redis-exporter.*Errorstats|redis-exporter.*unexpected_error_replies|redis-exporter.*total_error_replies}"
+LOG_WINDOW="${HEALTH_MONITOR_LOG_WINDOW:-5m}"
+
+IFS=' ' read -r -a COMPOSE_CMD <<< "${HEALTH_MONITOR_COMPOSE_BIN:-docker compose}"
+COMPOSE_CMD=("${COMPOSE_CMD[@]}")
+
 RESULTS=()
 FAILED=0
 WARNINGS=0
@@ -94,7 +108,7 @@ record_result() {
 }
 
 compose() {
-  (cd "$PROJECT_DIR" && docker compose "$@")
+  (cd "$PROJECT_DIR" && "${COMPOSE_CMD[@]}" "$@")
 }
 
 load_env_value() {
@@ -118,18 +132,29 @@ load_env_value() {
 check_compose_services() {
   log "Проверка статуса контейнеров..."
 
+  local compose_json compose_err tmp_err
+  tmp_err=$(mktemp)
+  if ! compose_json="$(compose ps --format json 2>"$tmp_err")"; then
+    compose_err="$(cat "$tmp_err")"
+    rm -f "$tmp_err"
+    record_result "FAIL" "Контейнеры" "Не удалось получить docker compose ps (${compose_err:-unknown error})"
+    return
+  fi
+  compose_err="$(cat "$tmp_err")"
+  rm -f "$tmp_err"
+
   local parsed
   if ! parsed="$(
-    compose ps --format json 2>/dev/null | python3 - <<'PY'
+    COMPOSE_JSON_PAYLOAD="$compose_json" python3 <<'PY'
 from __future__ import annotations
 import json
+import os
 import sys
 
+payload = os.environ.get("COMPOSE_JSON_PAYLOAD", "")
+lines = [line.strip() for line in payload.splitlines() if line.strip()]
 records = []
-for line in sys.stdin:
-    line = line.strip()
-    if not line:
-        continue
+for line in lines:
     try:
         records.append(json.loads(line))
     except json.JSONDecodeError:
@@ -146,7 +171,7 @@ detail = " ".join(unhealthy) if unhealthy else "none"
 print(f"{healthy}/{total} healthy, {running}/{total} running|{detail}")
 PY
   )"; then
-    record_result "FAIL" "Контейнеры" "Не удалось получить docker compose ps"
+    record_result "FAIL" "Контейнеры" "Не удалось разобрать вывод docker compose ps"
     return
   fi
 
@@ -250,7 +275,14 @@ check_disk_usage() {
 check_logs() {
   log "Анализ логов за последние 30 минут..."
   local count
-  count=$(compose logs --since 30m 2>/dev/null | grep -i -E "(ERROR|FATAL|CRITICAL)" | wc -l || echo "0")
+  local stream
+  stream="$(compose logs --since "$LOG_WINDOW" 2>/dev/null | grep -i -E "(ERROR|FATAL|CRITICAL)" || true)"
+
+  if [[ -n "$LOG_IGNORE_REGEX" ]]; then
+    stream="$(echo "$stream" | grep -Ev "$LOG_IGNORE_REGEX" || true)"
+  fi
+
+  count="$(echo "$stream" | sed '/^[[:space:]]*$/d' | wc -l || echo "0")"
 
   if [[ "$count" -eq 0 ]]; then
     record_result "PASS" "Логи" "Критические ошибки не найдены"

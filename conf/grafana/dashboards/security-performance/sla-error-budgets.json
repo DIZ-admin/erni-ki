@@ -1,0 +1,59 @@
+{
+  "uid": "sla-error-budgets",
+  "title": "SLA & Error Budgets",
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "1m",
+  "time": {"from": "now-7d", "to": "now"},
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "SLO Compliance (Ingress)",
+      "id": 1,
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(1 - sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 1)) or vector(0)", "legendFormat": "Availability", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Burn Rate (1h / 6h)",
+      "id": 2,
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 1)) / 0.005) or vector(0)", "legendFormat": "1h", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 1)) / 0.005) or vector(0)", "legendFormat": "6h", "refId": "B"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Authentication Failures (401)",
+      "id": 3,
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m])) or vector(0)", "legendFormat": "401 req/s", "refId": "A"}
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Active Alerts",
+      "id": 4,
+      "gridPos": {"h": 10, "w": 12, "x": 12, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "ALERTS{alertstate=\"firing\"}", "format": "table", "refId": "A"}
+      ],
+      "options": {"showHeader": true}
+    },
+    {
+      "type": "logs",
+      "title": "Security Log Stream",
+      "id": 5,
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 12},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=\"auth\"} |= \"WARN\"", "refId": "A"}
+      ]
+    }
+  ]
+}

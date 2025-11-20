@@ -28,7 +28,7 @@
 - Data & Storage раздел не упомянут в README/index → инженеры часто не знают о
   `database-monitoring-plan.md` и `redis-operations-guide.md`.
 - API справочник (`docs/reference/api-reference.md`) и MCPO гайд не отражают
-  ноябрьские обновления (LiteLLM 1.77.3, новые эндпоинты Context7).
+  ноябрьские обновления (LiteLLM 1.80.0.rc.1, новые эндпоинты Context7).
 - Ряд cron/alert документов живёт только в `docs/archive/config-backup`, хотя их
   стоит вынести в operations.
 
@@ -85,7 +85,7 @@
   (`scripts/monitoring/*`).
 - Перенести ключевые finding’и из `docs/log-audit-2025-11-14.md` в
   operations-runbook («Alertmanager queue remediation»).
-- Переписать `reference/api-reference.md` (LiteLLM 1.77.3, Context7,
+- Переписать `reference/api-reference.md` (LiteLLM 1.80.0.rc.1, Context7,
   `/lite/api/v1/think`, новые RAG endpoints, JWT примеры).
 
 ### Волна 3 — Архив, локализация и data docs (4–5 дней)

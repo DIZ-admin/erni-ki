@@ -117,7 +117,7 @@ services:
   # LiteLLM Context Engineering Gateway (оптимизированная сетевая конфигурация)
   litellm:
     # Используем последнюю версию LiteLLM с поддержкой thinking tokens
-    image: ghcr.io/berriai/litellm:main-latest
+    image: ghcr.io/berriai/litellm:v1.80.0.rc.1
     container_name: erni-ki-litellm
 
     # Зависимости - запускаем после критически важных сервисов
@@ -359,7 +359,7 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
-    image: ollama/ollama:0.11.6
+    image: ollama/ollama:0.12.11
     logging: *fluentd-logging
     ports:
       - 11434:11434

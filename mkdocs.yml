@@ -158,6 +158,20 @@ extra:
 nav:
   - Главная: index.md
   - Сводка: overview.md
+  - Дополнительно:
+      - operations/ci-health.md
+      - operations/github-governance.md
+      - operations/monitoring-audit.md
+      - operations/runbooks/access-log-sync-and-fluentbit.md
+      - operations/runbooks/alertmanager-noise-reduction.md
+      - reference/documentation-refactoring-plan.md
+      - reference/status-snippet.md
+      - locales/de/status-snippet.md
+      - remote-branch-cleanup.md
+      - log-audit-2025-11-14.md
+      - log-audit-2025-11-14-repeat.md
+      - logging-system-audit-2025-11-14.md
+      - monitoring-logging-audit-2025-11-14.md
   - Быстрый старт:
       - Установка: getting-started/installation.md
       - Конфигурация: getting-started/configuration-guide.md
@@ -235,6 +249,11 @@ nav:
           - Runbooks: locales/de/runbooks.md
   - Отчёты и архив:
       - Обзор архивов: archive/README.md
+      - Архивные README:
+          - archive/audits/README.md
+          - archive/diagnostics/README.md
+          - archive/incidents/README.md
+          - archive/diagnostics/system-diagnostics-2025-11-18.md
       - Аудиты:
           - documentation-audit (2025-10-24): archive/audits/documentation-audit-2025-10-24.md
           - documentation-cleanup-audit (2025-10-24): archive/audits/documentation-cleanup-audit-2025-10-24.md

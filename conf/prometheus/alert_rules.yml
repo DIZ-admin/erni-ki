@@ -100,8 +100,8 @@ groups:
     rules:
       # Критическое использование памяти контейнером
       - alert: ContainerHighMemoryUsage
-        expr: ((container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 90)
-          and on(name) (container_spec_memory_limit_bytes > 0)
+        expr: ((container_memory_usage_bytes{name=~"erni-ki-.*"} / container_spec_memory_limit_bytes{name=~"erni-ki-.*"}) * 100 > 90)
+          and on(name) (container_spec_memory_limit_bytes{name=~"erni-ki-.*"} > 0)
         for: 5m
         labels:
           severity: critical
@@ -117,8 +117,8 @@ groups:
 
       # Предупреждение о высоком использовании памяти контейнером
       - alert: ContainerWarningMemoryUsage
-        expr: ((container_memory_usage_bytes / container_spec_memory_limit_bytes) * 100 > 85)
-          and on(name) (container_spec_memory_limit_bytes > 0)
+        expr: ((container_memory_usage_bytes{name=~"erni-ki-.*"} / container_spec_memory_limit_bytes{name=~"erni-ki-.*"}) * 100 > 85)
+          and on(name) (container_spec_memory_limit_bytes{name=~"erni-ki-.*"} > 0)
         for: 10m
         labels:
           severity: warning
@@ -802,7 +802,7 @@ groups:
 
       # Alertmanager Cluster Health Score Low
       - alert: AlertmanagerClusterHealthLow
-        expr: alertmanager_cluster_health_score < 0.8
+        expr: alertmanager_cluster_health_score > 0.8
         for: 5m
         labels:
           severity: warning
@@ -810,7 +810,7 @@ groups:
           category: cluster-optimization
         annotations:
           summary: "Alertmanager cluster health score low"
-          description: "Alertmanager cluster health score is below 0.8 for more than 5 minutes. Current value: {{ $value | humanizePercentage }}. Cluster degraded."
+          description: "Alertmanager cluster health score (0 is healthy) is above 0.8 for more than 5 minutes. Current value: {{ $value }}."
 
   # Logging Stack Monitoring (добавлено после аудита системы логирования)
   - name: logging.rules
@@ -889,7 +889,7 @@ groups:
 
       # Missing Logs от критических сервисов
       - alert: CriticalServiceLogsMissing
-        expr: absent_over_time(fluentbit_input_records_total{tag=~"docker.openwebui|docker.ollama|docker.nginx"}[10m])
+        expr: increase(fluentbit_input_record_total{name="tail."}[10m]) == 0
         for: 5m
         labels:
           severity: critical
@@ -897,7 +897,7 @@ groups:
           category: logging-optimization
         annotations:
           summary: "Critical service logs missing"
-          description: "No logs received from critical services (OpenWebUI, Ollama, Nginx) for more than 10 minutes. Check logging pipeline."
+          description: "Fluent Bit tail input has not ingested any records for more than 10 minutes. Check logging pipeline."
 
   - name: cron-watchdog.rules
     rules:

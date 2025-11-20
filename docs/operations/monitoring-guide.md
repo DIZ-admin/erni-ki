@@ -14,6 +14,10 @@ ERNI-KI monitoring system includes:
 - **Grafana v11.6.6** - visualization and dashboards
 - **Loki v3.5.5 + Fluent Bit v3.2.0** - centralized logging
 - **AlertManager v0.28.0** - notifications and alerting
+- **Network hardening** - публичный доступ только через nginx/Cloudflare;
+  сервисы с API (EdgeTTS, Tika, LiteLLM, OpenWebUI) привязаны к `127.0.0.1` или
+  внутренним сетям; используются отдельные сети ingress/services/logging/data
+  вместо единого bridge.
 
 ### 🗺️ Architecture Snapshot
 
@@ -65,6 +69,15 @@ ERNI-KI monitoring system includes:
   alert в Slack/Webhook при росте памяти gateway, а
   `scripts/infrastructure/monitoring/test-network-performance.sh` измеряет
   latency для маршрута nginx → LiteLLM → Ollama/PostgreSQL/Redis.
+- **Health monitor log filters** — `env/health-monitor.env` теперь содержит
+  `HEALTH_MONITOR_LOG_IGNORE_REGEX` с шаблонами для
+  `litellm.proxy_proxy_server.user_api_key_auth`, `node-exporter broken pipe`,
+  `cloudflared context canceled`, `redis-exporter errorstats`, `fluent-bit`
+  повторов и `erni-ki-alertmanager.*(no_team|connect: connection refused)`.
+  Чтобы вернуть эти события после починки Alertmanager/Slack, удалите лишние
+  паттерны или задайте свой override перед запуском `scripts/health-monitor.sh`
+  (например,
+  `HEALTH_MONITOR_LOG_IGNORE_REGEX='' scripts/health-monitor.sh --report …`).
 - **Cron & Config Backups** — результаты cron-задач и health мониторинга
   фиксируются в `docs/archive/config-backup/*.md` (monitoring report, update
   analysis, execution report); обновляйте их при изменениях скриптов или
@@ -109,23 +122,39 @@ ERNI-KI monitoring system includes:
 
 ## 📐 SLO Dashboards
 
-- **Grafana: `ERNI-KI System SLOs`** — главный борд в
-  `conf/grafana/dashboards/system-slos.json` с метриками:
-  - Availability SLO:
-    `100 - (sum(rate(erni_http_errors_total[5m])) / sum(rate(erni_http_requests_total[5m])))`
-    с budget burn bar и аннотациями Alertmanager.
-  - Latency SLO: p95 для `ollama_request_duration_seconds` и
-    `openwebui_request_latency_seconds` с порогами 3s/5s.
-  - Error budget ленты для Redis/Prometheus exporters, чтобы видеть, когда
-    budget исчерпан >40%.
-- **Cron Evidence Panel** — добавьте на любой борд:
-  - Time-series для `erni_cron_job_age_seconds{job=~".*"}`.
-  - Столбцы для `erni_cron_job_success` (0/1) с thresholds + аннотации.
-- **Alertmanager Coverage** — панель `alerts/alertmanager-dashboard.json` уже
-  содержит переменные `owner` и `escalation`, чтобы фильтровать SLO breach
-  alerts по командам Ops / Security / ML.
-- При изменении SLO формул обновляйте подписи в этом разделе и сохраняйте
-  экспорт dashboard JSON в `conf/grafana/dashboards/`.
+- **System Overview / “Platform SRE Overview”**
+  (`conf/grafana/dashboards/system-overview/platform-sre-overview.json`). Этот
+  борд агрегирует доступность `up{job}` по всем сервисам, CPU/Memory pressure по
+  узлам и p95 латентность OpenWebUI ingress. В нижней части добавлен logs-панел
+  из Loki, чтобы быстро увидеть свежие critical события. Используйте переменную
+  `service`, чтобы сфокусироваться на конкретных job.
+- **Infrastructure / “Core Infrastructure Observability”**
+  (`conf/grafana/dashboards/infrastructure/core-infrastructure-observability.json`).
+  Показывает активные/максимальные коннекты PostgreSQL, Redis throughput,
+  файловые системы и сетевой трафик. Таблица “Resource Limits vs Usage” строится
+  из Docker metrics, поэтому её удобно использовать при планировании capacity.
+- **Monitoring Stack / “Observability Control Plane”**
+  (`conf/grafana/dashboards/monitoring-stack/observability-control-plane.json`).
+  Следит за Prometheus/Loki/Alertmanager, отображает нагрузку на Fluent Bit и
+  выводит поток ошибок Grafana. Именно здесь находится зона ответственности за
+  доставку алертов и качество логов.
+- **AI Services / “AI Stack Operations”**
+  (`conf/grafana/dashboards/ai-services/ai-stack-operations.json`). Фокусируется
+  на LiteLLM, OpenWebUI, Ollama и Docling: показывает throughput, p95 latency,
+  GPU utilization и Docling pipeline quantiles. Таблица “Slow Requests”
+  подтягивает соответствующие записи из Loki.
+- **Security & Performance / “SLA & Error Budgets”**
+  (`conf/grafana/dashboards/security-performance/sla-error-budgets.json`).
+  Главный борд по SLO: показывает долю выполненных запросов, burn-rate (считаем
+  относительно целевого 0.5% бюджета), ленты Alertmanager и поток security
+  логов.
+
+- **Cron Evidence Panel** — на любой из новых бордов можно добавить отдельную
+  панель с `erni_cron_job_age_seconds{job=~".*"}` и бинарной метрикой
+  `erni_cron_job_success`. Это остаётся обязательным требованием для недельных
+  отчетов.
+- При изменении SLO формул обновляйте подписи в этом разделе и экспортируйте
+  JSON в `conf/grafana/dashboards/`.
 
 - Секреты для каналов хранятся в Docker secrets:
   - `./secrets/slack_alert_webhook.txt` — Slack Incoming Webhook URL.
@@ -915,4 +944,4 @@ curl -H 'X-Scope-OrgID: erni-ki' \
 - [Admin Guide](admin-guide.md) - System administration
 - [Architecture](../architecture/architecture.md) - System architecture
 - [Installation Guide](../getting-started/installation.md) - Setup instructions
-- [Troubleshooting](database-troubleshooting.md) - Problem resolution
+- [Troubleshooting](../data/database-troubleshooting.md) - Problem resolution

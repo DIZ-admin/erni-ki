@@ -6,7 +6,7 @@
 ## 1. Цель
 
 - Поддерживать 30 production-сервисов Healthy (см. `README.md`).
-- Обеспечить идентичность по версиям (OpenWebUI v0.6.34, Prometheus v3.0.1,
+- Обеспечить идентичность по версиям (OpenWebUI v0.6.36, Prometheus v3.0.1,
   Grafana v11.6.6).
 - Поддерживать response targets по 27 активным alert rules и ежедневным
   cron-скриптам.
@@ -101,7 +101,7 @@
 
 ## 9. LiteLLM Context & RAG контроль
 
-- LiteLLM v1.77.3-stable обслуживает Context Engineering и Context7 (Thinking
+- LiteLLM v1.80.0.rc.1 обслуживает Context Engineering и Context7 (Thinking
   tokens, `/lite/api/v1/think`). Убедитесь, что gateway доступен на
   `http://localhost:4000/health/liveliness`.
 - `scripts/monitor-litellm-memory.sh` — cron/Ad-hoc проверка потребления памяти
@@ -125,3 +125,14 @@
   `update-analysis-2025-10-02.md`, `update-execution-report-2025-10-02.md`. При
   обновлении скриптов фиксируйте изменения в этих отчётах или создавайте новые
   файлы в config-backup.
+
+## 11. CI/CD и безопасность
+
+- **Secret scanning:** добавьте gitleaks или trufflehog как отдельный CI job для
+  PR. Блокируйте pipeline при находках, исключения оформляйте через baseline.
+- **Dependency scanning:** `npm audit --omit=dev` или Snyk OSS в CI с fail по
+  критическим CVE; для Go оставить `gosec` + Trivy filesystem scan.
+- **Container scanning:** Trivy image scan с явным allowlist/ignorefile на
+  ложные срабатывания, все прочие критичные — fail pipeline.
+- **Policy:** реальные секреты только в секрет-хранилище/CI secrets; в git —
+  только `.example` и инструкции генерации (README/handbook).

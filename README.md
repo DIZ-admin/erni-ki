@@ -1,7 +1,7 @@
 # 🤖 ERNI-KI — Production AI Platform
 
-**ERNI-KI** — стэк из 30 сервисов вокруг OpenWebUI v0.6.34 и Ollama 0.12.3 с
-GPU-ускорением, Context7/LiteLLM gateway и полной обсервабилити.
+**ERNI-KI** — стэк из 30 сервисов вокруг OpenWebUI v0.6.36 и Ollama 0.12.11, Go
+1.24.10 в CI, с GPU-ускорением, Context7/LiteLLM gateway и полной обсервабилити.
 
 <!-- STATUS_SNIPPET_START -->
 
@@ -19,8 +19,9 @@ GPU-ускорением, Context7/LiteLLM gateway и полной обсерв�
 ```bash
 git clone https://github.com/DIZ-admin/erni-ki.git
 cd erni-ki
-
 cp env/*.example env/   # заполните .env файлы
+# (Рекомендуется) один раз скачать модели Docling
+./scripts/maintenance/download-docling-models.sh
 docker compose up -d
 docker compose ps
 ```
