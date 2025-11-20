@@ -14,6 +14,10 @@ ERNI-KI monitoring system includes:
 - **Grafana v11.6.6** - visualization and dashboards
 - **Loki v3.5.5 + Fluent Bit v3.2.0** - centralized logging
 - **AlertManager v0.28.0** - notifications and alerting
+- **Network hardening** - публичный доступ только через nginx/Cloudflare;
+  сервисы с API (EdgeTTS, Tika, LiteLLM, OpenWebUI) привязаны к `127.0.0.1` или
+  внутренним сетям; используются отдельные сети ingress/services/logging/data
+  вместо единого bridge.
 
 ### 🗺️ Architecture Snapshot
 
