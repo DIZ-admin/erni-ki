@@ -19,8 +19,9 @@ GPU-ускорением, Context7/LiteLLM gateway и полной обсерв�
 ```bash
 git clone https://github.com/DIZ-admin/erni-ki.git
 cd erni-ki
-
 cp env/*.example env/   # заполните .env файлы
+# (Рекомендуется) один раз скачать модели Docling
+./scripts/maintenance/download-docling-models.sh
 docker compose up -d
 docker compose ps
 ```

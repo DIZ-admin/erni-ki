@@ -65,6 +65,15 @@ ERNI-KI monitoring system includes:
   alert в Slack/Webhook при росте памяти gateway, а
   `scripts/infrastructure/monitoring/test-network-performance.sh` измеряет
   latency для маршрута nginx → LiteLLM → Ollama/PostgreSQL/Redis.
+- **Health monitor log filters** — `env/health-monitor.env` теперь содержит
+  `HEALTH_MONITOR_LOG_IGNORE_REGEX` с шаблонами для
+  `litellm.proxy_proxy_server.user_api_key_auth`, `node-exporter broken pipe`,
+  `cloudflared context canceled`, `redis-exporter errorstats`, `fluent-bit`
+  повторов и `erni-ki-alertmanager.*(no_team|connect: connection refused)`.
+  Чтобы вернуть эти события после починки Alertmanager/Slack, удалите лишние
+  паттерны или задайте свой override перед запуском `scripts/health-monitor.sh`
+  (например,
+  `HEALTH_MONITOR_LOG_IGNORE_REGEX='' scripts/health-monitor.sh --report …`).
 - **Cron & Config Backups** — результаты cron-задач и health мониторинга
   фиксируются в `docs/archive/config-backup/*.md` (monitoring report, update
   analysis, execution report); обновляйте их при изменениях скриптов или
