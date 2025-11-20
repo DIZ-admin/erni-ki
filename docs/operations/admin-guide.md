@@ -758,11 +758,11 @@ docker exec erni-ki-nginx-1 grep "universal_request_id" /etc/nginx/nginx.conf
 
 - **📖 Документация:** [docs/operations/troubleshooting.md](troubleshooting.md)
 - **🔧 Database Troubleshooting:**
-  [docs/data/database-troubleshooting.md](database-troubleshooting.md)
+  [docs/data/database-troubleshooting.md](../data/database-troubleshooting.md)
 - **📊 Database Monitoring:**
-  [docs/data/database-monitoring-plan.md](database-monitoring-plan.md)
+  [docs/data/database-monitoring-plan.md](../data/database-monitoring-plan.md)
 - **⚡ Production Optimizations:**
-  [docs/data/database-production-optimizations.md](database-production-optimizations.md)
+  [docs/data/database-production-optimizations.md](../data/database-production-optimizations.md)
 - **🐛 Issues:** [GitHub Issues](https://github.com/DIZ-admin/erni-ki/issues)
 - **💬 Discussions:**
   [GitHub Discussions](https://github.com/DIZ-admin/erni-ki/discussions)

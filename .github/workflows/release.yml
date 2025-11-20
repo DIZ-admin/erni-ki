@@ -112,7 +112,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.10"
+          go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
 
       - name: 🧪 Run comprehensive tests

@@ -7,7 +7,7 @@
 > - Контейнеры: 30/30 контейнеров healthy
 > - Графана: 18/18 Grafana дашбордов
 > - Алерты: 27 Prometheus alert rules активны
-> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
+> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU), Go 1.24.10
 > - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
 > - Мониторинг: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
 >   v3.2.0, Alertmanager v0.28.0
@@ -34,14 +34,14 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 
 ## 2. Текущее состояние системы
 
-| Область                     | Показатель                                                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **Здоровье сервисов**       | 30/30 контейнеров healthy (см. [`README.md`](../README.md) и [`services-overview.md`](architecture/services-overview.md)) |
-| **Мониторинг**              | Prometheus v3.0.1, Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0                                  |
-| **GPU & AI стэк**           | OpenWebUI v0.6.36, Ollama 0.12.11, LiteLLM v1.80.0.rc.1, MCP Server, RAG через SearXNG                                    |
-| **Автоматизация**           | Cron: PostgreSQL VACUUM (вс. 03:00), Docker cleanup (вс. 04:00), Backrest бэкапы (ежедневно 01:30)                        |
-| **Безопасность**            | JWT Auth сервис, Nginx WAF (rate limiting + security headers), Cloudflare Zero Trust (5 доменов)                          |
-| **Документация & процессы** | Обновлённые гайды по архитектуре, операциям, мониторингу, runbook’и и security policy                                     |
+| Область                     | Показатель                                                                                                                  |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Здоровье сервисов**       | 30/30 контейнеров healthy (см. README.md в корне репозитория и [`services-overview.md`](architecture/services-overview.md)) |
+| **Мониторинг**              | Prometheus v3.0.1, Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0                                    |
+| **GPU & AI стэк**           | OpenWebUI v0.6.36, Ollama 0.12.11, LiteLLM v1.80.0.rc.1, MCP Server, RAG через SearXNG                                      |
+| **Автоматизация**           | Cron: PostgreSQL VACUUM (вс. 03:00), Docker cleanup (вс. 04:00), Backrest бэкапы (ежедневно 01:30)                          |
+| **Безопасность**            | JWT Auth сервис, Nginx WAF (rate limiting + security headers), Cloudflare Zero Trust (5 доменов)                            |
+| **Документация & процессы** | Обновлённые гайды по архитектуре, операциям, мониторингу, runbook’и и security policy                                       |
 
 ## 3. Архитектура и ключевые компоненты
 
@@ -98,8 +98,9 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   [`operations-handbook.md`](operations/operations-handbook.md).
 - **Monitoring Guide**: Prometheus targets, health-checks, экспортёры —
   [`monitoring-guide.md`](operations/monitoring-guide.md).
-- **Runbooks**: рестарты, бэкапы, Docling cleanup, troubleshooting (директория
-  [`runbooks/`](operations/runbooks/)).
+- **Runbooks**: рестарты, бэкапы, Docling cleanup, troubleshooting —
+  [`service-restart-procedures.md`](operations/runbooks/service-restart-procedures.md),
+  [`troubleshooting-guide.md`](operations/runbooks/troubleshooting-guide.md).
 - **Diagnostics**: методология и чеклисты —
   [`diagnostics/`](operations/diagnostics/README.md).
 
@@ -142,7 +143,8 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   [`operations-handbook.md`](operations/operations-handbook.md),
   [`monitoring-guide.md`](operations/monitoring-guide.md),
   [`automated-maintenance-guide.md`](operations/automated-maintenance-guide.md)
-- **Runbooks и troubleshooting:** [`runbooks/`](operations/runbooks/),
+- **Runbooks и troubleshooting:**
+  [`Troubleshooting guide`](operations/runbooks/troubleshooting-guide.md),
   [`troubleshooting.md`](operations/troubleshooting.md)
 - **Безопасность:**
   [`security/security-policy.md`](security/security-policy.md),
