@@ -136,8 +136,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info se
    - `EASYOCR_GPU=true`, `EASYOCR_FORCE_CPU=false` — EasyOCR работает на CUDA.
    - `DOCLING_SERVE_ENABLE_REMOTE_SERVICES=true` — разрешает VLM/LLM вызовы.
    - `DOCLING_SHARED_VOLUME_PATH=/docling-shared`,
-     `DOCLING_SERVE_ARTIFACTS_PATH=/docling-artifacts` (модели берутся из
-     примонтированного кэшa).
+     `DOCLING_SERVE_ARTIFACTS_PATH=/docling-artifacts` (хостовая папка
+     `./data/docling/docling-models`).
 
    После изменения переменных выполните `docker compose up -d docling`.
 
@@ -279,8 +279,11 @@ API
 
 #### 📄 Docling Service
 
-> Docling был удалён из платформы; используйте Tika или внешние OCR-сервисы для
-> обработки документов.
+Docling сервится в составе стека (см. `docker compose ps docling`) и использует
+официальный образ `ghcr.io/docling-project/docling-serve-cu126`. Перед
+диагностикой убедитесь, что модели скачаны
+(`scripts/maintenance/download-docling-models.sh`) и тома `data/docling/*`
+доступны. См. раздел выше «Docling - Document Processing» для команд проверки.
 
 ### 🎯 Ключевые принципы после исправлений
 

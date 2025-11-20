@@ -128,6 +128,8 @@ cd erni-ki
 ```bash
 # Копирование примеров конфигураций (оптимизированная структура)
 cp env/*.example env/
+# Однократно скачайте модели Docling (OCR)
+./scripts/maintenance/download-docling-models.sh
 # Удалите расширение .example из скопированных файлов
 
 # Редактирование основных настроек

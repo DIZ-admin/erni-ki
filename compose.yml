@@ -372,8 +372,8 @@ services:
   # Ollama LLM сервер с GPU ускорением (оптимизированная сетевая конфигурация)
   ollama:
     runtime: nvidia
-    mem_limit: 16g
-    mem_reservation: 8g
+    mem_limit: 24g
+    mem_reservation: 12g
     cpus: "12.0"
     oom_score_adj: -900
     environment:
@@ -494,12 +494,13 @@ services:
 
   # Docling OCR/ingestion pipeline (GPU aware)
   docling:
+    # Официальный GPU-образ Docling Serve (CUDA 12.6)
+    image: ghcr.io/docling-project/docling-serve-cu126:main
     depends_on:
       ollama:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: docling-serve:gpu
     runtime: nvidia
     mem_limit: 12g
     mem_reservation: 8g
@@ -523,7 +524,7 @@ services:
       - ./data/docling/models:/opt/app-root/src/.cache/huggingface
       - ./data/docling/easyocr:/opt/app-root/src/.EasyOCR
       - ./data/docling/docling-models:/opt/app-root/src/.cache/docling
-      - ./data/docling-artifacts:/docling-artifacts
+      - ./data/docling/docling-models:/docling-artifacts
       - ./data/docling/shared:/docling-shared
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
