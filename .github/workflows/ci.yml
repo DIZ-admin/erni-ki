@@ -170,7 +170,9 @@ jobs:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
 
-      - name: 🔒 Run Gosec Security Scanner
+      - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
+        env:
+          GOTOOLCHAIN: go1.23.12
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@latest
           gosec -fmt sarif -out gosec-results.sarif ./auth/...

@@ -121,7 +121,9 @@ jobs:
           go test -v -race -coverprofile=coverage.out ./...
           go tool cover -func=coverage.out
 
-      - name: 🔒 Security scan
+      - name: 🔒 Security scan (pinned toolchain)
+        env:
+          GOTOOLCHAIN: go1.23.12
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@latest
           gosec ./auth/...
