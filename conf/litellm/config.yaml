@@ -187,7 +187,7 @@ litellm_settings:
   # === PERFORMANCE OPTIMIZATION ===
   # Настройки кэширования для production
   # Включено: 2025-10-02 с использованием in-memory кэширования
-  # Redis кэширование имеет баг в LiteLLM v1.77.3 (socket_timeout: 5.0 hardcoded)
+  # Redis кэширование имеет баг в LiteLLM v1.80.0.rc.1 (socket_timeout: 5.0 hardcoded)
   cache_params:
     type: "local" # Использовать in-memory кэширование
     ttl: 1800 # TTL кэша в секундах (30 минут)

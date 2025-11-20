@@ -1,6 +1,5 @@
 # ============================================================================
 # 4-УРОВНЕВАЯ СТРАТЕГИЯ ЛОГГИРОВАНИЯ ERNI-KI
-# Обновлено: 2025-08-22 - Оптимизированная система согласно аудиту
 # ============================================================================
 
 # УРОВЕНЬ 1 - Критически важные сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx)
@@ -142,8 +141,8 @@ services:
   # LiteLLM Context Engineering Gateway (оптимизированная сетевая конфигурация)
   litellm:
     # Используем последнюю версию LiteLLM с поддержкой thinking tokens
-    # Обновлено: 2025-10-02 с v1.77.2.rc.1 до v1.77.3-stable для стабильности
-    image: ghcr.io/berriai/litellm:v1.77.3-stable
+    # Обновлено: 2025-11-18 до v1.80.0.rc.1 (routing fixes + security patches)
+    image: ghcr.io/berriai/litellm:v1.80.0.rc.1
     container_name: erni-ki-litellm
 
     # Зависимости - запускаем после критически важных сервисов
@@ -161,7 +160,7 @@ services:
 
     # Порт для API (внутренний Docker network)
     ports:
-      - "4000:4000" # LiteLLM Proxy API
+      - "127.0.0.1:4000:4000" # LiteLLM Proxy API (localhost only)
     expose:
       - "9109" # Prometheus metrics for PublicAI provider
 
@@ -211,7 +210,8 @@ services:
       - "com.erni-ki.service=litellm"
       - "com.erni-ki.version=main-stable"
       - "com.erni-ki.description=Context Engineering Gateway"
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=ai-services"
     secrets:
       - litellm_db_password
@@ -372,8 +372,8 @@ services:
   # Ollama LLM сервер с GPU ускорением (оптимизированная сетевая конфигурация)
   ollama:
     runtime: nvidia
-    mem_limit: 16g
-    mem_reservation: 8g
+    mem_limit: 24g
+    mem_reservation: 12g
     cpus: "12.0"
     oom_score_adj: -900
     environment:
@@ -390,7 +390,7 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
-    image: ollama/ollama:0.12.9 # Обновлено до последней стабильной версии (2025-11-04) - Fix performance regression, Qwen3-VL, MiniMax-M2 support
+    image: ollama/ollama:0.12.11 # Обновлено до 0.12.11 (2025-11-18) - upstream security fixes и стабильность GPU
     logging: *critical-logging
     ports:
       - 11434:11434
@@ -453,7 +453,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: ghcr.io/open-webui/open-webui:v0.6.35 # Обновлено: 2025-11-07 до v0.6.35 (последняя стабильная версия)
+    image: ghcr.io/open-webui/open-webui:v0.6.36 # Обновлено: 2025-11-18 до v0.6.36 (последняя стабильная версия)
     runtime: nvidia
     mem_limit: 8g
     mem_reservation: 4g
@@ -478,7 +478,6 @@ services:
     volumes:
       - ./data/openwebui:/app/backend/data
       - ./data/docling/shared:/app/backend/data/docling-shared
-      - ./patches/openwebui:/opt/erni/openwebui-patches:ro
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
       # Shared volume для передачи файлов в Docling (mount по умолчанию для обмена)
       # Entry-point wrapper подставляет секреты из Docker secrets
@@ -489,17 +488,19 @@ services:
     # Используем стандартную Docker bridge сеть
     labels:
       # Разрешить автообновление для OpenWebUI
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=web-interface"
 
   # Docling OCR/ingestion pipeline (GPU aware)
   docling:
+    # Официальный GPU-образ Docling Serve (CUDA 12.6)
+    image: ghcr.io/docling-project/docling-serve-cu126:main
     depends_on:
       ollama:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: ghcr.io/docling-project/docling-serve:v1.8.0
     runtime: nvidia
     mem_limit: 12g
     mem_reservation: 8g
@@ -523,7 +524,7 @@ services:
       - ./data/docling/models:/opt/app-root/src/.cache/huggingface
       - ./data/docling/easyocr:/opt/app-root/src/.EasyOCR
       - ./data/docling/docling-models:/opt/app-root/src/.cache/docling
-      - ./data/docling-artifacts:/docling-artifacts
+      - ./data/docling/docling-models:/docling-artifacts
       - ./data/docling/shared:/docling-shared
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -776,16 +777,19 @@ services:
       - PG_EXPORTER_DISABLE_SETTINGS_METRICS=true
       - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
       - PG_EXPORTER_EXCLUDE_DATABASES=template0,template1,postgres
-      - PG_EXPORTER_COLLECTOR_STAT_BGWRITER=false
     volumes:
       - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
       - ./secrets/postgres_exporter_dsn.txt:/etc/postgres_exporter_dsn.txt:ro
+      - ./conf/postgres-exporter/config.yml:/etc/postgres_exporter.yml:ro
     # Публикуем порт 9188 для socat proxy (2025-11-07)
     ports:
       - "127.0.0.1:9188:9188"
     restart: unless-stopped
     entrypoint:
       - /entrypoint/postgres-exporter.sh
+    command:
+      - --config.file=/etc/postgres_exporter.yml
+      - --no-collector.stat_bgwriter
     logging: *monitoring-logging
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1"]
@@ -815,6 +819,12 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep socat"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   # NVIDIA GPU Exporter - мониторинг GPU
   nvidia-exporter:
@@ -827,6 +837,12 @@ services:
       - "127.0.0.1:9445:9445"
     restart: unless-stopped
     logging: *monitoring-logging
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ': < /dev/tcp/localhost/9445'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     # Health check отключен: минимальный образ не содержит wget/curl/nc
     # Сервис мониторится через Prometheus scrape успешность
     labels:
@@ -880,6 +896,12 @@ services:
       - "127.0.0.1:9121:9121"
     restart: unless-stopped
     logging: *monitoring-logging
+    healthcheck:
+      test: ["CMD", "/redis_exporter", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     # Health check отключен: минимальный образ не содержит wget/curl/nc
     # Сервис мониторится через Prometheus scrape успешность
     labels:
@@ -907,17 +929,16 @@ services:
       - "127.0.0.1:9778:9778"
     restart: unless-stopped
     logging: *monitoring-logging
-    # Health check отключен для минимального образа без wget/curl
-    # healthcheck:
-    #   test:
-    #     [
-    #       "CMD-SHELL",
-    #       "wget --no-verbose --tries=1 --spider http://localhost:9778/metrics || exit 1",
-    #     ]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 15s
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://localhost:9778/metrics'', timeout=5).read()"',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
@@ -937,9 +958,12 @@ services:
       - "127.0.0.1:9113:9113"
     restart: unless-stopped
     logging: *monitoring-logging
-    # Health check отключен: минимальный образ не содержит wget/curl/nc
-    # Сервис мониторится через Prometheus scrape успешность
-    # Метрики доступны на http://localhost:9113/metrics
+    healthcheck:
+      test: ["CMD", "/usr/bin/nginx-prometheus-exporter", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
@@ -1006,6 +1030,9 @@ services:
     container_name: erni-ki-fluent-bit
     logging: *monitoring-logging
     restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: "0.5"
     volumes:
       # Обновленная конфигурация Fluent Bit для Loki интеграции
       - ./conf/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
@@ -1019,14 +1046,26 @@ services:
       - erni-ki-fluent-db:/fluent-bit/db
       # Доступ к Docker socket для сбора логов контейнеров
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Доступ к json-файлам Docker контейнеров (tail input)
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
     ports:
       - "127.0.0.1:2020:2020" # HTTP API и health checks
       - "127.0.0.1:2021:2021" # Prometheus метрики (Фаза 2)
       - "127.0.0.1:24224:24224" # Fluentd forward protocol
+    healthcheck:
+      test: ["CMD", "/fluent-bit/bin/fluent-bit", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     labels:
       # Разрешить автообновление для Fluent Bit
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=logging-stack"
+    networks:
+      default:
+        aliases:
+          - fluent-bit
 
   # RAG Exporter - метрики SLA RAG (latency, sources)
   rag-exporter:

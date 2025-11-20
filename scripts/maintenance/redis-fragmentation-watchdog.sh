@@ -23,12 +23,14 @@ DRY_RUN=false
 THRESHOLD="${REDIS_FRAGMENTATION_THRESHOLD:-6.0}"
 LOG_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.log"
 STATE_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.state"
+LOW_MEMORY_NOTICE_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.lowmem"
+LOW_MEMORY_NOTICE_INTERVAL="${REDIS_FRAGMENTATION_LOW_MEMORY_NOTICE_INTERVAL:-3600}"
 COOLDOWN="${REDIS_FRAGMENTATION_COOLDOWN_SECONDS:-600}"
 MAX_PURGES="${REDIS_FRAGMENTATION_MAX_PURGES:-6}"
 AUTOSCALE_ENABLED="${REDIS_AUTOSCALE_ENABLED:-true}"
 AUTOSCALE_STEP_MB="${REDIS_AUTOSCALE_STEP_MB:-256}"
 AUTOSCALE_MAX_GB="${REDIS_AUTOSCALE_MAX_GB:-4}"
-MIN_USED_MEMORY_BYTES="${REDIS_FRAGMENTATION_MIN_USED_BYTES:-5242880}"
+MIN_USED_MEMORY_BYTES="${REDIS_FRAGMENTATION_MIN_USED_BYTES:-67108864}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -114,6 +116,23 @@ EOF
 
 reset_state() {
   rm -f "$STATE_FILE"
+  rm -f "$LOW_MEMORY_NOTICE_FILE"
+}
+
+should_log_low_memory() {
+  if [[ ! -f "$LOW_MEMORY_NOTICE_FILE" ]]; then
+    return 0
+  fi
+  local last_notice
+  last_notice=$(cat "$LOW_MEMORY_NOTICE_FILE" 2>/dev/null || echo 0)
+  if (( now - last_notice >= LOW_MEMORY_NOTICE_INTERVAL )); then
+    return 0
+  fi
+  return 1
+}
+
+record_low_memory_notice() {
+  echo "$now" > "$LOW_MEMORY_NOTICE_FILE"
 }
 
 load_state
@@ -125,9 +144,14 @@ if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
   log "Fragmentation ratio ${ratio} > threshold ${THRESHOLD} (used=${used:-0} rss=${rss:-0} peak=${peak:-0})"
 
   if (( used < MIN_USED_MEMORY_BYTES )); then
-    log "Used memory ${used}B меньше MIN_USED_MEMORY_BYTES=${MIN_USED_MEMORY_BYTES}B; пропускаю purge как ложноположительный"
+    if should_log_low_memory; then
+      log "Used memory ${used}B меньше MIN_USED_MEMORY_BYTES=${MIN_USED_MEMORY_BYTES}B; пропускаю проверку как ложноположительную (порог можно изменить через REDIS_FRAGMENTATION_MIN_USED_BYTES)."
+      record_low_memory_notice
+    fi
     reset_state
     exit 0
+  else
+    rm -f "$LOW_MEMORY_NOTICE_FILE"
   fi
 
   if (( now - LAST_ACTION_TS < COOLDOWN )); then

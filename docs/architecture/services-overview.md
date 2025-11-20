@@ -9,13 +9,13 @@
 
 ## 🤖 Application Layer (AI & Core Services)
 
-| Сервис            | Статус     | Порты             | Конфигурация                  | Переменные окружения | Тип конфигурации | Примечания                                                                          |
-| ----------------- | ---------- | ----------------- | ----------------------------- | -------------------- | ---------------- | ----------------------------------------------------------------------------------- |
-| **🧠 ollama**     | ✅ Healthy | `11434:11434`     | ❌ Нет                        | `env/ollama.env`     | ENV              | **🔥 КРИТИЧЕСКИЙ** • Ollama 0.12.3 • GPU: 4GB VRAM limit • Автообновление отключено |
-| **🤖 openwebui**  | ✅ Healthy | `8080` (internal) | `conf/openwebui/*.json`       | `env/openwebui.env`  | JSON             | **🔥 КРИТИЧЕСКИЙ** • OpenWebUI v0.6.32 • GPU: NVIDIA runtime • MCP интеграция       |
-| **🌐 litellm**    | ✅ Healthy | `4000:4000`       | `conf/litellm/config.yaml`    | `env/litellm.env`    | YAML             | LiteLLM v1.77.3-stable • Context Engineering • Memory: 12GB limit • Thinking tokens |
-| **🔍 searxng**    | ✅ Healthy | `8080` (internal) | `conf/searxng/*.yml`          | `env/searxng.env`    | YAML/TOML/INI    | RAG поиск • 6+ источников (Brave, Startpage, Bing, Wikipedia) • Redis кэширование   |
-| **🔌 mcposerver** | ✅ Healthy | `8000:8000`       | `conf/mcposerver/config.json` | `env/mcposerver.env` | JSON             | Model Context Protocol • 4 инструмента (Time, PostgreSQL, Filesystem, Memory)       |
+| Сервис            | Статус     | Порты             | Конфигурация                  | Переменные окружения | Тип конфигурации | Примечания                                                                           |
+| ----------------- | ---------- | ----------------- | ----------------------------- | -------------------- | ---------------- | ------------------------------------------------------------------------------------ |
+| **🧠 ollama**     | ✅ Healthy | `11434:11434`     | ❌ Нет                        | `env/ollama.env`     | ENV              | **🔥 КРИТИЧЕСКИЙ** • Ollama 0.12.11 • GPU: 4GB VRAM limit • Автообновление отключено |
+| **🤖 openwebui**  | ✅ Healthy | `8080` (internal) | `conf/openwebui/*.json`       | `env/openwebui.env`  | JSON             | **🔥 КРИТИЧЕСКИЙ** • OpenWebUI v0.6.36 • GPU: NVIDIA runtime • MCP интеграция        |
+| **🌐 litellm**    | ✅ Healthy | `4000:4000`       | `conf/litellm/config.yaml`    | `env/litellm.env`    | YAML             | LiteLLM v1.80.0.rc.1 • Context Engineering • Memory: 12GB limit • Thinking tokens    |
+| **🔍 searxng**    | ✅ Healthy | `8080` (internal) | `conf/searxng/*.yml`          | `env/searxng.env`    | YAML/TOML/INI    | RAG поиск • 6+ источников (Brave, Startpage, Bing, Wikipedia) • Redis кэширование    |
+| **🔌 mcposerver** | ✅ Healthy | `8000:8000`       | `conf/mcposerver/config.json` | `env/mcposerver.env` | JSON             | Model Context Protocol • 4 инструмента (Time, PostgreSQL, Filesystem, Memory)        |
 
 ## 🔧 Processing Layer (Document & Media Processing)
 
@@ -153,9 +153,12 @@ curl -s -H "X-Scope-OrgID: erni-ki" http://localhost:3100/ready
 - **[Архитектура системы](architecture.md)** - Диаграммы и описание компонентов
 - **[Руководство администратора](../operations/admin-guide.md)** - Детальные
   инструкции по управлению
-- **[Мониторинг и алерты](monitoring.md)** - Настройка Prometheus/Grafana
-- **[Резервное копирование](backup-guide.md)** - Конфигурация Backrest
-- **[Устранение неполадок](troubleshooting.md)** - Решение типовых проблем
+- **[Мониторинг и алерты](../operations/monitoring.md)** - Настройка
+  Prometheus/Grafana
+- **[Резервное копирование](../operations/backup-guide.md)** - Конфигурация
+  Backrest
+- **[Устранение неполадок](../operations/troubleshooting.md)** - Решение типовых
+  проблем
 
 ---
 

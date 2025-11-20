@@ -1,5 +1,67 @@
 # CHANGELOG - ERNI-KI System Updates
 
+# CHANGELOG - ERNI-KI System Updates
+
+## [2025-11-18] - LiteLLM v1.80.0.rc.1 + Ollama 0.12.11 Refresh
+
+### 🎯 Summary
+
+- LiteLLM сервис обновлён до `ghcr.io/berriai/litellm:v1.80.0.rc.1`.
+- Ollama переведена на `ollama/ollama:0.12.11` вместе с примером compose.
+- Все статусы/архитектурные гайды теперь отражают новые версии, включая немецкие локализации.
+
+### 🔧 Реализация
+
+1. **Compose** — `compose.yml` и `compose.yml.example` переключены на новые теги, комментарии обновлены с датой.
+2. **Документация** — README, overview, architecture/service inventory, status snippets (RU/DE) и API reference синхронизированы с версиями 0.12.11/1.80.0.rc.1.
+3. **Конфиг LiteLLM** — комментарий в `conf/litellm/config.yaml` теперь указывает на известный баг в v1.80.0.rc.1 (socket timeout), чтобы команда знала контекст.
+
+### ✅ Проверки
+
+- Требуется выполнить `docker compose up -d litellm ollama` и `scripts/health-monitor.sh --report` на сервере, чтобы подтвердить, что новые контейнеры проходят healthchecks и OpenWebUI продолжает проксировать запросы.
+
+## [2025-11-18] - OpenWebUI v0.6.36 Upgrade
+
+### 🎯 Summary
+
+- Обновили контейнер OpenWebUI до `ghcr.io/open-webui/open-webui:v0.6.36`.
+- Удалили все кастомные патчи и механизмы их применения в entrypoint’е.
+- Пересобрали compose-стек без тома `patches/openwebui`.
+- Актуализировали документацию (README, architecture/overview, локализации).
+- Выполнили полный `scripts/health-monitor.sh` после обновления.
+- Отключили `stat_bgwriter` collector у Postgres Exporter, чтобы убрать шум `checkpoints_timed`.
+
+### 🔧 Реализация
+
+1. **Compose & Entrypoint**
+   - `compose.yml`: образ обновлён до v0.6.36, том с патчами удалён.
+   - `scripts/entrypoints/openwebui.sh`: убран код, пытавшийся применять патчи.
+2. **Удаление патчей**
+   - Директория `patches/openwebui` очищена (патчи 001–004 удалены из репозитория).
+3. **Документация**
+   - README, docs/index.md, docs/overview.md и все status snippets обновлены до v0.6.36.
+   - Архитектурные гайды (RU/DE) отражают новую версию и дату обновления.
+4. **Monitoring**
+   - У `postgres-exporter` выключен сборщик `stat_bgwriter` через `--no-collector.stat_bgwriter`, контейнер пересобран (`docker compose up -d postgres-exporter postgres-exporter-proxy`).
+   - Повторные логи `checkpoints_timed` исчезли (`docker compose logs postgres-exporter --since 5m` пуст).
+5. **Hardening & Diagnostics**
+   - Добавлен stub-конфиг `conf/postgres-exporter/config.yml` и `compose.yml` теперь передаёт `--config.file` во время запуска.
+   - LiteLLM и OpenWebUI переведены в monitor-only режим Watchtower, а порт `4000` проброшен только на `127.0.0.1`.
+   - `scripts/health-monitor.sh` получил настраиваемые `HEALTH_MONITOR_LOG_WINDOW` и `HEALTH_MONITOR_LOG_IGNORE_REGEX`, чтобы фильтровать шум (`litellm cron`, node-exporter broken pipe, cloudflared context canceled, redis-exporter Errorstats).
+   - Для fluent-bit, nginx-exporter, nvidia-exporter, ollama-exporter, postgres-exporter-proxy и redis-exporter добавлены Docker healthcheck’и → `docker compose ps` и health-monitor показывают 31/31 healthy.
+   - Alertmanager Slack шаблоны переписаны без `| default`, чтобы не генерировать Go template ошибки.
+   - Отчёт `logs/diagnostics/hardening-20251118.md` добавлен в артефакты.
+6. **Проверки**
+   - `scripts/health-monitor.sh --report` выполнен: контейнеры, HTTP healthchecks и метрики без ошибок.
+
+### 📊 Диагностика
+
+- docker compose ps: все сервисы в состоянии `running`, healthcheck = healthy.
+- HTTP end-to-end проверки: OpenWebUI `/health`, LiteLLM `/health`, Docling `/health` возвращают 200.
+- Мониторинг: Prometheus и Alertmanager endpoints отвечают, алерты не сработали.
+
+---
+
 ## [2025-10-02] - Post-Update Fixes
 
 ### 🎯 Summary

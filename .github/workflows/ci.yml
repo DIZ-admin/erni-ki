@@ -55,6 +55,10 @@ jobs:
       - name: 🎨 Check Prettier formatting
         run: npm run format:check
 
+      - name: 🔒 Run npm security audit (production dependencies)
+        run: npm audit --omit=dev --audit-level=moderate || true
+        continue-on-error: true
+
       - name: 📝 Check EditorConfig
         uses: editorconfig-checker/action-editorconfig-checker@main
 
@@ -75,7 +79,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.10"
+          go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
 
       - name: 📦 Download dependencies
@@ -163,12 +167,16 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.10"
+          go-version-file: auth/go.mod
+          cache-dependency-path: auth/go.sum
 
-      - name: 🔒 Run Gosec Security Scanner
+      - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
+        env:
+          GOTOOLCHAIN: go1.23.12
+          GOSEC_VERSION: v2.15.0
         run: |
-          go install github.com/securego/gosec/v2/cmd/gosec@latest
-          gosec -fmt sarif -out gosec-results.sarif ./auth/...
+          go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
+          gosec -fmt sarif -out gosec-results.sarif ./auth/... || echo "gosec exited non-zero (known upstream SSA panic); continuing"
         continue-on-error: true
 
       - name: 📤 Upload Gosec results to GitHub Security
@@ -241,7 +249,7 @@ jobs:
             SKIP_TESTS=true
 
       - name: 🔍 Run Trivy on Docker image
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         continue-on-error: true
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:${{ github.ref_name }}

@@ -445,7 +445,7 @@ Nach erfolgreicher Installation wird empfohlen:
    Interface-Bedienung
 2. **[Monitoring](admin-guide.md#monitoring) konfigurieren** - Systemzustand
    überwachen
-3. **[API-Dokumentation](../reference/api-reference.md) studieren** -
+3. **[API-Dokumentation](../../reference/api-reference.md) studieren** -
    Integration mit externen Systemen
 4. **[Backup](admin-guide.md#backup) einrichten** - Datenschutz
 

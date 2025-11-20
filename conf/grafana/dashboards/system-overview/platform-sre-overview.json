@@ -1,0 +1,126 @@
+{
+  "uid": "platform-sre-overview",
+  "title": "Platform SRE Overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "tags": ["erni-ki", "overview", "sre"],
+  "time": {"from": "now-3h", "to": "now"},
+  "annotations": {
+    "list": [
+      {
+        "name": "Deployments",
+        "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+        "enable": true,
+        "iconColor": "rgba(0, 211, 255, 1)"
+      }
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "query",
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "query": "label_values(up, job)",
+        "refresh": 2,
+        "includeAll": true,
+        "multi": true,
+        "current": {"text": "All", "value": ["$__all"]}
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Overall Availability",
+      "id": 1,
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 0},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg(up{job=~\"$service\"})", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {"mode": "percentage", "steps": [{"color": "red", "value": 0}, {"color": "yellow", "value": 0.95}, {"color": "green", "value": 0.995}]}
+        },
+        "overrides": []
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "auto", "textMode": "value"}
+    },
+    {
+      "type": "timeseries",
+      "title": "Node CPU Utilization",
+      "id": 2,
+      "gridPos": {"h": 8, "w": 10, "x": 4, "y": 0},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg by (instance)(100 - (avg without(mode) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100))", "legendFormat": "{{instance}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent"}, "overrides": []},
+      "options": {"legend": {"showLegend": true, "calcs": ["lastNotNull"], "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Pressure",
+      "id": 3,
+      "gridPos": {"h": 8, "w": 10, "x": 14, "y": 0},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg by (instance)((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes)", "legendFormat": "{{instance}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent", "thresholds": {"mode": "percentage", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.75}, {"color": "red", "value": 0.9}]}}, "overrides": []}
+    },
+    {
+      "type": "table",
+      "title": "Critical Service Health",
+      "id": 4,
+      "gridPos": {"h": 6, "w": 10, "x": 0, "y": 4},
+      "options": {"showHeader": true},
+      "targets": [
+        {
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "expr": "up{job=~\"(prometheus|alertmanager|nginx|postgres|redis|ollama-exporter|node-exporter|cadvisor|loki)\"}",
+          "legendFormat": "{{job}}",
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {"id": "labelsToFields", "options": {"keepLabels": true}},
+        {"id": "organize", "options": {"excludeByName": {"Time": true}, "indexByName": {"Value": 1}}}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Active Nginx Connections",
+      "id": 5,
+      "gridPos": {"h": 8, "w": 12, "x": 10, "y": 8},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "nginx_connections_active", "legendFormat": "active", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate",
+      "id": 6,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 10},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(nginx_http_requests_total[5m])), 1)) or vector(0)", "legendFormat": "5xx ratio", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent", "thresholds": {"mode": "percentage", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.01}, {"color": "red", "value": 0.02}]}}}
+    },
+    {
+      "type": "logs",
+      "title": "Recent Critical Logs",
+      "id": 7,
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 16},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "options": {"showLabels": true, "wrapLogMessage": true},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name!~\"prometheus|grafana\"} |= \"ERROR\"", "refId": "A"}
+      ]
+    }
+  ]
+}
