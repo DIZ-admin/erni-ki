@@ -149,8 +149,6 @@ jobs:
 
       - name: 🔐 Run Gitleaks
         uses: zricethezav/gitleaks-action@v2
-        with:
-          args: detect --redact --no-git --source .
 
   # Сканирование Docker образов
   container-scan:
@@ -225,6 +223,7 @@ jobs:
           framework: dockerfile,github_actions,secrets
           output_format: sarif
           output_file_path: checkov-results.sarif
+          config_file: .checkov.yml
           quiet: true
           soft_fail: true
 
