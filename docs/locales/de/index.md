@@ -12,7 +12,7 @@
 > - Container: 30/30 контейнеров healthy
 > - Grafana: 18/18 Grafana дашбордов
 > - Alerts: 27 Prometheus alert rules активны
-> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
+> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU), Go 1.24.10
 > - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
 > - Monitoring: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
 >   v3.2.0, Alertmanager v0.28.0
@@ -44,13 +44,13 @@ Sprachinteraktion.
 - **[Monitoring Übersicht](monitoring.md)** - Kennzahlen, Skripte und Alerts
 - **[Runbooks](runbooks.md)** - Deutsche Zusammenfassungen der wichtigsten
   Abläufe
-- **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
+- **[API-Referenz](../../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 
 ### 💻 Entwicklung
 
-- **[Entwicklerhandbuch](../reference/development.md)** - Entwicklungsumgebung
-  einrichten (Englisch)
+- **[Entwicklerhandbuch](../../reference/development.md)** -
+  Entwicklungsumgebung einrichten (Englisch)
 
 ## 🎯 Zielgruppen
 
@@ -76,8 +76,8 @@ Wenn Sie ERNI-KI installieren und verwalten:
 Wenn Sie ERNI-KI erweitern oder anpassen möchten:
 
 1. Verstehen Sie die **[Systemarchitektur](architecture.md)**
-2. Lesen Sie das **[Entwicklerhandbuch](../reference/development.md)**
-3. Nutzen Sie die **[API-Referenz](../reference/api-reference.md)**
+2. Lesen Sie das **[Entwicklerhandbuch](../../reference/development.md)**
+3. Nutzen Sie die **[API-Referenz](../../reference/api-reference.md)**
 
 ## 🚀 Schnellstart-Pfade
 
@@ -232,7 +232,7 @@ Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 3. **Screenshots hinzufügen** - Visuelle Hilfen für Benutzer
 4. **FAQ erweitern** - Häufige Fragen beantworten
 
-→ **Beitragen:** [Entwicklerhandbuch](../reference/development.md)
+→ **Beitragen:** [Entwicklerhandbuch](../../reference/development.md)
 
 ## 🏷️ Versionshinweise
 

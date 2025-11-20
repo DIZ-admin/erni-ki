@@ -153,9 +153,12 @@ curl -s -H "X-Scope-OrgID: erni-ki" http://localhost:3100/ready
 - **[Архитектура системы](architecture.md)** - Диаграммы и описание компонентов
 - **[Руководство администратора](../operations/admin-guide.md)** - Детальные
   инструкции по управлению
-- **[Мониторинг и алерты](monitoring.md)** - Настройка Prometheus/Grafana
-- **[Резервное копирование](backup-guide.md)** - Конфигурация Backrest
-- **[Устранение неполадок](troubleshooting.md)** - Решение типовых проблем
+- **[Мониторинг и алерты](../operations/monitoring.md)** - Настройка
+  Prometheus/Grafana
+- **[Резервное копирование](../operations/backup-guide.md)** - Конфигурация
+  Backrest
+- **[Устранение неполадок](../operations/troubleshooting.md)** - Решение типовых
+  проблем
 
 ---
 

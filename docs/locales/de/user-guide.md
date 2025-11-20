@@ -252,7 +252,7 @@ neuer Modelle.
 ### Nützliche Ressourcen
 
 - [Administrator-Handbuch](admin-guide.md) - für Systemkonfiguration
-- [API-Dokumentation](../reference/api-reference.md) - für Integrationen
+- [API-Dokumentation](../../reference/api-reference.md) - für Integrationen
 - [Systemarchitektur](architecture.md) - technische Informationen
 
 ---

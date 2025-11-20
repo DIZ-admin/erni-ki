@@ -1082,11 +1082,11 @@ environment:
 **Документация:**
 
 - Полный отчет:
-  [./config-backup/update-execution-report-2025-10-02.md](./config-backup/update-execution-report-2025-10-02.md)
+  [../archive/config-backup/update-execution-report-2025-10-02.md](../archive/config-backup/update-execution-report-2025-10-02.md)
 - Мониторинг:
-  [./config-backup/monitoring-report-2025-10-02.md](./config-backup/monitoring-report-2025-10-02.md)
+  [../archive/config-backup/monitoring-report-2025-10-02.md](../archive/config-backup/monitoring-report-2025-10-02.md)
 - Анализ обновлений:
-  [./config-backup/update-analysis-2025-10-02.md](./config-backup/update-analysis-2025-10-02.md)
+  [../archive/config-backup/update-analysis-2025-10-02.md](../archive/config-backup/update-analysis-2025-10-02.md)
 
 ---
 

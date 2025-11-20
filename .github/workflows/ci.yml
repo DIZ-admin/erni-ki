@@ -55,6 +55,10 @@ jobs:
       - name: 🎨 Check Prettier formatting
         run: npm run format:check
 
+      - name: 🔒 Run npm security audit
+        run: npm audit --audit-level=high || true
+        continue-on-error: true
+
       - name: 📝 Check EditorConfig
         uses: editorconfig-checker/action-editorconfig-checker@main
 
@@ -75,7 +79,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.10"
+          go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
 
       - name: 📦 Download dependencies
@@ -241,7 +245,7 @@ jobs:
             SKIP_TESTS=true
 
       - name: 🔍 Run Trivy on Docker image
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         continue-on-error: true
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:${{ github.ref_name }}

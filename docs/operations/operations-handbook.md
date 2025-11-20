@@ -125,3 +125,14 @@
   `update-analysis-2025-10-02.md`, `update-execution-report-2025-10-02.md`. При
   обновлении скриптов фиксируйте изменения в этих отчётах или создавайте новые
   файлы в config-backup.
+
+## 11. CI/CD и безопасность
+
+- **Secret scanning:** добавьте gitleaks или trufflehog как отдельный CI job для
+  PR. Блокируйте pipeline при находках, исключения оформляйте через baseline.
+- **Dependency scanning:** `npm audit --omit=dev` или Snyk OSS в CI с fail по
+  критическим CVE; для Go оставить `gosec` + Trivy filesystem scan.
+- **Container scanning:** Trivy image scan с явным allowlist/ignorefile на
+  ложные срабатывания, все прочие критичные — fail pipeline.
+- **Policy:** реальные секреты только в секрет-хранилище/CI secrets; в git —
+  только `.example` и инструкции генерации (README/handbook).

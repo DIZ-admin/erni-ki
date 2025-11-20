@@ -598,7 +598,7 @@ curl -k https://localhost/health
 
 - Предыдущий аудит:
   [comprehensive-audit-2025-10-14.md](comprehensive-audit-2025-10-14.md)
-- Последний ремонт: [system-repair-2025-10-16.md](system-repair-2025-10-16.md)
+- Последний ремонт: system-repair-2025-10-16 (файл недоступен в архиве)
 
 ---
 

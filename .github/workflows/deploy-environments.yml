@@ -255,6 +255,7 @@ jobs:
           echo "🔧 Configuration: .deploy-config/environment.env"
 
           # Здесь будет реальная логика деплоя (например, через kubectl, docker-compose, etc.)
+          # TODO: Implement actual deployment logic here
           echo "✅ Deployment completed successfully"
 
       - name: 📊 Post-deployment verification
