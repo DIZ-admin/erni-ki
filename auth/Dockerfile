@@ -48,13 +48,10 @@ COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=builder /build/main /app/main
 
 # Distroless образ уже использует непривилегированного пользователя nonroot
+# Note: Health checks should be configured at orchestration layer (K8s/Docker Compose)
 
 # Открываем порт
 EXPOSE 9090
-
-# Настраиваем health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD ["/app/main", "--health-check"]
 
 # Метаданные образа
 LABEL maintainer="erni-ki-team" \
