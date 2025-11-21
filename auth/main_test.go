@@ -38,7 +38,7 @@ func TestRootEndpoint(t *testing.T) {
 	router := setupRouter()
 
 	// Создаем тестовый запрос
-	req, err := http.NewRequest("GET", "/", http.NoBody)
+	req, err := http.NewRequestWithContext(context.Background(), "GET", "/", http.NoBody)
 	require.NoError(t, err)
 
 	// Создаем ResponseRecorder для записи ответа
