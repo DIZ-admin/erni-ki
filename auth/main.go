@@ -85,7 +85,10 @@ func requestIDMiddleware() gin.HandlerFunc {
 }
 
 func requestLogger(param gin.LogFormatterParams) string { //nolint:gocritic
-	reqID, _ := param.Keys["request_id"].(string)
+	reqID, ok := param.Keys["request_id"].(string)
+	if !ok {
+		reqID = ""
+	}
 	return fmt.Sprintf(
 		"{\"time\":%q,\"status\":%d,\"latency_ms\":%.2f,\"client\":%q,\"method\":%q,\"path\":%q,\"request_id\":%q}\n",
 		param.TimeStamp.Format(time.RFC3339Nano),

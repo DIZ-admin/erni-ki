@@ -155,7 +155,7 @@ jobs:
 
       - name: 🔐 Run Gitleaks
         run: |
-          go install github.com/zricethezav/gitleaks/v8/cmd/gitleaks@v8.29.1
+          go install github.com/zricethezav/gitleaks/v8@v8.29.1
           gitleaks detect --redact --source=. --config-path=.gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
         continue-on-error: true
 
