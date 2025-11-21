@@ -158,23 +158,13 @@ linters:
   disable:
     # Отключенные линтеры (могут быть слишком строгими)
     - cyclop # Цикломатическая сложность (дублирует gocyclo)
-    - deadcode # Устарел, заменен на unused
-    - exhaustivestruct # Слишком строгий
     - forbidigo # Запрет функций
     - funlen # Длина функций (может быть слишком строгим)
     - gci # Импорты (может конфликтовать с goimports)
     - godox # TODO комментарии
-    - golint # Устарел, заменен на revive
-    - gomnd # Magic numbers (может быть слишком строгим)
-    - ifshort # Устарел
-    - interfacer # Устарел
-    - maligned # Устарел, заменен на fieldalignment
     - nestif # Вложенность if
     - paralleltest # Параллельные тесты (может быть излишним)
-    - scopelint # Устарел, заменен на exportloopref
-    - structcheck # Устарел, заменен на unused
     - testpackage # Тестовые пакеты
-    - varcheck # Устарел, заменен на unused
     - varnamelen # Длина имен переменных
     - wrapcheck # Обертывание ошибок
     - wsl # Пробелы (может быть слишком строгим)
