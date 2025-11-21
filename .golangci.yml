@@ -1,5 +1,5 @@
 # golangci-lint configuration для проекта erni-ki
-# yaml-language-server: $schema=https://golangci-lint.run/jsonschema/golangci.jsonschema.json
+# yaml-language-server: $schema=
 # Конфигурация линтера для Go кода
 
 # Версия конфигурации golangci-lint
@@ -88,8 +88,6 @@ linters-settings:
 
   stylecheck:
     checks: ["all"]
-
-  unused:
 
   whitespace:
     multi-if: false
