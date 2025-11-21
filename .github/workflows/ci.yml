@@ -43,7 +43,7 @@ jobs:
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.18.0"
           cache: npm
 
       - name: 📦 Install dependencies
@@ -60,7 +60,7 @@ jobs:
         continue-on-error: true
 
       - name: 📝 Check EditorConfig
-        uses: editorconfig-checker/action-editorconfig-checker@main
+        uses: editorconfig-checker/action-editorconfig-checker@v2
 
   # Тестирование Go сервиса
   test-go:
@@ -121,6 +121,7 @@ jobs:
     name: 🧪 Test JS/TS Stack
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    needs: [lint]
 
     steps:
       - name: 📥 Checkout code
@@ -129,7 +130,7 @@ jobs:
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "20.18.0"
           cache: npm
 
       - name: 📦 Install dependencies
@@ -151,6 +152,32 @@ jobs:
           name: playwright-report
           path: playwright-report
           retention-days: 7
+
+  # Go lint (auth service)
+  go-lint:
+    name: 🧹 Go Lint (golangci-lint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GOTOOLCHAIN: go1.24.10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐹 Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: auth/go.mod
+          cache-dependency-path: auth/go.sum
+
+      - name: 🔍 Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.5
+          working-directory: auth
+          # go-version input is not supported in v6; it uses the Go version from setup-go
+          args: --timeout=5m
 
   # Сканирование безопасности
   security:
@@ -266,7 +293,7 @@ jobs:
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
-    needs: [lint, test-go, test-js, security, docker-build]
+    needs: [lint, go-lint, test-go, test-js, security, docker-build]
     if: always() && github.ref == 'refs/heads/main'
 
     steps:
@@ -274,6 +301,7 @@ jobs:
         id: results
         run: |
           echo "lint=${{ needs.lint.result }}" >> $GITHUB_OUTPUT
+          echo "golint=${{ needs['go-lint'].result }}" >> $GITHUB_OUTPUT
           echo "test_go=${{ needs['test-go'].result }}" >> $GITHUB_OUTPUT
           echo "test_ts=${{ needs['test-js'].result }}" >> $GITHUB_OUTPUT
           echo "security=${{ needs.security.result }}" >> $GITHUB_OUTPUT
@@ -285,6 +313,7 @@ jobs:
           echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Lint | ${{ steps.results.outputs.lint == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Go Lint | ${{ steps.results.outputs.golint == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Go Tests | ${{ steps.results.outputs.test_go == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| TS Tests | ${{ steps.results.outputs.test_ts == 'success' && '✅' || steps.results.outputs.test_ts == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security | ${{ steps.results.outputs.security == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY

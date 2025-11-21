@@ -230,7 +230,7 @@ services:
     env_file: env/auth.env
     logging: *important-logging
     ports:
-      - "9092:9090" # Изменен порт для избежания конфликта
+      - "127.0.0.1:9092:9090" # Изменен порт для избежания конфликта, ограничен localhost
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "/app/main", "--health-check"]
@@ -286,7 +286,7 @@ services:
     image: travisvn/openai-edge-tts@sha256:4e7e2773350a3296f301b5f66e361daad243bdc4b799eec32613fddcee849040 # обновлено: digest совместим с schema2
     logging: *auxiliary-logging
     ports:
-      - 5050:5050
+      - "127.0.0.1:5050:5050"
     restart: unless-stopped
     labels:
       # Разрешить автообновление для EdgeTTS
@@ -305,7 +305,7 @@ services:
     image: apache/tika@sha256:3fafa194474c5f3a8cff25a0eefd07e7c0513b7f552074ad455e1af58a06bbea # pinned 2025-11 digest (linux/amd64)
     logging: *auxiliary-logging
     ports:
-      - 9998:9998
+      - "127.0.0.1:9998:9998"
     restart: unless-stopped
     labels:
       # Разрешить автообновление для Tika
@@ -328,7 +328,7 @@ services:
     image: ghcr.io/open-webui/mcpo:git-91e8f94 # Обновлено: 2025-11-04 с latest на git-91e8f94 (стабильный коммит)
     logging: *auxiliary-logging
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     restart: unless-stopped
     volumes:
       - ./conf/mcposerver:/app/conf:ro
@@ -546,7 +546,7 @@ services:
     image: garethgeorge/backrest:v1.9.2
     logging: *important-logging
     ports:
-      - "9898:9898"
+      - "127.0.0.1:9898:9898"
     restart: unless-stopped
     volumes:
       - ./data/backrest:/data

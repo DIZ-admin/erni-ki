@@ -66,9 +66,9 @@ func main() {
 		}
 	})
 
-	err := r.Run("0.0.0.0:9090")
-	if err != nil {
-		return
+	if err := r.Run("0.0.0.0:9090"); err != nil {
+		fmt.Printf("Failed to start server: %v\n", err)
+		os.Exit(1)
 	}
 }
 
@@ -84,10 +84,13 @@ func requestIDMiddleware() gin.HandlerFunc {
 	}
 }
 
-func requestLogger(param gin.LogFormatterParams) string {
-	reqID, _ := param.Keys["request_id"].(string)
+func requestLogger(param gin.LogFormatterParams) string { //nolint:gocritic
+	reqID, ok := param.Keys["request_id"].(string)
+	if !ok {
+		reqID = ""
+	}
 	return fmt.Sprintf(
-		"{\"time\":\"%s\",\"status\":%d,\"latency_ms\":%.2f,\"client\":\"%s\",\"method\":\"%s\",\"path\":\"%s\",\"request_id\":\"%s\"}\n",
+		"{\"time\":%q,\"status\":%d,\"latency_ms\":%.2f,\"client\":%q,\"method\":%q,\"path\":%q,\"request_id\":%q}\n",
 		param.TimeStamp.Format(time.RFC3339Nano),
 		param.StatusCode,
 		float64(param.Latency)/float64(time.Millisecond),
@@ -108,28 +111,29 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 	c.JSON(status, payload)
 }
 
-// healthCheck выполняет проверку здоровья сервиса для Docker
+// healthCheck выполняет проверку здоровья сервиса для Docker.
 func healthCheck() {
-	resp, err := http.Get("http://localhost:9090/health")
+	resp, err := http.Get("http://localhost:9090/health") //nolint:noctx
 	if err != nil {
 		fmt.Printf("Health check failed: %v\n", err)
 		os.Exit(1)
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		fmt.Printf("Health check failed with status: %d\n", resp.StatusCode)
+		_ = resp.Body.Close()
 		os.Exit(1)
 	}
 
 	fmt.Println("Health check passed")
+	_ = resp.Body.Close()
 	os.Exit(0)
 }
 
 func verifyToken(tokenString string) (bool, error) {
 	jwtSecret := os.Getenv("WEBUI_SECRET_KEY")
 
-	if len(jwtSecret) == 0 {
+	if jwtSecret == "" {
 		return false, fmt.Errorf("JWT_SECRET env variable missing")
 	}
 
