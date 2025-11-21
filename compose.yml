@@ -648,6 +648,29 @@ services:
       - grafana_admin_password
     # Используем стандартную Docker bridge сеть
 
+  # Uptime Kuma - визуальный статус ERNI-KI
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: erni-ki-uptime-kuma
+    env_file: env/uptime-kuma.env
+    restart: unless-stopped
+    logging: *monitoring-logging
+    ports:
+      - "127.0.0.1:3001:3001" # Локальный порт; внешний доступ через reverse-proxy
+    volumes:
+      - ./data/uptime-kuma:/app/data
+    healthcheck:
+      test: ["CMD", "node", "/app/server/ping.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    labels:
+      # Разрешить автообновление для Uptime Kuma
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=monitoring-stack"
+    # Используем стандартную Docker bridge сеть
+
   # Loki - современная система логирования (замена Elasticsearch)
   loki:
     image: grafana/loki:3.0.0 # Стабильная версия (3.6.0 не существует)
