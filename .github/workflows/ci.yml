@@ -158,6 +158,8 @@ jobs:
     name: 🧹 Go Lint (golangci-lint)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      GOTOOLCHAIN: go1.24.10
 
     steps:
       - name: 📥 Checkout code
