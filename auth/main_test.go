@@ -31,7 +31,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-// Тест корневого эндпоинта
+// Тест корневого эндпоинта.
 func TestRootEndpoint(t *testing.T) {
 	// Создаем тестовый роутер
 	router := setupRouter()
@@ -57,7 +57,7 @@ func TestRootEndpoint(t *testing.T) {
 	assert.Equal(t, "auth-service is running", response["message"])
 }
 
-// Тест валидации с отсутствующим токеном
+// Тест валидации с отсутствующим токеном.
 func TestValidateEndpointMissingToken(t *testing.T) {
 	router := setupRouter()
 
@@ -78,7 +78,7 @@ func TestValidateEndpointMissingToken(t *testing.T) {
 	assert.Equal(t, "token missing", response["error"])
 }
 
-// Тест валидации с валидным токеном
+// Тест валидации с валидным токеном.
 func TestValidateEndpointValidToken(t *testing.T) {
 	router := setupRouter()
 
@@ -107,7 +107,7 @@ func TestValidateEndpointValidToken(t *testing.T) {
 	assert.Equal(t, "authorized", response["message"])
 }
 
-// Тест валидации с невалидным токеном
+// Тест валидации с невалидным токеном.
 func TestValidateEndpointInvalidToken(t *testing.T) {
 	router := setupRouter()
 
@@ -133,7 +133,7 @@ func TestValidateEndpointInvalidToken(t *testing.T) {
 	assert.Equal(t, "unauthorized", response["message"])
 }
 
-// Тест функции verifyToken с валидным токеном
+// Тест функции verifyToken с валидным токеном.
 func TestVerifyTokenValid(t *testing.T) {
 	token := createValidJWTToken(t)
 
@@ -143,7 +143,7 @@ func TestVerifyTokenValid(t *testing.T) {
 	assert.True(t, valid)
 }
 
-// Тест функции verifyToken с невалидным токеном
+// Тест функции verifyToken с невалидным токеном.
 func TestVerifyTokenInvalid(t *testing.T) {
 	valid, err := verifyToken("invalid.jwt.token")
 
@@ -151,7 +151,7 @@ func TestVerifyTokenInvalid(t *testing.T) {
 	assert.False(t, valid)
 }
 
-// Тест функции verifyToken с отсутствующим секретом
+// Тест функции verifyToken с отсутствующим секретом.
 func TestVerifyTokenMissingSecret(t *testing.T) {
 	// Временно удаляем переменную окружения
 	originalSecret := os.Getenv("WEBUI_SECRET_KEY")
@@ -167,7 +167,7 @@ func TestVerifyTokenMissingSecret(t *testing.T) {
 	assert.Contains(t, err.Error(), "JWT_SECRET env variable missing")
 }
 
-// Тест функции verifyToken с истекшим токеном
+// Тест функции verifyToken с истекшим токеном.
 func TestVerifyTokenExpired(t *testing.T) {
 	token := createExpiredJWTToken(t)
 

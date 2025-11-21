@@ -60,7 +60,7 @@ jobs:
         continue-on-error: true
 
       - name: 📝 Check EditorConfig
-        uses: editorconfig-checker/action-editorconfig-checker@main
+        uses: editorconfig-checker/action-editorconfig-checker@v2
 
   # Тестирование Go сервиса
   test-go:
