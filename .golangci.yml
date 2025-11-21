@@ -141,7 +141,6 @@ linters:
     - misspell # Орфография
     - nakedret # Naked returns
     - nilerr # Nil errors
-    - nlreturn # Новые строки
     - noctx # HTTP requests без context
     - nolintlint # Проверка nolint директив
     - prealloc # Предварительное выделение памяти
@@ -171,7 +170,6 @@ linters:
     - interfacer # Устарел
     - maligned # Устарел, заменен на fieldalignment
     - nestif # Вложенность if
-    - nlreturn # Новые строки (может быть слишком строгим)
     - paralleltest # Параллельные тесты (может быть излишним)
     - scopelint # Устарел, заменен на exportloopref
     - structcheck # Устарел, заменен на unused
