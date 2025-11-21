@@ -509,9 +509,9 @@ services:
     oom_score_adj: -500
     env_file: env/docling.env
     environment:
-      - NVIDIA_VISIBLE_DEVICES=${DOCLING_GPU_VISIBLE_DEVICES:-1}
+      - NVIDIA_VISIBLE_DEVICES=${DOCLING_GPU_VISIBLE_DEVICES:-0}
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-      - CUDA_VISIBLE_DEVICES=${DOCLING_CUDA_VISIBLE_DEVICES:-1}
+      - CUDA_VISIBLE_DEVICES=${DOCLING_CUDA_VISIBLE_DEVICES:-0}
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:5001/health || exit 1"]
