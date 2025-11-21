@@ -2,8 +2,13 @@
 
 ERNI-KI — production-ready AI платформа на базе OpenWebUI, Ollama, LiteLLM и
 MCP, окружённая полным стеком наблюдаемости, мониторинга и безопасности. Здесь
-собраны актуальные гайды для DevOps/SRE и ML-инженеров, ответственные за
-стабильность, операции и развитие платформы.
+собраны актуальные гайды для DevOps/SRE и ML-инженеров, а также понятные
+инструкции для офисных сотрудников о том, как безопасно работать с AI в
+повседневных задачах.
+
+**Academy KI** — отдельный вход для сотрудников с быстрым стартом, обучением и
+готовыми сценариями. Начните с [портала Academy KI](academy/index.md), чтобы
+получить ссылки на базовые уроки, примеры промптов и актуальные новости.
 
 ## Обновления
 
@@ -37,6 +42,14 @@ MCP, окружённая полным стеком наблюдаемости, 
 - **ML и API** — `reference/api-reference.md`, `README.md` (вне MkDocs, но
   всегда актуален в корне репозитория).
 - **Безопасность** — `security/security-policy.md` и related compliance notes.
+- **Academy KI** — входная точка для сотрудников: [портал](academy/index.md),
+  базовые уроки ([Open WebUI basics](training/openwebui-basics.md),
+  [Prompting 101](training/prompting-101.md)), сценарии
+  ([HowTo](howto/write-customer-email-with-openwebui.md)) и
+  [News](news/index.md).
+- **Проверить статус ERNI-KI** — смотрите
+  [status page](operations/status-page.md) (ссылку на конкретный URL укажите в
+  конфигурации).
 
 > Для быстрых решений используйте Archon (runbooks, checklists, status updates)
 > и держите синхронизацию с этими материалами.

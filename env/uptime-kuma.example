@@ -1,0 +1,5 @@
+# Uptime Kuma configuration
+# Adjust the port if 3001 conflicts locally
+UPTIME_KUMA_PORT=3001
+# Optional: set a custom base path when served behind a reverse proxy (e.g., /status)
+UPTIME_KUMA_BASE_PATH=/
