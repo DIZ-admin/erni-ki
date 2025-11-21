@@ -156,7 +156,7 @@ jobs:
       - name: 🔐 Run Gitleaks
         run: |
           go install github.com/zricethezav/gitleaks/v8@v8.29.1
-          gitleaks detect --redact --source=. --config-path=.gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
+          gitleaks detect --redact --source=. -c .gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
         continue-on-error: true
 
   # Сканирование Docker образов
