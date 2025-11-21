@@ -37,7 +37,7 @@ func TestRootEndpoint(t *testing.T) {
 	router := setupRouter()
 
 	// Создаем тестовый запрос
-	req, err := http.NewRequest("GET", "/", nil)
+	req, err := http.NewRequest("GET", "/", http.NoBody)
 	require.NoError(t, err)
 
 	// Создаем ResponseRecorder для записи ответа
@@ -61,7 +61,7 @@ func TestRootEndpoint(t *testing.T) {
 func TestValidateEndpointMissingToken(t *testing.T) {
 	router := setupRouter()
 
-	req, err := http.NewRequest("GET", "/validate", nil)
+	req, err := http.NewRequest("GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
 	w := httptest.NewRecorder()
@@ -85,7 +85,7 @@ func TestValidateEndpointValidToken(t *testing.T) {
 	// Создаем валидный JWT токен
 	token := createValidJWTToken(t)
 
-	req, err := http.NewRequest("GET", "/validate", nil)
+	req, err := http.NewRequest("GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
 	// Добавляем токен в cookie
@@ -111,7 +111,7 @@ func TestValidateEndpointValidToken(t *testing.T) {
 func TestValidateEndpointInvalidToken(t *testing.T) {
 	router := setupRouter()
 
-	req, err := http.NewRequest("GET", "/validate", nil)
+	req, err := http.NewRequest("GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
 	// Добавляем невалидный токен
