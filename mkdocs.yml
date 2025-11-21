@@ -72,6 +72,11 @@ plugins:
       lang:
         - ru
         - en
+  - blog:
+      blog_dir: news
+      post_dir: news
+      categories: true
+      blog_toc: true
   - git-revision-date-localized:
       type: datetime
       locale: ru
@@ -158,6 +163,15 @@ extra:
 nav:
   - Главная: index.md
   - Сводка: overview.md
+  - Academy KI: academy/index.md
+  - News: news/index.md
+  - HowTo:
+      - howto/write-customer-email-with-openwebui.md
+      - howto/summarize-meeting-notes.md
+      - howto/create-jira-description-with-ai.md
+  - Training:
+      - Open WebUI basics: training/openwebui-basics.md
+      - Prompting 101: training/prompting-101.md
   - Дополнительно:
       - operations/ci-health.md
       - operations/github-governance.md
@@ -188,6 +202,7 @@ nav:
   - Операции:
       - Operations Handbook: operations/operations-handbook.md
       - Admin Guide: operations/admin-guide.md
+      - Status page: operations/status-page.md
       - Monitoring:
           - Monitoring Guide: operations/monitoring-guide.md
           - Monitoring Playbook: operations/monitoring.md
