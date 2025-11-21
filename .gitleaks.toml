@@ -1,0 +1,34 @@
+title = "ERNI-KI gitleaks config"
+description = "Allowlist redacted samples and baselines; fail on real secrets"
+
+[allowlist]
+description = "Known redacted values and sample docs"
+paths = [
+  ".secrets.baseline",
+  "LETSENCRYPT-QUICK-START.md",
+  "QUICK-START-SSL.md",
+  "README-old.md",
+  "compose.yml.example",
+  "examples/",
+  "docs/reports/",
+  "docs/diagnostics/",
+  "docs/api-reference.md",
+  "docs/azure-document-intelligence-guide.md",
+  "docs/erni-ki-configuration-fix-report.md",
+  "docs/litellm-web-interface-setup.md",
+  "docs/openwebui-settings-analysis.md",
+  "docs/database-optimization-configs.md",
+  "docs/database-analysis-report.md",
+  "conf/searxng/settings.yml",
+  "conf/searxng/settings.yml.backup-20250714-090614",
+  "data/searxng/settings.yml.example",
+  "scripts/admin/test-admin-models-display.sh",
+  "scripts/maintenance/system-restart-report.sh",
+  "scripts/troubleshooting/test-tts-integration.sh",
+  "scripts/erni-ki-health-check.sh"
+]
+regexes = [
+  "Authorization: \\*\\*\\*;3;mREDACTED",
+  "REDACTED",
+  "hashed_secret"
+]

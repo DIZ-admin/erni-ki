@@ -151,6 +151,12 @@ jobs:
         uses: zricethezav/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: >-
+            detect --redact
+            --config-path=.gitleaks.toml
+            --report-format=sarif
+            --report-path=gitleaks-results.sarif
 
   # Сканирование Docker образов
   container-scan:
