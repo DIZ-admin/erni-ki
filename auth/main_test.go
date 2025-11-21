@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -14,7 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Настройка тестового окружения
+// Настройка тестового окружения.
 func TestMain(m *testing.M) {
 	// Устанавливаем Gin в тестовый режим
 	gin.SetMode(gin.TestMode)
@@ -31,13 +32,13 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-// Тест корневого эндпоинта
+// Тест корневого эндпоинта.
 func TestRootEndpoint(t *testing.T) {
 	// Создаем тестовый роутер
 	router := setupRouter()
 
 	// Создаем тестовый запрос
-	req, err := http.NewRequest("GET", "/", nil)
+	req, err := http.NewRequestWithContext(context.Background(), "GET", "/", http.NoBody)
 	require.NoError(t, err)
 
 	// Создаем ResponseRecorder для записи ответа
@@ -57,11 +58,11 @@ func TestRootEndpoint(t *testing.T) {
 	assert.Equal(t, "auth-service is running", response["message"])
 }
 
-// Тест валидации с отсутствующим токеном
+// Тест валидации с отсутствующим токеном.
 func TestValidateEndpointMissingToken(t *testing.T) {
 	router := setupRouter()
 
-	req, err := http.NewRequest("GET", "/validate", nil)
+	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
 	w := httptest.NewRecorder()
@@ -78,14 +79,14 @@ func TestValidateEndpointMissingToken(t *testing.T) {
 	assert.Equal(t, "token missing", response["error"])
 }
 
-// Тест валидации с валидным токеном
+// Тест валидации с валидным токеном.
 func TestValidateEndpointValidToken(t *testing.T) {
 	router := setupRouter()
 
 	// Создаем валидный JWT токен
 	token := createValidJWTToken(t)
 
-	req, err := http.NewRequest("GET", "/validate", nil)
+	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
 	// Добавляем токен в cookie
@@ -107,11 +108,11 @@ func TestValidateEndpointValidToken(t *testing.T) {
 	assert.Equal(t, "authorized", response["message"])
 }
 
-// Тест валидации с невалидным токеном
+// Тест валидации с невалидным токеном.
 func TestValidateEndpointInvalidToken(t *testing.T) {
 	router := setupRouter()
 
-	req, err := http.NewRequest("GET", "/validate", nil)
+	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
 	// Добавляем невалидный токен
@@ -133,7 +134,7 @@ func TestValidateEndpointInvalidToken(t *testing.T) {
 	assert.Equal(t, "unauthorized", response["message"])
 }
 
-// Тест функции verifyToken с валидным токеном
+// Тест функции verifyToken с валидным токеном.
 func TestVerifyTokenValid(t *testing.T) {
 	token := createValidJWTToken(t)
 
@@ -143,7 +144,7 @@ func TestVerifyTokenValid(t *testing.T) {
 	assert.True(t, valid)
 }
 
-// Тест функции verifyToken с невалидным токеном
+// Тест функции verifyToken с невалидным токеном.
 func TestVerifyTokenInvalid(t *testing.T) {
 	valid, err := verifyToken("invalid.jwt.token")
 
@@ -151,7 +152,7 @@ func TestVerifyTokenInvalid(t *testing.T) {
 	assert.False(t, valid)
 }
 
-// Тест функции verifyToken с отсутствующим секретом
+// Тест функции verifyToken с отсутствующим секретом.
 func TestVerifyTokenMissingSecret(t *testing.T) {
 	// Временно удаляем переменную окружения
 	originalSecret := os.Getenv("WEBUI_SECRET_KEY")
@@ -167,7 +168,7 @@ func TestVerifyTokenMissingSecret(t *testing.T) {
 	assert.Contains(t, err.Error(), "JWT_SECRET env variable missing")
 }
 
-// Тест функции verifyToken с истекшим токеном
+// Тест функции verifyToken с истекшим токеном.
 func TestVerifyTokenExpired(t *testing.T) {
 	token := createExpiredJWTToken(t)
 
@@ -179,7 +180,7 @@ func TestVerifyTokenExpired(t *testing.T) {
 
 // Вспомогательные функции
 
-// setupRouter создает тестовый роутер
+// setupRouter создает тестовый роутер.
 func setupRouter() *gin.Engine {
 	router := gin.New()
 
@@ -218,7 +219,7 @@ func setupRouter() *gin.Engine {
 	return router
 }
 
-// createValidJWTToken создает валидный JWT токен для тестов
+// createValidJWTToken создает валидный JWT токен для тестов.
 func createValidJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY должен быть установлен для тестов")
@@ -235,7 +236,7 @@ func createValidJWTToken(t *testing.T) string {
 	return tokenString
 }
 
-// createExpiredJWTToken создает истекший JWT токен для тестов
+// createExpiredJWTToken создает истекший JWT токен для тестов.
 func createExpiredJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY должен быть установлен для тестов")

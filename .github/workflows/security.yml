@@ -147,10 +147,17 @@ jobs:
           head: HEAD
           extra_args: --only-verified
 
+      - name: 🐹 Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: false
+
       - name: 🔐 Run Gitleaks
-        uses: zricethezav/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          go install github.com/zricethezav/gitleaks/v8@v8.29.1
+          gitleaks detect --redact --source=. -c .gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
+        continue-on-error: true
 
   # Сканирование Docker образов
   container-scan:

@@ -1,8 +1,8 @@
 # golangci-lint configuration для проекта erni-ki
+# yaml-language-server: $schema=
 # Конфигурация линтера для Go кода
 
 # Версия конфигурации golangci-lint
-version: "2"
 
 run:
   timeout: 5m
@@ -22,7 +22,6 @@ linters-settings:
       - fmt.Printf
 
   govet:
-    check-shadowing: true
     enable-all: true
     disable:
       - fieldalignment # Может быть слишком строгим
@@ -90,9 +89,6 @@ linters-settings:
   stylecheck:
     checks: ["all"]
 
-  unused:
-    check-exported: false
-
   whitespace:
     multi-if: false
     multi-func: false
@@ -126,7 +122,6 @@ linters:
     - durationcheck # Проверка time.Duration
     - errorlint # Проверка ошибок
     - exhaustive # Проверка switch statements
-    - exportloopref # Проверка loop variables
     - gochecknoinits # Проверка init функций
     - gochecknoglobals # Проверка глобальных переменных
     - gocognit # Когнитивная сложность
@@ -145,7 +140,6 @@ linters:
     - misspell # Орфография
     - nakedret # Naked returns
     - nilerr # Nil errors
-    - nlreturn # Новые строки
     - noctx # HTTP requests без context
     - nolintlint # Проверка nolint директив
     - prealloc # Предварительное выделение памяти
@@ -163,24 +157,13 @@ linters:
   disable:
     # Отключенные линтеры (могут быть слишком строгими)
     - cyclop # Цикломатическая сложность (дублирует gocyclo)
-    - deadcode # Устарел, заменен на unused
-    - exhaustivestruct # Слишком строгий
     - forbidigo # Запрет функций
     - funlen # Длина функций (может быть слишком строгим)
     - gci # Импорты (может конфликтовать с goimports)
     - godox # TODO комментарии
-    - golint # Устарел, заменен на revive
-    - gomnd # Magic numbers (может быть слишком строгим)
-    - ifshort # Устарел
-    - interfacer # Устарел
-    - maligned # Устарел, заменен на fieldalignment
     - nestif # Вложенность if
-    - nlreturn # Новые строки (может быть слишком строгим)
     - paralleltest # Параллельные тесты (может быть излишним)
-    - scopelint # Устарел, заменен на exportloopref
-    - structcheck # Устарел, заменен на unused
     - testpackage # Тестовые пакеты
-    - varcheck # Устарел, заменен на unused
     - varnamelen # Длина имен переменных
     - wrapcheck # Обертывание ошибок
     - wsl # Пробелы (может быть слишком строгим)
@@ -195,4 +178,4 @@ issues:
 
 severity:
   # Уровень серьезности по умолчанию
-  default: error
+  default-severity: error
