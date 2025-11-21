@@ -122,7 +122,6 @@ linters:
     - durationcheck # Проверка time.Duration
     - errorlint # Проверка ошибок
     - exhaustive # Проверка switch statements
-    - exportloopref # Проверка loop variables
     - gochecknoinits # Проверка init функций
     - gochecknoglobals # Проверка глобальных переменных
     - gocognit # Когнитивная сложность
