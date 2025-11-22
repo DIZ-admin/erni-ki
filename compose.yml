@@ -495,7 +495,8 @@ services:
   # Docling OCR/ingestion pipeline (GPU aware)
   docling:
     # Официальный GPU-образ Docling Serve (CUDA 12.6)
-    image: ghcr.io/docling-project/docling-serve-cu126:main
+    # Переопределяйте DOCLING_IMAGE в .env на зафиксированный digest/tag.
+    image: ${DOCLING_IMAGE:-ghcr.io/docling-project/docling-serve-cu126:main}
     depends_on:
       ollama:
         condition: service_healthy
@@ -508,9 +509,9 @@ services:
     oom_score_adj: -500
     env_file: env/docling.env
     environment:
-      - NVIDIA_VISIBLE_DEVICES=${DOCLING_GPU_VISIBLE_DEVICES:-1}
+      - NVIDIA_VISIBLE_DEVICES=${DOCLING_GPU_VISIBLE_DEVICES:-0}
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-      - CUDA_VISIBLE_DEVICES=${DOCLING_CUDA_VISIBLE_DEVICES:-1}
+      - CUDA_VISIBLE_DEVICES=${DOCLING_CUDA_VISIBLE_DEVICES:-0}
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:5001/health || exit 1"]
@@ -527,7 +528,7 @@ services:
       - ./data/docling/docling-models:/docling-artifacts
       - ./data/docling/shared:/docling-shared
     labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=document-processing"
       - "com.erni-ki.service=docling"
 
@@ -645,6 +646,29 @@ services:
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     secrets:
       - grafana_admin_password
+    # Используем стандартную Docker bridge сеть
+
+  # Uptime Kuma - визуальный статус ERNI-KI
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: erni-ki-uptime-kuma
+    env_file: env/uptime-kuma.env
+    restart: unless-stopped
+    logging: *monitoring-logging
+    ports:
+      - "127.0.0.1:3001:3001" # Локальный порт; внешний доступ через reverse-proxy
+    volumes:
+      - ./data/uptime-kuma:/app/data
+    healthcheck:
+      test: ["CMD", "node", "/app/server/ping.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    labels:
+      # Разрешить автообновление для Uptime Kuma
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     # Используем стандартную Docker bridge сеть
 
   # Loki - современная система логирования (замена Elasticsearch)

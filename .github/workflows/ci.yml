@@ -275,11 +275,14 @@ jobs:
           build-args: |
             SKIP_TESTS=true
 
+      - name: 🧾 Set image ref for Trivy
+        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${GITHUB_REPOSITORY,,}/auth:${GITHUB_REF_NAME#refs/heads/}" >> "${GITHUB_ENV}"
+
       - name: 🔍 Run Trivy on Docker image
         uses: aquasecurity/trivy-action@0.28.0
         continue-on-error: true
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:${{ github.ref_name }}
+          image-ref: ${{ env.TRIVY_IMAGE_REF }}
           format: "sarif"
           output: "docker-trivy-results.sarif"
 
