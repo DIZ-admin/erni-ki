@@ -358,5 +358,6 @@ Nach der Fehlerbehebung überprüfen:
 ## 🔗 Verwandte Dokumentation
 
 - [Admin-Leitfaden](admin-guide.md) - Systemverwaltung
-- [Architektur](architecture.md) - Systemarchitektur
-- [Installationsanleitung](installation-guide.md) - Setup-Anweisungen
+- [Architektur](../architecture/architecture.md) - Systemarchitektur
+- [Installationsanleitung](../getting-started/installation.md) -
+  Setup-Anweisungen
