@@ -1,3 +1,12 @@
+---
+title: '🚀 Detaillierte Installationsanleitung für ERNI-KI'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # 🚀 Detaillierte Installationsanleitung für ERNI-KI
 
 > **Dokumentversion:** 2.0 **Aktualisierungsdatum:** 2025-07-04

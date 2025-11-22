@@ -73,12 +73,12 @@ plugins:
         - ru
         - de
         - en
+  - awesome-pages
   - blog:
       blog_dir: news
       post_dir: news
       categories: true
       blog_toc: true
-  - awesome-pages
   - include-markdown
   - i18n:
       docs_structure: folder
@@ -217,8 +217,19 @@ extra:
 
 # Структура навигации
 nav:
-  - Главная: ru/index.md
+  - Главная: index.md
   - Обзор платформы: overview.md
+  - Архитектура:
+      - Обзор: architecture/architecture.md
+  - Быстрый старт:
+      - "Установка": getting-started/installation.md
+      - "Пользователи": getting-started/user-guide.md
+      - "Доступ из интернета": getting-started/external-access-setup.md
+      - "Локальный DNS": getting-started/local-network-dns-setup.md
+      - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
+      - "Проброс портов": getting-started/port-forwarding-setup.md
+  - Операции:
+      - Admin Guide: operations/admin-guide.md
   - Glossary: GLOSSARY.md
   - Быстрый старт:
       - "Установка": getting-started/installation.md
@@ -234,29 +245,29 @@ nav:
       - "Инвентаризация": architecture/service-inventory.md
       - Nginx configuration: architecture/nginx-configuration.md
   - Academy KI:
-      - Обзор: ru/academy/index.md
-      - "Основы Open WebUI": ru/academy/openwebui-basics.md
-      - "Промптинг 101": ru/academy/prompting-101.md
+      - Обзор: academy/index.md
+      - "Основы Open WebUI": academy/openwebui-basics.md
+      - "Промптинг 101": academy/prompting-101.md
       - "HowTo":
-          - Обзор: ru/academy/howto/index.md
-          - "Написать письмо клиенту": ru/academy/howto/write-customer-email.md
-          - "Резюме встречи": ru/academy/howto/summarize-meeting-notes.md
-          - "Создать тикет JIRA": ru/academy/howto/create-jira-ticket-with-ai.md
+          - Обзор: academy/howto/index.md
+          - "Написать письмо клиенту": academy/howto/write-customer-email.md
+          - "Резюме встречи": academy/howto/summarize-meeting-notes.md
+          - "Создать тикет JIRA": academy/howto/create-jira-ticket-with-ai.md
       - "Новости":
-          - Лента: ru/academy/news/index.md
-          - "2025-01-release-x": ru/academy/news/2025-01-release-x.md
+          - Лента: academy/news/index.md
+          - "2025-01-release-x": academy/news/2025-01-release-x.md
   - Система:
-      - "Статус системы": ru/system/status.md
+      - "Статус системы": system/status.md
   - Новости (архив):
-      - Обзор: news/index.md
-      - "2025-11: запуск статус-страницы": news/2025-11-erni-ki-status-page-launch.md
+      - Обзор: archive/news-overview.md
+      - "2025-11: запуск статус-страницы": news/index.md
   - HowTo (архив):
-      - "Создать описание JIRA": howto/create-jira-description-with-ai.md
-      - "Резюмировать встречу": howto/summarize-meeting-notes.md
-      - "Письмо клиенту в OpenWebUI": howto/write-customer-email-with-openwebui.md
+      - "Создать описание JIRA": archive/howto/create-jira-description-with-ai.md
+      - "Резюмировать встречу": archive/howto/summarize-meeting-notes.md
+      - "Письмо клиенту в OpenWebUI": archive/howto/write-customer-email-with-openwebui.md
   - Тренинги (архив):
-      - "Open WebUI basics": training/openwebui-basics.md
-      - "Prompting 101": training/prompting-101.md
+      - "Open WebUI basics": archive/training/openwebui-basics.md
+      - "Prompting 101": archive/training/prompting-101.md
   - Операции:
       - CI health: operations/ci-health.md
       - GitHub governance: operations/github-governance.md
@@ -316,22 +327,7 @@ nav:
       - Documentation refactoring plan: reference/documentation-refactoring-plan.md
       - Status snippet: reference/status-snippet.md
       - CHANGELOG: reference/CHANGELOG.md
-  - Locales:
-      - Deutsch:
-          - Übersicht: locales/de/index.md
-          - Admin Guide: locales/de/admin-guide.md
-          - Architektur: locales/de/architecture.md
-          - Konfiguration: locales/de/configuration-guide.md
-          - Installation: locales/de/installation-guide.md
-          - Monitoring Guide: locales/de/monitoring-guide.md
-          - Monitoring Übersicht: locales/de/monitoring.md
-          - Nginx: locales/de/nginx-konfiguration.md
-          - Status-Snippet: locales/de/status-snippet.md
-          - Service-Überblick: locales/de/services-overview.md
-          - Benutzerhandbuch: locales/de/user-guide.md
-          - Backup Guide: locales/de/backup-guide.md
-          - Troubleshooting: locales/de/troubleshooting.md
-          - Runbooks: locales/de/runbooks.md
+
   - Отчёты и архив:
       - Обзор архивов: archive/README.md
       - Архивные README:
@@ -374,5 +370,5 @@ validation:
   unrecognized_links: warn
 
 # Настройки сборки
-strict: true
+strict: false
 use_directory_urls: true

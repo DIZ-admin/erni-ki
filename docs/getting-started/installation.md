@@ -1,3 +1,11 @@
+---
+title: 'installation'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'ru'
+---
+
 # 📦 Installation Guide - ERNI-KI
 
 > **Версия:** 7.0 **Дата обновления:** 19.09.2025 **Статус:** Production Ready
