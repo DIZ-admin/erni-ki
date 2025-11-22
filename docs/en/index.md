@@ -1,13 +1,18 @@
 ---
 page_id: site.home
-translation_status: outdated
+translation_status: partial
+doc_version: '2025.02'
 ---
 
 # ERNI Academy KI
 
-This is the English version of the portal. Content will follow the Russian
-canonical pages.
+English portal for ERNI KI users. Russian pages remain the canonical source;
+this version tracks them and highlights the most important user links.
 
-- See the Russian site for full details.
-- Check uptime: **[System status](system/status.md)**.
-- Start here: [Academy KI](academy/index.md).
+- Start here: [Academy KI](academy/index.md) — Open WebUI basics, Prompting 101,
+  HowTo, News.
+- Quick start: [Open WebUI basics](../training/openwebui-basics.md) and
+  [Prompting 101](../training/prompting-101.md).
+- Practical scenarios: [HowTo collection](academy/howto/index.md).
+- Uptime first: **[System status](system/status.md)** before you escalate an
+  issue.
