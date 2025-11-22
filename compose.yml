@@ -653,7 +653,7 @@ services:
     image: louislam/uptime-kuma:1
     container_name: erni-ki-uptime-kuma
     env_file: env/uptime-kuma.env
-    restart: unless-stopped
+    restart: always
     logging: *monitoring-logging
     ports:
       - "127.0.0.1:3001:3001" # Локальный порт; внешний доступ через reverse-proxy
@@ -669,7 +669,10 @@ services:
       # Разрешить автообновление для Uptime Kuma
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Используем стандартную Docker bridge сеть
+    networks:
+      default:
+        aliases:
+          - uptime-kuma
 
   # Loki - современная система логирования (замена Elasticsearch)
   loki:
