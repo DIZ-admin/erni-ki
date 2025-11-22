@@ -80,12 +80,10 @@ curl -I "https://ki.erni-gruppe.ch"
 ### 🚫 Частые ошибки диагностики
 
 1. **Тестирование без аутентификации**
-
    - ❌ `curl http://localhost:4000/v1/models`
    - ✅ `curl -H "Authorization: Bearer TOKEN" http://localhost:4000/v1/models`
 
 2. **Неправильные endpoints**
-
    - ❌ `curl http://localhost:8080/search?q=test`
    - ✅ `curl http://localhost:8080/search?q=test&format=json`
 

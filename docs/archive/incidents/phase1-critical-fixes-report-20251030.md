@@ -353,14 +353,12 @@ Docker Secrets.
 ### Приоритет: Высокий
 
 1. **Custom entrypoint для OpenWebUI (4 часа)**
-
    - Создать `scripts/openwebui-entrypoint.sh`
    - Читать секреты из `/run/secrets/`
    - Строить `DATABASE_URL` динамически
    - Обновить `compose.yml` для использования custom entrypoint
 
 2. **Миграция LiteLLM на Docker Secrets (2 часа)**
-
    - Создать custom entrypoint для LiteLLM
    - Переместить `DATABASE_URL` и `LITELLM_MASTER_KEY` в secrets
 
@@ -371,7 +369,6 @@ Docker Secrets.
 ### Приоритет: Средний
 
 4. **Добавить healthchecks для exporters (2 часа)**
-
    - `nginx-exporter`, `ollama-exporter`, `nvidia-exporter`, `redis-exporter`
    - Улучшить мониторинг состояния
 
@@ -384,7 +381,6 @@ Docker Secrets.
 ## 📚 Созданная документация
 
 1. **secrets/README.md** - Полное руководство по Docker Secrets
-
    - Быстрый старт
    - Безопасность
    - Использование в Docker Compose
