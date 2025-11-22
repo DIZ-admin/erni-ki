@@ -20,7 +20,6 @@ Exporter + RAG Exporter). Externer Zugriff über Cloudflare-Tunnel (5 Domains).
 #### 🔄 Monitoring-Update und Systemstabilisierung (02. Oktober 2025)
 
 - **Monitoring auf neueste stabile Versionen aktualisiert**:
-
   - Prometheus v2.47.2 → v3.0.1 (+30% Performance, -14% Speicher, 132
     Alert-Regeln)
   - Loki v2.9.2 → v3.5.5 (TSDB v13, +40% Query-Geschwindigkeit, -9% Speicher)
@@ -38,21 +37,18 @@ Exporter + RAG Exporter). Externer Zugriff über Cloudflare-Tunnel (5 Domains).
 #### 🔧 Kritische Verbesserungen (25. September 2025)
 
 - **Systemstabilität**: Erreicht 96,4% Gesundheitsstatus
-
   - 26 von 30 Containern im gesunden Zustand
   - Alle kritischen Probleme behoben (nginx routing, SSL handshake, Cloudflare
     tunnels)
   - GPU-Beschleunigung für Ollama und OpenWebUI aktiv
 
 - **Neue Komponenten integriert**:
-
   - **LiteLLM v1.77.2**: Context Engineering Gateway mit PostgreSQL Integration
   - **MCP Server**: Model Context Protocol für erweiterte AI-Funktionen
   - **Apache Tika**: Metadaten-Extraktion für Dokumente
   - **Fluent Bit**: Zentralisierte Log-Sammlung
 
 - **Architektur-Updates**: Neue Mermaid-Diagramme mit allen 30 Services
-
   - Content Security Policy für localhost-Unterstützung optimiert
   - CORS-Header für Entwicklung und Production erweitert
   - SSL-Konfiguration mit ssl_verify_client off korrigiert

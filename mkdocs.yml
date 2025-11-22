@@ -219,6 +219,7 @@ extra:
 nav:
   - Главная: ru/index.md
   - Обзор платформы: overview.md
+  - Glossary: GLOSSARY.md
   - Быстрый старт:
       - "Установка": getting-started/installation.md
       - "Конфигурация": getting-started/configuration-guide.md

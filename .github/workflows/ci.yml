@@ -228,6 +228,39 @@ jobs:
         with:
           sarif_file: "trivy-results.sarif"
 
+  # Проверка ссылок в документации
+  link-check:
+    name: 🔗 Check Documentation Links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔗 Check links with lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --max-redirects 5
+            --exclude-link-local
+            --exclude 'localhost'
+            --exclude '127\.0\.0\.1'
+            --exclude 'example\.com'
+            --exclude 'ki\.erni-gruppe\.ch'
+            'docs/**/*.md'
+            'README.md'
+          fail: true
+        continue-on-error: true
+
+      - name: 📊 Create link check summary
+        if: always()
+        run: |
+          echo "## 🔗 Link Check Results" >> $GITHUB_STEP_SUMMARY
+          cat lychee/out.md >> $GITHUB_STEP_SUMMARY || echo "No broken links found! ✅" >> $GITHUB_STEP_SUMMARY
+
   # Сборка Docker образов
   docker-build:
     name: 🐳 Docker Build
@@ -295,7 +328,7 @@ jobs:
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
-    needs: [lint, go-lint, test-go, test-js, security, docker-build]
+    needs: [lint, go-lint, test-go, test-js, security, link-check, docker-build]
     if: always() && github.ref == 'refs/heads/main'
 
     steps:
