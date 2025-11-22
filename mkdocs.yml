@@ -71,20 +71,31 @@ plugins:
   - search:
       lang:
         - ru
+        - de
         - en
   - blog:
       blog_dir: news
       post_dir: news
       categories: true
       blog_toc: true
+  - awesome-pages
+  - include-markdown
+  - i18n:
+      docs_structure: folder
+      languages:
+        - locale: ru
+          default: true
+          name: Русский
+        - locale: de
+          name: Deutsch
+        - locale: en
+          name: English
   - git-revision-date-localized:
       type: datetime
       locale: ru
       enable_parallel_processing: false
   - minify:
       minify_html: true
-  - awesome-pages
-  - include-markdown
 
 # Расширения Markdown
 markdown_extensions:
@@ -161,7 +172,12 @@ extra:
 
 # Структура навигации
 nav:
-  - Главная: index.md
+  - Главная: ru/index.md
+  - Academy KI:
+      - "Основы Open WebUI": ru/academy/openwebui-basics.md
+      - "Промптинг 101": ru/academy/prompting-101.md
+      - "HowTo": ru/academy/howto/index.md
+      - "Новости": ru/academy/news/index.md
   - Сводка: overview.md
   - Academy KI: academy/index.md
   - News: news/index.md
