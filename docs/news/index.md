@@ -1,9 +1,7 @@
-# ERNI-KI News
+---
+title: 'Blog'
+date: 2025-11-22
+description: 'ERNI-KI Blog'
+---
 
-Stay up to date with platform releases and AI usage updates. Each post includes
-what changed, how it impacts users, and where to get help.
-
-- [2025-11 — ERNI-KI status page launch](2025-11-erni-ki-status-page-launch.md)
-
-> Tip: Use the search bar to quickly find announcements by keyword (e.g., "Open
-> WebUI", "maintenance", "release").
+# Blog

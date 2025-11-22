@@ -1,3 +1,12 @@
+---
+title: '📊 ERNI-KI Monitoring-Leitfaden'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # 📊 ERNI-KI Monitoring-Leitfaden
 
 Umfassender Leitfaden für die Überwachung des ERNI-KI Systems mit 9
@@ -343,6 +352,15 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 
 # Redis Exporter Logs prüfen
 docker logs erni-ki-Redis Monitoring über Grafana --tail 20
+```
+
+### 🔔 Alarmierung testen {#alert-testing}
+
+Um die Alarmierung zu testen, können Sie manuell einen Alarm auslösen:
+
+```bash
+# Test-Alarm an AlertManager senden
+curl -H "Content-Type: application/json" -d '[{"labels":{"alertname":"TestAlert"}}]' http://localhost:9093/api/v1/alerts
 ```
 
 ## 🎯 Erfolgskriterien

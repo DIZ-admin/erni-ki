@@ -1,3 +1,12 @@
+---
+title: '👨‍💼 ERNI-KI Administrator-Handbuch'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # 👨‍💼 ERNI-KI Administrator-Handbuch
 
 > **Dokumentversion:** 7.0 **Aktualisierungsdatum:** 2025-09-11 **Zielgruppe:**

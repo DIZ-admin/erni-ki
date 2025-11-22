@@ -6,8 +6,8 @@ guided start and the ERNI Gruppe tone-of-voice guidelines.
 
 ## Before you start
 
-- Check the [status page](../operations/status-page.md). If the platform is not
-  **Operational**, wait or follow the incident channel.
+- Check the [status page](../../operations/status-page.md). If the platform is
+  not **Operational**, wait or follow the incident channel.
 - Confirm you are using company-approved networks/VPN if required.
 - Keep handy the list of allowed models and data types:
   `<INSERT APPROVED MODELS LIST>` / `<INSERT DATA CLASSIFICATION GUIDE>`.
@@ -17,7 +17,7 @@ guided start and the ERNI Gruppe tone-of-voice guidelines.
 ## Sign in and access
 
 - Open the Open WebUI URL provided by your team. If unsure, ask your admin or
-  check the [status page](../operations/status-page.md) for the current
+  check the [status page](../../operations/status-page.md) for the current
   endpoint.
 - Sign in with your company account if Single Sign-On is enabled. Otherwise, use
   the credentials shared by your administrator.
@@ -76,7 +76,7 @@ guided start and the ERNI Gruppe tone-of-voice guidelines.
 ## Troubleshooting
 
 - Slow or failing responses: check the
-  [status page](../operations/status-page.md), then retry.
+  [status page](../../operations/status-page.md), then retry.
 - Access issues: confirm your account is active and verify VPN/SSO requirements.
 - If problems persist, contact the platform owners with the timestamp and
   screenshot.
