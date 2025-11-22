@@ -39,7 +39,7 @@
 2. **Удаление патчей**
    - Директория `patches/openwebui` очищена (патчи 001–004 удалены из репозитория).
 3. **Документация**
-   - README, docs/index.md, docs/overview.md и все status snippets обновлены до v0.6.36.
+   - README, docs/ru/index.md, docs/overview.md и все status snippets обновлены до v0.6.36.
    - Архитектурные гайды (RU/DE) отражают новую версию и дату обновления.
 4. **Monitoring**
    - У `postgres-exporter` выключен сборщик `stat_bgwriter` через `--no-collector.stat_bgwriter`, контейнер пересобран (`docker compose up -d postgres-exporter postgres-exporter-proxy`).
