@@ -886,13 +886,11 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | .name'
 ### Metrics Collection Optimization
 
 1. **Scrape Intervals:** Adjust based on metric importance
-
    - Critical metrics: 15s interval
    - Standard metrics: 30s interval
    - Historical metrics: 60s interval
 
 2. **Retention Policies:** Configure appropriate data retention
-
    - High-resolution: 7 days
    - Medium-resolution: 30 days
    - Low-resolution: 1 year

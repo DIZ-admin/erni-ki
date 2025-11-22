@@ -171,8 +171,8 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 CLIENT LI
 
 ### 2. Исправление OpenWebUI → MCP Server Connectivity
 
-**Проблема:** "Cannot connect to host mcposerver:8000 ssl:default [Name
-or service not known]"
+**Проблема:** "Cannot connect to host mcposerver:8000 ssl:default [Name or
+service not known]"
 
 **Диагностика:**
 
@@ -465,7 +465,6 @@ curl -k https://localhost/health
 ### ✅ Соблюдаются
 
 1. **Docker Compose структура:**
-
    - ✅ Использование named volumes для критических данных
    - ✅ Health checks для большинства сервисов
    - ✅ Resource limits для критических сервисов
@@ -473,21 +472,18 @@ curl -k https://localhost/health
    - ✅ Restart policies (unless-stopped)
 
 2. **Логирование:**
-
    - ✅ 4-уровневая стратегия логирования
    - ✅ Централизованное логирование через Fluent Bit
    - ✅ Структурированные логи (JSON format)
    - ✅ Log rotation настроен
 
 3. **Мониторинг:**
-
    - ✅ Полный Prometheus + Grafana стек
    - ✅ Множественные exporters для метрик
    - ✅ Loki для централизованных логов
    - ✅ Alertmanager для уведомлений
 
 4. **Backup:**
-
    - ✅ Backrest для автоматических бэкапов
    - ✅ Retention policy (7 дней daily, 4 недели weekly)
    - ✅ Backup критических данных (PostgreSQL, OpenWebUI, Ollama)
@@ -500,19 +496,16 @@ curl -k https://localhost/health
 ### ⚠️ Требуют улучшения
 
 1. **Безопасность:**
-
    - ⚠️ Пароли в env файлах (рекомендуется Docker Secrets)
    - ⚠️ SSL сертификаты отсутствуют локально
    - ⚠️ Нет автоматического обновления SSL сертификатов
 
 2. **CI/CD:**
-
    - ⚠️ Нет автоматизированного тестирования
    - ⚠️ Нет автоматического деплоя
    - ⚠️ Нет pre-commit hooks для валидации
 
 3. **High Availability:**
-
    - ⚠️ PostgreSQL single instance (нет репликации)
    - ⚠️ Redis single instance (нет Sentinel)
    - ⚠️ Single point of failure для критических сервисов

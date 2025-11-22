@@ -26,7 +26,6 @@ JSON.parse: unexpected end of data at line 1 column 1 of the JSON data
 ### Симптомы
 
 1. **Firefox (v144.0):**
-
    - ❌ Ошибка: `JSON.parse: unexpected end of data`
    - ❌ HTTP Status: `400 Bad Request`
    - ❌ Response: `400 Bad Request nginx/1.28.0`
@@ -34,7 +33,6 @@ JSON.parse: unexpected end of data at line 1 column 1 of the JSON data
      `client prematurely closed stream: only 0 out of 151554 bytes received`
 
 2. **Chrome:**
-
    - ✅ Загрузка работает нормально
    - ✅ HTTP Status: `200 OK`
    - ✅ Файлы успешно обрабатываются
