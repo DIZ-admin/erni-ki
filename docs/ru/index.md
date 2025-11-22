@@ -1,4 +1,4 @@
-# ERNI-KI Documentation Hub
+# ERNI-KI — портал документации (RU)
 
 ERNI-KI — production-ready AI платформа на базе OpenWebUI, Ollama, LiteLLM и
 MCP, окружённая полным стеком наблюдаемости, мониторинга и безопасности. Здесь
