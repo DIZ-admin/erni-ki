@@ -37,7 +37,7 @@
 - При обновлении статусных метрик редактируйте только
   `docs/reference/status.yml`, затем выполняйте
   `scripts/docs/update_status_snippet.py` — он синхронизирует `README.md`,
-  `docs/index.md` и `docs/overview.md`.
+  `docs/ru/index.md` и `docs/overview.md`.
 
 ### 🧪 Тестирование
 
@@ -145,6 +145,12 @@ npm install
 cd auth
 go mod download
 cd ..
+
+# Python зависимости для сборки документации (MkDocs + i18n)
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install mkdocs mkdocs-material mkdocs-static-i18n
 
 # Копирование конфигураций
 cp compose.yml.example compose.yml
