@@ -79,6 +79,6 @@ curl -X POST http://localhost:9093/-/reload  # Alertmanager
   `docs/reference/status-snippet.md` и вставку в `README.md`.
 - Для MkDocs страниц используйте
   `{% include-markdown "reference/status-snippet.md" %}` (пример —
-  `docs/index.md`, `docs/overview.md`).
+  `docs/ru/index.md`, `docs/overview.md`).
 - В PR приложите результат `git status` подтверждающий, что README и snippet
   синхронизированы.

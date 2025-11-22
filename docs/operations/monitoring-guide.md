@@ -173,6 +173,24 @@ ERNI-KI monitoring system includes:
 Алерт появится в Slack и PagerDuty с пометкой `SmokeTestAlert`. Не забудьте
 закрыть его вручную.
 
+### Alert testing {#alert-testing}
+
+1. Подготовить переменные окружения для теста доставки:
+   - `PROMETHEUS_URL` указывает на Prometheus, который должен принимать метрики
+     тестового алерта.
+   - `ALERTMANAGER_URL` указывает на Alertmanager, куда отправится событие.
+2. Запустить синтетический алерт из CLI:
+
+   ```bash
+   ./scripts/monitoring/test-alert-delivery.sh critical ops
+   ```
+
+   Скрипт публикует тестовое событие `SmokeTestAlert` и проверяет доставку в
+   Slack и PagerDuty.
+
+3. После успешной проверки закройте алерт вручную в Alertmanager, чтобы не
+   оставлять тестовые записи в очереди.
+
 ### Alertmanager Queue Runbook {#alertmanagerQueue}
 
 1. Проверить Slack/PagerDuty — скрипт `alertmanager-queue-watch.sh`
