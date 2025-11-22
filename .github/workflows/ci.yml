@@ -83,20 +83,16 @@ jobs:
           cache-dependency-path: auth/go.sum
 
       - name: 📦 Download dependencies
-        working-directory: ./auth
         run: go mod download
 
       - name: 🔍 Verify dependencies
-        working-directory: ./auth
         run: go mod verify
 
       - name: 🧪 Run tests
-        working-directory: ./auth
         run: |
           go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: 📊 Generate coverage report
-        working-directory: ./auth
         run: go tool cover -html=coverage.out -o coverage.html
 
       - name: 📤 Upload coverage to Codecov
