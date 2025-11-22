@@ -68,8 +68,18 @@ theme:
 
 # Плагины
 plugins:
-  - search
+  - search:
+      lang:
+        - ru
+        - de
+        - en
+  - blog:
+      blog_dir: news
+      post_dir: news
+      categories: true
+      blog_toc: true
   - awesome-pages
+  - include-markdown
   - i18n:
       docs_structure: folder
       languages:
@@ -121,7 +131,7 @@ plugins:
       enable_parallel_processing: false
   - minify:
       minify_html: true
-  - include-markdown
+
 
 # Расширения Markdown
 markdown_extensions:
