@@ -1,4 +1,13 @@
-# ERNI-KI — портал документации (DE)
+---
+page_id: site.home
+translation_status: outdated
+---
 
-Документация на немецком языке будет добавлена позже. Эта страница
-зарезервирована для будущего перевода.
+# ERNI Academy KI
+
+Dies ist die deutschsprachige Version des Portals. Inhalt wird nach der
+russischen Referenz aktualisiert.
+
+- Für vollständige Informationen siehe die russische Seite.
+- Status prüfen: **[Systemstatus](system/status.md)**.
+- Academy-Start: [Academy KI](academy/index.md).

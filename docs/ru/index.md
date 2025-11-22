@@ -1,55 +1,34 @@
-# ERNI-KI — портал документации (RU)
+---
+page_id: site.home
+translation_status: complete
+---
 
-ERNI-KI — production-ready AI платформа на базе OpenWebUI, Ollama, LiteLLM и
-MCP, окружённая полным стеком наблюдаемости, мониторинга и безопасности. Здесь
-собраны актуальные гайды для DevOps/SRE и ML-инженеров, а также понятные
-инструкции для офисных сотрудников о том, как безопасно работать с AI в
-повседневных задачах.
+# ERNI Academy KI
 
-**Academy KI** — отдельный вход для сотрудников с быстрым стартом, обучением и
-готовыми сценариями. Начните с [портала Academy KI](academy/index.md), чтобы
-получить ссылки на базовые уроки, примеры промптов и актуальные новости.
+Добро пожаловать в единый портал обучения и поддержки ERNI KI. Здесь собраны
+инструкции по работе с Open WebUI, примеры промптов и новости продукта на
+русском языке как на основном языке портала.
 
-## Обновления
+- Для быстрого старта переходите в раздел [Academy KI](academy/index.md).
+- Следите за обновлениями в [ленте новостей](academy/news/index.md).
+- Если что-то не работает, сначала нажмите
+  **[Проверить статус системы](system/status.md)**.
 
-<!-- STATUS_SNIPPET_START -->
+## Актуальное состояние платформы
 
-> **Статус системы (2025-11-14) — Production Ready v12.1**
->
-> - Контейнеры: 30/30 контейнеров healthy
-> - Графана: 18/18 Grafana дашбордов
-> - Алерты: 27 Prometheus alert rules активны
-> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU), Go 1.24.10
-> - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
-> - Мониторинг: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
->   v3.2.0, Alertmanager v0.28.0
-> - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
->   01:30, Watchtower selective updates
-> - Примечание: Наблюдаемость и AI стек актуализированы в ноябре 2025
+- **Версия:** Open WebUI 0.6.36 + Ollama 0.12.11, LiteLLM gateway и
+  RAG-компоненты (Docling, Tika, EdgeTTS) развернуты и проходят мониторинг.
+- **Инфраструктура:** около 30 контейнеров (prod), Prometheus/Grafana/Loki,
+  Watchtower/cron активны, GPU-ускорение включено.
+- **Доступ:** прод — `https://ki.erni-gruppe.ch`, локально —
+  `http://localhost:8080` при запуске `docker compose up -d`.
+- **Обновлено:** информация синхронизирована с README и текущей сборкой CI.
 
-<!-- STATUS_SNIPPET_END -->
+## Как устроен портал
 
-## Быстрые переходы
-
-- **Архитектура и сервисы** — `architecture/architecture.md`,
-  `architecture/service-inventory.md`, `architecture/services-overview.md`.
-- **Операции** — `operations/operations-handbook.md`,
-  `operations/monitoring-guide.md`, `operations/automated-maintenance-guide.md`,
-  `operations/runbooks/`.
-- **Хранилище и данные** — `docs/data/database-monitoring-plan.md`,
-  `docs/data/redis-operations-guide.md`,
-  `docs/data/database-production-optimizations.md`.
-- **ML и API** — `reference/api-reference.md`, `README.md` (вне MkDocs, но
-  всегда актуален в корне репозитория).
-- **Безопасность** — `security/security-policy.md` и related compliance notes.
-- **Academy KI** — входная точка для сотрудников: [портал](academy/index.md),
-  базовые уроки ([Open WebUI basics](training/openwebui-basics.md),
-  [Prompting 101](training/prompting-101.md)), сценарии
-  ([HowTo](howto/write-customer-email-with-openwebui.md)) и
-  [News](news/index.md).
-- **Проверить статус ERNI-KI** — смотрите
-  [status page](operations/status-page.md) (ссылку на конкретный URL укажите в
-  конфигурации).
-
-> Для быстрых решений используйте Archon (runbooks, checklists, status updates)
-> и держите синхронизацию с этими материалами.
+1. **Русский — канонический язык.** Все материалы сначала публикуются здесь и
+   становятся источником для переводов.
+2. **Переключатель языка** позволяет переходить на немецкий и английский
+   варианты страниц, когда они готовы.
+3. **Структура едина**: Academy KI → Основы, Промптинг, HowTo, Новости, а также
+   раздел «Система» с доступом к статусу сервисов.

@@ -73,14 +73,11 @@ plugins:
         - ru
         - de
         - en
-<<<<<<< HEAD
   - blog:
       blog_dir: news
       post_dir: news
       categories: true
       blog_toc: true
-=======
->>>>>>> origin/codex/audit-documentation-for-multilingual-setup-yrtg7u
   - awesome-pages
   - include-markdown
   - i18n:
@@ -88,17 +85,53 @@ plugins:
       languages:
         - locale: ru
           default: true
-          name: Русский
+          name: "Русский"
+          site_name: "ERNI Academy KI"
         - locale: de
-          name: Deutsch
+          name: "Deutsch"
+          nav_translations:
+            Главная: Startseite
+            Academy KI: Academy KI
+            "Основы Open WebUI": "Open WebUI Grundlagen"
+            "Промптинг 101": "Prompting 101"
+            "HowTo": "HowTo"
+            "Новости": "News"
+            Система: System
+            "Статус системы": "Systemstatus"
+            "Nginx configuration": "Nginx-Konfiguration"
+            Операции: Betrieb
+            "Operations Handbook": Betriebshandbuch
+            "Admin Guide": Admin-Handbuch
+            "Status page": Statusseite
+            Monitoring: Monitoring
+            "Monitoring Guide": Monitoring-Leitfaden
+            "Monitoring Playbook": Monitoring-Runbook
         - locale: en
-          name: English
+          name: "English"
+          nav_translations:
+            Главная: Home
+            Academy KI: Academy KI
+            "Основы Open WebUI": "Open WebUI basics"
+            "Промптинг 101": "Prompting 101"
+            "HowTo": "HowTo"
+            "Новости": "News"
+            Система: System
+            "Статус системы": "System status"
+            "Nginx configuration": "Nginx configuration"
+            Операции: Operations
+            "Operations Handbook": "Operations Handbook"
+            "Admin Guide": "Admin Guide"
+            "Status page": "Status page"
+            Monitoring: Monitoring
+            "Monitoring Guide": "Monitoring Guide"
+            "Monitoring Playbook": "Monitoring Playbook"
   - git-revision-date-localized:
       type: datetime
       locale: ru
       enable_parallel_processing: false
   - minify:
       minify_html: true
+
 
 # Расширения Markdown
 markdown_extensions:
@@ -164,6 +197,16 @@ extra:
       link: https://github.com/DIZ-admin/erni-ki
     - icon: fontawesome/brands/docker
       link: https://github.com/DIZ-admin/erni-ki/pkgs/container/erni-ki%2Fauth
+  alternate:
+    - name: "Русский"
+      link: /
+      lang: ru
+    - name: "Deutsch"
+      link: /de/
+      lang: de
+    - name: "English"
+      link: /en/
+      lang: en
   analytics:
     provider: google
     property: G-XXXXXXXXXX
@@ -176,54 +219,48 @@ extra:
 # Структура навигации
 nav:
   - Главная: ru/index.md
+  - Обзор платформы: overview.md
+  - Быстрый старт:
+      - "Установка": getting-started/installation.md
+      - "Конфигурация": getting-started/configuration-guide.md
+      - "Пользователи": getting-started/user-guide.md
+      - "Доступ из интернета": getting-started/external-access-setup.md
+      - "Локальный DNS": getting-started/local-network-dns-setup.md
+      - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
+      - "Проброс портов": getting-started/port-forwarding-setup.md
+  - Архитектура:
+      - Обзор: architecture/architecture.md
+      - "Сервисы": architecture/services-overview.md
+      - "Инвентаризация": architecture/service-inventory.md
+      - Nginx configuration: architecture/nginx-configuration.md
   - Academy KI:
-      - "Обзор": ru/academy/index.md
+      - Обзор: ru/academy/index.md
       - "Основы Open WebUI": ru/academy/openwebui-basics.md
       - "Промптинг 101": ru/academy/prompting-101.md
       - "HowTo":
-          - "Обзор HowTo": ru/academy/howto/index.md
-          - "Письмо клиенту": ru/academy/howto/write-customer-email.md
-          - "Резюме митинга": ru/academy/howto/summarize-meeting-notes.md
-          - "Создание тикета в Jira": ru/academy/howto/create-jira-ticket.md
-      - "Новости": ru/academy/news/index.md
-  - Сводка: overview.md
-  - Academy KI: academy/index.md
-  - News: news/index.md
-  - HowTo:
-      - howto/write-customer-email-with-openwebui.md
-      - howto/summarize-meeting-notes.md
-      - howto/create-jira-description-with-ai.md
-  - Training:
-      - Open WebUI basics: training/openwebui-basics.md
-      - Prompting 101: training/prompting-101.md
-  - Дополнительно:
-      - operations/ci-health.md
-      - operations/github-governance.md
-      - operations/monitoring-audit.md
-      - operations/runbooks/access-log-sync-and-fluentbit.md
-      - operations/runbooks/alertmanager-noise-reduction.md
-      - reference/documentation-refactoring-plan.md
-      - reference/status-snippet.md
-      - locales/de/status-snippet.md
-      - remote-branch-cleanup.md
-      - log-audit-2025-11-14.md
-      - log-audit-2025-11-14-repeat.md
-      - logging-system-audit-2025-11-14.md
-      - monitoring-logging-audit-2025-11-14.md
-  - Быстрый старт:
-      - Установка: getting-started/installation.md
-      - Конфигурация: getting-started/configuration-guide.md
-      - Пользовательское руководство: getting-started/user-guide.md
-      - Внешний доступ: getting-started/external-access-setup.md
-      - Local network DNS: getting-started/local-network-dns-setup.md
-      - DNSMASQ setup: getting-started/dnsmasq-setup-instructions.md
-      - Port forwarding: getting-started/port-forwarding-setup.md
-  - Архитектура:
-      - Архитектура системы: architecture/architecture.md
-      - Сервисный каталог: architecture/service-inventory.md
-      - Статус сервисов: architecture/services-overview.md
-      - Nginx configuration: architecture/nginx-configuration.md
+          - Обзор: ru/academy/howto/index.md
+          - "Написать письмо клиенту": ru/academy/howto/write-customer-email.md
+          - "Резюме встречи": ru/academy/howto/summarize-meeting-notes.md
+          - "Создать тикет JIRA": ru/academy/howto/create-jira-ticket-with-ai.md
+      - "Новости":
+          - Лента: ru/academy/news/index.md
+          - "2025-01-release-x": ru/academy/news/2025-01-release-x.md
+  - Система:
+      - "Статус системы": ru/system/status.md
+  - Новости (архив):
+      - Обзор: news/index.md
+      - "2025-11: запуск статус-страницы": news/2025-11-erni-ki-status-page-launch.md
+  - HowTo (архив):
+      - "Создать описание JIRA": howto/create-jira-description-with-ai.md
+      - "Резюмировать встречу": howto/summarize-meeting-notes.md
+      - "Письмо клиенту в OpenWebUI": howto/write-customer-email-with-openwebui.md
+  - Тренинги (архив):
+      - "Open WebUI basics": training/openwebui-basics.md
+      - "Prompting 101": training/prompting-101.md
   - Операции:
+      - CI health: operations/ci-health.md
+      - GitHub governance: operations/github-governance.md
+      - Monitoring audit: operations/monitoring-audit.md
       - Operations Handbook: operations/operations-handbook.md
       - Admin Guide: operations/admin-guide.md
       - Status page: operations/status-page.md
@@ -247,7 +284,9 @@ nav:
           - Backup & Restore: operations/runbooks/backup-restore-procedures.md
           - Configuration changes: operations/runbooks/configuration-change-process.md
           - Docling shared volume: operations/runbooks/docling-shared-volume.md
+          - Access log sync & Fluent Bit: operations/runbooks/access-log-sync-and-fluentbit.md
           - Service restart: operations/runbooks/service-restart-procedures.md
+          - Alertmanager noise reduction: operations/runbooks/alertmanager-noise-reduction.md
           - Troubleshooting: operations/runbooks/troubleshooting-guide.md
       - Diagnostics:
           - Diagnostics Overview: operations/diagnostics/README.md
@@ -264,12 +303,18 @@ nav:
   - Безопасность:
       - Security policy: security/security-policy.md
       - Log audit: security/log-audit.md
+      - Log audit (2025-11-14): log-audit-2025-11-14.md
+      - Log audit (2025-11-14 repeat): log-audit-2025-11-14-repeat.md
+      - Logging system audit: logging-system-audit-2025-11-14.md
+      - Monitoring & logging audit: monitoring-logging-audit-2025-11-14.md
   - Справочник:
       - API reference: reference/api-reference.md
       - Development: reference/development.md
       - GitHub environments: reference/github-environments-setup.md
       - MCPO integration: reference/mcpo-integration-guide.md
       - Pre-commit hooks: reference/pre-commit-hooks.md
+      - Documentation refactoring plan: reference/documentation-refactoring-plan.md
+      - Status snippet: reference/status-snippet.md
       - CHANGELOG: reference/CHANGELOG.md
   - Locales:
       - Deutsch:
@@ -281,6 +326,7 @@ nav:
           - Monitoring Guide: locales/de/monitoring-guide.md
           - Monitoring Übersicht: locales/de/monitoring.md
           - Nginx: locales/de/nginx-konfiguration.md
+          - Status-Snippet: locales/de/status-snippet.md
           - Service-Überblick: locales/de/services-overview.md
           - Benutzerhandbuch: locales/de/user-guide.md
           - Backup Guide: locales/de/backup-guide.md
@@ -301,6 +347,8 @@ nav:
           - comprehensive-audit (2025-10-14): archive/audits/comprehensive-audit-2025-10-14.md
           - comprehensive-project-audit (2025-10-17): archive/audits/comprehensive-project-audit-2025-10-17.md
           - comprehensive-project-audit part 2 (2025-10-17): archive/audits/comprehensive-project-audit-2025-10-17-part2.md
+          - legacy index: archive/legacy-index.md
+          - legacy academy index: archive/legacy-academy-index.md
       - Диагностика:
           - Full server diagnostics (2025-11-04): archive/diagnostics/full-server-diagnostics-2025-11-04.md
           - RAG system diagnostic (2025-10-30): archive/diagnostics/rag-system-diagnostic-report-20251030.md
@@ -316,6 +364,8 @@ nav:
           - Update execution report: archive/config-backup/update-execution-report-2025-10-02.md
           - Monitoring report: archive/config-backup/monitoring-report-2025-10-02.md
           - Update analysis: archive/config-backup/update-analysis-2025-10-02.md
+      - Прочее:
+          - Remote branch cleanup: remote-branch-cleanup.md
 
 # Настройки валидации
 validation:
