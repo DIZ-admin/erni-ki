@@ -1,3 +1,12 @@
+---
+title: 'Monitoring Übersicht (DE)'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # Monitoring Übersicht (DE)
 
 Aktueller Stack (November 2025):

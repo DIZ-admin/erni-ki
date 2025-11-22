@@ -1,3 +1,12 @@
+---
+title: '📚 ERNI-KI Dokumentation (Deutsch)'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # 📚 ERNI-KI Dokumentation (Deutsch)
 
 > **Willkommen zur deutschen Dokumentation von ERNI-KI** **Version:** 12.1

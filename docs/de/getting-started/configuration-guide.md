@@ -1,3 +1,12 @@
+---
+title: '🔧 ERNI-KI Konfigurationsleitfaden'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # 🔧 ERNI-KI Konfigurationsleitfaden
 
 > **Version:** 11.0 **Aktualisierungsdatum:** 2025-09-25 **Status:** Production

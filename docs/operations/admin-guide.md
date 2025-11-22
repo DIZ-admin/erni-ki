@@ -1,3 +1,11 @@
+---
+title: 'admin-guide'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'ru'
+---
+
 # 👨‍💼 Administration Guide - ERNI-KI
 
 > **Версия:** 8.1 **Дата обновления:** 24.10.2025 **Статус:** Production Ready

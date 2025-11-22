@@ -1,3 +1,12 @@
+---
+title: '🌐 Nginx Konfigurationsleitfaden - ERNI-KI'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # 🌐 Nginx Konfigurationsleitfaden - ERNI-KI
 
 > **Version:** 9.0 | **Datum:** 2025-09-11 | **Status:** Production Ready
