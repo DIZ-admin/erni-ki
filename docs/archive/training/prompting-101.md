@@ -88,5 +88,5 @@ answers and less rework.
 - Do not paste confidential data unless you are sure the model is approved for
   it.
 - Avoid sharing passwords, keys, or personal identifiers.
-- When unsure, check the [status page](../operations/status-page.md) and reach
-  out to the support channel.
+- When unsure, check the [status page](../../operations/status-page.md) and
+  reach out to the support channel.

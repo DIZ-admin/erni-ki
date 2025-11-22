@@ -1,3 +1,12 @@
+---
+title: '🏗️ ERNI-KI Systemarchitektur'
+version: '12.1'
+date: '2025-11-22'
+status: 'Production Ready'
+language: 'de'
+audience: 'administrators'
+---
+
 # 🏗️ ERNI-KI Systemarchitektur
 
 > **Dokumentversion:** 12.0 **Aktualisierungsdatum:** 2025-10-02 **Status:**
