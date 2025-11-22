@@ -83,20 +83,16 @@ jobs:
           cache-dependency-path: auth/go.sum
 
       - name: 📦 Download dependencies
-        working-directory: ./auth
         run: go mod download
 
       - name: 🔍 Verify dependencies
-        working-directory: ./auth
         run: go mod verify
 
       - name: 🧪 Run tests
-        working-directory: ./auth
         run: |
           go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: 📊 Generate coverage report
-        working-directory: ./auth
         run: go tool cover -html=coverage.out -o coverage.html
 
       - name: 📤 Upload coverage to Codecov
@@ -228,13 +224,54 @@ jobs:
         with:
           sarif_file: "trivy-results.sarif"
 
+  # Проверка ссылок в документации
+  link-check:
+    name: 🔗 Check Documentation Links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔗 Check links with lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --max-redirects 5
+            --exclude-link-local
+            --exclude 'localhost'
+            --exclude '127\.0\.0\.1'
+            --exclude 'example\.com'
+            --exclude 'your-domain'
+            --exclude 'ki\.erni-gruppe\.ch'
+            --exclude '192\.168\.\d+\.\d+'
+            --exclude 'nginx:8080'
+            --exclude 'openwebui:8080'
+            --exclude 'searxng:8080'
+            --exclude 'dash\.cloudflare\.com'
+            --exclude 'docs\.openwebui\.com/api'
+            --exclude 'github\.com/nginx/nginx/issues'
+            --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
+            'docs/**/*.md'
+            'README.md'
+          fail: true
+        continue-on-error: true
+
+      - name: 📊 Create link check summary
+        if: always()
+        run: |
+          echo "## 🔗 Link Check Results" >> $GITHUB_STEP_SUMMARY
+          cat lychee/out.md >> $GITHUB_STEP_SUMMARY || echo "No broken links found! ✅" >> $GITHUB_STEP_SUMMARY
+
   # Сборка Docker образов
   docker-build:
     name: 🐳 Docker Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [test-go, security]
-    if: github.event_name != 'pull_request'
 
     steps:
       - name: 📥 Checkout code
@@ -296,7 +333,7 @@ jobs:
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
-    needs: [lint, go-lint, test-go, test-js, security, docker-build]
+    needs: [lint, go-lint, test-go, test-js, security, link-check, docker-build]
     if: always() && github.ref == 'refs/heads/main'
 
     steps:

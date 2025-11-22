@@ -10,7 +10,7 @@ translation_status: complete
 лучше всего.
 
 - Перед запуском сценария убедитесь, что выбрана нужная модель и статус сервисов
-  зелёный: [Проверить](../system/status.md).
+  зелёный: [Проверить](../../system/status.md).
 
 - [Написать письмо клиенту](write-customer-email.md)
 - [Суммировать заметки встречи](summarize-meeting-notes.md)

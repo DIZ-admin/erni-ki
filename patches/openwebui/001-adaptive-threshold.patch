@@ -10,9 +10,9 @@
      try:
          if (
 @@ -211,6 +213,28 @@ def query_doc_with_hybrid_search(
- 
+
          result = compression_retriever.invoke(query)
- 
+
 +        if (
 +            enable_relevance_fallback
 +            and r

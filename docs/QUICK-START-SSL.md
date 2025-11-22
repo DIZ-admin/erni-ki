@@ -144,8 +144,7 @@ docker compose logs cloudflared --tail 50
 
 ## 📚 Подробная документация
 
-Полная инструкция:
-[docs/ssl-setup-instructions.md](docs/ssl-setup-instructions.md)
+Полная инструкция: [ssl-setup-instructions.md](ssl-setup-instructions.md)
 
 ---
 

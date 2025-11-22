@@ -443,11 +443,11 @@ Nach erfolgreicher Installation wird empfohlen:
 
 1. **[Benutzerhandbuch](user-guide.md) studieren** - Grundlagen der
    Interface-Bedienung
-2. **[Monitoring](admin-guide.md#monitoring) konfigurieren** - Systemzustand
-   überwachen
+2. **[Monitoring](../operations/admin-guide.md#monitoring) konfigurieren** -
+   Systemzustand überwachen
 3. **[API-Dokumentation](../../reference/api-reference.md) studieren** -
    Integration mit externen Systemen
-4. **[Backup](admin-guide.md#backup) einrichten** - Datenschutz
+4. **[Backup](../operations/admin-guide.md#backup) einrichten** - Datenschutz
 
 ---
 

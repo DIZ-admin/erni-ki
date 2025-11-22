@@ -5,4 +5,3 @@ COPY rag_exporter.py /app/rag_exporter.py
 ENV PORT=9808
 EXPOSE 9808
 CMD ["python", "-u", "/app/rag_exporter.py"]
-

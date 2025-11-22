@@ -132,7 +132,6 @@ plugins:
   - minify:
       minify_html: true
 
-
 # Расширения Markdown
 markdown_extensions:
   # Python Markdown
@@ -220,6 +219,7 @@ extra:
 nav:
   - Главная: ru/index.md
   - Обзор платформы: overview.md
+  - Glossary: GLOSSARY.md
   - Быстрый старт:
       - "Установка": getting-started/installation.md
       - "Конфигурация": getting-started/configuration-guide.md
@@ -374,5 +374,5 @@ validation:
   unrecognized_links: warn
 
 # Настройки сборки
-strict: false
+strict: true
 use_directory_urls: true
