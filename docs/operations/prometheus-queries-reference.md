@@ -217,6 +217,7 @@ event_count_total or vector(5)
    ```
 
 2. **Выбирайте осмысленные fallback значения:**
+
    - Для error rates: `vector(0)` (нет ошибок)
    - Для success rates: `vector(95)` (высокая доступность)
    - Для response times: `vector(2.0)` (целевое SLA)

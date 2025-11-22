@@ -294,6 +294,7 @@ AI: Использует Filesystem Server для поиска файлов с �
    ```
 
 2. **MCP инструменты не доступны в OpenWebUI**
+
    - Проверьте TOOL_SERVER_CONNECTIONS в env/openwebui.env
    - Убедитесь, что nginx proxy работает
    - Перезапустите OpenWebUI: `docker-compose restart openwebui`

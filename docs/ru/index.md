@@ -16,13 +16,22 @@ translation_status: complete
 
 ## Актуальное состояние платформы
 
-- **Версия:** Open WebUI 0.6.36 + Ollama 0.12.11, LiteLLM gateway и
-  RAG-компоненты (Docling, Tika, EdgeTTS) развернуты и проходят мониторинг.
-- **Инфраструктура:** около 30 контейнеров (prod), Prometheus/Grafana/Loki,
-  Watchtower/cron активны, GPU-ускорение включено.
-- **Доступ:** прод — `https://ki.erni-gruppe.ch`, локально —
-  `http://localhost:8080` при запуске `docker compose up -d`.
-- **Обновлено:** информация синхронизирована с README и текущей сборкой CI.
+<!-- STATUS_SNIPPET_START -->
+
+> **Статус системы (2025-11-14) — Production Ready v12.1**
+>
+> - Контейнеры: 30/30 контейнеров healthy
+> - Графана: 18/18 Grafana дашбордов
+> - Алерты: 27 Prometheus alert rules активны
+> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
+> - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
+> - Мониторинг: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
+>   v3.2.0, Alertmanager v0.28.0
+> - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
+>   01:30, Watchtower selective updates
+> - Примечание: Наблюдаемость и AI стек актуализированы в ноябре 2025
+
+<!-- STATUS_SNIPPET_END -->
 
 ## Как устроен портал
 
