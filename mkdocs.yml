@@ -73,11 +73,14 @@ plugins:
         - ru
         - de
         - en
+<<<<<<< HEAD
   - blog:
       blog_dir: news
       post_dir: news
       categories: true
       blog_toc: true
+=======
+>>>>>>> origin/codex/audit-documentation-for-multilingual-setup-yrtg7u
   - awesome-pages
   - include-markdown
   - i18n:
@@ -174,9 +177,14 @@ extra:
 nav:
   - Главная: ru/index.md
   - Academy KI:
+      - "Обзор": ru/academy/index.md
       - "Основы Open WebUI": ru/academy/openwebui-basics.md
       - "Промптинг 101": ru/academy/prompting-101.md
-      - "HowTo": ru/academy/howto/index.md
+      - "HowTo":
+          - "Обзор HowTo": ru/academy/howto/index.md
+          - "Письмо клиенту": ru/academy/howto/write-customer-email.md
+          - "Резюме митинга": ru/academy/howto/summarize-meeting-notes.md
+          - "Создание тикета в Jira": ru/academy/howto/create-jira-ticket.md
       - "Новости": ru/academy/news/index.md
   - Сводка: overview.md
   - Academy KI: academy/index.md
