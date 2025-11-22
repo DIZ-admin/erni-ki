@@ -245,7 +245,7 @@ Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 
 ---
 
-## 🎉 Los geht's!
+## 🎉 Los geht's
 
 **Bereit zum Start?** Wählen Sie Ihren Pfad:
 
