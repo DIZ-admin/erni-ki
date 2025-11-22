@@ -1,7 +1,7 @@
 # 📚 ERNI-KI Dokumentation (Deutsch)
 
-> **Willkommen zur deutschen Dokumentation von ERNI-KI**  
-> **Version:** 12.1 (Wave 3) · **Aktualisiert:** 2025-11-14
+> **Willkommen zur deutschen Dokumentation von ERNI-KI** **Version:** 12.1
+> (Wave 3) · **Aktualisiert:** 2025-11-14
 
 ## 🎯 Über ERNI-KI
 
@@ -32,25 +32,28 @@ Sprachinteraktion.
 
 ### 🚀 Erste Schritte
 
-- **[Installationsanleitung](installation-guide.md)** - Detaillierte
+- **[Installationsanleitung](getting-started/installation.md)** - Detaillierte
   Installationsschritte
-- **[Benutzerhandbuch](user-guide.md)** - Anleitung für Endbenutzer
+- **[Benutzerhandbuch](getting-started/user-guide.md)** - Anleitung für
+  Endbenutzer
 
 ### 🏗️ Technische Dokumentation
 
-- **[Systemarchitektur](architecture.md)** - Technische Architektur und
-  Service-Details
-- **[Administrator-Handbuch](admin-guide.md)** - Systemverwaltung und Wartung
-- **[Monitoring Übersicht](monitoring.md)** - Kennzahlen, Skripte und Alerts
-- **[Runbooks](runbooks.md)** - Deutsche Zusammenfassungen der wichtigsten
-  Abläufe
-- **[API-Referenz](../../reference/api-reference.md)** - API-Dokumentation
+- **[Systemarchitektur](architecture/architecture.md)** - Technische Architektur
+  und Service-Details
+- **[Administrator-Handbuch](operations/admin-guide.md)** - Systemverwaltung und
+  Wartung
+- **[Monitoring Übersicht](operations/monitoring.md)** - Kennzahlen, Skripte und
+  Alerts
+- **[Runbooks](operations/runbooks.md)** - Deutsche Zusammenfassungen der
+  wichtigsten Abläufe
+- **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 
 ### 💻 Entwicklung
 
-- **[Entwicklerhandbuch](../../reference/development.md)** -
-  Entwicklungsumgebung einrichten (Englisch)
+- **[Entwicklerhandbuch](../reference/development.md)** - Entwicklungsumgebung
+  einrichten (Englisch)
 
 ## 🎯 Zielgruppen
 
@@ -58,7 +61,7 @@ Sprachinteraktion.
 
 Wenn Sie ERNI-KI verwenden möchten:
 
-1. Beginnen Sie mit dem **[Benutzerhandbuch](user-guide.md)**
+1. Beginnen Sie mit dem **[Benutzerhandbuch](getting-started/user-guide.md)**
 2. Lernen Sie die Grundlagen der AI-Interaktion
 3. Entdecken Sie erweiterte Funktionen wie RAG-Suche und Dokumentenverarbeitung
 
@@ -66,18 +69,18 @@ Wenn Sie ERNI-KI verwenden möchten:
 
 Wenn Sie ERNI-KI installieren und verwalten:
 
-1. Folgen Sie der **[Installationsanleitung](installation-guide.md)**
-2. Studieren Sie die **[Systemarchitektur](architecture.md)**
-3. Verwenden Sie das **[Administrator-Handbuch](admin-guide.md)** für die
-   tägliche Verwaltung
+1. Folgen Sie der **[Installationsanleitung](getting-started/installation.md)**
+2. Studieren Sie die **[Systemarchitektur](architecture/architecture.md)**
+3. Verwenden Sie das **[Administrator-Handbuch](operations/admin-guide.md)** für
+   die tägliche Verwaltung
 
 ### 👨‍💻 **Entwickler**
 
 Wenn Sie ERNI-KI erweitern oder anpassen möchten:
 
-1. Verstehen Sie die **[Systemarchitektur](architecture.md)**
-2. Lesen Sie das **[Entwicklerhandbuch](../../reference/development.md)**
-3. Nutzen Sie die **[API-Referenz](../../reference/api-reference.md)**
+1. Verstehen Sie die **[Systemarchitektur](architecture/architecture.md)**
+2. Lesen Sie das **[Entwicklerhandbuch](../reference/development.md)**
+3. Nutzen Sie die **[API-Referenz](../reference/api-reference.md)**
 
 ## 🚀 Schnellstart-Pfade
 
@@ -99,7 +102,7 @@ docker compose up -d
 docker compose exec ollama ollama pull llama3.2:3b
 ```
 
-→ **Weiter mit:** [Installationsanleitung](installation-guide.md)
+→ **Weiter mit:** [Installationsanleitung](getting-started/installation.md)
 
 ### 🎯 **Erste Nutzung (10 Minuten)**
 
@@ -109,7 +112,7 @@ docker compose exec ollama ollama pull llama3.2:3b
 3. Ollama-Verbindung konfigurieren: `http://ollama:11434`
 4. Ersten Chat mit AI starten
 
-→ **Weiter mit:** [Benutzerhandbuch](user-guide.md)
+→ **Weiter mit:** [Benutzerhandbuch](getting-started/user-guide.md)
 
 ### ⚙️ **System-Administration**
 
@@ -118,7 +121,7 @@ docker compose exec ollama ollama pull llama3.2:3b
 3. Backups konfigurieren: `http://localhost:9898`
 4. Benutzer verwalten
 
-→ **Weiter mit:** [Administrator-Handbuch](admin-guide.md)
+→ **Weiter mit:** [Administrator-Handbuch](operations/admin-guide.md)
 
 ## 🔧 Hauptfunktionen
 
@@ -232,7 +235,7 @@ Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 3. **Screenshots hinzufügen** - Visuelle Hilfen für Benutzer
 4. **FAQ erweitern** - Häufige Fragen beantworten
 
-→ **Beitragen:** [Entwicklerhandbuch](../../reference/development.md)
+→ **Beitragen:** [Entwicklerhandbuch](../reference/development.md)
 
 ## 🏷️ Versionshinweise
 
@@ -246,9 +249,11 @@ Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 
 **Bereit zum Start?** Wählen Sie Ihren Pfad:
 
-- 🚀 **[Schnelle Installation](installation-guide.md)** - System in 30 Minuten
-  aufsetzen
-- 👤 **[Benutzer-Guide](user-guide.md)** - Sofort mit AI arbeiten
-- 🏗️ **[Architektur verstehen](architecture.md)** - Technische Details
+- 🚀 **[Schnelle Installation](getting-started/installation.md)** - System in 30
+  Minuten aufsetzen
+- 👤 **[Benutzer-Guide](getting-started/user-guide.md)** - Sofort mit AI
+  arbeiten
+- 🏗️ **[Architektur verstehen](architecture/architecture.md)** - Technische
+  Details
 
 **Viel Erfolg mit ERNI-KI!** 🤖✨

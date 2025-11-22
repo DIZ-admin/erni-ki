@@ -204,7 +204,7 @@ docker compose logs cloudflared --tail 50
 ## 📚 Дополнительная документация
 
 Полное руководство:
-[docs/letsencrypt-ssl-setup-guide.md](docs/letsencrypt-ssl-setup-guide.md)
+[letsencrypt-ssl-setup-guide.md](letsencrypt-ssl-setup-guide.md)
 
 ---
 
