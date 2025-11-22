@@ -251,12 +251,10 @@ netstat -tlnp | grep nginx
 ### Häufige Probleme
 
 1. **404 bei API-Endpunkten**
-
    - Include-Dateien im Container überprüfen
    - Korrektheit der Upstream-Blöcke sicherstellen
 
 2. **WebSocket-Verbindungen funktionieren nicht**
-
    - websocket-common.conf überprüfen
    - Vorhandensein der Upgrade-Header sicherstellen
 
