@@ -1,13 +1,18 @@
 ---
 page_id: site.home
-translation_status: outdated
+translation_status: partial
+doc_version: '2025.02'
 ---
 
 # ERNI Academy KI
 
-Dies ist die deutschsprachige Version des Portals. Inhalt wird nach der
-russischen Referenz aktualisiert.
+Deutschsprachiger Einstieg in die Academy KI. Die russische Version bleibt die
+Referenz; diese Seite bietet aktuelle Links für Nutzer.
 
-- Für vollständige Informationen siehe die russische Seite.
-- Status prüfen: **[Systemstatus](system/status.md)**.
-- Academy-Start: [Academy KI](academy/index.md).
+- Start: [Academy KI](academy/index.md) – Open WebUI Basics, Prompting 101,
+  HowTo, News.
+- Schnellstart: [Open WebUI basics](../training/openwebui-basics.md) und
+  [Prompting 101](../training/prompting-101.md).
+- Praxisbeispiele: [HowTo-Sammlung](academy/howto/index.md).
+- Immer zuerst den **[Systemstatus](system/status.md)** prüfen, bevor Support
+  kontaktiert wird.
