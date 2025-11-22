@@ -132,7 +132,6 @@ plugins:
   - minify:
       minify_html: true
 
-
 # Расширения Markdown
 markdown_extensions:
   # Python Markdown
@@ -374,5 +373,5 @@ validation:
   unrecognized_links: warn
 
 # Настройки сборки
-strict: false
+strict: true
 use_directory_urls: true

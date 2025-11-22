@@ -376,10 +376,12 @@ echo "ollama: $(docker logs erni-ki-ollama-1 --since 24h 2>&1 | grep -E 'ERROR|C
 ### Следующие шаги
 
 1. ✅ **Фаза 2 (24-48 часов):**
+
    - Установить pg_stat_statements
    - Исправить Backrest config.json
 
 2. ⏳ **Фаза 3 (1-2 недели):**
+
    - Зафиксировать версии Docker образов
    - Аудит безопасности (секреты, порты)
    - Docker Security Best Practices

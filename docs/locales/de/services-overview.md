@@ -1,6 +1,6 @@
 # 📊 Detaillierte Tabelle der aktiven Services des ERNI-KI Systems
 
-> **Referenzdokumentation für die Administration des ERNI-KI Systems**
+> **Referenzdokumentation für die Administration des ERNI-KI Systems** >
 > **Erstellungsdatum**: 2025-09-25 **Systemversion**: v11.0 Production Ready
 > **Status**: ✅ 26 von 30 Services gesund (96,4% System Health)
 

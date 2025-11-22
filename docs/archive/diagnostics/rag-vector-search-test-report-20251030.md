@@ -42,18 +42,21 @@ ERNI-KI системе. Все этапы тестирования успешн�
 тестирования векторного поиска:
 
 1. **QUANTUM_ENCRYPTION** - Квантовое шифрование
+
    - 2048-qubit процессор
    - Key generation rate: 1.2 million keys/second
    - Operational temperature: -273.14°C
    - QBER: <0.5%
 
 2. **NEURAL_ARCHITECTURE** - Поиск нейронных архитектур
+
    - 8x NVIDIA A100 GPUs (80GB VRAM each)
    - 512 GB system RAM
    - NVMe SSD storage (10 TB minimum)
    - 100 Gbps InfiniBand network
 
 3. **DISTRIBUTED_LEDGER** - Распределенный реестр
+
    - Proof-of-Stake consensus
    - 64 parallel shards
    - 100,000 TPS throughput

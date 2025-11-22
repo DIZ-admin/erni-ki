@@ -234,7 +234,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [test-go, security]
-    if: github.event_name != 'pull_request'
 
     steps:
       - name: 📥 Checkout code

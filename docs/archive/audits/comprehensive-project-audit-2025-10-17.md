@@ -160,6 +160,7 @@ erni-ki_erni-ki-fluent-db  - Fluent Bit database (high-performance)
 
 - 🟡 **OpenWebUI Redis ошибки** (97 за 24 часа): "invalid username-password pair
   or user is disabled"
+
   - **Влияние:** Средняя производительность, кэширование не работает оптимально
   - **Приоритет:** Средний
   - **Решение:** Проверить Redis ACL конфигурацию для OpenWebUI пользователя
@@ -183,6 +184,7 @@ erni-ki_erni-ki-fluent-db  - Fluent Bit database (high-performance)
 **Проблемы:**
 
 - 🟡 **Redis cache hit rate: 46.6%** (114427 hits / 245718 total)
+
   - **Влияние:** Низкая эффективность кэширования
   - **Приоритет:** Средний
   - **Целевое значение:** >60%
@@ -207,6 +209,7 @@ erni-ki_erni-ki-fluent-db  - Fluent Bit database (high-performance)
 
 - 🟡 **5 exporters без health checks**: Fluent Bit, Redis Exporter, Nginx
   Exporter, NVIDIA Exporter, Ollama Exporter
+
   - **Влияние:** Невозможно автоматически определить проблемы
   - **Приоритет:** Средний
   - **Решение:** Добавить healthcheck в compose.yml для всех exporters
@@ -227,11 +230,13 @@ erni-ki_erni-ki-fluent-db  - Fluent Bit database (high-performance)
 **Проблемы:**
 
 - 🔴 **SSL сертификаты отсутствуют**: `conf/ssl/cert.pem` не найден
+
   - **Влияние:** HTTPS не работает локально (только через Cloudflare)
   - **Приоритет:** Высокий (но не критический, т.к. Cloudflare обеспечивает SSL)
   - **Решение:** Сгенерировать Let's Encrypt или self-signed сертификаты
 
 - 🟢 **Пароли в env файлах:** Не используются Docker Secrets
+
   - **Приоритет:** Низкий (для production рекомендуется Docker Secrets)
 
 - 🟢 **Nginx timeout ошибки:** 2880 ошибок за 24 часа (SearXNG monitoring
@@ -335,8 +340,8 @@ erni-ki_erni-ki-fluent-db  - Fluent Bit database (high-performance)
 
 #### 2. OpenWebUI → MCP Server DNS Errors
 
-- **Описание:** "Cannot connect to host mcposerver:8000 ssl:default [Name or
-  service not known]"
+- **Описание:** "Cannot connect to host mcposerver:8000 ssl:default [Name
+  or service not known]"
 - **Влияние:** MCP инструменты недоступны в OpenWebUI
 - **Время на исправление:** 20 минут
 - **Решение:**
