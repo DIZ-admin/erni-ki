@@ -1,6 +1,7 @@
 ---
 page_id: academy.index
 translation_status: complete
+doc_version: '2025.02'
 ---
 
 # Academy KI
