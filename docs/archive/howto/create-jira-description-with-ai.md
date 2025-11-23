@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: archived
+doc_version: '2025.11'
 ---
 
 # Create a JIRA description with AI

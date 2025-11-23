@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: complete
+doc_version: '2025.11'
 ---
 
 # Руководство по эксплуатации Redis в ERNI-KI

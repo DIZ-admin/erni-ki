@@ -2,6 +2,7 @@
 language: ru
 page_id: academy.news.index
 translation_status: complete
+doc_version: '2025.11'
 ---
 
 # Новости Academy KI

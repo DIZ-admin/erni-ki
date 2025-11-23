@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: complete
+doc_version: '2025.11'
 ---
 
 # 📘 ERNI-KI Professional Documentation & Refactoring Plan (ноябрь 2025)

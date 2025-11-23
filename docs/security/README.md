@@ -1,3 +1,9 @@
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+---
+
 # Security Documentation
 
 This directory contains security-related documentation, policies, and procedures

@@ -1,3 +1,9 @@
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+---
+
 # Architecture Documentation
 
 This directory contains comprehensive technical documentation of the ERNI-KI
