@@ -1,35 +1,35 @@
 #!/bin/bash
 
 # ERNI-KI Network Creation Script
-# Скрипт для создания оптимизированных Docker сетей
+# Creates optimized Docker networks
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функции логирования
+# Logging helpers
 log() { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"; }
 warn() { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"; }
 error() { echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"; }
 info() { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"; }
 
-# Создание оптимизированных Docker сетей
+# Create optimized Docker networks
 create_optimized_networks() {
-    log "Создание оптимизированных Docker сетей..."
+    log "Creating optimized Docker networks..."
 
-    # Удаляем существующие сети (если они есть)
-    info "Удаление существующих сетей..."
-    docker network rm erni-ki-backend 2>/dev/null || warn "Сеть erni-ki-backend не найдена"
-    docker network rm erni-ki-monitoring 2>/dev/null || warn "Сеть erni-ki-monitoring не найдена"
-    docker network rm erni-ki-internal 2>/dev/null || warn "Сеть erni-ki-internal не найдена"
+    # Remove existing networks if present
+    info "Removing existing networks..."
+    docker network rm erni-ki-backend 2>/dev/null || warn "Network erni-ki-backend not found"
+    docker network rm erni-ki-monitoring 2>/dev/null || warn "Network erni-ki-monitoring not found"
+    docker network rm erni-ki-internal 2>/dev/null || warn "Network erni-ki-internal not found"
 
-    # Создаем backend сеть
-    info "Создание backend сети..."
+    # Create backend network
+    info "Creating backend network..."
     docker network create \
         --driver bridge \
         --subnet=172.21.0.0/16 \
@@ -40,8 +40,8 @@ create_optimized_networks() {
         --opt com.docker.network.bridge.enable_ip_masquerade=true \
         erni-ki-backend
 
-    # Создаем monitoring сеть
-    info "Создание monitoring сети..."
+    # Create monitoring network
+    info "Creating monitoring network..."
     docker network create \
         --driver bridge \
         --subnet=172.22.0.0/16 \
@@ -52,8 +52,8 @@ create_optimized_networks() {
         --opt com.docker.network.bridge.enable_ip_masquerade=true \
         erni-ki-monitoring
 
-    # Создаем internal сеть с jumbo frames
-    info "Создание internal сети..."
+    # Create internal network with jumbo frames
+    info "Creating internal network..."
     docker network create \
         --driver bridge \
         --subnet=172.23.0.0/16 \
@@ -64,45 +64,45 @@ create_optimized_networks() {
         --opt com.docker.network.bridge.enable_icc=true \
         erni-ki-internal
 
-    log "Оптимизированные Docker сети созданы"
+    log "Optimized Docker networks created"
 }
 
-# Проверка созданных сетей
+# Verify created networks
 verify_networks() {
-    log "Проверка созданных сетей..."
+    log "Verifying created networks..."
 
-    info "Список Docker сетей:"
+    info "Docker networks:"
     docker network ls | grep erni-ki
 
-    info "Детали backend сети:"
+    info "Backend network details:"
     docker network inspect erni-ki-backend --format '{{.IPAM.Config}}'
 
-    info "Детали monitoring сети:"
+    info "Monitoring network details:"
     docker network inspect erni-ki-monitoring --format '{{.IPAM.Config}}'
 
-    info "Детали internal сети:"
+    info "Internal network details:"
     docker network inspect erni-ki-internal --format '{{.IPAM.Config}}'
 
-    log "Проверка сетей завершена"
+    log "Network verification complete"
 }
 
-# Основная функция
+# Main
 main() {
-    log "Запуск создания оптимизированных Docker сетей..."
+    log "Starting optimized Docker network creation..."
 
-    # Проверяем, что Docker запущен
+    # Ensure Docker is running
     if ! docker info >/dev/null 2>&1; then
-        error "Docker не запущен или недоступен"
+        error "Docker is not running or unavailable"
         exit 1
     fi
 
     create_optimized_networks
     verify_networks
 
-    log "Создание оптимизированных Docker сетей завершено!"
-    info "Теперь можно запустить ERNI-KI с новой сетевой архитектурой"
-    info "Выполните: docker-compose up -d"
+    log "Optimized Docker network creation completed!"
+    info "You can now start ERNI-KI with the new networking layout"
+    info "Run: docker-compose up -d"
 }
 
-# Запуск основной функции
+# Run main
 main "$@"

@@ -54,7 +54,7 @@ generate_dhparam() {
         log "Generating DH params (this may take a few minutes)..."
         mkdir -p "$NGINX_SSL_DIR"
         openssl dhparam -out "$NGINX_SSL_DIR/dhparam.pem" 2048
-        log "DH параметры сгенерированы: $NGINX_SSL_DIR/dhparam.pem"
+        log "DH parameters generated: $NGINX_SSL_DIR/dhparam.pem"
     else
         log "DH params already exist"
     fi

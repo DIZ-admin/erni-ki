@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # ERNI-KI Rate Limiting Monitoring Setup
-# Настройка автоматического мониторинга rate limiting
-# Автор: Альтэон Шульц (Tech Lead)
+# Automated rate limiting monitoring configuration
+# Author: Alteon Schultz (Tech Lead)
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# === Функции логирования ===
+# === Logging functions ===
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
@@ -22,30 +22,30 @@ success() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $*"
 }
 
-# === Создание cron задачи ===
+# === Create cron job ===
 setup_cron_monitoring() {
-    log "Настройка cron мониторинга..."
+    log "Setting up cron monitoring..."
 
     local cron_entry="*/1 * * * * cd $PROJECT_ROOT && ./scripts/monitor-rate-limiting.sh monitor >/dev/null 2>&1"
 
-    # Проверка существующей cron задачи
+    # Check existing cron job
     if crontab -l 2>/dev/null | grep -q "monitor-rate-limiting.sh"; then
-        log "Cron задача уже существует"
+        log "Cron job already exists"
     else
-        # Добавление новой cron задачи
+        # Add new cron job
         (crontab -l 2>/dev/null; echo "$cron_entry") | crontab -
-        success "Cron задача добавлена: мониторинг каждую минуту"
+        success "Cron job added: monitoring every minute"
     fi
 }
 
-# === Создание systemd сервиса ===
+# === Create systemd service ===
 setup_systemd_service() {
-    log "Создание systemd сервиса..."
+    log "Creating systemd service..."
 
     local service_file="/etc/systemd/system/erni-ki-rate-monitor.service"
     local timer_file="/etc/systemd/system/erni-ki-rate-monitor.timer"
 
-    # Создание сервиса
+    # Create service
     sudo tee "$service_file" > /dev/null <<EOF
 [Unit]
 Description=ERNI-KI Rate Limiting Monitor
@@ -64,7 +64,7 @@ StandardError=journal
 WantedBy=multi-user.target
 EOF
 
-    # Создание таймера
+    # Create timer
     sudo tee "$timer_file" > /dev/null <<EOF
 [Unit]
 Description=Run ERNI-KI Rate Limiting Monitor every minute
@@ -78,17 +78,17 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
-    # Перезагрузка systemd и запуск
+    # Reload systemd and start
     sudo systemctl daemon-reload
     sudo systemctl enable erni-ki-rate-monitor.timer
     sudo systemctl start erni-ki-rate-monitor.timer
 
-    success "Systemd сервис настроен и запущен"
+    success "Systemd service configured and started"
 }
 
-# === Настройка логротации ===
+# === Setup log rotation ===
 setup_log_rotation() {
-    log "Настройка ротации логов..."
+    log "Setting up log rotation..."
 
     local logrotate_config="/etc/logrotate.d/erni-ki-rate-limiting"
 
@@ -102,17 +102,17 @@ $PROJECT_ROOT/logs/rate-limiting-*.log {
     notifempty
     create 644 $USER $USER
     postrotate
-        # Отправка сигнала для обновления логов (если нужно)
+        # Send signal to update logs (if needed)
     endscript
 }
 EOF
 
-    success "Логротация настроена"
+    success "Log rotation configured"
 }
 
-# === Создание dashboard скрипта ===
+# === Create dashboard script ===
 create_dashboard() {
-    log "Создание dashboard скрипта..."
+    log "Creating dashboard script..."
 
     cat > "$PROJECT_ROOT/scripts/rate-limiting-dashboard.sh" <<'EOF'
 #!/bin/bash
@@ -275,15 +275,15 @@ main() {
 
     # Testing
     if test_monitoring; then
-        echo "  ./scripts/monitor-rate-limiting.sh stats    # Показать статистику"
-        echo "  ./scripts/rate-limiting-dashboard.sh        # Запустить dashboard"
-        echo "  tail -f logs/rate-limiting-monitor.log      # Просмотр логов"
+        echo "  ./scripts/monitor-rate-limiting.sh stats    # Show statistics"
+        echo "  ./scripts/rate-limiting-dashboard.sh        # Start dashboard"
+        echo "  tail -f logs/rate-limiting-monitor.log      # View logs"
 
     else
-        error "Ошибка при настройке системы мониторинга"
+        error "Error setting up monitoring system"
         exit 1
     fi
 }
 
-# Запуск
+# Run script
 main "$@"

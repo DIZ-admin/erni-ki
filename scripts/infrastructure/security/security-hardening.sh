@@ -399,8 +399,8 @@ main() {
     echo "3. Restart services: docker compose down && docker compose up -d"
     echo "4. Configure regular backups"
 
-    warning "ВАЖНО: Сохраните сгенерированные пароли в безопасном месте!"
+    warning "IMPORTANT: Store generated passwords in a secure location!"
 }
 
-# Запуск скрипта
+# Run script
 main "$@"
