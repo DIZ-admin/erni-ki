@@ -3,7 +3,7 @@ title: 'installation'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: 'ru'
+language: ru
 ---
 
 # 📦 Installation Guide - ERNI-KI

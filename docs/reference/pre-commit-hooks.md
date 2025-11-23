@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Pre-commit Hooks для ERNI-KI
 
 ## Обзор

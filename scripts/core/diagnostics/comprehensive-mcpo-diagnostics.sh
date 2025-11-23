@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # ERNI-KI MCPO Comprehensive Diagnostics Script
-# Проводит полную диагностику MCPO-сервиса и интеграции с OpenWebUI
+# Complete diagnostics for the MCPO service and OpenWebUI integration
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output color palette
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -13,25 +13,25 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Конфигурация
+# Configuration
 MCPO_URL="http://localhost:8000"
 NGINX_PROXY_URL="http://localhost:8080/api/mcp"
 TIMESTAMP=$(date '+%Y%m%d-%H%M%S')
 REPORT_FILE=".config-backup/mcpo-diagnostics-${TIMESTAMP}.txt"
 
 echo -e "${BLUE}🔍 ERNI-KI MCPO Comprehensive Diagnostics${NC}"
-echo -e "${CYAN}Дата: $(date)${NC}"
+echo -e "${CYAN}Date: $(date)${NC}"
 echo "=============================================================="
 
-# Создание директории для отчетов
+# Ensure report directory exists
 mkdir -p .config-backup
 
-# Функция для логирования
+# Logging helper
 log_result() {
     echo "$1" | tee -a "$REPORT_FILE"
 }
 
-# Функция для проверки endpoint с детальной информацией
+# Detailed endpoint verification helper
 test_endpoint_detailed() {
     local url=$1
     local description=$2
@@ -59,7 +59,7 @@ test_endpoint_detailed() {
     fi
 }
 
-# Функция для тестирования MCP инструмента
+# MCP tool testing helper
 test_mcp_tool() {
     local server=$1
     local endpoint=$2
@@ -94,7 +94,7 @@ log_result "ERNI-KI MCPO Comprehensive Diagnostics Report"
 log_result "Generated: $(date)"
 log_result "=============================================================="
 
-# 1. Проверка статуса контейнеров
+# 1. Container status checks
 echo -e "\n${BLUE}🐳 Container Status Check${NC}"
 echo "=========================="
 
@@ -107,7 +107,7 @@ docker-compose ps openwebui | tee -a "$REPORT_FILE"
 echo -e "\nNginx Status:"
 docker-compose ps nginx | tee -a "$REPORT_FILE"
 
-# 2. Проверка health checks
+# 2. Health check calls
 echo -e "\n${BLUE}🏥 Health Checks${NC}"
 echo "================"
 
@@ -121,18 +121,18 @@ if test_endpoint_detailed "$MCPO_URL/openapi.json" "MCPO OpenAPI spec"; then
     ((passed_tests++))
 fi
 
-# 3. Проверка отдельных MCP серверов
+# 3. Individual MCP server checks
 echo -e "\n${BLUE}⚙️ Individual MCP Servers${NC}"
 echo "=========================="
 
-# Получение списка доступных серверов
+# Fetch available MCP servers
 echo "Available MCP servers:"
 servers=$(curl -s "$MCPO_URL/openapi.json" 2>/dev/null | jq -r '.info.description' | grep -oE '\[([^]]+)\]' | tr -d '[]' | tr ',' '\n' | sed 's/^ *//' || echo "")
 
 if [ -n "$servers" ]; then
     echo "$servers" | tee -a "$REPORT_FILE"
 
-    # Тестирование каждого сервера
+# Testing each MCP server
     for server in time postgres filesystem memory searxng; do
         echo -e "\n--- $server server ---"
 
@@ -146,7 +146,7 @@ if [ -n "$servers" ]; then
             ((passed_tests++))
         fi
 
-        # Подсчет доступных инструментов
+# Counting available tools
         tools_count=$(curl -s "$MCPO_URL/$server/openapi.json" 2>/dev/null | jq '.paths | keys | length' 2>/dev/null || echo "0")
         echo "Available tools: $tools_count" | tee -a "$REPORT_FILE"
     done
@@ -154,7 +154,7 @@ else
     echo -e "${YELLOW}⚠️ No servers information available${NC}"
 fi
 
-# 4. Функциональное тестирование инструментов
+# 4. Functional tool testing
 echo -e "\n${BLUE}🔧 Functional Tool Testing${NC}"
 echo "==========================="
 
@@ -176,7 +176,7 @@ if test_mcp_tool "memory" "read_graph" '{}' "Memory server functionality"; then
     ((passed_tests++))
 fi
 
-# 5. Nginx Proxy Integration
+# 5. Nginx proxy integration
 echo -e "\n${BLUE}🌐 Nginx Proxy Integration${NC}"
 echo "=========================="
 
@@ -187,7 +187,7 @@ for server in time postgres filesystem memory; do
     fi
 done
 
-# 6. Проверка логов на ошибки
+# 6. Log analysis
 echo -e "\n${BLUE}📋 Log Analysis${NC}"
 echo "================"
 
@@ -241,7 +241,7 @@ else
 fi
 ((total_tests++))
 
-# 9. Итоговый отчет
+# 9. Final report summary
 echo -e "\n${BLUE}📊 Diagnostic Summary${NC}"
 echo "====================="
 

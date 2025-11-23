@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# ===== СКРИПТ МОНИТОРИНГА ПРОИЗВОДИТЕЛЬНОСТИ WATCHTOWER =====
-# Мониторинг ресурсов, времени выполнения и влияния на систему
+# ===== WATCHTOWER PERFORMANCE MONITORING SCRIPT =====
+# Monitoring resources, execution time, and system impact
 
 set -euo pipefail
 
-# Конфигурация
+# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 LOG_DIR="$PROJECT_DIR/logs/watchtower"
 METRICS_FILE="$LOG_DIR/performance-metrics.json"
 REPORT_FILE="$LOG_DIR/performance-report.txt"
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -20,10 +20,10 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# Создание директории логов
+# Create logs directory
 mkdir -p "$LOG_DIR"
 
-# Функции логирования
+# Logging functions
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
@@ -44,34 +44,34 @@ info() {
     echo -e "${CYAN}[INFO]${NC} $1"
 }
 
-# Получение метрик контейнера
+# Get container metrics
 get_container_metrics() {
     local container_name="$1"
     local timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
     if ! docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}" "$container_name" 2>/dev/null; then
-        error "Не удалось получить метрики для контейнера $container_name"
+        error "Failed to get metrics for container $container_name"
         return 1
     fi
 }
 
-# Детальные метрики в JSON формате
+# Detailed metrics in JSON format
 get_detailed_metrics() {
     local container_name="$1"
     local timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-    # Получаем статистику контейнера
+    # Get container statistics
     local stats=$(docker stats --no-stream --format "{{.CPUPerc}},{{.MemUsage}},{{.NetIO}},{{.BlockIO}}" "$container_name" 2>/dev/null || echo "0.00%,0B / 0B,0B / 0B,0B / 0B")
 
-    # Парсим статистику
+    # Parse statistics
     IFS=',' read -r cpu_perc mem_usage net_io block_io <<< "$stats"
 
-    # Извлекаем числовые значения
+    # Extract numeric values
     cpu_value=$(echo "$cpu_perc" | sed 's/%//')
     mem_used=$(echo "$mem_usage" | cut -d'/' -f1 | sed 's/[^0-9.]//g')
     mem_total=$(echo "$mem_usage" | cut -d'/' -f2 | sed 's/[^0-9.]//g')
 
-    # Создаем JSON
+    # Create JSON
     cat << EOF
 {
   "timestamp": "$timestamp",
@@ -85,17 +85,17 @@ get_detailed_metrics() {
 EOF
 }
 
-# Мониторинг времени выполнения Watchtower
+# Monitor Watchtower execution time
 monitor_execution_time() {
-    log "Мониторинг времени выполнения Watchtower..."
+    log "Monitoring Watchtower execution time..."
 
     local start_time=$(date +%s)
     local container_name="erni-ki-watchtower-1"
 
-    # Получаем начальные метрики
+    # Get initial metrics
     local start_metrics=$(get_detailed_metrics "$container_name")
 
-    # Ждем завершения цикла проверки (максимум 5 минут)
+    # Wait for check cycle completion (max 5 minutes)
     local timeout=300
     local elapsed=0
 
@@ -110,10 +110,10 @@ monitor_execution_time() {
     local end_time=$(date +%s)
     local execution_time=$((end_time - start_time))
 
-    # Получаем конечные метрики
+    # Get final metrics
     local end_metrics=$(get_detailed_metrics "$container_name")
 
-    # Сохраняем результаты
+    # Save results
     cat << EOF >> "$METRICS_FILE"
 {
   "execution_start": "$start_time",
@@ -124,94 +124,94 @@ monitor_execution_time() {
 },
 EOF
 
-    success "Время выполнения: ${execution_time}s"
+    success "Execution time: ${execution_time}s"
 }
 
-# Анализ логов Watchtower
+# Analyze Watchtower logs
 analyze_logs() {
-    log "Анализ логов Watchtower..."
+    log "Analyzing Watchtower logs..."
 
     local container_name="erni-ki-watchtower-1"
     local since_time="24h"
 
-    # Получаем логи за последние 24 часа
+    # Get logs for the last 24 hours
     local logs=$(docker logs "$container_name" --since="$since_time" 2>/dev/null || echo "")
 
     if [[ -z "$logs" ]]; then
-        warning "Логи Watchtower недоступны"
+        warning "Watchtower logs unavailable"
         return 1
     fi
 
-    # Анализируем логи
+    # Analyze logs
     local total_sessions=$(echo "$logs" | grep -c "Session done" || echo "0")
     local failed_updates=$(echo "$logs" | grep -c "level=error" || echo "0")
     local successful_updates=$(echo "$logs" | grep -c "updated to" || echo "0")
     local skipped_containers=$(echo "$logs" | grep -c "Skipping" || echo "0")
 
-    # Среднее время между проверками
+    # Average time between checks
     local check_intervals=$(echo "$logs" | grep "Scheduled next run" | wc -l || echo "0")
 
     cat << EOF
-=== АНАЛИЗ ЛОГОВ WATCHTOWER (24ч) ===
-Всего сессий: $total_sessions
-Успешных обновлений: $successful_updates
-Ошибок: $failed_updates
-Пропущено контейнеров: $skipped_containers
-Запланированных проверок: $check_intervals
+=== WATCHTOWER LOG ANALYSIS (24h) ===
+Total sessions: $total_sessions
+Successful updates: $successful_updates
+Errors: $failed_updates
+Skipped containers: $skipped_containers
+Scheduled checks: $check_intervals
 EOF
 }
 
-# Проверка влияния на производительность системы
+# Check system impact
 check_system_impact() {
-    log "Проверка влияния на производительность системы..."
+    log "Checking system impact..."
 
-    # Получаем общую загрузку системы
+    # Get overall system load
     local load_avg=$(uptime | awk -F'load average:' '{print $2}' | sed 's/,//g')
     local memory_info=$(free -m | awk 'NR==2{printf "%.1f%%", $3*100/$2}')
     local disk_usage=$(df -h / | awk 'NR==2{print $5}')
 
-    # Проверяем количество запущенных контейнеров
+    # Check number of running containers
     local running_containers=$(docker ps --format "table {{.Names}}" | wc -l)
     local total_containers=$(docker ps -a --format "table {{.Names}}" | wc -l)
 
     cat << EOF
-=== ВЛИЯНИЕ НА СИСТЕМУ ===
-Загрузка CPU: $load_avg
-Использование памяти: $memory_info
-Использование диска: $disk_usage
-Запущенных контейнеров: $running_containers
-Всего контейнеров: $total_containers
+=== SYSTEM IMPACT ===
+CPU Load: $load_avg
+Memory Usage: $memory_info
+Disk Usage: $disk_usage
+Running Containers: $running_containers
+Total Containers: $total_containers
 EOF
 }
 
-# Проверка расписания и следующего запуска
+# Check schedule and next run
 check_schedule() {
-    log "Проверка расписания Watchtower..."
+    log "Checking Watchtower schedule..."
 
     local container_name="erni-ki-watchtower-1"
 
-    # Получаем информацию о следующем запуске из логов
-    local next_run=$(docker logs "$container_name" --tail=50 2>/dev/null | grep "Scheduled next run" | tail -1 | awk -F'Scheduled next run: ' '{print $2}' || echo "Не найдено")
+    # Get next run info from logs
+    local next_run=$(docker logs "$container_name" --tail=50 2>/dev/null | grep "Scheduled next run" | tail -1 | awk -F'Scheduled next run: ' '{print $2}' || echo "Not found")
 
-    # Проверяем конфигурацию расписания
-    local schedule_config=$(docker exec "$container_name" env | grep "WATCHTOWER_SCHEDULE" || echo "WATCHTOWER_SCHEDULE=не настроено")
+    # Check schedule configuration
+    local schedule_config=$(docker exec "$container_name" env | grep "WATCHTOWER_SCHEDULE" || echo "WATCHTOWER_SCHEDULE=not configured")
 
     cat << EOF
-=== РАСПИСАНИЕ WATCHTOWER ===
-Конфигурация: $schedule_config
-Следующий запуск: $next_run
+=== WATCHTOWER SCHEDULE ===
+Configuration: $schedule_config
+Next run: $next_run
 EOF
 }
 
-# Генерация отчета о производительности
+# Generate performance report
 generate_performance_report() {
-    log "Генерация отчета о производительности..."
+    log "Generating performance report..."
 
     local timestamp=$(date +'%Y-%m-%d %H:%M:%S UTC')
 
     cat << EOF > "$REPORT_FILE"
-===== ОТЧЕТ О ПРОИЗВОДИТЕЛЬНОСТИ WATCHTOWER =====
-Дата генерации: $timestamp
+===== WATCHTOWER PERFORMANCE REPORT =====
+Generated at: $timestamp
 
 $(check_system_impact)
 
@@ -219,61 +219,61 @@ $(analyze_logs)
 
 $(check_schedule)
 
-=== РЕКОМЕНДАЦИИ ===
-1. Оптимальное время запуска: 03:00 UTC (минимальная нагрузка)
-2. Частота проверок: Ежедневно (баланс актуальности и нагрузки)
-3. Мониторинг ресурсов: Ограничение памяти 128MB, CPU 0.1 core
-4. Очистка образов: Включена для экономии места
-5. Критические сервисы: Исключены из автообновления
+=== RECOMMENDATIONS ===
+1. Optimal run time: 03:00 UTC (minimal load)
+2. Check frequency: Daily (balance between freshness and load)
+3. Resource monitoring: Memory limit 128MB, CPU 0.1 core
+4. Image cleanup: Enabled to save space
+5. Critical services: Excluded from auto-updates
 
-=== МЕТРИКИ КАЧЕСТВА ===
-- Время выполнения: <60 секунд (цель)
-- Использование памяти: <128MB (лимит)
-- Влияние на CPU: <5% (цель)
-- Успешность обновлений: >95% (цель)
+=== QUALITY METRICS ===
+- Execution time: <60 seconds (target)
+- Memory usage: <128MB (limit)
+- CPU impact: <5% (target)
+- Update success rate: >95% (target)
 
-=== СЛЕДУЮЩИЕ ШАГИ ===
-1. Настроить уведомления для критических ошибок
-2. Интегрировать с системой мониторинга
-3. Создать процедуры отката для неудачных обновлений
-4. Настроить резервное копирование перед обновлениями
+=== NEXT STEPS ===
+1. Configure notifications for critical errors
+2. Integrate with monitoring system
+3. Create rollback procedures for failed updates
+4. Configure backup before updates
 
 EOF
 
-    success "Отчет сохранен: $REPORT_FILE"
+    success "Report saved: $REPORT_FILE"
 }
 
-# Оптимизация конфигурации
+# Optimize configuration
 optimize_configuration() {
-    log "Анализ возможностей оптимизации..."
+    log "Analyzing optimization opportunities..."
 
     local config_file="$PROJECT_DIR/env/watchtower.env"
     local suggestions=()
 
-    # Проверяем текущую конфигурацию
+    # Check current configuration
     if ! grep -q "WATCHTOWER_SCHEDULE=" "$config_file"; then
-        suggestions+=("Добавить расписание: WATCHTOWER_SCHEDULE=0 0 3 * * *")
+        suggestions+=("Add schedule: WATCHTOWER_SCHEDULE=0 0 3 * * *")
     fi
 
     if ! grep -q "WATCHTOWER_CLEANUP=true" "$config_file"; then
-        suggestions+=("Включить очистку образов: WATCHTOWER_CLEANUP=true")
+        suggestions+=("Enable image cleanup: WATCHTOWER_CLEANUP=true")
     fi
 
     if ! grep -q "WATCHTOWER_LOG_FORMAT=json" "$config_file"; then
-        suggestions+=("Использовать JSON логи: WATCHTOWER_LOG_FORMAT=json")
+        suggestions+=("Use JSON logs: WATCHTOWER_LOG_FORMAT=json")
     fi
 
     if [[ ${#suggestions[@]} -gt 0 ]]; then
-        warning "Рекомендации по оптимизации:"
+        warning "Optimization recommendations:"
         for suggestion in "${suggestions[@]}"; do
             echo "  - $suggestion"
         done
     else
-        success "Конфигурация оптимизирована"
+        success "Configuration optimized"
     fi
 }
 
-# Основная функция
+# Main function
 main() {
     local command="${1:-monitor}"
 
@@ -297,7 +297,7 @@ main() {
             optimize_configuration
             ;;
         "full")
-            log "Запуск полного мониторинга..."
+            log "Starting full monitoring..."
             check_system_impact
             echo ""
             analyze_logs
@@ -310,30 +310,30 @@ main() {
             ;;
         *)
             cat << EOF
-Использование: $0 [КОМАНДА]
+Usage: $0 [COMMAND]
 
-Команды:
-    monitor   - Мониторинг времени выполнения
-    analyze   - Анализ логов
-    impact    - Проверка влияния на систему
-    schedule  - Проверка расписания
-    report    - Генерация отчета
-    optimize  - Рекомендации по оптимизации
-    full      - Полный анализ
+Commands:
+    monitor   - Monitor execution time
+    analyze   - Analyze logs
+    impact    - Check system impact
+    schedule  - Check schedule
+    report    - Generate report
+    optimize  - Optimization recommendations
+    full      - Full analysis
 
-Файлы:
-    Метрики: $METRICS_FILE
-    Отчет: $REPORT_FILE
+Files:
+    Metrics: $METRICS_FILE
+    Report: $REPORT_FILE
 EOF
             ;;
     esac
 }
 
-# Проверка окружения
+# Check environment
 if [[ ! -f "$PROJECT_DIR/compose.yml" ]]; then
-    error "Скрипт должен быть запущен из проекта ERNI-KI"
+    error "Script must be run from ERNI-KI project"
     exit 1
 fi
 
-# Запуск
+# Run
 main "$@"

@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 🚨 Prometheus Alerts Guide - ERNI-KI
 
 **Version:** 1.0  

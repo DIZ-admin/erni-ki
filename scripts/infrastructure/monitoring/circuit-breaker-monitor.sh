@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Circuit Breaker Monitor для системы логгирования ERNI-KI
-# Фаза 3: Мониторинг и алертинг - предотвращение каскадных сбоев
+# Circuit Breaker Monitor for the ERNI-KI logging stack
+# Phase 3: Monitoring and alerting to prevent cascading failures
 # Version: 1.0 - Production Ready
 
 set -euo pipefail
 
 # ============================================================================
-# КОНФИГУРАЦИЯ
+# CONFIGURATION
 # ============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,106 +17,106 @@ LOKI_URL="http://localhost:3100"
 LOKI_TENANT_HEADER="X-Scope-OrgID: erni-ki"
 PROMETHEUS_URL="http://localhost:9090"
 
-# Пороги для circuit breaker
-ERROR_THRESHOLD=10          # Максимум ошибок за 5 минут
-RETRY_THRESHOLD=50          # Максимум retry за 5 минут
-BUFFER_THRESHOLD=80         # Максимальное заполнение буфера в %
-RESPONSE_TIME_THRESHOLD=5   # Максимальное время ответа в секундах
+# Circuit breaker thresholds
+ERROR_THRESHOLD=10          # Max errors in a 5-minute window
+RETRY_THRESHOLD=50          # Max retries in a 5-minute window
+BUFFER_THRESHOLD=80         # Max buffer utilization (%)
+RESPONSE_TIME_THRESHOLD=5   # Max response time (seconds)
 
 # ============================================================================
-# ФУНКЦИИ МОНИТОРИНГА
+# MONITORING FUNCTIONS
 # ============================================================================
 
 check_fluent_bit_health() {
-    echo "=== ПРОВЕРКА ЗДОРОВЬЯ FLUENT BIT ==="
+    echo "=== FLUENT BIT HEALTH CHECK ==="
 
-    # Проверяем доступность API
+    # Verify API availability
     if ! curl -s --max-time 5 "$FLUENT_BIT_URL/api/v1/health" > /dev/null; then
-        echo "❌ Fluent Bit API недоступен"
+        echo "❌ Fluent Bit API is unreachable"
         return 1
     fi
 
-    # Получаем метрики
+    # Retrieve metrics
     local metrics=$(curl -s --max-time 5 "$FLUENT_BIT_URL/api/v1/metrics" 2>/dev/null || echo '{}')
 
-    # Проверяем ошибки
+    # Evaluate errors/retries
     local errors=$(echo "$metrics" | jq -r '.output.["loki.0"].errors // 0')
     local retries=$(echo "$metrics" | jq -r '.output.["loki.0"].retries // 0')
 
-    echo "Ошибки: $errors (порог: $ERROR_THRESHOLD)"
-    echo "Повторы: $retries (порог: $RETRY_THRESHOLD)"
+    echo "Errors: $errors (threshold: $ERROR_THRESHOLD)"
+    echo "Retries: $retries (threshold: $RETRY_THRESHOLD)"
 
-    # Circuit breaker логика
+    # Circuit breaker logic
     if [ "$errors" -gt "$ERROR_THRESHOLD" ]; then
-        echo "🔴 CIRCUIT BREAKER: Превышен порог ошибок ($errors > $ERROR_THRESHOLD)"
+        echo "🔴 CIRCUIT BREAKER: Error threshold exceeded ($errors > $ERROR_THRESHOLD)"
         trigger_circuit_breaker "errors" "$errors"
         return 1
     fi
 
     if [ "$retries" -gt "$RETRY_THRESHOLD" ]; then
-        echo "🟡 WARNING: Высокое количество повторов ($retries > $RETRY_THRESHOLD)"
+        echo "🟡 WARNING: High retry count ($retries > $RETRY_THRESHOLD)"
         trigger_warning "retries" "$retries"
     fi
 
-    echo "✅ Fluent Bit работает в штатном режиме"
+    echo "✅ Fluent Bit is healthy"
     return 0
 }
 
 check_loki_health() {
-    echo "=== ПРОВЕРКА ЗДОРОВЬЯ LOKI ==="
+    echo "=== LOKI HEALTH CHECK ==="
 
-    # Проверяем готовность Loki
+    # Verify Loki readiness
     local start_time=$(date +%s)
     if ! curl -s --max-time "$RESPONSE_TIME_THRESHOLD" -H "$LOKI_TENANT_HEADER" "$LOKI_URL/ready" > /dev/null; then
-        echo "❌ Loki недоступен или медленно отвечает"
+        echo "❌ Loki is unavailable or slow to respond"
         trigger_circuit_breaker "loki_unavailable" "timeout"
         return 1
     fi
     local end_time=$(date +%s)
     local response_time=$((end_time - start_time))
 
-    echo "Время ответа Loki: ${response_time}s (порог: ${RESPONSE_TIME_THRESHOLD}s)"
+    echo "Loki response time: ${response_time}s (threshold: ${RESPONSE_TIME_THRESHOLD}s)"
 
     if [ "$response_time" -gt "$RESPONSE_TIME_THRESHOLD" ]; then
-        echo "🟡 WARNING: Медленный ответ Loki (${response_time}s > ${RESPONSE_TIME_THRESHOLD}s)"
+        echo "🟡 WARNING: Slow Loki response (${response_time}s > ${RESPONSE_TIME_THRESHOLD}s)"
         trigger_warning "loki_slow" "$response_time"
     fi
 
-    echo "✅ Loki работает в штатном режиме"
+    echo "✅ Loki is healthy"
     return 0
 }
 
 check_system_resources() {
-    echo "=== ПРОВЕРКА СИСТЕМНЫХ РЕСУРСОВ ==="
+    echo "=== SYSTEM RESOURCE CHECK ==="
 
-    # Проверяем использование диска
+    # Check disk usage
     local disk_usage=$(df -h data/logs-optimized 2>/dev/null | awk 'NR==2 {print $5}' | sed 's/%//' || echo "0")
-    echo "Использование диска для логов: ${disk_usage}%"
+    echo "Log volume disk usage: ${disk_usage}%"
 
     if [ "$disk_usage" -gt 90 ]; then
-        echo "🔴 CIRCUIT BREAKER: Критическое заполнение диска (${disk_usage}% > 90%)"
+        echo "🔴 CIRCUIT BREAKER: Disk usage critical (${disk_usage}% > 90%)"
         trigger_circuit_breaker "disk_full" "$disk_usage"
         return 1
     elif [ "$disk_usage" -gt 80 ]; then
-        echo "🟡 WARNING: Высокое использование диска (${disk_usage}% > 80%)"
+        echo "🟡 WARNING: Elevated disk usage (${disk_usage}% > 80%)"
         trigger_warning "disk_usage" "$disk_usage"
     fi
 
-    # Проверяем память контейнеров логгирования
+    # Check logging container memory
     local fluent_memory=$(docker stats --no-stream --format "{{.MemPerc}}" erni-ki-fluent-bit 2>/dev/null | sed 's/%//' || echo "0")
-    echo "Использование памяти Fluent Bit: ${fluent_memory}%"
+    echo "Fluent Bit memory usage: ${fluent_memory}%"
 
     if [ "${fluent_memory%.*}" -gt 80 ]; then
-        echo "🟡 WARNING: Высокое использование памяти Fluent Bit (${fluent_memory}% > 80%)"
+        echo "🟡 WARNING: Fluent Bit memory usage high (${fluent_memory}% > 80%)"
         trigger_warning "memory_usage" "$fluent_memory"
     fi
 
-    echo "✅ Системные ресурсы в норме"
+    echo "✅ System resources are within limits"
     return 0
 }
 
 # ============================================================================
-# CIRCUIT BREAKER ДЕЙСТВИЯ
+# CIRCUIT BREAKER ACTIONS
 # ============================================================================
 
 trigger_circuit_breaker() {
@@ -124,12 +124,12 @@ trigger_circuit_breaker() {
     local value="$2"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
-    echo "🔴 CIRCUIT BREAKER АКТИВИРОВАН: $reason = $value"
+    echo "🔴 CIRCUIT BREAKER TRIGGERED: $reason = $value"
 
-    # Логируем событие
+    # Log the event
     echo "[$timestamp] CIRCUIT_BREAKER_TRIGGERED: reason=$reason value=$value" >> "$PROJECT_ROOT/.config-backup/logs/circuit-breaker.log"
 
-    # Уведомляем через webhook (если настроен)
+    # Notify via webhook (if configured)
     if command -v curl > /dev/null; then
         curl -s -X POST "http://localhost:9095/webhook/circuit-breaker" \
             -H "Content-Type: application/json" \
@@ -137,14 +137,14 @@ trigger_circuit_breaker() {
             > /dev/null 2>&1 || true
     fi
 
-    # Применяем защитные меры
+    # Apply mitigation steps
     case "$reason" in
         "errors"|"loki_unavailable")
-            echo "Применяем защитные меры: переключение на локальное хранение логов"
+            echo "Applying mitigation: enabling local log fallback"
             enable_local_fallback
             ;;
         "disk_full")
-            echo "Применяем защитные меры: экстренная очистка старых логов"
+            echo "Applying mitigation: emergency log cleanup"
             emergency_log_cleanup
             ;;
     esac
@@ -157,10 +157,10 @@ trigger_warning() {
 
     echo "🟡 WARNING: $reason = $value"
 
-    # Логируем предупреждение
+    # Log warning
     echo "[$timestamp] WARNING: reason=$reason value=$value" >> "$PROJECT_ROOT/.config-backup/logs/circuit-breaker.log"
 
-    # Уведомляем через webhook
+    # Send webhook notification
     if command -v curl > /dev/null; then
         curl -s -X POST "http://localhost:9095/webhook/warning" \
             -H "Content-Type: application/json" \
@@ -170,18 +170,18 @@ trigger_warning() {
 }
 
 enable_local_fallback() {
-    echo "Включение локального fallback режима для логов..."
+    echo "Enabling local log fallback mode..."
 
-    # Создаем временную конфигурацию с локальным выводом
+    # Create temporary configuration with local output
     local fallback_config="$PROJECT_ROOT/conf/fluent-bit/fluent-bit-fallback.conf"
 
-    # Копируем основную конфигурацию и модифицируем
+    # Copy base configuration and adjust
     cp "$PROJECT_ROOT/conf/fluent-bit/fluent-bit.conf" "$fallback_config"
 
-    # Добавляем локальный output
+    # Append local output
     cat >> "$fallback_config" << EOF
 
-# EMERGENCY FALLBACK OUTPUT - Circuit Breaker активирован
+# EMERGENCY FALLBACK OUTPUT - Circuit Breaker activated
 [OUTPUT]
     Name        file
     Match       *
@@ -191,37 +191,37 @@ enable_local_fallback() {
 
 EOF
 
-    echo "✅ Локальный fallback режим настроен"
+    echo "✅ Local fallback mode configured"
 }
 
 emergency_log_cleanup() {
-    echo "Выполнение экстренной очистки логов..."
+    echo "Executing emergency log cleanup..."
 
-    # Архивируем и удаляем старые логи
+    # Archive/remove older logs
     find "$PROJECT_ROOT/data/logs-optimized" -name "*.log" -mtime +7 -exec gzip {} \; 2>/dev/null || true
     find "$PROJECT_ROOT/data/logs-optimized" -name "*.gz" -mtime +30 -delete 2>/dev/null || true
 
-    # Очищаем Docker логи
+    # Clean Docker logs
     docker system prune -f --volumes > /dev/null 2>&1 || true
 
-    echo "✅ Экстренная очистка логов завершена"
+    echo "✅ Emergency log cleanup finished"
 }
 
 # ============================================================================
-# ОСНОВНАЯ ЛОГИКА
+# MAIN LOGIC
 # ============================================================================
 
 main() {
-    echo "🔍 Запуск Circuit Breaker Monitor для системы логгирования ERNI-KI"
-    echo "Время: $(date)"
+    echo "🔍 Starting Circuit Breaker Monitor for ERNI-KI logging"
+    echo "Timestamp: $(date)"
     echo ""
 
     local overall_status=0
 
-    # Создаем директорию для логов мониторинга
+    # Ensure log directory exists
     mkdir -p "$PROJECT_ROOT/.config-backup/logs"
 
-    # Проверяем все компоненты
+    # Check all components
     check_fluent_bit_health || overall_status=1
     echo ""
 
@@ -232,13 +232,13 @@ main() {
     echo ""
 
     if [ $overall_status -eq 0 ]; then
-        echo "🎉 Все системы логгирования работают в штатном режиме"
+        echo "🎉 Logging systems are operating normally"
     else
-        echo "⚠️  Обнаружены проблемы в системе логгирования - применены защитные меры"
+        echo "⚠️  Logging issues detected — mitigation steps applied"
     fi
 
     return $overall_status
 }
 
-# Запуск мониторинга
+# Kick off monitor
 main "$@"

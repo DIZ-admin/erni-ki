@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Academy KI для сотрудников ERNI Gruppe
 
 Это входная точка для сотрудников ERNI (офис, продажи, HR, delivery), которые

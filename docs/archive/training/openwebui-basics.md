@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Open WebUI basics
 
 This quickstart is for non-technical colleagues who want to use Open WebUI

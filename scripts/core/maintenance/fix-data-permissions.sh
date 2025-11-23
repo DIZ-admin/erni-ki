@@ -1,21 +1,21 @@
 #!/bin/bash
 
 # ===================================================================
-# Универсальный скрипт исправления прав доступа для ERNI-KI
-# Исправляет проблемы с доступом Snyk и других инструментов ко всем директориям data/
-# Поддерживает: Backrest, Grafana, PostgreSQL и другие сервисы
+# Universal data permissions fix script for ERNI-KI
+# Fixes access issues for Snyk and other tools across data/ directories
+# Supports: Backrest, Grafana, PostgreSQL and other services
 # ===================================================================
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[1;33m'
 readonly BLUE='\033[0;34m'
 readonly NC='\033[0m' # No Color
 
-# Функции логирования
+# Logging helpers
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -32,95 +32,95 @@ error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Проверка прав root
+# Root permission check
 check_root() {
     if [[ $EUID -ne 0 ]]; then
-        error "Этот скрипт должен быть запущен с правами root (sudo)"
+        error "This script must be run as root (sudo)"
         exit 1
     fi
 }
 
-# Проверка существования директории data
+# Ensure data directory exists
 check_data_directory() {
     local data_dir="data"
 
     if [[ ! -d "$data_dir" ]]; then
-        error "Директория data не найдена: $data_dir"
+        error "Data directory not found: $data_dir"
         exit 1
     fi
 
-    log "Директория data найдена: $data_dir"
+    log "Data directory found: $data_dir"
 }
 
-# Поиск проблемных директорий
+# Find problematic directories
 find_problematic_directories() {
-    log "Поиск директорий с ограниченными правами доступа..."
+    log "Searching for directories with restricted permissions..."
 
-    # Находим директории без права execute для "остальных" пользователей
+    # Find dirs without execute for others
     local problematic_dirs
     problematic_dirs=$(find data/ -type d ! -perm -o+x 2>/dev/null || true)
 
     if [[ -n "$problematic_dirs" ]]; then
-        echo "=== Найдены проблемные директории ==="
+        echo "=== Found problematic directories ==="
         echo "$problematic_dirs" | while read -r dir; do
             if [[ -n "$dir" ]]; then
-                ls -ld "$dir" 2>/dev/null || echo "Недоступно: $dir"
+                ls -ld "$dir" 2>/dev/null || echo "Unavailable: $dir"
             fi
         done
         echo ""
         return 0
     else
-        log "Проблемные директории не найдены"
+        log "No problematic directories found"
         return 1
     fi
 }
 
-# Анализ текущих прав доступа
+# Analyze current permissions
 analyze_permissions() {
-    log "Анализ текущих прав доступа..."
+    log "Analyzing current permissions..."
 
-    echo "=== Общий обзор директории data ==="
+    echo "=== data directory overview ==="
     ls -la data/ | head -10
     echo ""
 
-    # Анализ конкретных сервисов
+    # Specific services
     for service_dir in data/backrest data/grafana data/postgres data/prometheus data/redis; do
         if [[ -d "$service_dir" ]]; then
-            echo "=== Права доступа к $service_dir ==="
-            ls -la "$service_dir/" 2>/dev/null | head -5 || echo "Доступ ограничен"
+            echo "=== Permissions for $service_dir ==="
+            ls -la "$service_dir/" 2>/dev/null | head -5 || echo "Access restricted"
             echo ""
         fi
     done
 }
 
-# Исправление прав доступа
+# Fix permissions
 fix_permissions() {
-    log "Исправление прав доступа..."
+    log "Fixing permissions..."
 
     local fixed_count=0
 
-    # Находим и исправляем все проблемные директории
+    # Find and fix all problematic directories
     local problematic_dirs
     problematic_dirs=$(find data/ -type d ! -perm -o+x 2>/dev/null || true)
 
     if [[ -n "$problematic_dirs" ]]; then
         echo "$problematic_dirs" | while read -r dir; do
             if [[ -n "$dir" && -d "$dir" ]]; then
-                log "Исправление прав доступа к $dir"
+                log "Fixing permissions for $dir"
 
-                # Определяем подходящие права в зависимости от сервиса
+                # Set appropriate permissions per service
                 case "$dir" in
                     data/postgres*)
-                        # PostgreSQL требует более строгие права
-                        chmod 750 "$dir" 2>/dev/null || warning "Не удалось изменить права для $dir"
+                        # PostgreSQL needs stricter permissions
+                        chmod 750 "$dir" 2>/dev/null || warning "Failed to change permissions for $dir"
                         ;;
                     data/grafana/alerting*)
-                        # Grafana alerting - рекурсивно исправляем
-                        chmod -R 755 "$dir" 2>/dev/null || warning "Не удалось изменить права для $dir"
+                        # Grafana alerting - fix recursively
+                        chmod -R 755 "$dir" 2>/dev/null || warning "Failed to change permissions for $dir"
                         ;;
                     *)
-                        # Остальные директории - стандартные права
-                        chmod 755 "$dir" 2>/dev/null || warning "Не удалось изменить права для $dir"
+                        # Standard permissions elsewhere
+                        chmod 755 "$dir" 2>/dev/null || warning "Failed to change permissions for $dir"
                         ;;
                 esac
 
@@ -128,172 +128,173 @@ fix_permissions() {
             fi
         done
 
-        success "Исправлено прав доступа для директорий: $fixed_count"
+        success "Permissions fixed for directories: $fixed_count"
     else
-        log "Проблемные директории не найдены"
+        log "No problematic directories found"
     fi
 
-    # Специальная обработка для Backrest репозитория
+    # Backrest repo handling
     if [[ -d "data/backrest/repos/erni-ki-local" ]]; then
-        log "Дополнительное исправление для Backrest репозитория"
-        chmod -R 755 data/backrest/repos/erni-ki-local 2>/dev/null || warning "Не удалось исправить права Backrest"
+        log "Additional fix for Backrest repo"
+        chmod -R 755 data/backrest/repos/erni-ki-local 2>/dev/null || warning "Could not fix Backrest permissions"
     fi
 }
 
-# Проверка доступности после исправления
+# Verify access after fixes
 verify_access() {
-    log "Проверка доступности после исправления..."
+    log "Verifying access after fixes..."
 
     local verification_failed=0
 
-    # Проверяем все ранее проблемные директории
+    # Check previously problematic dirs
     local test_dirs=("data/backrest/repos" "data/grafana/alerting" "data/grafana/csv" "data/grafana/png")
 
     for dir in "${test_dirs[@]}"; do
         if [[ -d "$dir" ]]; then
             if ls "$dir/" >/dev/null 2>&1; then
-                success "Доступ к $dir восстановлен"
+                success "Access to $dir restored"
             else
-                error "Доступ к $dir всё ещё ограничен"
+                error "Access to $dir still restricted"
                 ((verification_failed++))
             fi
         fi
     done
 
-    # Специальная проверка для Backrest репозитория
+    # Backrest repo check
     if [[ -d "data/backrest/repos/erni-ki-local" ]]; then
         if ls data/backrest/repos/erni-ki-local/ >/dev/null 2>&1; then
-            success "Доступ к Backrest репозиторию восстановлен"
+            success "Access to Backrest repo restored"
         else
-            error "Доступ к Backrest репозиторию всё ещё ограничен"
+            error "Access to Backrest repo still restricted"
             ((verification_failed++))
         fi
     fi
 
-    # Проверяем, что не осталось проблемных директорий
+    # Ensure no remaining problematic dirs
     local remaining_issues
     remaining_issues=$(find data/ -type d ! -perm -o+x 2>/dev/null | wc -l)
 
     if [[ "$remaining_issues" -eq 0 ]]; then
-        success "Все проблемы с правами доступа устранены"
+        success "All permission issues resolved"
     else
-        warning "Остались проблемные директории: $remaining_issues"
+        warning "Remaining problematic directories: $remaining_issues"
         ((verification_failed++))
     fi
 
     return $verification_failed
 }
 
-# Проверка работы сервисов
+# Check services
 check_services() {
-    log "Проверка работы сервисов..."
+    log "Checking services..."
 
-    # Проверяем Backrest
+    # Check Backrest
     if docker ps | grep -q backrest; then
-        success "Контейнер Backrest запущен"
+        success "Backrest container is running"
         if curl -s http://localhost:9898/ >/dev/null 2>&1; then
-            success "Веб-интерфейс Backrest доступен"
+            success "Backrest web UI is reachable"
         else
-            warning "Веб-интерфейс Backrest недоступен"
+            warning "Backrest web UI is not reachable"
         fi
     else
-        warning "Контейнер Backrest не запущен"
+        warning "Backrest container is not running"
     fi
 
-    # Проверяем Grafana
+    # Check Grafana
     if docker ps | grep -q grafana; then
-        success "Контейнер Grafana запущен"
+        success "Grafana container is running"
         if curl -s http://localhost:3000/ >/dev/null 2>&1; then
-            success "Веб-интерфейс Grafana доступен"
+            success "Grafana web UI is reachable"
         else
-            warning "Веб-интерфейс Grafana недоступен"
+            warning "Grafana web UI is not reachable"
         fi
     else
-        warning "Контейнер Grafana не запущен"
+        warning "Grafana container is not running"
     fi
 
-    # Проверяем PostgreSQL
+    # Check PostgreSQL
     if docker ps | grep -q postgres; then
-        success "Контейнер PostgreSQL запущен"
+        success "PostgreSQL container is running"
     else
-        warning "Контейнер PostgreSQL не запущен"
+        warning "PostgreSQL container is not running"
     fi
 }
 
-# Создание отчёта
+# Create report
 create_report() {
     local report_file="logs/data-permissions-fix-$(date +%Y%m%d_%H%M%S).log"
 
-    log "Создание отчёта: $report_file"
+    log "Creating report: $report_file"
 
     {
-        echo "=== Отчёт об исправлении прав доступа ERNI-KI ==="
-        echo "Дата: $(date)"
-        echo "Пользователь: $(whoami)"
+        echo "=== ERNI-KI Data Permissions Fix Report ==="
+        echo "Date: $(date)"
+        echo "User: $(whoami)"
         echo ""
-        echo "=== Общий обзор директории data ==="
-        ls -la data/ 2>/dev/null || echo "Директория data недоступна"
+        echo "=== Data Directory Overview ==="
+        ls -la data/ 2>/dev/null || echo "Data directory not accessible"
         echo ""
 
-        # Отчёт по каждому сервису
+        # Report per service
         for service in backrest grafana postgres prometheus redis; do
             if [[ -d "data/$service" ]]; then
-                echo "=== Права доступа к data/$service ==="
-                ls -la "data/$service/" 2>/dev/null || echo "Директория data/$service недоступна"
+                echo "=== Permissions for data/$service ==="
+                ls -la "data/$service/" 2>/dev/null || echo "Directory data/$service not accessible"
                 echo ""
             fi
         done
 
-        echo "=== Проверка проблемных директорий ==="
+        echo "=== Problematic Directories Check ==="
         local remaining_issues
         remaining_issues=$(find data/ -type d ! -perm -o+x 2>/dev/null || true)
         if [[ -n "$remaining_issues" ]]; then
-            echo "Остались проблемные директории:"
+            echo "Remaining problematic directories:"
             echo "$remaining_issues"
         else
-            echo "Проблемные директории не найдены"
+            echo "No problematic directories found"
         fi
 
         echo ""
-        echo "=== Статус сервисов ==="
-        docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "(backrest|grafana|postgres)" || echo "Сервисы не найдены"
+        echo "=== Service Status ==="
+        docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "(backrest|grafana|postgres)" || echo "Services not found"
 
     } > "$report_file"
 
-    success "Отчёт создан: $report_file"
+    success "Report created: $report_file"
 }
 
-# Основная функция
+# Main function
 main() {
-    log "Запуск универсального исправления прав доступа для ERNI-KI"
+    log "Starting universal data permissions fix for ERNI-KI"
 
-    # Проверки
+    # Checks
     check_root
     check_data_directory
 
-    # Анализ проблем
+    # Analyze problems
     analyze_permissions
     if ! find_problematic_directories; then
-        success "Проблемы с правами доступа не обнаружены"
+        success "No permission issues found"
         exit 0
     fi
 
-    # Исправление и проверка
+    # Fix and verify
     fix_permissions
     verify_access
     check_services
     create_report
 
-    success "Исправление прав доступа завершено успешно"
+    success "Permissions fix completed successfully"
 
     echo ""
-    echo "=== Рекомендации ==="
-    echo "1. Snyk теперь может сканировать проект без ошибок доступа"
-    echo "2. Все сервисы (Backrest, Grafana, PostgreSQL) продолжают работать"
-    echo "3. Безопасность сохранена (только чтение для других пользователей)"
-    echo "4. При появлении новых проблем запустите этот скрипт повторно"
-    echo "5. Рассмотрите добавление скрипта в cron для автоматической проверки"
+    echo ""
+    echo "=== Recommendations ==="
+    echo "1. Snyk can now scan the project without access errors"
+    echo "2. All services (Backrest, Grafana, PostgreSQL) continue to work"
+    echo "3. Security maintained (read-only for other users)"
+    echo "4. If new issues appear, run this script again"
+    echo "5. Consider adding script to cron for automatic checks"
 }
 
-# Запуск основной функции
+# Run main function
 main "$@"

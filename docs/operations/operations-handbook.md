@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Operations Handbook ERNI-KI
 
 Сводный справочник для DevOps/SRE, управляющих наблюдаемостью, SLA и реакцией на

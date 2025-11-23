@@ -1,85 +1,75 @@
-# Grafana Configuration для ERNI-KI
-# Система визуализации метрик и дашбордов
-# Дата обновления: 2025-09-19
-# Статус: Production Ready - 18 дашбордов (100% функциональны)
-# Система мониторинга: Оптимизированная с исправленными Prometheus запросами
+# Grafana Configuration for ERNI-KI
+# Metrics visualization and dashboards
+# Updated: 2025-09-19 | Status: Production Ready (18 dashboards)
+# Monitoring stack: optimized with fixed Prometheus queries
 
-# === Основные настройки ===
-# Режим установки (production для стабильной работы)
+# === Basics ===
+# Install mode (production for stability)
 GF_INSTALL_PLUGINS=
-# Отключить проверку обновлений
+# Disable plugin update checks
 GF_INSTALL_PLUGINS_CHECK_FOR_UPDATES=false
 
-# === Безопасность ===
-# Секретный ключ для подписи cookies (сгенерируйте уникальный)
+# === Security ===
+# Secret key for signing cookies (unique)
 GF_SECURITY_SECRET_KEY=your-grafana-secret-key-here
-# Админ пользователь
+# Admin user
 GF_SECURITY_ADMIN_USER=admin
-# Админ пароль (измените на безопасный)
+# Admin password (set a strong one)
 GF_SECURITY_ADMIN_PASSWORD=your-admin-password-here
-# Отключить регистрацию новых пользователей
+# Disable new user signups
 GF_USERS_ALLOW_SIGN_UP=false
-# Отключить анонимный доступ
+# Disable anonymous access
 GF_AUTH_ANONYMOUS_ENABLED=false
 
-# === Сервер ===
-# Домен для доступа
+# === Server ===
+# Domain
 GF_SERVER_DOMAIN=grafana.your-domain.com
-# Корневой URL
+# Root URL
 GF_SERVER_ROOT_URL=http://grafana.your-domain.com:3000
-# HTTP порт
+# HTTP port
 GF_SERVER_HTTP_PORT=3000
-# Протокол
+# Protocol
 GF_SERVER_PROTOCOL=http
 
-# === База данных ===
-# Тип базы данных (sqlite3 для простоты)
+# === Database ===
+# DB type (sqlite3 for simplicity)
 GF_DATABASE_TYPE=sqlite3
-# Путь к файлу базы данных
+# DB file path
 GF_DATABASE_PATH=/var/lib/grafana/grafana.db
 
-# === Логирование ===
-# Уровень логирования
+# === Logging ===
+# Log level
 GF_LOG_LEVEL=info
-# Режим логирования
+# Log mode
 GF_LOG_MODE=console,file
-# Путь к файлу логов
+# Log file path
 GF_LOG_FILE_PATH=/var/log/grafana/grafana.log
 
-# === Аналитика ===
-# Отключить отправку аналитики
+# === Analytics ===
+# Disable telemetry
 GF_ANALYTICS_REPORTING_ENABLED=false
-# Отключить проверку обновлений
+# Disable update checks
 GF_ANALYTICS_CHECK_FOR_UPDATES=false
 
-# === Плагины ===
-# Разрешить загрузку неподписанных плагинов
+# === Plugins ===
+# Allow unsigned plugins
 GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=
-# Путь к плагинам
+# Plugins path
 GF_PATHS_PLUGINS=/var/lib/grafana/plugins
 
-# === ДАШБОРДЫ (18 дашбордов - 100% функциональны) ===
-# Путь к провайдерам дашбордов
+# === Dashboards (18, fully functional) ===
+# Provisioning path
 GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-# Автоматическое обновление дашбордов
+# Default home dashboard
 GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/home.json
 
-# === ОПТИМИЗИРОВАННАЯ СИСТЕМА МОНИТОРИНГА ===
-# Статус на 2025-09-19: 18 дашбордов Grafana (100% функциональны)
-# - System Overview (5 дашбордов): USE/RED методология
-# - AI Services (5 дашбордов): LiteLLM, Docling, Context7, RAG Pipeline
-# - Infrastructure (4 дашборда): Nginx, PostgreSQL, Redis, SearXNG
-# - Monitoring Stack (2 дашборда): Prometheus, Grafana
-# - Security & Performance (2 дашборда): SSL мониторинг, производительность
-#
-# Prometheus запросы: 85% успешность (улучшено с 40%)
-# Все запросы имеют fallback значения для стабильного отображения данных
-# Время загрузки дашбордов: <3 секунд
-# Производительность: Оптимизирована для AI инфраструктуры
+# === Optimized monitoring notes ===
+# 18 Grafana dashboards (System Overview, AI Services, Infrastructure, Monitoring Stack, Security & Performance)
+# Prometheus queries use fallbacks; target: <3s load times, optimized for AI infra
 
-# === ВАЖНО: ИЗМЕНИТЬ ПЕРЕД ПРОДАКШЕНОМ ===
-# ⚠️ Замените your-grafana-secret-key-here на уникальный секретный ключ
-# ⚠️ Замените your-admin-password-here на безопасный пароль администратора
-# ⚠️ Настройте GF_SERVER_DOMAIN согласно вашему домену
-# ⚠️ Проверьте доступность всех 18 дашбордов после запуска
-# ⚠️ Убедитесь в корректной работе Prometheus data source
+# === IMPORTANT BEFORE PRODUCTION ===
+# ⚠️ Replace your-grafana-secret-key-here with a unique secret
+# ⚠️ Replace your-admin-password-here with a strong admin password
+# ⚠️ Set GF_SERVER_DOMAIN to your domain
+# ⚠️ Verify all 18 dashboards load after startup
+# ⚠️ Confirm Prometheus data source works

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# ERNI-KI Let's Encrypt SSL Setup с Cloudflare DNS Challenge
-# Автор: Альтэон Шульц (Tech Lead-Мудрец)
-# Версия: 1.0
-# Дата: 2025-08-11
+# ERNI-KI Let's Encrypt SSL Setup with Cloudflare DNS Challenge
+# Author: Alteon Schultz (Tech Lead)
+# Version: 1.0
+# Date: 2025-08-11
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -15,7 +15,7 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Функции логирования
+# Logging functions
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO:${NC} $1"
 }
@@ -33,7 +33,7 @@ error() {
     exit 1
 }
 
-# Конфигурация
+# Configuration
 DOMAIN="ki.erni-gruppe.ch"
 EMAIL="admin@erni-ki.local"
 ACME_HOME="$HOME/.acme.sh"
@@ -41,95 +41,93 @@ SSL_DIR="$(pwd)/conf/nginx/ssl"
 BACKUP_DIR="$(pwd)/.config-backup/ssl-letsencrypt-$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$(pwd)/logs/ssl-setup.log"
 
-# Создание директории для логов
+# Creating directories for logs
 mkdir -p "$(dirname "$LOG_FILE")"
 
-# Проверка зависимостей
+# Dependency check
 check_dependencies() {
-    log "Проверка зависимостей..."
+    log "Checking prerequisites..."
 
-    # Проверка Docker
+    # Check Docker
     if ! command -v docker-compose &> /dev/null; then
-        error "docker-compose не найден. Установите Docker Compose."
+        error "docker-compose not found. Install Docker Compose."
     fi
 
-    # Проверка curl
+    # Check curl
     if ! command -v curl &> /dev/null; then
-        error "curl не найден. Установите curl."
+        error "curl not found. Install curl."
     fi
 
-    # Проверка openssl
+    # Check openssl
     if ! command -v openssl &> /dev/null; then
-        error "openssl не найден. Установите openssl."
+        error "openssl not found. Install openssl."
     fi
 
-    # Проверка директории SSL
+    # Ensure SSL directory exists
     if [ ! -d "$SSL_DIR" ]; then
-        error "Директория SSL не найдена: $SSL_DIR"
+        error "SSL directory not found: $SSL_DIR"
     fi
 
-    success "Все зависимости найдены"
+    success "All dependencies found"
 }
 
-# Проверка Cloudflare API токена
+# Validate Cloudflare API token
 check_cloudflare_credentials() {
-    log "Проверка Cloudflare API токена..."
+    log "Checking Cloudflare API token..."
 
     if [ -z "${CF_Token:-}" ] && [ -z "${CF_Key:-}" ]; then
-        error "Cloudflare API токен не найден. Установите переменную CF_Token или CF_Key и CF_Email"
+        error "Cloudflare API token missing. Set CF_Token or CF_Key + CF_Email."
     fi
 
     if [ -n "${CF_Token:-}" ]; then
-        log "Используется Cloudflare API Token (рекомендуется)"
-        # Тест API токена
+        log "Using Cloudflare API Token (recommended)"
         if ! curl -s -H "Authorization: Bearer $CF_Token" \
              -H "Content-Type: application/json" \
              "https://api.cloudflare.com/client/v4/user/tokens/verify" | grep -q '"success":true'; then
-            error "Cloudflare API токен недействителен"
+            error "Cloudflare API token invalid"
         fi
     elif [ -n "${CF_Key:-}" ] && [ -n "${CF_Email:-}" ]; then
-        log "Используется Cloudflare Global API Key"
-        # Тест Global API Key
+        log "Using Cloudflare Global API Key"
         if ! curl -s -H "X-Auth-Email: $CF_Email" \
              -H "X-Auth-Key: $CF_Key" \
              -H "Content-Type: application/json" \
              "https://api.cloudflare.com/client/v4/user" | grep -q '"success":true'; then
-            error "Cloudflare Global API Key недействителен"
+            error "Cloudflare Global API Key invalid"
         fi
     else
-        error "Неполные данные Cloudflare API. Требуется CF_Token или (CF_Key + CF_Email)"
+        error "Incomplete Cloudflare credentials. Provide CF_Token or (CF_Key + CF_Email)."
     fi
 
-    success "Cloudflare API токен действителен"
+    success "Cloudflare credentials verified"
 }
 
-# Установка acme.sh
+# Install acme.sh if needed
 install_acme_sh() {
-    log "Установка acme.sh..."
+    log "Installing acme.sh..."
 
     if [ ! -f "$ACME_HOME/acme.sh" ]; then
-        log "Загрузка и установка acme.sh..."
+        log "Downloading acme.sh..."
         curl https://get.acme.sh | sh -s email="$EMAIL"
 
-        # Перезагрузка переменных окружения
+        # Reload environment variables
         source "$HOME/.bashrc" 2>/dev/null || true
 
         if [ ! -f "$ACME_HOME/acme.sh" ]; then
-            error "Ошибка установки acme.sh"
+            error "acme.sh installation failed"
         fi
     else
-        log "acme.sh уже установлен"
+        log "acme.sh already installed"
     fi
 
-    # Обновление acme.sh до последней версии
+    # Ensure we're on the latest version
     "$ACME_HOME/acme.sh" --upgrade
 
-    success "acme.sh установлен и обновлен"
+    success "acme.sh installed and updated"
 }
 
-# Создание резервной копии
+# Backup existing certificates
 create_backup() {
-    log "Создание резервной копии текущих сертификатов..."
+    log "Backing up current certificates..."
 
     mkdir -p "$BACKUP_DIR"
 
@@ -137,120 +135,118 @@ create_backup() {
         cp "$SSL_DIR"/*.crt "$BACKUP_DIR/" 2>/dev/null || true
         cp "$SSL_DIR"/*.key "$BACKUP_DIR/" 2>/dev/null || true
         cp "$SSL_DIR"/*.pem "$BACKUP_DIR/" 2>/dev/null || true
-        success "Резервная копия создана: $BACKUP_DIR"
+        success "Backup created: $BACKUP_DIR"
     else
-        warning "Существующие сертификаты не найдены"
+        warning "No existing certificates found"
     fi
 }
 
-# Получение сертификата Let's Encrypt
+# Obtaining certificate Let's Encrypt
 obtain_certificate() {
-    log "Получение Let's Encrypt сертификата для домена: $DOMAIN"
+    log "Requesting Let's Encrypt certificate for domain: $DOMAIN"
 
-    # Установка Let's Encrypt сервера
+    # Use Let's Encrypt CA
     "$ACME_HOME/acme.sh" --set-default-ca --server letsencrypt
 
-    # Получение сертификата через DNS-01 challenge с Cloudflare API
+    # Issue certificate via DNS-01 challenge with Cloudflare
     if "$ACME_HOME/acme.sh" --issue --dns dns_cf -d "$DOMAIN" --email "$EMAIL" --force; then
-        success "Сертификат успешно получен"
+        success "Certificate successfully obtained"
     else
-        error "Ошибка получения сертификата"
+        error "Certificate issuance failed"
     fi
 }
 
-# Установка сертификата
+# Installation certificate
 install_certificate() {
-    log "Установка сертификата в nginx..."
+    log "Installing certificate into nginx..."
 
-    # Создание временной директории для новых сертификатов
+    # Temporary directory for fresh files
     TEMP_SSL_DIR="/tmp/ssl-new-$(date +%s)"
     mkdir -p "$TEMP_SSL_DIR"
 
-    # Установка сертификата с правильными путями
+    # Install certificate into the temp directory
     if "$ACME_HOME/acme.sh" --install-cert -d "$DOMAIN" \
         --cert-file "$TEMP_SSL_DIR/nginx.crt" \
         --key-file "$TEMP_SSL_DIR/nginx.key" \
         --fullchain-file "$TEMP_SSL_DIR/nginx-fullchain.crt" \
         --ca-file "$TEMP_SSL_DIR/nginx-ca.crt"; then
 
-        # Копирование сертификатов в рабочую директорию
+        # Copy certificates into SSL directory
         cp "$TEMP_SSL_DIR"/* "$SSL_DIR/"
 
-        # Установка правильных прав доступа
+        # Fix permissions
         chmod 644 "$SSL_DIR"/*.crt
         chmod 600 "$SSL_DIR"/*.key
 
-        # Очистка временной директории
+        # Cleanup temp files
         rm -rf "$TEMP_SSL_DIR"
 
-        success "Сертификат установлен в nginx"
+        success "Certificate installed in nginx"
     else
         rm -rf "$TEMP_SSL_DIR"
-        error "Ошибка установки сертификата"
+        error "Certificate installation failed"
     fi
 }
 
-# Проверка сертификата
+# Check certificate
 verify_certificate() {
-    log "Проверка установленного сертификата..."
+    log "Checking installed certificate..."
 
     if [ -f "$SSL_DIR/nginx.crt" ]; then
-        # Проверка срока действия
+        # Expiration
         local expiry_date=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -enddate | cut -d= -f2)
-        log "Сертификат действителен до: $expiry_date"
+        log "Certificate valid until: $expiry_date"
 
-        # Проверка домена
+        # Domain name
         local cert_domain=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject | grep -o "CN=[^,]*" | cut -d= -f2)
-        if [ "$cert_domain" = "$DOMAIN" ]; then
-            success "Сертификат выдан для правильного домена: $cert_domain"
+        if [[ "$cert_domain" == "$DOMAIN" ]]; then
+            success "Certificate issued for expected domain: $cert_domain"
         else
-            warning "Домен в сертификате ($cert_domain) не соответствует ожидаемому ($DOMAIN)"
+            warning "Certificate domain ($cert_domain) does not match ($DOMAIN)"
         fi
 
-        # Проверка издателя
+        # Issuer
         local issuer=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -issuer | grep -o "CN=[^,]*" | cut -d= -f2)
-        log "Издатель сертификата: $issuer"
+        log "Issuer: $issuer"
 
     else
-        error "Файл сертификата не найден: $SSL_DIR/nginx.crt"
+        error "Certificate file not found: $SSL_DIR/nginx.crt"
     fi
 }
 
-# Перезагрузка nginx
+# Reload nginx
 reload_nginx() {
-    log "Перезагрузка nginx..."
+    log "Reloading nginx..."
 
-    # Проверка конфигурации nginx
     if docker-compose exec -T nginx nginx -t; then
-        # Перезагрузка nginx
         if docker-compose exec -T nginx nginx -s reload; then
-            success "Nginx успешно перезагружен"
+            success "Nginx reloaded successfully"
         else
-            warning "Ошибка перезагрузки nginx, перезапуск контейнера..."
+            warning "Nginx reload failed, restarting container..."
             docker-compose restart nginx
         fi
     else
-        error "Ошибка в конфигурации nginx"
+        error "Nginx configuration test failed"
     fi
 }
 
-# Настройка автоматического обновления
+# Configure automatic renewal
 setup_auto_renewal() {
-    log "Настройка автоматического обновления сертификатов..."
+    log "Configuring automatic renewal..."
 
-    # Создание hook скрипта для перезагрузки nginx
+    # Hook script to reload nginx
     local hook_script="$ACME_HOME/nginx-reload-hook.sh"
 
     cat > "$hook_script" << 'EOF'
 #!/bin/bash
-# Hook скрипт для перезагрузки nginx после обновления сертификата
+# Hook script that reloads nginx after certificate renewal
 
 cd "$(dirname "$0")/../.."
 
-# Логирование
+# Logging
 echo "$(date): Certificate renewal hook executed" >> logs/ssl-renewal.log
 
-# Перезагрузка nginx
+# Reload nginx
 if docker-compose exec -T nginx nginx -s reload 2>/dev/null; then
     echo "$(date): Nginx reloaded successfully after certificate renewal" >> logs/ssl-renewal.log
 else
@@ -261,7 +257,7 @@ EOF
 
     chmod +x "$hook_script"
 
-    # Обновление acme.sh конфигурации для использования hook
+    # Update acme.sh configuration to use the hook
     "$ACME_HOME/acme.sh" --install-cert -d "$DOMAIN" \
         --cert-file "$SSL_DIR/nginx.crt" \
         --key-file "$SSL_DIR/nginx.key" \
@@ -269,10 +265,10 @@ EOF
         --ca-file "$SSL_DIR/nginx-ca.crt" \
         --reloadcmd "$hook_script"
 
-    success "Hook скрипт для автообновления настроен"
+    success "Renewal hook configured"
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${CYAN}"
     echo "=================================================="
@@ -292,16 +288,16 @@ main() {
     setup_auto_renewal
 
     echo ""
-    success "🎉 Let's Encrypt SSL сертификат успешно настроен!"
+    success "🎉 Let's Encrypt SSL certificate configured!"
     echo ""
-    log "Следующие шаги:"
-    echo "1. Проверьте HTTPS доступ: https://$DOMAIN"
-    echo "2. Проверьте SSL рейтинг: https://www.ssllabs.com/ssltest/"
-    echo "3. Сертификат будет автоматически обновляться каждые 60 дней"
+    log "Next steps:"
+    echo "1. Verify HTTPS access: https://$DOMAIN"
+    echo "2. Check SSL rating: https://www.ssllabs.com/ssltest/"
+    echo "3. Certificates auto-renew every ~60 days"
     echo ""
-    log "Резервная копия старых сертификатов: $BACKUP_DIR"
-    log "Логи установки: $LOG_FILE"
+    log "Backup directory: $BACKUP_DIR"
+    log "Setup log: $LOG_FILE"
 }
 
-# Запуск скрипта
+# Starting script
 main "$@" 2>&1 | tee -a "$LOG_FILE"

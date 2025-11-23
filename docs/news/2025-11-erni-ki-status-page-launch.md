@@ -1,4 +1,5 @@
 ---
+language: ru
 title: 'ERNI-KI status page launch'
 date: 2025-11-20
 description: 'New user-friendly status view powered by Uptime Kuma'

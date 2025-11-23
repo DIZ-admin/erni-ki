@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -14,8 +16,11 @@ import (
 func main() {
 	// Check command line arguments for health check
 	if len(os.Args) > 1 && os.Args[1] == "--health-check" {
-		healthCheck()
-		return
+		if err := healthCheck(); err != nil {
+			log.Printf("health check failed: %v", err)
+			os.Exit(1)
+		}
+		os.Exit(0)
 	}
 
 	r := gin.New()
@@ -51,23 +56,33 @@ func main() {
 		}
 
 		valid, err := verifyToken(cookieToken)
-		if err != nil {
+		if err != nil || !valid {
+			if err != nil {
+				log.Printf("token verification failed: %v", err)
+			}
 			respondJSON(c, http.StatusUnauthorized, gin.H{
 				"message": "unauthorized",
-				"error":   err,
+				"error":   "invalid token",
 			})
 			return
 		}
 
-		if valid {
-			respondJSON(c, http.StatusOK, gin.H{
-				"message": "authorized",
-			})
-		}
+		respondJSON(c, http.StatusOK, gin.H{
+			"message": "authorized",
+		})
 	})
 
-	if err := r.Run("0.0.0.0:9090"); err != nil {
-		fmt.Printf("Failed to start server: %v\n", err)
+	server := &http.Server{
+		Addr:              "0.0.0.0:9090",
+		Handler:           r,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
+
+	if err := server.ListenAndServe(); err != nil {
+		log.Printf("failed to start server: %v", err)
 		os.Exit(1)
 	}
 }
@@ -112,29 +127,43 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 }
 
 // healthCheck performs service health check for Docker.
-func healthCheck() {
-	resp, err := http.Get("http://localhost:9090/health") //nolint:noctx
+func healthCheck() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		"http://localhost:9090/health",
+		http.NoBody,
+	)
 	if err != nil {
-		fmt.Printf("Health check failed: %v\n", err)
-		os.Exit(1)
+		return fmt.Errorf("health check failed: %w", err)
 	}
 
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("health check failed: %w", err)
+	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Health check failed with status: %d\n", resp.StatusCode)
-		_ = resp.Body.Close()
-		os.Exit(1)
+		return fmt.Errorf("health check failed with status: %d", resp.StatusCode)
 	}
 
 	fmt.Println("Health check passed")
-	_ = resp.Body.Close()
-	os.Exit(0)
+	return nil
 }
 
 func verifyToken(tokenString string) (bool, error) {
 	jwtSecret := os.Getenv("WEBUI_SECRET_KEY")
 
 	if jwtSecret == "" {
-		return false, fmt.Errorf("JWT_SECRET env variable missing")
+		return false, fmt.Errorf("WEBUI_SECRET_KEY env variable missing")
 	}
 
 	mySigningKey := []byte(jwtSecret)

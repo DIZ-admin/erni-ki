@@ -70,22 +70,23 @@ docker compose ps
 > **Версия документации:** см. [docs/VERSION.md](docs/VERSION.md) для текущего
 > номера версии, даты и правил обновления.
 
-| Тема                   | Где искать                                                                               |
-| ---------------------- | ---------------------------------------------------------------------------------------- |
-| Архитектура и обзор    | `docs/architecture/`, `docs/overview.md`                                                 |
-| Мониторинг/операции    | `docs/operations/monitoring-guide.md`, `docs/operations/monitoring-audit.md`             |
-| GitHub/CI Governance   | `docs/operations/github-governance.md`, `.github/`                                       |
-| Environments & секреты | `docs/reference/github-environments-setup.md` + `scripts/infrastructure/security/`       |
-| Инциденты/аудиты       | `docs/archive/incidents/`, `docs/archive/audits/`                                        |
-| Academy / Пользователи | `docs/academy/README.md`, `docs/ru/index.md`, `docs/en/index.md`, `docs/de/index.md`     |
-| HowTo / сценарии       | `docs/howto/`, `docs/en/academy/howto/`                                                  |
-| Статус системы         | `docs/operations/status-page.md`, `docs/ru/system/status.md`, `docs/en/system/status.md` |
-| Аудит документации     | `docs/operations/documentation-audit.md`                                                 |
+| Тема                   | Где искать                                                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Архитектура и обзор    | `docs/architecture/`, `docs/overview.md`                                                                          |
+| Мониторинг/операции    | `docs/operations/monitoring-guide.md`, `docs/operations/monitoring-audit.md`                                      |
+| GitHub/CI Governance   | `docs/operations/github-governance.md`, `.github/`                                                                |
+| Environments & секреты | `docs/reference/github-environments-setup.md` + `scripts/infrastructure/security/`                                |
+| Инциденты/аудиты       | `docs/archive/incidents/`, `docs/archive/audits/`                                                                 |
+| Academy / Пользователи | `docs/academy/README.md`, `docs/index.md`, `docs/en/index.md`, `docs/de/index.md`                                 |
+| HowTo / сценарии       | `docs/howto/`, `docs/en/academy/howto/`                                                                           |
+| Статус системы         | `docs/operations/status-page.md`, `docs/system/status.md`, `docs/en/system/status.md`, `docs/de/system/status.md` |
+| Аудит документации     | `docs/operations/documentation-audit.md`                                                                          |
 
 ## 🎓 Academy KI и пользовательские сценарии
 
-- **Портал для пользователей:** заходите в `docs/ru/index.md` (каноничный язык)
-  или локализации `docs/en/index.md` / `docs/de/index.md`.
+- **Портал для пользователей:** заходите в `docs/index.md` (каноничный русский
+  портал) или локализации `docs/en/index.md` / `docs/de/index.md`. или
+  локализации `docs/en/index.md` / `docs/de/index.md`.
 - **Быстрый старт:** используйте `docs/training/openwebui-basics.md` и чек-листы
   `docs/training/prompting-101.md`.
 - **Практика:** готовые шаблоны и сценарии — в `docs/howto/` и переводах в

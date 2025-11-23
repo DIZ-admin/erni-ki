@@ -1,4 +1,5 @@
 ---
+language: ru
 page_id: howto.write-customer-email
 translation_status: complete
 ---

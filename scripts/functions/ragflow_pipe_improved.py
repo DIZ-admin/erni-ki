@@ -85,7 +85,7 @@ class Pipe:
 
         # --- Commands ---
         RESET_COMMANDS: List[str] = Field(
-            default=["/reset", "reset", "reset context", "новый чат", "сброс", "/new"],
+            default=["/reset", "reset", "reset context", "/new"],
             description="User messages that trigger context reset.",
         )
 

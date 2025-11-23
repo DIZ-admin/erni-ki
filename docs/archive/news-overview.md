@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # ERNI-KI News
 
 Stay up to date with platform releases and AI usage updates. Each post includes

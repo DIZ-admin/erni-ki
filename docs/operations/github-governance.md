@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # GitHub Governance Checklist
 
 _Обновлено: 2025-11-17_

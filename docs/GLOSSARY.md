@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Glossary
 
 This glossary defines key terms and concepts used throughout the ERNI-KI

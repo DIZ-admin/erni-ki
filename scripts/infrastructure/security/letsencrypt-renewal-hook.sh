@@ -1,5 +1,5 @@
 #!/bin/bash
-# Hook скрипт для перезагрузки nginx после обновления Let's Encrypt сертификата
+# Hook script that reloads nginx after Let's Encrypt renewal
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 LOG_FILE="$PROJECT_ROOT/logs/ssl-renewal-$(date +%Y%m%d).log"
@@ -8,7 +8,7 @@ echo "[$(date +'%Y-%m-%d %H:%M:%S')] Certificate renewal hook executed" >> "$LOG
 
 cd "$PROJECT_ROOT"
 
-# Перезагрузка nginx
+# Reload nginx
 if docker compose exec -T nginx nginx -s reload 2>> "$LOG_FILE"; then
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] Nginx reloaded successfully" >> "$LOG_FILE"
 else
@@ -16,7 +16,7 @@ else
     docker compose restart nginx >> "$LOG_FILE" 2>&1
 fi
 
-# Перезагрузка Cloudflare Tunnel
+# Reload Cloudflare Tunnel
 docker compose restart cloudflared >> "$LOG_FILE" 2>&1
 
 echo "[$(date +'%Y-%m-%d %H:%M:%S')] Certificate renewal completed" >> "$LOG_FILE"

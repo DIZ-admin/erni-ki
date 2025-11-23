@@ -1,4 +1,5 @@
 ---
+language: de
 page_id: site.home
 translation_status: complete
 doc_version: '2025.02'

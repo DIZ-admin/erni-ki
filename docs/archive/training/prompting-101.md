@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Prompting 101
 
 Learn the simplest structure to get reliable answers from Open WebUI. This

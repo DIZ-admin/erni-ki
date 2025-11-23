@@ -54,6 +54,8 @@
     "format": "./scripts/prettier-run.sh write",
     "format:check": "./scripts/prettier-run.sh check",
     "type-check": "tsc --noEmit",
+    "lint:language": "node scripts/language-check.cjs",
+    "lint:language:all": "node scripts/language-check.cjs --all",
     "build": "tsc",
     "clean": "rm -rf dist coverage node_modules/.cache",
     "docker:build": "docker build -t erni-ki-auth:dev ./auth",

@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # ERNI-KI Monitoring Audit (November 2025)
 
 This report documents the current state of the ERNI-KI observability stack,
