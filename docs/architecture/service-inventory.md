@@ -9,7 +9,7 @@ doc_version: '2025.11'
 Документ агрегирует сведения из `compose.yml` и `env/*.env` о каждом сервисе,
 чтобы инженеры могли быстро понять назначение контейнеров, точки входа,
 зависимости и требования к безопасности. Для обновлений образов используйте
-[checklist](../operations/image-upgrade-checklist.md).
+[checklist](../operations/maintenance/image-upgrade-checklist.md).
 
 ## Базовая инфраструктура и хранение
 
@@ -82,7 +82,7 @@ doc_version: '2025.11'
 - Структура тома: `uploads/` (сырьё, 2 дня), `processed/` (промежуточные
   артефакты, 14 дней), `exports/` (результаты, 30 дней), `quarantine/`
   (инциденты, 60 дней), `tmp/` (1 день). Детали —
-  `docs/operations/runbooks/docling-shared-volume.md`.
+  `docs/operations/maintenance/docling-shared-volume.md`.
 - Права доступа: владелец — пользователь docker host; группа `docling-data`
   имеет `rwx`; аудиторы добавляются через ACL `docling-readonly` с `rx` на
   `exports/`.
@@ -147,7 +147,7 @@ doc_version: '2025.11'
   инструментов.
 - **Docling/EdgeTTS**: работают через internal ports, используют CPU,
   обеспечивают многоязычный RAG pipeline и служат источником для
-  `docs/operations/monitoring-guide.md`.
+  `docs/operations/monitoring/monitoring-guide.md`.
 
 - Журналы высылаются во Fluent Bit (24224 forward, 2020 HTTP) и передаются в
   Loki, а критические сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx) также пишут
@@ -158,7 +158,7 @@ doc_version: '2025.11'
   (Slack/Teams через Watchtower metrics API).
 - Grafana v11.3.0 содержит 5 provisioned дашбордов (GPU/LLM, инфраструктура,
   SLA). Каждое обновление дашборда фиксируется в
-  `docs/operations/grafana-dashboards-guide.md`.
+  `docs/operations/monitoring/grafana-dashboards-guide.md`.
 - Безопасность базируется на Nginx WAF, Cloudflare Zero Trust (5 туннелей), JWT
   Go-сервисе и секретах в `secrets/`. Подробнее см.
   `security/security-policy.md`.
@@ -169,8 +169,9 @@ doc_version: '2025.11'
   GPU labels).
 - Конфигурации: `env/*.env`, `conf/nginx`, `conf/redis/redis.conf`,
   `conf/litellm`, `conf/prometheus`.
-- Мониторинг и runbooks: `docs/operations/monitoring-guide.md`,
-  `docs/operations/automated-maintenance-guide.md`, `docs/operations/runbooks/`.
+- Мониторинг и runbooks: `docs/operations/monitoring/monitoring-guide.md`,
+  `docs/operations/automation/automated-maintenance-guide.md`,
+  `docs/operations/runbooks/`.
 - Архитектура: `docs/architecture/architecture.md` (GPU allocation, Cloudflare
   tunnels, 32 сервисов).
 - Безопасность: `security/security-policy.md`,

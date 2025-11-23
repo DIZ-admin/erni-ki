@@ -49,10 +49,15 @@
     "e2e:report": "playwright show-report",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
-    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
-    "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+    "lint": "npm run lint:js && npm run lint:py",
+    "lint:js": "eslint . --ext .js,.ts,.jsx,.tsx",
+    "lint:js:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+    "lint:py": "python3 -m ruff check .",
+    "lint:py:fix": "python3 -m ruff check . --fix",
+    "lint:fix": "npm run lint:js:fix && npm run lint:py:fix",
     "format": "./scripts/prettier-run.sh write",
     "format:check": "./scripts/prettier-run.sh check",
+    "format:py": "python3 -m ruff format .",
     "type-check": "tsc --noEmit",
     "lint:language": "node scripts/language-check.cjs",
     "lint:language:all": "node scripts/language-check.cjs --all",
@@ -102,6 +107,10 @@
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
+    ],
+    "*.py": [
+      "python3 -m ruff check --fix",
+      "python3 -m ruff format"
     ],
     "*.{json,yaml,yml,md}": [
       "prettier --write",

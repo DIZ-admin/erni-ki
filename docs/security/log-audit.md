@@ -225,8 +225,9 @@ doc_version: '2025.11'
   `python3`, что устраняет ошибку `python: command not found`.
 
 Отчёт нужно синхронизировать с runbook-ами
-(`docs/operations/monitoring-guide.md`, `docs/prometheus-alerts-guide.md`) и
-создать отдельный таск на чистку `data/webhook-logs`.
+(`docs/operations/monitoring/monitoring-guide.md`,
+`docs/operations/monitoring/prometheus-alerts-guide.md`) и создать отдельный
+таск на чистку `data/webhook-logs`.
 
 ## Повторный аудит (13 ноября 2025)
 
@@ -294,7 +295,8 @@ doc_version: '2025.11'
   зафиксировав WARN 304 — база для алерта.
 - `conf/prometheus/alerts.yml`: правило `ContainerRestarting` ужесточено для
   борьбы со спур. предупреждениями.
-- `docs/operations/monitoring-guide.md`, `docs/locales/de/monitoring-guide.md`,
+- `docs/operations/monitoring/monitoring-guide.md`,
+  `docs/locales/de/monitoring-guide.md`,
   `docs/architecture/service-inventory.md`, `secrets/README.md` и
   `secrets/redis_exporter_url.txt.example` обновлены под новую схему
   redis-exporter.

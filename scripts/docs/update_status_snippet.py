@@ -13,7 +13,6 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 STATUS_YAML = REPO_ROOT / "docs/reference/status.yml"
@@ -30,7 +29,7 @@ DE_MARKER_END = "<!-- STATUS_SNIPPET_DE_END -->"
 LOCALE_STRINGS_FILE = REPO_ROOT / "docs/reference/status-snippet-locales.json"
 
 
-def load_locale_strings() -> Dict[str, Dict[str, str]]:
+def load_locale_strings() -> dict[str, dict[str, str]]:
     if not LOCALE_STRINGS_FILE.exists():
         return {}
     try:
@@ -43,9 +42,9 @@ def load_locale_strings() -> Dict[str, Dict[str, str]]:
 LOCALE_STRINGS = load_locale_strings()
 
 
-def parse_simple_yaml(path: Path) -> Dict[str, str]:
+def parse_simple_yaml(path: Path) -> dict[str, str]:
     """Minimal YAML parser for flat key-value files."""
-    data: Dict[str, str] = {}
+    data: dict[str, str] = {}
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#"):
@@ -57,7 +56,7 @@ def parse_simple_yaml(path: Path) -> Dict[str, str]:
     return data
 
 
-def render_snippet(data: Dict[str, str], locale: str = "ru") -> str:
+def render_snippet(data: dict[str, str], locale: str = "ru") -> str:
     """Build the Markdown snippet using locale-specific labels."""
     labels = LOCALE_STRINGS.get(locale, LOCALE_STRINGS.get("ru", {}))
     header_label = labels.get("header", "System Status")
@@ -90,8 +89,7 @@ def run_prettier(paths: list[str]) -> None:
             ["npx", "prettier", "--write", *paths],
             cwd=REPO_ROOT,
             check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
     except FileNotFoundError:
         print("[WARN] npx not found; skipping prettier formatting.")
@@ -106,16 +104,17 @@ def prettier_format(text: str, filepath: Path) -> str:
             ["npx", "prettier", "--parser", "markdown", "--stdin-filepath", rel],
             cwd=REPO_ROOT,
             input=text.encode("utf-8"),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
             check=True,
+            capture_output=True,
         )
         return proc.stdout.decode("utf-8").strip()
     except (FileNotFoundError, subprocess.CalledProcessError):
         return text.strip()
 
 
-def inject_snippet(target: Path, start_marker: str, end_marker: str, content: str, skip_if_missing: bool = False) -> bool:
+def inject_snippet(
+    target: Path, start_marker: str, end_marker: str, content: str, skip_if_missing: bool = False
+) -> bool:
     """Inject snippet between markers. Returns True if injection happened, False if skipped."""
     text = target.read_text(encoding="utf-8")
     start = text.find(start_marker)
@@ -126,13 +125,7 @@ def inject_snippet(target: Path, start_marker: str, end_marker: str, content: st
         raise RuntimeError(f"{target} markers not found.")
     if start > end:
         raise RuntimeError(f"{target} markers are misordered.")
-    new_text = (
-        text[: start + len(start_marker)].rstrip()
-        + "\n\n"
-        + content
-        + "\n"
-        + text[end:]
-    )
+    new_text = text[: start + len(start_marker)].rstrip() + "\n\n" + content + "\n" + text[end:]
     target.write_text(new_text, encoding="utf-8")
     return True
 
@@ -164,7 +157,9 @@ def run_update() -> None:
     if DOC_OVERVIEW_FILE.exists():
         inject_snippet(DOC_OVERVIEW_FILE, MARKER_START, MARKER_END, snippet_ru)
     if DE_INDEX_FILE.exists():
-        inject_snippet(DE_INDEX_FILE, DE_MARKER_START, DE_MARKER_END, snippet_de, skip_if_missing=True)
+        inject_snippet(
+            DE_INDEX_FILE, DE_MARKER_START, DE_MARKER_END, snippet_de, skip_if_missing=True
+        )
     run_prettier(
         [
             SNIPPET_MD.relative_to(REPO_ROOT).as_posix(),
@@ -198,9 +193,7 @@ def run_check() -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Update or validate ERNI-KI status snippets."
-    )
+    parser = argparse.ArgumentParser(description="Update or validate ERNI-KI status snippets.")
     parser.add_argument(
         "--check",
         action="store_true",

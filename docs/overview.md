@@ -84,7 +84,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 - **Grafana** — 5 provisioned дашбордов (GPU/LLM, инфраструктура, SLA).
 - **Loki + Fluent Bit** — централизованные логи.
 - **Automation scripts** — см.
-  [`automated-maintenance-guide.md`](operations/automated-maintenance-guide.md).
+  [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md).
 
 ## 4. Среды и деплоймент
 
@@ -103,10 +103,10 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 - **Operations Handbook**: роли, SLA, реакция на алерты —
   [`operations-handbook.md`](operations/operations-handbook.md).
 - **Monitoring Guide**: Prometheus targets, health-checks, экспортёры —
-  [`monitoring-guide.md`](operations/monitoring-guide.md).
+  [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md).
 - **Runbooks**: рестарты, бэкапы, Docling cleanup, troubleshooting —
-  [`service-restart-procedures.md`](operations/runbooks/service-restart-procedures.md),
-  [`troubleshooting-guide.md`](operations/runbooks/troubleshooting-guide.md).
+  [`service-restart-procedures.md`](operations/maintenance/service-restart-procedures.md),
+  [`troubleshooting-guide.md`](operations/troubleshooting/troubleshooting-guide.md).
 - **Diagnostics**: методология и чеклисты —
   [`diagnostics/`](operations/diagnostics/README.md).
 
@@ -147,8 +147,8 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   [`external-access-setup.md`](getting-started/external-access-setup.md)
 - **Операции и мониторинг:**
   [`operations-handbook.md`](operations/operations-handbook.md),
-  [`monitoring-guide.md`](operations/monitoring-guide.md),
-  [`automated-maintenance-guide.md`](operations/automated-maintenance-guide.md)
+  [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md),
+  [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md)
 - **Runbooks и troubleshooting:**
   [`Troubleshooting guide`](operations/runbooks/troubleshooting-guide.md),
   [`troubleshooting.md`](operations/troubleshooting.md)

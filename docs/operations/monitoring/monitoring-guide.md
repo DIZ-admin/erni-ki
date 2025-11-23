@@ -9,93 +9,43 @@ doc_version: '2025.11'
 Comprehensive guide for monitoring ERNI-KI system with 8 specialized exporters,
 standardized healthchecks, and production-ready observability stack.
 
-## 🎯 Overview
+## 1. Введение
 
-ERNI-KI monitoring system includes:
+Система мониторинга ERNI-KI обеспечивает полную наблюдаемость (observability) за
+состоянием инфраструктуры, сервисов AI и баз данных.
 
-- **8 Specialized Exporters** - optimized and standardized (September 19, 2025)
-- **Prometheus v3.0.0** - metrics collection and storage (updated October
-  24, 2025)
-- **20 Alert Rules** - proactive monitoring (синхронизировано с
-  `conf/prometheus/alerts.yml`)
-- **Grafana v11.3.0** - visualization and dashboards (5 provisioned dashboards)
-- **Loki v3.0.0 + Fluent Bit v3.1.0** - centralized logging
-- **AlertManager v0.27.0** - notifications and alerting
-- **Network topology (current)** - стандартный docker bridge; большинство
-  мониторинговых портов привязаны к `127.0.0.1`; Ollama открыт на хост-порту
-  `11434`; сегментация ingress/services/logging/data планируется отдельно.
+### Основные компоненты:
+
+- **8 Specialized Exporters** - оптимизированы и стандартизированы.
+- **Prometheus v3.0.0** - сбор и хранение метрик.
+- **20 Alert Rules** - проактивный мониторинг.
+- **Grafana v11.3.0** - визуализация и дашборды.
+- **Loki v3.0.0 + Fluent Bit v3.1.0** - централизованное логирование.
+- **AlertManager v0.27.0** - уведомления и алертинг.
+
+## 2. Предварительные требования
+
+Для работы с системой мониторинга необходимо:
+
+- **Доступ к Grafana:** Учетная запись с правами Viewer или Editor.
+- **Доступ к Prometheus:** Прямой доступ к UI (если требуется отладка запросов).
+- **CLI инструменты:** `curl`, `jq` для проверки эндпоинтов вручную.
+- **Сетевой доступ:** Доступ к портам мониторинга (см. Architecture).
+
+## 3. Архитектура и Обновления
 
 ### 🗺️ Architecture Snapshot
 
-- Основная схема мониторинга обновлена после Phase 0 и доступна в
-  `docs/architecture/architecture.md` (раздел _Monitoring Stack_). Диаграмма
-  показывает Prometheus ↔ exporters, Loki ↔ Fluent Bit, Alertmanager ↔ Slack
-  / PagerDuty и каналы cron evidence → node_exporter textfile → Grafana.
-- Быстрая инвентаризация сервисов и портов:
-  `docs/architecture/services-overview.md` и
-  `docs/architecture/service-inventory.md`. Перед изменениями конфигурации
-  сверяйтесь с этими файлами, чтобы не нарушить связи между мониторинговыми
-  контейнерами.
+- Основная схема мониторинга доступна в `docs/architecture/architecture.md`.
+- Инвентаризация сервисов: `docs/architecture/service-inventory.md`.
 
 ### 🔄 Обновления ноября 2025
 
-- **Alertmanager queue watchdog** —
-  `scripts/monitoring/alertmanager-queue-watch.sh` сравнивает метрику
-  `alertmanager_cluster_messages_queued` с порогами, пишет историю в
-  `logs/alertmanager-queue.log` и при превышении лимита переводит cron в
-  error-состояние с ссылкой на runbook (никаких auto-restart).
-- **Fluent Bit Phase 0-2** — tail-инпут читает `json-file` логи как резерв,
-  `filters-optimized.conf` теперь подключен и маскирует токены, а каждый
-  контейнер в `compose.yml` использует Fluentd драйвер (`fluent-bit:24224`).
-- **Loki object storage + retention** — сервис пишет чанки в MinIO/S3
-  (`loki-object-store`), включает boltdb-shipper и 30-дневный retention, а
-  конфигурация использует `-config.expand-env` для безопасного подтягивания
-  cred’ов из `env/loki.env`.
-- **Correlation IDs everywhere** — nginx возвращает `X-Request-ID`, auth сервис
-  продвигает его до ответов и пишет структурированные логи, а OpenWebUI получает
-  `REQUEST_ID_HEADER=X-Request-ID` для будущего использования внутри приложения.
-- **Мультиканальное уведомление** — Alertmanager отправляет критические алерты
-  одновременно в Slack (`/run/secrets/slack_alert_webhook`) и PagerDuty
-  (`/run/secrets/pagerduty_routing_key`), маршруты содержат ссылки на runbook и
-  владельца.
-- **Docling shared volume** — `scripts/maintenance/docling-shared-cleanup.sh`
-  гарантирует очистку `data/docling/shared/uploads`, а
-  `scripts/monitoring/docling-cleanup-permission-metric.sh` публикует метрику
-  `erni_docling_cleanup_permission_denied`, чтобы Alertmanager ловил повторные
-  Permission denied.
-- **Redis fragmentation** —
-  `scripts/maintenance/redis-fragmentation-watchdog.sh` выполняет `memory purge`
-  и включает `activedefrag` при ratio >4, журнал —
-  `logs/redis-fragmentation-watchdog.log`.
-- **TLS & внешние проверки** —
-  `scripts/infrastructure/security/monitor-certificates.sh` +
-  `scripts/infrastructure/monitoring/monitor-rate-limiting.sh` собирают
-  отклонения proxy/HTTPS и обеспечивают перезапуск nginx/watchtower.
-- **LiteLLM Context7 контроль** — `scripts/monitor-litellm-memory.sh` публикует
-  alert в Slack/Webhook при росте памяти gateway, а
-  `scripts/infrastructure/monitoring/test-network-performance.sh` измеряет
-  latency для маршрута nginx → LiteLLM → Ollama/PostgreSQL/Redis.
-- **Health monitor log filters** — `env/health-monitor.env` теперь содержит
-  `HEALTH_MONITOR_LOG_IGNORE_REGEX` с шаблонами для
-  `litellm.proxy_proxy_server.user_api_key_auth`, `node-exporter broken pipe`,
-  `cloudflared context canceled`, `redis-exporter errorstats`, `fluent-bit`
-  повторов и `erni-ki-alertmanager.*(no_team|connect: connection refused)`.
-  Чтобы вернуть эти события после починки Alertmanager/Slack, удалите лишние
-  паттерны или задайте свой override перед запуском `scripts/health-monitor.sh`
-  (например,
-  `HEALTH_MONITOR_LOG_IGNORE_REGEX='' scripts/health-monitor.sh --report …`).
-- **Cron & Config Backups** — результаты cron-задач и health мониторинга
-  фиксируются в `docs/archive/config-backup/*.md` (monitoring report, update
-  analysis, execution report); обновляйте их при изменениях скриптов или
-  расписаний.
-- **Smoke-тест уведомлений** — скрипт
-  `scripts/monitoring/test-alert-delivery.sh` отправляет synthetic alert в
-  Alertmanager и позволяет проверить доставку Slack/PagerDuty перед релизом.
-- **Cron evidence metrics** — каждый watchdog/cron обновляет состояние через
-  `scripts/monitoring/record-cron-status.sh`, а
-  `scripts/monitoring/update-cron-metrics.sh` публикует показатели в
-  `data/node-exporter-textfile/cron_watchdogs.prom` (подхватывается
-  node_exporter textfile collector).
+- **Alertmanager queue watchdog** — контроль очереди уведомлений.
+- **Fluent Bit Phase 0-2** — оптимизированные фильтры и маскирование токенов.
+- **Loki object storage** — хранение логов в S3/MinIO с 30-дневным retention.
+- **Correlation IDs** — сквозная трассировка запросов (X-Request-ID).
+- **Мультиканальное уведомление** — Slack + PagerDuty для критических алертов.
 
 ## 🚨 Alert Delivery & Runbooks
 
@@ -634,7 +584,7 @@ healthcheck:
   start_period: 10s
 ```
 
-## 📊 Metrics Verification
+## 8. Верификация
 
 ### All Exporters Status Check
 

@@ -4,96 +4,88 @@ ERNI-KI Webhook Receiver for alert handling.
 Processes Alertmanager notifications and forwards them to various channels.
 """
 
-import json
 import logging
 import os
-import requests
 from datetime import datetime
-from flask import Flask, request, jsonify
-from typing import Dict, List, Any
+from typing import Any
+
+import requests
+from flask import Flask, jsonify, request
 
 # Logging configuration
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
 # Configuration from environment variables
-DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL', '')
-SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL', '')
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
-TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', '')
+DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL", "")
+SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+
 
 class AlertProcessor:
     """Alert processor with multi-channel notification support."""
 
     def __init__(self):
         self.severity_colors = {
-            'critical': 0xFF0000,  # Red
-            'warning': 0xFFA500,   # Orange
-            'info': 0x0099FF       # Blue
+            "critical": 0xFF0000,  # Red
+            "warning": 0xFFA500,  # Orange
+            "info": 0x0099FF,  # Blue
         }
 
-        self.severity_emojis = {
-            'critical': '🚨',
-            'warning': '⚠️',
-            'info': 'ℹ️'
-        }
+        self.severity_emojis = {"critical": "🚨", "warning": "⚠️", "info": "ℹ️"}
 
-    def process_alerts(self, alerts_data: Dict[str, Any]) -> Dict[str, Any]:
+    def process_alerts(self, alerts_data: dict[str, Any]) -> dict[str, Any]:
         """Process incoming alerts payload."""
         try:
-            alerts = alerts_data.get('alerts', [])
-            group_labels = alerts_data.get('groupLabels', {})
+            alerts = alerts_data.get("alerts", [])
+            group_labels = alerts_data.get("groupLabels", {})
 
             logger.info(f"Processing {len(alerts)} alerts")
 
-            results = {
-                'processed': 0,
-                'errors': [],
-                'notifications_sent': []
-            }
+            results = {"processed": 0, "errors": [], "notifications_sent": []}
 
             for alert in alerts:
                 try:
                     self._process_single_alert(alert, group_labels)
-                    results['processed'] += 1
+                    results["processed"] += 1
                 except Exception as e:
                     logger.error(f"Error processing alert: {e}")
-                    results['errors'].append(str(e))
+                    results["errors"].append(str(e))
 
             return results
 
         except Exception as e:
             logger.error(f"Error processing alerts: {e}")
-            return {'error': str(e)}
+            return {"error": str(e)}
 
-    def _process_single_alert(self, alert: Dict[str, Any], group_labels: Dict[str, Any]):
+    def _process_single_alert(self, alert: dict[str, Any], group_labels: dict[str, Any]):
         """Process a single alert."""
-        labels = alert.get('labels', {})
-        annotations = alert.get('annotations', {})
-        status = alert.get('status', 'unknown')
+        labels = alert.get("labels", {})
+        annotations = alert.get("annotations", {})
+        status = alert.get("status", "unknown")
 
         # Severity determination
-        severity = labels.get('severity', 'info')
-        service = labels.get('service', 'unknown')
-        category = labels.get('category', 'general')
+        severity = labels.get("severity", "info")
+        service = labels.get("service", "unknown")
+        category = labels.get("category", "general")
 
         # Message creation
         message_data = {
-            'alert_name': labels.get('alertname', 'Unknown Alert'),
-            'severity': severity,
-            'service': service,
-            'category': category,
-            'status': status,
-            'summary': annotations.get('summary', 'No summary available'),
-            'description': annotations.get('description', 'No description available'),
-            'instance': labels.get('instance', 'unknown'),
-            'timestamp': datetime.now().isoformat(),
-            'group_labels': group_labels
+            "alert_name": labels.get("alertname", "Unknown Alert"),
+            "severity": severity,
+            "service": service,
+            "category": category,
+            "status": status,
+            "summary": annotations.get("summary", "No summary available"),
+            "description": annotations.get("description", "No description available"),
+            "instance": labels.get("instance", "unknown"),
+            "timestamp": datetime.now().isoformat(),
+            "group_labels": group_labels,
         }
 
         # Sending notifications
@@ -106,49 +98,32 @@ class AlertProcessor:
         if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
             self._send_telegram_notification(message_data)
 
-    def _send_discord_notification(self, message_data: Dict[str, Any]):
+    def _send_discord_notification(self, message_data: dict[str, Any]):
         """Send Discord notification."""
         try:
-            severity = message_data['severity']
-            emoji = self.severity_emojis.get(severity, 'ℹ️')
+            severity = message_data["severity"]
+            emoji = self.severity_emojis.get(severity, "ℹ️")
             color = self.severity_colors.get(severity, 0x0099FF)
 
             embed = {
                 "title": f"{emoji} {message_data['alert_name']}",
-                "description": message_data['summary'],
+                "description": message_data["summary"],
                 "color": color,
                 "fields": [
-                    {
-                        "name": "🔧 Service",
-                        "value": message_data['service'],
-                        "inline": True
-                    },
-                    {
-                        "name": "📊 Category",
-                        "value": message_data['category'],
-                        "inline": True
-                    },
-                    {
-                        "name": "🎯 Instance",
-                        "value": message_data['instance'],
-                        "inline": True
-                    },
+                    {"name": "🔧 Service", "value": message_data["service"], "inline": True},
+                    {"name": "📊 Category", "value": message_data["category"], "inline": True},
+                    {"name": "🎯 Instance", "value": message_data["instance"], "inline": True},
                     {
                         "name": "📝 Description",
-                        "value": message_data['description'],
-                        "inline": False
-                    }
+                        "value": message_data["description"],
+                        "inline": False,
+                    },
                 ],
-                "timestamp": message_data['timestamp'],
-                "footer": {
-                    "text": f"ERNI-KI Monitoring • Status: {message_data['status']}"
-                }
+                "timestamp": message_data["timestamp"],
+                "footer": {"text": f"ERNI-KI Monitoring • Status: {message_data['status']}"},
             }
 
-            payload = {
-                "embeds": [embed],
-                "username": "ERNI-KI Monitor"
-            }
+            payload = {"embeds": [embed], "username": "ERNI-KI Monitor"}
 
             response = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=10)
             response.raise_for_status()
@@ -158,48 +133,29 @@ class AlertProcessor:
         except Exception as e:
             logger.error(f"Failed to send Discord notification: {e}")
 
-    def _send_slack_notification(self, message_data: Dict[str, Any]):
+    def _send_slack_notification(self, message_data: dict[str, Any]):
         """Send Slack notification."""
         try:
-            severity = message_data['severity']
-            emoji = self.severity_emojis.get(severity, 'ℹ️')
+            severity = message_data["severity"]
+            emoji = self.severity_emojis.get(severity, "ℹ️")
 
-            color_map = {
-                'critical': 'danger',
-                'warning': 'warning',
-                'info': 'good'
-            }
-            color = color_map.get(severity, 'good')
+            color_map = {"critical": "danger", "warning": "warning", "info": "good"}
+            color = color_map.get(severity, "good")
 
             attachment = {
                 "color": color,
                 "title": f"{emoji} {message_data['alert_name']}",
-                "text": message_data['summary'],
+                "text": message_data["summary"],
                 "fields": [
-                    {
-                        "title": "Service",
-                        "value": message_data['service'],
-                        "short": True
-                    },
-                    {
-                        "title": "Instance",
-                        "value": message_data['instance'],
-                        "short": True
-                    },
-                    {
-                        "title": "Description",
-                        "value": message_data['description'],
-                        "short": False
-                    }
+                    {"title": "Service", "value": message_data["service"], "short": True},
+                    {"title": "Instance", "value": message_data["instance"], "short": True},
+                    {"title": "Description", "value": message_data["description"], "short": False},
                 ],
                 "footer": "ERNI-KI Monitoring",
-                "ts": int(datetime.now().timestamp())
+                "ts": int(datetime.now().timestamp()),
             }
 
-            payload = {
-                "attachments": [attachment],
-                "username": "ERNI-KI Monitor"
-            }
+            payload = {"attachments": [attachment], "username": "ERNI-KI Monitor"}
 
             response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
             response.raise_for_status()
@@ -209,33 +165,29 @@ class AlertProcessor:
         except Exception as e:
             logger.error(f"Failed to send Slack notification: {e}")
 
-    def _send_telegram_notification(self, message_data: Dict[str, Any]):
+    def _send_telegram_notification(self, message_data: dict[str, Any]):
         """Send Telegram notification."""
         try:
-            severity = message_data['severity']
-            emoji = self.severity_emojis.get(severity, 'ℹ️')
+            severity = message_data["severity"]
+            emoji = self.severity_emojis.get(severity, "ℹ️")
 
             text = f"""
-{emoji} *{message_data['alert_name']}*
+{emoji} *{message_data["alert_name"]}*
 
-📝 *Summary:* {message_data['summary']}
-🔧 *Service:* {message_data['service']}
-📊 *Category:* {message_data['category']}
-🎯 *Instance:* {message_data['instance']}
-⏰ *Time:* {message_data['timestamp']}
+📝 *Summary:* {message_data["summary"]}
+🔧 *Service:* {message_data["service"]}
+📊 *Category:* {message_data["category"]}
+🎯 *Instance:* {message_data["instance"]}
+⏰ *Time:* {message_data["timestamp"]}
 
 📄 *Description:*
-{message_data['description']}
+{message_data["description"]}
 
-🔗 *Status:* {message_data['status']}
+🔗 *Status:* {message_data["status"]}
             """.strip()
 
             url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-            payload = {
-                "chat_id": TELEGRAM_CHAT_ID,
-                "text": text,
-                "parse_mode": "Markdown"
-            }
+            payload = {"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "Markdown"}
 
             response = requests.post(url, json=payload, timeout=10)
             response.raise_for_status()
@@ -245,60 +197,63 @@ class AlertProcessor:
         except Exception as e:
             logger.error(f"Failed to send Telegram notification: {e}")
 
+
 # Alert processor initialization
 alert_processor = AlertProcessor()
 
-@app.route('/webhook/critical', methods=['POST'])
+
+@app.route("/webhook/critical", methods=["POST"])
 def handle_critical_webhook():
     """Handle critical alerts"""
     try:
         data = request.get_json()
         if not data:
-            return jsonify({'error': 'No JSON data provided'}), 400
+            return jsonify({"error": "No JSON data provided"}), 400
 
         logger.info("Received critical alert webhook")
         result = alert_processor.process_alerts(data)
 
-        return jsonify({
-            'status': 'success',
-            'message': 'Critical alerts processed',
-            'result': result
-        })
+        return jsonify(
+            {"status": "success", "message": "Critical alerts processed", "result": result}
+        )
 
     except Exception as e:
         logger.error(f"Error handling critical webhook: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
-@app.route('/webhook/warning', methods=['POST'])
+
+@app.route("/webhook/warning", methods=["POST"])
 def handle_warning_webhook():
     """Handle warning alerts"""
     try:
         data = request.get_json()
         if not data:
-            return jsonify({'error': 'No JSON data provided'}), 400
+            return jsonify({"error": "No JSON data provided"}), 400
 
         logger.info("Received warning alert webhook")
         result = alert_processor.process_alerts(data)
 
-        return jsonify({
-            'status': 'success',
-            'message': 'Warning alerts processed',
-            'result': result
-        })
+        return jsonify(
+            {"status": "success", "message": "Warning alerts processed", "result": result}
+        )
 
     except Exception as e:
         logger.error(f"Error handling warning webhook: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
-@app.route('/health', methods=['GET'])
+
+@app.route("/health", methods=["GET"])
 def health_check():
     """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'service': 'erni-ki-webhook-receiver',
-        'timestamp': datetime.now().isoformat()
-    })
+    return jsonify(
+        {
+            "status": "healthy",
+            "service": "erni-ki-webhook-receiver",
+            "timestamp": datetime.now().isoformat(),
+        }
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     logger.info("Starting ERNI-KI Webhook Receiver")
-    app.run(host='0.0.0.0', port=9093, debug=False)
+    app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container

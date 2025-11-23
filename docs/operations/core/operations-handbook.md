@@ -21,7 +21,7 @@ doc_version: '2025.11'
 
 - Все правила задокументированы в `conf/prometheus/alerts.yml` (Critical,
   Performance, Database, GPU, Nginx). Подробнее —
-  `docs/operations/monitoring-guide.md` (раздел «Prometheus Alerts
+  `docs/operations/monitoring/monitoring-guide.md` (раздел «Prometheus Alerts
   Configuration»).
 - SLA: критические алерты — ответ <5 мин, багфиксы и triage в течение 30 мин.
 - Alertmanager v0.27.0 описывает каналы (Slack/Teams) и throttling; команды
@@ -44,8 +44,9 @@ doc_version: '2025.11'
 ## 4. Автоматизация обслуживания
 
 - Все скрипты VACUUM и Docker cleanup описаны в
-  `docs/operations/automated-maintenance-guide.md`. Запускаются по cron (VACUUM
-  03:00, cleanup 04:00, log rotation daily, Backrest backups 01:30).
+  `docs/operations/automation/automated-maintenance-guide.md`. Запускаются по
+  cron (VACUUM 03:00, cleanup 04:00, log rotation daily, Backrest backups
+  01:30).
 - Результаты проверяются через утилиты: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
 - При сбоях скриптов — см. `runbooks/backup-restore-procedures.md` для
@@ -83,13 +84,15 @@ doc_version: '2025.11'
 
 ## 7. Data & Storage документация
 
-- **Планы и оптимизации БД:** `docs/data/database-monitoring-plan.md`,
-  `docs/data/database-production-optimizations.md`,
-  `docs/data/database-troubleshooting.md`.
-- **Redis:** `docs/data/redis-monitoring-grafana.md`,
-  `docs/data/redis-operations-guide.md`.
-- **vLLM / LiteLLM ресурсы:** `docs/data/vllm-resource-optimization.md` +
-  скрипты `scripts/monitor-litellm-memory.sh`,
+- **Планы и оптимизации БД:**
+  `docs/operations/database/database-monitoring-plan.md`,
+  `docs/operations/database/database-production-optimizations.md`,
+  `docs/operations/database/database-troubleshooting.md`.
+- **Redis:** `docs/operations/database/redis-monitoring-grafana.md`,
+  `docs/operations/database/redis-operations-guide.md`.
+- **vLLM / LiteLLM ресурсы:**
+  `docs/operations/database/vllm-resource-optimization.md` + скрипты
+  `scripts/monitor-litellm-memory.sh`,
   `scripts/redis-performance-optimization.sh`.
 - В runbooks фиксируйте ссылки на соответствующие Data-документы при выполнении
   maintenance (pgvector VACUUM, Redis defrag, Backrest restore).
@@ -97,9 +100,9 @@ doc_version: '2025.11'
 ## 8. Ссылки и источники
 
 - Architecture → `docs/architecture/architecture.md`.
-- Monitoring → `docs/operations/monitoring-guide.md`, `conf/prometheus`,
-  `conf/grafana`.
-- Automation → `docs/operations/automated-maintenance-guide.md`,
+- Monitoring → `docs/operations/monitoring/monitoring-guide.md`,
+  `conf/prometheus`, `conf/grafana`.
+- Automation → `docs/operations/automation/automated-maintenance-guide.md`,
   `scripts/maintenance`.
 - Runbooks → `docs/operations/runbooks/*.md`.
 - Archon — обновлять короткие статусные заметки и чек-листы по каждому инциденту
