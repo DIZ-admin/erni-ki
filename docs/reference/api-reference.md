@@ -862,7 +862,7 @@ curl -X POST -F "file=@document.pdf" -F "ocr_languages=en,de,fr,it" \
 
 ## 📊 Мониторинг API (обновлено)
 
-### Grafana Dashboards (18 дашбордов - 100% функциональны)
+### Grafana Dashboards (5 provisioned дашбордов)
 
 #### GET /api/dashboards/search
 

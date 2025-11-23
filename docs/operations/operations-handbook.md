@@ -9,10 +9,10 @@ language: ru
 
 ## 1. Цель
 
-- Поддерживать 30 production-сервисов Healthy (см. `README.md`).
-- Обеспечить идентичность по версиям (OpenWebUI v0.6.36, Prometheus v3.0.1,
-  Grafana v11.6.6).
-- Поддерживать response targets по 27 активным alert rules и ежедневным
+- Поддерживать 32 production-сервиса Healthy (см. `README.md`).
+- Обеспечить идентичность по версиям (OpenWebUI v0.6.36, Prometheus v3.0.0,
+  Grafana v11.3.0).
+- Поддерживать response targets по 20 активным alert rules и ежедневным
   cron-скриптам.
 
 ## 2. Алерты и мониторинг
@@ -22,7 +22,7 @@ language: ru
   `docs/operations/monitoring-guide.md` (раздел «Prometheus Alerts
   Configuration»).
 - SLA: критические алерты — ответ <5 мин, багфиксы и triage в течение 30 мин.
-- Alertmanager v0.28.0 описывает каналы (Slack/Teams) и throttling; команды
+- Alertmanager v0.27.0 описывает каналы (Slack/Teams) и throttling; команды
   включают owner (SRE) и backup (Platform Lead).
 - Журналирование идет через Fluent Bit → Loki и `json-file` для критичных
   сервисов (OpenWebUI, Ollama, PostgreSQL, Nginx).
