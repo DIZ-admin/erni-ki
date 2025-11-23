@@ -41,7 +41,7 @@ fluent/fluent-bit:2024.05                      106 MB
 postgres:15-alpine                            279 MB
 grafana/grafana:2024.05                        733 MB
 ghcr.io/berriai/litellm:v1.77.2.rc.1          2.2 GB (старая версия)
-fluent/fluent-bit:3.2.0                       88.2 MB
+fluent/fluent-bit:3.1.0                       88.2 MB
 mysql:8.0.39                                  573 MB
 elasticsearch:8.11.3                          1.41 GB
 ```
@@ -78,7 +78,7 @@ docker rmi erni-foto-agency-app:2024.05
 # Удалить неиспользуемые служебные образы
 docker rmi jaegertracing/all-in-one:2024.05
 docker rmi fluent/fluent-bit:2024.05
-docker rmi fluent/fluent-bit:3.2.0
+docker rmi fluent/fluent-bit:3.1.0
 docker rmi postgres:15-alpine
 docker rmi grafana/grafana:2024.05
 docker rmi mysql:8.0.39

@@ -9,9 +9,9 @@ language: ru
 # 👨‍💼 Administration Guide - ERNI-KI
 
 > **Версия:** 8.1 **Дата обновления:** 24.10.2025 **Статус:** Production Ready
-> (Система мониторинга полностью оптимизирована: 18 дашбордов Grafana (100%
-> функциональны), 27 Prometheus alert rules, автоматизированное обслуживание,
-> LiteLLM Context Engineering, Docling OCR, Context7 интеграция)
+> (Система мониторинга: 5 provisioned дашбордов Grafana, 20 Prometheus alert
+> rules, автоматизированное обслуживание, LiteLLM Context Engineering, Docling
+> OCR, Context7 интеграция)
 
 ## 📋 Обзор
 

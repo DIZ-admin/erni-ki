@@ -13,8 +13,8 @@ language: ru
 > - Алерты: 27 Prometheus alert rules активны
 > - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
 > - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
-> - Мониторинг: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
->   v3.2.0, Alertmanager v0.28.0
+> - Мониторинг: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
+>   v3.1.0, Alertmanager v0.27.0
 > - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
 >   01:30, Watchtower selective updates
 > - Примечание: Наблюдаемость и AI стек актуализированы в ноябре 2025
@@ -41,7 +41,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 | Область                     | Показатель                                                                                                                  |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | **Здоровье сервисов**       | 30/30 контейнеров healthy (см. README.md в корне репозитория и [`services-overview.md`](architecture/services-overview.md)) |
-| **Мониторинг**              | Prometheus v3.0.1, Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0                                    |
+| **Мониторинг**              | Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0                                    |
 | **GPU & AI стэк**           | OpenWebUI v0.6.36, Ollama 0.12.11, LiteLLM v1.80.0.rc.1, MCP Server, RAG через SearXNG                                      |
 | **Автоматизация**           | Cron: PostgreSQL VACUUM (вс. 03:00), Docker cleanup (вс. 04:00), Backrest бэкапы (ежедневно 01:30)                          |
 | **Безопасность**            | JWT Auth сервис, Nginx WAF (rate limiting + security headers), Cloudflare Zero Trust (5 доменов)                            |
@@ -79,7 +79,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 
 - **Prometheus** (27 alert rules + 32 targets) и экспортёры (node, postgres,
   redis, nvidia, blackbox, ollama, nginx, cadvisor, RAG).
-- **Grafana** — 18 дашбордов (GPU, LLM, DB, Security).
+- **Grafana** — 5 provisioned дашбордов (GPU/LLM, инфраструктура, SLA).
 - **Loki + Fluent Bit** — централизованные логи.
 - **Automation scripts** — см.
   [`automated-maintenance-guide.md`](operations/automated-maintenance-guide.md).

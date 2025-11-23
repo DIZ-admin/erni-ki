@@ -150,12 +150,12 @@ language: ru
 - Журналы высылаются во Fluent Bit (24224 forward, 2020 HTTP) и передаются в
   Loki, а критические сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx) также пишут
   в `json-file` с tag `critical.*` по настройке `compose.yml`.
-- Прометей 3.0.1 опрашивает 32 target’а и содержит 27 активных правил в
+- Прометей 3.0.0 опрашивает 32 target’а и содержит 20 активных правил в
   `conf/prometheus/alerts.yml` (Critical, Performance, Database, GPU, Nginx).
-  Alertmanager v0.28.0 отправляет оповещения по предопределённому каналу
+  Alertmanager v0.27.0 отправляет оповещения по предопределённому каналу
   (Slack/Teams через Watchtower metrics API).
-- Grafana v11.6.6 содержит 18 дашбордов, включая GPU/LLM, PostgreSQL, Redis,
-  Docker-хост. Каждое обновление дашборда фиксируется в
+- Grafana v11.3.0 содержит 5 provisioned дашбордов (GPU/LLM, инфраструктура,
+  SLA). Каждое обновление дашборда фиксируется в
   `docs/operations/grafana-dashboards-guide.md`.
 - Безопасность базируется на Nginx WAF, Cloudflare Zero Trust (5 туннелей), JWT
   Go-сервисе и секретах в `secrets/`. Подробнее см.
@@ -170,7 +170,7 @@ language: ru
 - Мониторинг и runbooks: `docs/operations/monitoring-guide.md`,
   `docs/operations/automated-maintenance-guide.md`, `docs/operations/runbooks/`.
 - Архитектура: `docs/architecture/architecture.md` (GPU allocation, Cloudflare
-  tunnels, 30 сервисов).
+  tunnels, 32 сервисов).
 - Безопасность: `security/security-policy.md`,
   `docs/archive/reports/documentation-audit-2025-10-24.md` (указаны риски и
   необходимые актуализации).
