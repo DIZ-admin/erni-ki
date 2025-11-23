@@ -156,7 +156,7 @@ jobs:
 
       # Сборка и публикация Docker образов с тегами релиза
       - name: 🏗️ Build and push release images
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./auth
           file: ./auth/Dockerfile
