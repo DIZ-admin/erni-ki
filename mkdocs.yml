@@ -428,9 +428,7 @@ nav:
           - "GitHub Governance": operations/core/github-governance.md
           - "Configuration Changes": operations/core/configuration-change-process.md
       - Monitoring:
-          - "Monitoring Overview": operations/monitoring.md
           - "Monitoring Guide": operations/monitoring/monitoring-guide.md
-          - "Monitoring Troubleshooting v2": operations/monitoring-troubleshooting-v2.md
           - "Grafana Dashboards": operations/monitoring/grafana-dashboards-guide.md
           - "Prometheus Alerts Guide": operations/monitoring/prometheus-alerts-guide.md
           - "Prometheus Queries Reference": operations/monitoring/prometheus-queries-reference.md
@@ -449,7 +447,6 @@ nav:
           - "Backup & Restore": operations/maintenance/backup-restore-procedures.md
           - "Docling Shared Volume": operations/maintenance/docling-shared-volume.md
       - Troubleshooting:
-          - "Troubleshooting Overview": operations/troubleshooting.md
           - "Troubleshooting Guide": operations/troubleshooting/troubleshooting-guide.md
       - Database:
           - "Overview": operations/database/README.md
@@ -526,5 +523,5 @@ validation:
   unrecognized_links: warn
 
 # Build Settings
-strict: false
+strict: true
 use_directory_urls: true

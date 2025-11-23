@@ -41,7 +41,9 @@ jobs:
             mkdocs-static-i18n \
             mkdocs-awesome-pages-plugin \
             mkdocs-include-markdown-plugin \
-            mkdocs-blog-plugin
+            mkdocs-blog-plugin \
+            mkdocs-git-revision-date-localized-plugin \
+            mkdocs-minify-plugin
 
       - name: 🧱 Build documentation
         run: mkdocs build --site-dir site

@@ -499,7 +499,7 @@ nvidia-smi
 ## 📞 Поддержка
 
 - **📖 Документация:**
-  [docs/operations/troubleshooting.md](../operations/troubleshooting.md)
+  [docs/operations/troubleshooting/troubleshooting-guide.md](../operations/troubleshooting/troubleshooting-guide.md)
 - **🐛 Issues:** [GitHub Issues](https://github.com/DIZ-admin/erni-ki/issues)
 - **💬 Discussions:**
   [GitHub Discussions](https://github.com/DIZ-admin/erni-ki/discussions)
