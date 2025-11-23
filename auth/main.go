@@ -16,8 +16,11 @@ import (
 func main() {
 	// Check command line arguments for health check
 	if len(os.Args) > 1 && os.Args[1] == "--health-check" {
-		healthCheck()
-		return
+		if err := healthCheck(); err != nil {
+			log.Printf("health check failed: %v", err)
+			os.Exit(1)
+		}
+		os.Exit(0)
 	}
 
 	r := gin.New()
@@ -124,7 +127,7 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 }
 
 // healthCheck performs service health check for Docker.
-func healthCheck() {
+func healthCheck() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -135,8 +138,7 @@ func healthCheck() {
 		http.NoBody,
 	)
 	if err != nil {
-		fmt.Printf("Health check failed: %v\n", err)
-		os.Exit(1)
+		return fmt.Errorf("health check failed: %w", err)
 	}
 
 	client := &http.Client{
@@ -145,19 +147,16 @@ func healthCheck() {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("Health check failed: %v\n", err)
-		os.Exit(1)
+		return fmt.Errorf("health check failed: %w", err)
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Health check failed with status: %d\n", resp.StatusCode)
-		_ = resp.Body.Close()
-		os.Exit(1)
+		return fmt.Errorf("health check failed with status: %d", resp.StatusCode)
 	}
 
 	fmt.Println("Health check passed")
-	_ = resp.Body.Close()
-	os.Exit(0)
+	return nil
 }
 
 func verifyToken(tokenString string) (bool, error) {
