@@ -63,7 +63,7 @@ jobs:
       # Настройка окружения для JavaScript/TypeScript
       - name: 🟢 Setup Node.js
         if: matrix.language == 'javascript'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: "npm"
@@ -108,7 +108,7 @@ jobs:
       # Сканирование npm зависимостей (если есть)
       - name: 🟢 Setup Node.js
         if: hashFiles('package.json') != ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
 
