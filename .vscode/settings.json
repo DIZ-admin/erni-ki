@@ -78,7 +78,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -252,10 +252,10 @@
     "editor.defaultFormatter": "raynigon.nginx-formatter"
   },
 
-  // Специальные настройки для конфигурационных файлов ERNI-KI
-  // Отключаем автоформатирование для сохранения структуры
+  // Special settings for ERNI-KI config files
+  // Disable auto-format to preserve structure
 
-  // Отключаем форматирование для конфигурационных файлов
+  // Disable formatting for config files
   "[properties]": {
     "editor.formatOnSave": false,
     "editor.formatOnPaste": false,
@@ -263,9 +263,9 @@
     "files.trimTrailingWhitespace": false
   },
 
-  // Настройки для работы с REST API удалены - требуют установки расширения
+  // REST API settings removed - require extension
 
-  // Настройки Snyk - полное отключение проблемных сканирований
+  // Snyk settings - fully disable problematic scans
   "snyk.enableCodeSecurity": false,
   "snyk.enableOpenSource": true,
   "snyk.enableIac": false,
