@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console, security/detect-non-literal-fs-filename */
 
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -92,17 +93,19 @@ for (const file of stagedFiles) {
     const fm = extractFrontMatter(content);
     if (!fm) {
       warnings.push(
-        `Missing front matter for ${file}; add 'language: ${locale}' to document language explicitly`
+        `Missing front matter for ${file}; set "language: ${locale}" in the metadata block.`,
       );
       continue;
     }
     const language = parseLanguage(fm);
     if (language && language !== locale) {
       errors.push(
-        `Document ${file} declares language '${language}' but lives inside '${locale}' content`
+        `Document ${file} declares language '${language}' but lives inside '${locale}' content`,
       );
     } else if (!language) {
-      warnings.push(`Front matter of ${file} lacks 'language:' value for locale '${locale}'`);
+      warnings.push(
+        `Front matter of ${file} lacks 'language:' value for locale '${locale}'`,
+      );
     }
   }
 }
