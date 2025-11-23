@@ -31,10 +31,6 @@
     "importHelpers": true,
     "downlevelIteration": true,
     "outDir": "./dist",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./types/*"]
-    },
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,

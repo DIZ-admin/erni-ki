@@ -104,7 +104,8 @@
       "prettier --write"
     ],
     "*.{json,yaml,yml,md}": [
-      "prettier --write"
+      "prettier --write",
+      "npm run lint:language -- --all"
     ],
     "*.go": [
       "gofmt -w",
