@@ -11,8 +11,8 @@ MCP, окружённая полным стеком наблюдаемости, 
 повседневных задачах.
 
 **Academy KI** — отдельный вход для сотрудников с быстрым стартом, обучением и
-готовыми сценариями. Начните с [портала Academy KI](../ru/academy/index.md),
-чтобы получить ссылки на базовые уроки, примеры промптов и актуальные новости.
+готовыми сценариями. Начните с [портала Academy KI](../academy/index.md), чтобы
+получить ссылки на базовые уроки, примеры промптов и актуальные новости.
 
 ## Обновления
 
@@ -47,9 +47,8 @@ MCP, окружённая полным стеком наблюдаемости, 
 - **ML и API** — `reference/api-reference.md`, `README.md` (вне MkDocs, но
   всегда актуален в корне репозитория).
 - **Безопасность** — `security/security-policy.md` и related compliance notes.
-- **Academy KI** — входная точка для сотрудников:
-  [портал](../ru/academy/index.md), базовые уроки
-  ([Open WebUI basics](../academy/openwebui-basics.md),
+- **Academy KI** — входная точка для сотрудников: [портал](../academy/index.md),
+  базовые уроки ([Open WebUI basics](../academy/openwebui-basics.md),
   [Prompting 101](../academy/prompting-101.md)), сценарии
   ([HowTo](../academy/howto/write-customer-email.md)) и
   [News](../news/index.md).
