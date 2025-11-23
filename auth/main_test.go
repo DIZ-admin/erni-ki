@@ -15,42 +15,42 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Настройка тестового окружения.
+// Test environment setup.
 func TestMain(m *testing.M) {
-	// Устанавливаем Gin в тестовый режим
+	// Set Gin to test mode
 	gin.SetMode(gin.TestMode)
 
-	// Устанавливаем тестовые переменные окружения
+	// Set test environment variables
 	os.Setenv("WEBUI_SECRET_KEY", "test-secret-key-for-testing")
 
-	// Запускаем тесты
+	// Run tests
 	code := m.Run()
 
-	// Очищаем переменные окружения
+	// Clean up environment variables
 	os.Unsetenv("WEBUI_SECRET_KEY")
 
 	os.Exit(code)
 }
 
-// Тест корневого эндпоинта.
+// Test root endpoint.
 func TestRootEndpoint(t *testing.T) {
-	// Создаем тестовый роутер
+	// Create test router
 	router := setupRouter()
 
-	// Создаем тестовый запрос
+	// Create test request
 	req, err := http.NewRequestWithContext(context.Background(), "GET", "/", http.NoBody)
 	require.NoError(t, err)
 
-	// Создаем ResponseRecorder для записи ответа
+	// Create ResponseRecorder to capture response
 	w := httptest.NewRecorder()
 
-	// Выполняем запрос
+	// Execute request
 	router.ServeHTTP(w, req)
 
-	// Проверяем статус код
+	// Check status code
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	// Проверяем содержимое ответа
+	// Check response content
 	var response map[string]any
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	require.NoError(t, err)
@@ -58,7 +58,7 @@ func TestRootEndpoint(t *testing.T) {
 	assert.Equal(t, "auth-service is running", response["message"])
 }
 
-// Тест валидации с отсутствующим токеном.
+// Test validation with missing token.
 func TestValidateEndpointMissingToken(t *testing.T) {
 	router := setupRouter()
 
@@ -68,7 +68,7 @@ func TestValidateEndpointMissingToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
-	// Ожидаем 401 Unauthorized
+	// Expect 401 Unauthorized
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 
 	var response map[string]any
@@ -79,17 +79,17 @@ func TestValidateEndpointMissingToken(t *testing.T) {
 	assert.Equal(t, "token missing", response["error"])
 }
 
-// Тест валидации с валидным токеном.
+// Test validation with valid token.
 func TestValidateEndpointValidToken(t *testing.T) {
 	router := setupRouter()
 
-	// Создаем валидный JWT токен
+	// Create valid JWT token
 	token := createValidJWTToken(t)
 
 	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
-	// Добавляем токен в cookie
+	// Add token to cookie
 	req.AddCookie(&http.Cookie{
 		Name:  "token",
 		Value: token,
@@ -98,7 +98,7 @@ func TestValidateEndpointValidToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
-	// Ожидаем 200 OK
+	// Expect 200 OK
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var response map[string]any
@@ -108,14 +108,14 @@ func TestValidateEndpointValidToken(t *testing.T) {
 	assert.Equal(t, "authorized", response["message"])
 }
 
-// Тест валидации с невалидным токеном.
+// Test validation with invalid token.
 func TestValidateEndpointInvalidToken(t *testing.T) {
 	router := setupRouter()
 
 	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
 	require.NoError(t, err)
 
-	// Добавляем невалидный токен
+	// Add invalid token
 	req.AddCookie(&http.Cookie{
 		Name:  "token",
 		Value: "invalid.jwt.token",
@@ -134,7 +134,7 @@ func TestValidateEndpointInvalidToken(t *testing.T) {
 	assert.Equal(t, "unauthorized", response["message"])
 }
 
-// Тест функции verifyToken с валидным токеном.
+// Test verifyToken function with valid token.
 func TestVerifyTokenValid(t *testing.T) {
 	token := createValidJWTToken(t)
 
@@ -144,7 +144,7 @@ func TestVerifyTokenValid(t *testing.T) {
 	assert.True(t, valid)
 }
 
-// Тест функции verifyToken с невалидным токеном.
+// Test verifyToken function with invalid token.
 func TestVerifyTokenInvalid(t *testing.T) {
 	valid, err := verifyToken("invalid.jwt.token")
 
@@ -152,9 +152,9 @@ func TestVerifyTokenInvalid(t *testing.T) {
 	assert.False(t, valid)
 }
 
-// Тест функции verifyToken с отсутствующим секретом.
+// Test verifyToken function with missing secret.
 func TestVerifyTokenMissingSecret(t *testing.T) {
-	// Временно удаляем переменную окружения
+	// Temporarily remove environment variable
 	originalSecret := os.Getenv("WEBUI_SECRET_KEY")
 	os.Unsetenv("WEBUI_SECRET_KEY")
 	defer os.Setenv("WEBUI_SECRET_KEY", originalSecret)
@@ -168,7 +168,7 @@ func TestVerifyTokenMissingSecret(t *testing.T) {
 	assert.Contains(t, err.Error(), "JWT_SECRET env variable missing")
 }
 
-// Тест функции verifyToken с истекшим токеном.
+// Test verifyToken function with expired token.
 func TestVerifyTokenExpired(t *testing.T) {
 	token := createExpiredJWTToken(t)
 
@@ -178,9 +178,9 @@ func TestVerifyTokenExpired(t *testing.T) {
 	assert.False(t, valid)
 }
 
-// Вспомогательные функции
+// Helper functions
 
-// setupRouter создает тестовый роутер.
+// setupRouter creates a test router.
 func setupRouter() *gin.Engine {
 	router := gin.New()
 
@@ -219,7 +219,7 @@ func setupRouter() *gin.Engine {
 	return router
 }
 
-// createValidJWTToken создает валидный JWT токен для тестов.
+// createValidJWTToken creates a valid JWT token for tests.
 func createValidJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY должен быть установлен для тестов")
@@ -236,7 +236,7 @@ func createValidJWTToken(t *testing.T) string {
 	return tokenString
 }
 
-// createExpiredJWTToken создает истекший JWT токен для тестов.
+// createExpiredJWTToken creates an expired JWT token for tests.
 func createExpiredJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY должен быть установлен для тестов")
@@ -244,7 +244,7 @@ func createExpiredJWTToken(t *testing.T) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": "test-user",
 		"iat": time.Now().Add(-2 * time.Hour).Unix(),
-		"exp": time.Now().Add(-time.Hour).Unix(), // Истек час назад
+		"exp": time.Now().Add(-time.Hour).Unix(), // Expired one hour ago
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))
