@@ -137,6 +137,18 @@ repos:
           - prettier@3.6.2
 
   # ===================================================================
+  # PYTHON LINTING/FORMATTING (RUFF)
+  # ===================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.6
+    hooks:
+      - id: ruff
+        name: "Ruff: Python lint"
+        args: [--fix]
+      - id: ruff-format
+        name: "Ruff: Python format"
+
+  # ===================================================================
   # ESLINT CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-eslint

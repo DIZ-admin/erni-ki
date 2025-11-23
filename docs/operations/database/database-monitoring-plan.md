@@ -8,4 +8,5 @@ doc_version: '2025.11'
 
 - Используйте PostgreSQL Exporter (`9188`) и LVM metrics.
 - Установите alert rules: `PostgreSQLDown`, `PostgreSQLHighConnections`.
-- Сравните с `docs/operations/monitoring-guide.md` и `conf/prometheus/alerts.yml`.
+- Сравните с `docs/operations/monitoring/monitoring-guide.md` и
+  `conf/prometheus/alerts.yml`.

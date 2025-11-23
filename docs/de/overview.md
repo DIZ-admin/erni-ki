@@ -57,7 +57,8 @@ Sprachinteraktion.
 - **[Monitoring Übersicht](operations/monitoring.md)** - Kennzahlen, Skripte und
   Alerts
 - **[Runbooks](../operations/runbooks-summary.md)** - Deutsche Zusammenfassungen
-  der wichtigsten Abläufe (englische Originale в `operations/runbooks/`)
+  der wichtigsten Abläufe (englische Originale в `operations/maintenance/` und
+  `operations/troubleshooting/`)
 - **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 
@@ -200,7 +201,7 @@ docker compose exec ollama ollama pull llama3.2:3b
   russische Fassungen synchron bleiben.
 - Für detaillierte Runbooks und Monitoring-Schritte nutzen Sie die englischen
   Originale unter `docs/operations/runbooks/` und
-  `docs/operations/monitoring-guide.md`.
+  `docs/operations/monitoring/monitoring-guide.md`.
 
 ```bash
 # System-Gesundheit prüfen

@@ -156,6 +156,7 @@ git commit --no-verify -m "сообщение коммита"
 Pre-commit hooks интегрированы с:
 
 - **ESLint** - использует `eslint.config.js`
+- **Ruff** - использует `ruff.toml` (установить `requirements-dev.txt`)
 - **Prettier** - использует `.prettierrc`
 - **Commitlint** - использует `commitlint.config.cjs`
 - **Husky** - работает параллельно с существующими hooks
@@ -167,6 +168,7 @@ Pre-commit hooks интегрированы с:
 ```bash
 # Автоматическое исправление
 npm run format
+npm run format:py
 npm run lint:fix
 ```
 

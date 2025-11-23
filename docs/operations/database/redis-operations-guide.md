@@ -6,9 +6,7 @@ doc_version: '2025.11'
 
 # Руководство по эксплуатации Redis в ERNI-KI
 
-**Версия:** 1.0  
-**Дата:** 23 сентября 2025  
-**Система:** ERNI-KI
+**Версия:** 1.0 **Дата:** 23 сентября 2025 **Система:** ERNI-KI
 
 ---
 
@@ -233,7 +231,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 
 - **Tech Lead:** Альтэон Шульц
 - **Система:** ERNI-KI
-- **Документация:** `/docs/data/redis-operations-guide.md`
+- **Документация:** `/docs/operations/database/redis-operations-guide.md`
 
 ### Полезные ссылки
 
@@ -243,5 +241,4 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 
 ---
 
-_Руководство подготовлено для системы ERNI-KI  
-Версия 1.0 от 23 сентября 2025_
+_Руководство подготовлено для системы ERNI-KI Версия 1.0 от 23 сентября 2025_

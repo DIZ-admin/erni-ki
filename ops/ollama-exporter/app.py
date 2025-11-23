@@ -4,7 +4,6 @@ import signal
 import sys
 import threading
 import time
-from typing import Optional
 
 import requests
 from prometheus_client import Gauge, start_http_server
@@ -23,12 +22,14 @@ LOGGER = logging.getLogger("ollama_exporter")
 OLLAMA_UP = Gauge("ollama_up", "Ollama health status (1=up, 0=down)")
 OLLAMA_VERSION_INFO = Gauge("ollama_version_info", "Current Ollama version", ["version"])
 OLLAMA_INSTALLED_MODELS = Gauge("ollama_installed_models", "Number of installed Ollama models")
-OLLAMA_REQUEST_LATENCY = Gauge("ollama_request_latency_seconds", "Latency for Ollama version endpoint")
+OLLAMA_REQUEST_LATENCY = Gauge(
+    "ollama_request_latency_seconds", "Latency for Ollama version endpoint"
+)
 
 _STOP_EVENT = threading.Event()
 
 
-def fetch_json(path: str) -> Optional[dict]:
+def fetch_json(path: str) -> dict | None:
     url = f"{OLLAMA_URL}{path}"
     try:
         start = time.perf_counter()
