@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	// Проверяем аргументы командной строки для health check
+	// Check command line arguments for health check
 	if len(os.Args) > 1 && os.Args[1] == "--health-check" {
 		healthCheck()
 		return
@@ -111,7 +111,7 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 	c.JSON(status, payload)
 }
 
-// healthCheck выполняет проверку здоровья сервиса для Docker.
+// healthCheck performs service health check for Docker.
 func healthCheck() {
 	resp, err := http.Get("http://localhost:9090/health") //nolint:noctx
 	if err != nil {
