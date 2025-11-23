@@ -21,6 +21,7 @@
   ],
   "author": "Альтэон Шульц (Tech Lead)",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
     "playwright": "^1.55.1"
   },
