@@ -2,13 +2,13 @@
 
 # ============================================================================
 # ERNI-KI LOG MONITORING SCRIPT
-# Автоматизированный мониторинг размеров логов и производительности системы
-# Создан: 2025-09-18 в рамках улучшения системы логгирования
+# Automated log size and performance monitoring
+# Created: 2025-09-18 as part of logging improvements
 # ============================================================================
 
 set -euo pipefail
 
-# Конфигурация
+# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOG_DIR="$PROJECT_ROOT/logs"
@@ -17,14 +17,14 @@ CRITICAL_THRESHOLD_GB=5
 WEBHOOK_URL="${LOG_MONITORING_WEBHOOK_URL:-}"
 COMPOSE_FILE="$PROJECT_ROOT/compose.yml"
 
-# Цвета для вывода
+# Colors
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функция логгирования
+# Logging
 log() {
     echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
@@ -41,7 +41,7 @@ success() {
     echo -e "${GREEN}[SUCCESS]${NC} $1"
 }
 
-# Функция отправки webhook уведомлений
+# Webhook sender
 send_webhook() {
     local message="$1"
     local severity="${2:-info}"
@@ -54,9 +54,9 @@ send_webhook() {
     fi
 }
 
-# Функция проверки размеров логов Docker контейнеров
+# Docker log size check
 check_docker_logs() {
-    log "Проверка размеров логов Docker контейнеров..."
+    log "Checking Docker container log sizes..."
 
     local total_size=0
     local alerts=()

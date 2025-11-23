@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ERNI-KI OpenWebUI Model Synchronization Script
-Синхронизирует модели из Ollama и LiteLLM с базой данных OpenWebUI
+Sync models from Ollama and LiteLLM into OpenWebUI database
 """
 
 import os
@@ -13,18 +13,18 @@ from datetime import datetime
 import uuid
 
 def get_database_connection():
-    """Получить подключение к базе данных PostgreSQL"""
+    """Get PostgreSQL connection"""
     try:
         database_url = os.environ.get('DATABASE_URL',
             'postgresql://openwebui_user:OW_secure_pass_2025!@db:5432/openwebui')
         conn = psycopg2.connect(database_url)
         return conn
     except Exception as e:
-        print(f"❌ Ошибка подключения к БД: {e}")
+        print(f"❌ Database connection error: {e}")
         return None
 
 def get_ollama_models():
-    """Получить модели из Ollama"""
+    """Fetch models from Ollama"""
     try:
         response = requests.get('http://ollama:11434/api/tags', timeout=10)
         if response.status_code == 200:
@@ -42,14 +42,14 @@ def get_ollama_models():
                 })
             return models
         else:
-            print(f"⚠️ Ollama API вернул статус: {response.status_code}")
+            print(f"⚠️ Ollama API returned status: {response.status_code}")
             return []
     except Exception as e:
-        print(f"❌ Ошибка получения моделей Ollama: {e}")
+        print(f"❌ Failed to fetch Ollama models: {e}")
         return []
 
 def get_litellm_models():
-    """Получить модели из LiteLLM"""
+    """Fetch models from LiteLLM"""
     try:
         headers = {
             'Authorization': 'Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb'
@@ -64,20 +64,20 @@ def get_litellm_models():
                     'name': model['id'],
                     'provider': 'litellm',
                     'base_model_id': model['id'],
-                    'size': 0,  # LiteLLM не предоставляет размер
+                    'size': 0,  # LiteLLM does not provide size
                     'details': {'object': model.get('object', 'model')},
                     'modified_at': datetime.now().isoformat()
                 })
             return models
         else:
-            print(f"⚠️ LiteLLM API вернул статус: {response.status_code}")
+            print(f"⚠️ LiteLLM API returned status: {response.status_code}")
             return []
     except Exception as e:
-        print(f"❌ Ошибка получения моделей LiteLLM: {e}")
+        print(f"❌ Failed to fetch LiteLLM models: {e}")
         return []
 
 def sync_models_to_database(models):
-    """Синхронизировать модели с базой данных"""
+    """Sync models into database"""
     conn = get_database_connection()
     if not conn:
         return False
@@ -85,7 +85,7 @@ def sync_models_to_database(models):
     try:
         cursor = conn.cursor()
 
-        # Получить существующие модели
+        # Existing models
         cursor.execute('SELECT id, base_model_id FROM model')
         existing_models = {row[1]: row[0] for row in cursor.fetchall()}
 
@@ -94,7 +94,7 @@ def sync_models_to_database(models):
             model_id = model['base_model_id']
 
             if model_id not in existing_models:
-                # Добавить новую модель
+                # Insert new model
                 new_uuid = str(uuid.uuid4())
                 params = {
                     'provider': model['provider'],
@@ -115,9 +115,9 @@ def sync_models_to_database(models):
                     datetime.now()
                 ))
                 synced_count += 1
-                print(f"✅ Добавлена модель: {model['name']} ({model['provider']})")
+                print(f"✅ Added model: {model['name']} ({model['provider']})")
             else:
-                # Обновить существующую модель
+                # Update existing
                 params = {
                     'provider': model['provider'],
                     'size': model['size'],
@@ -133,51 +133,51 @@ def sync_models_to_database(models):
                     datetime.now(),
                     model_id
                 ))
-                print(f"🔄 Обновлена модель: {model['name']} ({model['provider']})")
+                print(f"🔄 Updated model: {model['name']} ({model['provider']})")
 
         conn.commit()
         cursor.close()
         conn.close()
 
-        print(f"\n📊 Синхронизация завершена: {synced_count} новых моделей добавлено")
+        print(f"\n📊 Sync complete: {synced_count} new models added")
         return True
 
     except Exception as e:
-        print(f"❌ Ошибка синхронизации с БД: {e}")
+        print(f"❌ Database sync error: {e}")
         if conn:
             conn.rollback()
             conn.close()
         return False
 
 def main():
-    """Главная функция"""
+    """Entry point"""
     print("🔄 ERNI-KI Model Synchronization")
     print("=" * 40)
 
-    # Получить модели из всех провайдеров
-    print("📡 Получение моделей из Ollama...")
+    # Fetch models from providers
+    print("📡 Fetching models from Ollama...")
     ollama_models = get_ollama_models()
-    print(f"   Найдено: {len(ollama_models)} моделей")
+    print(f"   Found: {len(ollama_models)} models")
 
-    print("📡 Получение моделей из LiteLLM...")
+    print("📡 Fetching models from LiteLLM...")
     litellm_models = get_litellm_models()
-    print(f"   Найдено: {len(litellm_models)} моделей")
+    print(f"   Found: {len(litellm_models)} models")
 
-    # Объединить все модели
+    # Merge all models
     all_models = ollama_models + litellm_models
-    print(f"\n📋 Всего моделей для синхронизации: {len(all_models)}")
+    print(f"\n📋 Total models to sync: {len(all_models)}")
 
     if not all_models:
-        print("⚠️ Модели не найдены. Проверьте подключение к провайдерам.")
+        print("⚠️ No models found. Check provider connectivity.")
         return 1
 
-    # Синхронизировать с базой данных
-    print("\n💾 Синхронизация с базой данных...")
+    # Sync to database
+    print("\n💾 Syncing with database...")
     if sync_models_to_database(all_models):
-        print("✅ Синхронизация успешно завершена!")
+        print("✅ Sync completed successfully!")
         return 0
     else:
-        print("❌ Ошибка синхронизации!")
+        print("❌ Sync failed!")
         return 1
 
 if __name__ == "__main__":

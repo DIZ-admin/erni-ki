@@ -32,32 +32,32 @@ def check_archive_readmes() -> List[str]:
     errors: List[str] = []
     for folder, readme in ARCHIVE_CHECKS.items():
         if not readme.exists():
-            errors.append(f"{readme} отсутствует.")
+            errors.append(f"{readme} is missing.")
             continue
         missing = missing_entries(folder, readme)
         if missing:
             errors.append(
-                f"{readme} не содержит ссылки на: {', '.join(missing)}"
+                f"{readme} does not contain references to: {', '.join(missing)}"
             )
     return errors
 
 
 def check_data_readme() -> List[str]:
     if not DATA_README.exists():
-        return [f"{DATA_README} отсутствует."]
+        return [f"{DATA_README} is missing."]
     text = DATA_README.read_text(encoding="utf-8")
     missing = missing_entries(DATA_DIR, DATA_README)
     if missing:
         return [
-            f"{DATA_README} не содержит записи для: {', '.join(missing)}"
+            f"{DATA_README} does not contain entries for: {', '.join(missing)}"
         ]
-    # также проверим, что каждая запись содержит дату в таблице
+    # Also ensure each entry has a date row in the table
     table_rows = [
         line for line in text.splitlines() if line.strip().startswith("| ")
     ]
     if len(table_rows) < 3:
         return [
-            f"{DATA_README} таблица состояния выглядит неполной (найдено {len(table_rows)} строк)."
+            f"{DATA_README} state table looks incomplete (found {len(table_rows)} rows)."
         ]
     return []
 
@@ -66,7 +66,7 @@ def main() -> None:
     errors = check_archive_readmes()
     errors.extend(check_data_readme())
     if errors:
-        print("Проверка README архивов/данных не пройдена:", file=sys.stderr)
+        print("Archive/data README check failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         sys.exit(1)

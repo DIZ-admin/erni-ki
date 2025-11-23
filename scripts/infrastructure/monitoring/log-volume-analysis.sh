@@ -1,26 +1,26 @@
 #!/bin/bash
-# Анализ объемов логов ERNI-KI
+# ERNI-KI log volume analysis
 
-echo "=== АНАЛИЗ ОБЪЕМОВ ЛОГОВ ERNI-KI ==="
-echo "Дата: $(date)"
+echo "=== ERNI-KI Log Volume Analysis ==="
+echo "Date: $(date)"
 echo
 
-# Размеры логов Docker контейнеров
-echo "1. Размеры логов Docker контейнеров:"
+# Docker container log sizes
+echo "1. Docker container log sizes:"
 docker system df
 
 echo
-echo "2. Топ-10 контейнеров по объему логов (за последний час):"
+echo "2. Top 10 containers by log volume (last hour):"
 for container in $(docker ps --format "{{.Names}}" | grep erni-ki); do
     lines=$(docker logs --since 1h "$container" 2>&1 | wc -l)
-    echo "$container: $lines строк"
+    echo "$container: $lines lines"
 done | sort -k2 -nr | head -10
 
 echo
-echo "3. Анализ ошибок в логах:"
+echo "3. Error analysis (last hour):"
 for container in $(docker ps --format "{{.Names}}" | grep erni-ki | head -5); do
     errors=$(docker logs --since 1h "$container" 2>&1 | grep -i -E "(error|critical|fatal)" | wc -l)
     if [[ $errors -gt 0 ]]; then
-        echo "$container: $errors ошибок"
+        echo "$container: $errors errors"
     fi
 done

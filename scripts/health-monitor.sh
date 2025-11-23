@@ -38,9 +38,9 @@ usage() {
 Usage: $(basename "$0") [options]
 
 Options:
-  -r, --report PATH     Сохранить отчёт в указанный файл (Markdown по умолчанию)
-  -f, --format FORMAT   Формат отчёта: markdown | text (по умолчанию markdown)
-  -h, --help            Показать справку
+  -r, --report PATH     Save report to PATH (default markdown)
+  -f, --format FORMAT   Report format: markdown | text (default markdown)
+  -h, --help            Show help
 EOF
 }
 
@@ -60,7 +60,7 @@ parse_args() {
         exit 0
         ;;
       *)
-        echo "Неизвестный аргумент: $1" >&2
+        echo "Unknown argument: $1" >&2
         usage
         exit 1
         ;;
@@ -130,14 +130,14 @@ load_env_value() {
 }
 
 check_compose_services() {
-  log "Проверка статуса контейнеров..."
+  log "Checking container status..."
 
   local compose_json compose_err tmp_err
   tmp_err=$(mktemp)
   if ! compose_json="$(compose ps --format json 2>"$tmp_err")"; then
     compose_err="$(cat "$tmp_err")"
     rm -f "$tmp_err"
-    record_result "FAIL" "Контейнеры" "Не удалось получить docker compose ps (${compose_err:-unknown error})"
+    record_result "FAIL" "Containers" "Failed to run docker compose ps (${compose_err:-unknown error})"
     return
   fi
   compose_err="$(cat "$tmp_err")"
@@ -171,7 +171,7 @@ detail = " ".join(unhealthy) if unhealthy else "none"
 print(f"{healthy}/{total} healthy, {running}/{total} running|{detail}")
 PY
   )"; then
-    record_result "FAIL" "Контейнеры" "Не удалось разобрать вывод docker compose ps"
+    record_result "FAIL" "Containers" "Failed to parse docker compose ps output"
     return
   fi
 
@@ -179,9 +179,9 @@ PY
   local detail="${parsed#*|}"
 
   if [[ "$detail" == "none" ]]; then
-    record_result "PASS" "Контейнеры" "$summary"
+    record_result "PASS" "Containers" "$summary"
   else
-    record_result "WARN" "Контейнеры" "$summary (проблемы: $detail)"
+    record_result "WARN" "Containers" "$summary (issues: $detail)"
   fi
 }
 
@@ -192,12 +192,12 @@ check_http_endpoint() {
 
   local response
   if ! response=$(curl -fsS --max-time 8 "$url" 2>/dev/null); then
-    record_result "FAIL" "$name" "Endpoint недоступен: $url"
+    record_result "FAIL" "$name" "Endpoint unavailable: $url"
     return
   fi
 
   if [[ -n "$expected" && "$response" != *"$expected"* ]]; then
-    record_result "WARN" "$name" "Ответ не содержит ожидаемое значение ($expected)"
+    record_result "WARN" "$name" "Response missing expected value ($expected)"
     return
   fi
 
@@ -205,7 +205,7 @@ check_http_endpoint() {
 }
 
 check_rag_latency() {
-  log "Проверка RAG веб-поиска..."
+  log "Checking RAG web search..."
   local warn_threshold="${RAG_LATENCY_WARN_SECONDS:-5.0}"
   local result
   result=$(curl -s -o /dev/null -w "%{http_code}|%{time_total}" "http://localhost:8080/api/searxng/search?q=health-check&format=json" --max-time 10 || echo "000|10")
@@ -213,28 +213,28 @@ check_rag_latency() {
   local duration="${result#*|}"
 
   if [[ "$code" != "200" ]]; then
-    record_result "FAIL" "RAG web search" "HTTP $code через /api/searxng/"
+    record_result "FAIL" "RAG web search" "HTTP $code via /api/searxng/"
     return
   fi
 
   if (( $(echo "$duration > $warn_threshold" | bc -l) )); then
-    record_result "WARN" "RAG web search" "Ответ ${duration}s (порог ${warn_threshold}s)"
+    record_result "WARN" "RAG web search" "Response ${duration}s (threshold ${warn_threshold}s)"
   else
     record_result "PASS" "RAG web search" "${duration}s"
   fi
 }
 
 check_postgres() {
-  log "Проверка PostgreSQL..."
+  log "Checking PostgreSQL..."
   if compose exec -T db pg_isready -U postgres >/dev/null 2>&1; then
     record_result "PASS" "PostgreSQL" "pg_isready ok"
   else
-    record_result "FAIL" "PostgreSQL" "pg_isready вернул ошибку"
+    record_result "FAIL" "PostgreSQL" "pg_isready returned error"
   fi
 }
 
 check_redis() {
-  log "Проверка Redis..."
+  log "Checking Redis..."
   local redis_pass
   redis_pass="$(load_env_value redis.env REDIS_PASSWORD || true)"
 
@@ -246,29 +246,29 @@ check_redis() {
   if compose exec -T redis sh -c "$cmd" 2>/dev/null | grep -q "PONG"; then
     record_result "PASS" "Redis" "ping OK"
   else
-    record_result "FAIL" "Redis" "Redis не ответил PONG"
+    record_result "FAIL" "Redis" "Redis did not reply PONG"
   fi
 }
 
 check_disk_usage() {
-  log "Проверка дискового пространства..."
+  log "Checking disk space..."
   local usageLine
   usageLine=$(df -h "$PROJECT_DIR" | tail -1)
   local percent
   percent=$(echo "$usageLine" | awk '{print $5}' | tr -d '%')
-  local detail=$(echo "$usageLine" | awk '{print $3 "/" $2 " используется"}')
+  local detail=$(echo "$usageLine" | awk '{print $3 "/" $2 " used"}')
 
   if [[ -z "$percent" ]]; then
-    record_result "WARN" "Диск" "Не удалось определить использование"
+    record_result "WARN" "Disk" "Unable to determine usage"
     return
   fi
 
   if (( percent >= 90 )); then
-    record_result "FAIL" "Диск" "$percent% - $detail"
+    record_result "FAIL" "Disk" "$percent% - $detail"
   elif (( percent >= 80 )); then
-    record_result "WARN" "Диск" "$percent% - $detail"
+    record_result "WARN" "Disk" "$percent% - $detail"
   else
-    record_result "PASS" "Диск" "$percent% - $detail"
+    record_result "PASS" "Disk" "$percent% - $detail"
   fi
 }
 

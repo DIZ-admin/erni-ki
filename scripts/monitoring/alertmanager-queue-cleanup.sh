@@ -22,7 +22,7 @@ get_queue_value() {
   local query='alertmanager_cluster_messages_queued'
   local response
   if ! response=$(curl -fsS "$PROM_URL/api/v1/query" --data-urlencode "query=$query"); then
-    log "queue-cleanup: не удалось получить ответ от $PROM_URL"
+    log "queue-cleanup: failed to get response from $PROM_URL"
     echo 0
     return
   fi
@@ -39,11 +39,11 @@ PY
 }
 
 queue_value=$(get_queue_value)
-log "queue-cleanup: текущее значение очереди ${queue_value} (threshold=${THRESHOLD}, hard_limit=${HARD_LIMIT})"
+log "queue-cleanup: current queue value ${queue_value} (threshold=${THRESHOLD}, hard_limit=${HARD_LIMIT})"
 
 awk "BEGIN {exit !(${queue_value} > ${HARD_LIMIT})}" || exit 0
 
-log "queue-cleanup: превышен hard limit, пытаюсь снять автоматические silences (tag ${SILENCE_TAG})"
+log "queue-cleanup: hard limit exceeded, expiring auto-silences (tag ${SILENCE_TAG})"
 
 silence_list=$($COMPOSE_CMD exec alertmanager amtool --alertmanager.url="$ALERTMANAGER_URL" \
   silence query --format '{{ .ID }}|{{ .Comment }}')
@@ -61,19 +61,19 @@ for line in payload:
 PY <<<"$silence_list")
 
 if [[ -z "$target_ids" ]]; then
-  log "queue-cleanup: не найдено silences с меткой ${SILENCE_TAG}"
+  log "queue-cleanup: no silences found with tag ${SILENCE_TAG}"
 else
   while read -r silence_id; do
     [[ -z "$silence_id" ]] && continue
     log "queue-cleanup: expire silence ${silence_id}"
     $COMPOSE_CMD exec alertmanager amtool --alertmanager.url="$ALERTMANAGER_URL" silence expire "$silence_id" || \
-      log "queue-cleanup: не удалось снять silence ${silence_id}"
+      log "queue-cleanup: failed to expire silence ${silence_id}"
   done <<<"$target_ids"
 fi
 
 if [[ "$RESTART_AM" == "1" ]]; then
-  log "queue-cleanup: перезапуск alertmanager"
+  log "queue-cleanup: restarting alertmanager"
   $COMPOSE_CMD restart alertmanager >/dev/null
 fi
 
-log "queue-cleanup: завершено"
+log "queue-cleanup: done"

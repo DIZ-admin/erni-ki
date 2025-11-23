@@ -1,30 +1,30 @@
 #!/bin/bash
 
-# LiteLLM Memory Monitoring Script для ERNI-KI
-# Автоматическая проверка использования памяти каждые 5 минут
-# Создан: 2025-09-09 для решения критической проблемы с памятью
+# LiteLLM Memory Monitoring Script for ERNI-KI
+# Automatic memory check every 5 minutes (intended for cron)
+# Created: 2025-09-09 to address critical memory issue
 
 set -euo pipefail
 
-# Конфигурация
+# Configuration
 CONTAINER_NAME="erni-ki-litellm"
-MEMORY_THRESHOLD=90  # Процент использования памяти для алерта
+MEMORY_THRESHOLD=90  # Memory usage percent threshold for alert
 LOG_FILE="/var/log/litellm-memory-monitor.log"
-WEBHOOK_URL=""  # Опционально: URL для уведомлений
+WEBHOOK_URL=""  # Optional: webhook URL for notifications
 
-# Функция логирования
+# Logging helper
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-# Функция отправки уведомления
+# Send notification
 send_alert() {
     local message="$1"
     local memory_usage="$2"
 
     log "ALERT: $message (Memory: $memory_usage%)"
 
-    # Отправка в webhook (если настроен)
+    # Send to webhook (if configured)
     if [[ -n "$WEBHOOK_URL" ]]; then
         curl -s -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
@@ -32,54 +32,54 @@ send_alert() {
             || log "Failed to send webhook notification"
     fi
 
-    # Отправка в системный журнал
+    # Send to system log
     logger -t "litellm-monitor" "CRITICAL: $message (Memory: $memory_usage%)"
 }
 
-# Функция проверки памяти
+# Memory check
 check_memory() {
-    # Получить статистику контейнера
+    # Get container stats
     local stats
     if ! stats=$(docker stats --no-stream --format "{{.MemPerc}}" "$CONTAINER_NAME" 2>/dev/null); then
         log "ERROR: Cannot get stats for container $CONTAINER_NAME"
         return 1
     fi
 
-    # Извлечь процент использования памяти
+    # Extract memory percent
     local memory_percent
     memory_percent=$(echo "$stats" | sed 's/%//')
 
-    # Проверить, является ли значение числом
+    # Validate numeric
     if ! [[ "$memory_percent" =~ ^[0-9]+\.?[0-9]*$ ]]; then
         log "ERROR: Invalid memory percentage: $memory_percent"
         return 1
     fi
 
-    # Получить детальную информацию
+    # Detailed usage
     local memory_usage
     memory_usage=$(docker stats --no-stream --format "{{.MemUsage}}" "$CONTAINER_NAME" 2>/dev/null)
 
     log "Memory usage: $memory_percent% ($memory_usage)"
 
-    # Проверить превышение порога
+    # Threshold check
     if (( $(echo "$memory_percent > $MEMORY_THRESHOLD" | bc -l) )); then
         send_alert "LiteLLM memory usage exceeded threshold ($MEMORY_THRESHOLD%)" "$memory_percent"
 
-        # Дополнительная диагностика
+        # Extra diagnostics
         log "Container details:"
         docker inspect "$CONTAINER_NAME" --format '{{.HostConfig.Memory}}' | tee -a "$LOG_FILE"
 
-        # Топ процессов в контейнере
+        # Top processes in container
         log "Top processes in container:"
         docker exec "$CONTAINER_NAME" ps aux 2>/dev/null | head -10 | tee -a "$LOG_FILE" || true
 
-        return 2  # Код возврата для превышения порога
+        return 2  # Return code for threshold breach
     fi
 
     return 0
 }
 
-# Функция проверки здоровья контейнера
+# Container health check
 check_health() {
     local health_status
     health_status=$(docker inspect "$CONTAINER_NAME" --format '{{.State.Health.Status}}' 2>/dev/null || echo "unknown")
@@ -92,25 +92,25 @@ check_health() {
     return 0
 }
 
-# Основная функция
+# Main
 main() {
     log "Starting LiteLLM memory monitoring check"
 
-    # Проверить существование контейнера
+    # Ensure container exists
     if ! docker ps --format '{{.Names}}' | grep -q "^$CONTAINER_NAME$"; then
         log "ERROR: Container $CONTAINER_NAME is not running"
         exit 1
     fi
 
-    # Проверить память
+    # Check memory
     local memory_check_result=0
     check_memory || memory_check_result=$?
 
-    # Проверить здоровье
+    # Check health
     local health_check_result=0
     check_health || health_check_result=$?
 
-    # Итоговый статус
+    # Final status
     if [[ $memory_check_result -eq 2 ]]; then
         log "CRITICAL: Memory threshold exceeded"
         exit 2
@@ -123,8 +123,8 @@ main() {
     fi
 }
 
-# Создать директорию для логов если не существует
+# Ensure log directory exists
 mkdir -p "$(dirname "$LOG_FILE")"
 
-# Запуск основной функции
+# Run
 main "$@"

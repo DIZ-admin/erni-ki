@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-OpenAI Assistant API Wrapper для ERNI-KI
-Предоставляет простой интерфейс для работы с OpenAI Assistant через LiteLLM
+OpenAI Assistant API Wrapper for ERNI-KI
+Provides a simple interface to work with OpenAI Assistant via LiteLLM
 """
 
 import requests
@@ -24,7 +24,7 @@ class AssistantAPIWrapper:
         }
 
     def create_thread(self) -> Optional[str]:
-        """Создает новый thread для разговора с Assistant"""
+        """Create a new thread for the Assistant"""
         try:
             response = requests.post(f"{self.base_url}/v1/threads",
                                    headers=self.headers, json={}, timeout=30)
@@ -41,7 +41,7 @@ class AssistantAPIWrapper:
             return None
 
     def add_message(self, thread_id: str, content: str, role: str = "user") -> Optional[str]:
-        """Добавляет сообщение в thread"""
+        """Add a message to the thread"""
         try:
             message_data = {
                 "role": role,
@@ -63,7 +63,7 @@ class AssistantAPIWrapper:
             return None
 
     def create_run(self, thread_id: str, instructions: str = None) -> Optional[str]:
-        """Создает run для выполнения Assistant"""
+        """Create a run for the Assistant"""
         try:
             run_data = {
                 "assistant_id": self.assistant_id
@@ -87,10 +87,10 @@ class AssistantAPIWrapper:
             return None
 
     def wait_for_run_completion(self, thread_id: str, run_id: str, max_wait: int = 60) -> Optional[str]:
-        """Ожидает завершения run и возвращает статус"""
+        """Wait for run completion and return status"""
         try:
             for attempt in range(max_wait):
-                # Используем прямой вызов к OpenAI API через requests
+                # Direct call to OpenAI API via requests
                 openai_headers = {
                     "Authorization": f"Bearer {os.environ.get('OPENAI_API_KEY')}",
                     "Content-Type": "application/json",
@@ -122,9 +122,9 @@ class AssistantAPIWrapper:
             return None
 
     def get_messages(self, thread_id: str) -> List[Dict]:
-        """Получает все сообщения из thread"""
+        """Get all messages from the thread"""
         try:
-            # Используем прямой вызов к OpenAI API
+            # Direct call to OpenAI API
             openai_headers = {
                 "Authorization": f"Bearer {os.environ.get('OPENAI_API_KEY')}",
                 "Content-Type": "application/json",
@@ -146,58 +146,58 @@ class AssistantAPIWrapper:
             return []
 
     def chat_with_assistant(self, message: str, instructions: str = None) -> Optional[str]:
-        """Полный цикл общения с Assistant"""
-        print(f"💬 Отправка сообщения Assistant: {message[:50]}...")
+        """Full chat cycle with the Assistant"""
+        print(f"💬 Sending message to Assistant: {message[:50]}...")
 
-        # 1. Создаем thread
+        # 1. Create thread
         thread_id = self.create_thread()
         if not thread_id:
             return None
-        print(f"✅ Thread создан: {thread_id}")
+        print(f"✅ Thread created: {thread_id}")
 
-        # 2. Добавляем сообщение пользователя
+        # 2. Add user message
         message_id = self.add_message(thread_id, message)
         if not message_id:
             return None
-        print(f"✅ Message добавлено: {message_id}")
+        print(f"✅ Message added: {message_id}")
 
-        # 3. Создаем run
+        # 3. Create run
         run_id = self.create_run(thread_id, instructions)
         if not run_id:
             return None
-        print(f"✅ Run создан: {run_id}")
+        print(f"✅ Run created: {run_id}")
 
-        # 4. Ждем завершения
+        # 4. Wait for completion
         status = self.wait_for_run_completion(thread_id, run_id)
         if status != 'completed':
-            print(f"❌ Run не завершился успешно: {status}")
+            print(f"❌ Run did not complete successfully: {status}")
             return None
-        print(f"✅ Run завершен: {status}")
+        print(f"✅ Run completed: {status}")
 
-        # 5. Получаем ответ
+        # 5. Get answer
         messages = self.get_messages(thread_id)
         for msg in messages:
             if msg.get('role') == 'assistant':
                 content = msg.get('content', [])
                 if content and len(content) > 0:
                     text = content[0].get('text', {}).get('value', '')
-                    print(f"✅ Ответ получен: {len(text)} символов")
+                    print(f"✅ Answer received: {len(text)} chars")
                     return text
 
-        print("❌ Ответ Assistant не найден")
+        print("❌ Assistant answer not found")
         return None
 
 def main():
-    """Демонстрация работы Assistant API Wrapper"""
-    print("🚀 Тестирование OpenAI Assistant API Wrapper")
+    """Demonstration of Assistant API Wrapper"""
+    print("🚀 Testing OpenAI Assistant API Wrapper")
     print("=" * 60)
 
-    # Проверяем наличие OpenAI API ключа
+    # Check OpenAI API key
     if not os.environ.get('OPENAI_API_KEY'):
-        print("❌ OPENAI_API_KEY не установлен в переменных окружения")
+        print("❌ OPENAI_API_KEY is not set in environment")
         return 1
 
-    # Создаем wrapper
+    # Create wrapper
     assistant = AssistantAPIWrapper()
 
     # Тестовое сообщение

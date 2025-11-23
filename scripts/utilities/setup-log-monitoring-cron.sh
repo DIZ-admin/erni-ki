@@ -2,8 +2,8 @@
 
 # ============================================================================
 # SETUP LOG MONITORING CRON JOB
-# Настройка автоматического мониторинга логов ERNI-KI
-# Создан: 2025-09-18
+# Automatic log monitoring for ERNI-KI
+# Created: 2025-09-18
 # ============================================================================
 
 set -euo pipefail
@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOG_MONITORING_SCRIPT="$SCRIPT_DIR/log-monitoring.sh"
 
-# Цвета для вывода
+# Colors
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
@@ -30,70 +30,70 @@ warn() {
     echo -e "${YELLOW}[WARN]${NC} $1"
 }
 
-# Функция настройки cron задачи
+# Configure cron
 setup_cron() {
-    log "Настройка cron задачи для мониторинга логов..."
+    log "Configuring cron job for log monitoring..."
 
-    # Создание временного файла с новой cron задачей
+    # Build temporary cron file
     local temp_cron=$(mktemp)
 
-    # Получение текущих cron задач (исключая наш мониторинг)
+    # Current cron jobs (excluding this monitoring)
     crontab -l 2>/dev/null | grep -v "log-monitoring.sh" > "$temp_cron" || true
 
-    # Добавление новой задачи (каждые 30 минут)
+    # Add new jobs (every 30 minutes + daily cleanup)
     cat >> "$temp_cron" << EOF
 
-# ERNI-KI Log Monitoring (добавлено $(date '+%Y-%m-%d'))
-# Запуск каждые 30 минут для мониторинга размеров логов
+# ERNI-KI Log Monitoring (added $(date '+%Y-%m-%d'))
+# Every 30 minutes: monitor log sizes
 */30 * * * * cd "$PROJECT_ROOT" && "$LOG_MONITORING_SCRIPT" >> "$PROJECT_ROOT/logs/log-monitoring-cron.log" 2>&1
 
-# ERNI-KI Log Monitoring - ежедневная очистка в 03:00
+# ERNI-KI Log Monitoring - daily cleanup at 03:00
 0 3 * * * cd "$PROJECT_ROOT" && "$LOG_MONITORING_SCRIPT" --cleanup >> "$PROJECT_ROOT/logs/log-monitoring-cron.log" 2>&1
 EOF
 
-    # Установка новой crontab
+    # Install new crontab
     crontab "$temp_cron"
     rm -f "$temp_cron"
 
-    success "Cron задачи настроены:"
-    echo "  - Мониторинг каждые 30 минут"
-    echo "  - Ежедневная очистка в 03:00"
+    success "Cron jobs configured:"
+    echo "  - Monitoring every 30 minutes"
+    echo "  - Daily cleanup at 03:00"
 }
 
-# Функция проверки cron задач
+# Check cron
 check_cron() {
-    log "Проверка текущих cron задач..."
+    log "Checking current cron jobs..."
 
     local cron_jobs=$(crontab -l 2>/dev/null | grep -c "log-monitoring.sh" || echo "0")
 
     if [[ "$cron_jobs" -gt 0 ]]; then
-        success "Найдено $cron_jobs cron задач для мониторинга логов"
+        success "Found $cron_jobs cron jobs for log monitoring"
         echo
-        echo "Текущие задачи:"
+        echo "Current jobs:"
         crontab -l | grep "log-monitoring.sh" || true
     else
-        warn "Cron задачи для мониторинга логов не найдены"
+        warn "No cron jobs found for log monitoring"
         return 1
     fi
 }
 
-# Функция удаления cron задач
+# Remove cron jobs
 remove_cron() {
-    log "Удаление cron задач мониторинга логов..."
+    log "Removing log monitoring cron jobs..."
 
     local temp_cron=$(mktemp)
     crontab -l 2>/dev/null | grep -v "log-monitoring.sh" > "$temp_cron" || true
     crontab "$temp_cron"
     rm -f "$temp_cron"
 
-    success "Cron задачи удалены"
+    success "Cron jobs removed"
 }
 
-# Функция создания systemd timer (альтернатива cron)
+# Create systemd timer (alternative to cron)
 setup_systemd_timer() {
-    log "Настройка systemd timer для мониторинга логов..."
+    log "Configuring systemd timer for log monitoring..."
 
-    # Создание service файла
+    # Create service file
     sudo tee /etc/systemd/system/erni-ki-log-monitoring.service > /dev/null << EOF
 [Unit]
 Description=ERNI-KI Log Monitoring
@@ -108,7 +108,7 @@ StandardOutput=append:$PROJECT_ROOT/logs/log-monitoring-systemd.log
 StandardError=append:$PROJECT_ROOT/logs/log-monitoring-systemd.log
 EOF
 
-    # Создание timer файла
+    # Create timer file
     sudo tee /etc/systemd/system/erni-ki-log-monitoring.timer > /dev/null << EOF
 [Unit]
 Description=Run ERNI-KI Log Monitoring every 30 minutes
@@ -122,15 +122,15 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
-    # Перезагрузка systemd и запуск timer
+    # Reload systemd and start timer
     sudo systemctl daemon-reload
     sudo systemctl enable erni-ki-log-monitoring.timer
     sudo systemctl start erni-ki-log-monitoring.timer
 
-    success "Systemd timer настроен и запущен"
+    success "Systemd timer configured and started"
 }
 
-# Основная функция
+# Main
 main() {
     echo "============================================================================"
     echo "🔧 ERNI-KI LOG MONITORING CRON SETUP"
@@ -150,13 +150,13 @@ main() {
             setup_systemd_timer
             ;;
         *)
-            echo "Использование: $0 [setup|check|remove|systemd]"
+            echo "Usage: $0 [setup|check|remove|systemd]"
             echo
-            echo "Команды:"
-            echo "  setup    - Настроить cron задачи (по умолчанию)"
-            echo "  check    - Проверить текущие cron задачи"
-            echo "  remove   - Удалить cron задачи"
-            echo "  systemd  - Настроить systemd timer (альтернатива cron)"
+            echo "Commands:"
+            echo "  setup    - Configure cron jobs (default)"
+            echo "  check    - Check current cron jobs"
+            echo "  remove   - Remove cron jobs"
+            echo "  systemd  - Configure systemd timer (alternative to cron)"
             exit 1
             ;;
     esac

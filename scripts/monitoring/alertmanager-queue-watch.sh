@@ -23,7 +23,7 @@ mkdir -p "$(dirname "$LOG_FILE")"
 
 response=$(curl -fsS "$PROM_URL/api/v1/query" --data-urlencode "query=$QUERY" || true)
 if [[ -z "$response" ]]; then
-  printf "[%s] queue-monitor: не удалось получить ответ от %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$PROM_URL" >> "$LOG_FILE"
+  printf "[%s] queue-monitor: failed to get response from %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$PROM_URL" >> "$LOG_FILE"
   record_status failure "prometheus response empty"
   exit 0
 fi
@@ -41,7 +41,7 @@ try:
     payload = json.loads(os.environ.get('ALERT_RESPONSE', ''))
 except json.JSONDecodeError:
     with open(log_path, 'a', encoding='utf-8') as fh:
-        fh.write(f"[{ts}] queue-monitor: некорректный JSON от Prometheus\n")
+        fh.write(f"[{ts}] queue-monitor: invalid JSON from Prometheus\n")
     sys.exit(0)
 
 value = 0.0

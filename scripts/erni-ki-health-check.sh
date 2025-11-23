@@ -12,7 +12,7 @@ REPORT_PATH="$REPORT_DIR/$REPORT_FILE"
 mkdir -p "$REPORT_DIR"
 
 if [[ ! -x "$TARGET" ]]; then
-  echo "❌ Не найден scripts/health-monitor.sh" >&2
+  echo "❌ scripts/health-monitor.sh not found" >&2
   exit 1
 fi
 
