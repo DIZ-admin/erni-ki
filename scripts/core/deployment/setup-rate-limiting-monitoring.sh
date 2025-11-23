@@ -145,110 +145,111 @@ echo
 echo "🎯 Статистика по зонам:"
 if [[ -f "$STATE_FILE" ]] && jq -e '.zones | length > 0' "$STATE_FILE" >/dev/null 2>&1; then
     jq -r '.zones[] | "   \(.zone): \(.count) блокировок"' "$STATE_FILE" 2>/dev/null
+    jq -r '.zones[] | "   \(.zone): \(.count) blocks"' "$STATE_FILE" 2>/dev/null
 else
-    echo "   ✅ Нет блокировок"
+    echo "   ✅ No blocks"
 fi
 
 echo
 
-# Топ IP адресов
-echo "🌐 Топ IP адресов:"
+# Top IP addresses
+echo "🌐 Top IP Addresses:"
 if [[ -f "$STATE_FILE" ]] && jq -e '.top_ips | length > 0' "$STATE_FILE" >/dev/null 2>&1; then
-    jq -r '.top_ips[] | "   \(.ip): \(.count) блокировок"' "$STATE_FILE" 2>/dev/null | head -5
+    jq -r '.top_ips[] | "   \(.ip): \(.count) blocks"' "$STATE_FILE" 2>/dev/null | head -5
 else
-    echo "   ✅ Нет проблемных IP"
+    echo "   ✅ No problematic IPs"
 fi
 
 echo
 
-# Последние алерты
-echo "🚨 Последние алерты:"
+# Latest alerts
+echo "🚨 Latest Alerts:"
 local alert_file="$PROJECT_ROOT/logs/rate-limiting-alerts.log"
 if [[ -f "$alert_file" ]]; then
     tail -5 "$alert_file" | grep -E "^\[.*\] \[.*\]" | while read -r line; do
         echo "   $line"
     done
 else
-    echo "   ✅ Нет алертов"
+    echo "   ✅ No alerts"
 fi
 
 echo
-echo "Обновлено: $(date)"
-echo "Для выхода нажмите Ctrl+C"
+echo "Updated: $(date)"
+echo "Press Ctrl+C to exit"
 EOF
 
     chmod +x "$PROJECT_ROOT/scripts/rate-limiting-dashboard.sh"
-    success "Dashboard создан: scripts/rate-limiting-dashboard.sh"
+    success "Dashboard created: scripts/rate-limiting-dashboard.sh"
 }
 
-# === Настройка уведомлений ===
+# === Setup notifications ===
 setup_notifications() {
-    log "Настройка интеграции уведомлений..."
+    log "Setting up notification integration..."
 
-    # Создание конфигурационного файла для уведомлений
+    # Create configuration file for notifications
     cat > "$PROJECT_ROOT/conf/rate-limiting-notifications.conf" <<EOF
 # ERNI-KI Rate Limiting Notifications Configuration
 
-# Пороги алертов
+# Alert thresholds
 ALERT_THRESHOLD=10
 WARNING_THRESHOLD=5
 
-# Email уведомления (если настроен sendmail)
+# Email notifications (if sendmail is configured)
 EMAIL_ENABLED=false
 EMAIL_TO="admin@example.com"
 
-# Slack уведомления (если настроен webhook)
+# Slack notifications (if webhook is configured)
 SLACK_ENABLED=false
 SLACK_WEBHOOK_URL=""
 
-# Discord уведомления (если настроен webhook)
+# Discord notifications (if webhook is configured)
 DISCORD_ENABLED=false
 DISCORD_WEBHOOK_URL=""
 
-# Telegram уведомления (если настроен bot)
+# Telegram notifications (if bot is configured)
 TELEGRAM_ENABLED=false
 TELEGRAM_BOT_TOKEN=""
 TELEGRAM_CHAT_ID=""
 
-# Backrest интеграция
+# Backrest integration
 BACKREST_ENABLED=true
 BACKREST_URL="http://localhost:9898"
 EOF
 
-    success "Конфигурация уведомлений создана"
+    success "Notification configuration created"
 }
 
-# === Тестирование системы ===
+# === Test system ===
 test_monitoring() {
-    log "Тестирование системы мониторинга..."
+    log "Testing monitoring system..."
 
-    # Запуск тестовой проверки
+    # Run a test check
     if "$PROJECT_ROOT/scripts/monitor-rate-limiting.sh" monitor; then
-        success "Мониторинг работает корректно"
+        success "Monitoring works correctly"
     else
-        error "Ошибка в работе мониторинга"
+        error "Monitoring error"
         return 1
     fi
 
-    # Проверка создания файлов
+    # Check file creation
     if [[ -f "$PROJECT_ROOT/logs/rate-limiting-monitor.log" ]]; then
-        success "Лог файл создан"
+        success "Log file created"
     else
-        error "Лог файл не создан"
+        error "Log file not created"
     fi
 
     return 0
 }
 
-# === Основная функция ===
+# === Main function ===
 main() {
-    log "Настройка системы мониторинга rate limiting для ERNI-KI"
+    log "Setting up ERNI-KI rate limiting monitoring system"
 
-    # Создание директорий
+    # Create directories
     mkdir -p "$PROJECT_ROOT/logs"
     mkdir -p "$PROJECT_ROOT/conf"
 
-    # Выбор метода мониторинга
+    # Choose monitoring method
     case "${1:-cron}" in
         "cron")
             setup_cron_monitoring
@@ -261,31 +262,19 @@ main() {
             setup_systemd_service
             ;;
         *)
-            error "Неизвестный метод: $1"
-            echo "Доступные методы: cron, systemd, both"
+            error "Unknown method: $1"
+            echo "Available methods: cron, systemd, both"
             exit 1
             ;;
     esac
 
-    # Общие настройки
+    # General settings
     setup_log_rotation
     create_dashboard
     setup_notifications
 
-    # Тестирование
+    # Testing
     if test_monitoring; then
-        success "Система мониторинга настроена успешно!"
-
-        echo
-        echo "📋 Что было настроено:"
-        echo "  ✅ Мониторинг rate limiting каждую минуту"
-        echo "  ✅ Автоматические алерты при превышении порогов"
-        echo "  ✅ Ротация логов (30 дней)"
-        echo "  ✅ Dashboard для просмотра статистики"
-        echo "  ✅ Интеграция с Backrest для уведомлений"
-
-        echo
-        echo "🚀 Полезные команды:"
         echo "  ./scripts/monitor-rate-limiting.sh stats    # Показать статистику"
         echo "  ./scripts/rate-limiting-dashboard.sh        # Запустить dashboard"
         echo "  tail -f logs/rate-limiting-monitor.log      # Просмотр логов"

@@ -22,9 +22,7 @@
 # - Fallback: ollama/llama3.1:8b (совместимость)
 #
 
-# Модели управляются через Database Models в LiteLLM Admin UI
-# Все модели мигрированы из конфигурации в базу данных для полного управления через веб-интерфейс
-#
+
 
 router_settings:
   num_retries: 3

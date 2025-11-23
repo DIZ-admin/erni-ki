@@ -200,10 +200,10 @@ def main():
     # Create wrapper
     assistant = AssistantAPIWrapper()
 
-    # Тестовое сообщение
+    # Test message
     test_message = "Hello! This is a test of the OpenAI Assistant integration through ERNI-KI system. Please confirm that you can receive and respond to this message."
 
-    # Отправляем сообщение
+    # Send message
     response = assistant.chat_with_assistant(
         message=test_message,
         instructions="Please respond briefly to confirm the integration is working."
@@ -211,17 +211,17 @@ def main():
 
     if response:
         print("\n" + "=" * 60)
-        print("✅ УСПЕХ! OpenAI Assistant API интеграция работает!")
-        print(f"📝 Ответ Assistant:\n{response}")
-        print("\n📋 Статус интеграции:")
-        print("   • LiteLLM может создавать threads и messages")
-        print("   • OpenAI Assistant API доступен напрямую")
-        print("   • Полный цикл общения функционирует")
-        print("   • Система готова к использованию")
+        print("✅ SUCCESS! OpenAI Assistant API integration is working!")
+        print(f"📝 Assistant reply:\n{response}")
+        print("\n📋 Integration status:")
+        print("   • LiteLLM can create threads and messages")
+        print("   • OpenAI Assistant API is reachable directly")
+        print("   • Full chat cycle operates end-to-end")
+        print("   • System is ready for use")
         return 0
     else:
         print("\n" + "=" * 60)
-        print("❌ ОШИБКА! Интеграция требует доработки")
+        print("❌ ERROR! Integration requires fixes")
         return 1
 
 if __name__ == "__main__":
