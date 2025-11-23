@@ -151,7 +151,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md)
 - **Runbooks и troubleshooting:**
   [`Troubleshooting guide`](operations/troubleshooting/troubleshooting-guide.md),
-  [`troubleshooting.md`](operations/troubleshooting.md)
+  [`troubleshooting-guide.md`](operations/troubleshooting/troubleshooting-guide.md)
 - **Безопасность:**
   [`security/security-policy.md`](security/security-policy.md),
   [`log-audit.md`](security/log-audit.md)

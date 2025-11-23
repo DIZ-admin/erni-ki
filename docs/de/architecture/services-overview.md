@@ -164,11 +164,11 @@ curl -s -H "X-Scope-OrgID: erni-ki" http://localhost:3100/ready
   Komponentenbeschreibung
 - **[Administrator-Handbuch](../operations/core/admin-guide.md)** - Detaillierte
   Verwaltungsanweisungen
-- **[Monitoring und Alerts](../operations/monitoring.md)** - Prometheus/Grafana
-  Konfiguration
+- **[Monitoring und Alerts](../operations/monitoring/monitoring-guide.md)** -
+  Prometheus/Grafana Konfiguration
 - **[Backup-Handbuch](../operations/backup-guide.md)** - Backrest Konfiguration
-- **[Fehlerbehebung](../operations/troubleshooting.md)** - Lösung typischer
-  Probleme
+- **[Fehlerbehebung](../operations/troubleshooting/troubleshooting-guide.md)** -
+  Lösung typischer Probleme
 
 ---
 

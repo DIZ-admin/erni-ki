@@ -914,5 +914,5 @@ curl -H 'X-Scope-OrgID: erni-ki' \
 - [Admin Guide](admin-guide.md) - System administration
 - [Architecture](../architecture/architecture.md) - System architecture
 - [Installation Guide](../getting-started/installation.md) - Setup instructions
-- [Troubleshooting](../operations/database/database-troubleshooting.md) -
-  Problem resolution
+- [Troubleshooting](../database/database-troubleshooting.md) - Problem
+  resolution
