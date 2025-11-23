@@ -78,10 +78,10 @@ def handle_critical_alert(alert):
     # - Запуск скриптов восстановления
     # - Уведомления в Slack/Teams
 
-    # Пример: запуск скрипта восстановления для определенных сервисов
+    # Автоматическое восстановление для критических сервисов
+    # TODO: Реализовать recovery scripts в scripts/recovery/ (см. issue #XXX)
     if service in ['ollama', 'openwebui', 'searxng']:
-        logger.info(f"Triggering recovery script for {service}")
-        # os.system(f"/app/scripts/recover_{service}.sh")
+        logger.info(f"Critical service {service} requires attention - manual intervention needed")
 
 def handle_gpu_alert(alert):
     """Обработка GPU алертов"""
