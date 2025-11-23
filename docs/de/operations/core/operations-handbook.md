@@ -34,13 +34,14 @@ Incident Response verwalten.
 
 1. Prüfen: `docker compose ps` → `docker compose logs <service>` → `curl` auf
    Metriken.
-2. Mit Grafana Dashboards vergleichen (GPU/LLM/DB). Ticks: `monitoring-guide.md`
-   beschreibt Healthcheck-Muster für Exporter (TCP, wget, Python).
+2. Mit Grafana Dashboards vergleichen (GPU/LLM/DB). Ticks:
+   `../monitoring/monitoring-guide.md` beschreibt Healthcheck-Muster für
+   Exporter (TCP, wget, Python).
 3. Bei kritischem Alert: Benachrichtigung über Alertmanager senden und Ticket in
    Archon öffnen (tasks/report). Status, Tokens, Teams dokumentieren (SRE
    Primary, Platform Backup).
-4. Für Sensoren (non-critical): `runbooks/service-restart-procedures.md` oder
-   `troubleshooting-guide.md` ausführen.
+4. Für Sensoren (non-critical): `../maintenance/service-restart-procedures.md`
+   oder `../troubleshooting/troubleshooting-guide.md` ausführen.
 
 ## 4. Wartungsautomatisierung
 
@@ -50,9 +51,8 @@ Incident Response verwalten.
   01:30).
 - Ergebnisse per Utilities prüfen: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
-- Bei Skript-Fehlern: siehe `runbooks/backup-restore-procedures.md` für
-  Wiederherstellung, `runbooks/configuration-change-process.md` für
-  Config-Migrationen.
+- Bei Skript-Fehlern: siehe `../maintenance/backup-restore-procedures.md` für
+  Wiederherstellung, `configuration-change-process.md` für Config-Migrationen.
 - **Neue November-Aufgaben:**
   - `scripts/maintenance/docling-shared-cleanup.sh` — bereinigt Docling Shared
     Volume und stellt Rechte wieder her (Cron Job **docling_shared_cleanup**).
@@ -67,17 +67,17 @@ Incident Response verwalten.
 
 ## 5. Runbooks und Playbooks
 
-- `runbooks/service-restart-procedures.md` — sichere Neustarts, Healthchecks
-  vorher/nachher.
-- `runbooks/troubleshooting-guide.md` — typische Probleme (GPU, RAG, Redis) und
-  Befehle `docker logs`, `nvidia-smi`, `curl`.
-- `runbooks/docling-shared-volume.md` — spezielle Aktionen zur Bereinigung von
-  Docling Shared Volume und Fluent Bit.
+- `../maintenance/service-restart-procedures.md` — sichere Neustarts,
+  Healthchecks vorher/nachher.
+- `../troubleshooting/troubleshooting-guide.md` — typische Probleme (GPU, RAG,
+  Redis) und Befehle `docker logs`, `nvidia-smi`, `curl`.
+- `../maintenance/docling-shared-volume.md` — spezielle Aktionen zur Bereinigung
+  von Docling Shared Volume und Fluent Bit.
 
 ## 6. Healthchecks & Metriken
 
-- Metriken aller Exporter in `monitoring-guide.md`: node-exporter, Redis,
-  PostgreSQL (mit IPv4/IPv6 Proxy), Nvidia, Blackbox, Ollama, Nginx, RAG.
+- Metriken aller Exporter in `../monitoring/monitoring-guide.md`: node-exporter,
+  Redis, PostgreSQL (mit IPv4/IPv6 Proxy), Nvidia, Blackbox, Ollama, Nginx, RAG.
 - Empfohlen: `curl -s http://localhost:PORT/metrics | head` zur Überprüfung und
   `docker inspect ... State.Health`.
 - `docker compose top` und `docker stats` für Prozessansicht verwenden.
@@ -104,7 +104,7 @@ Incident Response verwalten.
   `conf/prometheus`, `conf/grafana`.
 - Automation → `docs/operations/automation/automated-maintenance-guide.md`,
   `scripts/maintenance`.
-- Runbooks → `docs/operations/runbooks/*.md`.
+- Runbooks → `docs/operations/*.md`.
 - Archon — kurze Statusnotizen und Checklisten für jeden Incident aktualisieren
   (siehe Task `a0169e05…`).
 

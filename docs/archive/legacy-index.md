@@ -40,13 +40,12 @@ MCP, окружённая полным стеком наблюдаемости, 
 - **Архитектура и сервисы** — `../architecture/architecture.md`,
   `../architecture/service-inventory.md`,
   `../architecture/services-overview.md`.
-- **Операции** — `../operations/operations-handbook.md`,
+- **Операции** — `../operations/core/operations-handbook.md`,
   `../operations/monitoring/monitoring-guide.md`,
-  `../operations/automation/automated-maintenance-guide.md`,
-  `../operations/runbooks/`.
-- **Хранилище и данные** — `../data/database-monitoring-plan.md`,
-  `../data/redis-operations-guide.md`,
-  `../data/database-production-optimizations.md`.
+  `../operations/automation/automated-maintenance-guide.md`, `../operations/`.
+- **Хранилище и данные** — `../operations/database/database-monitoring-plan.md`,
+  `../operations/database/redis-operations-guide.md`,
+  `../operations/database/database-production-optimizations.md`.
 - **ML и API** — `reference/api-reference.md`, `README.md` (вне MkDocs, но
   всегда актуален в корне репозитория).
 - **Безопасность** — `security/security-policy.md` и related compliance notes.
@@ -56,8 +55,8 @@ MCP, окружённая полным стеком наблюдаемости, 
   ([HowTo](../academy/howto/write-customer-email.md)) и
   [News](../news/index.md).
 - **Проверить статус ERNI-KI** — смотрите
-  [status page](../operations/status-page.md) (ссылку на конкретный URL укажите
-  в конфигурации).
+  [status page](../operations/core/status-page.md) (ссылку на конкретный URL
+  укажите в конфигурации).
 
 > Для быстрых решений используйте Archon (runbooks, checklists, status updates)
 > и держите синхронизацию с этими материалами.

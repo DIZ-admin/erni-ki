@@ -9,8 +9,8 @@ doc_version: '2025.11'
 ## When to use this
 
 Use this when you need a clear issue description or user story faster. If Open
-WebUI reports errors, check the [status page](../../operations/status-page.md)
-and retry later.
+WebUI reports errors, check the
+[status page](../../operations/core/status-page.md) and retry later.
 
 ## Step-by-step
 

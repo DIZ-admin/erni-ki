@@ -10,7 +10,8 @@ doc_version: '2025.11'
 
 Use this guide when you need a polite, concise reply to a customer request and
 want to draft it faster with AI. Check the
-[status page](../../operations/status-page.md) first if responses seem delayed.
+[status page](../../operations/core/status-page.md) first if responses seem
+delayed.
 
 ## Step-by-step
 

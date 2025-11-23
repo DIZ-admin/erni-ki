@@ -589,16 +589,16 @@ curl -k https://localhost/health
 - Архитектура:
   [docs/architecture/architecture.md](../../architecture/architecture.md)
 - Руководство администратора:
-  [docs/operations/admin-guide.md](../../operations/admin-guide.md)
+  [docs/operations/core/admin-guide.md](../../operations/core/admin-guide.md)
 
 **Runbooks:**
 
 - Troubleshooting:
-  [docs/operations/runbooks/troubleshooting-guide.md](../../operations/runbooks/troubleshooting-guide.md)
+  [docs/operations/troubleshooting/troubleshooting-guide.md](../../operations/troubleshooting/troubleshooting-guide.md)
 - Backup/Restore:
-  [docs/operations/runbooks/backup-restore-procedures.md](../../operations/runbooks/backup-restore-procedures.md)
+  [docs/operations/maintenance/backup-restore-procedures.md](../../operations/maintenance/backup-restore-procedures.md)
 - Service Restart:
-  [docs/operations/runbooks/service-restart-procedures.md](../../operations/runbooks/service-restart-procedures.md)
+  [docs/operations/maintenance/service-restart-procedures.md](../../operations/maintenance/service-restart-procedures.md)
 
 **Отчёты:**
 

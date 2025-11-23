@@ -62,4 +62,4 @@ Validierungsergebnisse im Journal festhalten.
    aktualisieren.
 2. GitHub Environments und Secrets-Status bestätigen, Journal ausfüllen.
 3. Required Status Checks für `main`/`develop` gemäß Liste in
-   `docs/operations/ci-health.md` hinzufügen.
+   `docs/archive/audits/ci-health.md` hinzufügen.

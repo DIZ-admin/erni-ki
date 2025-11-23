@@ -61,4 +61,4 @@ _Обновлено: 2025-11-17_
 1. Переименовать удалённую ветку `dev` → `develop` и обновить protection rules.
 2. Подтвердить статус GitHub Environments и секретов, заполнить журнал.
 3. Добавить required status checks для `main`/`develop` согласно списку в
-   `docs/operations/ci-health.md`.
+   `docs/archive/audits/ci-health.md`.

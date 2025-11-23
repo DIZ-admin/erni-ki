@@ -4,7 +4,7 @@ set -euo pipefail
 ALERTMANAGER_URL=${ALERTMANAGER_URL:-http://localhost:9093}
 SEVERITY=${1:-critical}
 OWNER=${2:-ops}
-RUNBOOK=${RUNBOOK_URL:-"docs/operations/monitoring-guide.md#alert-response"}
+RUNBOOK=${RUNBOOK_URL:-"docs/operations/monitoring/monitoring-guide.md#alert-response"}
 
 payload=$(cat <<JSON
 [

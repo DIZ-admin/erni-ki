@@ -130,12 +130,12 @@ doc_version: '2025.11'
    - **Строка:** ~12
    - **Текущее:** "Prometheus v2.55.1"
    - **Должно быть:** "Prometheus v3.0.1"
-   - **Файл:** `docs/operations/monitoring-guide.md`
+   - **Файл:** `docs/operations/monitoring/monitoring-guide.md`
 
 3. **monitoring-guide.md - Отсутствует alerts.yml**
    - **Проблема:** Нет раздела о новых 18 alert rules
    - **Должно быть:** Добавить раздел "Prometheus Alerts Configuration"
-   - **Файл:** `docs/operations/monitoring-guide.md`
+   - **Файл:** `docs/operations/monitoring/monitoring-guide.md`
 
 4. **architecture.md - Устаревшие версии**
    - **Строки:** 26-31
@@ -148,7 +148,7 @@ doc_version: '2025.11'
 5. **admin-guide.md - Отсутствуют cron jobs**
    - **Проблема:** Нет информации о PostgreSQL VACUUM и Docker cleanup
    - **Должно быть:** Добавить раздел "Automated Maintenance Tasks"
-   - **Файл:** `docs/operations/admin-guide.md`
+   - **Файл:** `docs/operations/core/admin-guide.md`
 
 6. **configuration-guide.md - Устаревшие примеры**
    - **Проблема:** Примеры конфигураций не соответствуют текущим
@@ -175,7 +175,8 @@ doc_version: '2025.11'
 10. **Создать новый файл: automated-maintenance-guide.md**
     - **Содержание:** PostgreSQL VACUUM, Docker cleanup, Log rotation
     - **Разделы:** Cron jobs, Scripts, Monitoring
-    - **Файл:** `docs/operations/automated-maintenance-guide.md` (новый)
+    - **Файл:** `docs/operations/automation/automated-maintenance-guide.md`
+      (новый)
 
 11. **Обновить Mermaid диаграммы**
     - **Проблема:** Диаграммы не отражают новые компоненты
@@ -193,7 +194,7 @@ doc_version: '2025.11'
    - Добавить информацию о 18 alert rules
    - Обновить статус системы (дата 2025-10-24)
 
-2. ✅ **Обновить docs/operations/monitoring-guide.md**
+2. ✅ **Обновить docs/operations/monitoring/monitoring-guide.md**
    - Версия Prometheus v2.55.1 → v3.0.1
    - Добавить раздел "Prometheus Alerts Configuration"
    - Документировать 18 alert rules из alerts.yml
@@ -210,13 +211,13 @@ doc_version: '2025.11'
    - Примеры конфигурации
    - Troubleshooting
 
-5. ✅ **Создать docs/operations/automated-maintenance-guide.md**
+5. ✅ **Создать docs/operations/automation/automated-maintenance-guide.md**
    - PostgreSQL VACUUM automation
    - Docker cleanup automation
    - Log rotation
    - Cron jobs management
 
-6. ✅ **Обновить docs/operations/admin-guide.md**
+6. ✅ **Обновить docs/operations/core/admin-guide.md**
    - Добавить раздел "Automated Maintenance"
    - Ссылки на новые руководства
    - Примеры команд
@@ -338,7 +339,7 @@ docs/
 
 **Результат:** ✅ Все версии актуальны, новые компоненты документированы
 
-#### 2. ✅ docs/operations/monitoring-guide.md - Обновлено
+#### 2. ✅ docs/operations/monitoring/monitoring-guide.md - Обновлено
 
 **Изменения:**
 
@@ -386,7 +387,7 @@ docs/
 
 **Объем:** 300+ строк **Результат:** ✅ Полная справочная документация по alerts
 
-#### 5. ✅ docs/operations/automated-maintenance-guide.md - СОЗДАН
+#### 5. ✅ docs/operations/automation/automated-maintenance-guide.md - СОЗДАН
 
 **Содержание:**
 
@@ -430,10 +431,11 @@ docs/
 
 1. ✅ `README.md` - Обновлен статус, добавлены alerts и automation
 2. ✅ `docs/architecture/architecture.md` - Добавлен раздел об автоматизации
-3. ✅ `docs/operations/monitoring-guide.md` - Добавлен раздел о Prometheus
-   Alerts
+3. ✅ `docs/operations/monitoring/monitoring-guide.md` - Добавлен раздел о
+   Prometheus Alerts
 4. ✅ `docs/prometheus-alerts-guide.md` - НОВЫЙ файл (300+ строк)
-5. ✅ `docs/operations/automated-maintenance-guide.md` - НОВЫЙ файл (300+ строк)
+5. ✅ `docs/operations/automation/automated-maintenance-guide.md` - НОВЫЙ файл
+   (300+ строк)
 6. ✅ `docs/archive/reports/documentation-audit-2025-10-24.md` - НОВЫЙ файл
    (300+ строк)
 
@@ -452,7 +454,7 @@ docs/
 
 #### Этап 4: Дополнительные улучшения (по мере необходимости)
 
-- Обновить `docs/operations/admin-guide.md` - Добавить ссылки на новые
+- Обновить `docs/operations/core/admin-guide.md` - Добавить ссылки на новые
   руководства
 - Обновить `docs/getting-started/configuration-guide.md` - Актуализировать
   примеры

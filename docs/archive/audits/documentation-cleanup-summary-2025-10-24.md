@@ -92,7 +92,7 @@ doc_version: '2025.11'
 
 **Результат:** ✅ Актуален
 
-### 3. docs/operations/monitoring-guide.md
+### 3. docs/operations/monitoring/monitoring-guide.md
 
 **Изменения:**
 
@@ -102,7 +102,7 @@ doc_version: '2025.11'
 
 **Результат:** ✅ Актуален
 
-### 4. docs/operations/admin-guide.md
+### 4. docs/operations/core/admin-guide.md
 
 **Изменения:**
 
@@ -138,7 +138,7 @@ doc_version: '2025.11'
 **Объем:** 626 строк  
 **Статус:** ✅ Production Ready
 
-### 2. docs/operations/automated-maintenance-guide.md (НОВЫЙ)
+### 2. docs/operations/automation/automated-maintenance-guide.md (НОВЫЙ)
 
 **Содержание:**
 
@@ -203,16 +203,17 @@ doc_version: '2025.11'
 
 1. ✅ `README.md` - Обновлен статус, добавлены alerts и automation
 2. ✅ `docs/architecture/architecture.md` - Добавлен раздел об автоматизации
-3. ✅ `docs/operations/monitoring-guide.md` - Добавлен раздел о Prometheus
-   Alerts
-4. ✅ `docs/operations/admin-guide.md` - Добавлен раздел об автоматизированном
-   обслуживании
+3. ✅ `docs/operations/monitoring/monitoring-guide.md` - Добавлен раздел о
+   Prometheus Alerts
+4. ✅ `docs/operations/core/admin-guide.md` - Добавлен раздел об
+   автоматизированном обслуживании
 5. ✅ `docs/architecture/services-overview.md` - Обновлена дата и версия
 
 ### Созданные файлы (4)
 
 1. ✅ `docs/prometheus-alerts-guide.md` - НОВЫЙ (626 строк)
-2. ✅ `docs/operations/automated-maintenance-guide.md` - НОВЫЙ (442 строки)
+2. ✅ `docs/operations/automation/automated-maintenance-guide.md` - НОВЫЙ (442
+   строки)
 3. ✅ `docs/archive/reports/documentation-audit-2025-10-24.md` - НОВЫЙ (505
    строк)
 4. ✅ `docs/archive/reports/documentation-cleanup-audit-2025-10-24.md` - НОВЫЙ

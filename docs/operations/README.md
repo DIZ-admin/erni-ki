@@ -31,16 +31,16 @@ managing the ERNI-KI platform.
 
 - **[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)** -
   Diagnostic procedures and common issues
-- **[maintenance/](maintenance/)** - Specific maintenance procedures
-  - Service restarts
-  - Backup & Restore
-  - Image upgrades
+- **Maintenance:**
+  [Service restarts](maintenance/service-restart-procedures.md),
+  [Backup & Restore](maintenance/backup-restore-procedures.md)
 
 ### Specialized Guides
 
-- **[automation/](automation/)** - Automated maintenance guides
-- **[database/](database/)** - Database operations and monitoring
-- **[monitoring/](monitoring/)** - Detailed monitoring references
+- **Automation:**
+  [Automated maintenance](automation/automated-maintenance-guide.md)
+- **Database:** [Operations overview](database/README.md)
+- **Monitoring:** [Monitoring guide](monitoring/monitoring-guide.md)
 
 ### Diagnostics
 
@@ -49,10 +49,10 @@ managing the ERNI-KI platform.
 
 ## Quick Start
 
-**For Operators:** Start with the [admin-guide.md](core/admin-guide.md) **For
-Monitoring:** See [monitoring-guide.md](monitoring/monitoring-guide.md) **For
-Incidents:** Check
-[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)
+**For Operators:** Start with the [admin-guide.md](core/admin-guide.md).  
+**For Monitoring:** See [monitoring-guide.md](monitoring/monitoring-guide.md).  
+**For Incidents:** Check
+[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
 
 ## Related Documentation
 

@@ -405,9 +405,9 @@ docker compose up -d service
 
 ## 📚 СВЯЗАННЫЕ ДОКУМЕНТЫ
 
-- [Service Restart Procedures](service-restart-procedures.md)
-- [Troubleshooting Guide](troubleshooting-guide.md)
-- [Backup Restore Procedures](backup-restore-procedures.md)
+- [Service Restart Procedures](../maintenance/service-restart-procedures.md)
+- [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
+- [Backup Restore Procedures](../maintenance/backup-restore-procedures.md)
 - [System Architecture](../../architecture/architecture.md)
 
 ---
