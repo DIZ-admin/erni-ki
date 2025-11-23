@@ -522,8 +522,8 @@ echo -e "\n✅ Проверка завершена"
 ## 📚 СВЯЗАННЫЕ ДОКУМЕНТЫ
 
 - [Service Restart Procedures](service-restart-procedures.md)
-- [Troubleshooting Guide](troubleshooting-guide.md)
-- [Configuration Change Process](configuration-change-process.md)
+- [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
+- [Configuration Change Process](../core/configuration-change-process.md)
 - [System Architecture](../../architecture/architecture.md)
 
 ---

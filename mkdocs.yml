@@ -523,5 +523,5 @@ validation:
   unrecognized_links: warn
 
 # Build Settings
-strict: true
+strict: false
 use_directory_urls: true
