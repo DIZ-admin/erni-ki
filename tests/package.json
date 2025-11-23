@@ -22,7 +22,7 @@
   "author": "Альтэон Шульц (Tech Lead)",
   "license": "MIT",
   "dependencies": {
-    "playwright": "^1.54.2"
+    "playwright": "^1.55.1"
   },
   "devDependencies": {
     "@types/node": "^24.10.0"
