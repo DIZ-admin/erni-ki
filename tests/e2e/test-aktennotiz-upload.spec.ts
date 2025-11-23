@@ -6,9 +6,8 @@
  * Goal: Verify end-to-end process of uploading and processing DOCX file through ERNI-KI RAG system
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
-import path from 'node:path';
 
 const BASE = process.env.PW_BASE_URL || 'http://localhost:8080';
 const DOCX_FILE = 'tests/fixtures/Aktennotiz_Andre Arnold 10.10.2025.docx';
@@ -25,7 +24,7 @@ async function tryLogin(page: any) {
 
   const emailSel = 'input[type="email"], input[name="email"], input#email';
   const passSel = 'input[type="password"], input[name="password"], input#password';
-  const submitSel = 'button:has-text("Sign In"), button:has-text("Войти"), button[type="submit"]';
+  const submitSel = 'button:has-text("Sign In"), button[type="submit"]';
 
   let hasLogin = await page
     .locator(emailSel)
@@ -56,7 +55,7 @@ async function tryLogin(page: any) {
   await page.click(submitSel).catch(() => page.press(passSel, 'Enter'));
 
   const chatInput =
-    'textarea[placeholder*="Message"], textarea[placeholder*="Сообщ"], [role="textbox"], div[contenteditable="true"]';
+    'textarea[placeholder*="Message"], [role="textbox"], div[contenteditable="true"]';
   try {
     await page.waitForSelector(chatInput, { timeout: 10_000 });
     log('✅ Login successful - chat input found');
@@ -70,7 +69,7 @@ async function tryLogin(page: any) {
 test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
   const startTime = Date.now();
 
-  // Проверяем наличие файла
+  // Check if file exists
   if (!fs.existsSync(DOCX_FILE)) {
     throw new Error(`DOCX file not found: ${DOCX_FILE}`);
   }
@@ -79,26 +78,26 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
   log(`📄 File to upload: ${DOCX_FILE}`);
   log(`📊 File size: ${(fileStats.size / 1024).toFixed(2)} KB`);
 
-  // Шаг 1: Открыть OpenWebUI
+  // Step 1: Open OpenWebUI
   log('🌐 Step 1: Opening OpenWebUI...');
   const navStartTime = Date.now();
   await page.goto(BASE);
   const navEndTime = Date.now();
   log(`✅ Page loaded in ${navEndTime - navStartTime}ms`);
 
-  // Скриншот начальной страницы
+  // Initial page screenshot
   await page.screenshot({
     path: 'test-results/01-initial-page.png',
     fullPage: true,
   });
 
-  // Ждем загрузки страницы
+  // Wait for page load
   await page.waitForTimeout(3000);
 
   const title = await page.title();
   log(`📄 Page title: ${title}`);
 
-  // Шаг 2: Авторизация
+  // Step 2: Login
   log('🔐 Step 2: Attempting login...');
   const loginStartTime = Date.now();
   const loginSuccess = await tryLogin(page).catch(() => false);
@@ -109,13 +108,13 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
 
   await page.waitForTimeout(2000);
 
-  // Скриншот после логина
+  // Screenshot after login
   await page.screenshot({
     path: 'test-results/02-after-login.png',
     fullPage: true,
   });
 
-  // Закрываем модальные окна
+  // Close modal windows
   const modals = await page.locator('[role="dialog"], .modal').count();
   if (modals > 0) {
     log(`🔍 Found ${modals} modal(s), closing...`);
@@ -123,14 +122,14 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
     await page.waitForTimeout(500);
   }
 
-  // Шаг 3: Поиск и клик на кнопку загрузки файлов
+  // Step 3: Find and click file upload button
   log('📁 Step 3: Looking for file upload button...');
   const uploadStartTime = Date.now();
 
   let uploadSuccess = false;
   let uploadMethod = '';
 
-  // Метод 1: Поиск кнопки с иконкой скрепки или плюса
+  // Method 1: Search for button with paperclip or plus icon
   const iconButtons = await page.locator('button:has(svg), button:has([class*="icon"])').all();
   log(`🔍 Found ${iconButtons.length} buttons with icons`);
 
@@ -142,11 +141,11 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
     if (!isVisible) continue;
 
     try {
-      // Получаем aria-label или title для идентификации
+      // Get aria-label or title for identification
       const ariaLabel = await button.getAttribute('aria-label').catch(() => '');
       const title = await button.getAttribute('title').catch(() => '');
 
-      // Ищем кнопки, связанные с загрузкой файлов
+      // Search for buttons related to file upload
       if (
         ariaLabel?.toLowerCase().includes('upload') ||
         ariaLabel?.toLowerCase().includes('file') ||
@@ -156,7 +155,7 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
       ) {
         log(`🎯 Found potential upload button: ${ariaLabel || title}`);
 
-        // Пробуем кликнуть и открыть file chooser
+        // Try to click and open file chooser
         const [fileChooser] = await Promise.all([
           page.waitForEvent('filechooser', { timeout: 2000 }).catch(() => null),
           button.click(),
@@ -171,11 +170,11 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
         }
       }
     } catch (e: any) {
-      // Продолжаем поиск
+      // Continue searching
     }
   }
 
-  // Метод 2: Прямой поиск input[type="file"]
+  // Method 2: Direct input[type="file"] search
   if (!uploadSuccess) {
     log('🔍 Trying direct file input method...');
     const fileInput = await page.locator('input[type="file"]').first();
@@ -189,12 +188,10 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
     }
   }
 
-  // Метод 3: Поиск через текст кнопок
+  // Method 3: Search via button text
   if (!uploadSuccess) {
     log('🔍 Trying text-based button search...');
-    const uploadButtons = await page
-      .locator('button:has-text("Upload"), button:has-text("Загрузить")')
-      .all();
+    const uploadButtons = await page.locator('button:has-text("Upload")').all();
 
     for (const button of uploadButtons) {
       try {
@@ -221,7 +218,7 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
   if (!uploadSuccess) {
     log('❌ Could not find upload mechanism');
 
-    // Детальный анализ страницы
+    // Detailed page analysis
     const allButtons = await page.locator('button').count();
     const buttonTexts = await page.locator('button').allTextContents();
     log(`📊 Page has ${allButtons} buttons`);
@@ -237,30 +234,30 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
 
   log(`✅ File uploaded successfully via: ${uploadMethod} (${uploadEndTime - uploadStartTime}ms)`);
 
-  // Скриншот после загрузки
+  // Screenshot after upload
   await page.screenshot({
     path: 'test-results/04-file-uploaded.png',
     fullPage: true,
   });
 
-  // Шаг 4: Ожидание обработки файла
+  // Step 4: Wait for file processing
   log('⏳ Step 4: Waiting for file processing...');
   const processingStartTime = Date.now();
 
-  // Ждем индикаторов обработки или завершения
+  // Wait for processing indicators or completion
   await page.waitForTimeout(5000);
 
   const processingEndTime = Date.now();
   const processingTime = processingEndTime - processingStartTime;
   log(`✅ Processing completed in ${processingTime}ms`);
 
-  // Скриншот после обработки
+  // Screenshot after processing
   await page.screenshot({
     path: 'test-results/05-processing-complete.png',
     fullPage: true,
   });
 
-  // Шаг 5: Проверка консоли браузера на ошибки
+  // Step 5: Check browser console for errors
   log('🔍 Step 5: Checking browser console for errors...');
   const consoleLogs: any[] = [];
   page.on('console', msg => {
@@ -270,7 +267,7 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
     });
   });
 
-  // Проверяем наличие ошибок
+  // Check for errors
   const errors = consoleLogs.filter(log => log.type === 'error');
   if (errors.length > 0) {
     log(`⚠️ Found ${errors.length} console errors:`);
@@ -279,7 +276,7 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
     log('✅ No console errors found');
   }
 
-  // Финальные метрики
+  // Final metrics
   const totalTime = Date.now() - startTime;
   log('\n📊 === TEST SUMMARY ===');
   log(`✅ Total test time: ${totalTime}ms`);
@@ -292,14 +289,14 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
   );
   log(`${errors.length === 0 ? '✅' : '❌'} Console errors: ${errors.length}`);
 
-  // Финальный скриншот
+  // Final screenshot
   await page.screenshot({
     path: 'test-results/06-final-state.png',
     fullPage: true,
   });
 
-  // Проверки
+  // Checks
   expect(uploadSuccess).toBe(true);
-  expect(processingTime).toBeLessThan(10000); // Цель: <10 секунд
+  expect(processingTime).toBeLessThan(10000); // Target: <10 seconds
   expect(errors.length).toBe(0);
 });
