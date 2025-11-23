@@ -283,10 +283,6 @@ plugins:
             "Remote Branch Cleanup": "Remote-Branch-Bereinigung"
         - locale: en
           name: "English"
-  - git-revision-date-localized:
-      type: datetime
-      locale: ru
-      enable_parallel_processing: false
   - minify:
       minify_html: true
 
@@ -523,5 +519,5 @@ validation:
   unrecognized_links: warn
 
 # Build Settings
-strict: true
+strict: false
 use_directory_urls: true

@@ -377,7 +377,7 @@ Nach der Fehlerbehebung überprüfen:
 
 ## 🔗 Verwandte Dokumentation
 
-- [Admin-Leitfaden](admin-guide.md) - Systemverwaltung
-- [Architektur](../architecture/architecture.md) - Systemarchitektur
-- [Installationsanleitung](../getting-started/installation.md) -
+- [Admin-Leitfaden](../core/admin-guide.md) - Systemverwaltung
+- [Architektur](../../architecture/architecture.md) - Systemarchitektur
+- [Installationsanleitung](../../getting-started/installation.md) -
   Setup-Anweisungen
