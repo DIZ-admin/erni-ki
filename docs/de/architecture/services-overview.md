@@ -1,6 +1,6 @@
 ---
 language: de
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 title: '📊 Detaillierte Tabelle der aktiven Services des ERNI-KI Systems'
 version: '12.1'
