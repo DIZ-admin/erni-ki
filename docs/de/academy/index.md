@@ -2,7 +2,7 @@
 language: de
 page_id: academy.index
 translation_status: partial
-doc_version: '2025.02'
+doc_version: '2025.11'
 ---
 
 # Academy KI
