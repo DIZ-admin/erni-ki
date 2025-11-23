@@ -13,9 +13,9 @@ audience: 'administrators'
 
 Aktueller Stack (November 2025):
 
-- **Prometheus v3.0.1** + 27 Alert Rules
-- **Grafana v11.6.6**, **Loki v3.5.5**, **Fluent Bit v3.2.0**
-- **Alertmanager v0.28.0** inkl. Queue-Watchdog
+- **Prometheus v3.0.0** + 20 Alert Rules
+- **Grafana v11.3.0**, **Loki v3.0.0**, **Fluent Bit v3.1.0**
+- **Alertmanager v0.27.0** inkl. Queue-Watchdog
 - Automatisierte Skripte:
   - `scripts/monitoring/alertmanager-queue-watch.sh`
   - `scripts/maintenance/docling-shared-cleanup.sh`
