@@ -1,7 +1,7 @@
 ---
 language: de
 page_id: howto.create-jira-ticket
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 ---
 

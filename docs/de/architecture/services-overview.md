@@ -1,6 +1,6 @@
 ---
 language: de
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 title: '📊 Detaillierte Tabelle der aktiven Services des ERNI-KI Systems'
 version: '12.1'
@@ -162,13 +162,13 @@ curl -s -H "X-Scope-OrgID: erni-ki" http://localhost:3100/ready
 
 - **[Systemarchitektur](./architecture.md)** - Diagramme und
   Komponentenbeschreibung
-- **[Administrator-Handbuch](../operations/admin-guide.md)** - Detaillierte
+- **[Administrator-Handbuch](../operations/core/admin-guide.md)** - Detaillierte
   Verwaltungsanweisungen
-- **[Monitoring und Alerts](../operations/monitoring.md)** - Prometheus/Grafana
-  Konfiguration
+- **[Monitoring und Alerts](../operations/monitoring/monitoring-guide.md)** -
+  Prometheus/Grafana Konfiguration
 - **[Backup-Handbuch](../operations/backup-guide.md)** - Backrest Konfiguration
-- **[Fehlerbehebung](../operations/troubleshooting.md)** - Lösung typischer
-  Probleme
+- **[Fehlerbehebung](../operations/troubleshooting/troubleshooting-guide.md)** -
+  Lösung typischer Probleme
 
 ---
 

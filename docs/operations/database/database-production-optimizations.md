@@ -7,5 +7,5 @@ doc_version: '2025.11'
 # Production Database Optimizations
 
 - Настройте pg_stat_statements и vacuum jobs
-  (`docs/operations/automated-maintenance-guide.md`).
+  (`docs/operations/automation/automated-maintenance-guide.md`).
 - Отслеживайте bloat и replication lag.

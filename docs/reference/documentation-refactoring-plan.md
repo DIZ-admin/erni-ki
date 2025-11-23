@@ -18,7 +18,7 @@ doc_version: '2025.11'
 | **Архитектура**      | `docs/architecture/*.md`, `service-inventory.md`, `services-overview.md`, `nginx-configuration.md`.            | 07.11.2025   |
 | **Операции**         | `docs/operations/*` + runbook директория (`backup`, `docling`, `service restart`, `troubleshooting`).          | 10–11.2025   |
 | **Наблюдаемость**    | `monitoring-guide.md`, `prometheus-alerts-guide.md`, `grafana-dashboards-guide.md`, `log-audit-2025-11-14.md`. | 14.11.2025   |
-| **Data & Storage**   | `docs/data/*.md` (6 файлов без перекрёстных ссылок в README).                                                  | 09–10.2025   |
+| **Data & Storage**   | `docs/operations/database/*.md` (мониторинг/оптимизации Postgres, Redis, vLLM).                                | 09–10.2025   |
 | **Security**         | `docs/security/security-policy.md`, `log-audit.md`, точечные отчёты.                                           | 09–11.2025   |
 | **Reference/API**    | `docs/reference/api-reference.md` (обновлена 2025-09-19), `mcpo-integration-guide.md`, `development.md`.       | 09–10.2025   |
 | **Архив / отчёты**   | 15+ отчётов в `docs/archive/reports/` (аудиты, диагностика, remediation).                                      | 10–11.2025   |
@@ -40,17 +40,17 @@ doc_version: '2025.11'
 
 ## 2. Целевая структура профессиональной документации
 
-| Уровень                     | Документ / раздел                                          | Содержание                                                                              |
-| --------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **Executive**               | `docs/overview.md` (single source of truth)                | SLA, 30/30 здоровье, последние апдейты, ссылка на отчёты.                               |
-| **Architecture**            | `architecture/architecture.md`, `service-inventory.md`     | L3 диаграммы, зависимости, профили Compose, конфигурации ingress/security.              |
-| **Operations**              | `operations/operations-handbook.md`, `monitoring-guide.md` | Роли, on-call, алерты, процедуры реагирования.                                          |
-| **Runbooks**                | `operations/runbooks/*`                                    | Шаблон: _Purpose → Preconditions → Steps → Validation_, связь со скриптами `scripts/*`. |
-| **Data & Storage**          | `docs/data/*.md`                                           | Постгрес/Redis планы, pgvector, retention, логика watchdog.                             |
-| **Security**                | `security/security-policy.md`, `log-audit.md`              | Политики, аудит логов, WAF и Zero Trust.                                                |
-| **API & Integrations**      | `reference/api-reference.md`, `mcpo-integration-guide.md`  | JWT, LiteLLM, MCP, Context7, RAG endpoints, примерные payloads.                         |
-| **Reports & Audits**        | `archive/reports/*.md`                                     | Исторические документы (Phase reports, audits, diagnostics) + конспекты в operations.   |
-| **Locales / Consumer Docs** | `locales/de/*`, пользовательские инструкции                | Переведённые руководства (install, user guide, admin).                                  |
+| Уровень                     | Документ / раздел                                               | Содержание                                                                              |
+| --------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Executive**               | `docs/overview.md` (single source of truth)                     | SLA, 30/30 здоровье, последние апдейты, ссылка на отчёты.                               |
+| **Architecture**            | `architecture/architecture.md`, `service-inventory.md`          | L3 диаграммы, зависимости, профили Compose, конфигурации ingress/security.              |
+| **Operations**              | `operations/core/operations-handbook.md`, `monitoring-guide.md` | Роли, on-call, алерты, процедуры реагирования.                                          |
+| **Runbooks**                | `operations/*`                                                  | Шаблон: _Purpose → Preconditions → Steps → Validation_, связь со скриптами `scripts/*`. |
+| **Data & Storage**          | `operations/database/*.md`                                      | Постгрес/Redis планы, pgvector, retention, логика watchdog.                             |
+| **Security**                | `security/security-policy.md`, `log-audit.md`                   | Политики, аудит логов, WAF и Zero Trust.                                                |
+| **API & Integrations**      | `reference/api-reference.md`, `mcpo-integration-guide.md`       | JWT, LiteLLM, MCP, Context7, RAG endpoints, примерные payloads.                         |
+| **Reports & Audits**        | `archive/reports/*.md`                                          | Исторические документы (Phase reports, audits, diagnostics) + конспекты в operations.   |
+| **Locales / Consumer Docs** | `locales/de/*`, пользовательские инструкции                     | Переведённые руководства (install, user guide, admin).                                  |
 
 ## 3. Гэп-анализ и приоритеты
 
@@ -69,7 +69,7 @@ doc_version: '2025.11'
 5. **Localization debt:** немецкие документы не включают monitoring/playbooks и
    не обновлены под v12.1.
 6. **Data & Storage discoverability:** добавить перекрёстные ссылки в README и
-   operations handbook, чтобы инженеры знают о `docs/data/*.md`.
+   operations handbook, чтобы инженеры знают о `operations/database/*.md`.
 7. **MkDocs навигация:** привести порядок `nav` к целевой структуре (сейчас Data
    & Storage идёт после Operations, но операции с базами не ссылаются на
    runbook’и).
@@ -86,7 +86,7 @@ doc_version: '2025.11'
 
 ### Волна 2 — Операционные документы и API (3–4 дня)
 
-- Обновить `operations/operations-handbook.md`, `monitoring-guide.md` и
+- Обновить `operations/core/operations-handbook.md`, `monitoring-guide.md` и
   `automated-maintenance-guide.md`, добавив ссылки на новые cron/alert скрипты
   (`scripts/monitoring/*`).
 - Перенести ключевые finding’и из `docs/log-audit-2025-11-14.md` в
@@ -101,8 +101,8 @@ doc_version: '2025.11'
 - Упростить `docs/archive/` (разложить по папкам `incidents`, `audits`,
   `diagnostics`), обновить `mkdocs.yml`.
 - Освежить `locales/de/*` + добавить missing разделы (monitoring/playbooks).
-- Добавить ссылки на `docs/data/*.md` в README и operations handbook + проверить
-  актуальность pgvector/Redis настроек.
+- Добавить ссылки на `operations/database/*.md` в README и operations handbook +
+  проверить актуальность pgvector/Redis настроек.
 
 ## 5. Предлагаемые deliverables
 
@@ -111,8 +111,8 @@ doc_version: '2025.11'
 - `docs/archive/` реструктурирован на `audits/`, `diagnostics/`, `incidents/` с
   README-навигаторами и обновлённым `mkdocs.yml`.
 - `docs/locales/de/` — добавлены status-блок, Monitoring/Runbooks обзоры.
-- README/index/operations-handbook теперь содержат ссылки на `docs/data/*.md` и
-  архивные отчёты.
+- README/index/operations-handbook теперь содержат ссылки на
+  `operations/database/*.md` и архивные отчёты.
 - Обновлённые operations guides и runbooks с привязкой к `scripts/*`.
 - Новый раздел «Documentation Health & Refactoring Plan» (этот документ) и
   Archon запись.
@@ -129,7 +129,7 @@ doc_version: '2025.11'
   добавлены Monitoring/Runbooks обзоры (`locales/de/monitoring.md`,
   `locales/de/runbooks.md`).
 - ✅ README, `docs/index.md` и Operations Handbook содержат явные ссылки на
-  `docs/data/*.md`.
+  `operations/database/*.md`.
 - 🔁 Продолжается расширение локализаций (de) и перевод runbook’ов; при каждом
   добавлении используйте общий статус-блок и README-навигаторы.
 
@@ -142,6 +142,6 @@ doc_version: '2025.11'
    полностью и добавить больше health-check сценариев.
 3. Добавить релизный чек-лист, подтверждающий актуальность
    `docs/reference/status.yml`, `docs/archive/*/README.md` и
-   `docs/data/README.md` перед каждой поставкой.
+   `docs/operations/database/*.md` перед каждой поставкой.
 4. Поддерживать Archon документ (эта страница) при каждом релизе, фиксируя
    прогресс по задачам Wave 3+ и локализационным обновлениям.

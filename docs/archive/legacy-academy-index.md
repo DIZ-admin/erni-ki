@@ -33,7 +33,7 @@ doc_version: '2025.11'
 ## Старт за 10 минут
 
 1. **Проверить доступность** — откройте
-   [status page](../operations/status-page.md) и убедитесь, что платформа в
+   [status page](../operations/core/status-page.md) и убедитесь, что платформа в
    состоянии _Operational_.
 2. **Зайти в Open WebUI** — следуйте гайду
    [Open WebUI basics](../academy/openwebui-basics.md); используйте
@@ -80,8 +80,9 @@ doc_version: '2025.11'
   данных (проверьте `<INSERT APPROVED MODELS LIST>`).
 - Не вставляйте пароли, ключи и конфиденциальные документы. При сомнении
   уточните у владельца продукта или безопасности.
-- При инцидентах сначала смотрите [status page](../operations/status-page.md),
-  затем эскалируйте через обычный канал поддержки.
+- При инцидентах сначала смотрите
+  [status page](../operations/core/status-page.md), затем эскалируйте через
+  обычный канал поддержки.
 
 ## Быстрые ссылки
 

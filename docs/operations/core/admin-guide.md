@@ -278,7 +278,7 @@ journalctl -u cron --since "1 day ago"
 ```
 
 **📚 Подробная документация:**
-[Automated Maintenance Guide](automated-maintenance-guide.md)
+[Automated Maintenance Guide](../automation/automated-maintenance-guide.md)
 
 ### Еженедельные задачи
 
@@ -472,7 +472,8 @@ docker exec erni-ki-nginx-1 grep "universal_request_id" /etc/nginx/nginx.conf
 
 ### Внешние ресурсы
 
-- **📖 Документация:** [docs/operations/troubleshooting.md](troubleshooting.md)
+- **📖 Документация:**
+  [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
 - **🔧 Database Troubleshooting:**
   [docs/operations/database/database-troubleshooting.md](../database/database-troubleshooting.md)
 - **📊 Database Monitoring:**

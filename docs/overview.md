@@ -101,7 +101,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 ## 5. Операции и наблюдаемость
 
 - **Operations Handbook**: роли, SLA, реакция на алерты —
-  [`operations-handbook.md`](operations/operations-handbook.md).
+  [`operations-handbook.md`](operations/core/operations-handbook.md).
 - **Monitoring Guide**: Prometheus targets, health-checks, экспортёры —
   [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md).
 - **Runbooks**: рестарты, бэкапы, Docling cleanup, troubleshooting —
@@ -146,19 +146,19 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   [`configuration-guide.md`](getting-started/configuration-guide.md),
   [`external-access-setup.md`](getting-started/external-access-setup.md)
 - **Операции и мониторинг:**
-  [`operations-handbook.md`](operations/operations-handbook.md),
+  [`operations-handbook.md`](operations/core/operations-handbook.md),
   [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md),
   [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md)
 - **Runbooks и troubleshooting:**
-  [`Troubleshooting guide`](operations/runbooks/troubleshooting-guide.md),
-  [`troubleshooting.md`](operations/troubleshooting.md)
+  [`Troubleshooting guide`](operations/troubleshooting/troubleshooting-guide.md),
+  [`troubleshooting-guide.md`](operations/troubleshooting/troubleshooting-guide.md)
 - **Безопасность:**
   [`security/security-policy.md`](security/security-policy.md),
   [`log-audit.md`](security/log-audit.md)
 - **Data & Storage:**
-  [`data/database-monitoring-plan.md`](data/database-monitoring-plan.md),
-  [`data/redis-operations-guide.md`](data/redis-operations-guide.md),
-  [`data/vllm-resource-optimization.md`](data/vllm-resource-optimization.md)
+  [`operations/database/database-monitoring-plan.md`](operations/database/database-monitoring-plan.md),
+  [`operations/database/redis-operations-guide.md`](operations/database/redis-operations-guide.md),
+  [`operations/database/vllm-resource-optimization.md`](operations/database/vllm-resource-optimization.md)
 - **API и интеграции:** [`api-reference.md`](reference/api-reference.md),
   [`mcpo-integration-guide.md`](reference/mcpo-integration-guide.md)
 

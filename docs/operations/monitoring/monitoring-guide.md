@@ -243,9 +243,9 @@ cat data/node-exporter-textfile/cron_watchdogs.prom
   Performance, Database, GPU, Nginx) и сопровождаются списоком индикаций, что
   позволяет быстро проверять состояние после аудита.
 - Раздел «Monitoring Guide» теперь связывается с `prometheus-alerts-guide.md`
-  (специальный справочник) и c Runbook’ами `operations/operations-handbook.md`,
-  `automated-maintenance-guide.md`, чтобы DevOps видел консистентность и
-  регламенты ответов.
+  (специальный справочник) и c Runbook’ами
+  `operations/core/operations-handbook.md`, `automated-maintenance-guide.md`,
+  чтобы DevOps видел консистентность и регламенты ответов.
 
 ## 📈 Exporters Configuration
 
@@ -914,4 +914,5 @@ curl -H 'X-Scope-OrgID: erni-ki' \
 - [Admin Guide](admin-guide.md) - System administration
 - [Architecture](../architecture/architecture.md) - System architecture
 - [Installation Guide](../getting-started/installation.md) - Setup instructions
-- [Troubleshooting](../data/database-troubleshooting.md) - Problem resolution
+- [Troubleshooting](../database/database-troubleshooting.md) - Problem
+  resolution

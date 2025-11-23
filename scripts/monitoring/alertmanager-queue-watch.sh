@@ -8,7 +8,7 @@ LOG_FILE="$PROJECT_DIR/.config-backup/logs/alertmanager-queue.log"
 PROM_URL="${PROMETHEUS_URL:-http://localhost:9091}"
 THRESHOLD="${ALERTMANAGER_QUEUE_WARN:-100}"
 HARD_LIMIT="${ALERTMANAGER_QUEUE_HARD_LIMIT:-500}"
-RUNBOOK_URL="docs/operations/monitoring-guide.md#alertmanagerQueue"
+RUNBOOK_URL="docs/operations/monitoring/monitoring-guide.md#alertmanagerQueue"
 CRON_STATUS_HELPER="$PROJECT_DIR/scripts/monitoring/record-cron-status.sh"
 JOB_NAME="alertmanager_queue_watch"
 record_status() {
@@ -56,7 +56,7 @@ with open(log_path, 'a', encoding='utf-8') as fh:
     fh.write(f"[{ts}] queue-monitor: {value} (threshold={threshold}) status={status}\n")
 
 hard_limit = float(os.environ.get('HARD_LIMIT', '0') or 0)
-runbook_url = os.environ.get('RUNBOOK_URL', 'docs/operations/monitoring-guide.md#alertmanagerQueue')
+runbook_url = os.environ.get('RUNBOOK_URL', 'docs/operations/monitoring/monitoring-guide.md#alertmanagerQueue')
 if hard_limit and value > hard_limit:
     with open(log_path, 'a', encoding='utf-8') as fh:
         fh.write(

@@ -26,7 +26,7 @@ doc_version: '2025.11'
 - ✅ README.md / docs/index.md / docs/overview.md – статус-блоки обновлены на v0.6.36
 - ✅ docs/architecture/* (RU/DE) – диаграммы и описания обновлены
 - ✅ docs/reference/status*.md/yml – общие сниппеты теперь указывают v0.6.36
-- ✅ docs/operations/operations-handbook.md – цели по версиям обновлены
+- ✅ docs/operations/core/operations-handbook.md – цели по версиям обновлены
 
 #### 🧪 **Проверка после обновления**
 - Выполнен полный health-check (`scripts/health-monitor.sh`)

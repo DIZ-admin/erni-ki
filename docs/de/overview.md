@@ -1,6 +1,6 @@
 ---
 language: de
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 title: '📚 ERNI-KI Dokumentation (Deutsch)'
 version: '12.1'
@@ -52,13 +52,13 @@ Sprachinteraktion.
 
 - **[Systemarchitektur](architecture/architecture.md)** - Technische Architektur
   und Service-Details
-- **[Administrator-Handbuch](operations/admin-guide.md)** - Systemverwaltung und
-  Wartung
-- **[Monitoring Übersicht](operations/monitoring.md)** - Kennzahlen, Skripte und
-  Alerts
-- **[Runbooks](../operations/runbooks-summary.md)** - Deutsche Zusammenfassungen
-  der wichtigsten Abläufe (englische Originale в `operations/maintenance/` und
-  `operations/troubleshooting/`)
+- **[Administrator-Handbuch](operations/core/admin-guide.md)** -
+  Systemverwaltung und Betrieb
+- **[Monitoring Übersicht](operations/monitoring/monitoring-guide.md)** -
+  Kennzahlen, Skripte und Alerts
+- **[Runbooks](operations/core/runbooks-summary.md)** - Deutsche
+  Zusammenfassungen der wichtigsten Abläufe (englische Originale в
+  `operations/maintenance/` und `operations/troubleshooting/`)
 - **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 
@@ -83,8 +83,9 @@ Wenn Sie ERNI-KI installieren und verwalten:
 
 1. Folgen Sie der **[Installationsanleitung](getting-started/installation.md)**
 2. Studieren Sie die **[Systemarchitektur](architecture/architecture.md)**
-3. Verwenden Sie das **[Administrator-Handbuch](operations/admin-guide.md)** für
-   die tägliche Verwaltung
+3. Verwenden Sie das
+   **[Administrator-Handbuch](operations/core/admin-guide.md)** für die tägliche
+   Verwaltung
 
 ### 👨‍💻 **Entwickler**
 
@@ -133,7 +134,7 @@ docker compose exec ollama ollama pull llama3.2:3b
 3. Backups konfigurieren: `http://localhost:9898`
 4. Benutzer verwalten
 
-→ **Weiter mit:** [Administrator-Handbuch](operations/admin-guide.md)
+→ **Weiter mit:** [Administrator-Handbuch](operations/core/admin-guide.md)
 
 ## 🔧 Hauptfunktionen
 
@@ -200,7 +201,7 @@ docker compose exec ollama ollama pull llama3.2:3b
   `scripts/docs/update_status_snippet.py` ausführen, damit deutsche und
   russische Fassungen synchron bleiben.
 - Für detaillierte Runbooks und Monitoring-Schritte nutzen Sie die englischen
-  Originale unter `docs/operations/runbooks/` und
+  Originale unter `docs/operations/` und
   `docs/operations/monitoring/monitoring-guide.md`.
 
 ```bash
