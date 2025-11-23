@@ -37,7 +37,7 @@
 - При обновлении статусных метрик редактируйте только
   `docs/reference/status.yml`, затем выполняйте
   `scripts/docs/update_status_snippet.py` — он синхронизирует `README.md`,
-  `docs/ru/index.md` и `docs/overview.md`.
+  `docs/index.md` и `docs/overview.md`.
 
 ### 🧪 Тестирование
 

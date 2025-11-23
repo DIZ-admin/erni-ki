@@ -1,10 +1,10 @@
 #!/bin/bash
-# Тестирование совместимости контейнеров ERNI-KI
-# Автор: Альтэон Шульц (Tech Lead)
+# ERNI-KI container compatibility test
+# Author: Alteon Schulz (Tech Lead)
 
 set -e
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -13,7 +13,7 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# Функции логирования
+# Logging helpers
 log() { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
 success() { echo -e "${GREEN}✅ $1${NC}"; }
 warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
@@ -21,126 +21,126 @@ error() { echo -e "${RED}❌ $1${NC}"; }
 info() { echo -e "${CYAN}ℹ️  $1${NC}"; }
 section() { echo -e "${PURPLE}🔍 $1${NC}"; }
 
-# Проверка версий Docker и docker-compose
+# Check Docker and docker-compose versions
 check_docker_versions() {
-    section "Проверка версий Docker и Docker Compose"
+    section "Checking Docker and Docker Compose versions"
 
-    # Проверка Docker
+    # Docker binary check
     if command -v docker &> /dev/null; then
         local docker_version=$(docker --version | awk '{print $3}' | sed 's/,//')
-        success "Docker версия: $docker_version"
+        success "Docker version: $docker_version"
 
-        # Проверка минимальной версии (20.10+)
+        # Enforce minimum version (>=20.10)
         local major=$(echo "$docker_version" | cut -d. -f1)
         local minor=$(echo "$docker_version" | cut -d. -f2)
 
         if [ "$major" -gt 20 ] || ([ "$major" -eq 20 ] && [ "$minor" -ge 10 ]); then
-            success "Docker версия совместима с ERNI-KI"
+            success "Docker version meets ERNI-KI requirements"
         else
-            warning "Docker версия может быть устаревшей (рекомендуется 20.10+)"
+            warning "Docker version may be outdated (>=20.10 recommended)"
         fi
 
-        # Проверка Docker daemon
+        # Check Docker daemon status
         if docker info &> /dev/null; then
-            success "Docker daemon работает"
+            success "Docker daemon is running"
 
-            # Информация о Docker
+            # Docker info
             local docker_root=$(docker info --format '{{.DockerRootDir}}')
             local storage_driver=$(docker info --format '{{.Driver}}')
             success "Docker root: $docker_root"
             success "Storage driver: $storage_driver"
         else
-            error "Docker daemon не работает"
+            error "Docker daemon is not running"
             return 1
         fi
     else
-        error "Docker не установлен"
+        error "Docker is not installed"
         return 1
     fi
 
-    # Проверка docker-compose
+    # Check docker-compose binary
     if command -v docker-compose &> /dev/null; then
         local compose_version=$(docker-compose --version | awk '{print $3}' | sed 's/,//')
-        success "Docker Compose версия: $compose_version"
+        success "Docker Compose version: $compose_version"
 
-        # Проверка минимальной версии (1.29+)
+        # Enforce minimum version (>=1.29)
         local major=$(echo "$compose_version" | cut -d. -f1)
         local minor=$(echo "$compose_version" | cut -d. -f2)
 
         if [ "$major" -gt 1 ] || ([ "$major" -eq 1 ] && [ "$minor" -ge 29 ]); then
-            success "Docker Compose версия совместима"
+            success "Docker Compose meets requirements"
         else
-            warning "Docker Compose версия может быть устаревшей (рекомендуется 1.29+)"
+            warning "Docker Compose may be outdated (>=1.29 recommended)"
         fi
     else
-        error "Docker Compose не установлен"
+        error "Docker Compose is not installed"
         return 1
     fi
 
-    # Проверка docker compose (v2)
+    # Check docker compose v2 availability
     if docker compose version &> /dev/null; then
         local compose_v2=$(docker compose version --short)
-        info "Docker Compose v2 также доступен: $compose_v2"
+        info "Docker Compose v2 available: $compose_v2"
     fi
 
     echo ""
 }
 
-# Проверка конфигурации Docker Compose
+# Check Docker Compose configuration
 check_compose_config() {
-    section "Проверка конфигурации Docker Compose"
+    section "Validating Docker Compose config"
 
     if [ -f "compose.yml" ]; then
-        success "Файл compose.yml найден"
+        success "compose.yml found"
 
-        # Валидация конфигурации
+        # Validate config
         if docker-compose config &> /dev/null; then
-            success "Конфигурация Docker Compose валидна"
+            success "Docker Compose config is valid"
 
-            # Подсчет сервисов
+            # Count services
             local services_count=$(docker-compose config --services | wc -l)
-            success "Количество сервисов: $services_count"
+            success "Service count: $services_count"
 
-            # Список сервисов
-            info "Сервисы в конфигурации:"
+            # List services
+            info "Services defined in compose.yml:"
             docker-compose config --services | while read service; do
                 echo "  • $service"
             done
         else
-            error "Ошибка в конфигурации Docker Compose"
+            error "Docker Compose configuration invalid"
             docker-compose config
             return 1
         fi
     else
-        error "Файл compose.yml не найден"
+        error "compose.yml not found"
         return 1
     fi
     echo ""
 }
 
-# Проверка образов Docker
+# Docker image checks
 check_docker_images() {
-    section "Проверка доступности Docker образов"
+    # Check availability of Docker images
 
-    # Получение списка образов из compose.yml
+    # Get image list from compose.yml
     local images=$(docker-compose config | grep "image:" | awk '{print $2}' | sort -u)
 
     echo "$images" | while read image; do
         if [ -n "$image" ]; then
-            log "Проверка образа: $image"
+            log "Checking image: $image"
 
-            # Проверка наличия образа локально
+            # Check if image exists locally
             if docker images --format "{{.Repository}}:{{.Tag}}" | grep -q "^$image$"; then
-                success "Образ $image доступен локально"
+                success "Image $image is available locally"
             else
-                info "Образ $image отсутствует локально"
+                info "Image $image missing locally"
 
-                # Попытка загрузки образа
-                log "Попытка загрузки образа $image..."
+                # Try to pull the image
+                log "Attempting to pull image $image..."
                 if docker pull "$image" &> /dev/null; then
-                    success "Образ $image успешно загружен"
+                    success "Image $image pulled successfully"
                 else
-                    warning "Не удалось загрузить образ $image"
+                    warning "Failed to pull image $image"
                 fi
             fi
         fi
@@ -148,228 +148,228 @@ check_docker_images() {
     echo ""
 }
 
-# Тестирование запуска сервисов
+# Service startup tests
 test_services_startup() {
-    section "Тестирование запуска сервисов"
+# Service startup tests
 
-    # Список критичных сервисов в порядке запуска
+    # Critical services launch order
     local critical_services=("db" "redis" "auth" "ollama" "nginx" "openwebui")
     local optional_services=("searxng" "edgetts" "tika" "mcposerver")
 
-    # Остановка всех сервисов для чистого теста
-    log "Остановка всех сервисов для чистого теста..."
+    # Stop all services for clean test
+    log "Stopping all services for a clean test..."
     docker-compose down &> /dev/null || true
 
-    # Тестирование критичных сервисов
+    # Testing critical services
     for service in "${critical_services[@]}"; do
-        log "Тестирование запуска сервиса: $service"
+        log "Testing service startup: $service"
 
         if docker-compose up -d "$service" &> /dev/null; then
             sleep 5
 
-            # Проверка статуса
+            # Check container status
             local status=$(docker-compose ps "$service" --format "{{.State}}" 2>/dev/null || echo "unknown")
             if echo "$status" | grep -q "Up"; then
-                success "Сервис $service запущен успешно"
+                success "Service $service started successfully"
             else
-                warning "Сервис $service имеет проблемы: $status"
+                warning "Service $service has issues: $status"
 
-                # Показать логи для диагностики
-                echo "Последние логи $service:"
-                docker-compose logs --tail=10 "$service" 2>/dev/null || echo "Логи недоступны"
+                # Show recent logs
+                echo "Recent logs for $service:"
+                docker-compose logs --tail=10 "$service" 2>/dev/null || echo "Logs unavailable"
             fi
         else
-            error "Не удалось запустить сервис $service"
+            error "Failed to start service $service"
         fi
     done
 
-    # Тестирование опциональных сервисов
-    log "Тестирование опциональных сервисов..."
+    # Test optional services
+    log "Testing optional services..."
     for service in "${optional_services[@]}"; do
         if docker-compose up -d "$service" &> /dev/null; then
             sleep 3
             local status=$(docker-compose ps "$service" --format "{{.State}}" 2>/dev/null || echo "unknown")
             if echo "$status" | grep -q "Up"; then
-                success "Опциональный сервис $service работает"
+                success "Optional service $service is running"
             else
-                info "Опциональный сервис $service: $status"
+                info "Optional service $service: $status"
             fi
         else
-            info "Опциональный сервис $service не запустился"
+            info "Optional service $service failed to start"
         fi
     done
     echo ""
 }
 
-# Проверка межсервисной коммуникации
+# Inter-service communication checks
 test_inter_service_communication() {
-    section "Тестирование межсервисной коммуникации"
+    section "Testing inter-service connectivity"
 
-    # Проверка подключения к базе данных
-    log "Проверка подключения к PostgreSQL..."
+    # Validate database connectivity
+    log "Testing PostgreSQL connectivity..."
     if docker-compose exec -T db pg_isready -U postgres &> /dev/null; then
-        success "PostgreSQL доступен"
+        success "PostgreSQL is reachable"
 
-        # Проверка создания подключения
+        # Verify connection establishment
         if docker-compose exec -T db psql -U postgres -d openwebui -c "SELECT 1;" &> /dev/null; then
-            success "Подключение к базе данных работает"
+            success "Database connection is operational"
         else
-            warning "Проблемы с подключением к базе данных"
+            warning "Database connection issues detected"
         fi
     else
-        error "PostgreSQL недоступен"
+        error "PostgreSQL unreachable"
     fi
 
-    # Проверка Redis
-    log "Проверка подключения к Redis..."
+    # Check Redis connectivity
+    log "Testing Redis connectivity..."
     if docker-compose exec -T redis redis-cli ping 2>/dev/null | grep -q "PONG"; then
-        success "Redis доступен"
+        success "Redis is available"
     else
-        error "Redis недоступен"
+        error "Redis is unavailable"
     fi
 
-    # Проверка Ollama API
-    log "Проверка Ollama API..."
+    # Verify Ollama API
+    log "Testing Ollama API..."
     if curl -sf http://localhost:11434/api/version &> /dev/null; then
-        success "Ollama API доступен"
+        success "Ollama API reachable"
 
-        # Проверка загруженных моделей
+        # Verify listed models
         local models=$(docker-compose exec -T ollama ollama list 2>/dev/null | tail -n +2 | wc -l)
         if [ "$models" -gt 0 ]; then
-            success "Ollama: $models моделей загружено"
+            success "Ollama: $models models loaded"
         else
-            warning "Ollama: модели не загружены"
+            warning "Ollama: no models loaded"
         fi
     else
-        error "Ollama API недоступен"
+        error "Ollama API unreachable"
     fi
 
-    # Проверка Auth сервиса
-    log "Проверка Auth API..."
+    # Validate Auth API
+    log "Testing Auth API..."
     if curl -sf http://localhost:9090/health &> /dev/null; then
-        success "Auth API доступен"
+        success "Auth API reachable"
     else
-        error "Auth API недоступен"
+        error "Auth API unreachable"
     fi
 
-    # Проверка Nginx
-    log "Проверка Nginx..."
+    # Validate Nginx
+    log "Testing Nginx availability..."
     if curl -sf http://localhost &> /dev/null; then
-        success "Nginx доступен"
+        success "Nginx is reachable"
     else
-        error "Nginx недоступен"
+        error "Nginx is unreachable"
     fi
 
-    # Проверка OpenWebUI
-    log "Проверка OpenWebUI..."
+    # Validate OpenWebUI
+    log "Checking OpenWebUI..."
     if curl -sf http://localhost:8080 &> /dev/null; then
-        success "OpenWebUI доступен"
+        success "OpenWebUI is reachable"
     else
-        warning "OpenWebUI может быть недоступен"
+        warning "OpenWebUI may be unreachable"
     fi
     echo ""
 }
 
-# Анализ использования ресурсов контейнерами
+# Resource usage analysis
 analyze_resource_usage() {
-    section "Анализ использования ресурсов контейнерами"
+    section "Resource usage analysis"
 
-    # Получение статистики контейнеров
-    log "Сбор статистики использования ресурсов..."
+    # Gather container stats
+    log "Gathering resource usage statistics..."
 
-    # Заголовок таблицы
-    printf "%-20s %-10s %-15s %-15s %-10s\n" "КОНТЕЙНЕР" "CPU %" "ПАМЯТЬ" "СЕТЬ I/O" "ДИСК I/O"
+    # Table header
+    printf "%-20s %-10s %-15s %-15s %-10s\n" "CONTAINER" "CPU %" "MEM" "NETWORK I/O" "BLOCK I/O"
     echo "────────────────────────────────────────────────────────────────────────"
 
-    # Получение статистики для каждого контейнера
+    # Stats per container
     docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}" | tail -n +2 | while read line; do
         echo "$line"
     done
 
     echo ""
 
-    # Анализ общего использования
+    # Totals
     local total_containers=$(docker ps -q | wc -l)
-    success "Всего запущенных контейнеров: $total_containers"
+    success "Containers running: $total_containers"
 
-    # Проверка лимитов памяти
-    log "Проверка лимитов ресурсов..."
-    docker-compose config | grep -A 5 -B 5 "mem_limit\|cpus\|memory" | grep -v "^--$" || info "Лимиты ресурсов не настроены"
+    # Resource limits
+    log "Checking defined resource limits..."
+    docker-compose config | grep -A 5 -B 5 "mem_limit\|cpus\|memory" | grep -v "^--$" || info "No resource limits configured"
 
     echo ""
 }
 
-# Проверка сетевой конфигурации
+# Network configuration checks
 check_network_configuration() {
-    section "Проверка сетевой конфигурации Docker"
+    section "Inspecting Docker network configuration"
 
-    # Список Docker сетей
-    success "Docker сети:"
+    # Docker networks list
+    success "Docker networks:"
     docker network ls --format "table {{.Name}}\t{{.Driver}}\t{{.Scope}}"
 
-    # Проверка сети проекта
+    # Project network
     local project_network=$(docker-compose config | grep -A 10 "networks:" | grep -v "networks:" | head -1 | awk '{print $1}' | sed 's/://')
     if [ -n "$project_network" ]; then
-        info "Сеть проекта: $project_network"
+        info "Project network: $project_network"
 
-        # Детали сети
-        docker network inspect "$project_network" &> /dev/null && success "Сеть проекта настроена корректно" || warning "Проблемы с сетью проекта"
+        # Network details
+        docker network inspect "$project_network" &> /dev/null && success "Project network configured" || warning "Project network issues detected"
     fi
 
-    # Проверка портов
-    log "Проверка открытых портов..."
+    # Open ports
+    log "Listing key ports..."
     netstat -tuln 2>/dev/null | grep -E ":(80|5432|6379|8080|9090|11434|5001|5050|9998|8000) " | while read line; do
         local port=$(echo "$line" | awk '{print $4}' | cut -d: -f2)
-        success "Порт $port открыт"
+        success "Port $port is listening"
     done
 
     echo ""
 }
 
-# Генерация отчета совместимости
+# Compatibility report
 generate_compatibility_report() {
-    section "Отчет совместимости контейнеров"
+    section "Container compatibility report"
 
     local score=0
     local max_score=8
     local issues=()
     local recommendations=()
 
-    # Проверка Docker
+    # Docker verification
     if command -v docker &> /dev/null && docker info &> /dev/null; then
         score=$((score + 2))
-        success "Docker: Работает корректно"
+        success "Docker: operational"
     else
-        error "Docker: Проблемы с установкой или запуском"
-        issues+=("Docker не работает корректно")
+        error "Docker: installation/runtime issues"
+        issues+=("Docker is not functioning correctly")
     fi
 
-    # Проверка docker-compose
+    # Docker Compose verification
     if command -v docker-compose &> /dev/null && docker-compose config &> /dev/null; then
         score=$((score + 1))
-        success "Docker Compose: Конфигурация валидна"
+        success "Docker Compose: configuration valid"
     else
-        error "Docker Compose: Проблемы с конфигурацией"
-        issues+=("Проблемы с Docker Compose")
+        error "Docker Compose: configuration issues"
+        issues+=("Docker Compose issues")
     fi
 
-    # Проверка запущенных сервисов
+    # Verify running services
     local running_services=$(docker-compose ps --services --filter "status=running" | wc -l)
     local total_services=$(docker-compose ps --services | wc -l)
 
     if [ "$running_services" -ge 8 ]; then
         score=$((score + 2))
-        success "Сервисы: $running_services/$total_services запущено"
+        success "Services: $running_services/$total_services running"
     elif [ "$running_services" -ge 5 ]; then
         score=$((score + 1))
-        warning "Сервисы: $running_services/$total_services запущено"
-        recommendations+=("Проверьте незапущенные сервисы")
+        warning "Services: $running_services/$total_services running"
+        recommendations+=("Investigate services that failed to start")
     else
-        error "Сервисы: Критически мало запущенных сервисов"
-        issues+=("Большинство сервисов не запущено")
+        error "Services: critically few containers running"
+        issues+=("Most services are not running")
     fi
 
-    # Проверка API endpoints
+    # API endpoint checks
     local working_apis=0
     local apis=("http://localhost" "http://localhost:9090/health" "http://localhost:11434/api/version")
 
@@ -381,64 +381,64 @@ generate_compatibility_report() {
 
     if [ "$working_apis" -eq 3 ]; then
         score=$((score + 2))
-        success "API: Все основные API доступны"
+        success "API: all core endpoints reachable"
     elif [ "$working_apis" -ge 2 ]; then
         score=$((score + 1))
-        warning "API: Некоторые API недоступны"
-        recommendations+=("Проверьте недоступные API")
+        warning "API: some endpoints unreachable"
+        recommendations+=("Check the unreachable APIs")
     else
-        error "API: Критические проблемы с API"
-        issues+=("Основные API недоступны")
+        error "API: critical accessibility issues"
+        issues+=("Core APIs unreachable")
     fi
 
-    # Проверка межсервисной коммуникации
+    # Inter-service communication checks
     if docker-compose exec -T db pg_isready &> /dev/null && docker-compose exec -T redis redis-cli ping &> /dev/null; then
         score=$((score + 1))
-        success "Коммуникация: Межсервисная связь работает"
+        success "Communication: inter-service links are healthy"
     else
-        warning "Коммуникация: Проблемы с межсервисной связью"
-        recommendations+=("Проверьте сетевые подключения между сервисами")
+        warning "Communication: inter-service issues detected"
+        recommendations+=("Review service-to-service network connectivity")
     fi
 
-    # Итоговая оценка
+    # Final score
     local percentage=$((score * 100 / max_score))
     echo ""
 
     if [ "$percentage" -ge 90 ]; then
-        success "ИТОГОВАЯ ОЦЕНКА СОВМЕСТИМОСТИ: ${percentage}% - Отлично"
+        success "Compatibility score: ${percentage}% - Excellent"
     elif [ "$percentage" -ge 70 ]; then
-        info "ИТОГОВАЯ ОЦЕНКА СОВМЕСТИМОСТИ: ${percentage}% - Хорошо"
+        info "Compatibility score: ${percentage}% - Good"
     elif [ "$percentage" -ge 50 ]; then
-        warning "ИТОГОВАЯ ОЦЕНКА СОВМЕСТИМОСТИ: ${percentage}% - Удовлетворительно"
+        warning "Compatibility score: ${percentage}% - Fair"
     else
-        error "ИТОГОВАЯ ОЦЕНКА СОВМЕСТИМОСТИ: ${percentage}% - Неудовлетворительно"
+        error "Compatibility score: ${percentage}% - Poor"
     fi
 
-    # Проблемы
+    # Issues
     if [ ${#issues[@]} -gt 0 ]; then
         echo ""
-        error "Обнаруженные проблемы:"
+        error "Issues detected:"
         for issue in "${issues[@]}"; do
             echo "  • $issue"
         done
     fi
 
-    # Рекомендации
+    # Recommendations
     if [ ${#recommendations[@]} -gt 0 ]; then
         echo ""
-        warning "Рекомендации:"
+        warning "Recommendations:"
         for rec in "${recommendations[@]}"; do
             echo "  • $rec"
         done
     fi
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${PURPLE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║              Container Compatibility Test                   ║"
-    echo "║           Тестирование совместимости контейнеров            ║"
+    echo "║           Container compatibility testing                  ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
@@ -454,11 +454,11 @@ main() {
     echo ""
     echo -e "${GREEN}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                 Тестирование завершено                      ║"
-    echo "║        Результаты сохранены в compatibility_report.txt      ║"
+    echo "║                  Testing completed                         ║"
+    echo "║       Results saved to compatibility_report.txt            ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 }
 
-# Запуск тестирования
+# Run test
 main "$@" | tee compatibility_report.txt

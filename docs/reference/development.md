@@ -78,7 +78,7 @@ curl -X POST http://localhost:9093/-/reload  # Alertmanager
   `scripts/docs/update_status_snippet.py` — скрипт обновит
   `docs/reference/status-snippet.md` и вставку в `README.md`.
 - Для MkDocs страниц используйте
-  `{% include-markdown "reference/status-snippet.md" %}` (пример —
-  `docs/ru/index.md`, `docs/overview.md`).
+- `{% include-markdown "reference/status-snippet.md" %}` (пример —
+- `docs/index.md`, `docs/overview.md`).
 - В PR приложите результат `git status` подтверждающий, что README и snippet
   синхронизированы.
