@@ -165,7 +165,7 @@ func TestVerifyTokenMissingSecret(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "JWT_SECRET env variable missing")
+	assert.Contains(t, err.Error(), "WEBUI_SECRET_KEY env variable missing")
 }
 
 // Test verifyToken function with expired token.

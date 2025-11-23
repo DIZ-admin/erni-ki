@@ -107,7 +107,10 @@ for (const file of stagedFiles) {
   const content = fs.readFileSync(file, 'utf8');
   const normalizedPath = normalizePath(file);
 
-  if ((CODE_EXTENSIONS.has(ext) || CONFIG_FILES.has(path.basename(file))) && !isDocumentationFile(file)) {
+  const isCodeOrConfig = CODE_EXTENSIONS.has(ext) || CONFIG_FILES.has(path.basename(file));
+  const documentationFile = isDocumentationFile(file);
+
+  if (isCodeOrConfig && !documentationFile) {
     if (CYRILLIC.test(content)) {
       if (baselineFiles.has(normalizedPath)) {
         baselineHits.add(normalizedPath);
@@ -135,9 +138,7 @@ for (const file of stagedFiles) {
         `Document ${file} declares language '${language}' but lives inside '${locale}' content`,
       );
     } else if (!language) {
-      warnings.push(
-        `Front matter of ${file} lacks 'language:' value for locale '${locale}'`,
-      );
+      warnings.push(`Front matter of ${file} lacks 'language:' value for locale '${locale}'`);
     }
   }
 }

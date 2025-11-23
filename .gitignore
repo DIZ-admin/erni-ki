@@ -96,6 +96,7 @@ vendor/
 go.work*
 auth/main
 auth/erni-ki-auth
+auth/auth
 auth/dist/
 auth/build/
 
