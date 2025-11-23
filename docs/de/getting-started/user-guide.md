@@ -1,6 +1,6 @@
 ---
 language: de
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 title: '👤 ERNI-KI Benutzerhandbuch'
 version: '12.1'
@@ -262,7 +262,7 @@ neuer Modelle.
 
 ### Nützliche Ressourcen
 
-- [Administrator-Handbuch](../operations/admin-guide.md) - für
+- [Administrator-Handbuch](../operations/core/admin-guide.md) - für
   Systemkonfiguration
 - [API-Dokumentation](../../reference/api-reference.md) - für Integrationen
 - [Systemarchitektur](../architecture/architecture.md) - technische

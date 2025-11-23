@@ -1,6 +1,6 @@
 ---
 language: ru
-page_id: howto.create-jira-ticket
+page_id: howto.create-jira-ticket-ai
 translation_status: complete
 doc_version: '2025.11'
 ---
@@ -24,6 +24,15 @@ doc_version: '2025.11'
 5. Добавьте ссылки на логи или скриншоты, если они есть, и закрепите дату
    воспроизведения.
 
+### Готовый промпт
+
+```
+Ты — support-инженер. Составь черновик тикета Jira по фактам ниже.
+Вставь: summary, description (steps, expected vs actual), окружение, labels,
+severity, 3 acceptance criteria. Не добавляй выдуманных фактов.
+Данные: <вставь заметки/логи>. Язык: RU. Формат: markdown.
+```
+
 ## Примеры промптов
 
 - **Хороший:**
@@ -34,3 +43,9 @@ doc_version: '2025.11'
     description с шагами, expected/actual, labels=auth, priority=High."
 - **Плохой:**
   - "Создай тикет про ошибку логина" (не хватает шагов и ожидаемого поведения)
+
+## Чек-лист
+
+- Указаны expected/actual и дата воспроизведения.
+- Есть severity/impact, labels/компоненты.
+- В тексте нет секретов (пароли, токены, приватные URL).

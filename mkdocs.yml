@@ -399,10 +399,10 @@ nav:
       - "Prompting 101": academy/prompting-101.md
       - "HowTo":
           - Overview: academy/howto/index.md
-          - "Create JIRA Ticket": academy/howto/create-jira-ticket.md
+          - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
           - "Write Customer Email": academy/howto/write-customer-email.md
           - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
-          - "Create JIRA Ticket": academy/howto/create-jira-ticket-with-ai.md
+          - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
       - "News":
           - Feed: academy/news/index.md
           - "2025-01-release-x": academy/news/2025-01-release-x.md
@@ -422,6 +422,7 @@ nav:
       - "Overview": operations/README.md
       - Core:
           - "Operations Handbook": operations/core/operations-handbook.md
+          - "Runbooks Summary": operations/core/runbooks-summary.md
           - "Admin Guide": operations/core/admin-guide.md
           - "Status Page": operations/core/status-page.md
           - "GitHub Governance": operations/core/github-governance.md
@@ -440,6 +441,7 @@ nav:
           - "Docker Cleanup": operations/automation/docker-cleanup-guide.md
           - "Docker Log Rotation": operations/automation/docker-log-rotation.md
       - Maintenance:
+          - "Backup Guide": operations/backup-guide.md
           - "Image Upgrade Checklist": operations/maintenance/image-upgrade-checklist.md
           - "Service Restart": operations/maintenance/service-restart-procedures.md
           - "Backup & Restore": operations/maintenance/backup-restore-procedures.md
@@ -456,7 +458,8 @@ nav:
           - "VLLM Optimization": operations/database/vllm-resource-optimization.md
       - Diagnostics:
           - "Diagnostics Overview": operations/diagnostics/README.md
-          - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
+      - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
+  - "Data & Storage": data/README.md
   - Security:
       - "Overview": security/README.md
       - "Security Policy": security/security-policy.md
@@ -520,5 +523,5 @@ validation:
   unrecognized_links: warn
 
 # Build Settings
-strict: false
+strict: true
 use_directory_urls: true

@@ -33,13 +33,15 @@ doc_version: '2025.11'
 
 1. Проверить `docker compose ps` → `docker compose logs <service>` → `curl` на
    метрики.
-2. Сравнить с дашбордами Grafana (GPU/LLM/DB). Тики: `monitoring-guide.md`
-   описывает healthcheck-паттерны для экспортеров (TCP, wget, Python).
+2. Сравнить с дашбордами Grafana (GPU/LLM/DB). Тики:
+   `../monitoring/monitoring-guide.md` описывает healthcheck-паттерны для
+   экспортеров (TCP, wget, Python).
 3. Если алерт критический: отправить уведомление через Alertmanager и открыть
    тикет в Archon (tasks/report). Зафиксировать статус, токены, команды (SRE
    Primary, Platform Backup).
 4. Для сенсометра (non-critical) выполнить
-   `runbooks/service-restart-procedures.md` или `troubleshooting-guide.md`.
+   `../maintenance/service-restart-procedures.md` или
+   `../troubleshooting/troubleshooting-guide.md`.
 
 ## 4. Автоматизация обслуживания
 
@@ -49,9 +51,8 @@ doc_version: '2025.11'
   01:30).
 - Результаты проверяются через утилиты: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
-- При сбоях скриптов — см. `runbooks/backup-restore-procedures.md` для
-  восстановления, `runbooks/configuration-change-process.md` для миграций
-  конфигов.
+- При сбоях скриптов — см. `../maintenance/backup-restore-procedures.md` для
+  восстановления, `configuration-change-process.md` для миграций конфигов.
 - **Новые ноябрьские задачи:**
   - `scripts/maintenance/docling-shared-cleanup.sh` — очищает Docling shared
     volume и восстанавливает права (cron job **docling_shared_cleanup**).
@@ -67,17 +68,18 @@ doc_version: '2025.11'
 
 ## 5. Runbooks и playbooks
 
-- `runbooks/service-restart-procedures.md` — безопасные перезапуски,
+- `../maintenance/service-restart-procedures.md` — безопасные перезапуски,
   healthchecks перед/после.
-- `runbooks/troubleshooting-guide.md` — типовые проблемы (GPU, RAG, Redis) и
-  команды `docker logs`, `nvidia-smi`, `curl`.
-- `runbooks/docling-shared-volume.md` — специальные действия по очистке Docling
-  shared volume и Fluent Bit.
+- `../troubleshooting/troubleshooting-guide.md` — типовые проблемы (GPU, RAG,
+  Redis) и команды `docker logs`, `nvidia-smi`, `curl`.
+- `../maintenance/docling-shared-volume.md` — специальные действия по очистке
+  Docling shared volume и Fluent Bit.
 
 ## 6. Healthchecks & metrics
 
-- Метрики всех экспортеров на `monitoring-guide.md`: node-exporter, Redis,
-  PostgreSQL (с IPv4/IPv6 proxy), Nvidia, Blackbox, Ollama, Nginx, RAG.
+- Метрики всех экспортеров на `../monitoring/monitoring-guide.md`:
+  node-exporter, Redis, PostgreSQL (с IPv4/IPv6 proxy), Nvidia, Blackbox,
+  Ollama, Nginx, RAG.
 - Рекомендуется запускать `curl -s http://localhost:PORT/metrics | head` для
   сверки и `docker inspect ... State.Health`.
 - Использовать `docker compose top` и `docker stats` для просмотра процесса.
@@ -104,7 +106,7 @@ doc_version: '2025.11'
   `conf/prometheus`, `conf/grafana`.
 - Automation → `docs/operations/automation/automated-maintenance-guide.md`,
   `scripts/maintenance`.
-- Runbooks → `docs/operations/runbooks/*.md`.
+- Runbooks → `docs/operations/*.md`.
 - Archon — обновлять короткие статусные заметки и чек-листы по каждому инциденту
   (см. task `a0169e05…`).
 

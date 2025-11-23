@@ -888,7 +888,7 @@ curl "http://localhost:9091/api/v1/query?query=rate(nginx_http_requests_total{st
 
 - [Grafana Dashboards Guide](../operations/monitoring/grafana-dashboards-guide.md) -
   руководство по 18 дашбордам
-- [Prometheus Queries Reference](../operations/prometheus-queries-reference.md) -
+- [Prometheus Queries Reference](../operations/monitoring/prometheus-queries-reference.md) -
   справочник запросов с fallback
 
   диагностика мониторинга

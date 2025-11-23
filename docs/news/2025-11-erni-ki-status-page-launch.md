@@ -34,8 +34,8 @@ monitoring network as other observability tools.
 
 ## How to get help
 
-- Check the [status page guide](../operations/status-page.md) for the current
-  URL and escalation path.
+- Check the [status page guide](../operations/core/status-page.md) for the
+  current URL and escalation path.
 - If the status page is red, notify the on-call engineer via the usual incident
   channel.
 - For documentation improvements, create an issue referencing this news item.

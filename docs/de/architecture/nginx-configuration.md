@@ -1,6 +1,6 @@
 ---
 language: de
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 title: '🌐 Nginx Konfigurationsleitfaden - ERNI-KI'
 version: '12.1'
