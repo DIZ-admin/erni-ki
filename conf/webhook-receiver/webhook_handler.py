@@ -12,7 +12,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from typing import Dict, List, Any
 
-# Настройка логирования
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Конфигурация из переменных окружения
+# Configuration from environment variables
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL', '')
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL', '')
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
@@ -32,9 +32,9 @@ class AlertProcessor:
 
     def __init__(self):
         self.severity_colors = {
-            'critical': 0xFF0000,  # Красный
-            'warning': 0xFFA500,   # Оранжевый
-            'info': 0x0099FF       # Синий
+            'critical': 0xFF0000,  # Red
+            'warning': 0xFFA500,   # Orange
+            'info': 0x0099FF       # Blue
         }
 
         self.severity_emojis = {
@@ -77,12 +77,12 @@ class AlertProcessor:
         annotations = alert.get('annotations', {})
         status = alert.get('status', 'unknown')
 
-        # Определение серьезности
+        # Severity determination
         severity = labels.get('severity', 'info')
         service = labels.get('service', 'unknown')
         category = labels.get('category', 'general')
 
-        # Создание сообщения
+        # Message creation
         message_data = {
             'alert_name': labels.get('alertname', 'Unknown Alert'),
             'severity': severity,
@@ -96,7 +96,7 @@ class AlertProcessor:
             'group_labels': group_labels
         }
 
-        # Отправка уведомлений
+        # Sending notifications
         if DISCORD_WEBHOOK_URL:
             self._send_discord_notification(message_data)
 
@@ -245,7 +245,7 @@ class AlertProcessor:
         except Exception as e:
             logger.error(f"Failed to send Telegram notification: {e}")
 
-# Инициализация процессора алертов
+# Alert processor initialization
 alert_processor = AlertProcessor()
 
 @app.route('/webhook/critical', methods=['POST'])
