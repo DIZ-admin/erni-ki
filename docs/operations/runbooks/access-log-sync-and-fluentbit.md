@@ -6,6 +6,7 @@
    `/var/log/nginx/access.log` из контейнера в `data/nginx/logs/access.log`.
 2. Unit-файлы находятся в `ops/systemd/nginx-access-sync.service` и `.timer`.
 3. Установка:
+
    ```bash
    ./scripts/maintenance/install-docling-cleanup-unit.sh  # пример — для sync используйте аналогию
    cp ops/systemd/nginx-access-sync.service ~/.config/systemd/user/
@@ -14,6 +15,7 @@
    systemctl --user daemon-reload
    systemctl --user enable --now nginx-access-sync.timer
    ```
+
 4. Настройте переменную `NGINX_SYNC_TARGET` в env-файле, если нужно сохранять
    лог в другом месте.
 5. Лог работы — `logs/nginx-access-sync.log`.
@@ -27,8 +29,11 @@
    - `FLUENTBIT_DB_DIR` — путь к базе.
    - `FLUENTBIT_DB_WARN_GB`/`FLUENTBIT_DB_CRIT_GB` — пороги (по умолчанию 5/8).
 3. Пример cron:
+
    ```cron
    0 * * * * cd /home/konstantin/Documents/augment-projects/erni-ki && ./scripts/infrastructure/monitoring/check-fluentbit-db.sh
    ```
+
 4. Для Alertmanager можно создать правило, которое читает лог через Fluent Bit →
-   Loki или добавляет метрику (см. TODO link).
+   Loki или добавляет метрику. См. подробности в
+   [руководстве по мониторингу](../monitoring-guide.md).
