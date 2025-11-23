@@ -1,7 +1,7 @@
 ---
 language: ru
 page_id: docs.documentation.audit
-translation_status: in_progress
+translation_status: complete
 doc_version: '2025.11'
 ---
 

@@ -3,7 +3,7 @@
 # https://pre-commit.com/
 
 default_language_version:
-  python: python3.12
+  python: python3.11
   node: "20.18.0"
 
 default_stages: [pre-commit]
@@ -134,7 +134,7 @@ repos:
         name: "Prettier: code formatting"
         files: \.(md|yml|yaml|json|js|jsx|ts|tsx)$
         additional_dependencies:
-          - prettier@3.3.3
+          - prettier@3.6.2
 
   # ===================================================================
   # ESLINT CHECKS
@@ -171,7 +171,7 @@ repos:
   # SECURITY AND SECRETS
   # ===================================================================
   - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.5.0
+    rev: v1.5.1
     hooks:
       - id: detect-secrets
         name: "Detect Secrets: find secrets in code"
@@ -220,6 +220,15 @@ repos:
   # ===================================================================
   - repo: local
     hooks:
+      # TypeScript type check (fast, no emit)
+      - id: ts-type-check
+        name: "TypeScript: type check"
+        entry: npm run type-check
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+        files: \.(ts|tsx)$
+
       # Docker Compose file validation
       - id: docker-compose-check
         name: "Docker Compose: configuration validation"
