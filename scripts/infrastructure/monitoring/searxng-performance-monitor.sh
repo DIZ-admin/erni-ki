@@ -124,7 +124,7 @@ main() {
     log "======================================="
 }
 
-# Запуск при вызове скрипта напрямую
+# Run when script is called directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

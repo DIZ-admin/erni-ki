@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # ERNI-KI Let's Encrypt SSL Setup Script
-# Настройка SSL сертификатов Let's Encrypt для домена ki.erni-gruppe.ch
-# Использует acme.sh с DNS-01 challenge через Cloudflare API
+# Setup SSL certificates Let's Encrypt for домена ki.erni-gruppe.ch
+# Использует acme.sh с DNS-01 challenge via Cloudflare API
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Функции для логирования
+# Functions for logging
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"
 }
@@ -32,37 +32,37 @@ error() {
     exit 1
 }
 
-# Конфигурация
+# Configuration
 DOMAIN="ki.erni-gruppe.ch"
 EMAIL="admin@gmail.com"
 ACME_HOME="$HOME/.acme.sh"
 SSL_DIR="$(pwd)/conf/nginx/ssl"
 BACKUP_DIR="$(pwd)/.config-backup/ssl-letsencrypt-$(date +%Y%m%d-%H%M%S)"
 
-# Проверка зависимостей
+# Check зависимостей
 check_dependencies() {
-    log "Проверка зависимостей..."
+    log "Check зависимостей..."
 
     if [ ! -f "$ACME_HOME/acme.sh" ]; then
         error "acme.sh не найден. Установите его сначала: curl https://get.acme.sh | sh"
     fi
 
     if [ ! -d "$SSL_DIR" ]; then
-        error "Директория SSL не найдена: $SSL_DIR"
+        error "Directory SSL не найдена: $SSL_DIR"
     fi
 
     success "Все зависимости найдены"
 }
 
-# Проверка переменных окружения Cyon
+# Check environment variables Cyon
 check_cyon_credentials() {
-    log "Проверка Cyon API credentials..."
+    log "Check Cyon API credentials..."
 
     if [ -z "${CY_Username:-}" ] || [ -z "${CY_Password:-}" ]; then
         error "Не найдены Cyon API credentials. Установите переменные:
         - CY_Username: Логин от my.cyon.ch (например: kontakt@erni-gruppe.ch)
         - CY_Password: Пароль от my.cyon.ch
-        - CY_OTP_Secret: (опционально) OTP токен для 2FA"
+        - CY_OTP_Secret: (опционально) OTP token for 2FA"
     fi
 
     log "Используется Cyon DNS API"
@@ -77,137 +77,137 @@ check_cyon_credentials() {
     success "Cyon credentials настроены"
 }
 
-# Создание резервной копии
+# Creating резервной копии
 create_backup() {
-    log "Создание резервной копии текущих сертификатов..."
+    log "Creating резервной копии текущих certificates..."
 
     mkdir -p "$BACKUP_DIR"
 
     if [ -f "$SSL_DIR/nginx.crt" ]; then
         cp "$SSL_DIR/nginx.crt" "$BACKUP_DIR/"
         cp "$SSL_DIR/nginx.key" "$BACKUP_DIR/"
-        log "Резервная копия создана в: $BACKUP_DIR"
+        log "Backup created в: $BACKUP_DIR"
     else
         warning "Текущие сертификаты не найдены"
     fi
 }
 
-# Получение сертификата Let's Encrypt
+# Obtaining certificate Let's Encrypt
 obtain_certificate() {
-    log "Получение Let's Encrypt сертификата для домена: $DOMAIN"
+    log "Obtaining Let's Encrypt certificate for домена: $DOMAIN"
 
-    # Установка Let's Encrypt сервера
+    # Installation Let's Encrypt сервера
     "$ACME_HOME/acme.sh" --set-default-ca --server letsencrypt
 
-    # Получение сертификата через DNS-01 challenge с Cyon API
+    # Obtaining certificate via DNS-01 challenge с Cyon API
     if "$ACME_HOME/acme.sh" --issue --dns dns_cyon -d "$DOMAIN" --email "$EMAIL" --force; then
-        success "Сертификат успешно получен"
+        success "Certificate successfully obtained"
     else
-        error "Ошибка получения сертификата"
+        error "Error получения certificate"
     fi
 }
 
-# Установка сертификата
+# Installation certificate
 install_certificate() {
-    log "Установка сертификата в nginx..."
+    log "Installation certificate в nginx..."
 
-    # Создание временной директории для новых сертификатов
+    # Creating временной директории for новых certificates
     TEMP_SSL_DIR="/tmp/ssl-new-$(date +%s)"
     mkdir -p "$TEMP_SSL_DIR"
 
-    # Копирование сертификатов из acme.sh
+    # Копирование certificates из acme.sh
     if "$ACME_HOME/acme.sh" --install-cert -d "$DOMAIN" \
         --cert-file "$TEMP_SSL_DIR/nginx.crt" \
         --key-file "$TEMP_SSL_DIR/nginx.key" \
         --fullchain-file "$TEMP_SSL_DIR/nginx-fullchain.crt" \
         --ca-file "$TEMP_SSL_DIR/nginx-ca.crt"; then
 
-        # Проверка валидности сертификатов
+        # Check валидности certificates
         if openssl x509 -in "$TEMP_SSL_DIR/nginx.crt" -noout -text >/dev/null 2>&1; then
-            # Замена старых сертификатов
+            # Замена старых certificates
             cp "$TEMP_SSL_DIR/nginx.crt" "$SSL_DIR/"
             cp "$TEMP_SSL_DIR/nginx.key" "$SSL_DIR/"
             cp "$TEMP_SSL_DIR/nginx-fullchain.crt" "$SSL_DIR/"
             cp "$TEMP_SSL_DIR/nginx-ca.crt" "$SSL_DIR/"
 
-            # Установка правильных прав доступа
+            # Installation correct access permissions
             chmod 644 "$SSL_DIR/nginx.crt" "$SSL_DIR/nginx-fullchain.crt" "$SSL_DIR/nginx-ca.crt"
             chmod 600 "$SSL_DIR/nginx.key"
 
-            success "Сертификаты установлены в: $SSL_DIR"
+            success "Certificates installedы в: $SSL_DIR"
         else
             error "Полученный сертификат невалиден"
         fi
     else
-        error "Ошибка установки сертификата"
+        error "Error установки certificate"
     fi
 
     # Очистка временной директории
     rm -rf "$TEMP_SSL_DIR"
 }
 
-# Проверка сертификата
+# Check certificate
 verify_certificate() {
-    log "Проверка установленного сертификата..."
+    log "Check installedного certificate..."
 
     if openssl x509 -in "$SSL_DIR/nginx.crt" -text -noout | grep -q "Let's Encrypt"; then
-        success "Сертификат Let's Encrypt успешно установлен"
+        success "Certificate Let's Encrypt успешно installed"
 
         # Показать информацию о сертификате
         echo ""
-        log "Информация о сертификате:"
+        log "Info о сертификате:"
         openssl x509 -in "$SSL_DIR/nginx.crt" -text -noout | grep -E "(Subject:|Issuer:|Not Before|Not After)"
         echo ""
     else
-        error "Сертификат не является сертификатом Let's Encrypt"
+        error "Certificate не является сертификатом Let's Encrypt"
     fi
 }
 
-# Перезагрузка nginx
+# Reload nginx
 reload_nginx() {
-    log "Перезагрузка nginx..."
+    log "Reload nginx..."
 
-    # Проверка конфигурации nginx
+    # Check конфигурации nginx
     if docker compose exec nginx nginx -t 2>/dev/null; then
-        # Перезагрузка nginx
+        # Reload nginx
         if docker compose exec nginx nginx -s reload 2>/dev/null; then
             success "Nginx успешно перезагружен"
         else
-            warning "Ошибка перезагрузки nginx, пробуем restart контейнера"
+            warning "Error перезагрузки nginx, пробуем restart контейнера"
             docker compose restart nginx
         fi
     else
-        error "Ошибка в конфигурации nginx"
+        error "Error в конфигурации nginx"
     fi
 }
 
-# Настройка автообновления
+# Setup автообновления
 setup_auto_renewal() {
-    log "Настройка автообновления сертификатов..."
+    log "Setup автообновления certificates..."
 
-    # acme.sh автоматически создает cron job при установке
+    # acme.sh автоматически создает cron job when установке
     # Проверим, что он существует
     if crontab -l 2>/dev/null | grep -q "acme.sh"; then
-        success "Автообновление уже настроено через cron"
+        success "Auto-renewal уже configured via cron"
     else
-        warning "Cron job для автообновления не найден"
-        log "Создание cron job для автообновления..."
+        warning "Cron job for автообновления не найден"
+        log "Creating cron job for автообновления..."
 
         # Добавление cron job
         (crontab -l 2>/dev/null; echo "0 2 * * * $ACME_HOME/acme.sh --cron --home $ACME_HOME > /dev/null") | crontab -
-        success "Cron job для автообновления создан"
+        success "Cron job for автообновления создан"
     fi
 
-    # Создание hook скрипта для перезагрузки nginx
+    # Creating hook script for перезагрузки nginx
     HOOK_SCRIPT="$ACME_HOME/reload-nginx-hook.sh"
     cat > "$HOOK_SCRIPT" << 'EOF'
 #!/bin/bash
-# Hook script для перезагрузки nginx после обновления сертификата
+# Hook script for перезагрузки nginx после обновления certificate
 
 ERNI_KI_DIR="/home/konstantin/Documents/augment-projects/erni-ki"
 cd "$ERNI_KI_DIR"
 
-# Перезагрузка nginx
+# Reload nginx
 if docker compose exec nginx nginx -s reload 2>/dev/null; then
     echo "$(date): Nginx reloaded successfully after certificate renewal"
 else
@@ -218,28 +218,28 @@ EOF
 
     chmod +x "$HOOK_SCRIPT"
 
-    # Обновление acme.sh конфигурации для использования hook
+    # Update acme.sh конфигурации for using hook
     "$ACME_HOME/acme.sh" --install-cert -d "$DOMAIN" \
         --cert-file "$SSL_DIR/nginx.crt" \
         --key-file "$SSL_DIR/nginx.key" \
         --fullchain-file "$SSL_DIR/nginx-fullchain.crt" \
         --reloadcmd "$HOOK_SCRIPT"
 
-    success "Hook скрипт для автообновления настроен"
+    success "Hook скрипт for автообновления настроен"
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${CYAN}"
     echo "=============================================="
     echo "  ERNI-KI Let's Encrypt SSL Setup"
-    echo "  Домен: $DOMAIN"
+    echo "  Domain: $DOMAIN"
     echo "=============================================="
     echo -e "${NC}"
 
-    # Проверка, что мы в корне проекта
+    # Check, что мы в корне проекта
     if [ ! -f "compose.yml" ] && [ ! -f "compose.yml.example" ]; then
-        error "Скрипт должен запускаться из корня проекта ERNI-KI"
+        error "Script должен запускаться из корня проекта ERNI-KI"
     fi
 
     check_dependencies
@@ -257,10 +257,10 @@ main() {
     log "Следующие шаги:"
     echo "1. Проверьте HTTPS доступ: https://$DOMAIN"
     echo "2. Проверьте SSL рейтинг: https://www.ssllabs.com/ssltest/"
-    echo "3. Сертификат будет автоматически обновляться каждые 60 дней"
+    echo "3. Certificate будет автоматически обновляться каждые 60 days"
     echo ""
-    log "Резервная копия старых сертификатов: $BACKUP_DIR"
+    log "Резервная копия старых certificates: $BACKUP_DIR"
 }
 
-# Запуск скрипта
+# Starting script
 main "$@"

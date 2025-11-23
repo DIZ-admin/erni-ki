@@ -1,8 +1,8 @@
 /**
- * GPU Monitoring для ERNI-KI AI Diagnostics
- * Мониторинг использования GPU во время тестирования AI моделей
+ * GPU Monitoring for ERNI-KI AI Diagnostics
+ * GPU usage monitoring during AI models testing
  *
- * @author Альтэон Шульц (Tech Lead)
+ * @author Alteon Schultz (Tech Lead)
  * @version 1.0.0
  */
 const { spawn } = require('child_process');
@@ -16,7 +16,7 @@ class GPUMonitor {
     this.interval = null;
     this.outputFile = './test-results/gpu-metrics.json';
 
-    // Создание директории для результатов
+    // Create directory for results
     const dir = path.dirname(this.outputFile);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -34,16 +34,16 @@ class GPUMonitor {
 
       nvidia.on('close', code => {
         if (code === 0 && output.trim()) {
-          console.log(`🎮 GPU обнаружен: ${output.trim()}`);
+          console.log(`🎮 GPU detected: ${output.trim()}`);
           resolve(true);
         } else {
-          console.log('❌ GPU не обнаружен или nvidia-smi недоступен');
+          console.log('❌ GPU not detected or nvidia-smi unavailable');
           resolve(false);
         }
       });
 
       nvidia.on('error', () => {
-        console.log('❌ Ошибка запуска nvidia-smi');
+        console.log('❌ Error launching nvidia-smi');
         resolve(false);
       });
     });
@@ -102,17 +102,17 @@ class GPUMonitor {
 
   async startMonitoring(intervalMs = 2000) {
     if (this.monitoring) {
-      console.log('⚠️ Мониторинг уже запущен');
+      console.log('⚠️ Monitoring already running');
       return;
     }
 
     const gpuAvailable = await this.checkGPUAvailability();
     if (!gpuAvailable) {
-      console.log('❌ GPU недоступен для мониторинга');
+      console.log('❌ GPU unavailable for monitoring');
       return false;
     }
 
-    console.log(`🔍 Запуск GPU мониторинга (интервал: ${intervalMs}ms)`);
+    console.log(`🔍 Starting GPU monitoring (interval: ${intervalMs}ms)`);
     this.monitoring = true;
     this.data = [];
 
@@ -124,12 +124,12 @@ class GPUMonitor {
 
         // Вывод текущих метрик
         const memoryUsage =
-          `Память: ${metrics.memoryUsed}MB/${metrics.memoryTotal}MB ` +
+          `Memory: ${metrics.memoryUsed}MB/${metrics.memoryTotal}MB ` +
           `(${metrics.memoryUtilization}%)`;
         const usageLineParts = [
           `GPU: ${metrics.gpuUtilization}%`,
           memoryUsage,
-          `Температура: ${metrics.temperature}°C`,
+          `Temperature: ${metrics.temperature}°C`,
         ];
         console.log(usageLineParts.join(' | '));
       }
@@ -140,11 +140,11 @@ class GPUMonitor {
 
   stopMonitoring() {
     if (!this.monitoring) {
-      console.log('⚠️ Мониторинг не запущен');
+      console.log('⚠️ Monitoring not running');
       return;
     }
 
-    console.log('🛑 Остановка GPU мониторинга');
+    console.log('🛑 Stopping GPU monitoring');
     this.monitoring = false;
 
     if (this.interval) {
@@ -158,20 +158,20 @@ class GPUMonitor {
 
   saveResults() {
     if (this.data.length === 0) {
-      console.log('📊 Нет данных для сохранения');
+      console.log('📊 No data to save');
       return;
     }
 
     const report = {
       timestamp: new Date().toISOString(),
-      duration: this.data.length * 2, // секунды (интервал 2с)
+      duration: this.data.length * 2, // secondsы (интервал 2с)
       totalSamples: this.data.length,
       metrics: this.data,
       summary: this.calculateSummary(),
     };
 
     fs.writeFileSync(this.outputFile, JSON.stringify(report, null, 2));
-    console.log(`📋 GPU метрики сохранены: ${this.outputFile}`);
+    console.log(`📋 GPU metrics saved: ${this.outputFile}`);
 
     this.printSummary(report.summary);
   }
@@ -214,38 +214,38 @@ class GPUMonitor {
     if (!summary) return;
 
     console.log('\n' + '='.repeat(50));
-    console.log('📊 СВОДКА GPU МЕТРИК');
+    console.log('📊 GPU METRICS SUMMARY');
     console.log('='.repeat(50));
     console.log(
-      `🎮 GPU утилизация: ${summary.gpu.min}% - ${summary.gpu.max}% ` +
-        `(среднее: ${summary.gpu.avg}%)`,
+      `🎮 GPU utilization: ${summary.gpu.min}% - ${summary.gpu.max}% ` +
+        `(average: ${summary.gpu.avg}%)`,
     );
     console.log(
-      `💾 Память: ${summary.memory.min}% - ${summary.memory.max}% ` +
-        `(среднее: ${summary.memory.avg}%)`,
+      `💾 Memory: ${summary.memory.min}% - ${summary.memory.max}% ` +
+        `(average: ${summary.memory.avg}%)`,
     );
-    console.log(`📈 Пиковое использование памяти: ${summary.memory.peakUsedMB} MB`);
+    console.log(`📈 Peak memory usage: ${summary.memory.peakUsedMB} MB`);
     console.log(
-      `🌡️  Температура: ${summary.temperature.min}°C - ${summary.temperature.max}°C ` +
-        `(среднее: ${summary.temperature.avg}°C)`,
+      `🌡️  Temperature: ${summary.temperature.min}°C - ${summary.temperature.max}°C ` +
+        `(average: ${summary.temperature.avg}°C)`,
     );
     console.log(
-      `⚡ Энергопотребление: ${summary.power.min}W - ${summary.power.max}W ` +
-        `(среднее: ${summary.power.avg}W)`,
+      `⚡ Power consumption: ${summary.power.min}W - ${summary.power.max}W ` +
+        `(average: ${summary.power.avg}W)`,
     );
     console.log('='.repeat(50));
   }
 
   async runStandaloneTest(durationSeconds = 60) {
-    console.log(`🚀 Запуск автономного GPU теста на ${durationSeconds} секунд`);
+    console.log(`🚀 Running standalone GPU test for ${durationSeconds} seconds`);
 
-    const started = await this.startMonitoring(1000); // 1 секунда интервал
+    const started = await this.startMonitoring(1000); // 1 secondsа интервал
     if (!started) {
       return;
     }
 
     // Имитация нагрузки через Ollama
-    console.log('🤖 Отправка тестового запроса к Ollama...');
+    console.log('🤖 Sending test request to Ollama...');
     this.sendTestRequest();
 
     // eslint-disable-next-line no-undef
@@ -273,11 +273,11 @@ class GPUMonitor {
     ]);
 
     curl.on('close', code => {
-      console.log(`📤 Тестовый запрос завершен (код: ${code})`);
+      console.log(`📤 Test request completed (code: ${code})`);
     });
 
     curl.on('error', error => {
-      console.log(`❌ Ошибка отправки запроса: ${error.message}`);
+      console.log(`❌ Error sending request: ${error.message}`);
     });
   }
 }
@@ -291,7 +291,7 @@ if (require.main === module) {
 
   // Обработка сигналов для корректного завершения
   process.on('SIGINT', () => {
-    console.log('\n🛑 Получен сигнал прерывания');
+    console.log('\n🛑 Received interrupt signal');
     monitor.stopMonitoring();
     process.exit(0);
   });

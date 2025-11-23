@@ -1,50 +1,50 @@
 #!/bin/bash
-# Мониторинг безопасности LiteLLM
+# Security monitoring LiteLLM
 
 LOG_FILE="/var/log/litellm-security.log"
 ALERT_EMAIL="admin@example.com"
 
-# Проверка подозрительных запросов
+# Check suspicious requests
 check_suspicious_requests() {
-    echo "$(date): Проверка подозрительных запросов" >> $LOG_FILE
+    echo "$(date): Check suspicious requests" >> $LOG_FILE
 
-    # Анализ логов nginx
+    # Log analysis nginx
     tail -1000 /var/log/nginx/access.log | grep -E "(sql|script|exec|union|select)" | while read line; do
-        echo "ALERT: Подозрительный запрос: $line" >> $LOG_FILE
-        # Отправка уведомления (если настроена почта)
+        echo "ALERT: Suspicious request: $line" >> $LOG_FILE
+        # Sending notification (if mail is configured)
         # echo "$line" | mail -s "Security Alert: Suspicious Request" $ALERT_EMAIL
     done
 }
 
-# Проверка неудачных аутентификаций
+# Check failed authentications
 check_auth_failures() {
-    echo "$(date): Проверка неудачных аутентификаций" >> $LOG_FILE
+    echo "$(date): Check failed authentications" >> $LOG_FILE
 
-    # Анализ логов LiteLLM
+    # Log analysis LiteLLM
     docker-compose logs litellm | grep -i "unauthorized\|forbidden\|invalid.*key" | tail -50 | while read line; do
-        echo "ALERT: Неудачная аутентификация: $line" >> $LOG_FILE
+        echo "ALERT: Failed authentication: $line" >> $LOG_FILE
     done
 }
 
-# Проверка аномальной активности
+# Check anomalous activity
 check_anomalies() {
-    echo "$(date): Проверка аномальной активности" >> $LOG_FILE
+    echo "$(date): Check anomalous activity" >> $LOG_FILE
 
     # Высокая частота запросов от одного IP
     tail -1000 /var/log/nginx/access.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -10 | while read count ip; do
         if [ "$count" -gt 100 ]; then
-            echo "ALERT: Высокая активность от IP $ip: $count запросов" >> $LOG_FILE
+            echo "ALERT: High activity from IP $ip: $count запросов" >> $LOG_FILE
         fi
     done
 }
 
-# Основная функция
+# Main function
 main() {
     check_suspicious_requests
     check_auth_failures
     check_anomalies
 
-    # Ротация логов
+    # Log rotation
     if [ -f "$LOG_FILE" ] && [ $(stat -f%z "$LOG_FILE" 2>/dev/null || stat -c%s "$LOG_FILE") -gt 10485760 ]; then
         mv "$LOG_FILE" "${LOG_FILE}.old"
         touch "$LOG_FILE"

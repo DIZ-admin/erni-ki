@@ -224,5 +224,5 @@ main() {
     log "Logs saved to: $LOG_FILE"
 }
 
-# Запуск скрипта
+# Starting script
 main "$@"

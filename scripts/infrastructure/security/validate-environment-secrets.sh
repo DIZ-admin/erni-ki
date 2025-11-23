@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# GitHub Environment Secrets Validation для ERNI-KI
+# GitHub Environment Secrets Validation for ERNI-KI
 # Комплексная проверка доступности и корректности всех секретов
-# Автор: Альтэон Шульц (Tech Lead)
-# Дата: 2025-09-19
+# Author: Alteon Schultz (Tech Lead)
+# Date: 2025-09-19
 
 set -euo pipefail
 
@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LOG_FILE="$PROJECT_ROOT/.config-backup/secrets-validation-$(date +%Y%m%d-%H%M%S).log"
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -41,7 +41,7 @@ info() {
     echo -e "${PURPLE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}" | tee -a "$LOG_FILE"
 }
 
-# === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+# === GLOBAL ПЕРЕМЕННЫЕ ===
 TOTAL_SECRETS=0
 VALID_SECRETS=0
 INVALID_SECRETS=0
@@ -49,23 +49,23 @@ MISSING_SECRETS=0
 
 # === ПРОВЕРКА ЗАВИСИМОСТЕЙ ===
 check_dependencies() {
-    log "Проверка зависимостей..."
+    log "Check зависимостей..."
 
-    # Проверка GitHub CLI
+    # Check GitHub CLI
     if ! command -v gh &> /dev/null; then
-        error "GitHub CLI не установлен. Установите: https://cli.github.com/"
+        error "GitHub CLI not installed. Установите: https://cli.github.com/"
         exit 1
     fi
 
-    # Проверка аутентификации
+    # Check аутентификации
     if ! gh auth status &> /dev/null; then
         error "GitHub CLI не аутентифицирован. Выполните: gh auth login"
         exit 1
     fi
 
-    # Проверка jq
+    # Check jq
     if ! command -v jq &> /dev/null; then
-        warning "jq не установлен. Некоторые функции могут работать некорректно."
+        warning "jq not installed. Некоторые функции могут работать некорректно."
     fi
 
     success "Все зависимости проверены"
@@ -73,7 +73,7 @@ check_dependencies() {
 
 # === ПОЛУЧЕНИЕ СПИСКА ОКРУЖЕНИЙ ===
 get_environments() {
-    log "Получение списка окружений..."
+    log "Obtaining списка окружений..."
 
     local environments
     if environments=$(gh api "repos/:owner/:repo/environments" --jq '.[].name' 2>/dev/null); then
@@ -92,7 +92,7 @@ validate_secret() {
 
     TOTAL_SECRETS=$((TOTAL_SECRETS + 1))
 
-    # Проверяем существование секрета
+    # Checking существование секрета
     if gh secret list --env "$environment" --json name | jq -r '.[].name' | grep -q "^${secret_name}$"; then
         if [ "$is_critical" = "true" ]; then
             # Для критических секретов проверяем, что они не содержат placeholder
@@ -119,9 +119,9 @@ validate_secret() {
 validate_environment_secrets() {
     local environment="$1"
 
-    info "🔍 Проверка секретов для окружения: $environment"
+    info "🔍 Check секретов for окружения: $environment"
 
-    # Определяем суффикс для окружения
+    # Определяем суффикс for окружения
     local env_suffix=""
     case "$environment" in
         "development") env_suffix="_DEV" ;;
@@ -133,13 +133,13 @@ validate_environment_secrets() {
             ;;
     esac
 
-    # Список обязательных секретов для каждого окружения
+    # Список обязательных секретов for каждого окружения
     local required_secrets=(
         "TUNNEL_TOKEN${env_suffix}"
         "OPENAI_API_KEY${env_suffix}"
     )
 
-    # Проверяем каждый секрет
+    # Checking каждый секрет
     for secret in "${required_secrets[@]}"; do
         local is_critical="false"
         if [ "$environment" = "production" ]; then
@@ -167,7 +167,7 @@ validate_environment_secrets() {
 
 # === ПРОВЕРКА REPOSITORY-LEVEL СЕКРЕТОВ ===
 validate_repository_secrets() {
-    info "🔍 Проверка repository-level секретов..."
+    info "🔍 Check repository-level секретов..."
 
     # Список критических repository секретов
     local repo_secrets=(
@@ -182,7 +182,7 @@ validate_repository_secrets() {
         "BACKREST_PASSWORD"
     )
 
-    # Проверяем каждый repository секрет
+    # Checking каждый repository секрет
     for secret in "${repo_secrets[@]}"; do
         TOTAL_SECRETS=$((TOTAL_SECRETS + 1))
 
@@ -198,12 +198,12 @@ validate_repository_secrets() {
 
 # === ПРОВЕРКА БЕЗОПАСНОСТИ СЕКРЕТОВ ===
 security_check() {
-    info "🛡️ Проверка безопасности секретов..."
+    info "🛡️ Check безопасности секретов..."
 
     local security_issues=0
 
-    # Проверяем, что production секреты не содержат тестовые значения
-    log "Проверка production секретов на placeholder значения..."
+    # Checking, что production секреты не содержат тестовые значения
+    log "Check production секретов на placeholder значения..."
 
     # Здесь можно добавить дополнительные проверки безопасности
     # Например, проверка силы паролей, ротации секретов и т.д.
@@ -215,14 +215,14 @@ security_check() {
     fi
 }
 
-# === ГЕНЕРАЦИЯ ОТЧЕТА ===
+# === GENERATION ОТЧЕТА ===
 generate_report() {
     local report_file="$PROJECT_ROOT/.config-backup/secrets-validation-report-$(date +%Y%m%d-%H%M%S).md"
 
     cat > "$report_file" << EOF
-# 🔐 Отчет о валидации GitHub Secrets для ERNI-KI
+# 🔐 Report о валидации GitHub Secrets for ERNI-KI
 
-**Дата проверки:** $(date +'%Y-%m-%d %H:%M:%S')
+**Date проверки:** $(date +'%Y-%m-%d %H:%M:%S')
 **Проверено окружений:** $(get_environments | wc -l)
 **Всего секретов:** $TOTAL_SECRETS
 
@@ -241,7 +241,7 @@ EOF
         echo "### $env" >> "$report_file"
         echo "" >> "$report_file"
 
-        # Получаем список секретов для окружения
+        # Получаем список секретов for окружения
         if secrets_list=$(gh secret list --env "$env" --json name,updated_at 2>/dev/null); then
             echo "$secrets_list" | jq -r '.[] | "- ✅ \(.name) (обновлен: \(.updated_at))"' >> "$report_file"
         else
@@ -272,45 +272,45 @@ fi)
 ### 🔄 Следующие шаги
 
 1. Исправить отсутствующие секреты
-2. Заменить placeholder значения на реальные (особенно для production)
+2. Заменить placeholder значения на реальные (особенно for production)
 3. Настроить автоматическую ротацию секретов
 4. Регулярно проводить аудит секретов
 
 ---
-*Отчет сгенерирован автоматически скриптом validate-environment-secrets.sh*
+*Report сгенерирован автоматически скриптом validate-environment-secrets.sh*
 EOF
 
-    log "Отчет сохранен: $report_file"
+    log "Report сохранен: $report_file"
 }
 
 # === ОСНОВНАЯ ФУНКЦИЯ ===
 main() {
-    log "Запуск валидации GitHub Secrets для ERNI-KI..."
+    log "Starting валидации GitHub Secrets for ERNI-KI..."
 
-    # Создание директории для логов
+    # Creating directories for logs
     mkdir -p "$PROJECT_ROOT/.config-backup"
 
-    # Проверка зависимостей
+    # Check зависимостей
     check_dependencies
 
-    # Получение списка окружений
+    # Obtaining списка окружений
     local environments
     environments=$(get_environments)
 
     log "Найдены окружения: $environments"
 
-    # Проверка repository-level секретов
+    # Check repository-level секретов
     validate_repository_secrets
 
-    # Проверка секретов для каждого окружения
+    # Check секретов for каждого окружения
     while IFS= read -r env; do
         validate_environment_secrets "$env"
     done <<< "$environments"
 
-    # Проверка безопасности
+    # Check безопасности
     security_check
 
-    # Генерация отчета
+    # Generation отчета
     generate_report
 
     # Итоговая статистика
@@ -333,7 +333,7 @@ main() {
 # Обработка аргументов командной строки
 case "${1:-}" in
     "--help"|"-h")
-        echo "Использование: $0 [--help|--dry-run]"
+        echo "Usage: $0 [--help|--dry-run]"
         echo "  --help, -h     Показать эту справку"
         echo "  --dry-run      Выполнить проверку без изменений"
         exit 0
@@ -343,5 +343,5 @@ case "${1:-}" in
         ;;
 esac
 
-# Запуск скрипта
+# Starting script
 main "$@"
