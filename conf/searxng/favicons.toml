@@ -1,5 +1,5 @@
 # SearXNG Favicons Configuration
-# Конфигурация иконок для результатов поиска
+# Favicons configuration for search results
 
 [favicons]
 cfg_schema = 1
