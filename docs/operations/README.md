@@ -14,36 +14,33 @@ managing the ERNI-KI platform.
 
 ### Core Guides
 
-- **[admin-guide.md](admin-guide.md)** - System administration handbook
+- **[admin-guide.md](core/admin-guide.md)** - System administration handbook
   - User management
   - Service configuration
   - Backup and restore procedures
   - Security management
 
-- **[monitoring-guide.md](monitoring-guide.md)** - Comprehensive monitoring
-  documentation
+- **[monitoring-guide.md](monitoring/monitoring-guide.md)** - Comprehensive
+  monitoring documentation
   - Prometheus metrics and alerts
   - Grafana dashboards (5 provisioned)
   - Loki log aggregation
   - SLO tracking
 
-### Runbooks
+### Troubleshooting & Runbooks
 
-- **[runbooks/README.md](runbooks/README.md)** - Step-by-step operational
-  procedures
-  - Service restart procedures
-  - Incident response playbooks
-  - Alert remediation guides
-  - Common troubleshooting steps
+- **[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)** -
+  Diagnostic procedures and common issues
+- **[maintenance/](maintenance/)** - Specific maintenance procedures
+  - Service restarts
+  - Backup & Restore
+  - Image upgrades
 
 ### Specialized Guides
 
-- **[docker-cleanup-guide.md](docker-cleanup-guide.md)** - Docker maintenance
-  procedures
-- **[image-upgrade-checklist.md](image-upgrade-checklist.md)** - Container
-  update process
-- **[prometheus-queries-reference.md](prometheus-queries-reference.md)** -
-  PromQL query examples
+- **[automation/](automation/)** - Automated maintenance guides
+- **[database/](database/)** - Database operations and monitoring
+- **[monitoring/](monitoring/)** - Detailed monitoring references
 
 ### Diagnostics
 
@@ -52,9 +49,10 @@ managing the ERNI-KI platform.
 
 ## Quick Start
 
-**For Operators:** Start with the [admin-guide.md](admin-guide.md) **For
-Monitoring:** See [monitoring-guide.md](monitoring-guide.md) **For Incidents:**
-Check [runbooks/README.md](runbooks/README.md)
+**For Operators:** Start with the [admin-guide.md](core/admin-guide.md) **For
+Monitoring:** See [monitoring-guide.md](monitoring/monitoring-guide.md) **For
+Incidents:** Check
+[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)
 
 ## Related Documentation
 
@@ -64,4 +62,4 @@ Check [runbooks/README.md](runbooks/README.md)
 
 ## Version
 
-Documentation version: **12.1** Last updated: **2025-11-22**
+Documentation version: **12.1** Last updated: **2025-11-23**

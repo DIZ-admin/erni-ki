@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: complete
+doc_version: '2025.11'
 ---
 
 # 🔧 Development Guide — ERNI-KI
@@ -21,8 +23,11 @@ npm install
 # Юнит‑тесты
 npm test
 
-# Линтинг и форматирование
+# Линтинг и форматирование (ESLint + Ruff + Prettier)
+python -m pip install -r requirements-dev.txt
 npm run lint
+# Автоформат Python при необходимости
+npm run format:py
 ```
 
 ## Локальный запуск сервисов

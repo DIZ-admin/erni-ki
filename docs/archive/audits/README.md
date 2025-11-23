@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: archived
+doc_version: '2025.11'
 ---
 
 # Архив аудитов ERNI-KI

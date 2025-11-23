@@ -15,7 +15,7 @@ permissions:
   contents: read
   security-events: write
   actions: read
-  packages: write
+  packages: read
 
 # Environment variables
 env:
@@ -40,6 +40,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements-dev.txt
+
+      - name: 📦 Install Python tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -49,7 +61,7 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci --prefer-offline
 
-      - name: 🧹 Run ESLint
+      - name: 🧹 Run lint (JS + Python)
         run: npm run lint
 
       - name: 🎨 Check Prettier formatting
@@ -213,7 +225,7 @@ jobs:
 
       # Dependency Scanning
       - name: 🔍 Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: "fs"
           scan-ref: "."
@@ -275,6 +287,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [test-go, security]
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
 
     steps:
       - name: 📥 Checkout code

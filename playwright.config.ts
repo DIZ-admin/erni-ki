@@ -16,7 +16,7 @@ if (process.env.PW_SNI_HOST && process.env.PW_SNI_IP) {
 const mockMode = process.env.E2E_MOCK_MODE === 'true';
 const headless =
   process.env.PLAYWRIGHT_HEADFUL === 'true' ? false : process.env.CI ? true : mockMode;
-const testMatch = mockMode ? /mock-openwebui\.spec\.ts$/ : undefined;
+const testMatch = mockMode ? /mock-openwebui\.spec\.ts$/ : /.*\.spec\.ts$/;
 
 const reporter: ReporterDescription[] = process.env.CI
   ? [['dot'], ['html', { outputFolder: 'playwright-report', open: 'never' }]]
@@ -26,7 +26,7 @@ export default defineConfig({
   testDir: 'tests/e2e',
   testMatch,
   fullyParallel: !mockMode,
-  workers: mockMode ? 1 : undefined,
+  ...(mockMode ? { workers: 1 } : {}),
   timeout: mockMode ? 30_000 : 90_000,
   expect: {
     timeout: mockMode ? 10_000 : 30_000,

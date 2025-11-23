@@ -1,13 +1,15 @@
 ---
+language: de
+translation_status: outdated
+doc_version: '2025.11'
 title: 'Troubleshooting (DE)'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: de
 audience: 'administrators'
 ---
 
 # Troubleshooting (DE)
 
-Verwenden Sie `docs/operations/runbooks/troubleshooting-guide.md` für typische
-Fehler.
+Verwenden Sie `docs/operations/troubleshooting/troubleshooting-guide.md` für
+typische Fehler.

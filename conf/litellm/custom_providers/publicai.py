@@ -13,19 +13,23 @@ import errno
 import json
 import logging
 import os
+import tempfile
 import threading
 import time
-from typing import Any, AsyncIterator, Dict, Iterator, Optional, Tuple, Union
+from collections.abc import AsyncIterator, Iterator
+from pathlib import Path
+from typing import Any
 
 import httpx
 from litellm import CustomLLM, ModelResponse
-from litellm.llms.custom_llm import CustomLLMError
 from litellm.litellm_core_utils.llm_response_utils.convert_dict_to_response import (
     convert_to_model_response_object,
 )
+from litellm.llms.custom_llm import CustomLLMError
 from litellm.types.utils import GenericStreamingChunk
 
-METRICS_STORAGE_DIR = os.getenv("LITELLM_PUBLICAI_METRICS_DIR", "/tmp/litellm-publicai-prom")
+_DEFAULT_METRICS_DIR = Path(tempfile.gettempdir()) / "litellm-publicai-prom"
+METRICS_STORAGE_DIR = os.getenv("LITELLM_PUBLICAI_METRICS_DIR", str(_DEFAULT_METRICS_DIR))
 os.makedirs(METRICS_STORAGE_DIR, exist_ok=True)
 os.environ.setdefault("PROMETHEUS_MULTIPROC_DIR", METRICS_STORAGE_DIR)
 
@@ -54,12 +58,10 @@ METRICS_ENABLED = (
 
 _METRICS_STARTED = False
 _METRICS_LOCK = threading.Lock()
-_METRICS_REGISTRY: Optional[CollectorRegistry] = None
+_METRICS_REGISTRY: CollectorRegistry | None = None
 
 if METRICS_ENABLED:
-    LOGGER.info(
-        "PublicAI metrics enabled (port=%s, dir=%s)", METRICS_PORT, METRICS_STORAGE_DIR
-    )
+    LOGGER.info("PublicAI metrics enabled (port=%s, dir=%s)", METRICS_PORT, METRICS_STORAGE_DIR)
     REQUEST_COUNTER = Counter(
         "litellm_publicai_requests_total",
         "Total requests routed to PublicAI",
@@ -92,15 +94,11 @@ def _start_metrics_server() -> None:
             multiprocess.MultiProcessCollector(registry)
             start_http_server(METRICS_PORT, registry=registry)
             _METRICS_REGISTRY = registry
-            LOGGER.info(
-                "PublicAI metrics exporter listening on 0.0.0.0:%s", METRICS_PORT
-            )
+            LOGGER.info("PublicAI metrics exporter listening on 0.0.0.0:%s", METRICS_PORT)
             _METRICS_STARTED = True
         except OSError as exc:
             if exc.errno == errno.EADDRINUSE:
-                LOGGER.debug(
-                    "PublicAI metrics server already running on port %s", METRICS_PORT
-                )
+                LOGGER.debug("PublicAI metrics server already running on port %s", METRICS_PORT)
             else:
                 LOGGER.warning("Failed to start PublicAI metrics server: %s", exc)
                 METRICS_ENABLED = False
@@ -137,18 +135,18 @@ class PublicAICustomLLM(CustomLLM):
         model: str,
         messages: list,
         api_base: str,
-        custom_prompt_dict: Dict[str, Any],
+        custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
         print_verbose,
         encoding,
         api_key,
         logging_obj,
-        optional_params: Dict[str, Any],
+        optional_params: dict[str, Any],
         acompletion=None,
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: Optional[Union[float, httpx.Timeout]] = None,
+        timeout: float | httpx.Timeout | None = None,
         client=None,
     ) -> ModelResponse:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -175,18 +173,18 @@ class PublicAICustomLLM(CustomLLM):
         model: str,
         messages: list,
         api_base: str,
-        custom_prompt_dict: Dict[str, Any],
+        custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
         print_verbose,
         encoding,
         api_key,
         logging_obj,
-        optional_params: Dict[str, Any],
+        optional_params: dict[str, Any],
         acompletion=None,
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: Optional[Union[float, httpx.Timeout]] = None,
+        timeout: float | httpx.Timeout | None = None,
         client=None,
     ) -> ModelResponse:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -213,18 +211,18 @@ class PublicAICustomLLM(CustomLLM):
         model: str,
         messages: list,
         api_base: str,
-        custom_prompt_dict: Dict[str, Any],
+        custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
         print_verbose,
         encoding,
         api_key,
         logging_obj,
-        optional_params: Dict[str, Any],
+        optional_params: dict[str, Any],
         acompletion=None,
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: Optional[Union[float, httpx.Timeout]] = None,
+        timeout: float | httpx.Timeout | None = None,
         client=None,
     ) -> Iterator[GenericStreamingChunk]:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -250,18 +248,18 @@ class PublicAICustomLLM(CustomLLM):
         model: str,
         messages: list,
         api_base: str,
-        custom_prompt_dict: Dict[str, Any],
+        custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
         print_verbose,
         encoding,
         api_key,
         logging_obj,
-        optional_params: Dict[str, Any],
+        optional_params: dict[str, Any],
         acompletion=None,
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: Optional[Union[float, httpx.Timeout]] = None,
+        timeout: float | httpx.Timeout | None = None,
         client=None,
     ) -> AsyncIterator[GenericStreamingChunk]:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -292,17 +290,17 @@ class PublicAICustomLLM(CustomLLM):
         *,
         model: str,
         messages: list,
-        api_base: Optional[str],
-        api_key: Optional[str],
-        optional_params: Dict[str, Any],
-        litellm_params: Optional[Dict[str, Any]],
-        headers: Optional[Dict[str, str]],
+        api_base: str | None,
+        api_key: str | None,
+        optional_params: dict[str, Any],
+        litellm_params: dict[str, Any] | None,
+        headers: dict[str, str] | None,
         stream: bool,
-    ) -> Tuple[Dict[str, Any], Dict[str, str], str, Optional[httpx.Timeout]]:
+    ) -> tuple[dict[str, Any], dict[str, str], str, httpx.Timeout | None]:
         merged_params = {**(litellm_params or {}), **(optional_params or {})}
         resolved_api_key = self._resolve_api_key(api_key, merged_params)
 
-        payload: Dict[str, Any] = {
+        payload: dict[str, Any] = {
             "model": self._resolve_upstream_model(model, optional_params, litellm_params),
             "messages": messages,
             "stream": stream,
@@ -334,19 +332,15 @@ class PublicAICustomLLM(CustomLLM):
     def _resolve_upstream_model(
         self,
         requested_model: str,
-        optional_params: Dict[str, Any],
-        litellm_params: Optional[Dict[str, Any]],
+        optional_params: dict[str, Any],
+        litellm_params: dict[str, Any] | None,
     ) -> str:
         explicit = (
-            optional_params.get("model")
-            or (litellm_params or {}).get("model")
-            or requested_model
+            optional_params.get("model") or (litellm_params or {}).get("model") or requested_model
         )
         return str(explicit)
 
-    def _resolve_api_key(
-        self, provided_key: Optional[str], merged_params: Dict[str, Any]
-    ) -> str:
+    def _resolve_api_key(self, provided_key: str | None, merged_params: dict[str, Any]) -> str:
         key_candidate = merged_params.get("api_key") or provided_key
         if isinstance(key_candidate, str) and key_candidate.startswith("os.environ/"):
             env_name = key_candidate.split("/", 1)[1]
@@ -362,18 +356,14 @@ class PublicAICustomLLM(CustomLLM):
             )
         return key_candidate
 
-    def _resolve_api_base(
-        self, api_base: Optional[str], merged_params: Dict[str, Any]
-    ) -> str:
+    def _resolve_api_base(self, api_base: str | None, merged_params: dict[str, Any]) -> str:
         base_candidate = api_base or merged_params.get("api_base") or DEFAULT_BASE_URL
         if isinstance(base_candidate, str) and base_candidate.startswith("os.environ/"):
             env_name = base_candidate.split("/", 1)[1]
             base_candidate = os.getenv(env_name, DEFAULT_BASE_URL)
         return str(base_candidate).rstrip("/")
 
-    def _resolve_timeout(
-        self, timeout_value: Optional[Union[float, httpx.Timeout]]
-    ) -> Optional[httpx.Timeout]:
+    def _resolve_timeout(self, timeout_value: float | httpx.Timeout | None) -> httpx.Timeout | None:
         if timeout_value is None:
             return None
         if isinstance(timeout_value, httpx.Timeout):
@@ -389,17 +379,19 @@ class PublicAICustomLLM(CustomLLM):
         self,
         *,
         url: str,
-        headers: Dict[str, str],
-        payload: Dict[str, Any],
-        timeout: Optional[Union[float, httpx.Timeout]],
-    ) -> Tuple[Dict[str, Any], Dict[str, str]]:
+        headers: dict[str, str],
+        payload: dict[str, Any],
+        timeout: float | httpx.Timeout | None,
+    ) -> tuple[dict[str, Any], dict[str, str]]:
         start = time.perf_counter()
         try:
             with httpx.Client(timeout=timeout) as client:
                 response = client.post(url, headers=headers, json=payload)
         except httpx.HTTPError as exc:
             self._record_metrics("exception", time.perf_counter() - start, stream=False)
-            raise CustomLLMError(status_code=502, message=f"PublicAI request failed: {exc}") from exc
+            raise CustomLLMError(
+                status_code=502, message=f"PublicAI request failed: {exc}"
+            ) from exc
 
         duration = time.perf_counter() - start
         try:
@@ -414,17 +406,19 @@ class PublicAICustomLLM(CustomLLM):
         self,
         *,
         url: str,
-        headers: Dict[str, str],
-        payload: Dict[str, Any],
-        timeout: Optional[Union[float, httpx.Timeout]],
-    ) -> Tuple[Dict[str, Any], Dict[str, str]]:
+        headers: dict[str, str],
+        payload: dict[str, Any],
+        timeout: float | httpx.Timeout | None,
+    ) -> tuple[dict[str, Any], dict[str, str]]:
         start = time.perf_counter()
         try:
             async with httpx.AsyncClient(timeout=timeout) as client:
                 response = await client.post(url, headers=headers, json=payload)
         except httpx.HTTPError as exc:
             self._record_metrics("exception", time.perf_counter() - start, stream=False)
-            raise CustomLLMError(status_code=502, message=f"PublicAI request failed: {exc}") from exc
+            raise CustomLLMError(
+                status_code=502, message=f"PublicAI request failed: {exc}"
+            ) from exc
 
         duration = time.perf_counter() - start
         try:
@@ -435,9 +429,7 @@ class PublicAICustomLLM(CustomLLM):
         self._record_metrics(response.status_code, duration, stream=False)
         return data, response_headers
 
-    def _handle_response(
-        self, response: httpx.Response
-    ) -> Tuple[Dict[str, Any], Dict[str, str]]:
+    def _handle_response(self, response: httpx.Response) -> tuple[dict[str, Any], dict[str, str]]:
         if response.status_code >= 400:
             detail = self._extract_error_detail(response)
             raise CustomLLMError(status_code=response.status_code, message=detail)
@@ -454,9 +446,9 @@ class PublicAICustomLLM(CustomLLM):
 
     def _to_model_response(
         self,
-        payload: Dict[str, Any],
-        headers: Dict[str, str],
-        template: Optional[ModelResponse] = None,
+        payload: dict[str, Any],
+        headers: dict[str, str],
+        template: ModelResponse | None = None,
     ) -> ModelResponse:
         return convert_to_model_response_object(
             response_object=payload,
@@ -471,21 +463,21 @@ class PublicAICustomLLM(CustomLLM):
         self,
         *,
         url: str,
-        headers: Dict[str, str],
-        payload: Dict[str, Any],
-        timeout: Optional[Union[float, httpx.Timeout]],
+        headers: dict[str, str],
+        payload: dict[str, Any],
+        timeout: float | httpx.Timeout | None,
     ) -> Iterator[GenericStreamingChunk]:
         start = time.perf_counter()
         try:
-            with httpx.Client(timeout=timeout) as client:
-                with client.stream("POST", url, headers=headers, json=payload) as response:
-                    if response.status_code >= 400:
-                        detail = self._extract_error_detail(response)
-                        raise CustomLLMError(status_code=response.status_code, message=detail)
-                    self._record_metrics(
-                        response.status_code, time.perf_counter() - start, stream=True
-                    )
-                    yield from self._iterate_sse(response.iter_lines())
+            with (
+                httpx.Client(timeout=timeout) as client,
+                client.stream("POST", url, headers=headers, json=payload) as response,
+            ):
+                if response.status_code >= 400:
+                    detail = self._extract_error_detail(response)
+                    raise CustomLLMError(status_code=response.status_code, message=detail)
+                self._record_metrics(response.status_code, time.perf_counter() - start, stream=True)
+                yield from self._iterate_sse(response.iter_lines())
         except httpx.HTTPError as exc:
             self._record_metrics("exception", time.perf_counter() - start, stream=True)
             raise CustomLLMError(status_code=502, message=f"PublicAI stream failed: {exc}") from exc
@@ -494,22 +486,22 @@ class PublicAICustomLLM(CustomLLM):
         self,
         *,
         url: str,
-        headers: Dict[str, str],
-        payload: Dict[str, Any],
-        timeout: Optional[Union[float, httpx.Timeout]],
+        headers: dict[str, str],
+        payload: dict[str, Any],
+        timeout: float | httpx.Timeout | None,
     ) -> AsyncIterator[GenericStreamingChunk]:
         start = time.perf_counter()
         try:
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                async with client.stream("POST", url, headers=headers, json=payload) as response:
-                    if response.status_code >= 400:
-                        detail = self._extract_error_detail(response)
-                        raise CustomLLMError(status_code=response.status_code, message=detail)
-                    self._record_metrics(
-                        response.status_code, time.perf_counter() - start, stream=True
-                    )
-                    async for chunk in self._aiterate_sse(response.aiter_lines()):
-                        yield chunk
+            async with (
+                httpx.AsyncClient(timeout=timeout) as client,
+                client.stream("POST", url, headers=headers, json=payload) as response,
+            ):
+                if response.status_code >= 400:
+                    detail = self._extract_error_detail(response)
+                    raise CustomLLMError(status_code=response.status_code, message=detail)
+                self._record_metrics(response.status_code, time.perf_counter() - start, stream=True)
+                async for chunk in self._aiterate_sse(response.aiter_lines()):
+                    yield chunk
         except httpx.HTTPError as exc:
             self._record_metrics("exception", time.perf_counter() - start, stream=True)
             raise CustomLLMError(status_code=502, message=f"PublicAI stream failed: {exc}") from exc
@@ -546,7 +538,7 @@ class PublicAICustomLLM(CustomLLM):
                 continue
             yield self._chunk_from_stream(chunk)
 
-    def _chunk_from_stream(self, chunk_payload: Dict[str, Any]) -> GenericStreamingChunk:
+    def _chunk_from_stream(self, chunk_payload: dict[str, Any]) -> GenericStreamingChunk:
         choices = chunk_payload.get("choices") or []
         choice = choices[0] if choices else {}
         delta = choice.get("delta") or {}
@@ -562,9 +554,7 @@ class PublicAICustomLLM(CustomLLM):
             "provider_specific_fields": choice.get("provider_specific_fields"),
         }
 
-    def _record_metrics(
-        self, status_code: Union[int, str], duration: Optional[float], stream: bool
-    ) -> None:
+    def _record_metrics(self, status_code: int | str, duration: float | None, stream: bool) -> None:
         if not METRICS_ENABLED or REQUEST_COUNTER is None:
             return
 
@@ -572,9 +562,10 @@ class PublicAICustomLLM(CustomLLM):
         stream_label = "true" if stream else "false"
         try:
             REQUEST_COUNTER.labels(status=status_label, stream=stream_label).inc()
-            if status_label.startswith(("4", "5")) or status_label == "exception":
-                if ERROR_COUNTER is not None:
-                    ERROR_COUNTER.labels(status=status_label, stream=stream_label).inc()
+            if (
+                status_label.startswith(("4", "5")) or status_label == "exception"
+            ) and ERROR_COUNTER is not None:
+                ERROR_COUNTER.labels(status=status_label, stream=stream_label).inc()
             if duration is not None and LATENCY_HISTOGRAM is not None:
                 LATENCY_HISTOGRAM.labels(stream=stream_label).observe(duration)
         except Exception:  # pragma: no cover - metrics are best effort

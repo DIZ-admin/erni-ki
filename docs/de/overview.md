@@ -1,9 +1,11 @@
 ---
+language: de
+translation_status: outdated
+doc_version: '2025.11'
 title: '📚 ERNI-KI Dokumentation (Deutsch)'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: de
 audience: 'administrators'
 ---
 
@@ -19,12 +21,12 @@ audience: 'administrators'
 > **Systemstatus (2025-11-14) — Production Ready v12.1**
 >
 > - Container: 30/30 контейнеров healthy
-> - Grafana: 18/18 Grafana дашбордов
-> - Alerts: 27 Prometheus alert rules активны
+> - Grafana: 5/5 Grafana Dashboards
+> - Alerts: 20 Prometheus alert rules aktiv
 > - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
 > - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
-> - Monitoring: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
->   v3.2.0, Alertmanager v0.28.0
+> - Monitoring: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
+>   v3.1.0, Alertmanager v0.27.0
 > - Automatisierung: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00,
 >   Backrest 01:30, Watchtower selective updates
 > - Hinweis: Наблюдаемость и AI стек актуализированы в ноябре 2025
@@ -55,7 +57,8 @@ Sprachinteraktion.
 - **[Monitoring Übersicht](operations/monitoring.md)** - Kennzahlen, Skripte und
   Alerts
 - **[Runbooks](../operations/runbooks-summary.md)** - Deutsche Zusammenfassungen
-  der wichtigsten Abläufe (englische Originale в `operations/runbooks/`)
+  der wichtigsten Abläufe (englische Originale в `operations/maintenance/` und
+  `operations/troubleshooting/`)
 - **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 
@@ -198,7 +201,7 @@ docker compose exec ollama ollama pull llama3.2:3b
   russische Fassungen synchron bleiben.
 - Für detaillierte Runbooks und Monitoring-Schritte nutzen Sie die englischen
   Originale unter `docs/operations/runbooks/` und
-  `docs/operations/monitoring-guide.md`.
+  `docs/operations/monitoring/monitoring-guide.md`.
 
 ```bash
 # System-Gesundheit prüfen
