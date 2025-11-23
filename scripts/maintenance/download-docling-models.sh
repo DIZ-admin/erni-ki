@@ -8,17 +8,17 @@ IMAGE="ghcr.io/docling-project/docling-serve-cu126:main"
 mkdir -p "${ARTIFACT_DIR}"
 
 if ! command -v docker >/dev/null 2>&1; then
-  echo "[docling-models] Требуется Docker" >&2
+  echo "[docling-models] Docker is required" >&2
   exit 1
 fi
 
-echo "[docling-models] Подтягиваем образ ${IMAGE}"
+echo "[docling-models] Pulling image ${IMAGE}"
 docker pull "${IMAGE}"
 
-echo "[docling-models] Скачиваем модели в ${ARTIFACT_DIR}" \
+echo "[docling-models] Downloading models to ${ARTIFACT_DIR}" \
   && docker run --rm \
        -v "${ARTIFACT_DIR}:/docling-artifacts" \
        "${IMAGE}" \
        docling-tools models download --output-dir /docling-artifacts --all
 
-echo "[docling-models] Готово"
+echo "[docling-models] Done"

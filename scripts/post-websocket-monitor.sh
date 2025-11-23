@@ -2,17 +2,17 @@
 
 # ===================================================================
 # ERNI-KI Post-WebSocket Fix Monitor
-# Мониторинг системы после исправления WebSocket проблемы
-# Автор: Альтэон Шульц, Tech Lead
-# Дата создания: 11 сентября 2025
+# Monitoring after WebSocket issue fix
+# Author: Alteon Schulz, Tech Lead
+# Created: 2025-09-11
 # ===================================================================
 
 echo "🔍 === ERNI-KI Post-WebSocket Fix Monitor ==="
-echo "📅 Дата: $(date)"
-echo "⏰ Время анализа: $(date '+%H:%M:%S')"
+echo "📅 Date: $(date)"
+echo "⏰ Analysis time: $(date '+%H:%M:%S')"
 echo ""
 
-# Функция для цветного вывода
+# Colored output helper
 print_status() {
     local status=$1
     local message=$2
@@ -24,57 +24,57 @@ print_status() {
     esac
 }
 
-# 1. WebSocket ошибки (критический показатель)
-echo "🌐 === WEBSOCKET АНАЛИЗ ==="
+# 1. WebSocket errors (critical indicator)
+echo "🌐 === WEBSOCKET ANALYSIS ==="
 websocket_errors_30m=$(docker-compose logs openwebui --since 30m 2>/dev/null | grep -c "socket.io.*400" || echo "0")
 websocket_errors_1h=$(docker-compose logs openwebui --since 1h 2>/dev/null | grep -c "socket.io.*400" || echo "0")
 
 if [ "$websocket_errors_30m" -eq 0 ]; then
-    print_status "SUCCESS" "WebSocket ошибки за 30 минут: $websocket_errors_30m"
+    print_status "SUCCESS" "WebSocket errors (30m): $websocket_errors_30m"
 elif [ "$websocket_errors_30m" -lt 50 ]; then
-    print_status "WARNING" "WebSocket ошибки за 30 минут: $websocket_errors_30m (улучшение)"
+    print_status "WARNING" "WebSocket errors (30m): $websocket_errors_30m (improving)"
 else
-    print_status "ERROR" "WebSocket ошибки за 30 минут: $websocket_errors_30m (требует внимания)"
+    print_status "ERROR" "WebSocket errors (30m): $websocket_errors_30m (needs attention)"
 fi
 
-echo "   📊 WebSocket ошибки за час: $websocket_errors_1h"
+echo "   📊 WebSocket errors (1h): $websocket_errors_1h"
 echo ""
 
-# 2. SearXNG ошибки (высокий приоритет)
-echo "🔍 === SEARXNG АНАЛИЗ ==="
+# 2. SearXNG errors (high priority)
+echo "🔍 === SEARXNG ANALYSIS ==="
 searxng_errors_1h=$(docker-compose logs searxng --since 1h 2>/dev/null | grep -c -E "(ERROR|WARN)" || echo "0")
 searxng_errors_2h=$(docker-compose logs searxng --since 2h 2>/dev/null | grep -c -E "(ERROR|WARN)" || echo "0")
 
 if [ "$searxng_errors_1h" -lt 100 ]; then
-    print_status "SUCCESS" "SearXNG ошибки за час: $searxng_errors_1h"
+    print_status "SUCCESS" "SearXNG errors (1h): $searxng_errors_1h"
 elif [ "$searxng_errors_1h" -lt 300 ]; then
-    print_status "WARNING" "SearXNG ошибки за час: $searxng_errors_1h (умеренный уровень)"
+    print_status "WARNING" "SearXNG errors (1h): $searxng_errors_1h (moderate)"
 else
-    print_status "ERROR" "SearXNG ошибки за час: $searxng_errors_1h (высокий уровень)"
+    print_status "ERROR" "SearXNG errors (1h): $searxng_errors_1h (high)"
 fi
 
-echo "   📊 SearXNG ошибки за 2 часа: $searxng_errors_2h"
+echo "   📊 SearXNG errors (2h): $searxng_errors_2h"
 echo ""
 
-# 3. PostgreSQL FATAL ошибки
-echo "🗄️ === POSTGRESQL АНАЛИЗ ==="
+# 3. PostgreSQL FATAL errors
+echo "🗄️ === POSTGRESQL ANALYSIS ==="
 postgres_fatal_1h=$(docker-compose logs db --since 1h 2>/dev/null | grep -c "FATAL" || echo "0")
 postgres_errors_1h=$(docker-compose logs db --since 1h 2>/dev/null | grep -c -E "(ERROR|WARN)" || echo "0")
 
 if [ "$postgres_fatal_1h" -eq 0 ]; then
-    print_status "SUCCESS" "PostgreSQL FATAL ошибки за час: $postgres_fatal_1h"
+    print_status "SUCCESS" "PostgreSQL FATAL errors (1h): $postgres_fatal_1h"
 else
-    print_status "ERROR" "PostgreSQL FATAL ошибки за час: $postgres_fatal_1h"
+    print_status "ERROR" "PostgreSQL FATAL errors (1h): $postgres_fatal_1h"
 fi
 
-echo "   📊 PostgreSQL общие ошибки за час: $postgres_errors_1h"
+echo "   📊 PostgreSQL general errors (1h): $postgres_errors_1h"
 echo ""
 
-# 4. RAG производительность
-echo "🚀 === RAG ПРОИЗВОДИТЕЛЬНОСТЬ ==="
-echo "   🧪 Тестирование SearXNG API..."
+# 4. RAG performance
+echo "🚀 === RAG PERFORMANCE ==="
+echo "   🧪 Testing SearXNG API..."
 
-# Тест производительности с timeout
+# Performance test with timeout
 start_time=$(date +%s.%N)
 rag_result=$(timeout 10s curl -s "http://localhost:8080/searxng/search?q=test&format=json" 2>/dev/null | jq '.number_of_results' 2>/dev/null)
 end_time=$(date +%s.%N)
@@ -82,41 +82,41 @@ end_time=$(date +%s.%N)
 if [ $? -eq 0 ] && [ ! -z "$rag_result" ]; then
     response_time=$(echo "$end_time - $start_time" | bc 2>/dev/null || echo "N/A")
     if (( $(echo "$response_time < 2.0" | bc -l 2>/dev/null || echo 0) )); then
-        print_status "SUCCESS" "RAG ответ: ${response_time}s, результатов: $rag_result"
+        print_status "SUCCESS" "RAG response: ${response_time}s, results: $rag_result"
     elif (( $(echo "$response_time < 5.0" | bc -l 2>/dev/null || echo 0) )); then
-        print_status "WARNING" "RAG ответ: ${response_time}s, результатов: $rag_result (медленно)"
+        print_status "WARNING" "RAG response: ${response_time}s, results: $rag_result (slow)"
     else
-        print_status "ERROR" "RAG ответ: ${response_time}s, результатов: $rag_result (очень медленно)"
+        print_status "ERROR" "RAG response: ${response_time}s, results: $rag_result (very slow)"
     fi
 else
-    print_status "ERROR" "RAG тест не удался (timeout или ошибка API)"
+    print_status "ERROR" "RAG test failed (timeout or API error)"
 fi
 echo ""
 
-# 5. Статус сервисов
-echo "🏥 === СТАТУС СЕРВИСОВ ==="
+# 5. Service status
+echo "🏥 === SERVICE STATUS ==="
 total_services=$(docker-compose ps 2>/dev/null | grep -c "erni-ki-" || echo "0")
 healthy_services=$(docker-compose ps --format "table {{.Name}}\t{{.Health}}" 2>/dev/null | grep -c "healthy" || echo "0")
 unhealthy_services=$(docker-compose ps --format "table {{.Name}}\t{{.Health}}" 2>/dev/null | grep -c "unhealthy" || echo "0")
 
 if [ "$healthy_services" -ge 26 ]; then
-    print_status "SUCCESS" "Healthy сервисы: $healthy_services/$total_services"
+    print_status "SUCCESS" "Healthy services: $healthy_services/$total_services"
 elif [ "$healthy_services" -ge 20 ]; then
-    print_status "WARNING" "Healthy сервисы: $healthy_services/$total_services"
+    print_status "WARNING" "Healthy services: $healthy_services/$total_services"
 else
-    print_status "ERROR" "Healthy сервисы: $healthy_services/$total_services"
+    print_status "ERROR" "Healthy services: $healthy_services/$total_services"
 fi
 
 if [ "$unhealthy_services" -gt 0 ]; then
-    print_status "ERROR" "Unhealthy сервисы: $unhealthy_services"
+    print_status "ERROR" "Unhealthy services: $unhealthy_services"
 fi
 echo ""
 
-# 6. Общая оценка системы
-echo "📊 === ОБЩАЯ ОЦЕНКА СИСТЕМЫ ==="
+# 6. Overall system score
+echo "📊 === OVERALL SYSTEM SCORE ==="
 total_score=0
 
-# Подсчет баллов (максимум 100)
+# Score calculation (max 100)
 [ "$websocket_errors_30m" -eq 0 ] && total_score=$((total_score + 25))
 [ "$websocket_errors_30m" -lt 50 ] && [ "$websocket_errors_30m" -gt 0 ] && total_score=$((total_score + 15))
 
@@ -130,61 +130,61 @@ total_score=0
 [ "$healthy_services" -ge 26 ] && total_score=$((total_score + 20))
 [ "$healthy_services" -ge 20 ] && [ "$healthy_services" -lt 26 ] && total_score=$((total_score + 10))
 
-# Итоговая оценка
+# Final score
 if [ "$total_score" -ge 80 ]; then
-    print_status "SUCCESS" "Общая оценка системы: $total_score/100 (Отлично)"
+    print_status "SUCCESS" "Overall score: $total_score/100 (Excellent)"
 elif [ "$total_score" -ge 60 ]; then
-    print_status "WARNING" "Общая оценка системы: $total_score/100 (Хорошо)"
+    print_status "WARNING" "Overall score: $total_score/100 (Good)"
 else
-    print_status "ERROR" "Общая оценка системы: $total_score/100 (Требует внимания)"
+    print_status "ERROR" "Overall score: $total_score/100 (Needs attention)"
 fi
 echo ""
 
-# 7. Рекомендации
-echo "💡 === РЕКОМЕНДАЦИИ ==="
+# 7. Recommendations
+echo "💡 === RECOMMENDATIONS ==="
 if [ "$websocket_errors_30m" -gt 0 ]; then
-    echo "   🔧 Рекомендуется полное отключение WebSocket в nginx"
+    echo "   🔧 Consider disabling WebSocket in nginx temporarily"
 fi
 
 if [ "$searxng_errors_1h" -gt 200 ]; then
-    echo "   🔧 Требуется анализ и оптимизация SearXNG конфигурации"
+    echo "   🔧 Analyze and optimize SearXNG configuration"
 fi
 
 if [ "$postgres_fatal_1h" -gt 0 ]; then
-    echo "   🔧 Необходима очистка старых данных PostgreSQL pg15"
+    echo "   🔧 Clean up old PostgreSQL pg15 data"
 fi
 
 if [ "$healthy_services" -lt 25 ]; then
-    echo "   🔧 Проверьте статус unhealthy сервисов"
+    echo "   🔧 Check status of unhealthy services"
 fi
 
 if [ "$total_score" -ge 80 ]; then
-    echo "   ✅ Система работает стабильно, продолжайте мониторинг"
+    echo "   ✅ System is stable, continue monitoring"
 fi
 echo ""
 
-# 8. Сохранение результатов
-echo "💾 === СОХРАНЕНИЕ РЕЗУЛЬТАТОВ ==="
+# 8. Save results
+echo "💾 === SAVING RESULTS ==="
 report_file=".config-backup/monitoring/post-websocket-report-$(date +%Y%m%d-%H%M%S).txt"
 mkdir -p .config-backup/monitoring
 
 {
     echo "ERNI-KI Post-WebSocket Monitor Report"
-    echo "Дата: $(date)"
-    echo "WebSocket ошибки (30м): $websocket_errors_30m"
-    echo "SearXNG ошибки (1ч): $searxng_errors_1h"
-    echo "PostgreSQL FATAL (1ч): $postgres_fatal_1h"
-    echo "RAG результат: $rag_result"
-    echo "Healthy сервисы: $healthy_services/$total_services"
-    echo "Общая оценка: $total_score/100"
+    echo "Date: $(date)"
+    echo "WebSocket errors (30m): $websocket_errors_30m"
+    echo "SearXNG errors (1h): $searxng_errors_1h"
+    echo "PostgreSQL FATAL (1h): $postgres_fatal_1h"
+    echo "RAG result: $rag_result"
+    echo "Healthy services: $healthy_services/$total_services"
+    echo "Overall score: $total_score/100"
 } > "$report_file"
 
-print_status "INFO" "Отчет сохранен: $report_file"
+print_status "INFO" "Report saved: $report_file"
 echo ""
 
-echo "🎯 === АНАЛИЗ ЗАВЕРШЕН ==="
-echo "📈 Следующий запуск рекомендуется через 1 час"
-echo "🔄 Для автоматического мониторинга добавьте в crontab:"
+echo "🎯 === ANALYSIS COMPLETE ==="
+echo "📈 Next run recommended in 1 hour"
+echo "🔄 To automate, add to crontab:"
 echo "   0 * * * * cd /path/to/erni-ki && ./scripts/post-websocket-monitor.sh"
 echo ""
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Очистка и архивирование Alertmanager webhook-логов
+# Cleanup and archive Alertmanager webhook logs
 
 set -euo pipefail
 
@@ -19,13 +19,13 @@ log() {
 }
 
 if [[ ! -d "$WEBHOOK_DIR" ]]; then
-  log "Каталог $WEBHOOK_DIR не найден"
+  log "Directory $WEBHOOK_DIR not found"
   exit 0
 fi
 
 cutoff_epochs=$(date -d "-${RETENTION_DAYS} days" +%s)
 
-# Группируем файлы по дате из имени (alert_<severity>_YYYYMMDD_HHMMSS.json)
+# Group files by date from filename (alert_<severity>_YYYYMMDD_HHMMSS.json)
 find "$WEBHOOK_DIR" -maxdepth 1 -type f -name 'alert_*.json' -print0 | while IFS= read -r -d '' file; do
   base="$(basename "$file")"
   IFS='_' read -r prefix severity date_part time_part rest <<<"$base"
@@ -41,7 +41,7 @@ find "$WEBHOOK_DIR" -maxdepth 1 -type f -name 'alert_*.json' -print0 | while IFS
   mv "$file" "$bucket/" 2>/dev/null || true
 done
 
-# Упаковываем каталоги по датам и удаляем исходные файлы
+# Tar per-day buckets and remove originals
 shopt -s nullglob
 for day_dir in "${ARCHIVE_DIR}"/*; do
   [[ -d "$day_dir" ]] || continue
@@ -49,14 +49,14 @@ for day_dir in "${ARCHIVE_DIR}"/*; do
   archive_file="${ARCHIVE_DIR}/alert-${day}.tar.gz"
   if [[ -n "$(ls -A "$day_dir")" ]]; then
     tar -czf "$archive_file" -C "$day_dir" . && rm -rf "$day_dir"
-    log "Заархивированы вебхуки за ${day} → $(basename "$archive_file")"
+    log "Archived webhooks for ${day} → $(basename "$archive_file")"
   else
     rmdir "$day_dir"
   fi
 done
 shopt -u nullglob
 
-# Удаляем старые архивы
+# Remove old archives
 find "$ARCHIVE_DIR" -maxdepth 1 -type f -name 'alert-*.tar.gz' -mtime +"$ARCHIVE_RETENTION_DAYS" -print -delete
 
-log "Очистка завершена"
+log "Cleanup complete"
