@@ -316,7 +316,7 @@ jobs:
         run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${GITHUB_REPOSITORY,,}/auth:${GITHUB_REF_NAME#refs/heads/}" >> "${GITHUB_ENV}"
 
       - name: 🔍 Run Trivy on Docker image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.33.1
         continue-on-error: true
         with:
           image-ref: ${{ env.TRIVY_IMAGE_REF }}
