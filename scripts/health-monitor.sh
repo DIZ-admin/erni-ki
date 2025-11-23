@@ -273,7 +273,7 @@ check_disk_usage() {
 }
 
 check_logs() {
-  log "Анализ логов за последние 30 минут..."
+  log "Analyzing logs for the last 30 minutes..."
   local count
   local stream
   stream="$(compose logs --since "$LOG_WINDOW" 2>/dev/null | grep -i -E "(ERROR|FATAL|CRITICAL)" || true)"
@@ -285,11 +285,11 @@ check_logs() {
   count="$(echo "$stream" | sed '/^[[:space:]]*$/d' | wc -l || echo "0")"
 
   if [[ "$count" -eq 0 ]]; then
-    record_result "PASS" "Логи" "Критические ошибки не найдены"
+    record_result "PASS" "Logs" "No critical errors found"
   elif [[ "$count" -le 10 ]]; then
-    record_result "WARN" "Логи" "$count критических записей за 30 мин"
+    record_result "WARN" "Logs" "$count critical records in 30 minutes"
   else
-    record_result "FAIL" "Логи" "$count критических записей за 30 мин"
+    record_result "FAIL" "Logs" "$count critical records in 30 minutes"
   fi
 }
 
@@ -318,7 +318,7 @@ write_report() {
     echo "# ERNI-KI Health Report"
     echo "_${ts}_"
     echo ""
-    echo "| Статус | Проверка | Детали |"
+    echo "| Status | Check | Details |"
     echo "|--------|----------|--------|"
     for row in "${RESULTS[@]}"; do
       IFS='|' read -r status summary detail <<< "$row"

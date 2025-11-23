@@ -1,17 +1,17 @@
 #!/bin/bash
-# Скрипт настройки локального бэкапа ERNI-KI через Backrest
-# Создает репозиторий и план бэкапа для критических данных
+# Local backup setup script for ERNI-KI using Backrest
+# Creates repository and backup plan for critical data
 
 set -euo pipefail
 
-# Цвета для вывода
+# Color definitions for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функции логирования
+# Logging functions
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -29,88 +29,88 @@ error() {
     exit 1
 }
 
-# Конфигурация
+# Configuration
 BACKREST_URL="http://localhost:9898"
 REPO_ID="erni-ki-local"
 REPO_PATH="/backup-sources/.config-backup"
 PLAN_ID="erni-ki-critical-data"
 
-# Получение учетных данных
+# Retrieve credentials
 get_credentials() {
     if [ -f ".backrest_secrets" ]; then
         BACKREST_PASSWORD=$(grep "BACKREST_PASSWORD=" .backrest_secrets | cut -d'=' -f2)
         RESTIC_PASSWORD=$(grep "RESTIC_PASSWORD=" .backrest_secrets | cut -d'=' -f2)
 
         if [ -z "$BACKREST_PASSWORD" ] || [ -z "$RESTIC_PASSWORD" ]; then
-            error "Не удалось получить учетные данные из .backrest_secrets"
+            error "Failed to obtain credentials from .backrest_secrets"
         fi
 
-        success "Учетные данные загружены"
+        success "Credentials loaded"
     else
-        error "Файл .backrest_secrets не найден. Запустите сначала ./scripts/backrest-setup.sh"
+        error "File .backrest_secrets not found. Please run ./scripts/backrest-setup.sh first"
     fi
 }
 
-# Проверка доступности Backrest
+# Check Backrest availability
 check_backrest() {
-    log "Проверка доступности Backrest..."
+    log "Checking Backrest availability..."
 
     if ! curl -s -o /dev/null -w "%{http_code}" "$BACKREST_URL/" | grep -q "200"; then
-        error "Backrest недоступен по адресу $BACKREST_URL"
+        error "Backrest not reachable at $BACKREST_URL"
     fi
 
-    success "Backrest доступен"
+    success "Backrest is reachable"
 }
 
-# Создание репозитория через веб-интерфейс (инструкции)
+# Repository creation via web UI (instructions)
 create_repository_instructions() {
-    log "Создание локального репозитория..."
+    log "Creating local repository..."
 
     echo ""
-    echo "=== ИНСТРУКЦИИ ПО СОЗДАНИЮ РЕПОЗИТОРИЯ ==="
+    echo "=== INSTRUCTIONS FOR CREATING REPOSITORY ==="
     echo ""
-    echo "1. Откройте веб-интерфейс Backrest: $BACKREST_URL"
-    echo "2. Войдите с учетными данными:"
-    echo "   - Пользователь: admin"
-    echo "   - Пароль: $BACKREST_PASSWORD"
+    echo "1. Open the Backrest web interface: $BACKREST_URL"
+    echo "2. Log in with credentials:"
+    echo "   - User: admin"
+    echo "   - Password: $BACKREST_PASSWORD"
     echo ""
-    echo "3. Нажмите 'Add Repository' и заполните:"
+    echo "3. Click 'Add Repository' and fill in:"
     echo "   - Repository ID: $REPO_ID"
     echo "   - Repository URI: $REPO_PATH"
     echo "   - Password: $RESTIC_PASSWORD"
     echo ""
-    echo "4. В разделе 'Prune Policy' установите:"
-    echo "   - Schedule: 0 3 * * * (ежедневно в 3:00)"
+    echo "4. Set 'Prune Policy' section:"
+    echo "   - Schedule: 0 3 * * * (daily at 03:00)"
     echo "   - Max Unused Bytes: 1GB"
     echo ""
-    echo "5. В разделе 'Check Policy' установите:"
-    echo "   - Schedule: 0 4 * * 0 (еженедельно в воскресенье в 4:00)"
+    echo "5. Set 'Check Policy' section:"
+    echo "   - Schedule: 0 4 * * 0 (weekly on Sunday at 04:00)"
     echo ""
-    echo "6. Нажмите 'Create Repository'"
+    echo "6. Click 'Create Repository'"
     echo ""
 }
 
-# Создание плана бэкапа (инструкции)
+# Backup plan creation (instructions)
 create_backup_plan_instructions() {
-    log "Создание плана бэкапа..."
+    log "Creating backup plan..."
 
     echo ""
-    echo "=== ИНСТРУКЦИИ ПО СОЗДАНИЮ ПЛАНА БЭКАПА ==="
+    echo "=== INSTRUCTIONS FOR CREATING BACKUP PLAN ==="
     echo ""
-    echo "1. После создания репозитория нажмите 'Add Plan'"
+    echo "1. After creating the repository, click 'Add Plan'"
     echo ""
-    echo "2. Заполните основные настройки:"
+    echo "2. Fill in the main settings:"
     echo "   - Plan ID: $PLAN_ID"
     echo "   - Repository: $REPO_ID"
     echo ""
-    echo "3. В разделе 'Paths' добавьте:"
+    echo "3. Add paths in the 'Paths' section:"
     echo "   - /backup-sources/env"
     echo "   - /backup-sources/conf"
     echo "   - /backup-sources/data/postgres"
     echo "   - /backup-sources/data/openwebui"
     echo "   - /backup-sources/data/ollama"
     echo ""
-    echo "4. В разделе 'Excludes' добавьте:"
+    echo "4. Add excludes in the 'Excludes' section:"
     echo "   - *.log"
     echo "   - *.tmp"
     echo "   - **/cache/**"
@@ -118,250 +118,250 @@ create_backup_plan_instructions() {
     echo "   - **/.git/**"
     echo "   - **/node_modules/**"
     echo ""
-    echo "5. В разделе 'Schedule' установите:"
-    echo "   - Schedule: 0 2 * * * (ежедневно в 2:00)"
+    echo "5. Set schedule in the 'Schedule' section:"
+    echo "   - Schedule: 0 2 * * * (daily at 02:00)"
     echo ""
-    echo "6. В разделе 'Retention Policy' выберите 'Time-based' и установите:"
+    echo "6. In 'Retention Policy', select 'Time-based' and set:"
     echo "   - Keep Daily: 7"
     echo "   - Keep Weekly: 4"
     echo "   - Keep Monthly: 0"
     echo "   - Keep Yearly: 0"
     echo ""
-    echo "7. Нажмите 'Create Plan'"
+    echo "7. Click 'Create Plan'"
     echo ""
 }
 
-# Создание тестового бэкапа (инструкции)
+# Test backup creation (instructions)
 create_test_backup_instructions() {
-    log "Создание тестового бэкапа..."
+    log "Creating test backup..."
 
     echo ""
-    echo "=== ИНСТРУКЦИИ ПО СОЗДАНИЮ ТЕСТОВОГО БЭКАПА ==="
+    echo "=== INSTRUCTIONS FOR CREATING TEST BACKUP ==="
     echo ""
-    echo "1. После создания плана перейдите на страницу 'Plans'"
-    echo "2. Найдите план '$PLAN_ID'"
-    echo "3. Нажмите кнопку 'Backup Now' рядом с планом"
-    echo "4. Дождитесь завершения операции бэкапа"
-    echo "5. Проверьте, что в директории .config-backup/ появились файлы"
+    echo "1. After creating the plan, go to the 'Plans' page"
+    echo "2. Find the plan '$PLAN_ID'"
+    echo "3. Click the 'Backup Now' button next to the plan"
+    echo "4. Wait for the backup operation to complete"
+    echo "5. Verify that files appear in the .config-backup/ directory"
     echo ""
 }
 
-# Проверка созданного бэкапа
+# Verify created backup
 check_backup() {
-    log "Проверка созданного бэкапа..."
+    log "Verifying created backup..."
 
     if [ -d ".config-backup" ] && [ "$(ls -A .config-backup 2>/dev/null)" ]; then
-        success "Директория .config-backup содержит данные бэкапа"
-        echo "Содержимое директории:"
+        success "Directory .config-backup contains backup data"
+        echo "Directory contents:"
         ls -la .config-backup/
     else
-        warning "Директория .config-backup пуста или не содержит данных бэкапа"
-        echo "Убедитесь, что вы создали и запустили план бэкапа через веб-интерфейс"
+        warning "Directory .config-backup is empty or contains no backup data"
+        echo "Ensure you have created and run the backup plan via the web interface"
     fi
 }
 
-# Создание инструкций по восстановлению
+# Create restoration instructions
 create_restore_instructions() {
-    log "Создание инструкций по восстановлению..."
+    log "Creating restoration instructions..."
 
     cat > docs/local-backup-restore-guide.md << 'EOF'
-# Руководство по восстановлению из локального бэкапа ERNI-KI
+# Guide for restoring from local ERNI-KI backup
 
-## 🎯 Обзор
+## 🎯 Overview
 
-Данное руководство описывает процедуры восстановления данных из локального бэкапа, созданного с помощью Backrest в директории `.config-backup/`.
+This guide describes procedures for restoring data from a local backup created with Backrest in the `.config-backup/` directory.
 
-## 📋 Что включено в бэкап
+## 📋 What is included in the backup
 
-- **Конфигурационные файлы**: `env/` и `conf/`
-- **База данных PostgreSQL**: `data/postgres/`
-- **Данные Open WebUI**: `data/openwebui/`
-- **Модели Ollama**: `data/ollama/`
+- **Configuration files**: `env/` and `conf/`
+- **PostgreSQL database**: `data/postgres/`
+- **Open WebUI data**: `data/openwebui/`
+- **Ollama models**: `data/ollama/`
 
-## 🔧 Восстановление через веб-интерфейс Backrest
+## 🔧 Restoration via Backrest web interface
 
-### 1. Доступ к интерфейсу восстановления
+### 1. Access the restoration interface
 
-1. Откройте http://localhost:9898
-2. Войдите с учетными данными из `.backrest_secrets`
-3. Перейдите в раздел "Snapshots"
-4. Выберите нужный снапшот для восстановления
+1. Open http://localhost:9898
+2. Log in with credentials from `.backrest_secrets`
+3. Navigate to the "Snapshots" section
+4. Select the desired snapshot for restoration
 
-### 2. Восстановление отдельных файлов
+### 2. Restoring individual files
 
-1. В списке снапшотов нажмите "Browse"
-2. Навигируйте к нужным файлам
-3. Выберите файлы для восстановления
-4. Нажмите "Restore" и укажите путь назначения
+1. In the snapshots list, click "Browse"
+2. Navigate to the required files
+3. Select files for restoration
+4. Click "Restore" and specify the destination path
 
-### 3. Полное восстановление системы
+### 3. Full system restoration
 
-1. Остановите все сервисы ERNI-KI:
+1. Stop all ERNI-KI services:
    ```bash
    docker-compose down
    ```
 
-2. Создайте резервную копию текущих данных:
+2. Create a backup of current data:
    ```bash
    mv data data.backup.$(date +%Y%m%d_%H%M%S)
    mv env env.backup.$(date +%Y%m%d_%H%M%S)
    mv conf conf.backup.$(date +%Y%m%d_%H%M%S)
    ```
 
-3. Восстановите данные через Backrest веб-интерфейс:
-   - Выберите последний успешный снапшот
-   - Восстановите каждую директорию в соответствующее место
-   - Убедитесь, что права доступа корректны
+3. Restore data via Backrest web interface:
+    - Select the latest successful snapshot
+    - Restore each directory to its appropriate location
+    - Ensure file permissions are correct
 
-4. Запустите сервисы:
+4. Start services:
    ```bash
    docker-compose up -d
    ```
 
-## 🛠️ Восстановление через командную строку
+## 🛠️ Restoration via command line
 
-### 1. Прямое использование restic
+### 1. Direct use of restic
 
 ```bash
-# Установка переменных окружения
+# Set environment variables
 export RESTIC_REPOSITORY="/path/to/.config-backup"
 export RESTIC_PASSWORD="your_restic_password_from_.backrest_secrets"
 
-# Просмотр доступных снапшотов
+# View available snapshots
 restic snapshots
 
-# Восстановление конкретного снапшота
+# Restore a specific snapshot
 restic restore latest --target ./restore-temp
 
-# Восстановление конкретных файлов
+# Restore specific files
 restic restore latest --target ./restore-temp --include "*/env/*"
 ```
 
-### 2. Использование Docker контейнера Backrest
+### 2. Using the Backrest Docker container
 
 ```bash
-# Вход в контейнер Backrest
+# Enter the Backrest container
 docker-compose exec backrest sh
 
-# Внутри контейнера
+# Inside the container
 export RESTIC_REPOSITORY="/backup-sources/.config-backup"
 export RESTIC_PASSWORD="your_restic_password"
 
-# Просмотр снапшотов
+# View snapshots
 restic snapshots
 
-# Восстановление
+# Restoration
 restic restore latest --target /tmp/restore
 ```
 
-## 🚨 Процедуры экстренного восстановления
+## 🚨 Emergency recovery procedures
 
-### Сценарий 1: Потеря конфигурационных файлов
+### Scenario 1: Loss of configuration files
 
 ```bash
-# 1. Остановка сервисов
+# 1. Stop services
 docker-compose down
 
-# 2. Восстановление конфигураций
-# Через веб-интерфейс Backrest восстановите:
+# 2. Restore configurations
+# Use the Backrest web interface to restore:
 # - /backup-sources/env -> ./env
 # - /backup-sources/conf -> ./conf
 
-# 3. Проверка и запуск
+# 3. Verify and start
 docker-compose up -d
 ```
 
-### Сценарий 2: Повреждение базы данных
+### Scenario 2: Database corruption
 
 ```bash
-# 1. Остановка сервисов
+# 1. Stop services
 docker-compose down
 
-# 2. Резервное копирование поврежденной БД
+# 2. Backup the corrupted DB
 mv data/postgres data/postgres.corrupted.$(date +%Y%m%d_%H%M%S)
 
-# 3. Восстановление БД из бэкапа
-# Через Backrest восстановите /backup-sources/data/postgres -> ./data/postgres
+# 3. Restore DB from backup
+# Use Backrest to restore /backup-sources/data/postgres -> ./data/postgres
 
-# 4. Проверка прав доступа
+# 4. Verify permissions
 sudo chown -R 999:999 data/postgres
 
-# 5. Запуск сервисов
+# 5. Start services
 docker-compose up -d db
-# Дождитесь запуска БД, затем запустите остальные сервисы
+# Wait for the DB to start, then start other services
 docker-compose up -d
 ```
 
-### Сценарий 3: Потеря моделей Ollama
+### Scenario 3: Loss of Ollama models
 
 ```bash
-# 1. Остановка Ollama
+# 1. Stop Ollama
 docker-compose stop ollama
 
-# 2. Восстановление моделей
-# Через Backrest восстановите /backup-sources/data/ollama -> ./data/ollama
+# 2. Restore models
+# Use Backrest to restore /backup-sources/data/ollama -> ./data/ollama
 
-# 3. Проверка прав доступа
+# 3. Verify permissions
 sudo chown -R 1000:1000 data/ollama
 
-# 4. Запуск Ollama
+# 4. Start Ollama
 docker-compose start ollama
 ```
 
-## ✅ Проверка успешности восстановления
+## ✅ Verify successful restoration
 
-### 1. Проверка сервисов
+### 1. Verify services
 
 ```bash
-# Статус всех контейнеров
+# Status of all containers
 docker-compose ps
 
-# Проверка логов
+# Check logs
 docker-compose logs --tail=50
 ```
 
-### 2. Проверка функциональности
+### 2. Verify functionality
 
-1. **Open WebUI**: http://localhost (или ваш домен)
+1. **Open WebUI**: http://localhost (or your domain)
 2. **Backrest**: http://localhost:9898
-3. **База данных**:
+3. **Database**:
    ```bash
-   docker-compose exec db psql -U postgres -d openwebui -c "SELECT COUNT(*) FROM users;"
+    docker-compose exec db psql -U postgres -d openwebui -c "SELECT COUNT(*) FROM users;"
    ```
 
-### 3. Проверка данных
+### 3. Verify data
 
-- Убедитесь, что пользователи могут войти в систему
-- Проверьте доступность загруженных моделей Ollama
-- Убедитесь, что чаты и настройки сохранены
+- Ensure users can log in
+- Verify availability of loaded Ollama models
+- Ensure chats and settings are preserved
 
-## 📝 Рекомендации
+## 📝 Recommendations
 
-1. **Регулярное тестирование**: Проводите тестовое восстановление ежемесячно
-2. **Документирование**: Ведите журнал всех операций восстановления
-3. **Мониторинг**: Настройте алерты на неудачные бэкапы
-4. **Безопасность**: Храните пароли шифрования в безопасном месте
+1. **Regular testing**: Perform test restorations monthly
+2. **Documentation**: Keep a log of all restoration operations
+3. **Monitoring**: Set up alerts for failed backups
+4. **Security**: Store encryption passwords securely
 
-## 🆘 Поддержка
+## 🆘 Support
 
-При возникновении проблем с восстановлением:
+If you encounter restoration issues:
 
-1. Проверьте логи Backrest: `docker-compose logs backrest`
-2. Убедитесь в целостности бэкапа: `restic check`
-3. Обратитесь к документации Backrest: https://garethgeorge.github.io/backrest/
-4. Проверьте права доступа к файлам и директориям
+1. Check Backrest logs: `docker-compose logs backrest`
+2. Verify backup integrity: `restic check`
+3. Refer to Backrest documentation: https://garethgeorge.github.io/backrest/
+4. Check file and directory permissions
 
 ---
 
-**Важно**: Всегда создавайте резервную копию текущих данных перед восстановлением!
+**Important**: Always create a backup of current data before restoration!
 EOF
 
-    success "Создано руководство по восстановлению: docs/local-backup-restore-guide.md"
+    success "Restoration guide created: docs/local-backup-restore-guide.md"
 }
 
-# Основная функция
+# Main function
 main() {
-    log "Настройка локального бэкапа ERNI-KI..."
+    log "Setting up local ERNI-KI backup..."
 
     get_credentials
     check_backrest
@@ -371,18 +371,18 @@ main() {
     create_restore_instructions
 
     echo ""
-    success "Настройка локального бэкапа завершена!"
+    success "Local backup setup completed!"
     echo ""
-    warning "СЛЕДУЮЩИЕ ШАГИ:"
-    echo "1. Откройте веб-интерфейс Backrest: $BACKREST_URL"
-    echo "2. Следуйте инструкциям выше для создания репозитория и плана"
-    echo "3. Создайте тестовый бэкап"
-    echo "4. Проверьте содержимое директории .config-backup/"
+    warning "NEXT STEPS:"
+    echo "1. Open the Backrest web interface: $BACKREST_URL"
+    echo "2. Follow the above instructions to create the repository and plan"
+    echo "3. Create a test backup"
+    echo "4. Check the contents of the .config-backup/ directory"
     echo ""
-    echo "Учетные данные для входа:"
-    echo "- Пользователь: admin"
-    echo "- Пароль: $BACKREST_PASSWORD"
+    echo "Login credentials:"
+    echo "- User: admin"
+    echo "- Password: $BACKREST_PASSWORD"
 }
 
-# Запуск скрипта
+# Script entry point
 main "$@"
