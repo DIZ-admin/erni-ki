@@ -106,6 +106,9 @@ plugins:
             Monitoring: Monitoring
             "Monitoring Guide": Monitoring-Leitfaden
             "Monitoring Playbook": Monitoring-Runbook
+            "Documentation audit": "Dokumentations-Audit"
+            "Runbooks (DE summary)": "Runbooks (DE Kurzübersicht)"
+            "VERSION": "VERSION"
         - locale: en
           name: "English"
           nav_translations:
@@ -125,6 +128,9 @@ plugins:
             Monitoring: Monitoring
             "Monitoring Guide": "Monitoring Guide"
             "Monitoring Playbook": "Monitoring Playbook"
+            "Documentation audit": "Documentation audit"
+            "Runbooks (DE summary)": "Runbooks (DE summary)"
+            "VERSION": "VERSION"
   - git-revision-date-localized:
       type: datetime
       locale: ru
@@ -219,18 +225,6 @@ extra:
 nav:
   - Главная: index.md
   - Обзор платформы: overview.md
-  - Архитектура:
-      - Обзор: architecture/architecture.md
-  - Быстрый старт:
-      - "Установка": getting-started/installation.md
-      - "Пользователи": getting-started/user-guide.md
-      - "Доступ из интернета": getting-started/external-access-setup.md
-      - "Локальный DNS": getting-started/local-network-dns-setup.md
-      - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
-      - "Проброс портов": getting-started/port-forwarding-setup.md
-  - Операции:
-      - Admin Guide: operations/admin-guide.md
-  - Glossary: GLOSSARY.md
   - Быстрый старт:
       - "Установка": getting-started/installation.md
       - "Конфигурация": getting-started/configuration-guide.md
@@ -244,12 +238,14 @@ nav:
       - "Сервисы": architecture/services-overview.md
       - "Инвентаризация": architecture/service-inventory.md
       - Nginx configuration: architecture/nginx-configuration.md
+  - Glossary: GLOSSARY.md
   - Academy KI:
       - Обзор: academy/index.md
       - "Основы Open WebUI": academy/openwebui-basics.md
       - "Промптинг 101": academy/prompting-101.md
       - "HowTo":
           - Обзор: academy/howto/index.md
+          - "Создать тикет JIRA": academy/howto/create-jira-ticket.md
           - "Написать письмо клиенту": academy/howto/write-customer-email.md
           - "Резюме встречи": academy/howto/summarize-meeting-notes.md
           - "Создать тикет JIRA": academy/howto/create-jira-ticket-with-ai.md
@@ -272,6 +268,7 @@ nav:
       - CI health: operations/ci-health.md
       - GitHub governance: operations/github-governance.md
       - Monitoring audit: operations/monitoring-audit.md
+      - Documentation audit: operations/documentation-audit.md
       - Operations Handbook: operations/operations-handbook.md
       - Admin Guide: operations/admin-guide.md
       - Status page: operations/status-page.md
@@ -299,6 +296,7 @@ nav:
           - Service restart: operations/runbooks/service-restart-procedures.md
           - Alertmanager noise reduction: operations/runbooks/alertmanager-noise-reduction.md
           - Troubleshooting: operations/runbooks/troubleshooting-guide.md
+          - Runbooks (DE summary): operations/runbooks-de.md
       - Diagnostics:
           - Diagnostics Overview: operations/diagnostics/README.md
           - Diagnostic methodology: operations/diagnostics/erni-ki-diagnostic-methodology.md
@@ -326,6 +324,7 @@ nav:
       - Pre-commit hooks: reference/pre-commit-hooks.md
       - Documentation refactoring plan: reference/documentation-refactoring-plan.md
       - Status snippet: reference/status-snippet.md
+      - VERSION: VERSION.md
       - CHANGELOG: reference/CHANGELOG.md
 
   - Отчёты и архив:

@@ -1,19 +1,19 @@
 #!/bin/bash
 
 # ERNI-KI Nginx Optimization Fixes
-# Автоматическое применение оптимизаций из аудита от 25.08.2025
-# Версия: 1.0
+# Automated application of optimizations from 2025-08-25 audit
+# Version: 1.0
 
 set -euo pipefail
 
-# === Конфигурация ===
+# === Configuration ===
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 NGINX_CONF_DIR="$PROJECT_ROOT/conf/nginx"
 BACKUP_DIR="$PROJECT_ROOT/.config-backup/nginx-optimization-$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$PROJECT_ROOT/logs/nginx-optimization.log"
 
-# === Функции логирования ===
+# === Logging ===
 log() {
     echo "[$(date -Iseconds)] INFO: $*" | tee -a "$LOG_FILE"
 }
@@ -30,59 +30,59 @@ error() {
     echo "[$(date -Iseconds)] ERROR: $*" | tee -a "$LOG_FILE"
 }
 
-# === Создание директорий ===
+# === Ensure directories exist ===
 mkdir -p "$(dirname "$LOG_FILE")" "$BACKUP_DIR"
 
-# === Создание backup ===
+# === Create backup ===
 create_backup() {
-    log "Создание backup конфигурации nginx..."
+    log "Creating nginx configuration backup..."
 
     if cp -r "$NGINX_CONF_DIR" "$BACKUP_DIR/"; then
-        success "Backup создан: $BACKUP_DIR"
+        success "Backup created: $BACKUP_DIR"
         echo "$BACKUP_DIR" > "$PROJECT_ROOT/.config-backup/nginx-last-backup.txt"
     else
-        error "Не удалось создать backup"
+        error "Failed to create backup"
         exit 1
     fi
 }
 
-# === Проверка текущей конфигурации ===
+# === Validate current configuration ===
 check_current_config() {
-    log "Проверка текущей конфигурации nginx..."
+    log "Validating current nginx configuration..."
 
     if docker exec erni-ki-nginx-1 nginx -t >/dev/null 2>&1; then
-        success "Текущая конфигурация валидна"
+        success "Current configuration is valid"
     else
-        error "Текущая конфигурация содержит ошибки"
+        error "Current configuration has errors"
         docker exec erni-ki-nginx-1 nginx -t
         exit 1
     fi
 }
 
-# === Исправление 1: Добавление Gzip сжатия ===
+# === Fix 1: Add Gzip compression ===
 fix_gzip_compression() {
-    log "Исправление 1: Добавление Gzip сжатия в nginx.conf..."
+    log "Fix 1: Adding Gzip compression to nginx.conf..."
 
     local nginx_conf="$NGINX_CONF_DIR/nginx.conf"
 
-    # Проверяем, есть ли уже gzip настройки
+    # Skip if gzip already configured
     if grep -q "gzip on" "$nginx_conf"; then
-        warning "Gzip уже настроен в nginx.conf"
+        warning "Gzip already configured in nginx.conf"
         return 0
     fi
 
-    # Находим строку после которой вставить gzip настройки
+    # Find insertion line after mime.types
     local insert_line=$(grep -n "include /etc/nginx/mime.types;" "$nginx_conf" | cut -d: -f1)
 
     if [[ -z "$insert_line" ]]; then
-        error "Не найдена строка для вставки gzip настроек"
+        error "Insertion point for gzip settings not found"
         return 1
     fi
 
-    # Создаем временный файл с gzip настройками
+    # Temporary gzip settings
     cat > /tmp/gzip_config.txt << 'EOF'
 
-    # Gzip сжатие для оптимизации производительности
+    # Gzip compression for performance
     gzip on;
     gzip_vary on;
     gzip_min_length 1024;
@@ -100,214 +100,214 @@ fix_gzip_compression() {
         image/svg+xml;
 EOF
 
-    # Вставляем gzip настройки после mime.types
+    # Insert gzip settings
     sed -i "${insert_line}r /tmp/gzip_config.txt" "$nginx_conf"
     rm /tmp/gzip_config.txt
 
-    success "Gzip сжатие добавлено в nginx.conf"
+    success "Gzip compression added to nginx.conf"
 }
 
-# === Исправление 2: Удаление дублирующихся WebSocket директив ===
+# === Fix 2: Remove duplicate WebSocket directives ===
 fix_websocket_duplication() {
-    log "Исправление 2: Удаление дублирующихся WebSocket директив..."
+    log "Fix 2: Removing duplicate WebSocket directives..."
 
     local default_conf="$NGINX_CONF_DIR/conf.d/default.conf"
 
-    # Проверяем наличие дублирования
+    # Check duplicates
     local websocket_count=$(grep -c "map \$http_upgrade \$connection_upgrade" "$default_conf" || echo "0")
 
     if [[ "$websocket_count" -eq 0 ]]; then
-        warning "WebSocket mapping не найден в default.conf"
+        warning "WebSocket mapping not found in default.conf"
         return 0
     fi
 
-    # Удаляем дублирующийся блок (строки 74-77)
+    # Remove duplicate block (lines 74-77)
     sed -i '74,77d' "$default_conf"
 
-    success "Дублирующиеся WebSocket директивы удалены"
+    success "Duplicate WebSocket directives removed"
 }
 
-# === Исправление 3: Принудительное добавление Security Headers ===
+# === Fix 3: Enforce security headers ===
 fix_security_headers() {
-    log "Исправление 3: Исправление Security Headers..."
+    log "Fix 3: Enforcing security headers..."
 
     local default_conf="$NGINX_CONF_DIR/conf.d/default.conf"
 
-    # Находим основной location / блок (около строки 804)
+    # Find main location / block (around line 804)
     local location_line=$(grep -n "location / {" "$default_conf" | head -1 | cut -d: -f1)
 
     if [[ -z "$location_line" ]]; then
-        error "Не найден основной location / блок"
+        error "Main location / block not found"
         return 1
     fi
 
-    # Находим строку с proxy_pass в этом блоке
+    # Locate proxy_pass within the block
     local proxy_line=$(sed -n "${location_line},/^[[:space:]]*}/p" "$default_conf" | grep -n "proxy_pass" | head -1 | cut -d: -f1)
 
     if [[ -z "$proxy_line" ]]; then
-        error "Не найдена строка proxy_pass в location /"
+        error "proxy_pass not found in location /"
         return 1
     fi
 
-    # Вычисляем абсолютную строку для вставки
+    # Absolute insertion line
     local insert_line=$((location_line + proxy_line))
 
-    # Создаем временный файл с security headers
+    # Temporary file with security headers
     cat > /tmp/security_headers.txt << 'EOF'
 
-        # Принудительное добавление security headers
+        # Enforce security headers
         add_header X-Frame-Options SAMEORIGIN always;
         add_header X-Content-Type-Options nosniff always;
         add_header X-XSS-Protection "1; mode=block" always;
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 EOF
 
-    # Вставляем security headers после proxy_pass
+    # Insert security headers after proxy_pass
     sed -i "${insert_line}r /tmp/security_headers.txt" "$default_conf"
     rm /tmp/security_headers.txt
 
-    success "Security headers исправлены"
+    success "Security headers inserted"
 }
 
-# === Исправление 4: Комментирование неиспользуемых upstream блоков ===
+# === Fix 4: Comment unused upstream blocks ===
 fix_unused_upstreams() {
-    log "Исправление 4: Комментирование неиспользуемых upstream блоков..."
+    log "Fix 4: Commenting unused upstream blocks..."
 
     local default_conf="$NGINX_CONF_DIR/conf.d/default.conf"
 
-    # Комментируем redisUpstream (если не используется)
+    # Comment redisUpstream (when unused)
     if grep -q "upstream redisUpstream" "$default_conf" && ! grep -q "proxy_pass.*redisUpstream" "$default_conf"; then
         sed -i '/upstream redisUpstream/,/^}/s/^/# /' "$default_conf"
-        success "redisUpstream закомментирован"
+        success "redisUpstream commented"
     fi
 
-    # Комментируем authUpstream (если не используется)
+    # Comment authUpstream (when unused)
     if grep -q "upstream authUpstream" "$default_conf" && ! grep -q "proxy_pass.*authUpstream" "$default_conf"; then
         sed -i '/upstream authUpstream/,/^}/s/^/# /' "$default_conf"
-        success "authUpstream закомментирован"
+        success "authUpstream commented"
     fi
 }
 
-# === Проверка новой конфигурации ===
+# === Validate new configuration ===
 test_new_config() {
-    log "Проверка новой конфигурации nginx..."
+    log "Validating new nginx configuration..."
 
     if docker exec erni-ki-nginx-1 nginx -t >/dev/null 2>&1; then
-        success "Новая конфигурация валидна"
+        success "New configuration is valid"
         return 0
     else
-        error "Новая конфигурация содержит ошибки:"
+        error "New configuration has errors:"
         docker exec erni-ki-nginx-1 nginx -t
         return 1
     fi
 }
 
-# === Применение изменений ===
+# === Apply changes ===
 apply_changes() {
-    log "Применение изменений без downtime..."
+    log "Applying changes without downtime..."
 
     if docker exec erni-ki-nginx-1 nginx -s reload; then
-        success "Nginx перезагружен успешно"
+        success "Nginx reloaded successfully"
     else
-        error "Ошибка при перезагрузке nginx"
+        error "Failed to reload nginx"
         return 1
     fi
 }
 
-# === Проверка результатов ===
+# === Verify fixes ===
 verify_fixes() {
-    log "Проверка результатов оптимизации..."
+    log "Verifying optimization results..."
 
-    # Проверка gzip
+    # Gzip check
     if curl -s -H "Accept-Encoding: gzip" -I http://localhost:8080/ | grep -q "Content-Encoding: gzip"; then
-        success "Gzip сжатие работает"
+        success "Gzip compression works"
     else
-        warning "Gzip сжатие не обнаружено"
+        warning "Gzip compression not detected"
     fi
 
-    # Проверка security headers
+    # Security headers check
     local headers_count=$(curl -s -I https://localhost:443/ -k | grep -E "(X-Frame-Options|X-Content-Type-Options|X-XSS-Protection|Strict-Transport-Security)" | wc -l)
 
     if [[ "$headers_count" -ge 3 ]]; then
-        success "Security headers работают ($headers_count из 4)"
+        success "Security headers present ($headers_count of 4)"
     else
-        warning "Security headers не все работают ($headers_count из 4)"
+        warning "Security headers incomplete ($headers_count of 4)"
     fi
 
-    # Проверка общей работоспособности
+    # General availability
     if curl -s -o /dev/null -w "%{http_code}" https://localhost:443/ -k | grep -q "200"; then
-        success "Основной сайт доступен"
+        success "Main site reachable"
     else
-        error "Основной сайт недоступен"
+        error "Main site unreachable"
     fi
 }
 
-# === Откат изменений ===
+# === Rollback changes ===
 rollback_changes() {
-    log "Откат изменений к предыдущей конфигурации..."
+    log "Rolling back to previous configuration..."
 
     local last_backup
     if [[ -f "$PROJECT_ROOT/.config-backup/nginx-last-backup.txt" ]]; then
         last_backup=$(cat "$PROJECT_ROOT/.config-backup/nginx-last-backup.txt")
     else
-        error "Не найден путь к последнему backup"
+        error "Path to last backup not found"
         return 1
     fi
 
     if [[ -d "$last_backup" ]]; then
         cp -r "$last_backup/nginx/"* "$NGINX_CONF_DIR/"
         docker exec erni-ki-nginx-1 nginx -s reload
-        success "Откат выполнен успешно"
+        success "Rollback completed successfully"
     else
-        error "Backup директория не найдена: $last_backup"
+        error "Backup directory not found: $last_backup"
         return 1
     fi
 }
 
-# === Основная функция ===
+# === Main function ===
 main() {
-    log "=== Запуск оптимизации Nginx ERNI-KI ==="
+    log "=== Starting ERNI-KI Nginx optimization ==="
 
-    # Проверка окружения
+    # Environment checks
     if ! docker ps | grep -q "erni-ki-nginx-1"; then
-        error "Контейнер erni-ki-nginx-1 не найден"
+        error "Container erni-ki-nginx-1 not found"
         exit 1
     fi
 
-    # Выполнение исправлений
+    # Apply fixes
     create_backup
     check_current_config
 
-    log "Применение исправлений..."
+    log "Applying fixes..."
     fix_gzip_compression
     fix_websocket_duplication
     fix_security_headers
     fix_unused_upstreams
 
-    # Проверка и применение
+    # Validate and apply
     if test_new_config; then
         apply_changes
         verify_fixes
 
-        log "=== Оптимизация завершена успешно ==="
-        log "Backup сохранен в: $BACKUP_DIR"
-        log "Для отката используйте: $0 --rollback"
+        log "=== Optimization completed successfully ==="
+        log "Backup saved to: $BACKUP_DIR"
+        log "For rollback use: $0 --rollback"
     else
-        error "Конфигурация содержит ошибки, откат..."
+        error "Configuration has errors, rolling back..."
         rollback_changes
         exit 1
     fi
 }
 
-# === Обработка аргументов ===
+# === Argument handling ===
 case "${1:-}" in
     --rollback)
         rollback_changes
         ;;
     --help)
-        echo "Использование: $0 [--rollback|--help]"
-        echo "  --rollback  Откат к предыдущей конфигурации"
-        echo "  --help      Показать эту справку"
+        echo "Usage: $0 [--rollback|--help]"
+        echo "  --rollback  Roll back to previous configuration"
+        echo "  --help      Show this help"
         ;;
     *)
         main "$@"

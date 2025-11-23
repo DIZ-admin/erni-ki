@@ -1,25 +1,25 @@
 #!/bin/bash
 # Nginx Enhanced Healthcheck Script
-# Проверяет не только HTTP статус, но и подключения к upstream серверам
-# Автор: ERNI-KI System
-# Дата: 2025-09-22
+# Checks HTTP status and upstream connectivity
+# Author: ERNI-KI System
+# Date: 2025-09-22
 
 set -e
 
-# Конфигурация
+# Configuration
 NGINX_PORT=80
 NGINX_SSL_PORT=443
 NGINX_API_PORT=8080
 TIMEOUT=5
 MAX_RETRIES=2
 
-# Цвета для логирования
+# Logging colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Функция логирования
+# Logging functions
 log() {
     echo -e "${GREEN}[$(date '+%Y-%m-%d %H:%M:%S')] HEALTHCHECK:${NC} $1"
 }
@@ -32,13 +32,13 @@ warning() {
     echo -e "${YELLOW}[$(date '+%Y-%m-%d %H:%M:%S')] HEALTHCHECK WARNING:${NC} $1" >&2
 }
 
-# Функция проверки HTTP статуса
+# HTTP status check
 check_http_status() {
     local url=$1
     local expected_code=${2:-200}
     local description=$3
 
-    log "Проверка $description: $url"
+    log "Checking $description: $url"
 
     local http_code
     http_code=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout $TIMEOUT --max-time $TIMEOUT "$url" 2>/dev/null || echo "000")
@@ -47,62 +47,62 @@ check_http_status() {
         log "✅ $description: HTTP $http_code"
         return 0
     else
-        error "❌ $description: HTTP $http_code (ожидался $expected_code)"
+        error "❌ $description: HTTP $http_code (expected $expected_code)"
         return 1
     fi
 }
 
-# Функция проверки TCP подключения
+# TCP connectivity check
 check_tcp_connection() {
     local host=$1
     local port=$2
     local description=$3
 
-    log "Проверка TCP подключения: $description ($host:$port)"
+    log "Checking TCP connectivity: $description ($host:$port)"
 
     if timeout $TIMEOUT bash -c "echo >/dev/tcp/$host/$port" 2>/dev/null; then
-        log "✅ $description: TCP подключение успешно"
+        log "✅ $description: TCP connection succeeded"
         return 0
     else
-        error "❌ $description: TCP подключение не удалось"
+        error "❌ $description: TCP connection failed"
         return 1
     fi
 }
 
-# Функция проверки DNS резолюции
+# DNS resolution check
 check_dns_resolution() {
     local hostname=$1
     local description=$2
 
-    log "Проверка DNS резолюции: $description ($hostname)"
+    log "Checking DNS resolution: $description ($hostname)"
 
     local ip
     ip=$(getent hosts "$hostname" 2>/dev/null | awk '{print $1}' | head -1)
 
     if [[ -n "$ip" && "$ip" != "127.0.0.1" ]]; then
-        log "✅ $description: DNS резолюция успешна ($hostname -> $ip)"
+        log "✅ $description: DNS resolution successful ($hostname -> $ip)"
         return 0
     else
-        error "❌ $description: DNS резолюция не удалась"
+        error "❌ $description: DNS resolution failed"
         return 1
     fi
 }
 
-# Функция проверки upstream сервера
+# Upstream server check
 check_upstream_server() {
     local hostname=$1
     local port=$2
     local service_name=$3
     local retry_count=0
 
-    log "Проверка upstream сервера: $service_name"
+    log "Checking upstream server: $service_name"
 
-    # Проверка DNS резолюции
+    # DNS resolution
     if ! check_dns_resolution "$hostname" "$service_name DNS"; then
         return 1
     fi
 
-    # Проверка TCP подключения с повторными попытками
+    # TCP connectivity with retries
     while [[ $retry_count -lt $MAX_RETRIES ]]; do
         if check_tcp_connection "$hostname" "$port" "$service_name TCP"; then
             return 0
@@ -110,23 +110,23 @@ check_upstream_server() {
 
         retry_count=$((retry_count + 1))
         if [[ $retry_count -lt $MAX_RETRIES ]]; then
-            warning "Повторная попытка $retry_count/$MAX_RETRIES для $service_name"
+            warning "Retry $retry_count/$MAX_RETRIES for $service_name"
             sleep 1
         fi
     done
 
-    error "❌ $service_name: Все попытки подключения не удались"
+    error "❌ $service_name: All connection attempts failed"
     return 1
 }
 
-# Основная функция проверки
+# Main check function
 main() {
-    log "🔍 Запуск расширенной проверки здоровья nginx"
+    log "🔍 Starting enhanced nginx healthcheck"
 
     local failed_checks=0
 
-    # 1. Проверка основных портов nginx
-    log "📡 Проверка портов nginx"
+    # 1. Check nginx core ports
+    log "📡 Checking nginx ports"
 
     if ! check_http_status "http://localhost:$NGINX_PORT/nginx_status" 200 "Nginx Status Page"; then
         ((failed_checks++))
@@ -136,56 +136,56 @@ main() {
         ((failed_checks++))
     fi
 
-    # 2. Проверка критических upstream серверов
-    log "🔗 Проверка upstream серверов"
+    # 2. Check critical upstream services
+    log "🔗 Checking upstream services"
 
-    # OpenWebUI - критический сервис
+    # OpenWebUI - critical service
     if ! check_upstream_server "openwebui" 8080 "OpenWebUI"; then
         ((failed_checks++))
     fi
 
-    # SearXNG - критический для RAG
-    # Проверка через Nginx proxy (SearXNG слушает только IPv6)
+    # SearXNG - critical for RAG
+    # Check via nginx proxy (SearXNG listens on IPv6 only)
     if ! check_http_status "http://localhost:8080/searxng/" 200 "SearXNG Proxy"; then
-        warning "⚠️  SearXNG недоступен напрямую (IPv6 binding), но proxy работает"
-        # Не увеличиваем failed_checks, т.к. proxy функционален
+        warning "⚠️  SearXNG not reachable directly (IPv6 binding), proxy works"
+        # Do not increment failed_checks since proxy is functional
     fi
 
-    # Ollama - критический AI сервис
+    # Ollama - critical AI service
     if ! check_upstream_server "ollama" 11434 "Ollama"; then
         ((failed_checks++))
     fi
 
-    # PostgreSQL - критическая база данных
+    # PostgreSQL - critical database
     if ! check_upstream_server "db" 5432 "PostgreSQL"; then
         ((failed_checks++))
     fi
 
-    # 3. Проверка функциональности proxy
-    log "🔄 Проверка функциональности proxy"
+    # 3. Proxy functionality
+    log "🔄 Checking proxy functionality"
 
-    # Проверка проксирования к OpenWebUI
+    # Proxy to OpenWebUI
     if ! check_http_status "http://localhost:$NGINX_API_PORT/" 200 "OpenWebUI Proxy"; then
         ((failed_checks++))
     fi
 
-    # Проверка проксирования к SearXNG
+    # Proxy to SearXNG
     if ! check_http_status "http://localhost:$NGINX_API_PORT/searxng/" 200 "SearXNG Proxy"; then
         ((failed_checks++))
     fi
 
-    # Итоговая оценка
+    # Final evaluation
     if [[ $failed_checks -eq 0 ]]; then
-        log "✅ Все проверки пройдены успешно! Nginx здоров."
+        log "✅ All checks passed! Nginx is healthy."
         exit 0
     elif [[ $failed_checks -le 2 ]]; then
-        warning "⚠️  Обнаружены незначительные проблемы ($failed_checks), но nginx функционален"
+        warning "⚠️  Minor issues detected ($failed_checks), nginx remains functional"
         exit 0
     else
-        error "❌ Критические проблемы обнаружены ($failed_checks). Требуется перезапуск nginx."
+        error "❌ Critical issues detected ($failed_checks). Nginx restart required."
         exit 1
     fi
 }
 
-# Запуск основной функции
+# Entry point
 main "$@"

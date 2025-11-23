@@ -1,56 +1,56 @@
-# cAdvisor Configuration для ERNI-KI
-# Мониторинг контейнеров Docker
+# cAdvisor Configuration for ERNI-KI
+# Docker container monitoring
 
-# === Основные настройки ===
-# Порт для веб-интерфейса
+# === Basics ===
+# Web UI port
 CADVISOR_PORT=8080
-# Интервал сбора метрик (секунды)
+# Metrics interval (seconds)
 CADVISOR_HOUSEKEEPING_INTERVAL=10s
-# Максимальное количество хранимых точек данных
+# Max housekeeping interval
 CADVISOR_MAX_HOUSEKEEPING_INTERVAL=15s
 
-# === Хранение данных ===
-# Время хранения данных в памяти (2 минуты)
+# === Storage ===
+# In-memory retention (2 minutes)
 CADVISOR_STORAGE_DURATION=2m0s
-# Отключить локальное хранение (используем Prometheus)
+# Disable local storage (Prometheus used)
 CADVISOR_DISABLE_METRICS=disk,network,tcp,udp,percpu,sched,process
 
-# === Docker настройки ===
-# Путь к Docker socket
+# === Docker ===
+# Docker socket path
 CADVISOR_DOCKER_SOCKET=/var/run/docker.sock
-# Только Docker контейнеры
+# Only Docker containers
 CADVISOR_DOCKER_ONLY=true
-# Включить Docker labels в метрики
+# Include Docker labels in metrics
 CADVISOR_STORE_CONTAINER_LABELS=true
 
-# === Производительность ===
-# Отключить сбор метрик файловой системы для производительности
+# === Performance ===
+# Disable heavy filesystem stats
 CADVISOR_DISABLE_ROOT_CGROUP_STATS=false
-# Включить профилирование
+# Enable profiling
 CADVISOR_PROFILING=false
-# Максимальное количество процессов для мониторинга
+# Max processes to monitor
 CADVISOR_MAX_PROCS=5000
 
-# === Логирование ===
-# Уровень логирования
+# === Logging ===
+# Log level
 CADVISOR_LOG_LEVEL=INFO
-# Логировать в stderr
+# Log to stderr
 CADVISOR_LOGTOSTDERR=true
 
-# === Безопасность ===
-# Отключить аутентификацию для внутренней сети
+# === Security ===
+# Disable auth for internal network
 CADVISOR_HTTP_AUTH_FILE=
-# Отключить HTTPS
+# Disable HTTPS
 CADVISOR_HTTP_DIGEST_FILE=
 
-# === Метрики ===
-# Включить метрики Prometheus
+# === Metrics ===
+# Prometheus endpoint
 CADVISOR_PROMETHEUS_ENDPOINT=/metrics
-# Отключить метрики, которые не нужны
+# Disable unused metrics
 CADVISOR_DISABLE_METRICS=percpu,sched,tcp,udp,disk,diskIO,accelerator
 
-# === Ресурсы ===
-# Ограничение памяти для cAdvisor
+# === Resources ===
+# Memory limit
 CADVISOR_MEMORY_LIMIT=256M
-# CPU лимит
+# CPU limit
 CADVISOR_CPU_LIMIT=0.5

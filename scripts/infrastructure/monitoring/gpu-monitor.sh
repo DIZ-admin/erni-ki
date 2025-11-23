@@ -1,8 +1,8 @@
 #!/bin/bash
-# Мониторинг GPU для ERNI-KI
-# Автор: Альтэон Шульц (Tech Lead)
+# GPU monitoring for ERNI-KI
+# Author: Alteon Schultz (Tech Lead)
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -11,22 +11,22 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# Функции логирования
+# Logging helpers
 log() { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
 success() { echo -e "${GREEN}✅ $1${NC}"; }
 warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 error() { echo -e "${RED}❌ $1${NC}"; }
 info() { echo -e "${CYAN}ℹ️  $1${NC}"; }
 
-# Проверка доступности nvidia-smi
+# Ensure nvidia-smi is available
 check_nvidia_smi() {
     if ! command -v nvidia-smi &> /dev/null; then
-        error "nvidia-smi не найден. Установите драйверы NVIDIA."
+        error "nvidia-smi not found. Please install NVIDIA drivers."
         exit 1
     fi
 }
 
-# Отображение информации о GPU
+# Display GPU info
 show_gpu_info() {
     echo -e "${PURPLE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
@@ -34,7 +34,7 @@ show_gpu_info() {
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
-    # Основная информация о GPU
+    # Basic GPU details
     local gpu_info=$(nvidia-smi --query-gpu=name,driver_version,memory.total,compute_cap --format=csv,noheader,nounits)
     local gpu_name=$(echo "$gpu_info" | cut -d, -f1 | tr -d ' ')
     local driver_version=$(echo "$gpu_info" | cut -d, -f2 | tr -d ' ')
@@ -42,27 +42,27 @@ show_gpu_info() {
     local compute_cap=$(echo "$gpu_info" | cut -d, -f4 | tr -d ' ')
 
     success "GPU: $gpu_name"
-    success "Драйвер: $driver_version"
-    success "Память: ${memory_total} MB"
+    success "Driver: $driver_version"
+    success "Memory: ${memory_total} MB"
     success "Compute Capability: $compute_cap"
     echo ""
 }
 
-# Мониторинг в реальном времени
+# Realtime monitoring
 monitor_realtime() {
     local interval=${1:-2}
 
-    echo -e "${CYAN}Мониторинг GPU (обновление каждые ${interval}s, Ctrl+C для выхода)${NC}"
+    echo -e "${CYAN}GPU monitoring (update every ${interval}s, Ctrl+C to exit)${NC}"
     echo ""
 
-    # Заголовок таблицы
+    # Table header
     printf "%-8s %-6s %-12s %-8s %-6s %-8s %-10s\n" "TIME" "GPU%" "MEMORY" "TEMP" "FAN" "POWER" "PROCESSES"
     echo "────────────────────────────────────────────────────────────────────────────"
 
     while true; do
         local timestamp=$(date +%H:%M:%S)
 
-        # Получение метрик GPU
+        # Read GPU metrics
         local gpu_util=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits)
         local mem_used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
         local mem_total=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits)
@@ -70,19 +70,19 @@ monitor_realtime() {
         local fan=$(nvidia-smi --query-gpu=fan.speed --format=csv,noheader,nounits)
         local power=$(nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits)
 
-        # Процессы, использующие GPU
+        # Processes using GPU
         local processes=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | wc -l)
 
-        # Форматирование памяти
+        # Memory formatting
         local mem_percent=$(echo "scale=0; $mem_used * 100 / $mem_total" | bc 2>/dev/null || echo "0")
         local mem_display="${mem_used}/${mem_total}MB"
 
-        # Цветовое кодирование
+        # Color coding
         local gpu_color=""
         local temp_color=""
         local power_color=""
 
-        # Цвет для загрузки GPU
+        # Color for GPU utilization
         if [ "$gpu_util" -gt 80 ]; then
             gpu_color="${RED}"
         elif [ "$gpu_util" -gt 50 ]; then
@@ -91,7 +91,7 @@ monitor_realtime() {
             gpu_color="${GREEN}"
         fi
 
-        # Цвет для температуры
+        # Color for temperature
         if [ "$temp" -gt 80 ]; then
             temp_color="${RED}"
         elif [ "$temp" -gt 70 ]; then
@@ -100,7 +100,7 @@ monitor_realtime() {
             temp_color="${GREEN}"
         fi
 
-        # Цвет для энергопотребления
+        # Color for power draw
         local power_int=$(echo "$power" | cut -d. -f1)
         if [ "$power_int" -gt 60 ]; then
             power_color="${RED}"
@@ -110,7 +110,7 @@ monitor_realtime() {
             power_color="${GREEN}"
         fi
 
-        # Вывод строки мониторинга
+        # Print monitoring line
         printf "%-8s ${gpu_color}%-6s${NC} %-12s ${temp_color}%-6s°C${NC} %-6s%% ${power_color}%-8sW${NC} %-10s\n" \
             "$timestamp" "${gpu_util}%" "$mem_display" "$temp" "$fan" "$power" "$processes"
 
@@ -118,7 +118,7 @@ monitor_realtime() {
     done
 }
 
-# Краткий статус
+# Short status
 show_status() {
     local gpu_util=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits)
     local mem_used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
@@ -127,85 +127,85 @@ show_status() {
     local power=$(nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits)
 
     echo "GPU Status:"
-    echo "  Загрузка: ${gpu_util}%"
-    echo "  Память: ${mem_used}/${mem_total} MB ($(echo "scale=0; $mem_used * 100 / $mem_total" | bc)%)"
-    echo "  Температура: ${temp}°C"
-    echo "  Энергопотребление: ${power}W"
+    echo "  Utilization: ${gpu_util}%"
+    echo "  Memory: ${mem_used}/${mem_total} MB ($(echo "scale=0; $mem_used * 100 / $mem_total" | bc)%)"
+    echo "  Temperature: ${temp}°C"
+    echo "  Power: ${power}W"
 
-    # Процессы
+    # Processes
     local processes=$(nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv,noheader)
     if [ -n "$processes" ]; then
-        echo "  Процессы:"
+        echo "  Processes:"
         echo "$processes" | while read line; do
             echo "    $line"
         done
     else
-        echo "  Процессы: Нет активных"
+        echo "  Processes: none"
     fi
 }
 
-# Проверка здоровья GPU
+# GPU health check
 health_check() {
     local issues=0
 
-    echo "Проверка здоровья GPU:"
+    echo "GPU health check:"
 
-    # Проверка температуры
+    # Temperature check
     local temp=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits)
     if [ "$temp" -gt 85 ]; then
-        error "Критическая температура: ${temp}°C"
+        error "Critical temperature: ${temp}°C"
         issues=$((issues + 1))
     elif [ "$temp" -gt 75 ]; then
-        warning "Высокая температура: ${temp}°C"
+        warning "High temperature: ${temp}°C"
     else
-        success "Температура в норме: ${temp}°C"
+        success "Temperature is within limits: ${temp}°C"
     fi
 
-    # Проверка энергопотребления
+    # Power draw check
     local power=$(nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits)
     local power_limit=$(nvidia-smi --query-gpu=power.limit --format=csv,noheader,nounits)
     local power_percent=$(echo "scale=0; $power * 100 / $power_limit" | bc)
 
     if [ "$power_percent" -gt 95 ]; then
-        warning "Высокое энергопотребление: ${power}W (${power_percent}%)"
+        warning "High power consumption: ${power}W (${power_percent}%)"
     else
-        success "Энергопотребление в норме: ${power}W (${power_percent}%)"
+        success "Power consumption is within limits: ${power}W (${power_percent}%)"
     fi
 
-    # Проверка памяти
+    # Memory usage check
     local mem_used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
     local mem_total=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits)
     local mem_percent=$(echo "scale=0; $mem_used * 100 / $mem_total" | bc)
 
     if [ "$mem_percent" -gt 90 ]; then
-        warning "Высокое использование памяти: ${mem_percent}%"
+        warning "High memory usage: ${mem_percent}%"
     else
-        success "Использование памяти в норме: ${mem_percent}%"
+        success "Memory usage is within limits: ${mem_percent}%"
     fi
 
-    # Проверка ошибок (ECC не поддерживается на Quadro P2200)
+    # ECC errors check (not supported on Quadro P2200)
     # local ecc_errors=$(nvidia-smi --query-gpu=ecc.errors.corrected.total --format=csv,noheader,nounits 2>/dev/null || echo "N/A")
     # if [[ "$ecc_errors" != "N/A" ]] && [[ "$ecc_errors" =~ ^[0-9]+$ ]] && [ "$ecc_errors" -gt 0 ]; then
-    #     warning "Обнаружены ECC ошибки: $ecc_errors"
+    #     warning "ECC errors detected: $ecc_errors"
     # fi
 
     if [ "$issues" -eq 0 ]; then
-        success "GPU работает нормально"
+        success "GPU is healthy"
         return 0
     else
-        error "Обнаружено $issues проблем с GPU"
+        error "$issues GPU issues detected"
         return 1
     fi
 }
 
-# Логирование в файл
+# Log to file
 log_to_file() {
     local logfile=${1:-"gpu_monitor.log"}
     local interval=${2:-60}
 
-    log "Запуск логирования GPU в файл: $logfile (интервал: ${interval}s)"
+    log "Starting GPU logging to file: $logfile (interval: ${interval}s)"
 
-    # Заголовок лог-файла
+    # Log header
     echo "timestamp,gpu_util,mem_used,mem_total,temp,fan,power,processes" > "$logfile"
 
     while true; do
@@ -224,29 +224,29 @@ log_to_file() {
     done
 }
 
-# Показать помощь
+# Help text
 show_help() {
-    echo "GPU Monitor для ERNI-KI"
+    echo "GPU Monitor for ERNI-KI"
     echo ""
-    echo "Использование: $0 [КОМАНДА] [ОПЦИИ]"
+    echo "Usage: $0 [COMMAND] [OPTIONS]"
     echo ""
-    echo "Команды:"
-    echo "  monitor [интервал]    - Мониторинг в реальном времени (по умолчанию: 2s)"
-    echo "  status               - Показать текущий статус GPU"
-    echo "  health               - Проверка здоровья GPU"
-    echo "  log [файл] [интервал] - Логирование в файл (по умолчанию: gpu_monitor.log, 60s)"
-    echo "  info                 - Показать информацию о GPU"
-    echo "  help                 - Показать эту справку"
+    echo "Commands:"
+    echo "  monitor [interval]   - Realtime monitoring (default: 2s)"
+    echo "  status               - Show current GPU status"
+    echo "  health               - GPU health check"
+    echo "  log [file] [interval]- Log metrics to file (default: gpu_monitor.log, 60s)"
+    echo "  info                 - Show GPU info"
+    echo "  help                 - Show this help"
     echo ""
-    echo "Примеры:"
-    echo "  $0 monitor           - Мониторинг каждые 2 секунды"
-    echo "  $0 monitor 5         - Мониторинг каждые 5 секунд"
-    echo "  $0 status            - Краткий статус"
-    echo "  $0 health            - Проверка здоровья"
-    echo "  $0 log gpu.log 30    - Логирование каждые 30 секунд"
+    echo "Examples:"
+    echo "  $0 monitor           - Monitor every 2 seconds"
+    echo "  $0 monitor 5         - Monitor every 5 seconds"
+    echo "  $0 status            - Short status"
+    echo "  $0 health            - Health check"
+    echo "  $0 log gpu.log 30    - Log every 30 seconds"
 }
 
-# Основная функция
+# Main function
 main() {
     check_nvidia_smi
 
@@ -274,7 +274,7 @@ main() {
             show_help
             ;;
         *)
-            error "Неизвестная команда: $1"
+            error "Unknown command: $1"
             echo ""
             show_help
             exit 1
@@ -282,8 +282,8 @@ main() {
     esac
 }
 
-# Обработка сигналов
-trap 'echo -e "\n${CYAN}Мониторинг остановлен${NC}"; exit 0' INT TERM
+# Signal handling
+trap 'echo -e "\n${CYAN}Monitoring stopped${NC}"; exit 0' INT TERM
 
-# Запуск
+# Launch
 main "$@"

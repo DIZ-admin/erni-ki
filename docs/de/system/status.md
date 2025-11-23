@@ -1,6 +1,6 @@
 ---
 page_id: system.status
-translation_status: partial
+translation_status: complete
 doc_version: '2025.02'
 ---
 
@@ -21,6 +21,6 @@ Status-Dashboard: **https://status.ki.erni-gruppe.ch** (Uptime Kuma).
 - Runbook & Eskalation:
   [`docs/operations/status-page.md`](../../operations/status-page.md)
 - Open WebUI Grundlagen:
-  [`docs/training/openwebui-basics.md`](../../training/openwebui-basics.md)
+  [`docs/academy/openwebui-basics.md`](../../academy/openwebui-basics.md)
 - Prompting-Checkliste:
-  [`docs/training/prompting-101.md`](../../training/prompting-101.md)
+  [`docs/academy/prompting-101.md`](../../academy/prompting-101.md)

@@ -1,7 +1,7 @@
 import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
 
 // Playwright E2E config for ERNI-KI OpenWebUI RAG
-// Рус: визуальные тесты (headless: false), расширенные таймауты и артефакты
+// Visual tests (headless: false), extended timeouts and artifacts
 
 const baseURL = process.env.PW_FORCE_HOST
   ? `https://${process.env.PW_FORCE_HOST}`
@@ -9,7 +9,7 @@ const baseURL = process.env.PW_FORCE_HOST
 
 const launchArgs: string[] = [];
 if (process.env.PW_SNI_HOST && process.env.PW_SNI_IP) {
-  // Принудительное SNI + резолв домена на нужный IP
+  // Force SNI and resolve the domain to the required IP
   launchArgs.push(`--host-resolver-rules=MAP ${process.env.PW_SNI_HOST} ${process.env.PW_SNI_IP}`);
 }
 

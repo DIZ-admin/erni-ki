@@ -30,21 +30,21 @@
    [status page](../operations/status-page.md) и убедитесь, что платформа в
    состоянии _Operational_.
 2. **Зайти в Open WebUI** — следуйте гайду
-   [Open WebUI basics](../training/openwebui-basics.md); используйте
+   [Open WebUI basics](../academy/openwebui-basics.md); используйте
    корпоративный аккаунт или данные от администратора.
 3. **Выбрать готовый сценарий** — начните с инструкций в разделе
-   [HowTo](../howto/write-customer-email-with-openwebui.md) или готовых шаблонов
-   из вашей команды.
+   [HowTo](../academy/howto/write-customer-email.md) или готовых шаблонов из
+   вашей команды.
 
 ## Обучающие треки
 
-- **Базовый уровень** — [Open WebUI basics](../training/openwebui-basics.md)
+- **Базовый уровень** — [Open WebUI basics](../academy/openwebui-basics.md)
   (вход, выбор модели, первые запросы).
 - **Навык формулирования запросов** —
-  [Prompting 101](../training/prompting-101.md) (шаблон ROLE + TASK + CONTEXT +
+  [Prompting 101](../academy/prompting-101.md) (шаблон ROLE + TASK + CONTEXT +
   FORMAT, примеры для офисных задач).
 - **Практика по сценариям** — пошаговые инструкции в разделе
-  [HowTo](../howto/write-customer-email-with-openwebui.md) и свежие обновления в
+  [HowTo](../academy/howto/write-customer-email.md) и свежие обновления в
   [News](../news/index.md).
 
 ## Ролевые сценарии и отделы
@@ -80,14 +80,14 @@
 ## Быстрые ссылки
 
 - О компании: [erni-gruppe.ch](https://www.erni-gruppe.ch/)
-- Академия и обучение: [Training](../training/openwebui-basics.md)
-- Пошаговые сценарии: [HowTo](../howto/write-customer-email-with-openwebui.md)
+- Академия и обучение: [Training](../academy/openwebui-basics.md)
+- Пошаговые сценарии: [HowTo](../academy/howto/write-customer-email.md)
 - Обновления платформы: [News](../news/index.md)
 
 ## Где получить помощь
 
 - Обновления и релизы — раздел [News](../news/index.md).
 - Частые шаги и подсказки — раздел
-  [HowTo](../howto/write-customer-email-with-openwebui.md).
+  [HowTo](../academy/howto/write-customer-email.md).
 - Обращение в поддержку — используйте внутренний канал/сервис-деск и приложите
   ссылку на статус и время проблемы.

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Автоматические отчеты о состоянии системы логгирования ERNI-KI
-# Фаза 3: Мониторинг и алертинг
+# Automated reports for ERNI-KI logging system
+# Phase 3: Monitoring and alerting
 # Version: 1.0 - Production Ready
 
 set -euo pipefail
 
 # ============================================================================
-# КОНФИГУРАЦИЯ
+# CONFIGURATION
 # ============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,7 +18,7 @@ PROMETHEUS_URL="http://localhost:9090"
 GRAFANA_URL="http://localhost:3000"
 FLUENT_BIT_URL="http://localhost:2020"
 
-# Создаем директорию для отчетов
+# Ensure report directory exists
 mkdir -p "$REPORTS_DIR"
 
 cron_status() {
@@ -33,11 +33,11 @@ CURRENT_JOB="logging_reports"
 trap 'cron_status "$CURRENT_JOB" failure "logging reports script failed"' ERR
 
 # ============================================================================
-# ФУНКЦИИ СБОРА МЕТРИК
+# METRIC COLLECTION FUNCTIONS
 # ============================================================================
 
 get_fluent_bit_metrics() {
-    echo "=== FLUENT BIT МЕТРИКИ ==="
+    echo "=== FLUENT BIT METRICS ==="
     curl -s "$FLUENT_BIT_URL/api/v1/metrics" | jq -r '
         "Input Records: " + (.input.["forward.0"].records | tostring),
         "Input Bytes: " + (.input.["forward.0"].bytes | tostring),
@@ -46,67 +46,67 @@ get_fluent_bit_metrics() {
         "Loki Errors: " + (.output.["loki.0"].errors | tostring),
         "Loki Retries: " + (.output.["loki.0"].retries | tostring),
         "Filter Efficiency: " + ((.output.["loki.0"].proc_records / .input.["forward.0"].records * 100) | floor | tostring) + "%"
-    ' 2>/dev/null || echo "Fluent Bit метрики недоступны"
+    ' 2>/dev/null || echo "Fluent Bit metrics unavailable"
 }
 
 get_service_health() {
-    echo "=== СТАТУС СЕРВИСОВ ЛОГГИРОВАНИЯ ==="
-    docker-compose ps --format "table {{.Name}}\t{{.Status}}" | grep -E "(fluent|loki|grafana|prometheus|alert)" || echo "Сервисы логгирования недоступны"
+    echo "=== LOGGING SERVICES STATUS ==="
+    docker-compose ps --format "table {{.Name}}\t{{.Status}}" | grep -E "(fluent|loki|grafana|prometheus|alert)" || echo "Logging services unavailable"
 }
 
 get_log_volume_stats() {
-    echo "=== СТАТИСТИКА ОБЪЕМА ЛОГОВ ==="
+    echo "=== LOG VOLUME STATS ==="
 
-    # Размеры директорий логов
-    echo "Размеры логов:"
-    du -sh logs/ .config-backup/logs/ 2>/dev/null || echo "Директории логов не найдены"
+    # Log directory sizes
+    echo "Log sizes:"
+    du -sh logs/ .config-backup/logs/ 2>/dev/null || echo "Log directories not found"
 
-    # Количество логов по сервисам за последний час
+    # Logs per service for the last hour
     echo ""
-    echo "Активность логгирования (последний час):"
+    echo "Logging activity (last hour):"
     for service in ollama nginx openwebui db searxng; do
         count=$(docker logs "erni-ki-${service}-1" --since=1h 2>/dev/null | wc -l)
-        echo "$service: $count записей"
+        echo "$service: $count entries"
     done
 }
 
 get_error_summary() {
-    echo "=== СВОДКА ОШИБОК ==="
+    echo "=== ERROR SUMMARY ==="
 
-    # Ошибки в критически важных сервисах
-    echo "Ошибки в критически важных сервисах (последние 24 часа):"
+    # Errors in critical services
+    echo "Critical services errors (last 24h):"
     for service in ollama nginx openwebui db; do
         errors=$(docker logs "erni-ki-${service}-1" --since=24h 2>/dev/null | grep -i error | wc -l)
         if [ "$errors" -gt 0 ]; then
-            echo "⚠️  $service: $errors ошибок"
+            echo "⚠️  $service: $errors errors"
         else
-            echo "✅ $service: без ошибок"
+            echo "✅ $service: no errors"
         fi
     done
 }
 
 get_performance_metrics() {
-    echo "=== МЕТРИКИ ПРОИЗВОДИТЕЛЬНОСТИ ==="
+    echo "=== PERFORMANCE METRICS ==="
 
-    # Использование ресурсов контейнерами логгирования
-    echo "Использование ресурсов:"
-    docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" | grep -E "(fluent|loki|grafana|prometheus)" || echo "Статистика недоступна"
+    # Resource usage by logging stack
+    echo "Resource usage:"
+    docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" | grep -E "(fluent|loki|grafana|prometheus)" || echo "Stats unavailable"
 }
 
 # ============================================================================
-# ГЕНЕРАЦИЯ ОТЧЕТОВ
+# REPORT GENERATION
 # ============================================================================
 
 generate_daily_report() {
     local report_date=$(date +%Y-%m-%d)
     local report_file="$REPORTS_DIR/daily-logging-report-$report_date.txt"
 
-    echo "Генерация ежедневного отчета: $report_file"
+    echo "Generating daily report: $report_file"
 
     cat > "$report_file" << EOF
-# ЕЖЕДНЕВНЫЙ ОТЧЕТ О СИСТЕМЕ ЛОГГИРОВАНИЯ ERNI-KI
-# Дата: $(date '+%Y-%m-%d %H:%M:%S')
-# Система: $(hostname)
+# DAILY LOGGING REPORT FOR ERNI-KI
+# Date: $(date '+%Y-%m-%d %H:%M:%S')
+# Host: $(hostname)
 
 $(get_service_health)
 
@@ -119,15 +119,15 @@ $(get_error_summary)
 $(get_performance_metrics)
 
 # ============================================================================
-# РЕКОМЕНДАЦИИ
+# RECOMMENDATIONS
 # ============================================================================
 
 EOF
 
-    # Добавляем рекомендации на основе метрик
+    # Add recommendations based on metrics
     add_recommendations "$report_file"
 
-    echo "✅ Ежедневный отчет создан: $report_file"
+    echo "✅ Daily report created: $report_file"
     cron_status "logging_reports_daily" success "Report $report_file"
 }
 
@@ -135,58 +135,58 @@ generate_weekly_report() {
     local report_date=$(date +%Y-W%U)
     local report_file="$REPORTS_DIR/weekly-logging-report-$report_date.txt"
 
-    echo "Генерация еженедельного отчета: $report_file"
+    echo "Generating weekly report: $report_file"
 
     cat > "$report_file" << EOF
-# ЕЖЕНЕДЕЛЬНЫЙ ОТЧЕТ О СИСТЕМЕ ЛОГГИРОВАНИЯ ERNI-KI
-# Неделя: $(date '+%Y-W%U (%Y-%m-%d)')
-# Система: $(hostname)
+# WEEKLY LOGGING REPORT FOR ERNI-KI
+# Week: $(date '+%Y-W%U (%Y-%m-%d)')
+# Host: $(hostname)
 
-## СВОДКА ЗА НЕДЕЛЮ
+## WEEKLY SUMMARY
 
 $(get_service_health)
 
 $(get_fluent_bit_metrics)
 
-## ТРЕНДЫ И АНАЛИЗ
+## TRENDS AND ANALYSIS
 
 $(analyze_weekly_trends)
 
-## РЕКОМЕНДАЦИИ ПО ОПТИМИЗАЦИИ
+## OPTIMIZATION RECOMMENDATIONS
 
 EOF
 
     add_weekly_recommendations "$report_file"
 
-    echo "✅ Еженедельный отчет создан: $report_file"
+    echo "✅ Weekly report created: $report_file"
     cron_status "logging_reports_weekly" success "Report $report_file"
 }
 
 add_recommendations() {
     local report_file="$1"
 
-    # Анализируем метрики и добавляем рекомендации
+    # Analyze metrics and append recommendations
     local fluent_errors=$(curl -s "$FLUENT_BIT_URL/api/v1/metrics" 2>/dev/null | jq -r '.output.["loki.0"].errors // 0')
     local log_count=$(docker logs erni-ki-ollama-1 --since=1h 2>/dev/null | wc -l)
 
     echo "" >> "$report_file"
 
     if [ "$fluent_errors" -gt 0 ]; then
-        echo "⚠️  ВНИМАНИЕ: Обнаружены ошибки доставки в Fluent Bit ($fluent_errors). Проверьте подключение к Loki." >> "$report_file"
+        echo "⚠️  WARNING: Fluent Bit delivery errors detected ($fluent_errors). Check connectivity to Loki." >> "$report_file"
     fi
 
     if [ "$log_count" -gt 1000 ]; then
-        echo "📊 ИНФОРМАЦИЯ: Высокая активность логгирования Ollama ($log_count записей/час). Рассмотрите оптимизацию уровня логгирования." >> "$report_file"
+        echo "📊 INFO: High Ollama logging activity ($log_count entries/hour). Consider reducing log verbosity." >> "$report_file"
     fi
 
-    echo "✅ СТАТУС: Система логгирования функционирует в штатном режиме." >> "$report_file"
+    echo "✅ STATUS: Logging system operates normally." >> "$report_file"
 }
 
 analyze_weekly_trends() {
-    echo "Анализ трендов за неделю:"
-    echo "- Средний объем логов: $(du -sh logs/ 2>/dev/null | cut -f1 || echo 'N/A')"
-    echo "- Количество перезапусков Fluent Bit: $(docker logs erni-ki-fluent-bit --since=7d 2>/dev/null | grep -c 'Starting' || echo '0')"
-    echo "- Критические ошибки: $(docker logs erni-ki-fluent-bit --since=7d 2>/dev/null | grep -c 'ERROR' || echo '0')"
+    echo "Weekly trend analysis:"
+    echo "- Average log volume: $(du -sh logs/ 2>/dev/null | cut -f1 || echo 'N/A')"
+    echo "- Fluent Bit restarts: $(docker logs erni-ki-fluent-bit --since=7d 2>/dev/null | grep -c 'Starting' || echo '0')"
+    echo "- Critical errors: $(docker logs erni-ki-fluent-bit --since=7d 2>/dev/null | grep -c 'ERROR' || echo '0')"
 }
 
 add_weekly_recommendations() {
@@ -194,28 +194,28 @@ add_weekly_recommendations() {
 
     cat >> "$report_file" << EOF
 
-1. **Производительность**: Мониторинг показывает стабильную работу системы логгирования
-2. **Оптимизация**: Рассмотрите архивирование логов старше 30 дней
-3. **Безопасность**: Проверьте фильтрацию чувствительных данных в логах
-4. **Мониторинг**: Все алерты настроены и функционируют корректно
+1. **Performance**: Monitoring indicates stable logging operations
+2. **Optimization**: Consider archiving logs older than 30 days
+3. **Security**: Ensure sensitive data is filtered from logs
+4. **Monitoring**: All alerts are configured and functioning
 
-## СЛЕДУЮЩИЕ ДЕЙСТВИЯ
+## NEXT STEPS
 
-- [ ] Проверить использование дискового пространства
-- [ ] Обновить правила ротации логов при необходимости
-- [ ] Провести тестирование системы алертов
-- [ ] Оптимизировать производительность при высокой нагрузке
+- [ ] Review disk usage
+- [ ] Update log rotation rules if needed
+- [ ] Test alerting system
+- [ ] Optimize performance under high load
 
 EOF
 }
 
 # ============================================================================
-# ОСНОВНАЯ ЛОГИКА
+# MAIN LOGIC
 # ============================================================================
 
 main() {
-    echo "🚀 Запуск генерации отчетов о системе логгирования ERNI-KI"
-    echo "Время: $(date)"
+    echo "🚀 Generating ERNI-KI logging system reports"
+    echo "Time: $(date)"
     echo ""
 
     case "${1:-daily}" in
@@ -234,15 +234,15 @@ main() {
             generate_weekly_report
             ;;
         *)
-            echo "Использование: $0 [daily|weekly|both]"
+            echo "Usage: $0 [daily|weekly|both]"
             exit 1
             ;;
     esac
 
     echo ""
-    echo "📁 Отчеты сохранены в: $REPORTS_DIR"
-    echo "🎉 Генерация отчетов завершена успешно!"
+    echo "📁 Reports stored in: $REPORTS_DIR"
+    echo "🎉 Report generation completed successfully!"
 }
 
-# Запуск скрипта
+# Script entry
 main "$@"

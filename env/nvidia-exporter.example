@@ -1,63 +1,63 @@
-# NVIDIA GPU Exporter Configuration для ERNI-KI
-# Мониторинг GPU метрик для Prometheus
+# NVIDIA GPU Exporter Configuration for ERNI-KI
+# GPU metrics for Prometheus
 
-# === Основные настройки ===
-# Порт для метрик
+# === Basics ===
+# Metrics port
 NVIDIA_EXPORTER_WEB_LISTEN_ADDRESS=0.0.0.0:9445
-# Путь к метрикам
+# Metrics path
 NVIDIA_EXPORTER_WEB_TELEMETRY_PATH=/metrics
 
-# === GPU настройки ===
-# Интервал сбора метрик GPU (секунды)
+# === GPU settings ===
+# GPU metrics interval (seconds)
 NVIDIA_EXPORTER_QUERY_INTERVAL=5
-# Включить детальные метрики процессов
+# Include process field names
 NVIDIA_EXPORTER_QUERY_FIELD_NAMES=AUTO
-# Включить метрики температуры
+# Include temperature metrics
 NVIDIA_EXPORTER_QUERY_GPU_TEMP=true
 
-# === Метрики ===
-# Собирать метрики использования GPU
+# === Metrics ===
+# Collect GPU utilization
 NVIDIA_EXPORTER_COLLECT_GPU_UTILIZATION=true
-# Собирать метрики памяти GPU
+# Collect GPU memory
 NVIDIA_EXPORTER_COLLECT_GPU_MEMORY=true
-# Собирать метрики температуры
+# Collect GPU temperature
 NVIDIA_EXPORTER_COLLECT_GPU_TEMPERATURE=true
-# Собирать метрики энергопотребления
+# Collect GPU power
 NVIDIA_EXPORTER_COLLECT_GPU_POWER=true
-# Собирать метрики процессов на GPU
+# Collect GPU process metrics
 NVIDIA_EXPORTER_COLLECT_GPU_PROCESSES=true
 
-# === Производительность ===
-# Таймаут для запросов к nvidia-ml
+# === Performance ===
+# nvidia-ml query timeout
 NVIDIA_EXPORTER_NVIDIA_ML_TIMEOUT=5s
-# Максимальное количество одновременных запросов
+# Max concurrent requests
 NVIDIA_EXPORTER_MAX_CONCURRENT_REQUESTS=10
 
-# === Логирование ===
-# Уровень логирования
+# === Logging ===
+# Log level
 NVIDIA_EXPORTER_LOG_LEVEL=info
-# Формат логов
+# Log format
 NVIDIA_EXPORTER_LOG_FORMAT=logfmt
-# Логировать в stdout
+# Output to stdout
 NVIDIA_EXPORTER_LOG_OUTPUT=stdout
 
-# === Безопасность ===
-# Отключить аутентификацию для внутренней сети
+# === Security ===
+# Disable auth (internal network)
 NVIDIA_EXPORTER_WEB_CONFIG_FILE=
-# Отключить TLS
+# Disable TLS
 NVIDIA_EXPORTER_WEB_TLS_CERT_FILE=
 NVIDIA_EXPORTER_WEB_TLS_KEY_FILE=
 
 # === NVIDIA Runtime ===
-# Видимые GPU устройства
+# Visible GPUs
 NVIDIA_VISIBLE_DEVICES=all
-# Возможности драйвера
+# Driver capabilities
 NVIDIA_DRIVER_CAPABILITIES=compute,utility,monitoring
 
-# === Специфичные метрики ===
-# Включить метрики для профессиональных GPU
+# === Specific metrics ===
+# Enable metrics for pro GPUs
 NVIDIA_EXPORTER_COLLECT_QUADRO_METRICS=true
-# Мониторинг ECC ошибок
+# ECC error monitoring
 NVIDIA_EXPORTER_COLLECT_ECC_ERRORS=true
 # Метрики производительности
 NVIDIA_EXPORTER_COLLECT_PERFORMANCE_STATE=true

@@ -1,18 +1,18 @@
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // Настройки тестирования для проекта erni-ki
+  // Test settings for the erni-ki project
   test: {
-    // Глобальные настройки
+    // Global settings
     globals: true,
     environment: 'node',
 
-    // Покрытие кода - цель ≥90%
+    // Code coverage target: ≥90%
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
-      // Показываем реальный layout (unit/integration + shared setup)
+      // Keep real layout (unit/integration + shared setup)
       include: ['tests/unit/**/*.{ts,js}', 'tests/integration/**/*.{ts,js}', 'tests/setup.ts'],
       exclude: [
         'node_modules/**',
@@ -21,7 +21,7 @@ export default defineConfig({
         'coverage/**',
         '**/*.config.*',
         '**/*.d.ts',
-        'auth/**', // Go код тестируется отдельно
+        'auth/**', // Go code tested separately
         'data/**',
         'logs/**',
         'docs/**',
@@ -37,19 +37,19 @@ export default defineConfig({
           statements: 90,
         },
       },
-      // Vitest 4.0: coverage.all удален, используем coverage.include вместо этого
+      // Vitest 4.0: coverage.all removed; use coverage.include instead
       skipFull: false,
     },
 
-    // Настройки выполнения тестов
+    // Execution settings
     testTimeout: 10000,
     hookTimeout: 10000,
     teardownTimeout: 5000,
 
-    // Паттерны для поиска тестов
+    // Test discovery patterns
     include: ['tests/unit/**/*.{test,spec}.{ts,js}', 'tests/integration/**/*.{test,spec}.{ts,js}'],
 
-    // Исключаем E2E тесты (они запускаются через Playwright)
+    // Exclude E2E tests (run via Playwright)
     exclude: [
       'node_modules/**',
       'dist/**',
@@ -57,61 +57,61 @@ export default defineConfig({
       'auth/**',
       'data/**',
       'logs/**',
-      'tests/e2e/**', // E2E тесты запускаются через Playwright
+      'tests/e2e/**', // E2E tests run via Playwright
       'playwright-report/**',
       'playwright-artifacts/**',
     ],
 
-    // Настройки репортеров
+    // Reporters
     reporters: ['verbose', 'json', 'html'],
     outputFile: {
       json: './coverage/test-results.json',
       html: './coverage/test-results.html',
     },
 
-    // Настройки для параллельного выполнения
-    // Vitest 4.0: poolOptions удален, все опции теперь top-level
+    // Parallel execution
+    // Vitest 4.0: poolOptions removed; all options are now top-level
     pool: 'threads',
-    isolate: true, // Изоляция между тестами (было в poolOptions.threads.isolate)
-    // singleThread: false эквивалентно maxWorkers > 1 (по умолчанию)
+    isolate: true, // Isolation between tests (previously poolOptions.threads.isolate)
+    // singleThread: false equals maxWorkers > 1 (default)
 
-    // Настройки для мокирования
+    // Mocking settings
     mockReset: true,
     clearMocks: true,
     restoreMocks: true,
 
-    // Настройки для работы с TypeScript
+    // TypeScript settings
     typecheck: {
       enabled: true,
       tsconfig: './tsconfig.json',
     },
 
-    // Настройки окружения для тестов
+    // Test environment variables
     env: {
       NODE_ENV: 'test',
       VITEST: 'true',
     },
 
-    // Настройки для работы с файлами конфигурации
+    // Configuration setup files
     setupFiles: ['./tests/setup.ts'],
 
-    // Настройки для работы с глобальными переменными
+    // Global setup
     globalSetup: ['./tests/global-setup.ts'],
   },
 
-  // Настройки разрешения модулей
+  // Module resolution
   resolve: {
     alias: {
       '@': './types',
     },
   },
 
-  // Настройки для работы с различными типами файлов
+  // File handling
   define: {
     __TEST__: true,
   },
 
-  // Настройки для оптимизации
+  // Dependency optimization
   optimizeDeps: {
     include: ['vitest/globals'],
   },

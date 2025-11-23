@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-ERNI-KI Webhook Receiver для обработки алертов
-Обрабатывает уведомления от Alertmanager и отправляет их в различные каналы
+ERNI-KI Webhook Receiver for alert handling.
+Processes Alertmanager notifications and forwards them to various channels.
 """
 
 import json
@@ -12,7 +12,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from typing import Dict, List, Any
 
-# Настройка логирования
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -21,20 +21,20 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Конфигурация из переменных окружения
+# Configuration from environment variables
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK_URL', '')
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL', '')
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', '')
 
 class AlertProcessor:
-    """Обработчик алертов с поддержкой различных каналов уведомлений"""
+    """Alert processor with multi-channel notification support."""
 
     def __init__(self):
         self.severity_colors = {
-            'critical': 0xFF0000,  # Красный
-            'warning': 0xFFA500,   # Оранжевый
-            'info': 0x0099FF       # Синий
+            'critical': 0xFF0000,  # Red
+            'warning': 0xFFA500,   # Orange
+            'info': 0x0099FF       # Blue
         }
 
         self.severity_emojis = {
@@ -44,7 +44,7 @@ class AlertProcessor:
         }
 
     def process_alerts(self, alerts_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Обработка входящих алертов"""
+        """Process incoming alerts payload."""
         try:
             alerts = alerts_data.get('alerts', [])
             group_labels = alerts_data.get('groupLabels', {})
@@ -72,17 +72,17 @@ class AlertProcessor:
             return {'error': str(e)}
 
     def _process_single_alert(self, alert: Dict[str, Any], group_labels: Dict[str, Any]):
-        """Обработка одного алерта"""
+        """Process a single alert."""
         labels = alert.get('labels', {})
         annotations = alert.get('annotations', {})
         status = alert.get('status', 'unknown')
 
-        # Определение серьезности
+        # Severity determination
         severity = labels.get('severity', 'info')
         service = labels.get('service', 'unknown')
         category = labels.get('category', 'general')
 
-        # Создание сообщения
+        # Message creation
         message_data = {
             'alert_name': labels.get('alertname', 'Unknown Alert'),
             'severity': severity,
@@ -96,7 +96,7 @@ class AlertProcessor:
             'group_labels': group_labels
         }
 
-        # Отправка уведомлений
+        # Sending notifications
         if DISCORD_WEBHOOK_URL:
             self._send_discord_notification(message_data)
 
@@ -107,7 +107,7 @@ class AlertProcessor:
             self._send_telegram_notification(message_data)
 
     def _send_discord_notification(self, message_data: Dict[str, Any]):
-        """Отправка уведомления в Discord"""
+        """Send Discord notification."""
         try:
             severity = message_data['severity']
             emoji = self.severity_emojis.get(severity, 'ℹ️')
@@ -119,22 +119,22 @@ class AlertProcessor:
                 "color": color,
                 "fields": [
                     {
-                        "name": "🔧 Service / Сервис",
+                        "name": "🔧 Service",
                         "value": message_data['service'],
                         "inline": True
                     },
                     {
-                        "name": "📊 Category / Категория",
+                        "name": "📊 Category",
                         "value": message_data['category'],
                         "inline": True
                     },
                     {
-                        "name": "🎯 Instance / Экземпляр",
+                        "name": "🎯 Instance",
                         "value": message_data['instance'],
                         "inline": True
                     },
                     {
-                        "name": "📝 Description / Описание",
+                        "name": "📝 Description",
                         "value": message_data['description'],
                         "inline": False
                     }
@@ -159,7 +159,7 @@ class AlertProcessor:
             logger.error(f"Failed to send Discord notification: {e}")
 
     def _send_slack_notification(self, message_data: Dict[str, Any]):
-        """Отправка уведомления в Slack"""
+        """Send Slack notification."""
         try:
             severity = message_data['severity']
             emoji = self.severity_emojis.get(severity, 'ℹ️')
@@ -210,7 +210,7 @@ class AlertProcessor:
             logger.error(f"Failed to send Slack notification: {e}")
 
     def _send_telegram_notification(self, message_data: Dict[str, Any]):
-        """Отправка уведомления в Telegram"""
+        """Send Telegram notification."""
         try:
             severity = message_data['severity']
             emoji = self.severity_emojis.get(severity, 'ℹ️')
@@ -245,12 +245,12 @@ class AlertProcessor:
         except Exception as e:
             logger.error(f"Failed to send Telegram notification: {e}")
 
-# Инициализация процессора алертов
+# Alert processor initialization
 alert_processor = AlertProcessor()
 
 @app.route('/webhook/critical', methods=['POST'])
 def handle_critical_webhook():
-    """Обработка критических алертов"""
+    """Handle critical alerts"""
     try:
         data = request.get_json()
         if not data:
@@ -271,7 +271,7 @@ def handle_critical_webhook():
 
 @app.route('/webhook/warning', methods=['POST'])
 def handle_warning_webhook():
-    """Обработка предупреждающих алертов"""
+    """Handle warning alerts"""
     try:
         data = request.get_json()
         if not data:
