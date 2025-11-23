@@ -20,7 +20,7 @@ configuration files checked into the repository.
 | Alerting      | Alertmanager single instance with HTTP-only webhooks and SMTP placeholders (`conf/alertmanager/alertmanager.yml:4-150`).                                | Notifications never leave the cluster; cron scripts auto-restart services instead of paging humans.    |
 | Logging       | Fluent Bit → Loki pipeline (`compose.yml:983-1024`, `conf/fluent-bit/fluent-bit.conf:10-200`, `conf/loki/loki-config.yaml:1-48`).                       | HTTP servers bound to `0.0.0.0`, filters drop entire classes of events, Loki auth disabled.            |
 | Automation    | Host-level cron jobs & watchdog scripts (`conf/cron/logging-reports.cron:5-27`, `scripts/monitoring/alertmanager-queue-watch.sh:1-62`).                 | Cron outputs to `/var/log`, watchdogs restart services on thresholds without incident context.         |
-| Documentation | `docs/operations/monitoring-guide.md`, `docs/archive/config-backup/*.md`.                                                                               | Guide enumerates exporters & scripts but lacks objective health scoring/SLO references.                |
+| Documentation | `docs/operations/monitoring/monitoring-guide.md`, `docs/archive/config-backup/*.md`.                                                                    | Guide enumerates exporters & scripts but lacks objective health scoring/SLO references.                |
 
 ## 2. Key Findings
 
@@ -63,7 +63,8 @@ compliance/log retention obligations, and attack surface for lateral movement.
   triggers `docker compose restart alertmanager`
   (`scripts/monitoring/alertmanager-queue-watch.sh:54-60`).
 - The Monitoring Guide touts watchdog scripts but doesn’t define on-call
-  expectations or SLO breaches (`docs/operations/monitoring-guide.md:18-43`).
+  expectations or SLO breaches
+  (`docs/operations/monitoring/monitoring-guide.md:18-43`).
 
 **Impact:** Critical outages can be silently “auto-remediated” without
 visibility, and no one is paged if cron jobs or webhooks fail.
@@ -144,9 +145,9 @@ logs, and exposure of log data to untrusted clients.
 - Cron definitions write to `/var/log/erni-ki-*.log` but there is no
   rotation/alerting for these host logs (`conf/cron/logging-reports.cron:5-27`).
   Failures silently accumulate.
-- Runbook references (`docs/operations/monitoring-guide.md:18-43`) highlight
-  scripts but do not state how results are reviewed or filed (no ticket
-  automation, no dashboards summarizing cron health).
+- Runbook references (`docs/operations/monitoring/monitoring-guide.md:18-43`)
+  highlight scripts but do not state how results are reviewed or filed (no
+  ticket automation, no dashboards summarizing cron health).
 - Monitoring reports live under `docs/archive/config-backup` and require manual
   refresh; there is no CI/CD check verifying they match the current config.
 
@@ -170,7 +171,7 @@ accumulates, creating compliance and audit risk.
 | **0 – Stabilize & Secure**                   | Week 1    | Reduce blast radius, stop silent failures.                  | Disable Prom admin/admin APIs, restrict Fluent Bit/Loki endpoints, raise Fluent Bit disk buffer to 10–20 GB, wire Alertmanager to Slack + PagerDuty, add “cron freshness” alert using node_exporter textfile.                                                                                      |
 | **1 – Coverage & Instrumentation**           | Weeks 2–3 | Close blind spots for document/LLM services.                | Build lightweight `/metrics` shims for Docling/Tika/EdgeTTS/LiteLLM, re-enable Fluent Bit Prometheus scrape, add synthetic workflows (doc upload, inference request) via blackbox exporter, update Grafana datasource metadata + dashboards for Prometheus 3.x, define RED/USE panels per service. |
 | **2 – Data Durability & Observability SLOs** | Weeks 3–4 | Ensure monitoring data survives incidents and ties to SLOs. | Introduce remote_write → VictoriaMetrics/Thanos, snapshot Prometheus/Loki volumes before watchtower updates, migrate Loki to object storage with auth, define availability/error-budget SLOs per key service and map existing alerts to them.                                                      |
-| **3 – Automation & Governance**              | Weeks 4–5 | Make scripts auditable and runbook-driven.                  | Replace host cron tasks with containerized systemd timers or GitHub workflows, publish watchdog outputs to Grafana, add CI job verifying docs vs config, document alert owners/escalations in `docs/operations/monitoring-guide.md` + link from Alertmanager annotations.                          |
+| **3 – Automation & Governance**              | Weeks 4–5 | Make scripts auditable and runbook-driven.                  | Replace host cron tasks with containerized systemd timers or GitHub workflows, publish watchdog outputs to Grafana, add CI job verifying docs vs config, document alert owners/escalations in `docs/operations/monitoring/monitoring-guide.md` + link from Alertmanager annotations.               |
 | **4 – Continuous Improvement**               | Ongoing   | Keep parity with best practices.                            | Add unit tests for alert rules (promtool), adopt `monitoring` GitHub label for changes, schedule quarterly chaos tests (simulate exporter crashes/queue stalls) and record learnings.                                                                                                              |
 
 ## 4. Next Steps
@@ -179,8 +180,9 @@ accumulates, creating compliance and audit risk.
    tasks (hardening, alert delivery, evidence metrics).
 2. Socialize this report with Ops/ML teams; agree on owners for each phase and
    attach timeline to the ERNI-KI project board.
-3. Once Phase 0 completes, update `docs/operations/monitoring-guide.md` with the
-   new architecture diagram and embed SLO dashboards.
+3. Once Phase 0 completes, update
+   `docs/operations/monitoring/monitoring-guide.md` with the new architecture
+   diagram and embed SLO dashboards.
 
 ---
 

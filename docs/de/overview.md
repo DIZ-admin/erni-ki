@@ -201,7 +201,7 @@ docker compose exec ollama ollama pull llama3.2:3b
   `scripts/docs/update_status_snippet.py` ausführen, damit deutsche und
   russische Fassungen synchron bleiben.
 - Für detaillierte Runbooks und Monitoring-Schritte nutzen Sie die englischen
-  Originale unter `docs/operations/runbooks/` und
+  Originale unter `docs/operations/` und
   `docs/operations/monitoring/monitoring-guide.md`.
 
 ```bash

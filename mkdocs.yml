@@ -422,12 +422,15 @@ nav:
       - "Overview": operations/README.md
       - Core:
           - "Operations Handbook": operations/core/operations-handbook.md
+          - "Runbooks Summary": operations/core/runbooks-summary.md
           - "Admin Guide": operations/core/admin-guide.md
           - "Status Page": operations/core/status-page.md
           - "GitHub Governance": operations/core/github-governance.md
           - "Configuration Changes": operations/core/configuration-change-process.md
       - Monitoring:
+          - "Monitoring Overview": operations/monitoring.md
           - "Monitoring Guide": operations/monitoring/monitoring-guide.md
+          - "Monitoring Troubleshooting v2": operations/monitoring-troubleshooting-v2.md
           - "Grafana Dashboards": operations/monitoring/grafana-dashboards-guide.md
           - "Prometheus Alerts Guide": operations/monitoring/prometheus-alerts-guide.md
           - "Prometheus Queries Reference": operations/monitoring/prometheus-queries-reference.md
@@ -440,11 +443,13 @@ nav:
           - "Docker Cleanup": operations/automation/docker-cleanup-guide.md
           - "Docker Log Rotation": operations/automation/docker-log-rotation.md
       - Maintenance:
+          - "Backup Guide": operations/backup-guide.md
           - "Image Upgrade Checklist": operations/maintenance/image-upgrade-checklist.md
           - "Service Restart": operations/maintenance/service-restart-procedures.md
           - "Backup & Restore": operations/maintenance/backup-restore-procedures.md
           - "Docling Shared Volume": operations/maintenance/docling-shared-volume.md
       - Troubleshooting:
+          - "Troubleshooting Overview": operations/troubleshooting.md
           - "Troubleshooting Guide": operations/troubleshooting/troubleshooting-guide.md
       - Database:
           - "Overview": operations/database/README.md
@@ -456,7 +461,8 @@ nav:
           - "VLLM Optimization": operations/database/vllm-resource-optimization.md
       - Diagnostics:
           - "Diagnostics Overview": operations/diagnostics/README.md
-          - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
+      - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
+  - "Data & Storage": data/README.md
   - Security:
       - "Overview": security/README.md
       - "Security Policy": security/security-policy.md

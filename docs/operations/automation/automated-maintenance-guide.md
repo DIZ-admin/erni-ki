@@ -133,7 +133,7 @@ journalctl -u cron --since "1 day ago"
 
 ## 5. Связанная документация
 
-- [Admin Guide](../admin-guide.md) - Администрирование системы
+- [Admin Guide](../core/admin-guide.md) - Администрирование системы
 - [Monitoring Guide](../monitoring/monitoring-guide.md) - Мониторинг и алерты
 - [Docker Cleanup Guide](docker-cleanup-guide.md) - Детальные процедуры очистки
 - [Docker Log Rotation](docker-log-rotation.md) - Управление логами

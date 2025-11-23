@@ -10,7 +10,7 @@ doc_version: '2025.11'
 
 Use when you have raw notes or chat logs and need a concise summary with next
 steps. If Open WebUI is slow, see the
-[status page](../../operations/status-page.md) before retrying.
+[status page](../../operations/core/status-page.md) before retrying.
 
 ## Step-by-step
 

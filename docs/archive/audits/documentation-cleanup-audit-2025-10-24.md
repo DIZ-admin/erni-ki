@@ -70,8 +70,8 @@ doc_version: '2025.11'
    - **Дата:** 2025-08-29
    - **Размер:** 16KB
    - **Версия:** 5.1 (устаревшая)
-   - **Причина:** Полностью дублирует docs/operations/admin-guide.md (версия
-     8.0, более актуальная)
+   - **Причина:** Полностью дублирует docs/operations/core/admin-guide.md
+     (версия 8.0, более актуальная)
    - **Ценность:** Нулевая (есть актуальная версия admin-guide.md)
    - **Действие:** Архивировать и удалить
    - **Примечание:** admin-guide.md содержит все обновления + новые разделы
@@ -79,7 +79,8 @@ doc_version: '2025.11'
 5. **docs/operations/monitoring-troubleshooting-v2.md**
    - **Дата:** 2025-09-19
    - **Размер:** 16KB
-   - **Причина:** Информация интегрирована в docs/operations/monitoring-guide.md
+   - **Причина:** Информация интегрирована в
+     docs/operations/monitoring/monitoring-guide.md
    - **Ценность:** Низкая (дублирует monitoring-guide.md)
    - **Действие:** Архивировать и удалить
    - **Примечание:** monitoring-guide.md более comprehensive и актуальный
@@ -126,7 +127,7 @@ doc_version: '2025.11'
 | nginx-configuration.md    | 2025-09-11 | ~16KB  | ✅ Актуален |
 | pre-commit-hooks.md       | 2025-09-11 | ~8KB   | ✅ Актуален |
 
-### Runbooks (docs/operations/runbooks/)
+### Runbooks (docs/operations/)
 
 | Файл                            | Дата       | Статус      |
 | ------------------------------- | ---------- | ----------- |

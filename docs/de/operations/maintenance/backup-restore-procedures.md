@@ -11,5 +11,5 @@ audience: 'administrators'
 
 # Backup-Anleitung (DE)
 
-Verweise auf `docs/operations/automated-maintenance-guide.md` und
+Verweise auf `docs/operations/automation/automated-maintenance-guide.md` und
 `docs/operations/maintenance/backup-restore-procedures.md`.
