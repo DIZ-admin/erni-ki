@@ -1,9 +1,11 @@
 ---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
 title: 'architecture'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: ru
 ---
 
 # 🏗️ Архитектура системы ERNI-KI

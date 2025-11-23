@@ -1,3 +1,9 @@
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+---
+
 # Getting Started with ERNI-KI
 
 This directory contains essential guides for installing, configuring, and using

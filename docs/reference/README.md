@@ -1,3 +1,9 @@
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+---
+
 # Reference Documentation
 
 This directory contains technical reference materials for developers and

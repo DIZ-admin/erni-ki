@@ -2,6 +2,7 @@
 language: ru
 page_id: howto.summarize-meeting-notes
 translation_status: complete
+doc_version: '2025.11'
 ---
 
 # Суммировать заметки встречи

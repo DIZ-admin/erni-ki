@@ -2,6 +2,7 @@
 language: de
 page_id: academy.howto.index
 translation_status: outdated
+doc_version: '2025.11'
 ---
 
 # HowTo
