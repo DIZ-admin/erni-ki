@@ -14,6 +14,10 @@ components:
   postgres: "17"
   redis: 7-alpine
 coverage:
-  german: 90%
-  russian: 100%
-  english: 45%
+  russian: 100% # 77 files (~660 KB) — canonical source
+  german: 30% # 23 files (~110 KB) — core docs only; operations/security/reference missing
+  english: 15% # 11 files (~5 KB) — academy only; technical docs missing
+
+notes:
+  de: "Основные пользовательские и архитектурные документы переведены. Operations, security, reference — в процессе."
+  en: "Базовая академия переведена. Требуется перевод технической документации (operations, security, reference)."
