@@ -831,7 +831,7 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | .name'
 
 - [Prometheus Alerts Guide](prometheus-alerts-guide.md) - Detailed alert
   documentation
-- [Admin Guide](admin-guide.md) - Alert management procedures
+- [Admin Guide](../core/admin-guide.md) - Alert management procedures
 
 ## 📈 Performance Optimization
 
@@ -911,8 +911,9 @@ curl -H 'X-Scope-OrgID: erni-ki' \
 
 ## 🔗 Related Documentation
 
-- [Admin Guide](admin-guide.md) - System administration
-- [Architecture](../architecture/architecture.md) - System architecture
-- [Installation Guide](../getting-started/installation.md) - Setup instructions
+- [Admin Guide](../core/admin-guide.md) - System administration
+- [Architecture](../../architecture/architecture.md) - System architecture
+- [Installation Guide](../../getting-started/installation.md) - Setup
+  instructions
 - [Troubleshooting](../database/database-troubleshooting.md) - Problem
   resolution
