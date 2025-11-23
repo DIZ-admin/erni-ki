@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """
 ERNI-KI Webhook Receiver
-Простой webhook receiver для обработки алертов от Alertmanager
+Simple webhook receiver for Alertmanager alerts
 """
 
 import json
 import logging
 import os
+from pathlib import Path
 from datetime import datetime
 from flask import Flask, request, jsonify
-from pathlib import Path
+from subprocess import CalledProcessError, run
 
 # Logging configuration
 logging.basicConfig(
@@ -24,6 +25,7 @@ app = Flask(__name__)
 WEBHOOK_PORT = int(os.getenv('WEBHOOK_PORT', 9093))
 LOG_DIR = Path('/app/logs')
 LOG_DIR.mkdir(exist_ok=True)
+RECOVERY_DIR = Path(os.getenv('RECOVERY_DIR', '/app/scripts/recovery'))
 
 def save_alert_to_file(alert_data, alert_type='general'):
     """Save alert to file for further processing"""
@@ -75,13 +77,13 @@ def handle_critical_alert(alert):
 
     # Automatic actions can be added here:
     # - Send SMS/email
-    # - Run recovery scripts
     # - Notifications to Slack/Teams
+    # - Recovery scripts per service
 
-    # Automatic recovery for critical services
-    # TODO: Implement recovery scripts in scripts/recovery/ (see issue #XXX)
     if service in ['ollama', 'openwebui', 'searxng']:
-        logger.info(f"Critical service {service} requires attention - manual intervention needed")
+        run_recovery_script(service)
+    else:
+        logger.info(f"Service {service} has no recovery script configured; manual intervention may be required")
 
 def handle_gpu_alert(alert):
     """GPU alert handling"""
@@ -94,6 +96,30 @@ def handle_gpu_alert(alert):
     # Special handling for GPU temperature
     if component == 'nvidia' and 'temperature' in labels.get('alertname', '').lower():
         logger.warning("GPU temperature alert - consider reducing workload")
+
+
+def run_recovery_script(service: str) -> None:
+    """Execute recovery script for a critical service if available."""
+    script_path = RECOVERY_DIR / f"{service}-recovery.sh"
+
+    if not script_path.exists():
+        logger.warning(f"No recovery script found for {service} at {script_path}")
+        return
+
+    if not os.access(script_path, os.X_OK):
+        logger.warning(f"Recovery script for {service} is not executable: {script_path}")
+        return
+
+    try:
+        logger.info(f"Running recovery script for {service}: {script_path}")
+        result = run([str(script_path)], check=True, capture_output=True, text=True)
+        logger.info("Recovery script output:\n%s", result.stdout)
+        if result.stderr:
+            logger.warning("Recovery script stderr:\n%s", result.stderr)
+    except CalledProcessError as exc:
+        logger.error("Recovery script failed for %s (exit %s): %s", service, exc.returncode, exc.stderr)
+    except Exception as exc:
+        logger.error("Unexpected error executing recovery script for %s: %s", service, exc)
 
 @app.route('/health', methods=['GET'])
 def health_check():
