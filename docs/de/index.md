@@ -1,8 +1,8 @@
 ---
 language: de
 page_id: site.home
-translation_status: complete
-doc_version: '2025.02'
+translation_status: outdated
+doc_version: '2025.11'
 ---
 
 # ERNI Academy KI

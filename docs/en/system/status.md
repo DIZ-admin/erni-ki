@@ -1,8 +1,8 @@
 ---
 language: en
 page_id: system.status
-translation_status: complete
-doc_version: '2025.02'
+translation_status: outdated
+doc_version: '2025.11'
 ---
 
 # System status
