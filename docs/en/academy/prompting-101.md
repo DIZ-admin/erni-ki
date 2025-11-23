@@ -1,4 +1,5 @@
 ---
+language: en
 page_id: academy.prompting-101
 translation_status: outdated
 ---

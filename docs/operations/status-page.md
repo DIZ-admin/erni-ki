@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # ERNI-KI status page (Uptime Kuma)
 
 A friendly status page shows whether ERNI-KI services are up, degraded, or under

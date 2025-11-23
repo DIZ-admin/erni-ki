@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 🧹 Comprehensive Documentation Cleanup Audit - ERNI-KI
 
 **Date:** 2025-10-24  

@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Инциденты и remediation отчёты
 
 | Файл                                       | Событие / remediation                                               |

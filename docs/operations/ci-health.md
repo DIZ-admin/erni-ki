@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # CI Health Log — GitHub Actions context fixes
 
 _Last updated: 2025-11-17_

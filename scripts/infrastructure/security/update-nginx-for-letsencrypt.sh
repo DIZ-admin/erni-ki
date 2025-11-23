@@ -1,322 +1,158 @@
 #!/bin/bash
 
-# ERNI-KI Nginx Configuration Update for Let's Encrypt
-# Author: Alteon Schultz (Tech Lead)
-# Version: 1.0
-# Date: 2025-08-11
-# Purpose: Update configuration nginx for using Let's Encrypt certificates
+# ERNI-KI Nginx Configuration Update for Let's Encrypt certificates
 
 set -euo pipefail
 
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Logging functions
-log() {
-    echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO:${NC} $1"
-}
-
-success() {
-    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS:${NC} $1"
-}
-
-warning() {
-    echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING:${NC} $1"
-}
-
-error() {
-    echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR:${NC} $1"
-    exit 1
-}
-
-# Configuration
 PROJECT_ROOT="$(pwd)"
 NGINX_CONF_DIR="$PROJECT_ROOT/conf/nginx"
 NGINX_DEFAULT_CONF="$NGINX_CONF_DIR/conf.d/default.conf"
 SSL_DIR="$NGINX_CONF_DIR/ssl"
 BACKUP_DIR="$PROJECT_ROOT/.config-backup/nginx-letsencrypt-$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$PROJECT_ROOT/logs/nginx-letsencrypt-update.log"
+DOMAIN="ki.erni-gruppe.ch"
 
-# Creating директорий
-mkdir -p "$(dirname "$LOG_FILE")"
-mkdir -p "$BACKUP_DIR"
+mkdir -p "$(dirname "$LOG_FILE")" "$BACKUP_DIR"
 
-# Check текущей конфигурации
+log()      { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO:${NC} $1" | tee -a "$LOG_FILE"; }
+success()  { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS:${NC} $1" | tee -a "$LOG_FILE"; }
+warning()  { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING:${NC} $1" | tee -a "$LOG_FILE"; }
+error_out(){ echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR:${NC} $1" | tee -a "$LOG_FILE"; exit 1; }
+
 check_current_config() {
-    log "Check текущей конфигурации nginx..."
+    log "Inspecting existing nginx configuration..."
+    [[ -f "$NGINX_DEFAULT_CONF" ]] || error_out "nginx config not found: $NGINX_DEFAULT_CONF"
 
-    if [ ! -f "$NGINX_DEFAULT_CONF" ]; then
-        error "File конфигурации nginx не найден: $NGINX_DEFAULT_CONF"
-    fi
-
-    # Check SSL настроек
-    if grep -q "ssl_certificate.*nginx-fullchain.crt" "$NGINX_DEFAULT_CONF"; then
-        success "Configuration уже настроена for Let's Encrypt (fullchain)"
-    elif grep -q "ssl_certificate.*nginx.crt" "$NGINX_DEFAULT_CONF"; then
-        warning "Configuration использует простой сертификат, требуется обновление"
+    if grep -q "ssl_certificate .*nginx-fullchain.crt" "$NGINX_DEFAULT_CONF"; then
+        success "Configuration already references nginx-fullchain.crt"
+    elif grep -q "ssl_certificate .*nginx.crt" "$NGINX_DEFAULT_CONF"; then
+        warning "Configuration still references nginx.crt"
         return 1
     else
-        error "SSL конфигурация не найдена в nginx"
+        error_out "SSL configuration missing in nginx default config"
     fi
 
-    # Check OCSP stapling
     if grep -q "ssl_stapling on" "$NGINX_DEFAULT_CONF"; then
-        success "OCSP stapling включен"
+        success "OCSP stapling enabled"
     else
-        warning "OCSP stapling не настроен"
+        warning "OCSP stapling not configured"
     fi
-
-    return 0
 }
 
-# Creating резервной копии
 create_backup() {
-    log "Creating резервной копии конфигурации nginx..."
-
+    log "Backing up nginx configuration..."
     cp -r "$NGINX_CONF_DIR" "$BACKUP_DIR/"
-    success "Backup created: $BACKUP_DIR"
+    success "Backup created at $BACKUP_DIR"
 }
 
-# Check Let's Encrypt certificates
-check_letsencrypt_certificates() {
-    log "Check Let's Encrypt certificates..."
-
-    local required_files=(
-        "$SSL_DIR/nginx.crt"
-        "$SSL_DIR/nginx.key"
-        "$SSL_DIR/nginx-fullchain.crt"
-        "$SSL_DIR/nginx-ca.crt"
-    )
-
-    for file in "${required_files[@]}"; do
-        if [ -f "$file" ]; then
-            success "Найден: $(basename "$file")"
-        else
-            error "Отсутствует: $file"
-        fi
+check_certificates() {
+    log "Validating certificate files..."
+    local files=("$SSL_DIR/nginx.crt" "$SSL_DIR/nginx.key" "$SSL_DIR/nginx-fullchain.crt" "$SSL_DIR/nginx-ca.crt")
+    for file in "${files[@]}"; do
+        [[ -f "$file" ]] || error_out "Missing $file"
     done
-
-    # Check, что сертификат от Let's Encrypt
     if openssl x509 -in "$SSL_DIR/nginx.crt" -noout -issuer | grep -q "Let's Encrypt"; then
-        success "Certificate выдан Let's Encrypt"
+        success "Certificate issued by Let's Encrypt"
     else
-        local issuer=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -issuer 2>/dev/null || echo "Unknown")
-        warning "Certificate не от Let's Encrypt. Издатель: $issuer"
+        warning "Certificate issuer is not Let's Encrypt"
     fi
-
-    # Check срока действия
-    local expiry_date=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -enddate | cut -d= -f2)
-    local expiry_epoch=$(date -d "$expiry_date" +%s)
-    local current_epoch=$(date +%s)
-    local days_left=$(( (expiry_epoch - current_epoch) / 86400 ))
-
-    if [ $days_left -gt 0 ]; then
-        success "Certificate действителен еще $days_left days"
-    else
-        error "Certificate истек $((days_left * -1)) days назад"
-    fi
+    local expiry=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -enddate | cut -d= -f2)
+    log "Certificate valid until: $expiry"
 }
 
-# Update configuration nginx
 update_nginx_config() {
-    log "Update configuration nginx for Let's Encrypt..."
-
-    # Check, нужно ли обновление
-    if check_current_config; then
-        log "Configuration уже оптимизирована for Let's Encrypt"
-        return 0
+    log "Updating nginx configuration for fullchain certificates..."
+    if check_current_config >/dev/null 2>&1; then
+        log "Configuration already optimized"
+        return
     fi
-
-    # Update путей к certificateм
-    log "Update путей к certificateм..."
-
-    # Замена ssl_certificate на fullchain версию
     sed -i 's|ssl_certificate /etc/nginx/ssl/nginx\.crt;|ssl_certificate /etc/nginx/ssl/nginx-fullchain.crt;|g' "$NGINX_DEFAULT_CONF"
-
-    # Добавление OCSP stapling если отсутствует
     if ! grep -q "ssl_stapling on" "$NGINX_DEFAULT_CONF"; then
-        log "Добавление OCSP stapling конфигурации..."
-
-        # Найти строку с ssl_session_tickets и добавить после неё OCSP настройки
-        sed -i '/ssl_session_tickets off;/a\\n  # OCSP Stapling for быстрой проверки certificates\n  ssl_stapling on;\n  ssl_stapling_verify on;\n  ssl_trusted_certificate /etc/nginx/ssl/nginx-ca.crt;\n  resolver 1.1.1.1 1.0.0.1 valid=300s;\n  resolver_timeout 5s;' "$NGINX_DEFAULT_CONF"
+        sed -i '/ssl_session_tickets off;/a\\n  # OCSP stapling\n  ssl_stapling on;\n  ssl_stapling_verify on;\n  ssl_trusted_certificate /etc/nginx/ssl/nginx-ca.crt;\n  resolver 1.1.1.1 1.0.0.1 valid=300s;\n  resolver_timeout 5s;' "$NGINX_DEFAULT_CONF"
     fi
-
-    success "Configuration nginx обновлена for Let's Encrypt"
+    success "nginx configuration updated"
 }
 
-# Check конфигурации nginx
 test_nginx_config() {
-    log "Check конфигурации nginx..."
-
-    if docker-compose exec -T nginx nginx -t; then
-        success "Configuration nginx корректна"
-        return 0
-    else
-        error "Error в конфигурации nginx"
-        return 1
-    fi
+    log "Validating nginx syntax..."
+    docker-compose exec -T nginx nginx -t >>"$LOG_FILE" 2>&1 || return 1
+    success "nginx configuration is valid"
 }
 
-# Reload nginx
 reload_nginx() {
-    log "Reload nginx..."
-
-    if docker-compose exec -T nginx nginx -s reload; then
-        success "Nginx успешно перезагружен"
+    log "Reloading nginx..."
+    if docker-compose exec -T nginx nginx -s reload >>"$LOG_FILE" 2>&1; then
+        success "nginx reloaded"
     else
-        warning "Error перезагрузки nginx, перезапуск контейнера..."
-        docker-compose restart nginx
-
-        # Check статуса после перезапуска
+        warning "Reload failed, restarting container"
+        docker-compose restart nginx >>"$LOG_FILE" 2>&1 || error_out "Unable to restart nginx"
         sleep 5
-        if docker-compose ps nginx | grep -q "healthy"; then
-            success "Nginx контейнер перезапущен и здоров"
-        else
-            error "Nginx контейнер не запустился корректно"
-        fi
+        docker-compose ps nginx | grep -q "healthy" || error_out "nginx container unhealthy after restart"
+        success "nginx container restarted"
     fi
 }
 
-# Тестирование HTTPS
 test_https_access() {
-    log "Тестирование HTTPS доступа..."
-
-    local domain="ki.erni-gruppe.ch"
-
-    # Test локального доступа
-    if curl -k -I "https://localhost/" --connect-timeout 5 >/dev/null 2>&1; then
-        success "Локальный HTTPS доступ работает"
+    log "Testing HTTPS endpoints..."
+    curl -k -I "https://localhost/" --connect-timeout 5 >/dev/null 2>&1 && success "Local HTTPS OK" || warning "Local HTTPS unreachable"
+    curl -I "https://$DOMAIN/" --connect-timeout 5 >/dev/null 2>&1 && success "Domain HTTPS OK" || warning "Domain HTTPS unreachable"
+    if echo | openssl s_client -connect "$DOMAIN:443" -servername "$DOMAIN" >/dev/null 2>&1; then
+        success "TLS handshake completed"
     else
-        warning "Локальный HTTPS доступ недоступен"
-    fi
-
-    # Test доступа по домену
-    if curl -I "https://$domain/" --connect-timeout 5 >/dev/null 2>&1; then
-        success "HTTPS доступ по домену работает"
-    else
-        warning "HTTPS доступ по домену недоступен (возможно, проблемы с DNS или сертификатом)"
-    fi
-
-    # Test SSL соединения
-    if echo | openssl s_client -connect "$domain:443" -servername "$domain" >/dev/null 2>&1; then
-        success "SSL соединение installedо успешно"
-    else
-        warning "Проблемы с SSL соединением"
+        warning "TLS handshake failed"
     fi
 }
 
-# Check SSL рейтинга
 check_ssl_rating() {
-    log "Check SSL конфигурации..."
-
-    local domain="ki.erni-gruppe.ch"
-
-    # Check поддерживаемых протоколов
-    log "Check поддерживаемых SSL протоколов..."
-
-    if echo | openssl s_client -connect "$domain:443" -tls1_2 >/dev/null 2>&1; then
-        success "TLS 1.2 поддерживается"
+    log "Checking TLS capabilities..."
+    echo | openssl s_client -connect "$DOMAIN:443" -tls1_2 >/dev/null 2>&1 && success "TLS 1.2 supported" || warning "TLS 1.2 not supported"
+    echo | openssl s_client -connect "$DOMAIN:443" -tls1_3 >/dev/null 2>&1 && success "TLS 1.3 supported" || warning "TLS 1.3 not supported"
+    if curl -I "https://$DOMAIN/" 2>/dev/null | grep -qi "Strict-Transport-Security"; then
+        success "HSTS header present"
     else
-        warning "TLS 1.2 не поддерживается"
-    fi
-
-    if echo | openssl s_client -connect "$domain:443" -tls1_3 >/dev/null 2>&1; then
-        success "TLS 1.3 поддерживается"
-    else
-        warning "TLS 1.3 не поддерживается"
-    fi
-
-    # Check HSTS заголовка
-    if curl -k -I "https://$domain/" 2>/dev/null | grep -q "Strict-Transport-Security"; then
-        success "HSTS заголовок настроен"
-    else
-        warning "HSTS заголовок отсутствует"
+        warning "HSTS header missing"
     fi
 }
 
-# Generation отчета
 generate_report() {
-    log "Generation отчета обновления nginx..."
-
     local report_file="$PROJECT_ROOT/logs/nginx-letsencrypt-update-$(date +%Y%m%d-%H%M%S).txt"
-
     {
         echo "ERNI-KI Nginx Let's Encrypt Update Report"
         echo "Generated: $(date)"
-        echo "=========================================="
-        echo ""
-
-        echo "Configuration Files:"
-        echo "- Nginx config: $NGINX_DEFAULT_CONF"
-        echo "- SSL directory: $SSL_DIR"
-        echo "- Backup: $BACKUP_DIR"
-        echo ""
-
-        echo "Certificate Information:"
-        if [ -f "$SSL_DIR/nginx.crt" ]; then
-            openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates 2>/dev/null || echo "Error reading certificate"
-        else
-            echo "Certificate not found"
-        fi
-        echo ""
-
-        echo "Nginx Configuration Check:"
-        docker-compose exec -T nginx nginx -t 2>&1 || echo "Configuration test failed"
-        echo ""
-
-        echo "Container Status:"
-        docker-compose ps nginx || echo "Container status check failed"
-        echo ""
-
-        echo "Next Steps:"
-        echo "1. Test HTTPS access: https://ki.erni-gruppe.ch/"
-        echo "2. Check SSL rating: https://www.ssllabs.com/ssltest/"
-        echo "3. Monitor certificate expiry"
-        echo ""
-
+        echo "Config file: $NGINX_DEFAULT_CONF"
+        echo "SSL dir: $SSL_DIR"
+        echo "Backup: $BACKUP_DIR"
+        openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates 2>/dev/null || echo "Certificate read error"
+        docker-compose exec -T nginx nginx -t 2>&1 || echo "nginx -t failed"
     } > "$report_file"
-
-    success "Report сохранен: $report_file"
-    cat "$report_file"
+    success "Report saved: $report_file"
 }
 
-# Main function
 main() {
-    echo -e "${CYAN}"
-    echo "=================================================="
+    echo -e "${CYAN}=================================================="
     echo "  ERNI-KI Nginx Let's Encrypt Configuration"
-    echo "  Update for валидных SSL certificates"
-    echo "=================================================="
-    echo -e "${NC}"
+    echo -e "==================================================${NC}"
 
     create_backup
-    check_letsencrypt_certificates
+    check_certificates
     update_nginx_config
-
     if test_nginx_config; then
         reload_nginx
         test_https_access
         check_ssl_rating
         generate_report
-
-        echo ""
-        success "🎉 Nginx успешно настроен for Let's Encrypt!"
-        echo ""
-        log "Следующие шаги:"
-        echo "1. Проверьте HTTPS доступ: https://ki.erni-gruppe.ch/"
-        echo "2. Проверьте SSL рейтинг: https://www.ssllabs.com/ssltest/"
-        echo "3. Настройте мониторинг certificates"
-        echo ""
-        log "Резервная копия: $BACKUP_DIR"
+        success "Nginx configured for Let's Encrypt"
+        log "Backup directory: $BACKUP_DIR"
     else
-        error "Error в конфигурации nginx. Check logs и восстановите из резервной копии when необходимости."
+        error_out "nginx configuration test failed"
     fi
 }
 
-# Starting script
-main "$@" 2>&1 | tee -a "$LOG_FILE"
+main "$@"

@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Create a JIRA description with AI
 
 ## When to use this

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Security monitoring LiteLLM
+# Security monitoring for LiteLLM
 
 LOG_FILE="/var/log/litellm-security.log"
 ALERT_EMAIL="admin@example.com"
@@ -30,10 +30,10 @@ check_auth_failures() {
 check_anomalies() {
     echo "$(date): Check anomalous activity" >> $LOG_FILE
 
-    # Высокая частота запросов от одного IP
+    # Flag IPs with unusually high request volume
     tail -1000 /var/log/nginx/access.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -10 | while read count ip; do
         if [ "$count" -gt 100 ]; then
-            echo "ALERT: High activity from IP $ip: $count запросов" >> $LOG_FILE
+            echo "ALERT: High activity from IP $ip: $count requests" >> $LOG_FILE
         fi
     done
 }

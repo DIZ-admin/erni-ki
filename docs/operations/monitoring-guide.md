@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 📊 ERNI-KI Monitoring Guide
 
 Comprehensive guide for monitoring ERNI-KI system with 8 specialized exporters,

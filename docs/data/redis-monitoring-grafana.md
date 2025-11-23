@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Redis Monitoring с Grafana в системе ERNI-KI
 
 ## 📊 Обзор

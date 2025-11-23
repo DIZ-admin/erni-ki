@@ -1,4 +1,5 @@
 ---
+language: de
 page_id: academy.openwebui-basics
 translation_status: outdated
 ---

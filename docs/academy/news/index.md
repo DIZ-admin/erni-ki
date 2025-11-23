@@ -1,4 +1,5 @@
 ---
+language: ru
 page_id: academy.news.index
 translation_status: complete
 ---

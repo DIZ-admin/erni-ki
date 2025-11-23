@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 🔍 Prometheus Queries Reference - ERNI-KI
 
 > **Версия:** 1.0 **Дата:** 2025-09-19 **Статус:** Production Ready  

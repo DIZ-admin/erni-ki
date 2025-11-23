@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Port Forwarding Setup для ERNI-KI
 
 **Дата**: 2025-10-27  

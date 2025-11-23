@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # SearXNG Redis/Valkey Connection Issue - Анализ и Решение
 
 **Дата**: 2025-10-27 **Статус**: НЕКРИТИЧНО (компенсируется nginx кэшированием)

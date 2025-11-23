@@ -1,4 +1,5 @@
 ---
+language: en
 page_id: howto.write-customer-email
 translation_status: outdated
 ---

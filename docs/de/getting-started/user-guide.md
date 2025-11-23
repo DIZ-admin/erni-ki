@@ -3,7 +3,7 @@ title: '👤 ERNI-KI Benutzerhandbuch'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: 'de'
+language: de
 audience: 'administrators'
 ---
 

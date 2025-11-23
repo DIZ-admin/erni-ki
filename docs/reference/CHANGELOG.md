@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 📋 CHANGELOG - ERNI-KI Documentation
 
 ## [5.2.0] - 2025-11-18

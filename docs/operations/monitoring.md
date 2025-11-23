@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Monitoring Overview
 
 Рекомендуется использовать `docs/operations/monitoring-guide.md` и

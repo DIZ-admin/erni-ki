@@ -101,7 +101,7 @@ WantedBy=default.target
 EOF
     fi
 
-    success "Systemd service создан: $service_file"
+    success "Systemd service created: $service_file"
 }
 
 # Creating systemd timer
@@ -180,7 +180,7 @@ setup_cron_monitoring() {
 
     # Show current crontab
     log "Current cron jobs:"
-    crontab -l | grep -E "(monitor-certificates|acme)" || echo "Нет связанных cron jobs"
+    crontab -l | grep -E "(monitor-certificates|acme)" || echo "No related cron jobs found"
 }
 
 # Creating script for manual execution
@@ -307,14 +307,14 @@ main() {
     echo "=============================================="
     echo -e "${NC}"
 
-    # Check, что мы в корне проекта
+    # Ensure script runs from project root
     if [ ! -f "compose.yml" ] && [ ! -f "compose.yml.example" ]; then
-        error "Script должен запускаться из корня проекта ERNI-KI"
+        error "Run this script from the ERNI-KI repository root"
     fi
 
-    # Check существования script мониторинга
+    # Ensure monitoring script exists
     if [ ! -f "$MONITOR_SCRIPT" ]; then
-        error "Script мониторинга не найден: $MONITOR_SCRIPT"
+        error "Monitoring script not found: $MONITOR_SCRIPT"
     fi
 
     case "$method" in
@@ -322,7 +322,7 @@ main() {
             if command -v systemctl >/dev/null 2>&1; then
                 setup_systemd_monitoring
             else
-                warning "systemd не найден, переключение на cron"
+                warning "systemd not available, falling back to cron"
                 setup_cron_monitoring
             fi
             ;;
@@ -330,13 +330,13 @@ main() {
             setup_cron_monitoring
             ;;
         "manual")
-            log "Setup только ручного мониторинга"
+            log "Manual-only monitoring selected"
             ;;
         *)
             echo "Usage: $0 [systemd|cron|manual]"
-            echo "  systemd - Использовать systemd timer (рекомендуется)"
-            echo "  cron    - Использовать cron job"
-            echo "  manual  - Только ручной запуск"
+            echo "  systemd - Use systemd timer (recommended)"
+            echo "  cron    - Use cron job"
+            echo "  manual  - Manual execution only"
             exit 1
             ;;
     esac
@@ -346,7 +346,7 @@ main() {
     test_monitoring
     show_usage_instructions
 
-    success "Setup SSL мониторинга завершена!"
+    success "SSL monitoring setup finished!"
 }
 
 # Starting script

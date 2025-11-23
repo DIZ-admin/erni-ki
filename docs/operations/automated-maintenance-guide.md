@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 🤖 Automated Maintenance Guide - ERNI-KI
 
 **Version:** 1.0  

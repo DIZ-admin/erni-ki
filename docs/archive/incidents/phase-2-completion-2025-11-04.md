@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # ✅ ФАЗА 2 ЗАВЕРШЕНА: PostgreSQL + Backrest
 
 ## Установка pg_stat_statements и проверка Backrest

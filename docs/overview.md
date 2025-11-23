@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # ERNI-KI — Профессиональная сводка проекта
 
 <!-- STATUS_SNIPPET_START -->
