@@ -1,29 +1,36 @@
+import contextlib
 import os
-import time
 import threading
+import time
+
 import requests
 from flask import Flask, Response
-from prometheus_client import CollectorRegistry, Histogram, Gauge, generate_latest, CONTENT_TYPE_LATEST
-
+from prometheus_client import (
+    CONTENT_TYPE_LATEST,
+    CollectorRegistry,
+    Gauge,
+    Histogram,
+    generate_latest,
+)
 
 app = Flask(__name__)
 registry = CollectorRegistry()
 
 rag_latency = Histogram(
-    'erni_ki_rag_response_latency_seconds',
-    'RAG end-to-end response latency in seconds',
+    "erni_ki_rag_response_latency_seconds",
+    "RAG end-to-end response latency in seconds",
     buckets=(0.25, 0.5, 1, 2, 3, 5, 10),
     registry=registry,
 )
 
 rag_sources = Gauge(
-    'erni_ki_rag_sources_count',
-    'Number of sources used in last RAG answer',
+    "erni_ki_rag_sources_count",
+    "Number of sources used in last RAG answer",
     registry=registry,
 )
 
-OPENWEBUI_TEST_URL = os.getenv('RAG_TEST_URL', 'http://openwebui:8080/health')
-RAG_TEST_INTERVAL = float(os.getenv('RAG_TEST_INTERVAL', '30'))
+OPENWEBUI_TEST_URL = os.getenv("RAG_TEST_URL", "http://openwebui:8080/health")
+RAG_TEST_INTERVAL = float(os.getenv("RAG_TEST_INTERVAL", "30"))
 
 
 def probe_loop():
@@ -34,14 +41,15 @@ def probe_loop():
             r = requests.get(OPENWEBUI_TEST_URL, timeout=10)
             # If an application endpoint returns JSON with sources, extract it here.
             # For now, we default to 0 when not present.
-            if r.headers.get('content-type', '').startswith('application/json'):
-                try:
+            if r.headers.get("content-type", "").startswith("application/json"):
+                with contextlib.suppress(Exception):
                     data = r.json()
-                    # Example: data may contain {'sources': [...]} from app integration later
-                    if isinstance(data, dict) and 'sources' in data and isinstance(data['sources'], list):
-                        sources_count = len(data['sources'])
-                except Exception:
-                    pass
+                    if (
+                        isinstance(data, dict)
+                        and "sources" in data
+                        and isinstance(data["sources"], list)
+                    ):
+                        sources_count = len(data["sources"])
             r.raise_for_status()
             elapsed = time.time() - start
             rag_latency.observe(elapsed)
@@ -55,7 +63,7 @@ def probe_loop():
         time.sleep(RAG_TEST_INTERVAL)
 
 
-@app.route('/metrics')
+@app.route("/metrics")
 def metrics():
     return Response(generate_latest(registry), mimetype=CONTENT_TYPE_LATEST)
 
@@ -63,9 +71,9 @@ def metrics():
 def main():
     t = threading.Thread(target=probe_loop, daemon=True)
     t.start()
-    port = int(os.getenv('PORT', '9808'))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.getenv("PORT", "9808"))
+    app.run(host="0.0.0.0", port=port)  # noqa: S104 - exporter runs inside container
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

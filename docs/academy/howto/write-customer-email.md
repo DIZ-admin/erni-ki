@@ -2,6 +2,7 @@
 language: ru
 page_id: howto.write-customer-email
 translation_status: complete
+doc_version: '2025.11'
 ---
 
 # Написать письмо клиенту

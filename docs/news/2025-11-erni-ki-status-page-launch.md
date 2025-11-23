@@ -1,12 +1,11 @@
 ---
 language: ru
+translation_status: complete
+doc_version: '2025.11'
 title: 'ERNI-KI status page launch'
 date: 2025-11-20
 description: 'New user-friendly status view powered by Uptime Kuma'
 tags:
-  - status
-  - uptime-kuma
-  - release
 ---
 
 # ERNI-KI status page launch

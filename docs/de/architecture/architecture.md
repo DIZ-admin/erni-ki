@@ -1,28 +1,32 @@
 ---
+language: de
+translation_status: outdated
+doc_version: '2025.11'
 title: '🏗️ ERNI-KI Systemarchitektur'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: de
 audience: 'administrators'
 ---
 
 # 🏗️ ERNI-KI Systemarchitektur
 
-> **Dokumentversion:** 12.0 **Aktualisierungsdatum:** 2025-10-02 **Status:**
-> Production Ready (System läuft stabil mit 30/30 gesunden Containern. 18
-> Grafana-Dashboards (100% funktionsfähig), alle kritischen Probleme behoben.
-> Auto-Updates. Monitoring aktualisiert: Prometheus v3.0.1, Loki v3.5.5, Fluent
-> Bit v3.2.0)
+> **Dokumentversion:** 12.1 **Aktualisierungsdatum:** 2025-11-23 **Status:**
+> Production Ready (compose.yml enthält 32 Services; 5/5 Grafana Dashboards
+> provisioniert; 20 aktive Alarmregeln. LiteLLM v1.80.0.rc.1, Docling, MCP
+> Server, Apache Tika, Watchtower monitor-only. Monitoring: Prometheus v3.0.0,
+> Loki v3.0.0, Fluent Bit v3.1.0, Alertmanager v0.27.0. **Prometheus Targets:
+> 32/32 UP (100%)** ✅)
 
 ## 📋 Architektur-Überblick
 
 ERNI-KI ist eine moderne Microservice-basierte AI-Plattform, die auf den
 Prinzipien der Containerisierung, Sicherheit und Skalierbarkeit aufbaut. Das
-System besteht aus **30 Microservices**: OpenWebUI v0.6.36, Ollama 0.12.11
-(GPU), MCP Server, Watchtower und vollständigem Observability-Stack (Prometheus
-v3.0.1, Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0, 8
-Exporter + RAG Exporter). Externer Zugriff über Cloudflare-Tunnel (5 Domains).
+System besteht aus **32 Microservices**: OpenWebUI v0.6.36, Ollama 0.12.11
+(GPU), LiteLLM v1.80.0.rc.1, MCP Server, Watchtower (monitor-only) und einem
+Observability-Stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0,
+Loki v3.0.0, Fluent Bit v3.1.0, 8 Exporter + RAG Exporter). Externer Zugriff
+über Cloudflare-Tunnel (5 Domains).
 
 ### 🚀 Neueste Updates (v12.0 - Oktober 2025)
 
@@ -106,21 +110,18 @@ Exporter + RAG Exporter). Externer Zugriff über Cloudflare-Tunnel (5 Domains).
 - **Auth Service**: JWT-Authentifizierung (Go-Service)
 - **Cloudflared 2025.9.1**: Cloudflare Zero Trust Tunnel (5 Domains)
 
-#### 📊 Monitoring und Observability (aktualisiert 2025-10-02)
+#### 📊 Monitoring und Observability (aktualisiert 2025-11-23)
 
-- **Prometheus v3.0.1**: Metriken-Sammlung mit 35+ Targets, 132 Alert-Regeln
+- **Prometheus v3.0.0**: Metriken-Sammlung mit 35+ Targets, 20 Alert-Regeln
   (+30% Performance, -14% Speicher)
-- **Grafana v11.6.6**: Visualisierung und Dashboards (18 Dashboards, 100%
-  funktionsfähig)
-- **Loki v3.5.5**: Zentralisierte Protokollierung über Fluent Bit (TSDB v13,
-  +40% Query-Geschwindigkeit, -9% Speicher)
-- **Fluent Bit v3.2.0**: Log-Sammlung (-10% Speicher)
-- **Alertmanager v0.28.0**: Event-Benachrichtigungen (verbessertes UI, -9%
-  Speicher)
+- **Grafana v11.3.0**: Visualisierung und Dashboards (5 Dashboards)
+- **Loki v3.0.0**: Zentralisierte Protokollierung über Fluent Bit (TSDB v13)
+- **Fluent Bit v3.1.0**: Log-Sammlung
+- **Alertmanager v0.27.0**: Event-Benachrichtigungen
 - **8 Exporter**: node, postgres, redis, nginx, ollama, nvidia, cadvisor,
   blackbox
 - **RAG Exporter**: SLA-Metriken für RAG (Latenz, Quellen)
-- **Watchtower 1.7.1**: Automatische Container-Updates (selektiv)
+- **Watchtower 1.7.1**: monitor-only (keine Auto-Updates)
 
 ## 🎯 Architektur-Prinzipien
 
@@ -176,12 +177,12 @@ graph TB
         BACKREST[Backrest v1.9.2<br/>:9898<br/>7T + 4W<br/>✅ Healthy]
     end
 
-    subgraph "📊 Monitoring & Observability (30/30 Healthy)"
-        PROMETHEUS[Prometheus v3.0.1<br/>:9091<br/>132 Regeln<br/>✅ Healthy]
-        GRAFANA[Grafana v11.6.6<br/>:3000<br/>18 Dashboards<br/>✅ Healthy]
-        ALERTMANAGER[Alertmanager v0.28.0<br/>:9093-9094<br/>✅ Healthy]
-        LOKI[Loki v3.5.5<br/>:3100<br/>TSDB v13<br/>✅ Healthy]
-        FLUENT_BIT[Fluent Bit v3.2.0<br/>:24224, :2020<br/>✅ Running]
+    subgraph "📊 Monitoring & Observability (32/32 Healthy)"
+        PROMETHEUS[Prometheus v3.0.0<br/>:9091<br/>20 Regeln<br/>✅ Healthy]
+        GRAFANA[Grafana v11.3.0<br/>:3000<br/>5 Dashboards<br/>✅ Healthy]
+        ALERTMANAGER[Alertmanager v0.27.0<br/>:9093-9094<br/>✅ Healthy]
+        LOKI[Loki v3.0.0<br/>:3100<br/>TSDB v13<br/>✅ Healthy]
+        FLUENT_BIT[Fluent Bit v3.1.0<br/>:24224, :2020<br/>✅ Running]
         WEBHOOK_REC[Webhook Receiver<br/>:9095<br/>✅ Healthy]
     end
 

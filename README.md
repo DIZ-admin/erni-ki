@@ -41,9 +41,10 @@ docker compose ps
 ## 🛠️ Branches, CI и политики
 
 - Работа ведётся в `develop`, релизы в `main`. Все изменения через PR + review.
-- Обязательные проверки: `ci` (ESLint/Vitest/Go), `security` (CodeQL/Trivy),
-  `deploy-environments`. Локально запускайте `npm run lint`, `npm run test`,
-  `go test ./auth/...`.
+- Обязательные проверки: `ci` (ESLint/Ruff/Vitest/Go), `security`
+  (CodeQL/Trivy), `deploy-environments`. Локально запускайте
+  `pip install -r requirements-dev.txt` (для Ruff/pre-commit), `npm run lint`,
+  `npm run test`, `go test ./auth/...`.
 - Governance, CODEOWNERS и Dependabot — см.
   [`docs/operations/github-governance.md`](docs/operations/github-governance.md).
 - GitHub Environments (development/staging/production), секреты и журнал
@@ -60,7 +61,7 @@ docker compose ps
 - **Данные:** PostgreSQL 17 + pgvector, Redis 7, Backrest, persistent volumes.
   Руководства — `docs/data/`.
 - **Обсервабилити:** Prometheus, Grafana, Alertmanager, Loki, Fluent Bit, 8
-  exporters. Схемы/alarms — `docs/operations/monitoring-guide.md`.
+  exporters. Схемы/alarms — `docs/operations/monitoring/monitoring-guide.md`.
 - **Security & Networking:** Cloudflare Zero Trust, Nginx WAF, TLS 1.2/1.3,
   Docker Secrets, JWT-auth service. Инструкции —
   `scripts/infrastructure/security` и `docs/security/`.
@@ -73,14 +74,14 @@ docker compose ps
 | Тема                   | Где искать                                                                                                        |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | Архитектура и обзор    | `docs/architecture/`, `docs/overview.md`                                                                          |
-| Мониторинг/операции    | `docs/operations/monitoring-guide.md`, `docs/operations/monitoring-audit.md`                                      |
+| Мониторинг/операции    | `docs/operations/monitoring/monitoring-guide.md`, `docs/archive/audits/monitoring-audit.md`                       |
 | GitHub/CI Governance   | `docs/operations/github-governance.md`, `.github/`                                                                |
 | Environments & секреты | `docs/reference/github-environments-setup.md` + `scripts/infrastructure/security/`                                |
 | Инциденты/аудиты       | `docs/archive/incidents/`, `docs/archive/audits/`                                                                 |
 | Academy / Пользователи | `docs/academy/README.md`, `docs/index.md`, `docs/en/index.md`, `docs/de/index.md`                                 |
 | HowTo / сценарии       | `docs/howto/`, `docs/en/academy/howto/`                                                                           |
 | Статус системы         | `docs/operations/status-page.md`, `docs/system/status.md`, `docs/en/system/status.md`, `docs/de/system/status.md` |
-| Аудит документации     | `docs/operations/documentation-audit.md`                                                                          |
+| Аудит документации     | `docs/archive/audits/documentation-audit.md`                                                                      |
 
 ## 🎓 Academy KI и пользовательские сценарии
 

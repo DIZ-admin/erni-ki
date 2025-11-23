@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: archived
+doc_version: '2025.11'
 ---
 
 # Отчет о тестировании векторного поиска (RAG) по документам в ERNI-KI

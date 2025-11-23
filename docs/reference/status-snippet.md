@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: complete
+doc_version: '2025.11'
 ---
 
 > **Статус системы (2025-11-23) — Production Ready v12.1**

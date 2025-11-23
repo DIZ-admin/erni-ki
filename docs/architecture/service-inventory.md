@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: complete
+doc_version: '2025.11'
 ---
 
 # Справочник сервисов ERNI-KI
@@ -7,7 +9,7 @@ language: ru
 Документ агрегирует сведения из `compose.yml` и `env/*.env` о каждом сервисе,
 чтобы инженеры могли быстро понять назначение контейнеров, точки входа,
 зависимости и требования к безопасности. Для обновлений образов используйте
-[checklist](../operations/image-upgrade-checklist.md).
+[checklist](../operations/maintenance/image-upgrade-checklist.md).
 
 ## Базовая инфраструктура и хранение
 
@@ -80,7 +82,7 @@ language: ru
 - Структура тома: `uploads/` (сырьё, 2 дня), `processed/` (промежуточные
   артефакты, 14 дней), `exports/` (результаты, 30 дней), `quarantine/`
   (инциденты, 60 дней), `tmp/` (1 день). Детали —
-  `docs/operations/runbooks/docling-shared-volume.md`.
+  `docs/operations/maintenance/docling-shared-volume.md`.
 - Права доступа: владелец — пользователь docker host; группа `docling-data`
   имеет `rwx`; аудиторы добавляются через ACL `docling-readonly` с `rx` на
   `exports/`.
@@ -145,18 +147,18 @@ language: ru
   инструментов.
 - **Docling/EdgeTTS**: работают через internal ports, используют CPU,
   обеспечивают многоязычный RAG pipeline и служат источником для
-  `docs/operations/monitoring-guide.md`.
+  `docs/operations/monitoring/monitoring-guide.md`.
 
 - Журналы высылаются во Fluent Bit (24224 forward, 2020 HTTP) и передаются в
   Loki, а критические сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx) также пишут
   в `json-file` с tag `critical.*` по настройке `compose.yml`.
-- Прометей 3.0.1 опрашивает 32 target’а и содержит 27 активных правил в
+- Прометей 3.0.0 опрашивает 32 target’а и содержит 20 активных правил в
   `conf/prometheus/alerts.yml` (Critical, Performance, Database, GPU, Nginx).
-  Alertmanager v0.28.0 отправляет оповещения по предопределённому каналу
+  Alertmanager v0.27.0 отправляет оповещения по предопределённому каналу
   (Slack/Teams через Watchtower metrics API).
-- Grafana v11.6.6 содержит 18 дашбордов, включая GPU/LLM, PostgreSQL, Redis,
-  Docker-хост. Каждое обновление дашборда фиксируется в
-  `docs/operations/grafana-dashboards-guide.md`.
+- Grafana v11.3.0 содержит 5 provisioned дашбордов (GPU/LLM, инфраструктура,
+  SLA). Каждое обновление дашборда фиксируется в
+  `docs/operations/monitoring/grafana-dashboards-guide.md`.
 - Безопасность базируется на Nginx WAF, Cloudflare Zero Trust (5 туннелей), JWT
   Go-сервисе и секретах в `secrets/`. Подробнее см.
   `security/security-policy.md`.
@@ -167,10 +169,11 @@ language: ru
   GPU labels).
 - Конфигурации: `env/*.env`, `conf/nginx`, `conf/redis/redis.conf`,
   `conf/litellm`, `conf/prometheus`.
-- Мониторинг и runbooks: `docs/operations/monitoring-guide.md`,
-  `docs/operations/automated-maintenance-guide.md`, `docs/operations/runbooks/`.
+- Мониторинг и runbooks: `docs/operations/monitoring/monitoring-guide.md`,
+  `docs/operations/automation/automated-maintenance-guide.md`,
+  `docs/operations/runbooks/`.
 - Архитектура: `docs/architecture/architecture.md` (GPU allocation, Cloudflare
-  tunnels, 30 сервисов).
+  tunnels, 32 сервисов).
 - Безопасность: `security/security-policy.md`,
   `docs/archive/reports/documentation-audit-2025-10-24.md` (указаны риски и
   необходимые актуализации).

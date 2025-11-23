@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: complete
+doc_version: '2025.11'
 ---
 
 # Настройка локального DNS для ERNI-KI в корпоративной сети

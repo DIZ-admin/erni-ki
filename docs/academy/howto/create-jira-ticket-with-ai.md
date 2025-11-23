@@ -2,6 +2,7 @@
 language: ru
 page_id: howto.create-jira-ticket
 translation_status: complete
+doc_version: '2025.11'
 ---
 
 # Создать JIRA тикет с помощью AI

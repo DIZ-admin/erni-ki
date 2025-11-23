@@ -1,9 +1,11 @@
 ---
+language: de
+translation_status: outdated
+doc_version: '2025.11'
 title: '🚀 Detaillierte Installationsanleitung für ERNI-KI'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: de
 audience: 'administrators'
 ---
 

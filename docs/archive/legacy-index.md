@@ -1,5 +1,7 @@
 ---
 language: ru
+translation_status: archived
+doc_version: '2025.11'
 ---
 
 # ERNI-KI — портал документации (RU)
@@ -39,8 +41,9 @@ MCP, окружённая полным стеком наблюдаемости, 
   `../architecture/service-inventory.md`,
   `../architecture/services-overview.md`.
 - **Операции** — `../operations/operations-handbook.md`,
-  `../operations/monitoring-guide.md`,
-  `../operations/automated-maintenance-guide.md`, `../operations/runbooks/`.
+  `../operations/monitoring/monitoring-guide.md`,
+  `../operations/automation/automated-maintenance-guide.md`,
+  `../operations/runbooks/`.
 - **Хранилище и данные** — `../data/database-monitoring-plan.md`,
   `../data/redis-operations-guide.md`,
   `../data/database-production-optimizations.md`.

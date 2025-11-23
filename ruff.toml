@@ -1,0 +1,48 @@
+# Ruff configuration for ERNI-KI
+# Enforces consistent style, safety, and modernization across Python utilities/scripts.
+
+line-length = 100
+target-version = "py311"
+src = ["."]
+
+extend-exclude = [
+  ".config-backup",
+  ".git",
+  ".venv",
+  "auth/coverage*",
+  "build",
+  "coverage",
+  "data",
+  "dist",
+  "env",
+  "logs",
+  "node_modules",
+  "playwright-artifacts",
+  "playwright-report",
+  "site",
+  "test-results",
+  "vendor",
+]
+
+[lint]
+select = [
+  "E",   # pycodestyle
+  "F",   # pyflakes
+  "W",   # warnings/pycodestyle
+  "I",   # isort
+  "UP",  # pyupgrade
+  "B",   # bugbear
+  "SIM", # simplifications
+  "S",   # security (bandit)
+  "C4",  # comprehensions
+]
+ignore = [
+  "S101", # allow asserts in tests/tools
+  "S311", # pseudo-random usage is fine for utility scripts
+]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "S311"]
+"scripts/**/*.py" = ["S603", "S607"]
+"conf/**/*.py" = ["S603", "S607"]
+"ops/**/*.py" = ["S603", "S607"]
