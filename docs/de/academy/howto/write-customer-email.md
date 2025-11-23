@@ -1,7 +1,7 @@
 ---
 language: de
 page_id: howto.write-customer-email
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 ---
 

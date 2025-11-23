@@ -1,6 +1,6 @@
 ---
 language: de
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
 title: 'Runbooks & Troubleshooting (DE summary)'
 version: '12.1'
