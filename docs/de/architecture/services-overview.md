@@ -162,7 +162,7 @@ curl -s -H "X-Scope-OrgID: erni-ki" http://localhost:3100/ready
 
 - **[Systemarchitektur](./architecture.md)** - Diagramme und
   Komponentenbeschreibung
-- **[Administrator-Handbuch](../operations/admin-guide.md)** - Detaillierte
+- **[Administrator-Handbuch](../operations/core/admin-guide.md)** - Detaillierte
   Verwaltungsanweisungen
 - **[Monitoring und Alerts](../operations/monitoring.md)** - Prometheus/Grafana
   Konfiguration
