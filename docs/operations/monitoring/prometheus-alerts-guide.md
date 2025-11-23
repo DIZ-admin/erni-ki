@@ -657,7 +657,7 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[].rules[] | select
 
 ### Testing Alerts
 
-See [monitoring-guide.md](monitoring-guide.md#alert-testing) for alert testing
+See [Monitoring Guide](monitoring-guide.md#alert-testing) for alert testing
 procedures.
 
 ### Silencing Alerts
