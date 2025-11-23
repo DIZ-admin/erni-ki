@@ -1,17 +1,17 @@
 #!/bin/bash
-# Скрипт усиления безопасности для проекта ERNI-KI
-# Автоматическое исправление критических проблем безопасности
+# Security hardening script for ERNI-KI
+# Automatically fixes critical security issues
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функции логирования
+# Logging helpers
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -29,23 +29,23 @@ error() {
     exit 1
 }
 
-# Проверка зависимостей
+# Dependency check
 check_dependencies() {
-    log "Проверка зависимостей..."
+    log "Checking dependencies..."
 
     local deps=("openssl" "docker" "docker-compose")
     for dep in "${deps[@]}"; do
         if ! command -v "$dep" &> /dev/null; then
-            error "Зависимость не найдена: $dep"
+            error "Dependency not found: $dep"
         fi
     done
 
-    success "Все зависимости установлены"
+    success "All dependencies installed"
 }
 
-# Генерация секретных ключей
+# Generate secret keys
 generate_secrets() {
-    log "Генерация секретных ключей..."
+    log "Generating secret keys..."
 
     # Генерация основных секретов
     JWT_SECRET=$(openssl rand -hex 32)
@@ -54,20 +54,20 @@ generate_secrets() {
     POSTGRES_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
     REDIS_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
 
-    success "Секретные ключи сгенерированы"
+    success "Secret keys generated"
 }
 
-# Обновление переменных окружения
+# Update environment files
 update_env_files() {
-    log "Обновление файлов переменных окружения..."
+    log "Updating environment files..."
 
     # Обновление auth.env
     if [ -f "env/auth.env" ]; then
         sed -i "s/JWT_SECRET=.*/JWT_SECRET=${JWT_SECRET}/" env/auth.env
         sed -i "s/GIN_MODE=.*/GIN_MODE=release/" env/auth.env
-        success "Обновлен env/auth.env"
+        success "Updated env/auth.env"
     else
-        warning "Файл env/auth.env не найден"
+        warning "File env/auth.env not found"
     fi
 
     # Обновление openwebui.env
@@ -75,25 +75,25 @@ update_env_files() {
         sed -i "s/WEBUI_SECRET_KEY=.*/WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}/" env/openwebui.env
         sed -i "s/ANONYMIZED_TELEMETRY=.*/ANONYMIZED_TELEMETRY=false/" env/openwebui.env
         sed -i "s/ENV=.*/ENV=production/" env/openwebui.env
-        success "Обновлен env/openwebui.env"
+        success "Updated env/openwebui.env"
     else
-        warning "Файл env/openwebui.env не найден"
+        warning "File env/openwebui.env not found"
     fi
 
     # Обновление searxng.env
     if [ -f "env/searxng.env" ]; then
         sed -i "s/SEARXNG_SECRET=.*/SEARXNG_SECRET=${SEARXNG_SECRET}/" env/searxng.env
-        success "Обновлен env/searxng.env"
+        success "Updated env/searxng.env"
     else
-        warning "Файл env/searxng.env не найден"
+        warning "File env/searxng.env not found"
     fi
 
     # Обновление db.env
     if [ -f "env/db.env" ]; then
         sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/" env/db.env
-        success "Обновлен env/db.env"
+        success "Updated env/db.env"
     else
-        warning "Файл env/db.env не найден"
+        warning "File env/db.env not found"
     fi
 
     # Обновление redis.env
@@ -103,20 +103,20 @@ update_env_files() {
         else
             echo "REDIS_ARGS=\"--requirepass ${REDIS_PASSWORD}\"" >> env/redis.env
         fi
-        success "Обновлен env/redis.env"
+        success "Updated env/redis.env"
     else
-        warning "Файл env/redis.env не найден"
+        warning "File env/redis.env not found"
     fi
 }
 
-# Создание безопасной конфигурации Nginx
+# Create secure Nginx configuration
 create_secure_nginx_config() {
-    log "Создание безопасной конфигурации Nginx..."
+    log "Creating secure Nginx configuration..."
 
     local nginx_conf="conf/nginx/nginx.conf"
     local default_conf="conf/nginx/conf.d/default.conf"
 
-    # Создание основной конфигурации nginx.conf
+    # Base nginx.conf
     cat > "$nginx_conf" << 'EOF'
 user nginx;
 worker_processes auto;
@@ -134,21 +134,21 @@ http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
 
-    # Логирование
+    # Logging
     log_format main '$remote_addr - $remote_user [$time_local] "$request" '
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for"';
 
     access_log /var/log/nginx/access.log main;
 
-    # Основные настройки
+    # Core settings
     sendfile on;
     tcp_nopush on;
     tcp_nodelay on;
     keepalive_timeout 65;
     types_hash_max_size 2048;
 
-    # Безопасность
+    # Security
     server_tokens off;
     add_header X-Frame-Options DENY always;
     add_header X-Content-Type-Options nosniff always;
@@ -161,12 +161,12 @@ http {
     limit_req_zone $binary_remote_addr zone=api:10m rate=100r/m;
     limit_req_zone $binary_remote_addr zone=general:10m rate=200r/m;
 
-    # Размеры запросов
+    # Request sizes/timeouts
     client_max_body_size 20M;
     client_body_timeout 10s;
     client_header_timeout 10s;
 
-    # Gzip сжатие
+    # Gzip compression
     gzip on;
     gzip_vary on;
     gzip_min_length 1024;
@@ -183,17 +183,17 @@ http {
 }
 EOF
 
-    success "Создана безопасная конфигурация Nginx"
+    success "Secure Nginx configuration created"
 }
 
-# Создание улучшенной конфигурации default.conf
+# Create hardened default.conf
 create_secure_default_conf() {
-    log "Создание безопасной конфигурации default.conf..."
+    log "Creating secure default.conf..."
 
     local default_conf="conf/nginx/conf.d/default.conf"
 
     cat > "$default_conf" << 'EOF'
-# Upstream серверы с улучшенными настройками
+# Upstreams with enhanced settings
 upstream docsUpstream {
     server openwebui:8080 max_fails=3 fail_timeout=30s weight=1;
     keepalive 32;
@@ -216,34 +216,34 @@ upstream authUpstream {
     keepalive 16;
 }
 
-# Основной сервер
+# Main server
 server {
     listen 80;
-    server_name localhost;  # Замените на ваш домен
+    server_name localhost;  # Replace with your domain
 
-    # Отключение абсолютных редиректов
+    # Disable absolute redirects
     absolute_redirect off;
 
-    # Защищенные эндпоинты с аутентификацией
+    # Protected endpoints with authentication
     location ~ ^/(docs|redis|searxng) {
         # Rate limiting
         limit_req zone=api burst=20 nodelay;
 
-        # Аутентификация
+        # Authentication
         auth_request /auth-server/validate;
         auth_request_set $auth_status $upstream_status;
         auth_request_set $auth_user $upstream_http_x_user;
 
-        # Обработка ошибок
+        # Error handling
         error_page 401 = @auth_required;
         error_page 403 = @access_denied;
         error_page 404 = @not_found;
 
-        # Заголовки аутентификации
+        # Auth headers
         add_header X-Auth-Status $auth_status;
         add_header X-Auth-User $auth_user;
 
-        # Проксирование
+        # Proxying
         proxy_pass http://$1Upstream;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -251,18 +251,18 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-User $auth_user;
 
-        # Таймауты
+        # Timeouts
         proxy_connect_timeout 5s;
         proxy_send_timeout 60s;
         proxy_read_timeout 60s;
 
-        # Буферизация
+        # Buffering
         proxy_buffering on;
         proxy_buffer_size 4k;
         proxy_buffers 8 4k;
     }
 
-    # Внутренний эндпоинт аутентификации
+    # Internal authentication endpoint
     location /auth-server/ {
         internal;
         proxy_pass http://authUpstream/;
@@ -272,45 +272,45 @@ server {
         proxy_set_header X-Original-Remote-Addr $remote_addr;
         proxy_set_header X-Original-Host $host;
 
-        # Таймауты для аутентификации
+        # Timeouts for auth
         proxy_connect_timeout 3s;
         proxy_send_timeout 3s;
         proxy_read_timeout 3s;
     }
 
-    # Основное приложение
+    # Main application
     location / {
         # Rate limiting
         limit_req zone=general burst=50 nodelay;
 
-        # WebSocket поддержка
+        # WebSocket support
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
         proxy_cache_bypass $http_upgrade;
 
-        # Стандартные заголовки
+        # Standard headers
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-        # Проксирование
+        # Proxy
         proxy_pass http://docsUpstream;
 
-        # Таймауты
+        # Timeouts
         proxy_connect_timeout 5s;
         proxy_send_timeout 300s;
         proxy_read_timeout 300s;
 
-        # Буферизация для больших ответов
+        # Buffering for large responses
         proxy_buffering on;
         proxy_buffer_size 8k;
         proxy_buffers 16 8k;
         proxy_busy_buffers_size 16k;
     }
 
-    # Обработчики ошибок
+    # Error handlers
     location @auth_required {
         return 302 /auth?redirect=$uri$is_args$query_string;
     }
@@ -323,7 +323,7 @@ server {
         return 404 "Not Found";
     }
 
-    # Healthcheck эндпоинт
+    # Healthcheck endpoint
     location /health {
         access_log off;
         return 200 "healthy\n";
@@ -331,23 +331,23 @@ server {
     }
 }
 
-# Переменная для WebSocket соединений
+# Map for WebSocket connections
 map $http_upgrade $connection_upgrade {
     default upgrade;
     '' close;
 }
 EOF
 
-    success "Создана улучшенная конфигурация default.conf"
+    success "Hardened default.conf created"
 }
 
-# Создание backup скрипта
+# Create backup script
 create_backup_script() {
-    log "Создание скрипта резервного копирования..."
+    log "Creating backup script..."
 
     cat > "scripts/backup.sh" << 'EOF'
 #!/bin/bash
-# Скрипт резервного копирования ERNI-KI
+# ERNI-KI backup script
 
 BACKUP_DIR="/backup/erni-ki"
 DATE=$(date +%Y%m%d_%H%M%S)
@@ -361,26 +361,26 @@ docker compose exec -T db pg_dump -U postgres openwebui > "${BACKUP_PATH}/postgr
 # Backup Redis
 docker compose exec -T redis redis-cli --rdb - > "${BACKUP_PATH}/redis_backup.rdb"
 
-# Backup конфигураций
+# Backup configs
 tar -czf "${BACKUP_PATH}/configs.tar.gz" env/ conf/
 
-# Backup данных приложений
+# Backup application data
 tar -czf "${BACKUP_PATH}/data.tar.gz" data/
 
 echo "Backup completed: ${BACKUP_PATH}"
 EOF
 
     chmod +x "scripts/backup.sh"
-    success "Создан скрипт резервного копирования"
+    success "Backup script created"
 }
 
-# Основная функция
+# Main function
 main() {
-    log "Запуск скрипта усиления безопасности ERNI-KI..."
+    log "Starting ERNI-KI security hardening..."
 
-    # Проверка, что мы в корне проекта
+    # Ensure project root
     if [ ! -f "compose.yml.example" ]; then
-        error "Скрипт должен запускаться из корня проекта ERNI-KI"
+        error "Script must be run from ERNI-KI project root"
     fi
 
     check_dependencies
@@ -390,14 +390,14 @@ main() {
     create_secure_default_conf
     create_backup_script
 
-    success "Усиление безопасности завершено!"
+    success "Security hardening completed!"
 
     echo ""
-    log "Следующие шаги:"
-    echo "1. Проверьте обновленные файлы переменных окружения"
-    echo "2. Настройте Cloudflare туннель с вашим доменом"
-    echo "3. Перезапустите сервисы: docker compose down && docker compose up -d"
-    echo "4. Настройте регулярные backup'ы"
+    log "Next steps:"
+    echo "1. Review updated environment files"
+    echo "2. Configure Cloudflare tunnel with your domain"
+    echo "3. Restart services: docker compose down && docker compose up -d"
+    echo "4. Configure regular backups"
 
     warning "ВАЖНО: Сохраните сгенерированные пароли в безопасном месте!"
 }
