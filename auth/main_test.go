@@ -124,7 +124,7 @@ func TestValidateEndpointInvalidToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
-	// Ожидаем 401 Unauthorized
+	// Expect 401 Unauthorized
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 
 	var response map[string]any
@@ -222,7 +222,7 @@ func setupRouter() *gin.Engine {
 // createValidJWTToken creates a valid JWT token for tests.
 func createValidJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY должен быть установлен для тестов")
+	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY must be set for tests")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": "test-user",
@@ -239,7 +239,7 @@ func createValidJWTToken(t *testing.T) string {
 // createExpiredJWTToken creates an expired JWT token for tests.
 func createExpiredJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY должен быть установлен для тестов")
+	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY must be set for tests")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": "test-user",

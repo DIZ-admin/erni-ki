@@ -1,9 +1,9 @@
 # ============================================================================
-# 4-УРОВНЕВАЯ СТРАТЕГИЯ ЛОГГИРОВАНИЯ ERNI-KI
+# ERNI-KI 4-TIER LOGGING STRATEGY
 # ============================================================================
 
-# УРОВЕНЬ 1 - Критически важные сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx)
-# Dual logging: fluentd + json-file backup, максимальная надежность
+# TIER 1: Critical Services (OpenWebUI, Ollama, PostgreSQL, Nginx)
+# Dual logging: fluentd + json-file backup, maximum reliability
 x-critical-logging: &critical-logging
   driver: "json-file"
   options:
@@ -12,8 +12,8 @@ x-critical-logging: &critical-logging
     labels: "service,version,environment,level=critical"
     tag: "critical.{{.Name}}"
 
-# УРОВЕНЬ 2 - Важные сервисы (SearXNG, Redis, Backrest, Auth, Cloudflared)
-# Fluentd с буферизацией, стандартная надежность
+# TIER 2: Important Services (SearXNG, Redis, Backrest, Auth, Cloudflared)
+# Fluentd with buffering, standard reliability
 x-important-logging: &important-logging
   driver: "json-file"
   options:
@@ -21,8 +21,8 @@ x-important-logging: &important-logging
     max-file: "5"
     labels: "service,version,environment,level=important"
 
-# УРОВЕНЬ 3 - Вспомогательные сервисы (Docling, EdgeTTS, Tika, MCP)
-# Fluentd с отдельными тэгами + tail fallback
+# TIER 3: Auxiliary Services (Docling, EdgeTTS, Tika, MCP)
+# Fluentd with separate tags + tail fallback
 x-auxiliary-logging: &auxiliary-logging
   driver: "json-file"
   options:
@@ -30,8 +30,8 @@ x-auxiliary-logging: &auxiliary-logging
     max-file: "5"
     labels: "service,version,level=auxiliary"
 
-# УРОВЕНЬ 4 - Мониторинговые сервисы (Prometheus, Grafana, Exporters)
-# Минимальное Fluentd логгирование + агрессивная фильтрация
+# TIER 4: Monitoring Services (Prometheus, Grafana, Exporters)
+# Minimal Fluentd logging with aggressive filtering
 x-monitoring-logging: &monitoring-logging
   driver: "json-file"
   options:
@@ -39,9 +39,9 @@ x-monitoring-logging: &monitoring-logging
     max-file: "5"
     labels: "service,version,level=monitoring"
 
-# Legacy logging configuration - сохранено для обратной совместимости
-# Миграция: все новые сервисы должны использовать уровни critical/important/auxiliary/monitoring
-# Планируется к удалению: Q2 2025 (после миграции всех legacy сервисов)
+# Legacy logging configuration - backward compatibility only
+# Migration: new services must use tier-based logging critical/important/auxiliary/monitoring
+# Deprecation: Q2 2025 (after all legacy services migrated)
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -50,9 +50,9 @@ x-logging: &default-logging
     labels: "service,version"
 
 services:
-  # Базовые сервисы инфраструктуры
+  # Infrastructure services
   watchtower:
-    # Команда запуска с оптимизированными параметрами (schedule задается через env)
+    # Startup command with optimized parameters (schedule via env)
     command: --cleanup --label-enable --http-api-update --http-api-metrics
     env_file: env/watchtower.env
     environment:
@@ -64,7 +64,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: containrrr/watchtower:1.7.1 # Закреплена версия для production (последняя стабильная)
+    image: containrrr/watchtower:1.7.1 # Pinned version for production (latest stable)
     logging: *default-logging
     restart: unless-stopped
     mem_limit: 256m
@@ -72,27 +72,27 @@ services:
     cpus: "0.2"
     oom_score_adj: 500
     user: "0"
-    # Добавляем порт для HTTP API
+    # Port for HTTP API
     ports:
-      - "127.0.0.1:8091:8080" # Доступ ограничен localhost для HTTP API
+      - "127.0.0.1:8091:8080" # Localhost-only access for HTTP API
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     secrets:
       - watchtower_api_token
     labels:
-      # Исключить Watchtower из собственного мониторинга
+      # Exclude Watchtower from self-monitoring
       - "com.centurylinklabs.watchtower.enable=false"
-      # Метка для идентификации в логах
+      # Label for log identification
       - "com.centurylinklabs.watchtower.scope=infrastructure"
 
-  # База данных PostgreSQL с векторным расширением (оптимизированная сетевая конфигурация)
+  # PostgreSQL database with vector extension (optimized network configuration)
   db:
     env_file: env/db.env
-    # Добавлено: 2025-10-30 - Docker Secrets для безопасного хранения пароля
+    # Added: 2025-10-30 - Docker Secrets for secure password storage
     secrets:
       - postgres_password
     environment:
-      # Переопределяем POSTGRES_PASSWORD из env файла на использование секрета
+      # Override POSTGRES_PASSWORD from env file to use secret
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
@@ -105,22 +105,22 @@ services:
     restart: unless-stopped
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-      # Кастомная конфигурация PostgreSQL с pg_stat_statements (добавлено: 2025-11-04)
+      # Custom PostgreSQL config with pg_stat_statements (added: 2025-11-04)
       - ./conf/postgres-enhanced/postgresql.conf:/etc/postgresql/postgresql.conf:ro
-    # Используем кастомную конфигурацию
+    # Using custom configuration
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # КРИТИЧЕСКИ ВАЖНО: Запретить автообновление базы данных
+      # CRITICAL: Disable database auto-updates
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-database"
 
-  # Redis кэш и очереди (оптимизированная сетевая конфигурация)
+  # Redis cache and queues (optimized network configuration)
   redis:
     env_file: env/redis.env
-    # Используем конфигурационный файл вместо параметров командной строки
-    # Обновлено: 2025-10-02 для поддержки active defragmentation
+    # Using config file instead of CLI parameters
+    # Updated: 2025-10-02 for support of active defragmentation
     command: redis-server /usr/local/etc/redis/redis.conf
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
@@ -128,52 +128,52 @@ services:
       timeout: 3s
       retries: 5
       start_period: 20s
-    image: redis:7-alpine # Откат к предыдущей версии (7.2 несовместима с RDB format v12)
+    image: redis:7-alpine # Rollback to previous version (7.2 incompatible with RDB format v12)
     logging: *important-logging
     restart: unless-stopped
     volumes:
       - ./data/redis:/data
       - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # Разрешить автообновление для Redis
+      # Allow auto-updates for Redis
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=cache-services"
 
-  # LiteLLM Context Engineering Gateway (оптимизированная сетевая конфигурация)
+  # LiteLLM Context Engineering Gateway (optimized network configuration)
   litellm:
-    # Используем последнюю версию LiteLLM с поддержкой thinking tokens
-    # Обновлено: 2025-11-18 до v1.80.0.rc.1 (routing fixes + security patches)
+    # Using latest LiteLLM version with thinking tokens support
+    # Updated: 2025-11-18 to v1.80.0.rc.1 (routing fixes + security patches)
     image: ghcr.io/berriai/litellm:v1.80.0.rc.1
     container_name: erni-ki-litellm
 
-    # Зависимости - запускаем после критически важных сервисов
+    # Dependencies - start after critical services
     depends_on:
       db:
         condition: service_healthy
       ollama:
         condition: service_healthy
 
-    # Environment файл с конфигурацией
+    # Environment file with configuration
     env_file: env/litellm.env
     entrypoint:
       - /bin/bash
       - /opt/erni/bin/litellm-entrypoint.sh
 
-    # Порт для API (внутренний Docker network)
+    # API port (internal Docker network)
     ports:
       - "127.0.0.1:4000:4000" # LiteLLM Proxy API (localhost only)
     expose:
       - "9109" # Prometheus metrics for PublicAI provider
 
-    # Restart policy для production
+    # Production restart policy
     restart: unless-stopped
 
     # Logging configuration
     logging: *auxiliary-logging
 
-    # Health check для мониторинга состояния (HTTP endpoint проверка)
-    # Используем Python urllib вместо curl, так как curl не установлен в контейнере LiteLLM
+    # Health check for status monitoring (HTTP endpoint check)
+    # Using Python urllib instead of curl (not installed in container) LiteLLM
     healthcheck:
       test:
         [
@@ -183,31 +183,32 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s # Время на инициализацию
+      start_period: 30s # Initialization time
 
-    # Volume mounts для конфигурации
+    # Volume mounts for configuration
     volumes:
-      - ./conf/litellm/config.yaml:/app/config.yaml:ro # Конфигурация моделей
-      - ./data/litellm:/app/data # Логи и временные файлы
-      - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro # Wrapper для секретов
-      - ./conf/litellm/custom_providers:/app/custom_providers:ro # Кастомные провайдеры LiteLLM
+      - ./conf/litellm/config.yaml:/app/config.yaml:ro # Model configuration
+      - ./data/litellm:/app/data # Logs and temporary files
+      - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro # Secrets wrapper
+      - ./conf/litellm/custom_providers:/app/custom_providers:ro # Custom providers LiteLLM
 
-    # Command с базовыми настройками
-    command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
+    # Command with basic settings
+    command:
+      ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
 
-    # Extra hosts для подключения к Ollama на хосте
+    # Extra hosts for Ollama host connection
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-    # Resource limits для стабильности (критическое увеличение памяти)
-    mem_limit: 12g # Лимит памяти (увеличено для предотвращения OOM; было 8G)
-    mem_reservation: 6g # Минимальная память (увеличена с 4G до 6G для буфера)
-    cpus: "1.0" # Лимит CPU
-    oom_score_adj: -300 # Защитить прокси от агрессивного OOM-killer
+    # Resource limits for stability (critical memory increase)
+    mem_limit: 12g # Memory limit (increased to prevent OOM; was 8G)
+    mem_reservation: 6g # Memory reservation (increased from 4G to 6G for buffer)
+    cpus: "1.0" # CPU limit
+    oom_score_adj: -300 # Protect proxy from aggressive OOM-killer
 
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-    # Labels для мониторинга
+    # Monitoring labels
     labels:
       - "com.erni-ki.service=litellm"
       - "com.erni-ki.version=main-stable"
@@ -224,7 +225,7 @@ services:
       - openai_api_key
       - publicai_api_key
 
-  # JWT аутентификация сервис
+  # JWT authentication service
   auth:
     build:
       context: ./auth
@@ -232,7 +233,7 @@ services:
     env_file: env/auth.env
     logging: *important-logging
     ports:
-      - "127.0.0.1:9092:9090" # Изменен порт для избежания конфликта, ограничен localhost
+      - "127.0.0.1:9092:9090" # Port changed to avoid conflict, localhost-only
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "/app/main", "--health-check"]
@@ -241,11 +242,11 @@ services:
       retries: 3
       start_period: 5s
     labels:
-      # Разрешить автообновление для Auth сервиса
+      # Allow auto-updates for Auth service
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=auth-services"
 
-  # Cloudflare туннель для внешнего доступа
+  # Cloudflare tunnel for external access
   cloudflared:
     command: tunnel --no-autoupdate run
     depends_on:
@@ -260,19 +261,19 @@ services:
       timeout: 15s
       retries: 3
       start_period: 30s
-    image: cloudflare/cloudflared:2024.10.0 # Стабильная версия (2025.11.0 не существует)
+    image: cloudflare/cloudflared:2024.10.0 # Stable version (2025.11.0 does not exist)
     logging: *important-logging
     restart: unless-stopped
     volumes:
       - ./conf/cloudflare/config:/home/nonroot/.cloudflared
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # Разрешить автообновление для Cloudflared
+      # Allow auto-updates for Cloudflared
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=tunnel-services"
 
-  # Сервис извлечения документов
-  # Сервис синтеза речи
+  # Document extraction service
+  # Text-to-speech service
   edgetts:
     env_file: env/edgetts.env
     healthcheck:
@@ -285,21 +286,22 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: travisvn/openai-edge-tts@sha256:4e7e2773350a3296f301b5f66e361daad243bdc4b799eec32613fddcee849040 # обновлено: digest совместим с schema2
+    image: travisvn/openai-edge-tts@sha256:4e7e2773350a3296f301b5f66e361daad243bdc4b799eec32613fddcee849040 # updated: digest compatible with schema2
     logging: *auxiliary-logging
     ports:
       - "127.0.0.1:5050:5050"
     restart: unless-stopped
     labels:
-      # Разрешить автообновление для EdgeTTS
+      # Allow auto-updates for EdgeTTS
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=text-to-speech"
 
-  # Сервис обработки файлов Apache Tika
+  # Apache Tika file processing service
   tika:
     env_file: env/tika.env
     healthcheck:
-      test: ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/9998' || exit 1"]
+      test:
+        ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/9998' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -310,11 +312,11 @@ services:
       - "127.0.0.1:9998:9998"
     restart: unless-stopped
     labels:
-      # Разрешить автообновление для Tika
+      # Allow auto-updates for Tika
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=document-processing"
 
-  # MCPO сервер для обработки запросов
+  # MCPO server for request processing
   mcposerver:
     command: ["--config", "/app/conf/config.json"]
     depends_on:
@@ -327,7 +329,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
-    image: ghcr.io/open-webui/mcpo:git-91e8f94 # Обновлено: 2025-11-04 с latest на git-91e8f94 (стабильный коммит)
+    image: ghcr.io/open-webui/mcpo:git-91e8f94 # Updated: 2025-11-04 from latest to git-91e8f94 (stable commit)
     logging: *auxiliary-logging
     ports:
       - "127.0.0.1:8000:8000"
@@ -335,13 +337,13 @@ services:
     volumes:
       - ./conf/mcposerver:/app/conf:ro
       - ./data:/app/data
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # Разрешить автообновление для MCP Server
+      # Allow auto-updates for MCP Server
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=ai-services"
 
-  # Поисковый движок SearXNG (оптимизированная сетевая конфигурация)
+  # SearXNG search engine (optimized network configuration)
   searxng:
     depends_on:
       redis:
@@ -365,13 +367,13 @@ services:
       - ./conf/searxng/uwsgi.ini:/etc/searxng/uwsgi.ini:ro
       - ./conf/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
       - ./conf/searxng/favicons.toml:/etc/searxng/favicons.toml:ro
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # Разрешить автообновление для SearXNG
+      # Allow auto-updates for SearXNG
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=search-services"
 
-  # Ollama LLM сервер с GPU ускорением (оптимизированная сетевая конфигурация)
+  # Ollama LLM server with GPU acceleration (optimized network configuration)
   ollama:
     runtime: nvidia
     mem_limit: 24g
@@ -384,29 +386,29 @@ services:
       - CUDA_VISIBLE_DEVICES=${OLLAMA_CUDA_VISIBLE_DEVICES:-0}
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
     env_file: env/ollama.env
-    # GPU Memory Limits оптимизированы для RTX 5000 (16GB VRAM)
-    # Ollama получает приоритет GPU (управление VRAM через OLLAMA_MAX_VRAM=0.75)
+    # GPU memory limits optimized for RTX 5000 (16GB VRAM)
+    # Ollama gets GPU priority (VRAM management via OLLAMA_MAX_VRAM=0.75)
     healthcheck:
       test: ["CMD", "ollama", "list"]
       interval: 30s
       timeout: 3s
       retries: 5
       start_period: 10s
-    image: ollama/ollama:0.12.11 # Обновлено до 0.12.11 (2025-11-18) - upstream security fixes и стабильность GPU
+    image: ollama/ollama:0.12.11 # Updated to 0.12.11 (2025-11-18) - upstream security fixes and GPU stability
     logging: *critical-logging
     ports:
       - 11434:11434
     restart: unless-stopped
     volumes:
       - ./data/ollama:/root/.ollama
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # КРИТИЧЕСКИ ВАЖНО: Запретить автообновление Ollama с GPU
+      # CRITICAL: Disable Ollama auto-updates (GPU)
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-ai-gpu"
 
-  # Nginx реверс-прокси (оптимизированная сетевая конфигурация)
+  # Nginx reverse proxy (optimized network configuration)
   nginx:
     depends_on:
       auth:
@@ -419,7 +421,7 @@ services:
       timeout: 30s
       retries: 3
       start_period: 30s
-    # Обновлено: 2025-11-04 с 1.28.0 до 1.29.3 (mainline с улучшениями производительности)
+    # Updated: 2025-11-04 from 1.28.0 to 1.29.3 (mainline with performance improvements)
     image: nginx:1.29.3
     logging: *critical-logging
     ports:
@@ -435,14 +437,14 @@ services:
       - ./conf/nginx/healthcheck.sh:/etc/nginx/healthcheck.sh:ro
       - ./data/nginx/webroot:/var/www/html
       - ./data/nginx/logs:/var/log/nginx
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # КРИТИЧЕСКИ ВАЖНО: Запретить автообновление Nginx (критический прокси-сервер)
+      # CRITICAL: Disable Nginx auto-updates (critical proxy server)
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-proxy"
 
-  # OpenWebUI основной интерфейс с GPU ускорением (оптимизированная сетевая конфигурация)
+  # OpenWebUI main interface with GPU acceleration (optimized network configuration)
   openwebui:
     depends_on:
       auth:
@@ -455,7 +457,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: ghcr.io/open-webui/open-webui:v0.6.36 # Обновлено: 2025-11-18 до v0.6.36 (последняя стабильная версия)
+    image: ghcr.io/open-webui/open-webui:v0.6.36 # Updated: 2025-11-18 to v0.6.36 (latest stable version)
     runtime: nvidia
     mem_limit: 8g
     mem_reservation: 4g
@@ -481,23 +483,23 @@ services:
       - ./data/openwebui:/app/backend/data
       - ./data/docling/shared:/app/backend/data/docling-shared
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
-      # Shared volume для передачи файлов в Docling (mount по умолчанию для обмена)
-      # Entry-point wrapper подставляет секреты из Docker secrets
+      # Shared volume for file transfer to Docling (default mount for exchange)
+      # Entry-point wrapper injects secrets from Docker secrets
     secrets:
       - postgres_password
       - litellm_api_key
       - openwebui_secret_key
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # Разрешить автообновление для OpenWebUI
+      # Allow auto-updates for OpenWebUI
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=web-interface"
 
   # Docling OCR/ingestion pipeline (GPU aware)
   docling:
-    # Официальный GPU-образ Docling Serve (CUDA 12.6)
-    # Переопределяйте DOCLING_IMAGE в .env на зафиксированный digest/tag.
+    # Official Docling Serve GPU image (CUDA 12.6)
+    # Override DOCLING_IMAGE in .env with pinned digest/tag
     image: ${DOCLING_IMAGE:-ghcr.io/docling-project/docling-serve-cu126:main}
     depends_on:
       ollama:
@@ -545,7 +547,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    # Обновлено: 2025-10-02 с v1.4.0 до v1.9.2 (стабильная версия с исправлениями)
+    # Updated: 2025-10-02 from v1.4.0 to v1.9.2 (stable version with fixes)
     image: garethgeorge/backrest:v1.9.2
     logging: *important-logging
     ports:
@@ -562,19 +564,19 @@ services:
       - ./.config-backup:/backup-sources/.config-backup
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
-      # Разрешить автообновление для Backrest
+      # Allow auto-updates for Backrest
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=backup-services"
 
   # ============================================================================
-  # МОНИТОРИНГ И ЛОГИРОВАНИЕ
+  # MONITORING AND LOGGING
   # ============================================================================
 
-  # Prometheus - сбор метрик
+  # Prometheus - metrics collection
   prometheus:
-    image: prom/prometheus:v3.0.0 # Стабильная версия (v3.8.0 не существует)
+    image: prom/prometheus:v3.0.0 # Stable version (v3.8.0 does not exist)
     container_name: erni-ki-prometheus
-    # Исправлено 2025-11-07: явная связь с postgres-exporter для DNS resolution
+    # Fixed 2025-11-07: explicit link to postgres-exporter for DNS resolution
     links:
       - postgres-exporter
     command:
@@ -588,9 +590,9 @@ services:
     volumes:
       - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./conf/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
-      - ./conf/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro # ДОБАВЛЕНО 2025-10-24: Системные алерты
+      - ./conf/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro # ADDED 2025-10-24: System alerts
       - ./conf/prometheus/rules:/etc/prometheus/rules:ro
-      - ./conf/prometheus/alerts:/etc/prometheus/alerts:ro # Добавлено: 2025-10-02 для litellm-memory.yml
+      - ./conf/prometheus/alerts:/etc/prometheus/alerts:ro # Added: 2025-10-02 for litellm-memory.yml
       - ./data/prometheus:/prometheus
     ports:
       - "127.0.0.1:9091:9090"
@@ -607,18 +609,18 @@ services:
       retries: 3
       start_period: 30s
     labels:
-      # Разрешить автообновление для Prometheus
+      # Allow auto-updates for Prometheus
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # Grafana - dashboard и визуализация
+  # Grafana - dashboard and visualization
   grafana:
     depends_on:
       prometheus:
         condition: service_healthy
-    # Обновлено: 2025-10-02 с 10.2.0 до 11.6.6 (последняя стабильная версия 11.x)
-    image: grafana/grafana:11.3.0 # Стабильная версия (11.7.0 не существует)
+    # Updated: 2025-10-02 from 10.2.0 to 11.6.6 (latest stable 11.x version)
+    image: grafana/grafana:11.3.0 # Stable version (11.7.0 does not exist)
     container_name: erni-ki-grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/grafana_admin_password
@@ -629,7 +631,7 @@ services:
       - GF_ANALYTICS_CHECK_FOR_UPDATES=false
     volumes:
       - ./data/grafana:/var/lib/grafana
-      # Обновленные пути для оптимизированных конфигураций
+      # Updated paths for optimized configurations
       - ./conf/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./conf/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
@@ -643,14 +645,14 @@ services:
       retries: 3
       start_period: 30s
     labels:
-      # Разрешить автообновление для Grafana
+      # Allow auto-updates for Grafana
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     secrets:
       - grafana_admin_password
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # Uptime Kuma - визуальный статус ERNI-KI
+  # Uptime Kuma - visual ERNI-KI status
   uptime-kuma:
     image: louislam/uptime-kuma:1
     container_name: erni-ki-uptime-kuma
@@ -658,7 +660,7 @@ services:
     restart: always
     logging: *monitoring-logging
     ports:
-      - "127.0.0.1:3001:3001" # Локальный порт; внешний доступ через reverse-proxy
+      - "127.0.0.1:3001:3001" # Local port; external access via reverse-proxy
     volumes:
       - ./data/uptime-kuma:/app/data
     healthcheck:
@@ -668,7 +670,7 @@ services:
       retries: 5
       start_period: 30s
     labels:
-      # Разрешить автообновление для Uptime Kuma
+      # Allow auto-updates for Uptime Kuma
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     networks:
@@ -676,9 +678,9 @@ services:
         aliases:
           - uptime-kuma
 
-  # Loki - современная система логирования (замена Elasticsearch)
+  # Loki - modern logging system (Elasticsearch replacement)
   loki:
-    image: grafana/loki:3.0.0 # Стабильная версия (3.6.0 не существует)
+    image: grafana/loki:3.0.0 # Stable version (3.6.0 does not exist)
     container_name: erni-ki-loki
     logging: *monitoring-logging
     restart: unless-stopped
@@ -702,25 +704,25 @@ services:
       retries: 5
       start_period: 30s
     labels:
-      # Разрешить автообновление для Loki
+      # Allow auto-updates for Loki
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=logging-stack"
 
-  # Alertmanager - управление алертами
+  # Alertmanager - alert management
   alertmanager:
-    image: prom/alertmanager:v0.27.0 # Стабильная версия (v0.29.0 не существует)
+    image: prom/alertmanager:v0.27.0 # Stable version (v0.29.0 does not exist)
     container_name: erni-ki-alertmanager
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager"
       - "--web.external-url=http://alertmanager.erni-ki.local"
       - "--cluster.listen-address=0.0.0.0:9094"
-      # Cluster параметры для решения проблемы переполнения очереди
-      - "--cluster.gossip-interval=500ms" # Увеличено с 200ms по умолчанию
-      - "--cluster.pushpull-interval=120s" # Увеличено с 60s по умолчанию
-      - "--cluster.tcp-timeout=15s" # Увеличено для стабильности соединений
-      - "--cluster.probe-timeout=1s" # Оптимизировано для быстрой диагностики
-      - "--cluster.probe-interval=2s" # Интервал проверки узлов кластера
+      # Cluster parameters to resolve queue overflow issue
+      - "--cluster.gossip-interval=500ms" # Increased from default 200ms
+      - "--cluster.pushpull-interval=120s" # Increased from default 60s
+      - "--cluster.tcp-timeout=15s" # Increased for connection stability
+      - "--cluster.probe-timeout=1s" # Optimized for fast diagnostics
+      - "--cluster.probe-interval=2s" # Cluster node check interval
     volumes:
       - ./conf/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - ./data/alertmanager:/alertmanager
@@ -740,36 +742,36 @@ services:
       retries: 3
       start_period: 30s
     labels:
-      # Разрешить автообновление для Alertmanager
+      # Allow auto-updates for Alertmanager
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     secrets:
       - slack_alert_webhook
       - pagerduty_routing_key
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # Node Exporter - системные метрики
+  # Node Exporter - system metrics
   node-exporter:
-    image: prom/node-exporter:v1.8.2 # Стабильная версия (v1.10.0 не существует)
+    image: prom/node-exporter:v1.8.2 # Stable version (v1.10.0 does not exist)
     container_name: erni-ki-node-exporter
     command:
       - "--path.procfs=/host/proc"
       - "--path.rootfs=/rootfs"
       - "--path.sysfs=/host/sys"
-      - "--path.udev.data=/host/run/udev/data" # Путь к udev данным для diskstats collector
+      - "--path.udev.data=/host/run/udev/data" # Path to udev data for diskstats collector
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
-      - "--no-collector.systemd" # Отключаем systemd collector (нет доступа к dbus в контейнере)
-      # ИСПРАВЛЕНО 2025-10-24: error вместо warn для подавления broken pipe ошибок
-      # Broken pipe ошибки - это нормальное поведение когда клиент закрывает соединение
+      - "--no-collector.systemd" # Disable systemd collector (no dbus access in container)
+      # FIXED 2025-10-24: error instead of warn to suppress broken pipe errors
+      # Broken pipe errors are normal behavior when client closes connection
       - "--log.level=error"
       - "--collector.processes"
-      - "--web.disable-exporter-metrics" # Отключаем метрики самого экспортера для уменьшения нагрузки
+      - "--web.disable-exporter-metrics" # Disable exporter's own metrics to reduce load
       - "--collector.textfile.directory=/var/lib/node_exporter/textfile_collector"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-      - /run/udev/data:/host/run/udev/data:ro # Монтируем udev данные для diskstats
+      - /run/udev/data:/host/run/udev/data:ro # Mount udev data for diskstats
       - /run/systemd/private:/run/systemd/private:ro
       - ./data/node-exporter-textfile:/var/lib/node_exporter/textfile_collector:ro
     ports:
@@ -788,17 +790,17 @@ services:
       retries: 3
       start_period: 10s
     labels:
-      # Разрешить автообновление для Node Exporter
+      # Allow auto-updates for Node Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # Postgres Exporter - мониторинг PostgreSQL
+  # Postgres Exporter - PostgreSQL monitoring
   postgres-exporter:
     depends_on:
       db:
         condition: service_healthy
-    # Возврат к prometheuscommunity образу 2025-11-07: wrouesnel не содержит wget/curl для healthcheck
+    # Rollback to prometheuscommunity image 2025-11-07: wrouesnel lacks wget/curl for healthcheck
     image: prometheuscommunity/postgres-exporter:v0.15.0
     container_name: erni-ki-postgres-exporter
     environment:
@@ -810,7 +812,7 @@ services:
       - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
       - ./secrets/postgres_exporter_dsn.txt:/etc/postgres_exporter_dsn.txt:ro
       - ./conf/postgres-exporter/config.yml:/etc/postgres_exporter.yml:ro
-    # Публикуем порт 9188 для socat proxy (2025-11-07)
+    # Publish port 9188 for socat proxy (2025-11-07)
     ports:
       - "127.0.0.1:9188:9188"
     restart: unless-stopped
@@ -821,20 +823,24 @@ services:
       - --no-collector.stat_bgwriter
     logging: *monitoring-logging
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 20s
     labels:
-      # Разрешить автообновление для Postgres Exporter
+      # Allow auto-updates for Postgres Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # Socat Proxy - IPv4 to IPv6 proxy для Postgres Exporter
-  # Решение проблемы: Postgres Exporter слушает только на IPv6, а Prometheus подключается по IPv4
-  # Используем network_mode: service для доступа к localhost exporter'а (2025-11-07)
+  # Socat Proxy - IPv4 to IPv6 proxy for Postgres Exporter
+  # Solution: Postgres Exporter listens only on IPv6, but Prometheus connects via IPv4
+  # Using network_mode: service for localhost exporter access (2025-11-07)
   postgres-exporter-proxy:
     depends_on:
       postgres-exporter:
@@ -855,7 +861,7 @@ services:
       retries: 3
       start_period: 10s
 
-  # NVIDIA GPU Exporter - мониторинг GPU
+  # NVIDIA GPU Exporter - GPU monitoring
   nvidia-exporter:
     image: mindprince/nvidia_gpu_prometheus_exporter:0.1
     container_name: erni-ki-nvidia-exporter
@@ -872,17 +878,17 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    # Health check отключен: минимальный образ не содержит wget/curl/nc
-    # Сервис мониторится через Prometheus scrape успешность
+    # Health check disabled: minimal image lacks wget/curl/nc
+    # Service monitored via Prometheus scrape success
     labels:
-      # Разрешить автообновление для NVIDIA Exporter
+      # Allow auto-updates for NVIDIA Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # Blackbox Exporter - мониторинг доступности
+  # Blackbox Exporter - availability monitoring
   blackbox-exporter:
-    image: prom/blackbox-exporter:v0.25.0 # Стабильная версия (v0.28.0 не существует)
+    image: prom/blackbox-exporter:v0.25.0 # Stable version (v0.28.0 does not exist)
     container_name: erni-ki-blackbox-exporter
     volumes:
       - ./conf/blackbox-exporter/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
@@ -900,21 +906,21 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
     labels:
-      # Разрешить автообновление для Blackbox Exporter
+      # Allow auto-updates for Blackbox Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
 
-  # Redis Exporter - мониторинг Redis
+  # Redis Exporter - Redis monitoring
   redis-exporter:
     depends_on:
       redis:
         condition: service_healthy
-    # Обновлено: 2025-10-02 с v1.55.0 до v1.62.0 (стабильная версия без проблем v1.77.0)
-    image: oliver006/redis_exporter:v1.62.0 # Откат к стабильной версии (v1.63.0 не существует)
+    # Updated: 2025-10-02 from v1.55.0 to v1.62.0 (stable version without v1.77.0 issues)
+    image: oliver006/redis_exporter:v1.62.0 # Rollback to stable version (v1.63.0 does not exist)
     container_name: erni-ki-redis-exporter
-    # Исправлено: 2025-11-07 используем полный URL с паролем (формат redis://:password@host:port)
+    # Fixed: 2025-11-07 using full URL with password (format redis://:password@host:port)
     environment:
       - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
       - REDIS_EXPORTER_LOG_FORMAT=txt
@@ -931,17 +937,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    # Health check отключен: минимальный образ не содержит wget/curl/nc
-    # Сервис мониторится через Prometheus scrape успешность
+    # Health check disabled: minimal image lacks wget/curl/nc
+    # Service monitored via Prometheus scrape success
     labels:
-      # Разрешить автообновление для Redis Exporter
+      # Allow auto-updates for Redis Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     secrets:
       - redis_exporter_url
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # Ollama Exporter - мониторинг AI сервисов
+  # Ollama Exporter - AI services monitoring
   ollama-exporter:
     depends_on:
       ollama:
@@ -972,16 +978,16 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
 
-  # Nginx Exporter - мониторинг веб-сервера
+  # Nginx Exporter - web server monitoring
   nginx-exporter:
     depends_on:
       nginx:
         condition: service_healthy
-    # Обновлено: 2025-10-02 с 1.1.0 до 1.4.2 (последняя стабильная версия)
-    image: nginx/nginx-prometheus-exporter:1.1.0 # Стабильная версия (1.5.0 не существует)
+    # Updated: 2025-10-02 from 1.1.0 to 1.4.2 (latest stable version)
+    image: nginx/nginx-prometheus-exporter:1.1.0 # Stable version (1.5.0 does not exist)
     container_name: erni-ki-nginx-exporter
     command:
-      - "--nginx.scrape-uri=http://nginx:80/nginx_status" # Исправлен порт с 8080 на 80
+      - "--nginx.scrape-uri=http://nginx:80/nginx_status" # Fixed port from 8080 to 80
       - "--web.listen-address=:9113"
     ports:
       - "127.0.0.1:9113:9113"
@@ -997,9 +1003,9 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
 
-  # cAdvisor - мониторинг контейнеров
+  # cAdvisor - container monitoring
   cadvisor:
-    # Обновлено: 2025-10-02 с v0.47.2 до v0.52.1 (последняя доступная версия)
+    # Updated: 2025-10-02 from v0.47.2 to v0.52.1 (latest available version)
     image: gcr.io/cadvisor/cadvisor:v0.52.1
     container_name: erni-ki-cadvisor
     command:
@@ -1028,34 +1034,34 @@ services:
       retries: 3
       start_period: 30s
     labels:
-      # Разрешить автообновление для cAdvisor
+      # Allow auto-updates for cAdvisor
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Используем стандартную Docker bridge сеть
+    # Using standard Docker bridge network
 
-  # === ЦЕНТРАЛИЗОВАННОЕ ЛОГИРОВАНИЕ ===
+  # === CENTRALIZED LOGGING ===
 
-  # Fluent Bit - сборщик и обработчик логов
+  # Fluent Bit - log collector and processor
   fluent-bit:
     depends_on:
       loki:
         condition: service_healthy
-      # Дополнительная задержка для стабилизации Loki
+      # Additional delay for Loki stabilization
       prometheus:
         condition: service_healthy
     environment:
-      # Уровень логирования
+      # Log level
       - FLB_LOG_LEVEL=info
-      # HTTP сервер для метрик и health checks
+      # HTTP server for metrics and health checks
       - FLB_HTTP_SERVER=On
       - FLB_HTTP_LISTEN=0.0.0.0
       - FLB_HTTP_PORT=2020
       # Health check endpoint
       - FLB_HEALTH_CHECK=On
-    # Health check для мониторинга состояния Fluent Bit → Loki интеграции
-    # Health check отключен: минимальный образ не содержит wget/curl/nc
-    # Сервис мониторится через Prometheus scrape успешность и Loki логи
-    image: fluent/fluent-bit:3.1.0 # Стабильная версия (3.3.0 не существует)
+    # Health check for Fluent Bit → Loki integration monitoring
+    # Health check disabled: minimal image lacks wget/curl/nc
+    # Service monitored via Prometheus scrape success and Loki logs
+    image: fluent/fluent-bit:3.1.0 # Stable version (3.3.0 does not exist)
     container_name: erni-ki-fluent-bit
     logging: *monitoring-logging
     restart: unless-stopped
@@ -1063,23 +1069,23 @@ services:
     mem_reservation: 256m
     cpus: "0.5"
     volumes:
-      # Обновленная конфигурация Fluent Bit для Loki интеграции
+      # Updated Fluent Bit configuration for Loki integration
       - ./conf/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./conf/fluent-bit/parsers.conf:/fluent-bit/etc/parsers.conf:ro
       - ./conf/fluent-bit/scripts:/fluent-bit/scripts:ro
       - ./conf/fluent-bit/filters-log-optimization.conf:/fluent-bit/etc/filters-log-optimization.conf:ro
       - ./conf/fluent-bit/filters-optimized.conf:/fluent-bit/etc/filters-optimized.conf:ro
       - ./conf/fluent-bit/certs:/fluent-bit/etc/certs:ro
-      # Dedicated volume для логов с оптимизацией для SSD (Фаза 3)
+      # Dedicated volume for logs with SSD optimization (Phase 3)
       - erni-ki-logs:/var/log
       - erni-ki-fluent-db:/fluent-bit/db
-      # Доступ к Docker socket для сбора логов контейнеров
+      # Access to Docker socket for container log collection
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Доступ к json-файлам Docker контейнеров (tail input)
+      # Access to Docker container json-files (tail input)
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
     ports:
-      - "127.0.0.1:2020:2020" # HTTP API и health checks
-      - "127.0.0.1:2021:2021" # Prometheus метрики (Фаза 2)
+      - "127.0.0.1:2020:2020" # HTTP API and health checks
+      - "127.0.0.1:2021:2021" # Prometheus metrics (Phase 2)
       - "127.0.0.1:24224:24224" # Fluentd forward protocol
     healthcheck:
       test: ["CMD", "/fluent-bit/bin/fluent-bit", "--version"]
@@ -1088,7 +1094,7 @@ services:
       retries: 3
       start_period: 10s
     labels:
-      # Разрешить автообновление для Fluent Bit
+      # Allow auto-updates for Fluent Bit
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=logging-stack"
     networks:
@@ -1096,7 +1102,7 @@ services:
         aliases:
           - fluent-bit
 
-  # RAG Exporter - метрики SLA RAG (latency, sources)
+  # RAG Exporter - RAG SLA metrics (latency, sources)
   rag-exporter:
     build:
       context: ./conf
@@ -1104,8 +1110,8 @@ services:
     container_name: erni-ki-rag-exporter
     environment:
       - PORT=9808
-      # URL тестового запроса (по умолчанию health OpenWebUI);
-      # можно заменить на реальный RAG endpoint приложения
+      # Test request URL (default: OpenWebUI health);
+      # can be replaced with real RAG endpoint
       - RAG_TEST_URL=http://openwebui:8080/health
       - RAG_TEST_INTERVAL=30
     ports:
@@ -1126,7 +1132,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
 
-  # Webhook Receiver - обработка алертов от Alertmanager
+  # Webhook Receiver - Alertmanager alert processing
   webhook-receiver:
     depends_on:
       alertmanager:
@@ -1136,20 +1142,20 @@ services:
       dockerfile: Dockerfile
     container_name: erni-ki-webhook-receiver
     environment:
-      # Порт для webhook endpoints
+      # Port for webhook endpoints
       - WEBHOOK_PORT=9093
-      # Python настройки
+      # Python settings
       - PYTHONUNBUFFERED=1
       - FLASK_ENV=production
-      # Настройки логирования
+      # Logging settings
       - LOG_LEVEL=INFO
     volumes:
-      # Логи webhook receiver
+      # Webhook receiver logs
       - ./data/webhook-logs:/app/logs
-      # Скрипты для обработки алертов
+      # Alert processing scripts
       - ./conf/webhook-receiver/scripts:/app/scripts:ro
     ports:
-      - "127.0.0.1:9095:9093" # Webhook endpoint (избегаем конфликта с Alertmanager 9093)
+      - "127.0.0.1:9095:9093" # Webhook endpoint (avoid conflict with Alertmanager 9093)
     restart: unless-stopped
     mem_limit: 256m
     mem_reservation: 128m
@@ -1163,17 +1169,17 @@ services:
       retries: 3
       start_period: 10s
     labels:
-      # Разрешить автообновление для Webhook Receiver
+      # Allow auto-updates for Webhook Receiver
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-# Используем стандартную Docker bridge сеть (docker0)
+# Using standard Docker bridge network (docker0)
 
 # ============================================================================
-# DEDICATED VOLUMES - Оптимизированные тома для производительности (Фаза 3)
+# DEDICATED VOLUMES - Optimized volumes for performance (Phase 3)
 # ============================================================================
 
 volumes:
-  # Dedicated volume для логов с оптимизацией для SSD
+  # Dedicated volume for logs with SSD optimization
   erni-ki-logs:
     driver: local
     driver_opts:
@@ -1185,7 +1191,7 @@ volumes:
       - "com.erni-ki.volume.optimization=ssd"
       - "com.erni-ki.volume.phase=3"
 
-  # Dedicated volume для Fluent Bit database с высокой производительностью
+  # Dedicated volume for Fluent Bit database with high performance
   erni-ki-fluent-db:
     driver: local
     driver_opts:
@@ -1198,32 +1204,32 @@ volumes:
       - "com.erni-ki.volume.phase=3"
 
 # ============================================================================
-# DOCKER SECRETS - Безопасное хранение паролей и API ключей
+# DOCKER SECRETS - Secure storage for passwords and API keys
 # ============================================================================
-# Добавлено: 2025-10-30 (Фаза 1: Критические исправления безопасности)
-# Все чувствительные данные перемещены из env файлов в Docker Secrets
+# Added: 2025-10-30 (Phase 1: Critical security fixes)
+# All sensitive data moved from env files to Docker Secrets
 secrets:
-  # PostgreSQL пароль (используется: db, openwebui, mcposerver)
+  # PostgreSQL password (used by: db, openwebui, mcposerver)
   postgres_password:
     file: ./secrets/postgres_password.txt
 
-  # LiteLLM database пароль
+  # LiteLLM database password
   litellm_db_password:
     file: ./secrets/litellm_db_password.txt
 
-  # LiteLLM API ключ (используется: openwebui, litellm)
+  # LiteLLM API key (used by: openwebui, litellm)
   litellm_api_key:
     file: ./secrets/litellm_api_key.txt
 
-  # Context7 API ключ (используется: mcposerver)
+  # Context7 API key (used by: mcposerver)
   context7_api_key:
     file: ./secrets/context7_api_key.txt
 
-  # VLLM API ключ
+  # VLLM API key
   vllm_api_key:
     file: ./secrets/vllm_api_key.txt
 
-  # Watchtower HTTP API токен
+  # Watchtower HTTP API token
   watchtower_api_token:
     file: ./secrets/watchtower_api_token.txt
 
@@ -1231,27 +1237,27 @@ secrets:
   grafana_admin_password:
     file: ./secrets/grafana_admin_password.txt
 
-  # DSN для Postgres exporter
+  # DSN for Postgres exporter
   postgres_exporter_dsn:
     file: ./secrets/postgres_exporter_dsn.txt
 
-  # Redis URL для redis-exporter
+  # Redis URL for redis-exporter
   redis_exporter_url:
     file: ./secrets/redis_exporter_url.txt
 
-  # Секретный ключ OpenWebUI (FastAPI SECRET_KEY)
+  # OpenWebUI secret key (FastAPI SECRET_KEY)
   openwebui_secret_key:
     file: ./secrets/openwebui_secret_key.txt
 
-  # LiteLLM master key для админ-доступа
+  # LiteLLM master key for admin access
   litellm_master_key:
     file: ./secrets/litellm_master_key.txt
 
-  # LiteLLM salt key для шифрования API ключей
+  # LiteLLM salt key for API key encryption
   litellm_salt_key:
     file: ./secrets/litellm_salt_key.txt
 
-  # Пароль UI LiteLLM
+  # LiteLLM UI password
   litellm_ui_password:
     file: ./secrets/litellm_ui_password.txt
   openai_api_key:
@@ -1260,6 +1266,6 @@ secrets:
     file: ./secrets/slack_alert_webhook.txt
   pagerduty_routing_key:
     file: ./secrets/pagerduty_routing_key.txt
-  # PublicAI API ключ для внешних моделей
+  # PublicAI API key for external models
   publicai_api_key:
     file: ./secrets/publicai_api_key.txt

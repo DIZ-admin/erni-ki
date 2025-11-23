@@ -2,7 +2,7 @@
   "name": "erni-ki",
   "version": "1.0.0",
   "type": "module",
-  "description": "AI платформа на базе Open WebUI с полной контейнеризацией",
+  "description": "AI platform based on Open WebUI with full containerization",
   "keywords": [
     "ai",
     "llm",
