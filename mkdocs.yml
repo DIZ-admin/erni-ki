@@ -285,6 +285,8 @@ plugins:
           name: "English"
   - minify:
       minify_html: true
+  - git-revision-date-localized:
+      enabled: false
 
 # Markdown Extensions
 markdown_extensions:
