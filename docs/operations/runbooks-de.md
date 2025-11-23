@@ -1,5 +1,5 @@
 ---
-title: 'Runbooks & Troubleshooting (DE)'
+title: 'Runbooks & Troubleshooting (DE summary)'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
@@ -7,10 +7,10 @@ language: 'de'
 audience: 'administrators'
 ---
 
-# Runbooks & Troubleshooting (DE)
+# Runbooks & Troubleshooting (DE summary)
 
-Zusammenfassung der wichtigsten Runbooks (englische Originale in
-`docs/operations/runbooks/`):
+Краткое резюме ключевых runbook'ов на немецком. Полные версии остаются в
+`docs/operations/runbooks/` (EN).
 
 | Thema                 | Referenzdatei (EN)                                    | Hinweis (DE)                                                               |
 | --------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------- |

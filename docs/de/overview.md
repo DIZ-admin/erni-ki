@@ -54,8 +54,8 @@ Sprachinteraktion.
   Wartung
 - **[Monitoring Übersicht](operations/monitoring.md)** - Kennzahlen, Skripte und
   Alerts
-- **[Runbooks](operations/runbooks.md)** - Deutsche Zusammenfassungen der
-  wichtigsten Abläufe
+- **[Runbooks](../operations/runbooks-de.md)** - Deutsche Zusammenfassungen der
+  wichtigsten Abläufe (englische Originale в `operations/runbooks/`)
 - **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 

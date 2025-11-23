@@ -21,6 +21,6 @@ Status dashboard: **https://status.ki.erni-gruppe.ch** (Uptime Kuma).
 - Operations runbook and escalation:
   [`docs/operations/status-page.md`](../../operations/status-page.md)
 - User basics for Open WebUI:
-  [`docs/training/openwebui-basics.md`](../../training/openwebui-basics.md)
+  [`docs/academy/openwebui-basics.md`](../../academy/openwebui-basics.md)
 - Prompting checklist:
-  [`docs/training/prompting-101.md`](../../training/prompting-101.md)
+  [`docs/academy/prompting-101.md`](../../academy/prompting-101.md)
