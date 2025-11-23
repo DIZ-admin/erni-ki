@@ -9,6 +9,7 @@ Run without arguments to update snippets, or with --check to validate.
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -26,6 +27,20 @@ MARKER_START = "<!-- STATUS_SNIPPET_START -->"
 MARKER_END = "<!-- STATUS_SNIPPET_END -->"
 DE_MARKER_START = "<!-- STATUS_SNIPPET_DE_START -->"
 DE_MARKER_END = "<!-- STATUS_SNIPPET_DE_END -->"
+LOCALE_STRINGS_FILE = REPO_ROOT / "docs/reference/status-snippet-locales.json"
+
+
+def load_locale_strings() -> Dict[str, Dict[str, str]]:
+    if not LOCALE_STRINGS_FILE.exists():
+        return {}
+    try:
+        return json.loads(LOCALE_STRINGS_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        print(f"[WARN] Failed to parse {LOCALE_STRINGS_FILE}: {exc}")
+        return {}
+
+
+LOCALE_STRINGS = load_locale_strings()
 
 
 def parse_simple_yaml(path: Path) -> Dict[str, str]:
@@ -43,30 +58,24 @@ def parse_simple_yaml(path: Path) -> Dict[str, str]:
 
 
 def render_snippet(data: Dict[str, str], locale: str = "ru") -> str:
-    """Build the Markdown snippet in Russian or German."""
-    header = (
-        f"> **Статус системы ({data.get('date', 'n/a')}) — {data.get('release', '')}**"
-        if locale == "ru"
-        else f"> **Systemstatus ({data.get('date', 'n/a')}) — {data.get('release', '')}**"
-    )
+    """Build the Markdown snippet using locale-specific labels."""
+    labels = LOCALE_STRINGS.get(locale, LOCALE_STRINGS.get("ru", {}))
+    header_label = labels.get("header", "System Status")
+    header = f"> **{header_label} ({data.get('date', 'n/a')}) — {data.get('release', '')}**"
     lines = [
         header,
         ">",
-        (
-            f"> - Контейнеры: {data.get('containers', '')}"
-            if locale == "ru"
-            else f"> - Container: {data.get('containers', '')}"
-        ),
-        f"> - {'Графана' if locale == 'ru' else 'Grafana'}: {data.get('grafana_dashboards', '')}",
-        f"> - {'Алерты' if locale == 'ru' else 'Alerts'}: {data.get('prometheus_alerts', '')}",
-        f"> - AI/GPU: {data.get('gpu_stack', '')}",
-        f"> - Context & RAG: {data.get('ai_stack', '')}",
-        f"> - {'Мониторинг' if locale == 'ru' else 'Monitoring'}: {data.get('monitoring_stack', '')}",
-        f"> - {'Автоматизация' if locale == 'ru' else 'Automatisierung'}: {data.get('automation', '')}",
+        f"> - {labels.get('containers', 'Containers')}: {data.get('containers', '')}",
+        f"> - {labels.get('grafana', 'Grafana')}: {data.get('grafana_dashboards', '')}",
+        f"> - {labels.get('alerts', 'Alerts')}: {data.get('prometheus_alerts', '')}",
+        f"> - {labels.get('aiGpu', 'AI/GPU')}: {data.get('gpu_stack', '')}",
+        f"> - {labels.get('context', 'Context & RAG')}: {data.get('ai_stack', '')}",
+        f"> - {labels.get('monitoring', 'Monitoring')}: {data.get('monitoring_stack', '')}",
+        f"> - {labels.get('automation', 'Automation')}: {data.get('automation', '')}",
     ]
     note = data.get("notes")
     if note:
-        label = "Примечание" if locale == "ru" else "Hinweis"
+        label = labels.get("note", "Note")
         lines.append(f"> - {label}: {note}")
     return "\n".join(lines) + "\n"
 

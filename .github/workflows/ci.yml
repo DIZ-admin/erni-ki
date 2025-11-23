@@ -55,6 +55,9 @@ jobs:
       - name: 🎨 Check Prettier formatting
         run: npm run format:check
 
+      - name: 🔡 Enforce language policy
+        run: npm run lint:language -- --all
+
       - name: 🔒 Run npm security audit (production dependencies)
         run: npm audit --omit=dev --audit-level=moderate || true
         continue-on-error: true

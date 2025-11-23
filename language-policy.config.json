@@ -1,0 +1,23 @@
+{
+  "baseline": [
+    "scripts/infrastructure/monitoring/standardize-logging.sh",
+    "scripts/infrastructure/security/create-letsencrypt-cert.sh",
+    "scripts/infrastructure/security/create-letsencrypt-dns-cert.sh",
+    "scripts/infrastructure/security/letsencrypt-renewal-hook.sh",
+    "scripts/infrastructure/security/monitor-certificates.sh",
+    "scripts/infrastructure/security/renew-self-signed.sh",
+    "scripts/infrastructure/security/rotate-logs.sh",
+    "scripts/infrastructure/security/rotate-secrets.sh",
+    "scripts/infrastructure/security/security-hardening.sh",
+    "scripts/infrastructure/security/security-monitor.sh",
+    "scripts/infrastructure/security/setup-github-environments.sh",
+    "scripts/infrastructure/security/setup-letsencrypt-cloudflare.sh",
+    "scripts/infrastructure/security/setup-letsencrypt-dns01-production.sh",
+    "scripts/infrastructure/security/setup-letsencrypt-http01.sh",
+    "scripts/infrastructure/security/setup-letsencrypt.sh",
+    "scripts/infrastructure/security/setup-ssl-monitoring.sh",
+    "scripts/infrastructure/security/test-letsencrypt-staging.sh",
+    "scripts/infrastructure/security/update-nginx-for-letsencrypt.sh",
+    "scripts/infrastructure/security/validate-environment-secrets.sh"
+  ]
+}

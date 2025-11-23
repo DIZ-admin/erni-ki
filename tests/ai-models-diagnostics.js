@@ -17,12 +17,12 @@ const CONFIG = {
   reportsDir: './test-results/reports',
   expectedModels: ['gpt-oss:20b', 'gemma3n:e4b', 'nomic-embed-text:latest'],
   testPrompts: [
-    'Привет! Как дела?',
-    'Расскажи о квантовой физике в двух предложениях.',
-    'Найди информацию о последних новостях в области AI',
+    'Hello! How are you?',
+    'Explain quantum physics in two sentences.',
+    'Find the latest news in the AI industry.',
   ],
   maxResponseTime: 5000, // 5 seconds
-  ragTestQuery: 'Найди последние новости о искусственном интеллекте',
+  ragTestQuery: 'Find the latest news about artificial intelligence',
 };
 
 class AIModelsDiagnostics {
@@ -187,7 +187,6 @@ class AIModelsDiagnostics {
         // Search for input field
         const inputSelectors = [
           'textarea[placeholder*="message"]',
-          'textarea[placeholder*="сообщение"]',
           '.chat-input textarea',
           'input[type="text"]',
           '[contenteditable="true"]',
@@ -214,7 +213,6 @@ class AIModelsDiagnostics {
         const sendSelectors = [
           'button[type="submit"]',
           'button[aria-label*="send"]',
-          'button[aria-label*="отправить"]',
           '.send-button',
           '[data-testid="send-button"]',
         ];
@@ -307,22 +305,18 @@ class AIModelsDiagnostics {
       // Testing RAG query
       const startTime = Date.now();
 
-      const inputSelector = [
-        'textarea[placeholder*="message"]',
-        'textarea[placeholder*="сообщение"]',
-        '.chat-input textarea',
-      ].join(', ');
+      const inputSelector = ['textarea[placeholder*="message"]', '.chat-input textarea'].join(', ');
       await this.page.fill(inputSelector, CONFIG.ragTestQuery);
 
       const sendButton = 'button[type="submit"], .send-button';
       await this.page.click(sendButton);
 
-      // Wait for response с источниками
+      // Wait for response with references
       await this.page.waitForSelector('.message, .chat-message, .response', { timeout: 15000 });
 
       const responseTime = Date.now() - startTime;
 
-      // Поиск источников
+      // Collect sources
       const collectSources = elements =>
         elements.map(el => el.textContent || el.href).filter(Boolean);
 
@@ -332,14 +326,14 @@ class AIModelsDiagnostics {
         query: CONFIG.ragTestQuery,
         responseTime,
         sourcesFound: sources.length,
-        sources: sources.slice(0, 5), // Первые 5 источников
+        sources: sources.slice(0, 5), // First five sources
         success: true,
         timestamp: new Date().toISOString(),
       });
 
       console.log(`✅ RAG test completed. Sources found: ${sources.length}`);
 
-      // Скриншот RAG ответа
+      // Screenshot of the RAG response
       await this.takeScreenshot('04-rag-response');
     } catch (error) {
       this.results.ragTests.push({
@@ -366,7 +360,7 @@ class AIModelsDiagnostics {
   async generateReport() {
     console.log('📊 Generating report...');
 
-    // Расчет метрик производительности
+    // Calculate performance metrics
     const successfulTests = this.results.modelTests.filter(test => test.success);
     const avgResponseTime =
       successfulTests.length > 0
@@ -382,16 +376,16 @@ class AIModelsDiagnostics {
       totalErrors: this.results.errors.length,
     };
 
-    // Генерация рекомендаций
+    // Build recommendations
     this.generateRecommendations();
 
-    // Сохранение отчета
+    // Persist report
     const reportPath = path.join(CONFIG.reportsDir, `ai-diagnostics-${Date.now()}.json`);
     fs.writeFileSync(reportPath, JSON.stringify(this.results, null, 2));
 
     console.log(`📋 Report saved: ${reportPath}`);
 
-    // Вывод краткого отчета в консоль
+    // Print brief summary to the console
     this.printSummary();
   }
 
@@ -400,25 +394,23 @@ class AIModelsDiagnostics {
 
     if (performanceMetrics.averageResponseTime > CONFIG.maxResponseTime) {
       this.results.recommendations.push(
-        'Время отклика превышает ожидаемое. Рекомендуется оптимизация GPU или модели.',
+        'Response time exceeds the expected threshold. Consider optimizing the GPU or model.',
       );
     }
 
     if (performanceMetrics.failedTests > 0) {
-      this.results.recommendations.push(
-        'Обнаружены неудачные тесты. Проверьте логи Ollama и OpenWebUI.',
-      );
+      this.results.recommendations.push('Some tests failed. Review the Ollama and OpenWebUI logs.');
     }
 
     if (errors.some(error => error.type === 'missing_models')) {
       this.results.recommendations.push(
-        'Отсутствуют ожидаемые модели. Загрузите недостающие модели через Ollama.',
+        'Expected models are missing. Pull the required models through Ollama.',
       );
     }
 
     if (this.results.ragTests.length === 0 || !this.results.ragTests.some(test => test.success)) {
       this.results.recommendations.push(
-        'RAG-интеграция не работает. Проверьте SearXNG и настройки веб-поиска.',
+        'RAG integration failed. Inspect SearXNG and the web-search configuration.',
       );
     }
   }
@@ -477,7 +469,7 @@ class AIModelsDiagnostics {
   }
 }
 
-// Запуск диагностики
+// Standalone diagnostics execution
 if (require.main === module) {
   const diagnostics = new AIModelsDiagnostics();
   diagnostics.run().catch(console.error);

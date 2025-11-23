@@ -122,7 +122,7 @@ class GPUMonitor {
       if (metrics) {
         this.data.push(metrics);
 
-        // Вывод текущих метрик
+        // Print current metrics
         const memoryUsage =
           `Memory: ${metrics.memoryUsed}MB/${metrics.memoryTotal}MB ` +
           `(${metrics.memoryUtilization}%)`;
@@ -164,7 +164,7 @@ class GPUMonitor {
 
     const report = {
       timestamp: new Date().toISOString(),
-      duration: this.data.length * 2, // secondsы (интервал 2с)
+      duration: this.data.length * 2, // seconds (2-second interval)
       totalSamples: this.data.length,
       metrics: this.data,
       summary: this.calculateSummary(),
@@ -239,12 +239,12 @@ class GPUMonitor {
   async runStandaloneTest(durationSeconds = 60) {
     console.log(`🚀 Running standalone GPU test for ${durationSeconds} seconds`);
 
-    const started = await this.startMonitoring(1000); // 1 secondsа интервал
+    const started = await this.startMonitoring(1000); // 1-second interval
     if (!started) {
       return;
     }
 
-    // Имитация нагрузки через Ollama
+    // Simulate workload through Ollama
     console.log('🤖 Sending test request to Ollama...');
     this.sendTestRequest();
 
@@ -257,7 +257,7 @@ class GPUMonitor {
   sendTestRequest() {
     const { spawn } = require('child_process');
 
-    // Отправка запроса к Ollama для создания нагрузки
+    // Send a request to Ollama to create additional load
     const curl = spawn('curl', [
       '-X',
       'POST',
@@ -267,7 +267,7 @@ class GPUMonitor {
       '-d',
       JSON.stringify({
         model: 'gpt-oss:20b',
-        prompt: 'Расскажи подробно о квантовой физике и её применении в современных технологиях.',
+        prompt: 'Describe quantum physics in detail and how it is applied in modern technology.',
         stream: false,
       }),
     ]);
@@ -282,14 +282,14 @@ class GPUMonitor {
   }
 }
 
-// Запуск автономного теста
+// Standalone monitoring entry point
 if (require.main === module) {
   const monitor = new GPUMonitor();
 
   const duration = process.argv[2] ? parseInt(process.argv[2]) : 60;
   monitor.runStandaloneTest(duration).catch(console.error);
 
-  // Обработка сигналов для корректного завершения
+  // Gracefully handle termination signals
   process.on('SIGINT', () => {
     console.log('\n🛑 Received interrupt signal');
     monitor.stopMonitoring();
