@@ -148,24 +148,26 @@ generate_secrets() {
     success "Сгенерированы секретные ключи"
 
     # Обновление файлов окружения
+    # Примечание: используем perl для кроссплатформенной совместимости (macOS/Linux)
+    # sed -i работает по-разному на macOS (требует sed -i '') и Linux (sed -i)
     if [ -f "env/auth.env" ]; then
-        sed -i "s/CHANGE_BEFORE_GOING_LIVE/$SECRET_KEY/g" env/auth.env
+        perl -pi -e "s/CHANGE_BEFORE_GOING_LIVE/$SECRET_KEY/g" env/auth.env
         success "Обновлен JWT_SECRET в env/auth.env"
     fi
 
     if [ -f "env/openwebui.env" ]; then
-        sed -i "s/CHANGE_BEFORE_GOING_LIVE/$SECRET_KEY/g" env/openwebui.env
-        sed -i "s/postgres:postgres@db/postgres:$DB_PASSWORD@db/g" env/openwebui.env
+        perl -pi -e "s/CHANGE_BEFORE_GOING_LIVE/$SECRET_KEY/g" env/openwebui.env
+        perl -pi -e "s/postgres:postgres@db/postgres:$DB_PASSWORD@db/g" env/openwebui.env
         success "Обновлен WEBUI_SECRET_KEY в env/openwebui.env"
     fi
 
     if [ -f "env/db.env" ]; then
-        sed -i "s/POSTGRES_PASSWORD=postgres/POSTGRES_PASSWORD=$DB_PASSWORD/g" env/db.env
+        perl -pi -e "s/POSTGRES_PASSWORD=postgres/POSTGRES_PASSWORD=$DB_PASSWORD/g" env/db.env
         success "Обновлен пароль БД в env/db.env"
     fi
 
     if [ -f "env/searxng.env" ]; then
-        sed -i "s/YOUR-SECRET-KEY/$SECRET_KEY/g" env/searxng.env
+        perl -pi -e "s/YOUR-SECRET-KEY/$SECRET_KEY/g" env/searxng.env
         success "Обновлен SEARXNG_SECRET в env/searxng.env"
     fi
 

@@ -39,7 +39,9 @@ x-monitoring-logging: &monitoring-logging
     max-file: "5"
     labels: "service,version,level=monitoring"
 
-# Обратная совместимость (deprecated, будет удалено в следующих версиях)
+# Legacy logging configuration - сохранено для обратной совместимости
+# Миграция: все новые сервисы должны использовать уровни critical/important/auxiliary/monitoring
+# Планируется к удалению: Q2 2025 (после миграции всех legacy сервисов)
 x-logging: &default-logging
   driver: "json-file"
   options:
