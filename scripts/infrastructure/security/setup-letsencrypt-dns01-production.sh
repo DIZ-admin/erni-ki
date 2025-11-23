@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # ============================================================================
-# ERNI-KI Production Let's Encrypt SSL Setup с Cloudflare DNS-01
+# ERNI-KI Production Let's Encrypt SSL Setup with Cloudflare DNS-01
 # ============================================================================
-# Описание: Безопасная установка Let's Encrypt сертификата через DNS-01
-# Автор: Augment Agent
-# Дата: 2025-11-11
-# Версия: 1.0.0
+# Description: Безопасная installation Let's Encrypt certificate via DNS-01
+# Author: Augment Agent
+# Date: 2025-11-11
+# Version: 1.0.0
 # ============================================================================
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[1;33m'
@@ -19,7 +19,7 @@ readonly BLUE='\033[0;34m'
 readonly CYAN='\033[0;36m'
 readonly NC='\033[0m'
 
-# Директории
+# Directories
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 readonly SSL_DIR="$PROJECT_ROOT/conf/nginx/ssl"
@@ -27,13 +27,13 @@ readonly BACKUP_DIR="$PROJECT_ROOT/.config-backup/ssl-letsencrypt-dns01-$(date +
 readonly ACME_HOME="$HOME/.acme.sh"
 readonly LOG_FILE="$PROJECT_ROOT/logs/ssl-letsencrypt-dns01-setup-$(date +%Y%m%d-%H%M%S).log"
 
-# Конфигурация
+# Configuration
 readonly DOMAIN="ki.erni-gruppe.ch"
 readonly DOMAIN_WWW="www.ki.erni-gruppe.ch"
 readonly EMAIL="diginnz1@gmail.com"
 readonly CERT_KEYLENGTH="2048"
 
-# Функции логирования
+# Logging functions
 log() {
     local msg="[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1"
     echo -e "${BLUE}${msg}${NC}"
@@ -59,7 +59,7 @@ error() {
     exit 1
 }
 
-# Создание директории для логов
+# Creating directories for logs
 mkdir -p "$(dirname "$LOG_FILE")"
 
 # Заголовок
@@ -67,15 +67,15 @@ print_header() {
     echo -e "${CYAN}"
     echo "============================================================================"
     echo "  ERNI-KI Production Let's Encrypt SSL Setup"
-    echo "  Метод: DNS-01 Challenge через Cloudflare API"
-    echo "  Домены: $DOMAIN, $DOMAIN_WWW"
+    echo "  Метод: DNS-01 Challenge via Cloudflare API"
+    echo "  Domains: $DOMAIN, $DOMAIN_WWW"
     echo "============================================================================"
     echo -e "${NC}"
 }
 
-# Проверка зависимостей
+# Check зависимостей
 check_dependencies() {
-    log "Проверка зависимостей..."
+    log "Check зависимостей..."
 
     local deps=("docker" "curl" "openssl" "dig")
     for dep in "${deps[@]}"; do
@@ -85,15 +85,15 @@ check_dependencies() {
     done
 
     if [ ! -d "$SSL_DIR" ]; then
-        error "Директория SSL не найдена: $SSL_DIR"
+        error "Directory SSL не найдена: $SSL_DIR"
     fi
 
     success "Все зависимости найдены"
 }
 
-# Проверка Docker Compose
+# Check Docker Compose
 check_docker_compose() {
-    log "Проверка Docker Compose..."
+    log "Check Docker Compose..."
 
     cd "$PROJECT_ROOT"
     if ! docker compose version &> /dev/null; then
@@ -103,42 +103,42 @@ check_docker_compose() {
     success "Docker Compose работает"
 }
 
-# Запрос Cloudflare API Token
+# Request Cloudflare API Token
 request_cloudflare_token() {
-    log "Настройка Cloudflare API..."
+    log "Setup Cloudflare API..."
     echo ""
     echo -e "${YELLOW}╔════════════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${YELLOW}║  Для получения сертификата через DNS-01 нужен Cloudflare API Token    ║${NC}"
+    echo -e "${YELLOW}║  To obtain certificate via DNS-01 needed Cloudflare API Token    ║${NC}"
     echo -e "${YELLOW}╚════════════════════════════════════════════════════════════════════════╝${NC}"
     echo ""
-    echo -e "${CYAN}Как получить API Token:${NC}"
-    echo -e "  1. Откройте: ${GREEN}https://dash.cloudflare.com/profile/api-tokens${NC}"
-    echo -e "  2. Нажмите: ${GREEN}Create Token${NC}"
-    echo -e "  3. Выберите шаблон: ${GREEN}Edit zone DNS${NC}"
-    echo -e "  4. Настройте права:"
+    echo -e "${CYAN}How to obtain API Token:${NC}"
+    echo -e "  1. Open: ${GREEN}https://dash.cloudflare.com/profile/api-tokens${NC}"
+    echo -e "  2. Press: ${GREEN}Create Token${NC}"
+    echo -e "  3. Select template: ${GREEN}Edit zone DNS${NC}"
+    echo -e "  4. Configure permissions:"
     echo -e "     • Zone: ${GREEN}DNS${NC} - ${GREEN}Edit${NC}"
     echo -e "     • Zone Resources: ${GREEN}Include${NC} - ${GREEN}Specific zone${NC} - ${GREEN}erni-gruppe.ch${NC}"
-    echo -e "  5. Нажмите: ${GREEN}Continue to summary${NC} → ${GREEN}Create Token${NC}"
-    echo -e "  6. Скопируйте токен"
+    echo -e "  5. Press: ${GREEN}Continue to summary${NC} → ${GREEN}Create Token${NC}"
+    echo -e "  6. Copy token"
     echo ""
-    echo -e "${GREEN}Вставьте Cloudflare API Token (ввод скрыт):${NC}"
+    echo -e "${GREEN}Paste Cloudflare API Token (ввод скрыт):${NC}"
     read -s CF_Token
     echo ""
 
     if [[ -z "$CF_Token" ]]; then
-        error "API Token не может быть пустым"
+        error "API Token cannot be empty"
     fi
 
-    # Экспорт для acme.sh
+    # Экспорт for acme.sh
     export CF_Token="$CF_Token"
     export CF_Account_ID=""
 
     success "Cloudflare API Token настроен"
 }
 
-# Проверка валидности Cloudflare API Token
+# Check валидности Cloudflare API Token
 verify_cloudflare_token() {
-    log "Проверка Cloudflare API Token..."
+    log "Check Cloudflare API Token..."
 
     local response=$(curl -s -H "Authorization: Bearer $CF_Token" \
          -H "Content-Type: application/json" \
@@ -147,21 +147,21 @@ verify_cloudflare_token() {
     if echo "$response" | grep -q '"success":true'; then
         success "Cloudflare API Token валиден"
     else
-        error "Cloudflare API Token невалиден. Проверьте токен и попробуйте снова."
+        error "Cloudflare API Token невалиден. Проверьте token и попробуйте снова."
     fi
 }
 
-# Создание резервной копии через Backrest
+# Creating резервной копии via Backrest
 create_backrest_backup() {
-    log "Создание резервной копии через Backrest..."
+    log "Creating резервной копии via Backrest..."
 
     cd "$PROJECT_ROOT"
 
-    # Создание тега для Backrest
+    # Creating тега for Backrest
     local backup_tag="ssl-letsencrypt-dns01-$(date +%Y%m%d-%H%M%S)"
 
     if docker compose exec -T backrest backrest backup --tag "$backup_tag" &>> "$LOG_FILE"; then
-        success "Резервная копия создана через Backrest (тег: $backup_tag)"
+        success "Backup created via Backrest (тег: $backup_tag)"
     else
         warning "Backrest недоступен, создаю локальную резервную копию..."
         create_local_backup
@@ -170,7 +170,7 @@ create_backrest_backup() {
 
 # Локальная резервная копия
 create_local_backup() {
-    log "Создание локальной резервной копии..."
+    log "Creating локальной резервной копии..."
 
     mkdir -p "$BACKUP_DIR"
 
@@ -183,41 +183,41 @@ create_local_backup() {
     fi
 }
 
-# Установка/обновление acme.sh
+# Installation/обновление acme.sh
 install_acme_sh() {
-    log "Проверка acme.sh..."
+    log "Check acme.sh..."
 
     if [ ! -f "$ACME_HOME/acme.sh" ]; then
-        log "Установка acme.sh..."
+        log "Installation acme.sh..."
         curl -s https://get.acme.sh | sh -s email="$EMAIL" &>> "$LOG_FILE"
 
         if [ ! -f "$ACME_HOME/acme.sh" ]; then
-            error "Ошибка установки acme.sh"
+            error "Error установки acme.sh"
         fi
-        success "acme.sh установлен"
+        success "acme.sh installed"
     else
-        log "acme.sh уже установлен, обновляю..."
+        log "acme.sh already installed, обновляю..."
         "$ACME_HOME/acme.sh" --upgrade &>> "$LOG_FILE" || true
         success "acme.sh обновлен"
     fi
 }
 
-# Получение сертификата Let's Encrypt
+# Obtaining certificate Let's Encrypt
 obtain_certificate() {
-    log "Получение Let's Encrypt сертификата..."
+    log "Obtaining Let's Encrypt certificate..."
     echo ""
-    echo -e "${YELLOW}Домены:${NC} $DOMAIN, $DOMAIN_WWW"
+    echo -e "${YELLOW}Domains:${NC} $DOMAIN, $DOMAIN_WWW"
     echo -e "${YELLOW}Email:${NC} $EMAIL"
     echo -e "${YELLOW}DNS Provider:${NC} Cloudflare"
     echo -e "${YELLOW}Key Length:${NC} $CERT_KEYLENGTH"
     echo ""
 
-    log "Запуск acme.sh (это может занять 2-3 минуты)..."
+    log "Starting acme.sh (это может занять 2-3 минуты)..."
 
-    # Установка Let's Encrypt как CA по умолчанию
+    # Installation Let's Encrypt как CA по умолчанию
     "$ACME_HOME/acme.sh" --set-default-ca --server letsencrypt &>> "$LOG_FILE"
 
-    # Получение сертификата через DNS-01
+    # Obtaining certificate via DNS-01
     if "$ACME_HOME/acme.sh" --issue \
         --dns dns_cf \
         -d "$DOMAIN" \
@@ -225,90 +225,90 @@ obtain_certificate() {
         --keylength "$CERT_KEYLENGTH" \
         --server letsencrypt \
         --force &>> "$LOG_FILE"; then
-        success "Сертификат успешно получен от Let's Encrypt!"
+        success "Certificate successfully obtained от Let's Encrypt!"
     else
-        error "Ошибка при получении сертификата. Проверьте логи: $LOG_FILE"
+        error "Error when obtaining certificate. Check logs: $LOG_FILE"
     fi
 }
 
-# Установка сертификатов
+# Installation certificates
 install_certificate() {
-    log "Установка сертификатов в nginx..."
+    log "Installation certificates в nginx..."
 
-    # Установка сертификатов с правильными путями
+    # Installation certificates с правильными путями
     "$ACME_HOME/acme.sh" --install-cert -d "$DOMAIN" \
         --key-file "$SSL_DIR/letsencrypt-privkey.key" \
         --fullchain-file "$SSL_DIR/letsencrypt-fullchain.crt" \
         --cert-file "$SSL_DIR/letsencrypt-cert.crt" \
         --ca-file "$SSL_DIR/letsencrypt-chain.crt" &>> "$LOG_FILE"
 
-    # Установка правильных прав доступа
+    # Installation correct access permissions
     chmod 644 "$SSL_DIR/letsencrypt-fullchain.crt"
     chmod 600 "$SSL_DIR/letsencrypt-privkey.key"
     chmod 644 "$SSL_DIR/letsencrypt-cert.crt"
     chmod 644 "$SSL_DIR/letsencrypt-chain.crt"
 
-    # Создание символических ссылок
+    # Creating symbolic links
     cd "$SSL_DIR"
     ln -sf letsencrypt-fullchain.crt nginx-fullchain.crt
     ln -sf letsencrypt-fullchain.crt nginx.crt
     ln -sf letsencrypt-privkey.key nginx.key
 
-    success "Сертификаты установлены"
+    success "Certificates installedы"
 }
 
-# Проверка сертификата
+# Check certificate
 verify_certificate() {
-    log "Проверка установленного сертификата..."
+    log "Check installedного certificate..."
     echo ""
 
     openssl x509 -in "$SSL_DIR/nginx-fullchain.crt" -noout -subject -issuer -dates -ext subjectAltName
 
     echo ""
-    success "Сертификат валиден"
+    success "Certificate валиден"
 }
 
-# Перезагрузка nginx
+# Reload nginx
 reload_nginx() {
-    log "Проверка конфигурации nginx..."
+    log "Check конфигурации nginx..."
 
     cd "$PROJECT_ROOT"
     if docker compose exec -T nginx nginx -t &>> "$LOG_FILE"; then
-        success "Конфигурация nginx корректна"
+        success "Configuration nginx корректна"
     else
-        error "Ошибка в конфигурации nginx. Проверьте логи: $LOG_FILE"
+        error "Error в конфигурации nginx. Check logs: $LOG_FILE"
     fi
 
-    log "Перезагрузка nginx..."
+    log "Reload nginx..."
     if docker compose restart nginx &>> "$LOG_FILE"; then
         success "Nginx перезагружен"
     else
-        error "Ошибка перезагрузки nginx"
+        error "Error перезагрузки nginx"
     fi
 }
 
-# Перезагрузка Cloudflare Tunnel
+# Reload Cloudflare Tunnel
 reload_cloudflared() {
-    log "Перезагрузка Cloudflare Tunnel..."
+    log "Reload Cloudflare Tunnel..."
 
     cd "$PROJECT_ROOT"
     if docker compose restart cloudflared &>> "$LOG_FILE"; then
         success "Cloudflare Tunnel перезагружен"
     else
-        warning "Ошибка перезагрузки Cloudflare Tunnel"
+        warning "Error перезагрузки Cloudflare Tunnel"
     fi
 }
 
-# Настройка автообновления
+# Setup автообновления
 setup_auto_renewal() {
-    log "Настройка автообновления сертификата..."
+    log "Setup автообновления certificate..."
 
-    # Создание hook скрипта для перезагрузки nginx
+    # Creating hook script for перезагрузки nginx
     local hook_script="$PROJECT_ROOT/scripts/infrastructure/security/letsencrypt-renewal-hook.sh"
 
     cat > "$hook_script" << 'EOFHOOK'
 #!/bin/bash
-# Hook скрипт для перезагрузки nginx после обновления Let's Encrypt сертификата
+# Hook скрипт for перезагрузки nginx после обновления Let's Encrypt certificate
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 LOG_FILE="$PROJECT_ROOT/logs/ssl-renewal-$(date +%Y%m%d).log"
@@ -317,7 +317,7 @@ echo "[$(date +'%Y-%m-%d %H:%M:%S')] Certificate renewal hook executed" >> "$LOG
 
 cd "$PROJECT_ROOT"
 
-# Перезагрузка nginx
+# Reload nginx
 if docker compose exec -T nginx nginx -s reload 2>> "$LOG_FILE"; then
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] Nginx reloaded successfully" >> "$LOG_FILE"
 else
@@ -325,7 +325,7 @@ else
     docker compose restart nginx >> "$LOG_FILE" 2>&1
 fi
 
-# Перезагрузка Cloudflare Tunnel
+# Reload Cloudflare Tunnel
 docker compose restart cloudflared >> "$LOG_FILE" 2>&1
 
 echo "[$(date +'%Y-%m-%d %H:%M:%S')] Certificate renewal completed" >> "$LOG_FILE"
@@ -333,7 +333,7 @@ EOFHOOK
 
     chmod +x "$hook_script"
 
-    # Обновление acme.sh конфигурации для использования hook
+    # Update acme.sh конфигурации for using hook
     "$ACME_HOME/acme.sh" --install-cert -d "$DOMAIN" \
         --key-file "$SSL_DIR/letsencrypt-privkey.key" \
         --fullchain-file "$SSL_DIR/letsencrypt-fullchain.crt" \
@@ -341,12 +341,12 @@ EOFHOOK
         --ca-file "$SSL_DIR/letsencrypt-chain.crt" \
         --reloadcmd "$hook_script" &>> "$LOG_FILE"
 
-    success "Автообновление настроено (acme.sh cron job)"
+    success "Auto-renewal configured (acme.sh cron job)"
 }
 
-# Проверка HTTPS доступа
+# Check HTTPS доступа
 test_https_access() {
-    log "Проверка HTTPS доступа..."
+    log "Check HTTPS доступа..."
 
     sleep 5  # Ждем перезагрузки сервисов
 
@@ -354,14 +354,14 @@ test_https_access() {
         if curl -sSf -I "https://$domain" &> /dev/null; then
             success "HTTPS доступ к $domain работает"
         else
-            warning "HTTPS доступ к $domain недоступен (может потребоваться время для DNS)"
+            warning "HTTPS доступ к $domain недоступен (может потребоваться время for DNS)"
         fi
     done
 }
 
-# Проверка статуса сервисов
+# Check статуса сервисов
 check_services_health() {
-    log "Проверка статуса сервисов ERNI-KI..."
+    log "Check статуса сервисов ERNI-KI..."
 
     cd "$PROJECT_ROOT"
     local unhealthy=$(docker compose ps --format json | jq -r 'select(.Health != "healthy" and .Health != "") | .Service' 2>/dev/null)
@@ -374,7 +374,7 @@ check_services_health() {
     fi
 }
 
-# Основная функция
+# Main function
 main() {
     print_header
 
@@ -395,25 +395,25 @@ main() {
 
     echo ""
     echo -e "${GREEN}╔════════════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║  ✅ Let's Encrypt SSL сертификат успешно установлен!                  ║${NC}"
+    echo -e "${GREEN}║  ✅ Let's Encrypt SSL сертификат успешно installed!                  ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════════════════════════════════╝${NC}"
     echo ""
-    echo -e "${CYAN}Информация о сертификате:${NC}"
+    echo -e "${CYAN}Info о сертификате:${NC}"
     echo -e "  • Издатель: Let's Encrypt (R3)"
-    echo -e "  • Срок действия: 90 дней"
-    echo -e "  • Автообновление: настроено через acme.sh cron"
-    echo -e "  • Домены: $DOMAIN, $DOMAIN_WWW"
+    echo -e "  • Validity period: 90 days"
+    echo -e "  • Auto-renewal: configured via acme.sh cron"
+    echo -e "  • Domains: $DOMAIN, $DOMAIN_WWW"
     echo ""
-    echo -e "${CYAN}Проверка HTTPS:${NC}"
+    echo -e "${CYAN}Check HTTPS:${NC}"
     echo -e "  curl -I https://ki.erni-gruppe.ch"
     echo -e "  curl -I https://www.ki.erni-gruppe.ch"
     echo ""
     echo -e "${CYAN}Логи:${NC}"
-    echo -e "  • Установка: $LOG_FILE"
+    echo -e "  • Installation: $LOG_FILE"
     echo -e "  • acme.sh: $ACME_HOME/acme.sh.log"
-    echo -e "  • Обновление: $PROJECT_ROOT/logs/ssl-renewal-*.log"
+    echo -e "  • Update: $PROJECT_ROOT/logs/ssl-renewal-*.log"
     echo ""
 }
 
-# Запуск скрипта
+# Starting script
 main "$@"

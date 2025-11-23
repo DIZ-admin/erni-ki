@@ -47,7 +47,7 @@ check_dependencies() {
 generate_secrets() {
     log "Generating secret keys..."
 
-    # Генерация основных секретов
+    # Generation основных секретов
     JWT_SECRET=$(openssl rand -hex 32)
     WEBUI_SECRET_KEY=$(openssl rand -hex 32)
     SEARXNG_SECRET=$(openssl rand -hex 32)
@@ -61,7 +61,7 @@ generate_secrets() {
 update_env_files() {
     log "Updating environment files..."
 
-    # Обновление auth.env
+    # Update auth.env
     if [ -f "env/auth.env" ]; then
         sed -i "s/JWT_SECRET=.*/JWT_SECRET=${JWT_SECRET}/" env/auth.env
         sed -i "s/GIN_MODE=.*/GIN_MODE=release/" env/auth.env
@@ -70,7 +70,7 @@ update_env_files() {
         warning "File env/auth.env not found"
     fi
 
-    # Обновление openwebui.env
+    # Update openwebui.env
     if [ -f "env/openwebui.env" ]; then
         sed -i "s/WEBUI_SECRET_KEY=.*/WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}/" env/openwebui.env
         sed -i "s/ANONYMIZED_TELEMETRY=.*/ANONYMIZED_TELEMETRY=false/" env/openwebui.env
@@ -80,7 +80,7 @@ update_env_files() {
         warning "File env/openwebui.env not found"
     fi
 
-    # Обновление searxng.env
+    # Update searxng.env
     if [ -f "env/searxng.env" ]; then
         sed -i "s/SEARXNG_SECRET=.*/SEARXNG_SECRET=${SEARXNG_SECRET}/" env/searxng.env
         success "Updated env/searxng.env"
@@ -88,7 +88,7 @@ update_env_files() {
         warning "File env/searxng.env not found"
     fi
 
-    # Обновление db.env
+    # Update db.env
     if [ -f "env/db.env" ]; then
         sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/" env/db.env
         success "Updated env/db.env"
@@ -96,7 +96,7 @@ update_env_files() {
         warning "File env/db.env not found"
     fi
 
-    # Обновление redis.env
+    # Update redis.env
     if [ -f "env/redis.env" ]; then
         if grep -q "REDIS_ARGS" env/redis.env; then
             sed -i "s/# REDIS_ARGS=.*/REDIS_ARGS=\"--requirepass ${REDIS_PASSWORD}\"/" env/redis.env

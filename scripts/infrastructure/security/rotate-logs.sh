@@ -1,6 +1,6 @@
 #!/bin/bash
 # ERNI-KI Manual Log Rotation Script
-# Ручная ротация логов с 7-дневным retention
+# Manual log rotation с 7-дневным retention
 
 set -e
 
@@ -8,16 +8,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 DATE=$(date +%Y%m%d-%H%M%S)
 
-echo "🔄 Ротация логов ERNI-KI - $(date)"
+echo "🔄 Log rotation ERNI-KI - $(date)"
 
-# Функция ротации логов
+# Log rotation function
 rotate_logs() {
     local log_dir="$1"
     local retention_days="$2"
     local description="$3"
 
     if [ ! -d "$log_dir" ]; then
-        echo "📁 Создание директории: $log_dir"
+        echo "📁 Creating directories: $log_dir"
         mkdir -p "$log_dir"
         return
     fi
@@ -27,7 +27,7 @@ rotate_logs() {
     # Найти и сжать логи старше 1 дня
     find "$log_dir" -name "*.log" -type f -mtime +0 -exec gzip {} \; 2>/dev/null || true
 
-    # Удалить сжатые логи старше retention_days дней
+    # Удалить сжатые логи старше retention_days days
     find "$log_dir" -name "*.log.gz" -type f -mtime +$retention_days -delete 2>/dev/null || true
 
     # Подсчет файлов
@@ -37,13 +37,13 @@ rotate_logs() {
     echo "   📊 Активных логов: $log_count, архивных: $gz_count"
 }
 
-# Ротация основных логов (7 дней)
+# Ротация основных логов (7 days)
 rotate_logs "$PROJECT_ROOT/logs" 7 "основных логов"
 
-# Ротация логов бэкапов (7 дней)
+# Log rotation бэкапов (7 days)
 rotate_logs "$PROJECT_ROOT/.config-backup/logs" 7 "логов бэкапов"
 
-# Ротация критических логов (30 дней)
+# Ротация критических логов (30 days)
 rotate_logs "$PROJECT_ROOT/monitoring/logs/critical" 30 "критических логов"
 
 # Очистка больших Fluent Bit DB файлов
@@ -70,10 +70,10 @@ else
     echo "   📁 Fluent Bit DB: N/A (директория отсутствует)"
 fi
 
-# Проверка свободного места
+# Check свободного места
 echo ""
 echo "💿 Свободное место на диске:"
 df -h "$PROJECT_ROOT" | tail -1 | awk '{print "   🖥️  Использовано: " $3 " из " $2 " (" $5 "), свободно: " $4}'
 
 echo ""
-echo "✅ Ротация логов завершена - $(date)"
+echo "✅ Log rotation завершена - $(date)"
