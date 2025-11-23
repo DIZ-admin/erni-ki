@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # ERNI-KI Network Optimization Script
-# Скрипт для оптимизации сетевой производительности системы
+# Script for optimizing system network performance
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функция логирования
+# Logging function
 log() {
     echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
 }
@@ -29,48 +29,48 @@ info() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"
 }
 
-# Проверка прав администратора
+# Check root privileges
 check_root() {
     if [[ $EUID -ne 0 ]]; then
-        error "Этот скрипт должен быть запущен с правами администратора (sudo)"
+        error "This script must be run as root (sudo)"
         exit 1
     fi
 }
 
-# Создание резервной копии текущих настроек
+# Backup current settings
 backup_current_settings() {
-    log "Создание резервной копии текущих сетевых настроек..."
+    log "Creating backup of current network settings..."
 
     local backup_dir=".config-backup/network-settings-$(date +%Y%m%d-%H%M%S)"
     mkdir -p "$backup_dir"
 
-    # Сохраняем текущие настройки ядра
+    # Save current kernel settings
     sysctl -a > "$backup_dir/sysctl-current.conf" 2>/dev/null || true
 
-    # Сохраняем настройки Docker
+    # Save Docker settings
     if command -v docker &> /dev/null; then
         docker network ls > "$backup_dir/docker-networks.txt" 2>/dev/null || true
         docker system info > "$backup_dir/docker-info.txt" 2>/dev/null || true
     fi
 
-    # Сохраняем настройки сети
+    # Save network settings
     ip addr show > "$backup_dir/ip-addr.txt" 2>/dev/null || true
     ip route show > "$backup_dir/ip-route.txt" 2>/dev/null || true
 
-    log "Резервная копия создана в $backup_dir"
+    log "Backup created in $backup_dir"
 }
 
-# Оптимизация параметров ядра для сетевой производительности
+# Optimize kernel parameters for network performance
 optimize_kernel_parameters() {
-    log "Оптимизация параметров ядра для сетевой производительности..."
+    log "Optimizing kernel parameters for network performance..."
 
-    # Создаем файл конфигурации для sysctl
+    # Create sysctl config file
     cat > /etc/sysctl.d/99-erni-ki-network.conf << 'EOF'
 # ERNI-KI Network Optimization Settings
-# Оптимизация сетевых параметров для высокой производительности
+# Network parameter optimization for high performance
 
 # TCP/IP Stack Optimization
-# Оптимизация TCP/IP стека
+# TCP/IP Stack Optimization
 net.core.rmem_default = 262144
 net.core.rmem_max = 536870912
 net.core.wmem_default = 262144
@@ -79,13 +79,13 @@ net.core.netdev_max_backlog = 30000
 net.core.netdev_budget = 600
 
 # TCP Buffer Sizes
-# Размеры TCP буферов
+# TCP Buffer Sizes
 net.ipv4.tcp_rmem = 4096 87380 536870912
 net.ipv4.tcp_wmem = 4096 65536 536870912
 net.ipv4.tcp_mem = 786432 1048576 26777216
 
 # TCP Connection Optimization
-# Оптимизация TCP соединений
+# TCP Connection Optimization
 net.ipv4.tcp_window_scaling = 1
 net.ipv4.tcp_timestamps = 1
 net.ipv4.tcp_sack = 1
@@ -94,65 +94,65 @@ net.ipv4.tcp_congestion_control = bbr
 net.ipv4.tcp_slow_start_after_idle = 0
 
 # TCP Keepalive Settings
-# Настройки TCP keepalive
+# TCP Keepalive Settings
 net.ipv4.tcp_keepalive_time = 600
 net.ipv4.tcp_keepalive_intvl = 60
 net.ipv4.tcp_keepalive_probes = 3
 
 # Connection Limits
-# Лимиты соединений
+# Connection Limits
 net.core.somaxconn = 65535
 net.ipv4.tcp_max_syn_backlog = 65535
 net.ipv4.ip_local_port_range = 1024 65535
 net.ipv4.tcp_fin_timeout = 30
 net.ipv4.tcp_tw_reuse = 1
 
-# Network Security (не влияет на производительность, но важно)
+# Network Security (does not affect performance, but important)
 net.ipv4.tcp_syncookies = 1
 net.ipv4.conf.all.rp_filter = 1
 net.ipv4.conf.default.rp_filter = 1
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 net.ipv4.icmp_ignore_bogus_error_responses = 1
 
-# IPv6 Optimization (если используется)
+# IPv6 Optimization (if used)
 net.ipv6.conf.all.disable_ipv6 = 0
 net.ipv6.conf.default.disable_ipv6 = 0
 
 # File System Optimization for Network I/O
-# Оптимизация файловой системы для сетевого I/O
+# File System Optimization for Network I/O
 fs.file-max = 2097152
 fs.nr_open = 2097152
 
 # Virtual Memory Optimization
-# Оптимизация виртуальной памяти
+# Virtual Memory Optimization
 vm.swappiness = 10
 vm.dirty_ratio = 15
 vm.dirty_background_ratio = 5
 vm.vfs_cache_pressure = 50
 EOF
 
-    # Применяем настройки
+    # Apply settings
     sysctl -p /etc/sysctl.d/99-erni-ki-network.conf
 
-    log "Параметры ядра оптимизированы"
+    log "Kernel parameters optimized"
 }
 
-# Оптимизация Docker для сетевой производительности
+# Optimize Docker for network performance
 optimize_docker_settings() {
-    log "Оптимизация настроек Docker..."
+    log "Optimizing Docker settings..."
 
-    # Создаем или обновляем daemon.json
+    # Create or update daemon.json
     local docker_config="/etc/docker/daemon.json"
     local temp_config="/tmp/docker-daemon.json"
 
-    # Читаем существующую конфигурацию или создаем новую
+    # Read existing config or create new one
     if [[ -f "$docker_config" ]]; then
         cp "$docker_config" "$temp_config"
     else
         echo '{}' > "$temp_config"
     fi
 
-    # Добавляем оптимизации с помощью jq
+    # Add optimizations using jq
     if command -v jq &> /dev/null; then
         jq '. + {
             "default-address-pools": [
@@ -189,7 +189,7 @@ optimize_docker_settings() {
             }
         }' "$temp_config" > "$docker_config"
     else
-        warn "jq не установлен, создаем конфигурацию вручную"
+        warn "jq not installed, creating configuration manually"
         cat > "$docker_config" << 'EOF'
 {
     "default-address-pools": [
@@ -230,17 +230,17 @@ EOF
 
     rm -f "$temp_config"
 
-    log "Настройки Docker оптимизированы"
+    log "Docker settings optimized"
 }
 
-# Создание оптимизированных Docker сетей
+# Create optimized Docker networks
 create_optimized_networks() {
-    log "Создание оптимизированных Docker сетей..."
+    log "Creating optimized Docker networks..."
 
-    # Удаляем существующие сети (если они есть)
+    # Remove existing networks (if any)
     docker network rm erni-ki-backend erni-ki-monitoring erni-ki-internal 2>/dev/null || true
 
-    # Создаем backend сеть
+    # Create backend network
     docker network create \
         --driver bridge \
         --subnet=172.21.0.0/16 \
@@ -251,7 +251,7 @@ create_optimized_networks() {
         --opt com.docker.network.bridge.enable_ip_masquerade=true \
         erni-ki-backend
 
-    # Создаем monitoring сеть
+    # Create monitoring network
     docker network create \
         --driver bridge \
         --subnet=172.22.0.0/16 \
@@ -262,7 +262,7 @@ create_optimized_networks() {
         --opt com.docker.network.bridge.enable_ip_masquerade=true \
         erni-ki-monitoring
 
-    # Создаем internal сеть с jumbo frames
+    # Create internal network with jumbo frames
     docker network create \
         --driver bridge \
         --subnet=172.23.0.0/16 \
@@ -273,17 +273,17 @@ create_optimized_networks() {
         --opt com.docker.network.bridge.enable_icc=true \
         erni-ki-internal
 
-    log "Оптимизированные Docker сети созданы"
+    log "Optimized Docker networks created"
 }
 
-# Проверка и установка необходимых пакетов
+# Check and install required packages
 install_dependencies() {
-    log "Проверка и установка необходимых пакетов..."
+    log "Checking and installing required packages..."
 
-    # Обновляем список пакетов
+    # Update package list
     apt-get update -qq
 
-    # Устанавливаем необходимые пакеты
+    # Install required packages
     apt-get install -y \
         net-tools \
         iptables-persistent \
@@ -295,56 +295,56 @@ install_dependencies() {
         curl \
         wget
 
-    log "Необходимые пакеты установлены"
+    log "Required packages installed"
 }
 
-# Оптимизация сетевых интерфейсов
+# Optimize network interfaces
 optimize_network_interfaces() {
-    log "Оптимизация сетевых интерфейсов..."
+    log "Optimizing network interfaces..."
 
-    # Получаем список активных интерфейсов
+    # Get list of active interfaces
     local interfaces=$(ip link show | grep -E '^[0-9]+:' | grep -v 'lo:' | cut -d: -f2 | tr -d ' ')
 
     for interface in $interfaces; do
         if [[ "$interface" =~ ^(eth|ens|enp) ]]; then
-            info "Оптимизация интерфейса $interface"
+            info "Optimizing interface $interface"
 
-            # Увеличиваем размеры буферов (если поддерживается)
-            ethtool -G "$interface" rx 4096 tx 4096 2>/dev/null || warn "Не удалось изменить размеры буферов для $interface"
+            # Increase buffer sizes (if supported)
+            ethtool -G "$interface" rx 4096 tx 4096 2>/dev/null || warn "Failed to change buffer sizes for $interface"
 
-            # Включаем offloading (если поддерживается)
-            ethtool -K "$interface" gso on tso on gro on lro on 2>/dev/null || warn "Не удалось включить offloading для $interface"
+            # Enable offloading (if supported)
+            ethtool -K "$interface" gso on tso on gro on lro on 2>/dev/null || warn "Failed to enable offloading for $interface"
 
-            # Оптимизируем настройки прерываний
-            ethtool -C "$interface" rx-usecs 50 tx-usecs 50 2>/dev/null || warn "Не удалось оптимизировать прерывания для $interface"
+            # Optimize interrupt settings
+            ethtool -C "$interface" rx-usecs 50 tx-usecs 50 2>/dev/null || warn "Failed to optimize interrupts for $interface"
         fi
     done
 
-    log "Сетевые интерфейсы оптимизированы"
+    log "Network interfaces optimized"
 }
 
-# Проверка результатов оптимизации
+# Verify optimization results
 verify_optimization() {
-    log "Проверка результатов оптимизации..."
+    log "Verifying optimization results..."
 
-    info "Текущие настройки TCP буферов:"
+    info "Current TCP buffer settings:"
     sysctl net.core.rmem_max net.core.wmem_max net.ipv4.tcp_rmem net.ipv4.tcp_wmem
 
-    info "Настройки соединений:"
+    info "Connection settings:"
     sysctl net.core.somaxconn net.ipv4.tcp_max_syn_backlog
 
-    info "Docker сети:"
+    info "Docker networks:"
     docker network ls | grep erni-ki
 
-    info "Статус Docker:"
+    info "Docker status:"
     systemctl is-active docker
 
-    log "Проверка завершена"
+    log "Verification completed"
 }
 
-# Основная функция
+# Main function
 main() {
-    log "Запуск оптимизации сетевой производительности ERNI-KI..."
+    log "Starting ERNI-KI network optimization..."
 
     check_root
     backup_current_settings
@@ -352,8 +352,8 @@ main() {
     optimize_kernel_parameters
     optimize_docker_settings
 
-    # Перезапускаем Docker для применения настроек
-    log "Перезапуск Docker для применения настроек..."
+    # Restart Docker to apply settings
+    log "Restarting Docker to apply settings..."
     systemctl restart docker
     sleep 10
 
@@ -361,10 +361,10 @@ main() {
     optimize_network_interfaces
     verify_optimization
 
-    log "Оптимизация сетевой производительности завершена!"
-    warn "Рекомендуется перезагрузить систему для полного применения всех настроек"
-    info "Для применения изменений в ERNI-KI выполните: docker-compose down && docker-compose up -d"
+    log "Network optimization completed!"
+    warn "System reboot recommended to fully apply all settings"
+    info "To apply changes in ERNI-KI run: docker-compose down && docker-compose up -d"
 }
 
-# Запуск основной функции
+# Run main function
 main "$@"

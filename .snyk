@@ -1,20 +1,20 @@
-# Snyk конфигурация для проекта erni-ki
-# Исключения для сканирования безопасности
+# Snyk configuration for erni-ki project
+# Security scan exclusions
 
-# Версия конфигурации
+# Configuration version
 version: v1.25.0
 
-# Отключаем Infrastructure as Code сканирование для избежания проблем с правами доступа
-# IaC сканирование отключено из-за Docker контейнеров с ограниченными правами
+# Disable Infrastructure as Code scanning to avoid permission issues
+# IaC scanning disabled due to Docker containers with limited permissions
 
-# Исключения для сканирования (закомментированы, так как IaC отключено)
+# Scan exclusions (commented out as IaC is disabled)
 # exclude:
 #   - "data"
 #   - "data/**"
 #   - "cache"
 #   - "cache/**"
 
-# Все исключения закомментированы, так как IaC сканирование отключено
+# All exclusions commented out as IaC scanning is disabled
 # - data/postgres/**
 # - data/redis/**
 # - data/ollama/**
@@ -24,7 +24,7 @@ version: v1.25.0
 # - cache/backrest/restic/**
 # - .git/**
 
-# Все исключения закомментированы
+# All exclusions commented out
 # - logs/**
 # - tmp/**
 # - temp/**
@@ -40,23 +40,23 @@ version: v1.25.0
 # - out/**
 # - lib/**
 
-# Игнорируемые уязвимости (с обоснованием)
+# Ignored vulnerabilities (with justification)
 ignore:
-  # Пример: игнорирование известной уязвимости в dev зависимости
+  # Example: ignore known vulnerability in dev dependency
   # SNYK-JS-EXAMPLE-123456:
   #   - '*':
-  #       reason: "Используется только в development окружении"
+  #       reason: "Used only in development environment"
   #       expires: '2025-12-31T23:59:59.999Z'
 
-# Патчи (автоматические исправления)
+# Patches (automatic fixes)
 patches: {}
 
-# Языковые настройки
+# Language settings
 language-settings:
   javascript:
-    # Исключаем dev зависимости из production сканирования
+    # Exclude dev dependencies from production scanning
     includeDevDependencies: false
 
   docker:
-    # Сканируем только production образы
+    # Scan only production images
     excludeBaseImageVulns: false

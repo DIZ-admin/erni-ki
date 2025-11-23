@@ -70,7 +70,7 @@ main() {
     log_message "INFO: Monitoring finished"
 }
 
-# === ЗАПУСК ===
+# === RUN ===
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

@@ -1,5 +1,5 @@
-// ESLint Flat Config для проекта erni-ki
-// Поддержка TypeScript, современный JavaScript, безопасность
+// ESLint Flat Config for erni-ki project
+// TypeScript support, modern JavaScript, security
 import js from '@eslint/js';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
@@ -8,10 +8,10 @@ import promise from 'eslint-plugin-promise';
 import security from 'eslint-plugin-security';
 
 export default [
-  // Базовые рекомендуемые правила JavaScript
+  // Basic recommended JavaScript rules
   js.configs.recommended,
 
-  // Игнорируемые файлы и папки
+  // Ignored files and folders
   {
     ignores: [
       'node_modules/**',
@@ -22,7 +22,7 @@ export default [
       '*.min.js',
       '*.min.css',
       'data/**',
-      'cache/**', // Backrest cache с ограниченными правами доступа
+      'cache/**', // Backrest cache with limited access rights
       'logs/**',
       '*.log',
       '.tmp/**',
@@ -49,11 +49,11 @@ export default [
       'playwright-report/**',
       'playwright-artifacts/**',
       'test-results/**',
-      'tests/e2e/**', // E2E тесты используют Playwright, не ESLint
+      'tests/e2e/**', // E2E tests use Playwright, not ESLint
     ],
   },
 
-  // Глобальная конфигурация для всех файлов
+  // Global configuration for all files
   {
     languageOptions: {
       ecmaVersion: 2024,
@@ -76,7 +76,7 @@ export default [
       promise,
     },
     rules: {
-      // Общие правила качества кода
+      // General code quality rules
       'no-console': 'warn',
       'no-debugger': 'error',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
@@ -92,7 +92,7 @@ export default [
       'eol-last': 'error',
       'no-trailing-spaces': 'error',
 
-      // Безопасность
+      // Security
       'security/detect-object-injection': 'warn',
       'security/detect-non-literal-regexp': 'warn',
       'security/detect-unsafe-regex': 'error',
@@ -106,10 +106,10 @@ export default [
       'security/detect-possible-timing-attacks': 'warn',
       'security/detect-pseudoRandomBytes': 'error',
 
-      // Node.js специфичные правила
+      // Node.js specific rules
       'n/no-deprecated-api': 'error',
-      'n/no-missing-import': 'off', // Отключаем, так как используем TypeScript
-      'n/no-missing-require': 'off', // Отключаем, так как используем TypeScript
+      'n/no-missing-import': 'off', // Disable as we use TypeScript
+      'n/no-missing-require': 'off', // Disable as we use TypeScript
 
       // Promises
       'promise/always-return': 'error',
@@ -124,7 +124,7 @@ export default [
     },
   },
 
-  // Конфигурация для TypeScript файлов
+  // Configuration for TypeScript files
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -139,11 +139,11 @@ export default [
       '@typescript-eslint': typescript,
     },
     rules: {
-      // Отключаем базовые правила, которые конфликтуют с TypeScript
+      // Disable basic rules that conflict with TypeScript
       'no-unused-vars': 'off',
       'no-undef': 'off',
 
-      // TypeScript специфичные правила
+      // TypeScript specific rules
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
@@ -159,7 +159,7 @@ export default [
     },
   },
 
-  // Игнорируемые файлы и директории
+  // Ignored files and directories
   {
     ignores: [
       'node_modules/**',
@@ -172,11 +172,11 @@ export default [
       '.git/**',
       'coverage/**',
       '*.config.js',
-      'auth/main', // Скомпилированный Go бинарник
+      'auth/main', // Compiled Go binary
     ],
   },
 
-  // Специальные правила для тестовых файлов
+  // Special rules for test files
   {
     files: ['**/*.test.{js,ts}', '**/*.spec.{js,ts}', 'tests/**/*.{js,ts}'],
     rules: {
@@ -189,7 +189,7 @@ export default [
     },
   },
 
-  // Специальные правила для конфигурационных файлов
+  // Special rules for configuration files
   {
     files: ['**/*.config.{js,ts,cjs}', 'commitlint.config.cjs'],
     rules: {
@@ -197,7 +197,7 @@ export default [
     },
   },
 
-  // Специальные правила для типов
+  // Special rules for types
   {
     files: ['**/*.d.ts'],
     rules: {

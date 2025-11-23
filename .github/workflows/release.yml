@@ -1,5 +1,5 @@
-# Release Pipeline для проекта erni-ki
-# Автоматические релизы с semantic versioning
+# Release Pipeline for erni-ki project
+# Automated releases with semantic versioning
 
 name: 🚀 Release
 
@@ -22,7 +22,7 @@ on:
           - minor
           - major
 
-# Разрешения для создания релизов
+# Permissions for creating releases
 permissions:
   contents: write
   packages: write
@@ -34,7 +34,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Определение версии релиза
+  # Determine release version
   version:
     name: 📋 Determine Version
     runs-on: ubuntu-latest
@@ -63,7 +63,7 @@ jobs:
         id: version
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # Ручной релиз
+            # Manual release
             CURRENT_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
             CURRENT_VERSION=${CURRENT_VERSION#v}
 
@@ -83,7 +83,7 @@ jobs:
             echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
             echo "changelog=Manual release: ${{ github.event.inputs.release_type }} version bump" >> $GITHUB_OUTPUT
           else
-            # Автоматический релиз через semantic-release
+            # Automated release via semantic-release
             npx semantic-release --dry-run --no-ci > release-output.txt 2>&1 || true
 
             if grep -q "The next release version is" release-output.txt; then
@@ -98,7 +98,7 @@ jobs:
             fi
           fi
 
-  # Сборка и тестирование перед релизом
+  # Build and test before release
   pre-release:
     name: 🧪 Pre-release Tests
     runs-on: ubuntu-latest
@@ -130,7 +130,7 @@ jobs:
           gosec ./auth/... || echo "gosec exited non-zero (known upstream SSA panic); continuing"
         continue-on-error: true
 
-  # Создание релиза
+  # Create release
   release:
     name: 🚀 Create Release
     runs-on: ubuntu-latest
@@ -154,7 +154,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Сборка и публикация Docker образов с тегами релиза
+      # Build and push Docker images with release tags
       - name: 🏗️ Build and push release images
         uses: docker/build-push-action@v5
         with:
@@ -174,14 +174,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Создание GitHub релиза
+      # Create GitHub release
       - name: 📋 Generate changelog
         id: changelog
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "changelog=${{ needs.version.outputs.changelog }}" >> $GITHUB_OUTPUT
           else
-            # Генерируем changelog на основе коммитов
+            # Generate changelog based on commits
             PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
             if [ -n "$PREVIOUS_TAG" ]; then
               CHANGELOG=$(git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges)
@@ -189,7 +189,7 @@ jobs:
               CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges)
             fi
 
-            # Экранируем для GitHub Actions
+            # Escape for GitHub Actions
             CHANGELOG="${CHANGELOG//'%'/'%25'}"
             CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
             CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
@@ -232,7 +232,7 @@ jobs:
           draft: false
           prerelease: false
 
-  # Уведомления о релизе
+  # Release notifications
   notify:
     name: 📢 Notify Release
     runs-on: ubuntu-latest

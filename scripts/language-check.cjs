@@ -18,23 +18,24 @@ const CODE_EXTENSIONS = new Set([
   '.rs',
   '.java',
   '.php',
+  '.yml',
+  '.yaml',
 ]);
 const DOC_EXTENSIONS = new Set(['.md', '.mdx']);
+const CONFIG_FILES = new Set(['.snyk']);
 const CYRILLIC = /[\u0400-\u04FF]/;
 
 const args = process.argv.slice(2);
 const runAll = args.includes('--all');
 
 function gitFiles(all) {
-  const cmd = all
-    ? 'git ls-files'
-    : 'git diff --cached --name-only --diff-filter=ACMR';
+  const cmd = all ? 'git ls-files' : 'git diff --cached --name-only --diff-filter=ACMR';
   try {
     const output = execSync(cmd, { encoding: 'utf8' });
     return output
       .split('\n')
-      .map((f) => f.trim())
-      .filter((f) => f.length > 0);
+      .map(f => f.trim())
+      .filter(f => f.length > 0);
   } catch (error) {
     console.error('Failed to list files:', error.message);
     process.exit(2);
@@ -77,9 +78,9 @@ for (const file of stagedFiles) {
   }
   const content = fs.readFileSync(file, 'utf8');
 
-  if (CODE_EXTENSIONS.has(ext)) {
+  if (CODE_EXTENSIONS.has(ext) || CONFIG_FILES.has(path.basename(file))) {
     if (CYRILLIC.test(content)) {
-      errors.push(`Cyrillic detected in code file ${file}`);
+      errors.push(`Cyrillic detected in code/config file ${file}`);
     }
   }
 
@@ -90,12 +91,16 @@ for (const file of stagedFiles) {
     }
     const fm = extractFrontMatter(content);
     if (!fm) {
-      warnings.push(`Missing front matter for ${file}; add 'language: ${locale}' to document language explicitly`);
+      warnings.push(
+        `Missing front matter for ${file}; add 'language: ${locale}' to document language explicitly`
+      );
       continue;
     }
     const language = parseLanguage(fm);
     if (language && language !== locale) {
-      errors.push(`Document ${file} declares language '${language}' but lives inside '${locale}' content`);
+      errors.push(
+        `Document ${file} declares language '${language}' but lives inside '${locale}' content`
+      );
     } else if (!language) {
       warnings.push(`Front matter of ${file} lacks 'language:' value for locale '${locale}'`);
     }
