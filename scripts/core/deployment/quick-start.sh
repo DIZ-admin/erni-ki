@@ -21,91 +21,91 @@ step() { echo -e "${PURPLE}🔸 $1${NC}"; }
 
 # Quick dependency check
 quick_check() {
-    step "Быстрая проверка системы..."
+    step "Quick system check..."
 
-    command -v docker >/dev/null 2>&1 || error "Docker не установлен"
-    command -v docker compose >/dev/null 2>&1 || error "Docker Compose не установлен"
-    command -v openssl >/dev/null 2>&1 || error "OpenSSL не установлен"
+    command -v docker >/dev/null 2>&1 || error "Docker is not installed"
+    command -v docker compose >/dev/null 2>&1 || error "Docker Compose is not installed"
+    command -v openssl >/dev/null 2>&1 || error "OpenSSL is not installed"
 
-    success "Все зависимости найдены"
+    success "All dependencies found"
 }
 
 # Quick setup
 quick_setup() {
-    step "Быстрая настройка конфигурации..."
+    step "Quick configuration setup..."
 
-    # Создание основных директорий
+    # Create main directories
     mkdir -p data/{postgres,redis,ollama,openwebui} scripts logs
     chmod 755 data/ && chmod 700 data/postgres
 
-    # Копирование основных файлов
+    # Copy main files
     [ ! -f "compose.yml" ] && cp compose.yml.example compose.yml
 
-    # Основные env файлы
+    # Main env files
     for env in auth db openwebui searxng; do
         [ ! -f "env/${env}.env" ] && cp "env/${env}.example" "env/${env}.env"
     done
 
-    # Основные конфигурации
+    # Main configurations
     [ ! -f "conf/nginx/nginx.conf" ] && cp conf/nginx/nginx.example conf/nginx/nginx.conf
     [ ! -f "conf/nginx/conf.d/default.conf" ] && cp conf/nginx/conf.d/default.example conf/nginx/conf.d/default.conf
 
-    success "Базовая конфигурация создана"
+    success "Basic configuration created"
 }
 
 # Quick secret generation
 quick_secrets() {
-    step "Генерация секретных ключей..."
+    step "Generating secret keys..."
 
     SECRET_KEY=$(openssl rand -hex 32)
     DB_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
 
-    # Обновление ключей
+    # Update keys
     sed -i "s/CHANGE_BEFORE_GOING_LIVE/$SECRET_KEY/g" env/auth.env env/openwebui.env
     sed -i "s/YOUR-SECRET-KEY/$SECRET_KEY/g" env/searxng.env
     sed -i "s/POSTGRES_PASSWORD=postgres/POSTGRES_PASSWORD=$DB_PASSWORD/g" env/db.env
     sed -i "s/postgres:postgres@db/postgres:$DB_PASSWORD@db/g" env/openwebui.env
 
-    # Настройка localhost
+    # Configure localhost
     sed -i "s/<domain-name>/localhost/g" conf/nginx/conf.d/default.conf
     sed -i "s|WEBUI_URL=https://<domain-name>|WEBUI_URL=http://localhost|g" env/openwebui.env
 
-    success "Секретные ключи настроены для localhost"
+    success "Secret keys configured for localhost"
 }
 
 # Quick service start
 quick_start() {
-    step "Запуск основных сервисов..."
+    step "Starting main services..."
 
-    # Проверка конфигурации
-    docker compose config >/dev/null || error "Ошибка в конфигурации Docker Compose"
+    # Check configuration
+    docker compose config >/dev/null || error "Error in Docker Compose configuration"
 
-    # Запуск в правильном порядке
-    log "Запуск базовых сервисов..."
+    # Start in correct order
+    log "Starting base services..."
     docker compose up -d watchtower db redis
     sleep 10
 
-    log "Запуск вспомогательных сервисов..."
+    log "Starting auxiliary services..."
     docker compose up -d auth searxng nginx
     sleep 10
 
-    log "Запуск Ollama..."
+    log "Starting Ollama..."
     docker compose up -d ollama
     sleep 15
 
-    log "Запуск OpenWebUI..."
+    log "Starting OpenWebUI..."
     docker compose up -d openwebui
     sleep 10
 
-    success "Все сервисы запущены"
+    success "All services started"
 }
 
 # Load base model
 quick_model() {
-    step "Загрузка базовой модели..."
+    step "Loading base model..."
 
-    # Ожидание готовности Ollama
-    log "Ожидание готовности Ollama..."
+    # Wait for Ollama readiness
+    log "Waiting for Ollama to be ready..."
     for i in {1..30}; do
         if docker compose exec -T ollama ollama list >/dev/null 2>&1; then
             break
@@ -115,52 +115,52 @@ quick_model() {
     done
     echo ""
 
-    # Загрузка модели
-    log "Загрузка llama3.2:3b (это может занять несколько минут)..."
+    # Load model
+    log "Loading llama3.2:3b (this may take several minutes)..."
     if docker compose exec -T ollama ollama pull llama3.2:3b; then
-        success "Модель llama3.2:3b загружена"
+        success "Model llama3.2:3b loaded"
     else
-        warning "Не удалось загрузить модель (можно сделать позже)"
+        warning "Failed to load model (can be done later)"
     fi
 }
 
 # Quick health check
 quick_health() {
-    step "Быстрая проверка состояния..."
+    step "Quick status check..."
 
-    # Проверка основных сервисов
+    # Check main services
     services=("auth" "db" "redis" "ollama" "nginx" "openwebui")
 
     for service in "${services[@]}"; do
         status=$(docker compose ps "$service" --format "{{.State}}" 2>/dev/null || echo "not_found")
         if [ "$status" = "running" ]; then
-            success "$service: работает"
+            success "$service: running"
         else
             warning "$service: $status"
         fi
     done
 
-    # Проверка основных endpoint'ов
+    # Check main endpoints
     sleep 5
 
     if curl -sf http://localhost >/dev/null 2>&1; then
-        success "Веб-интерфейс: доступен на http://localhost"
+        success "Web interface: available at http://localhost"
     else
-        warning "Веб-интерфейс: пока недоступен (может потребоваться время)"
+        warning "Web interface: not yet available (may need more time)"
     fi
 
     if curl -sf http://localhost:11434/api/version >/dev/null 2>&1; then
-        success "Ollama API: доступен"
+        success "Ollama API: available"
     else
-        warning "Ollama API: пока недоступен"
+        warning "Ollama API: not yet available"
     fi
 }
 
 # Create quick commands
 create_quick_commands() {
-    step "Создание быстрых команд..."
+    step "Creating quick commands..."
 
-    # Команда статуса
+    # Status command
     cat > scripts/status.sh << 'EOF'
 #!/bin/bash
 echo "📊 Статус ERNI-KI:"
@@ -172,14 +172,14 @@ echo "  - Ollama API: http://localhost:11434"
 echo "  - Auth API: http://localhost:9090"
 EOF
 
-    # Команда логов
+    # Logs command
     cat > scripts/logs.sh << 'EOF'
 #!/bin/bash
 echo "📋 Логи ERNI-KI (Ctrl+C для выхода):"
 docker compose logs -f
 EOF
 
-    # Команда остановки
+    # Stop command
     cat > scripts/stop.sh << 'EOF'
 #!/bin/bash
 echo "🛑 Остановка ERNI-KI..."
@@ -188,7 +188,7 @@ echo "✅ Все сервисы остановлены"
 EOF
 
     chmod +x scripts/*.sh
-    success "Быстрые команды созданы в scripts/"
+    success "Quick commands created in scripts/"
 }
 
 # Show next steps

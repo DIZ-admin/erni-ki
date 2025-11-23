@@ -1,17 +1,17 @@
 #!/bin/bash
-# Graceful restart процедуры для ERNI-KI
-# Безопасный перезапуск сервисов с сохранением данных
+# Graceful restart procedures for ERNI-KI
+# Safe service restart with data preservation
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Конфигурация
+# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="/var/log/erni-ki-graceful-restart.log"
@@ -19,7 +19,7 @@ BACKUP_DIR="$PROJECT_ROOT/.config-backup/graceful-restart"
 SHUTDOWN_TIMEOUT=60
 STARTUP_TIMEOUT=120
 
-# Функции логирования
+# Logging functions
 log() {
     local message="[$(date +'%Y-%m-%d %H:%M:%S')] $1"
     echo -e "${BLUE}$message${NC}"
@@ -44,7 +44,7 @@ error() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1" >> "$LOG_FILE"
 }
 
-# Создание резервной копии состояния
+# Create state backup
 create_state_backup() {
     log "Создание резервной копии состояния системы"
 
@@ -53,38 +53,38 @@ create_state_backup() {
 
     mkdir -p "$backup_path"
 
-    # Сохранение состояния контейнеров
+    # Save container states
     docker-compose ps --format json > "$backup_path/containers_state.json" 2>/dev/null || true
 
-    # Сохранение конфигураций
+    # Save configurations
     cp -r "$PROJECT_ROOT/env" "$backup_path/" 2>/dev/null || true
     cp -r "$PROJECT_ROOT/conf" "$backup_path/" 2>/dev/null || true
 
-    # Сохранение информации о томах
+    # Save volume information
     docker volume ls --format json > "$backup_path/volumes_info.json" 2>/dev/null || true
 
-    # Сохранение сетевой информации
+    # Save network information
     docker network ls --format json > "$backup_path/networks_info.json" 2>/dev/null || true
 
-    # Сохранение статистики использования ресурсов
+    # Save resource usage statistics
     docker stats --no-stream --format json > "$backup_path/resource_usage.json" 2>/dev/null || true
 
     success "Резервная копия состояния создана: $backup_path"
     echo "$backup_path" > "$BACKUP_DIR/latest_backup_path.txt"
 }
 
-# Проверка готовности к перезапуску
+# Check restart readiness
 check_restart_readiness() {
     log "Проверка готовности к перезапуску"
 
-    # Проверка дискового пространства
+    # Check disk space
     local disk_usage=$(df "$PROJECT_ROOT" | awk 'NR==2 {print $5}' | sed 's/%//')
     if [[ $disk_usage -gt 90 ]]; then
         error "Недостаточно места на диске: ${disk_usage}%"
         return 1
     fi
 
-    # Проверка активных пользователей OpenWebUI
+    # Check active OpenWebUI users
     local active_sessions=$(docker-compose exec -T openwebui ps aux | grep -c "python" 2>/dev/null || echo "0")
     if [[ $active_sessions -gt 5 ]]; then
         warning "Обнаружено $active_sessions активных сессий в OpenWebUI"
@@ -96,7 +96,7 @@ check_restart_readiness() {
         fi
     fi
 
-    # Проверка критических процессов
+    # Check critical processes
     local critical_processes=("postgres" "redis-server" "nginx")
     for process in "${critical_processes[@]}"; do
         if docker-compose exec -T db pgrep "$process" &>/dev/null ||
@@ -110,51 +110,51 @@ check_restart_readiness() {
     return 0
 }
 
-# Graceful остановка сервиса
+# Graceful service stop
 graceful_stop_service() {
     local service_name="$1"
     local timeout="${2:-$SHUTDOWN_TIMEOUT}"
 
     log "Graceful остановка сервиса: $service_name"
 
-    # Специальная обработка для разных сервисов
+    # Special handling for different services
     case $service_name in
         "openwebui")
-            # Уведомление пользователей о предстоящем перезапуске
+            # Notify users about upcoming restart
             log "Отправка уведомления пользователям OpenWebUI"
-            # Здесь можно добавить API вызов для уведомления пользователей
+            # API call for user notification can be added here
             ;;
         "ollama")
-            # Завершение текущих генераций
+            # Wait for current generations to complete
             log "Ожидание завершения текущих генераций Ollama"
             sleep 10
             ;;
         "db")
-            # Checkpoint базы данных
+            # Database checkpoint
             log "Выполнение checkpoint базы данных"
             docker-compose exec -T db psql -U postgres -c "CHECKPOINT;" 2>/dev/null || true
             ;;
         "redis")
-            # Сохранение данных Redis
+            # Save Redis data
             log "Сохранение данных Redis"
             docker-compose exec -T redis redis-cli BGSAVE 2>/dev/null || true
             sleep 5
             ;;
         "nginx")
-            # Graceful reload для завершения активных соединений
+            # Graceful reload to finish active connections
             log "Graceful reload Nginx"
             docker-compose exec nginx nginx -s quit 2>/dev/null || true
             ;;
     esac
 
-    # Отправка SIGTERM
+    # Send SIGTERM
     log "Отправка SIGTERM сервису $service_name"
     docker-compose stop "$service_name" --timeout="$timeout" || {
         warning "Graceful остановка не удалась, принудительная остановка"
         docker-compose kill "$service_name"
     }
 
-    # Проверка остановки
+    # Check if stopped
     local attempts=0
     while [[ $attempts -lt 10 ]]; do
         if ! docker-compose ps "$service_name" --format "{{.Status}}" | grep -q "Up"; then
@@ -169,17 +169,17 @@ graceful_stop_service() {
     return 1
 }
 
-# Graceful запуск сервиса
+# Graceful service start
 graceful_start_service() {
     local service_name="$1"
     local timeout="${2:-$STARTUP_TIMEOUT}"
 
     log "Graceful запуск сервиса: $service_name"
 
-    # Предварительные проверки
+    # Pre-start checks
     case $service_name in
         "ollama")
-            # Проверка доступности GPU
+            # Check GPU availability
             if command -v nvidia-smi &> /dev/null; then
                 if ! nvidia-smi &> /dev/null; then
                     error "GPU недоступен для Ollama"
@@ -188,10 +188,10 @@ graceful_start_service() {
             fi
             ;;
         "db")
-            # Проверка целостности данных
+            # Check data integrity
             log "Проверка целостности данных PostgreSQL"
             if [[ -d "$PROJECT_ROOT/data/postgres" ]]; then
-                # Простая проверка наличия основных файлов
+                # Simple check for main files presence
                 if [[ ! -f "$PROJECT_ROOT/data/postgres/PG_VERSION" ]]; then
                     error "Данные PostgreSQL повреждены"
                     return 1
@@ -200,11 +200,11 @@ graceful_start_service() {
             ;;
     esac
 
-    # Запуск сервиса
+    # Start service
     if docker-compose up -d "$service_name"; then
         log "Сервис $service_name запущен, ожидание готовности"
 
-        # Ожидание готовности с таймаутом
+        # Wait for readiness with timeout
         local start_time=$(date +%s)
         local end_time=$((start_time + timeout))
 
@@ -231,7 +231,7 @@ graceful_start_service() {
     fi
 }
 
-# Проверка зависимостей
+# Check dependencies
 check_dependencies() {
     local service_name="$1"
 
@@ -268,14 +268,14 @@ check_dependencies() {
     return 0
 }
 
-# Graceful перезапуск одного сервиса
+# Graceful restart of single service
 graceful_restart_service() {
     local service_name="$1"
     local check_deps="${2:-true}"
 
     log "Graceful перезапуск сервиса: $service_name"
 
-    # Проверка зависимостей
+    # Check dependencies
     if [[ "$check_deps" == "true" ]]; then
         if ! check_dependencies "$service_name"; then
             error "Зависимости для $service_name не готовы"
@@ -283,16 +283,16 @@ graceful_restart_service() {
         fi
     fi
 
-    # Остановка
+    # Stop
     if ! graceful_stop_service "$service_name"; then
         error "Не удалось остановить сервис $service_name"
         return 1
     fi
 
-    # Небольшая пауза
+    # Short pause
     sleep 5
 
-    # Запуск
+    # Start
     if ! graceful_start_service "$service_name"; then
         error "Не удалось запустить сервис $service_name"
         return 1
@@ -302,26 +302,26 @@ graceful_restart_service() {
     return 0
 }
 
-# Graceful перезапуск всей системы
+# Graceful restart of entire system
 graceful_restart_all() {
     log "Graceful перезапуск всей системы ERNI-KI"
 
-    # Проверка готовности
+    # Check readiness
     if ! check_restart_readiness; then
         error "Система не готова к перезапуску"
         return 1
     fi
 
-    # Создание резервной копии
+    # Create backup
     create_state_backup
 
-    # Определение порядка остановки (обратный порядок зависимостей)
+    # Define stop order (reverse dependency order)
     local stop_order=("openwebui" "nginx" "auth" "searxng" "ollama" "edgetts" "tika" "mcposerver" "cloudflared" "backrest" "redis" "db" "watchtower")
 
-    # Определение порядка запуска
+    # Define start order
     local start_order=("watchtower" "db" "redis" "auth" "ollama" "searxng" "edgetts" "tika" "mcposerver" "nginx" "openwebui" "cloudflared" "backrest")
 
-    # Остановка сервисов
+    # Stop services
     log "Остановка сервисов в правильном порядке"
     for service in "${stop_order[@]}"; do
         if docker-compose ps "$service" --format "{{.Status}}" | grep -q "Up"; then
@@ -331,25 +331,25 @@ graceful_restart_all() {
         fi
     done
 
-    # Пауза для полной остановки
+    # Pause for complete shutdown
     log "Ожидание полной остановки всех сервисов"
     sleep 10
 
-    # Очистка ресурсов
+    # Clean up resources
     log "Очистка неиспользуемых ресурсов Docker"
     docker system prune -f --volumes || true
 
-    # Запуск сервисов
+    # Start services
     log "Запуск сервисов в правильном порядке"
     for service in "${start_order[@]}"; do
         log "Запуск сервиса: $service"
         graceful_start_service "$service" 60
 
-        # Пауза между запусками для стабилизации
+        # Pause between starts for stabilization
         sleep 10
     done
 
-    # Финальная проверка
+    # Final check
     log "Финальная проверка всех сервисов"
     sleep 30
 
@@ -370,7 +370,7 @@ graceful_restart_all() {
     fi
 }
 
-# Откат к предыдущему состоянию
+# Rollback to previous state
 rollback_to_backup() {
     log "Откат к предыдущему состоянию"
 
@@ -387,10 +387,10 @@ rollback_to_backup() {
 
     log "Восстановление из резервной копии: $backup_path"
 
-    # Остановка всех сервисов
+    # Stop all services
     docker-compose down --timeout=30 || true
 
-    # Восстановление конфигураций
+    # Restore configurations
     if [[ -d "$backup_path/env" ]]; then
         cp -r "$backup_path/env"/* "$PROJECT_ROOT/env/" 2>/dev/null || true
     fi
@@ -399,13 +399,13 @@ rollback_to_backup() {
         cp -r "$backup_path/conf"/* "$PROJECT_ROOT/conf/" 2>/dev/null || true
     fi
 
-    # Запуск сервисов
+    # Start services
     docker-compose up -d
 
     success "Откат завершен"
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
@@ -414,17 +414,17 @@ main() {
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
-    # Создание директории для резервных копий
+    # Create backup directory
     mkdir -p "$BACKUP_DIR"
 
-    # Переход в рабочую директорию
+    # Change to working directory
     cd "$PROJECT_ROOT"
 
-    # Выполнение graceful перезапуска всей системы
+    # Execute graceful restart of entire system
     graceful_restart_all
 }
 
-# Обработка аргументов командной строки
+# Command line argument handling
 case "${1:-}" in
     --service)
         if [[ -n "${2:-}" ]]; then

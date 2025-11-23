@@ -1,25 +1,25 @@
 #!/bin/bash
 
-# GitHub Environment Secrets Setup для ERNI-KI
-# Добавление environment-specific секретов согласно трехуровневой архитектуре
-# Автор: Альтэон Шульц (Tech Lead)
-# Дата: 2025-09-19
+# GitHub Environment Secrets Setup for ERNI-KI
+# Adds environment-specific secrets for the three-tier architecture
+# Author: Alteon Schulz (Tech Lead)
+# Date: 2025-09-19
 
 set -euo pipefail
 
-# === КОНФИГУРАЦИЯ ===
+# === CONFIGURATION ===
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LOG_FILE="$PROJECT_ROOT/.config-backup/environment-secrets-$(date +%Y%m%d-%H%M%S).log"
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# === ФУНКЦИИ ЛОГИРОВАНИЯ ===
+# === LOGGING HELPERS ===
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}" | tee -a "$LOG_FILE"
 }
@@ -37,7 +37,7 @@ error() {
     exit 1
 }
 
-# === ГЕНЕРАЦИЯ БЕЗОПАСНЫХ СЕКРЕТОВ ===
+# === SECURE SECRET GENERATION ===
 generate_secure_secret() {
     local type="$1"
     case "$type" in
@@ -62,116 +62,116 @@ generate_secure_secret() {
     esac
 }
 
-# === ДОБАВЛЕНИЕ СЕКРЕТА В ОКРУЖЕНИЕ ===
+# === ADD SECRET TO ENVIRONMENT ===
 add_environment_secret() {
     local environment="$1"
     local secret_name="$2"
     local secret_value="$3"
     local description="$4"
 
-    log "Добавление секрета $secret_name в окружение $environment..."
+    log "Adding secret $secret_name to environment $environment..."
 
     if gh secret set "$secret_name" --env "$environment" --body "$secret_value" > /dev/null 2>&1; then
-        success "✅ $secret_name добавлен в $environment"
+        success "✅ $secret_name added to $environment"
     else
-        warning "⚠️ Ошибка добавления $secret_name в $environment (возможно уже существует)"
+        warning "⚠️ Failed to add $secret_name to $environment (maybe already exists)"
     fi
 }
 
-# === НАСТРОЙКА DEVELOPMENT СЕКРЕТОВ ===
+# === DEVELOPMENT SECRETS ===
 setup_development_secrets() {
-    log "Настройка секретов для Development окружения..."
+    log "Configuring secrets for Development..."
 
-    # Cloudflare Tunnel Token для development
+    # Cloudflare Tunnel Token for development
     local tunnel_token_dev=$(generate_secure_secret "tunnel_token")
     add_environment_secret "development" "TUNNEL_TOKEN_DEV" "$tunnel_token_dev" "Cloudflare tunnel token for development"
 
-    # OpenAI API Key для development (тестовый ключ с ограничениями)
+    # OpenAI API Key for development (test key with limits)
     local openai_key_dev=$(generate_secure_secret "api_key")
     add_environment_secret "development" "OPENAI_API_KEY_DEV" "$openai_key_dev" "OpenAI API key for development testing"
 
-    # Context7 API Key для development
+    # Context7 API Key for development
     local context7_key_dev=$(generate_secure_secret "context7_key")
 
-    # Anthropic API Key для development
+    # Anthropic API Key for development
     local anthropic_key_dev=$(generate_secure_secret "anthropic_key")
 
-    # Google API Key для development
+    # Google API Key for development
     local google_key_dev=$(generate_secure_secret "google_key")
 
-    success "Development секреты настроены"
+    success "Development secrets configured"
 }
 
-# === НАСТРОЙКА STAGING СЕКРЕТОВ ===
+# === STAGING SECRETS ===
 setup_staging_secrets() {
-    log "Настройка секретов для Staging окружения..."
+    log "Configuring secrets for Staging..."
 
-    # Cloudflare Tunnel Token для staging
+    # Cloudflare Tunnel Token for staging
     local tunnel_token_staging=$(generate_secure_secret "tunnel_token")
     add_environment_secret "staging" "TUNNEL_TOKEN_STAGING" "$tunnel_token_staging" "Cloudflare tunnel token for staging"
 
-    # OpenAI API Key для staging
+    # OpenAI API Key for staging
     local openai_key_staging=$(generate_secure_secret "api_key")
     add_environment_secret "staging" "OPENAI_API_KEY_STAGING" "$openai_key_staging" "OpenAI API key for staging testing"
 
-    # Context7 API Key для staging
+    # Context7 API Key for staging
     local context7_key_staging=$(generate_secure_secret "context7_key")
 
-    # Anthropic API Key для staging
+    # Anthropic API Key for staging
     local anthropic_key_staging=$(generate_secure_secret "anthropic_key")
 
-    # Google API Key для staging
+    # Google API Key for staging
     local google_key_staging=$(generate_secure_secret "google_key")
 
-    success "Staging секреты настроены"
+    success "Staging secrets configured"
 }
 
-# === НАСТРОЙКА PRODUCTION СЕКРЕТОВ ===
+# === PRODUCTION SECRETS ===
 setup_production_secrets() {
-    log "Настройка секретов для Production окружения..."
+    log "Configuring secrets for Production..."
 
-    warning "⚠️ ВНИМАНИЕ: Production секреты должны быть заменены на реальные значения!"
+    warning "⚠️ ATTENTION: Replace production secrets with real values!"
 
-    # Cloudflare Tunnel Token для production (ЗАМЕНИТЬ НА РЕАЛЬНЫЙ!)
+    # Cloudflare Tunnel Token for production (REPLACE WITH REAL!)
     local tunnel_token_prod="REPLACE_WITH_REAL_CLOUDFLARE_TUNNEL_TOKEN"
     add_environment_secret "production" "TUNNEL_TOKEN_PROD" "$tunnel_token_prod" "Cloudflare tunnel token for production"
 
-    # OpenAI API Key для production (ЗАМЕНИТЬ НА РЕАЛЬНЫЙ!)
+    # OpenAI API Key for production (REPLACE WITH REAL!)
     local openai_key_prod="REPLACE_WITH_REAL_OPENAI_API_KEY"
     add_environment_secret "production" "OPENAI_API_KEY_PROD" "$openai_key_prod" "OpenAI API key for production"
 
-    warning "🔴 КРИТИЧНО: Замените все production секреты на реальные значения!"
-    success "Production секреты настроены (требуют замены на реальные)"
+    warning "🔴 CRITICAL: Replace all production secrets with real values!"
+    success "Production secrets configured (must be replaced with real values)"
 }
 
-# === ПРОВЕРКА СЕКРЕТОВ ===
+# === VERIFY SECRETS ===
 verify_environment_secrets() {
-    log "Проверка добавленных секретов..."
+    log "Verifying added secrets..."
 
     for env in development staging production; do
-        log "Проверка секретов в окружении: $env"
+        log "Checking secrets in environment: $env"
 
         if secrets_list=$(gh secret list --env "$env" --json name 2>/dev/null); then
             local secrets_count=$(echo "$secrets_list" | jq '. | length')
-            log "  - Найдено секретов: $secrets_count"
+            log "  - Secrets found: $secrets_count"
 
             echo "$secrets_list" | jq -r '.[].name' | while read -r secret_name; do
                 log "    ✓ $secret_name"
             done
         else
-            warning "Не удалось получить список секретов для $env"
+            warning "Could not fetch secrets list for $env"
         fi
     done
 }
 
-# === СОЗДАНИЕ ИНСТРУКЦИЙ ПО ЗАМЕНЕ PRODUCTION СЕКРЕТОВ ===
+# === CREATE PRODUCTION REPLACEMENT INSTRUCTIONS ===
 create_production_instructions() {
     local instructions_file="$PROJECT_ROOT/.config-backup/production-secrets-instructions.md"
 
     cat > "$instructions_file" << 'EOF'
-# 🔴 КРИТИЧНО: Инструкции по замене Production секретов
+# 🔴 CRITICAL: Instructions for replacing Production secrets
 
-## Обязательные действия перед production деплоем:
+## Required actions before production deploy:
 
 ### 1. Cloudflare Tunnel Token
 ```bash
@@ -198,51 +198,51 @@ gh secret set ANTHROPIC_API_KEY_PROD --env production --body "sk-ant-YOUR_REAL_A
 gh secret set GOOGLE_API_KEY_PROD --env production --body "YOUR_REAL_GOOGLE_API_KEY"
 ```
 
-## Проверка секретов:
+## Verify secrets:
 ```bash
 gh secret list --env production
 ```
 
-## ⚠️ ВАЖНО:
-- Никогда не коммитьте реальные API ключи в репозиторий
-- Используйте ключи с минимальными необходимыми правами
-- Регулярно ротируйте production секреты
-- Мониторьте использование API ключей
+## ⚠️ IMPORTANT:
+- Never commit real API keys to the repository
+- Use keys with the minimum required permissions
+- Rotate production secrets regularly
+- Monitor API key usage
 EOF
 
-    log "Инструкции по замене production секретов созданы: $instructions_file"
+    log "Instructions for replacing production secrets written to: $instructions_file"
 }
 
-# === ОСНОВНАЯ ФУНКЦИЯ ===
+# === MAIN ===
 main() {
-    log "Запуск настройки environment-specific секретов для ERNI-KI..."
+    log "Starting environment-specific secrets setup for ERNI-KI..."
 
-    # Создание директории для логов
+    # Create log directory
     mkdir -p "$PROJECT_ROOT/.config-backup"
 
-    # Настройка секретов для каждого окружения
+    # Configure secrets per environment
     setup_development_secrets
     setup_staging_secrets
     setup_production_secrets
 
-    # Проверка добавленных секретов
+    # Verify added secrets
     verify_environment_secrets
 
-    # Создание инструкций для production
+    # Create production instructions
     create_production_instructions
 
-    success "✅ Environment-specific секреты успешно настроены!"
+    success "✅ Environment-specific secrets configured!"
 
     echo ""
-    log "Итоги настройки:"
-    echo "🟢 Development: 5 секретов (сгенерированы автоматически)"
-    echo "🟡 Staging: 5 секретов (сгенерированы автоматически)"
-    echo "🔴 Production: 5 секретов (ТРЕБУЮТ ЗАМЕНЫ НА РЕАЛЬНЫЕ!)"
+    log "Summary:"
+    echo "🟢 Development: 5 secrets (generated automatically)"
+    echo "🟡 Staging: 5 secrets (generated automatically)"
+    echo "🔴 Production: 5 secrets (MUST BE REPLACED WITH REAL VALUES!)"
     echo ""
-    warning "⚠️ ОБЯЗАТЕЛЬНО замените production секреты перед деплоем!"
-    log "Инструкции: .config-backup/production-secrets-instructions.md"
-    log "Логи сохранены в: $LOG_FILE"
+    warning "⚠️ You MUST replace production secrets before deploying!"
+    log "Instructions: .config-backup/production-secrets-instructions.md"
+    log "Logs saved to: $LOG_FILE"
 }
 
-# Запуск скрипта
+# Run script
 main "$@"

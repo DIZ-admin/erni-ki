@@ -1,42 +1,41 @@
-# OpenWebUI Configuration для ERNI-KI
-# Основной веб-интерфейс для AI ассистента с RAG и GPU ускорением
+# OpenWebUI Configuration for ERNI-KI
+# Primary web UI for the AI assistant with RAG and GPU acceleration
 
-# === Основные настройки ===
-# Секретный ключ для подписи сессий
-# ⚠️ КРИТИЧЕСКИ ВАЖНО: Замените перед production использованием!
-# Генерировать через: openssl rand -hex 32
+# === Basics ===
+# Session signing secret
+# ⚠️ MUST change before production; generate via: openssl rand -hex 32
 WEBUI_SECRET_KEY=CHANGE_THIS_SECRET_KEY_BEFORE_PRODUCTION
-# Внешний URL для доступа (замените на ваш домен)
+# External URL (set your domain)
 WEBUI_URL=https://your-domain.example.com
-# Отключить анонимную телеметрию
+# Disable anonymous telemetry
 ANONYMIZED_TELEMETRY=false
-# Режим окружения
+# Environment mode
 ENV=dev
-# Уровень логирования
+# Log level
 GLOBAL_LOG_LEVEL=info
 
-# === База данных PostgreSQL ===
-# Подключение к PostgreSQL с векторным расширением
-# ⚠️ ВАЖНО: Пароль должен совпадать с POSTGRES_PASSWORD в db.env
+# === PostgreSQL ===
+# Connection with vector extension
+# ⚠️ Password must match POSTGRES_PASSWORD in db.env
 DATABASE_URL="postgresql://postgres:CHANGE_THIS_PASSWORD_BEFORE_PRODUCTION@db:5432/openwebui"
 
-# === Ollama интеграция (AI модели) ===
-# Базовые URL для Ollama API
+# === Ollama (AI models) ===
+# Base URL(s) for Ollama API
 OLLAMA_BASE_URLS=http://ollama:11434
-# Включить Ollama API
+# Enable Ollama API
 ENABLE_OLLAMA_API=true
-# Использовать CUDA для GPU ускорения
+# Use CUDA for GPU acceleration
 USE_CUDA_DOCKER=true
 
-# === OpenAI API совместимость ===
-# Включить OpenAI API для совместимости
+# === OpenAI API compatibility ===
+# Enable OpenAI-compatible API
 ENABLE_OPENAI_API=true
-# API ключ OpenAI (опционально)
+# OpenAI API key (optional)
 OPENAI_API_KEY=your-openai-api-key-here
-# Базовый URL OpenAI API
+# OpenAI API base URL
 OPENAI_API_BASE_URL=https://api.openai.com/v1
-# === RAG (Retrieval-Augmented Generation) настройки ===
-# Движок для эмбеддингов
+# === RAG (Retrieval-Augmented Generation) ===
+# Embedding engine
 RAG_EMBEDDING_ENGINE=ollama
 # Модель для создания эмбеддингов
 RAG_EMBEDDING_MODEL=nomic-embed-text:latest

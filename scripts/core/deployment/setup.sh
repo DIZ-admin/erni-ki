@@ -307,7 +307,7 @@ EOF
     success "Helper scripts created in scripts/ directory"
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
@@ -357,5 +357,5 @@ main() {
     echo -e "${NC}"
 }
 
-# Запуск скрипта
+# Run script
 main "$@"

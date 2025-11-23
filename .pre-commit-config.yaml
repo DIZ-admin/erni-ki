@@ -1,5 +1,5 @@
-# Pre-commit hooks конфигурация для проекта ERNI-KI
-# Автоматизация проверок качества кода перед коммитом
+# Pre-commit hooks configuration for ERNI-KI project
+# Automated code quality checks before commits
 # https://pre-commit.com/
 
 default_language_version:
@@ -10,12 +10,12 @@ default_stages: [pre-commit]
 
 repos:
   # ===================================================================
-  # БАЗОВЫЕ ПРОВЕРКИ ФАЙЛОВ
+  # BASIC FILE CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      # Проверка trailing whitespace
+      # Check trailing whitespace
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
         exclude: |
@@ -33,7 +33,7 @@ repos:
             \.config-backup/.*
           )$
 
-      # Проверка end-of-file
+      # Check end-of-file
       - id: end-of-file-fixer
         exclude: |
           (?x)^(
@@ -50,7 +50,7 @@ repos:
             \.config-backup/.*
           )$
 
-      # Проверка больших файлов (>500KB)
+      # Check large files (>500KB)
       - id: check-added-large-files
         args: ["--maxkb=500"]
         exclude: |
@@ -64,13 +64,13 @@ repos:
             .*\.tar\.gz
           )$
 
-      # Проверка merge conflicts
+      # Check merge conflicts
       - id: check-merge-conflict
 
-      # Проверка case conflicts (важно для Windows/macOS)
+      # Check case conflicts (important for Windows/macOS)
       - id: check-case-conflict
 
-      # Проверка исполняемых файлов
+      # Check executable files have shebangs
       - id: check-executables-have-shebangs
         exclude: |
           (?x)^(
@@ -78,16 +78,16 @@ repos:
             \.git/.*
           )$
 
-      # Проверка shebang в исполняемых файлах
+      # Check shebang scripts are executable
       - id: check-shebang-scripts-are-executable
 
   # ===================================================================
-  # ВАЛИДАЦИЯ YAML И JSON
+  # YAML AND JSON VALIDATION
   # ===================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
-      # Валидация YAML файлов
+      # Validate YAML files
       - id: check-yaml
         args: [--allow-multiple-documents]
         exclude: |
@@ -102,7 +102,7 @@ repos:
             \.config-backup/.*
           )$
 
-      # Валидация JSON файлов
+      # Validate JSON files
       - id: check-json
         exclude: |
           (?x)^(
@@ -114,7 +114,7 @@ repos:
             \.vscode/.*
           )$
 
-      # Проверка синтаксиса TOML
+      # Validate TOML syntax
       - id: check-toml
         exclude: |
           (?x)^(
@@ -125,25 +125,25 @@ repos:
           )$
 
   # ===================================================================
-  # PRETTIER ФОРМАТИРОВАНИЕ
+  # PRETTIER FORMATTING
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.1.0
     hooks:
       - id: prettier
-        name: "Prettier: форматирование кода"
+        name: "Prettier: code formatting"
         files: \.(md|yml|yaml|json|js|jsx|ts|tsx)$
         additional_dependencies:
           - prettier@3.3.3
 
   # ===================================================================
-  # ESLINT ПРОВЕРКИ
+  # ESLINT CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.15.0
     hooks:
       - id: eslint
-        name: "ESLint: проверка TypeScript/JavaScript"
+        name: "ESLint: TypeScript/JavaScript validation"
         files: \.(js|jsx|ts|tsx)$
         exclude: |
           (?x)^(
@@ -168,13 +168,13 @@ repos:
         args: [--fix]
 
   # ===================================================================
-  # БЕЗОПАСНОСТЬ И СЕКРЕТЫ
+  # SECURITY AND SECRETS
   # ===================================================================
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:
       - id: detect-secrets
-        name: "Detect Secrets: поиск секретов в коде"
+        name: "Detect Secrets: find secrets in code"
         args: ["--baseline", ".secrets.baseline"]
         exclude: |
           (?x)^(
@@ -195,18 +195,18 @@ repos:
           )$
 
   # ===================================================================
-  # COMMITLINT (ПРОВЕРКА СООБЩЕНИЙ КОММИТОВ)
-  # Отключен - используется через Husky в commitlint.config.cjs
+  # COMMITLINT (COMMIT MESSAGE VALIDATION)
+  # Disabled - handled by Husky in commitlint.config.cjs
   # ===================================================================
 
   # ===================================================================
-  # ДОПОЛНИТЕЛЬНЫЕ ПРОВЕРКИ
+  # ADDITIONAL CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
-      # Проверка наличия TODO/FIXME комментариев в исходном коде
-      # Цель: Все задачи должны отслеживаться в GitHub Issues, а не в комментариях кода
+      # Check for TODO/FIXME comments in source code
+      # Goal: All tasks should be tracked in GitHub Issues, not in code comments
       - id: python-check-blanket-noqa
         exclude: |
           (?x)^(
@@ -216,21 +216,21 @@ repos:
           )$
 
   # ===================================================================
-  # ЛОКАЛЬНЫЕ HOOKS
+  # LOCAL HOOKS
   # ===================================================================
   - repo: local
     hooks:
-      # Проверка Docker Compose файлов
+      # Docker Compose file validation
       - id: docker-compose-check
-        name: "Docker Compose: валидация конфигурации"
+        name: "Docker Compose: configuration validation"
         entry: docker compose config -q
         language: system
         files: ^compose\.yml$
         pass_filenames: false
-      # Проверка на наличие TODO/FIXME комментариев в исходном коде
-      # Блокирует коммиты с незавершённой работой, которая должна отслеживаться в GitHub Issues
+      # Check for TODO/FIXME comments in source code
+      # Blocks commits with unfinished work that should be tracked in GitHub Issues
       - id: check-todo-fixme
-        name: "Code Quality: проверка TODO/FIXME комментариев"
+        name: "Code Quality: check TODO/FIXME comments"
         entry: bash
         language: system
         types: [text]
@@ -245,23 +245,23 @@ repos:
               exit 1
             fi
 
-      # Проверка Go форматирования
+      # Go code formatting
       - id: gofmt
-        name: "Go: форматирование кода"
+        name: "Go: code formatting"
         entry: gofmt
         language: system
         files: \.go$
         args: [-w]
 
-      # Проверка Go импортов
+      # Go imports organization
       - id: goimports
-        name: "Go: организация импортов"
+        name: "Go: organize imports"
         entry: goimports
         language: system
         files: \.go$
         args: [-w]
 
-      # Проверка актуальности статусного сниппета
+      # Validate status snippet is up-to-date
       - id: status-snippet-check
         name: "Docs: validate status snippets"
         entry: python3 scripts/docs/update_status_snippet.py --check
@@ -271,15 +271,34 @@ repos:
           (?x)^(
             docs/reference/status\.yml|
             docs/reference/status-snippet\.md|
-            docs/locales/de/status-snippet\.md|
-            docs/locales/de/index\.md|
+            docs/de/status-snippet\.md|
+            docs/de/index\.md|
             docs/(index|overview)\.md|
             README\.md
           )$
 
-      # Проверка README архивов/данных
+      # Check archive/data README coverage
       - id: archive-readme-check
         name: "Docs: archive/data README coverage"
         entry: python3 scripts/docs/check_archive_readmes.py
         language: system
         pass_filenames: false
+
+      # Check for temporary files
+      - id: check-temporary-files
+        name: "Cleanup: prevent .tmp and temporary files from being committed"
+        entry: bash
+        language: system
+        types: [text]
+        pass_filenames: false
+        args:
+          - -c
+          - |
+            # Check for .tmp files and other temporary artifacts
+            if find . -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" -o -name ".DS_Store" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" ! -path "*/.git/*" ! -path "*/data/*" ! -path "*/logs/*" 2>/dev/null | head -1 | grep -q .; then
+              echo "❌ Found temporary files that should not be committed:"
+              find . -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" -o -name ".DS_Store" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" ! -path "*/.git/*" ! -path "*/data/*" ! -path "*/logs/*" 2>/dev/null | head -20
+              echo ""
+              echo "Please remove these files before committing."
+              exit 1
+            fi

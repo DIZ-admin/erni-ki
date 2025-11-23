@@ -1,42 +1,42 @@
-# PostgreSQL Configuration для ERNI-KI
-# Конфигурация базы данных с векторным расширением для AI/RAG операций
+# PostgreSQL Configuration for ERNI-KI
+# Database with vector extension for AI/RAG operations
 
-# === Основные настройки ===
-# База данных для OpenWebUI
+# === Basics ===
+# Database name for OpenWebUI
 POSTGRES_DB=openwebui
-# Пользователь PostgreSQL
+# PostgreSQL user
 POSTGRES_USER=postgres
-# Пароль (замените на безопасный пароль)
+# Password (set a strong value)
 POSTGRES_PASSWORD=your-secure-password-here
 
-# === Производительность и память ===
-# Размер разделяемых буферов (256MB для оптимальной работы)
+# === Performance & memory ===
+# Shared buffers (256MB recommended)
 POSTGRES_SHARED_BUFFERS=256MB
-# Эффективный размер кэша (1GB для системы с достаточной RAM)
+# Effective cache size (1GB if RAM allows)
 POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
-# Память для операций обслуживания (VACUUM, CREATE INDEX)
+# Maintenance work mem (VACUUM, CREATE INDEX)
 POSTGRES_MAINTENANCE_WORK_MEM=64MB
-# Рабочая память для сортировки и хэширования
+# Work mem for sort/hash
 POSTGRES_WORK_MEM=4MB
-# Буферы WAL (Write-Ahead Logging)
+# WAL buffers
 POSTGRES_WAL_BUFFERS=16MB
 
-# === Соединения ===
-# Максимальное количество одновременных соединений
+# === Connections ===
+# Max concurrent connections
 POSTGRES_MAX_CONNECTIONS=200
 
-# === Автовакуум (автоматическая очистка) ===
-# Количество worker процессов для автовакуума
+# === Autovacuum ===
+# Worker count
 POSTGRES_AUTOVACUUM_MAX_WORKERS=3
-# Интервал между запусками автовакуума
+# Interval between runs
 POSTGRES_AUTOVACUUM_NAPTIME=20s
 
-# === Checkpoint (контрольные точки) ===
-# Целевое время завершения checkpoint (90%)
+# === Checkpoint ===
+# Target completion time (90%)
 POSTGRES_CHECKPOINT_COMPLETION_TARGET=0.9
 
-# === Логирование ===
-# Логировать запросы длиннее 1 секунды
+# === Logging ===
+# Log queries longer than 1s
 POSTGRES_LOG_MIN_DURATION_STATEMENT=1000
 
 # === Расширения ===

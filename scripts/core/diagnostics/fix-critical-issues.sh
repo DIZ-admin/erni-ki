@@ -1,10 +1,10 @@
 #!/bin/bash
-# Скрипт для исправления критических проблем из аудита ERNI-KI
-# Выполняет приоритетные исправления для подготовки к продакшну
+# Script to fix critical issues from ERNI-KI audit
+# Performs priority fixes for production preparation
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -16,7 +16,7 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-# Проверка прав администратора для некоторых операций
+# Check administrator rights for some operations
 check_sudo() {
     if ! sudo -n true 2>/dev/null; then
         warning "Некоторые операции требуют sudo прав"
@@ -25,42 +25,42 @@ check_sudo() {
     fi
 }
 
-# 1. Создание отсутствующих директорий
+# 1. Create missing directories
 fix_missing_directories() {
     log "Создание отсутствующих директорий..."
 
-    # Создание директорий для конфигураций
+    # Create directories for configurations
     mkdir -p conf/nginx/ssl
     mkdir -p conf/backrest
     mkdir -p conf/searxng
     mkdir -p conf/tika
     mkdir -p logs
 
-    # Создание директорий для данных
+    # Create directories for data
     mkdir -p data/prometheus
     mkdir -p data/grafana
 
     success "Директории созданы"
 }
 
-# 2. Исправление прав доступа к файлам
+# 2. Fix file permissions
 fix_file_permissions() {
     log "Исправление прав доступа к файлам..."
 
-    # Права для .env файлов
+    # Permissions for .env files
     find env/ -name "*.env" -exec chmod 600 {} \;
 
-    # Права для конфигурационных файлов
+    # Permissions for configuration files
     find conf/ -type f -exec chmod 644 {} \;
     find conf/ -type d -exec chmod 755 {} \;
 
-    # Права для скриптов
+    # Permissions for scripts
     find scripts/ -name "*.sh" -exec chmod +x {} \;
 
     success "Права доступа исправлены"
 }
 
-# 3. Генерация самоподписанного SSL сертификата
+# 3. Generate self-signed SSL certificate
 generate_ssl_certificate() {
     log "Генерация самоподписанного SSL сертификата..."
 
@@ -79,7 +79,7 @@ generate_ssl_certificate() {
     fi
 }
 
-# 4. Обновление Nginx конфигурации для SSL
+# 4. Update Nginx configuration for SSL
 update_nginx_ssl_config() {
     log "Обновление Nginx конфигурации для SSL..."
 
@@ -131,21 +131,21 @@ EOF
     fi
 }
 
-# 5. Замена placeholder API ключей
+# 5. Replace placeholder API keys
 fix_api_keys() {
     log "Генерация новых API ключей..."
 
-    # Генерация новых ключей
+    # Generate new keys
     NEW_API_KEY=$(openssl rand -hex 32)
     NEW_SECRET_KEY=$(openssl rand -hex 32)
 
-    # Обновление OpenWebUI конфигурации
+    # Update OpenWebUI configuration
     if grep -q "your_api_key_here" env/openwebui.env 2>/dev/null; then
         sed -i "s/your_api_key_here/$NEW_API_KEY/g" env/openwebui.env
         success "API ключи OpenWebUI обновлены"
     fi
 
-    # Сохранение ключей в безопасном файле
+    # Save keys to secure file
     cat > .generated_keys << EOF
 # Сгенерированные API ключи - $(date)
 NEW_API_KEY=$NEW_API_KEY
@@ -156,11 +156,11 @@ EOF
     success "Новые API ключи сгенерированы и сохранены в .generated_keys"
 }
 
-# 6. Добавление ограничений ресурсов в compose.yml
+# 6. Add resource limits to compose.yml
 add_resource_limits() {
     log "Добавление ограничений ресурсов..."
 
-    # Создание патча для ресурсных ограничений
+    # Create patch for resource limits
     cat > resource_limits_patch.yml << 'EOF'
 # Patch для добавления ограничений ресурсов
 # Добавить в каждый сервис в compose.yml:
@@ -200,11 +200,11 @@ EOF
     warning "См. файл resource_limits_patch.yml для примеров"
 }
 
-# 7. Создание базовой конфигурации мониторинга
+# 7. Create basic monitoring configuration
 create_monitoring_config() {
     log "Создание базовой конфигурации мониторинга..."
 
-    # Создание docker-compose.monitoring.yml
+    # Create docker-compose.monitoring.yml
     cat > docker-compose.monitoring.yml << 'EOF'
 version: '3.8'
 
@@ -248,7 +248,7 @@ services:
           cpus: '0.5'
 EOF
 
-    # Создание базовой конфигурации Prometheus
+    # Create basic Prometheus configuration
     mkdir -p conf/prometheus
     cat > conf/prometheus/prometheus.yml << 'EOF'
 global:
@@ -273,7 +273,7 @@ EOF
     warning "Запустите мониторинг: docker-compose -f docker-compose.monitoring.yml up -d"
 }
 
-# 8. Создание скрипта проверки здоровья
+# 8. Create health check script
 create_health_check_script() {
     log "Создание скрипта проверки здоровья..."
 
@@ -331,30 +331,30 @@ EOF
     success "Скрипт проверки здоровья создан"
 }
 
-# 9. Создание firewall правил
+# 9. Create firewall rules
 setup_basic_firewall() {
     log "Настройка базовых firewall правил..."
 
     if command -v ufw >/dev/null 2>&1; then
-        # Базовые правила UFW
+        # Basic UFW rules
         sudo ufw --force reset
         sudo ufw default deny incoming
         sudo ufw default allow outgoing
 
-        # Разрешить SSH
+        # Allow SSH
         sudo ufw allow ssh
 
-        # Разрешить HTTP/HTTPS
+        # Allow HTTP/HTTPS
         sudo ufw allow 80/tcp
         sudo ufw allow 443/tcp
 
-        # Разрешить только локальный доступ к админ портам
+        # Allow only local access to admin ports
         sudo ufw allow from 127.0.0.1 to any port 9090  # Auth
         sudo ufw allow from 127.0.0.1 to any port 9898  # Backrest
         sudo ufw allow from 127.0.0.1 to any port 3000  # Grafana
         sudo ufw allow from 127.0.0.1 to any port 9091  # Prometheus
 
-        # Активировать firewall
+        # Activate firewall
         sudo ufw --force enable
 
         success "UFW firewall настроен"
@@ -364,7 +364,7 @@ setup_basic_firewall() {
     fi
 }
 
-# 10. Создание отчета об исправлениях
+# 10. Create fix report
 create_fix_report() {
     log "Создание отчета об исправлениях..."
 
@@ -428,16 +428,16 @@ EOF
     success "Отчет создан: $REPORT_FILE"
 }
 
-# Основная функция
+# Main function
 main() {
     echo "🔧 Запуск исправления критических проблем ERNI-KI..."
     echo "Дата: $(date)"
     echo ""
 
-    # Проверка sudo для firewall
+    # Check sudo for firewall
     check_sudo
 
-    # Выполнение исправлений
+    # Execute fixes
     fix_missing_directories
     fix_file_permissions
     generate_ssl_certificate
@@ -461,5 +461,5 @@ main() {
     warning "⚠️  Не забудьте добавить ограничения ресурсов в compose.yml!"
 }
 
-# Запуск скрипта
+# Run script
 main "$@"
