@@ -1,5 +1,5 @@
 #!/bin/bash
-# Hook скрипт for перезагрузки nginx после обновления Let's Encrypt certificate
+# Hook script that reloads nginx after Let's Encrypt renewal
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 LOG_FILE="$PROJECT_ROOT/logs/ssl-renewal-$(date +%Y%m%d).log"

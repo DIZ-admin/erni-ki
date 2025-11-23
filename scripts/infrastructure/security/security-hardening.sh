@@ -47,7 +47,7 @@ check_dependencies() {
 generate_secrets() {
     log "Generating secret keys..."
 
-    # Generation основных секретов
+    # Generate core application secrets
     JWT_SECRET=$(openssl rand -hex 32)
     WEBUI_SECRET_KEY=$(openssl rand -hex 32)
     SEARXNG_SECRET=$(openssl rand -hex 32)

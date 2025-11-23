@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 🌐 Nginx Configuration Guide - ERNI-KI
 
 > **Версия:** 9.0 | **Дата:** 2025-09-11 | **Статус:** Production Ready

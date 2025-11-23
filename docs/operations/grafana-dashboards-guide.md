@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # 📊 Grafana Dashboards Guide - ERNI-KI
 
 > **Версия:** 2.0 **Дата:** 2025-11-04 **Статус:** Production Ready **Охват:**

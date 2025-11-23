@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Troubleshooting ERNI-KI
 
 - Начните с `docker compose ps`, `docker compose logs` и `docker compose top`.

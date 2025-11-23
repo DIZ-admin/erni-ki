@@ -1,4 +1,5 @@
 ---
+language: de
 page_id: academy.howto.index
 translation_status: outdated
 ---

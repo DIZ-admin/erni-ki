@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Summarize meeting notes
 
 ## When to use this

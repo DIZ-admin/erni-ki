@@ -1,4 +1,5 @@
 ---
+language: en
 page_id: howto.summarize-meeting-notes
 translation_status: outdated
 ---

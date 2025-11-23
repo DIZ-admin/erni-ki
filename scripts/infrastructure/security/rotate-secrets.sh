@@ -34,168 +34,168 @@ error() {
     exit 1
 }
 
-# Check зависимостей
+# Dependency check
 check_dependencies() {
     local deps=("docker-compose" "openssl")
     for dep in "${deps[@]}"; do
         if ! command -v "$dep" &> /dev/null; then
-            error "Зависимость '$dep' не найдена. Установите её перед запуском script."
+            error "Dependency '$dep' not found. Install it before running the script."
         fi
     done
 }
 
-# Check, что мы в корне проекта
+# Ensure we run from project root
 check_project_root() {
     if [ ! -f "compose.yml" ] || [ ! -d "env" ] || [ ! -d "secrets" ]; then
-        error "Script должен запускаться из корня проекта ERNI-KI"
+        error "Run this script from the ERNI-KI repository root"
     fi
 }
 
-# Creating backup старых секретов
+# Backup current secrets/env files
 backup_secrets() {
     local backup_dir=".config-backup/secrets-rotation-$(date +%Y%m%d-%H%M%S)"
-    log "Creating backup секретов в $backup_dir"
+    log "Creating secrets backup in $backup_dir"
 
     mkdir -p "$backup_dir"
     cp -r secrets/ "$backup_dir/"
     cp -r env/ "$backup_dir/"
 
-    success "Backup создан в $backup_dir"
+    success "Backup stored in $backup_dir"
 }
 
-# Generation новых паролей
+# Generate random passwords
 generate_passwords() {
-    log "Generation новых безопасных паролей..."
+    log "Generating new random passwords..."
 
     NEW_POSTGRES_PASSWORD=$(openssl rand -base64 32)
     NEW_REDIS_PASSWORD=$(openssl rand -base64 32)
     NEW_BACKREST_PASSWORD=$(openssl rand -base64 32)
 
-    success "Новые пароли сгенерированы"
+    success "Fresh passwords generated"
 }
 
-# Update PostgreSQL пароля
+# Update PostgreSQL password
 rotate_postgres_password() {
     if [ "$DRY_RUN" = true ]; then
-        log "[DRY RUN] Update PostgreSQL пароля"
+        log "[DRY RUN] Skipping PostgreSQL password update"
         return
     fi
 
-    log "Update PostgreSQL пароля..."
+    log "Rotating PostgreSQL password..."
 
-    # Update env файла
+    # Update env file
     sed -i "s/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${NEW_POSTGRES_PASSWORD}/" env/db.env
 
-    # Update secrets файла
+    # Update secret file
     echo "$NEW_POSTGRES_PASSWORD" > secrets/postgres_password.txt
     chmod 600 secrets/postgres_password.txt
 
-    success "PostgreSQL пароль обновлен"
+    success "PostgreSQL password rotated"
 }
 
-# Update Redis пароля
+# Update Redis password
 rotate_redis_password() {
     if [ "$DRY_RUN" = true ]; then
-        log "[DRY RUN] Update Redis пароля"
+        log "[DRY RUN] Skipping Redis password update"
         return
     fi
 
-    log "Update Redis пароля..."
+    log "Rotating Redis password..."
 
-    # Update env файла
+    # Update env file
     sed -i "s/REDIS_ARGS=\"--requirepass [^\"]*\"/REDIS_ARGS=\"--requirepass ${NEW_REDIS_PASSWORD} --maxmemory 1gb --maxmemory-policy allkeys-lru\"/" env/redis.env
 
-    # Update secrets файла
+    # Update secret file
     echo "$NEW_REDIS_PASSWORD" > secrets/redis_password.txt
     chmod 600 secrets/redis_password.txt
 
-    success "Redis пароль обновлен"
+    success "Redis password rotated"
 }
 
-# Update Backrest пароля
+# Update Backrest password
 rotate_backrest_password() {
     if [ "$DRY_RUN" = true ]; then
-        log "[DRY RUN] Update Backrest пароля"
+        log "[DRY RUN] Skipping Backrest password update"
         return
     fi
 
-    log "Update Backrest пароля..."
+    log "Rotating Backrest password..."
 
-    # Update env файла
+    # Update env file
     sed -i "s/BACKREST_PASSWORD=.*/BACKREST_PASSWORD=${NEW_BACKREST_PASSWORD}/" env/backrest.env
     sed -i "s/RESTIC_PASSWORD=.*/RESTIC_PASSWORD=${NEW_BACKREST_PASSWORD}/" env/backrest.env
 
-    # Update secrets файла
+    # Update secret file
     echo "$NEW_BACKREST_PASSWORD" > secrets/backrest_password.txt
     chmod 600 secrets/backrest_password.txt
 
-    success "Backrest пароль обновлен"
+    success "Backrest password rotated"
 }
 
-# Restarting сервисов
+# Restart services
 restart_services() {
     if [ "$DRY_RUN" = true ]; then
-        log "[DRY RUN] Restarting сервисов: $1"
+        log "[DRY RUN] Skipping service restart for: $1"
         return
     fi
 
     local services="$1"
-    log "Restarting сервисов: $services"
+    log "Restarting services: $services"
 
-    # Graceful restart с проверкой здоровья
+    # Graceful restart with health checks
     for service in $services; do
         log "Restarting $service..."
         docker-compose restart "$service"
 
-        # Ожидание восстановления здоровья сервиса
+        # Wait for service to become healthy
         local max_attempts=30
         local attempt=1
 
         while [ $attempt -le $max_attempts ]; do
             if docker-compose ps "$service" | grep -q "healthy\|Up"; then
-                success "$service успешно перезапущен"
+                success "$service restarted successfully"
                 break
             fi
 
             if [ $attempt -eq $max_attempts ]; then
-                error "$service не восстановился после перезапуска"
+                error "$service failed to recover after restart"
             fi
 
-            log "Ожидание восстановления $service (попытка $attempt/$max_attempts)..."
+            log "Waiting for $service to recover (attempt $attempt/$max_attempts)..."
             sleep 10
             ((attempt++))
         done
     done
 }
 
-# Check работоспособности после ротации
+# Validate services after rotation
 verify_rotation() {
     if [ "$DRY_RUN" = true ]; then
-        log "[DRY RUN] Check работоспособности"
+        log "[DRY RUN] Skipping post-rotation checks"
         return
     fi
 
-    log "Check работоспособности после ротации..."
+    log "Verifying services after rotation..."
 
-    # Check PostgreSQL
+    # PostgreSQL
     if docker-compose exec -T db pg_isready -U postgres; then
-        success "PostgreSQL работает корректно"
+        success "PostgreSQL is healthy"
     else
-        error "PostgreSQL недоступен после ротации"
+        error "PostgreSQL is unavailable after rotation"
     fi
 
-    # Check Redis
+    # Redis
     if docker-compose exec -T redis redis-cli ping | grep -q "PONG"; then
-        success "Redis работает корректно"
+        success "Redis is healthy"
     else
-        error "Redis недоступен после ротации"
+        error "Redis is unavailable after rotation"
     fi
 
-    # Check Backrest
+    # Backrest
     if curl -s http://localhost:9898/health >/dev/null; then
-        success "Backrest работает корректно"
+        success "Backrest responds to health checks"
     else
-        warning "Backrest может быть недоступен (проверьте вручную)"
+        warning "Backrest did not respond (check manually)"
     fi
 }
 
@@ -204,7 +204,7 @@ main() {
     local service_filter=""
     DRY_RUN=false
 
-    # Парсинг аргументов
+    # Parse CLI arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
             --dry-run)
@@ -217,20 +217,20 @@ main() {
                 ;;
             --help|-h)
                 echo "Usage: $0 [--dry-run] [--service SERVICE]"
-                echo "  --dry-run    Показать что будет сделано без выполнения"
-                echo "  --service    Ротировать только указанный сервис (postgres|redis|backrest)"
+                echo "  --dry-run    Show actions without applying changes"
+                echo "  --service    Rotate only the selected service (postgres|redis|backrest)"
                 exit 0
                 ;;
             *)
-                error "Неизвестный аргумент: $1"
+                error "Unknown argument: $1"
                 ;;
         esac
     done
 
-    log "🔄 Starting ротации секретов ERNI-KI..."
+    log "🔄 Starting ERNI-KI secrets rotation..."
 
     if [ "$DRY_RUN" = true ]; then
-        warning "РЕЖИМ ТЕСТИРОВАНИЯ - изменения не будут применены"
+        warning "DRY RUN MODE - no changes will be applied"
     fi
 
     check_dependencies
@@ -242,7 +242,7 @@ main() {
 
     generate_passwords
 
-    # Ротация по сервисам
+    # Handle service filter
     case "$service_filter" in
         "postgres")
             rotate_postgres_password
@@ -257,23 +257,23 @@ main() {
             restart_services "backrest"
             ;;
         "")
-            # Ротация всех сервисов
+            # Rotate every service
             rotate_postgres_password
             rotate_redis_password
             rotate_backrest_password
             restart_services "db redis backrest"
             ;;
         *)
-            error "Неизвестный сервис: $service_filter"
+            error "Unknown service: $service_filter"
             ;;
     esac
 
     verify_rotation
 
-    success "✅ Ротация секретов завершена успешно!"
+    success "✅ Secrets rotation completed successfully!"
 
     if [ "$DRY_RUN" = false ]; then
-        warning "IMPORTANT: Save новые пароли в безопасном месте!"
+        warning "IMPORTANT: Save the new passwords securely!"
         echo "PostgreSQL: $NEW_POSTGRES_PASSWORD"
         echo "Redis: $NEW_REDIS_PASSWORD"
         echo "Backrest: $NEW_BACKREST_PASSWORD"

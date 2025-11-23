@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Production Database Optimizations
 
 - Настройте pg_stat_statements и vacuum jobs

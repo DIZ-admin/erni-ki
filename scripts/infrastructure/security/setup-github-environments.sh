@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # GitHub Environments Setup for ERNI-KI
-# Creating и настройка окружений development, staging, production
+# Create and configure development, staging, production environments
 # Author: Alteon Schultz (Tech Lead)
 # Date: 2025-09-19
 
 set -euo pipefail
 
-# === КОНФИГУРАЦИЯ ===
+# === CONFIGURATION ===
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LOG_FILE="$PROJECT_ROOT/.config-backup/github-environments-setup-$(date +%Y%m%d-%H%M%S).log"
@@ -19,7 +19,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# === ФУНКЦИИ ЛОГИРОВАНИЯ ===
+# === LOGGING HELPERS ===
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}" | tee -a "$LOG_FILE"
 }
@@ -37,127 +37,122 @@ error() {
     exit 1
 }
 
-# === ПРОВЕРКА ЗАВИСИМОСТЕЙ ===
+# === DEPENDENCY CHECK ===
 check_dependencies() {
-    log "Check зависимостей..."
+    log "Checking prerequisites..."
 
     # Check GitHub CLI
     if ! command -v gh &> /dev/null; then
-        error "GitHub CLI not installed. Установите: https://cli.github.com/"
+        error "GitHub CLI not installed. Install from https://cli.github.com/"
     fi
 
-    # Check аутентификации
+    # Validate authentication
     if ! gh auth status &> /dev/null; then
-        error "GitHub CLI не аутентифицирован. Выполните: gh auth login"
+        error "GitHub CLI not authenticated. Run: gh auth login"
     fi
 
-    # Check прав доступа
+    # Ensure we can access the repo
     local repo_info
     if ! repo_info=$(gh repo view --json owner,name 2>/dev/null); then
-        error "Нет доступа к репозиторию или не в корне git репозитория"
+        error "Cannot access repository (run from repo root with appropriate rights)"
     fi
 
     local owner=$(echo "$repo_info" | jq -r '.owner.login')
     local repo=$(echo "$repo_info" | jq -r '.name')
 
-    log "Репозиторий: $owner/$repo"
+    log "Repository: $owner/$repo"
 
-    # Check прав на создание environments
+    # Verify permissions
     if ! gh api "repos/$owner/$repo" --jq '.permissions.admin' | grep -q true; then
-        warning "Возможно недостаточно прав for creation environments. Требуются admin права."
+        warning "Admin permissions may be required to create environments."
     fi
 
-    success "Все зависимости проверены"
+    success "Dependency check complete"
 }
 
-# === СОЗДАНИЕ ОКРУЖЕНИЙ ===
+# === ENVIRONMENT CREATION ===
 create_environment() {
     local env_name="$1"
     local description="$2"
 
-    log "Creating окружения: $env_name"
+    log "Creating environment: $env_name"
 
-    # Creating окружения
     if gh api "repos/:owner/:repo/environments/$env_name" -X PUT \
         --field "wait_timer=0" \
         --field "prevent_self_review=false" \
         --field "reviewers=[]" \
         --field "deployment_branch_policy=null" > /dev/null 2>&1; then
-        success "Окружение $env_name создано"
+        success "Environment $env_name created"
     else
-        warning "Окружение $env_name уже существует или ошибка creation"
+        warning "Environment $env_name already exists or request failed"
     fi
 }
 
-# === НАСТРОЙКА PROTECTION RULES ===
+# === PROTECTION RULES ===
 setup_development_protection() {
     log "Setup protection rules for development..."
 
-    # Development: без ограничений доступа
+    # Development: no restrictions
     gh api "repos/:owner/:repo/environments/development" -X PUT \
         --field "wait_timer=0" \
         --field "prevent_self_review=false" \
         --field "reviewers=[]" \
         --field "deployment_branch_policy=null" > /dev/null
 
-    success "Development protection rules настроены (без ограничений)"
+    success "Development protection configured (no restrictions)"
 }
 
 setup_staging_protection() {
     log "Setup protection rules for staging..."
 
-    # Staging: требовать review от 1 человека
+    # Staging: require one reviewer
     gh api "repos/:owner/:repo/environments/staging" -X PUT \
         --field "wait_timer=0" \
         --field "prevent_self_review=true" \
         --field "reviewers=[{\"type\":\"Team\",\"id\":null}]" \
         --field "deployment_branch_policy=null" > /dev/null
 
-    success "Staging protection rules настроены (1 reviewer required)"
+    success "Staging protection configured (review required)"
 }
 
 setup_production_protection() {
     log "Setup protection rules for production..."
 
-    # Production: требовать review от 2 человек + только main ветка
+    # Production: require reviews and restrict to protected branches
     gh api "repos/:owner/:repo/environments/production" -X PUT \
         --field "wait_timer=0" \
         --field "prevent_self_review=true" \
         --field "reviewers=[{\"type\":\"Team\",\"id\":null}]" \
         --field "deployment_branch_policy={\"protected_branches\":true,\"custom_branch_policies\":false}" > /dev/null
 
-    success "Production protection rules настроены (2 reviewers + main branch only)"
+    success "Production protection configured (review + main branch only)"
 }
 
-# === ОСНОВНАЯ ФУНКЦИЯ ===
+# === MAIN FLOW ===
 main() {
-    log "Starting настройки GitHub Environments for ERNI-KI..."
+    log "Starting GitHub environment configuration for ERNI-KI..."
 
-    # Creating directories for logs
     mkdir -p "$PROJECT_ROOT/.config-backup"
 
-    # Check зависимостей
     check_dependencies
 
-    # Creating окружений
     create_environment "development" "Development environment for ERNI-KI"
     create_environment "staging" "Staging environment for ERNI-KI pre-production testing"
     create_environment "production" "Production environment for ERNI-KI live deployment"
 
-    # Setup protection rules
     setup_development_protection
     setup_staging_protection
     setup_production_protection
 
-    success "✅ GitHub Environments успешно настроены!"
+    success "✅ GitHub environments configured!"
 
     echo ""
-    log "Следующие шаги:"
-    echo "1. Добавить environment-specific secrets"
-    echo "2. Обновить GitHub Actions workflows"
-    echo "3. Протестировать деплой в каждое окружение"
+    log "Next steps:"
+    echo "1. Add environment-specific secrets"
+    echo "2. Update GitHub Actions workflows to reference environments"
+    echo "3. Test deployments for each environment"
     echo ""
-    log "Логи сохранены в: $LOG_FILE"
+    log "Logs stored at: $LOG_FILE"
 }
 
 # Starting script

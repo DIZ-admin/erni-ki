@@ -3,7 +3,7 @@ title: 'Языковая политика контента'
 version: '12.1'
 date: '2025-11-23'
 status: 'Production Ready'
-language: 'ru'
+language: ru
 audience: 'contributors'
 summary: 'Правила использования языков в коде и документации ERNI-KI'
 ---

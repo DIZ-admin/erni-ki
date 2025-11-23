@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Docker Log Rotation для ERNI-KI
 
 ## Описание
