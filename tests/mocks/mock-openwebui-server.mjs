@@ -1,5 +1,5 @@
-import http from 'node:http';
 import { readFile } from 'node:fs/promises';
+import http from 'node:http';
 import path from 'node:path';
 
 const PORT = Number(process.env.MOCK_OPENWEBUI_PORT ?? 4173);
@@ -30,7 +30,7 @@ const baseHtml = `<!doctype html>
         document.querySelector('#sendBtn').addEventListener('click', () => {
           const text = textarea.value.trim() || 'Hello from mock AI';
           log.innerHTML +=
-            '<div class="message assistant">' + text + ' — источник: mock.pdf</div>';
+            '<div class="message assistant">' + text + ' — source: mock.pdf</div>';
           fetch('/api/chat', {
             method: 'POST',
             body: JSON.stringify({ message: text }),
@@ -95,7 +95,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     try {
-      // safePath проходит нормализацию, поэтому отключаем предупреждение security плагина
+      // safePath is normalized, so we disable the security plugin warning
       // eslint-disable-next-line security/detect-non-literal-fs-filename
       const file = await readFile(path.join(fixturesDir, safePath));
       res.writeHead(200);
@@ -109,7 +109,7 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'POST' && req.url.startsWith('/api/chat')) {
     res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify({ answer: 'Mock response with источник: mock.pdf' }));
+    res.end(JSON.stringify({ answer: 'Mock response with source: mock.pdf' }));
     return;
   }
 

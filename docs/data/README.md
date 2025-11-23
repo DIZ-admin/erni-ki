@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Data & Storage Overview
 
 > **Актуальность:** ноябрь 2025 (Release v12.1).  

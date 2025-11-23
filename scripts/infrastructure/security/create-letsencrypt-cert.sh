@@ -1,23 +1,22 @@
 #!/bin/bash
 
 # ============================================================================
-# Скрипт создания Let's Encrypt сертификатов для ERNI-KI
+# Issue Let's Encrypt certificates for ERNI-KI via webroot validation
 # ============================================================================
-# Описание: Автоматическое получение SSL сертификатов через certbot
-# Автор: Augment Agent
-# Дата: 11.11.2025
+# Description: Automates certificate issuance using certbot (HTTP-01)
+# Author: Augment Agent
+# Date: 11.11.2025
 # ============================================================================
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Директории
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 SSL_DIR="$PROJECT_ROOT/conf/nginx/ssl"
@@ -25,102 +24,69 @@ WEBROOT_DIR="$PROJECT_ROOT/data/nginx/webroot"
 LETSENCRYPT_DIR="$PROJECT_ROOT/data/letsencrypt"
 BACKUP_DIR="$PROJECT_ROOT/.config-backup/ssl-$(date +%Y%m%d-%H%M%S)"
 
-# Домены
 DOMAINS="ki.erni-gruppe.ch,www.ki.erni-gruppe.ch"
 EMAIL="diginnz1@gmail.com"
 
 echo -e "${BLUE}============================================================================${NC}"
-echo -e "${BLUE}Создание Let's Encrypt сертификатов для ERNI-KI${NC}"
+echo -e "${BLUE}Issuing Let's Encrypt certificates for ERNI-KI${NC}"
 echo -e "${BLUE}============================================================================${NC}"
-echo ""
 
-# Проверка зависимостей
-if ! command -v certbot &> /dev/null; then
-    echo -e "${YELLOW}⚠️  certbot не установлен. Устанавливаю...${NC}"
+echo -e "${YELLOW}Checking prerequisites...${NC}"
+if ! command -v certbot >/dev/null 2>&1; then
+    echo -e "${YELLOW}certbot is missing, installing via apt...${NC}"
     sudo apt-get update
     sudo apt-get install -y certbot
-    echo -e "${GREEN}✅ certbot установлен${NC}"
+    echo -e "${GREEN}certbot installed${NC}"
 fi
 
-# Создание необходимых директорий
-echo -e "${YELLOW}📁 Создание директорий...${NC}"
-mkdir -p "$WEBROOT_DIR"
-mkdir -p "$LETSENCRYPT_DIR"
-mkdir -p "$BACKUP_DIR"
-mkdir -p "$SSL_DIR"
-echo -e "${GREEN}✅ Директории созданы${NC}"
-echo ""
+mkdir -p "$WEBROOT_DIR" "$LETSENCRYPT_DIR" "$BACKUP_DIR" "$SSL_DIR"
+echo -e "${GREEN}Directories ready${NC}"
 
-# Бэкап существующих сертификатов
-echo -e "${YELLOW}📦 Создание бэкапа текущих сертификатов...${NC}"
-if [[ -f "$SSL_DIR/nginx.crt" ]]; then
-    cp "$SSL_DIR/nginx.crt" "$BACKUP_DIR/nginx.crt.backup"
-    echo -e "${GREEN}✅ Сохранен: nginx.crt${NC}"
-fi
+echo -e "${YELLOW}Backing up existing certificates (if present)...${NC}"
+for file in nginx.crt nginx.key nginx-fullchain.crt; do
+    if [[ -f "$SSL_DIR/$file" ]]; then
+        cp "$SSL_DIR/$file" "$BACKUP_DIR/$file.backup"
+        echo -e "${GREEN}Saved $file to backup${NC}"
+    fi
+done
 
-if [[ -f "$SSL_DIR/nginx.key" ]]; then
-    cp "$SSL_DIR/nginx.key" "$BACKUP_DIR/nginx.key.backup"
-    echo -e "${GREEN}✅ Сохранен: nginx.key${NC}"
-fi
-
-if [[ -f "$SSL_DIR/nginx-fullchain.crt" ]]; then
-    cp "$SSL_DIR/nginx-fullchain.crt" "$BACKUP_DIR/nginx-fullchain.crt.backup"
-    echo -e "${GREEN}✅ Сохранен: nginx-fullchain.crt${NC}"
-fi
-echo ""
-
-# Проверка DNS
 echo -e "${BLUE}============================================================================${NC}"
-echo -e "${BLUE}Проверка DNS записей${NC}"
+echo -e "${BLUE}Validating DNS records${NC}"
 echo -e "${BLUE}============================================================================${NC}"
-echo ""
 
-echo -e "${YELLOW}Проверка ki.erni-gruppe.ch...${NC}"
 KI_IP=$(dig +short ki.erni-gruppe.ch @8.8.8.8 | tail -1)
-echo -e "DNS: ${GREEN}$KI_IP${NC}"
-
-echo -e "${YELLOW}Проверка www.ki.erni-gruppe.ch...${NC}"
 WWW_IP=$(dig +short www.ki.erni-gruppe.ch @8.8.8.8 | tail -1)
-echo -e "DNS: ${GREEN}$WWW_IP${NC}"
-
-# Получение текущего IP сервера
 SERVER_IP=$(curl -s https://ipinfo.io/ip)
-echo -e "${YELLOW}IP сервера:${NC} ${GREEN}$SERVER_IP${NC}"
-echo ""
+
+echo -e "ki.erni-gruppe.ch -> ${GREEN}${KI_IP:-unknown}${NC}"
+echo -e "www.ki.erni-gruppe.ch -> ${GREEN}${WWW_IP:-unknown}${NC}"
+echo -e "Current server IP -> ${GREEN}${SERVER_IP:-unknown}${NC}"
 
 if [[ "$KI_IP" != "$SERVER_IP" ]]; then
-    echo -e "${RED}⚠️  ВНИМАНИЕ: DNS еще не распространился полностью${NC}"
-    echo -e "${YELLOW}ki.erni-gruppe.ch указывает на $KI_IP, но сервер имеет IP $SERVER_IP${NC}"
-    echo -e "${YELLOW}Продолжить? (y/n)${NC}"
+    echo -e "${RED}DNS does not point to this server yet.${NC}"
+    echo -e "${YELLOW}Continue anyway? (y/n) ${NC}"
     read -r CONTINUE
     if [[ "$CONTINUE" != "y" ]]; then
-        echo -e "${RED}Отменено пользователем${NC}"
+        echo -e "${RED}Aborted by operator${NC}"
         exit 1
     fi
 fi
 
-# Проверка доступности порта 80
-echo -e "${YELLOW}🔍 Проверка доступности порта 80...${NC}"
+echo -e "${YELLOW}Checking port 80 reachability...${NC}"
 if curl -I -s -m 5 http://ki.erni-gruppe.ch/.well-known/acme-challenge/test 2>&1 | grep -q "404"; then
-    echo -e "${GREEN}✅ Порт 80 доступен${NC}"
+    echo -e "${GREEN}Port 80 reachable${NC}"
 else
-    echo -e "${YELLOW}⚠️  Порт 80 может быть недоступен извне${NC}"
+    echo -e "${YELLOW}Port 80 might be blocked externally${NC}"
 fi
-echo ""
 
-# Получение сертификата
 echo -e "${BLUE}============================================================================${NC}"
-echo -e "${BLUE}Получение Let's Encrypt сертификата${NC}"
+echo -e "${BLUE}Requesting certificate via certbot${NC}"
 echo -e "${BLUE}============================================================================${NC}"
-echo ""
 
-echo -e "${YELLOW}Домены:${NC} $DOMAINS"
-echo -e "${YELLOW}Email:${NC} $EMAIL"
-echo -e "${YELLOW}Webroot:${NC} $WEBROOT_DIR"
-echo ""
+echo -e "Domains: ${DOMAINS}"
+echo -e "Email:   ${EMAIL}"
+echo -e "Webroot: ${WEBROOT_DIR}"
 
-# Запуск certbot
-echo -e "${YELLOW}🔐 Запуск certbot...${NC}"
 sudo certbot certonly \
   --webroot \
   --webroot-path="$WEBROOT_DIR" \
@@ -132,22 +98,11 @@ sudo certbot certonly \
   -d ki.erni-gruppe.ch \
   -d www.ki.erni-gruppe.ch
 
-if [[ $? -eq 0 ]]; then
-    echo -e "${GREEN}✅ Сертификат успешно получен!${NC}"
-else
-    echo -e "${RED}❌ Ошибка при получении сертификата${NC}"
-    echo -e "${YELLOW}Проверьте логи certbot: sudo journalctl -u certbot${NC}"
-    exit 1
-fi
-echo ""
-
-# Копирование сертификатов в nginx директорию
-echo -e "${YELLOW}📋 Копирование сертификатов в nginx директорию...${NC}"
+echo -e "${GREEN}Certificate request completed${NC}"
 
 CERT_PATH="/etc/letsencrypt/live/ki.erni-gruppe.ch"
-
 if [[ ! -d "$CERT_PATH" ]]; then
-    echo -e "${RED}❌ Ошибка: Сертификаты не найдены в $CERT_PATH${NC}"
+    echo -e "${RED}Certificate path $CERT_PATH not found${NC}"
     exit 1
 fi
 
@@ -156,38 +111,29 @@ sudo cp "$CERT_PATH/privkey.pem" "$SSL_DIR/letsencrypt-privkey.key"
 sudo cp "$CERT_PATH/cert.pem" "$SSL_DIR/letsencrypt-cert.crt"
 sudo cp "$CERT_PATH/chain.pem" "$SSL_DIR/letsencrypt-chain.crt"
 
-# Установка правильных прав доступа
-sudo chown $(whoami):$(whoami) "$SSL_DIR/letsencrypt-"*
-chmod 644 "$SSL_DIR/letsencrypt-fullchain.crt"
+sudo chown $(whoami):$(whoami) "$SSL_DIR"/letsencrypt-*
+chmod 644 "$SSL_DIR/letsencrypt-fullchain.crt" "$SSL_DIR/letsencrypt-cert.crt" "$SSL_DIR/letsencrypt-chain.crt"
 chmod 600 "$SSL_DIR/letsencrypt-privkey.key"
-chmod 644 "$SSL_DIR/letsencrypt-cert.crt"
-chmod 644 "$SSL_DIR/letsencrypt-chain.crt"
 
-echo -e "${GREEN}✅ Сертификаты скопированы${NC}"
-echo ""
+echo -e "${GREEN}Copied certificates into $SSL_DIR${NC}"
 
-# Создание символических ссылок
-echo -e "${YELLOW}🔗 Создание символических ссылок...${NC}"
+echo -e "${YELLOW}Creating nginx symlinks...${NC}"
 cd "$SSL_DIR"
 ln -sf letsencrypt-fullchain.crt nginx-fullchain.crt
 ln -sf letsencrypt-fullchain.crt nginx.crt
 ln -sf letsencrypt-privkey.key nginx.key
-echo -e "${GREEN}✅ Символические ссылки созданы${NC}"
-echo ""
+echo -e "${GREEN}Symlinks updated${NC}"
 
-# Проверка сертификата
-echo -e "${YELLOW}🔍 Проверка сертификата...${NC}"
+echo -e "${YELLOW}Inspecting resulting certificate...${NC}"
 openssl x509 -in "$SSL_DIR/nginx-fullchain.crt" -noout -subject -issuer -dates -ext subjectAltName
-echo ""
 
 echo -e "${BLUE}============================================================================${NC}"
-echo -e "${GREEN}✅ Let's Encrypt сертификаты успешно созданы и установлены!${NC}"
+echo -e "${GREEN}Certificates created and deployed successfully!${NC}"
 echo -e "${BLUE}============================================================================${NC}"
-echo ""
-echo -e "${YELLOW}Бэкап сохранен в:${NC} $BACKUP_DIR"
-echo -e "${YELLOW}Сертификаты:${NC} $SSL_DIR"
-echo ""
-echo -e "${YELLOW}Следующие шаги:${NC}"
-echo -e "1. Перезагрузите nginx: ${GREEN}docker compose restart nginx${NC}"
-echo -e "2. Проверьте HTTPS: ${GREEN}curl -I https://ki.erni-gruppe.ch${NC}"
-echo ""
+
+echo -e "Backup directory: ${BACKUP_DIR}"
+echo -e "Certificates stored in: ${SSL_DIR}"
+
+echo -e "Next steps:"
+echo -e "  1. Restart nginx -> ${GREEN}docker compose restart nginx${NC}"
+echo -e "  2. Validate HTTPS -> ${GREEN}curl -I https://ki.erni-gruppe.ch${NC}"

@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Database Troubleshooting
 
 - Для PostgreSQL используйте `docker compose exec db psql` и `pg_stat_activity`.

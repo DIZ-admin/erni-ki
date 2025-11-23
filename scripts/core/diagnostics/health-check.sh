@@ -7,7 +7,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 TARGET="$PROJECT_ROOT/scripts/health-monitor.sh"
 
 if [[ ! -x "$TARGET" ]]; then
-  echo "❌ Не найден scripts/health-monitor.sh" >&2
+  echo "❌ scripts/health-monitor.sh not found" >&2
   exit 1
 fi
 

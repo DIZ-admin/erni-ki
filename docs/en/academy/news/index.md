@@ -1,4 +1,5 @@
 ---
+language: en
 page_id: academy.news.index
 translation_status: outdated
 ---

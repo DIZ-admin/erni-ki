@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Write a customer email with Open WebUI
 
 ## When to use this

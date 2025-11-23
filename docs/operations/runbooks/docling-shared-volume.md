@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Политика доступа и очистки Docling Shared Volume
 
 Shared volume `./data/docling/shared` используется сервисами Docling и OpenWebUI

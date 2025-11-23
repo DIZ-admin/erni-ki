@@ -1,22 +1,22 @@
 #!/bin/bash
-# Быстрое развертывание системы мониторинга ERNI-KI
-# Критический приоритет - реализация в течение 24 часов
+# Quick deployment of ERNI-KI monitoring system
+# Critical priority - implementation within 24 hours
 
 set -euo pipefail
 
-# Цвета для вывода
+# Color definitions for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Конфигурация
+# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="/tmp/erni-ki-monitoring-deployment.log"
 
-# Функции логирования
+# Logging functions
 log() {
     local message="[$(date +'%Y-%m-%d %H:%M:%S')] $1"
     echo -e "${BLUE}$message${NC}"
@@ -41,43 +41,43 @@ error() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-# Проверка предварительных условий
+# Check prerequisites
 check_prerequisites() {
-    log "Проверка предварительных условий..."
+    log "Checking prerequisites..."
 
-    # Проверка Docker
+    # Check Docker
     if ! command -v docker &> /dev/null; then
-        error "Docker не установлен"
+        error "Docker is not installed"
         exit 1
     fi
 
-    # Проверка Docker Compose v2
+    # Check Docker Compose v2
     if ! docker compose version &> /dev/null; then
-        error "Docker Compose v2 недоступен (нужен docker compose)"
+        error "Docker Compose v2 not available (need docker compose)"
         exit 1
     fi
 
-    # Проверка доступности портов
+    # Check port availability
     local ports=(9091 3000 9093 2020 9101 8000)
     for port in "${ports[@]}"; do
         if netstat -tuln 2>/dev/null | grep ":$port " &> /dev/null; then
-            warning "Порт $port уже используется"
+            warning "Port $port is already in use"
         fi
     done
 
-    # Проверка дискового пространства
+    # Check disk space
     local disk_usage=$(df "$PROJECT_ROOT" | awk 'NR==2 {print $5}' | sed 's/%//')
     if [[ $disk_usage -gt 80 ]]; then
-        error "Недостаточно места на диске: ${disk_usage}%"
+        error "Insufficient disk space: ${disk_usage}%"
         exit 1
     fi
 
-    success "Предварительные условия выполнены"
+    success "Prerequisites met"
 }
 
-# Создание необходимых директорий
+# Create necessary directories
 create_directories() {
-    log "Создание необходимых директорий..."
+    log "Creating necessary directories..."
 
     local dirs=(
         "$PROJECT_ROOT/data/prometheus"
@@ -93,180 +93,180 @@ create_directories() {
     for dir in "${dirs[@]}"; do
         if [[ ! -d "$dir" ]]; then
             mkdir -p "$dir"
-            success "Создана директория: $dir"
+            success "Created directory: $dir"
         fi
     done
 
-    # Установка правильных прав доступа
+    # Set correct permissions
     chmod 755 "$PROJECT_ROOT/data/prometheus"
     chmod 755 "$PROJECT_ROOT/data/grafana"
     chmod 755 "$PROJECT_ROOT/data/alertmanager"
 
-    success "Директории созданы"
+    success "Directories created"
 }
 
-# Создание сети мониторинга
+# Create monitoring network
 create_monitoring_network() {
-    log "Создание сети мониторинга..."
+    log "Creating monitoring network..."
 
-    # Удаляем существующую сеть если она есть проблемы с метками
+    # Remove existing network if there are label issues
     if docker network ls | grep -q "erni-ki-monitoring"; then
-        log "Удаление существующей сети erni-ki-monitoring..."
+        log "Removing existing erni-ki-monitoring network..."
         docker network rm erni-ki-monitoring 2>/dev/null || true
     fi
 
-    # Создаем новую сеть
+    # Create new network
     docker network create erni-ki-monitoring --driver bridge --label com.docker.compose.network=monitoring
-    success "Сеть erni-ki-monitoring создана"
+    success "Network erni-ki-monitoring created"
 }
 
-# Развертывание системы мониторинга
+# Deploy monitoring system
 deploy_monitoring_stack() {
-    log "Развертывание системы мониторинга..."
+    log "Deploying monitoring system..."
 
     cd "$PROJECT_ROOT/monitoring"
 
-    # Запуск базовых компонентов мониторинга
-    log "Запуск Prometheus, Grafana, Alertmanager..."
+    # Start basic monitoring components
+    log "Starting Prometheus, Grafana, Alertmanager..."
     docker compose -f docker-compose.monitoring.yml up -d prometheus grafana alertmanager node-exporter
 
-    # Ожидание готовности
+    # Wait for readiness
     sleep 30
 
-    # Проверка статуса
+    # Check status
     local services=("prometheus" "grafana" "alertmanager" "node-exporter")
     for service in "${services[@]}"; do
         if docker compose -f docker-compose.monitoring.yml ps "$service" | grep -q "Up"; then
-            success "$service запущен"
+            success "$service started"
         else
-            error "$service не запустился"
+            error "$service failed to start"
         fi
     done
 }
 
-# Настройка критических алертов
+# Configure critical alerts
 configure_critical_alerts() {
-    log "Настройка критических алертов..."
+    log "Configuring critical alerts..."
 
-    # Проверка доступности Prometheus
+    # Check Prometheus availability
     local prometheus_ready=false
     for i in {1..10}; do
         if curl -s http://localhost:9091/-/ready &> /dev/null; then
             prometheus_ready=true
             break
         fi
-        log "Ожидание готовности Prometheus (попытка $i/10)..."
+        log "Waiting for Prometheus readiness (attempt $i/10)..."
         sleep 10
     done
 
     if [[ "$prometheus_ready" == "true" ]]; then
-        success "Prometheus готов"
+        success "Prometheus is ready"
 
-        # Перезагрузка конфигурации алертов
+        # Reload alert configuration
         if curl -s -X POST http://localhost:9091/-/reload &> /dev/null; then
-            success "Конфигурация алертов перезагружена"
+            success "Alert configuration reloaded"
         else
-            warning "Не удалось перезагрузить конфигурацию алертов"
+            warning "Failed to reload alert configuration"
         fi
     else
-        error "Prometheus не готов"
+        error "Prometheus is not ready"
     fi
 }
 
-# Развертывание GPU мониторинга
+# Deploy GPU monitoring
 deploy_gpu_monitoring() {
-    log "Развертывание GPU мониторинга..."
+    log "Deploying GPU monitoring..."
 
-    # Проверка доступности NVIDIA
+    # Check NVIDIA availability
     if command -v nvidia-smi &> /dev/null; then
         if nvidia-smi &> /dev/null; then
-            log "Запуск NVIDIA GPU Exporter..."
+            log "Starting NVIDIA GPU Exporter..."
             cd "$PROJECT_ROOT/monitoring"
             docker compose -f docker-compose.monitoring.yml up -d nvidia-exporter
 
             sleep 10
 
             if docker compose -f docker-compose.monitoring.yml ps nvidia-exporter | grep -q "Up"; then
-                success "NVIDIA GPU Exporter запущен"
+                success "NVIDIA GPU Exporter started"
             else
-                warning "NVIDIA GPU Exporter не запустился"
+                warning "NVIDIA GPU Exporter failed to start"
             fi
         else
-            warning "NVIDIA GPU недоступен"
+            warning "NVIDIA GPU not available"
         fi
     else
-        warning "nvidia-smi не найден, пропускаем GPU мониторинг"
+        warning "nvidia-smi not found, skipping GPU monitoring"
     fi
 }
 
-# Настройка webhook уведомлений
+# Setup webhook notifications
 setup_webhook_notifications() {
-    log "Настройка webhook уведомлений..."
+    log "Setting up webhook notifications..."
 
     cd "$PROJECT_ROOT/monitoring"
 
-    # Запуск webhook receiver
+    # Start webhook receiver
     docker compose -f docker-compose.monitoring.yml up -d webhook-receiver
 
     sleep 10
 
     if docker compose -f docker-compose.monitoring.yml ps webhook-receiver | grep -q "Up"; then
-        success "Webhook receiver запущен"
+        success "Webhook receiver started"
 
-        # Тестирование webhook
+        # Test webhook
         if curl -s -f http://localhost:9093/health &> /dev/null; then
-            success "Webhook receiver доступен"
+            success "Webhook receiver is available"
         else
-            warning "Webhook receiver недоступен"
+            warning "Webhook receiver is not available"
         fi
     else
-        error "Webhook receiver не запустился"
+        error "Webhook receiver failed to start"
     fi
 }
 
-# Исправление проблемных сервисов
+# Fix problematic services
 fix_problematic_services() {
-    log "Исправление проблемных сервисов..."
+    log "Fixing problematic services..."
 
     cd "$PROJECT_ROOT"
 
-    # Проверка и исправление EdgeTTS
-    log "Проверка EdgeTTS..."
+    # Check and fix EdgeTTS
+    log "Checking EdgeTTS..."
     if ! curl -s -f http://localhost:5050/voices &> /dev/null; then
-        warning "EdgeTTS недоступен, перезапускаем..."
+        warning "EdgeTTS not available, restarting..."
         docker compose restart edgetts
         sleep 15
 
         if curl -s -f http://localhost:5050/voices &> /dev/null; then
-            success "EdgeTTS восстановлен"
+            success "EdgeTTS restored"
         else
-            error "EdgeTTS все еще недоступен"
+            error "EdgeTTS still not available"
         fi
     else
-        success "EdgeTTS работает"
+        success "EdgeTTS is working"
     fi
 
-    # Проверка проксированного SearXNG
+    # Check proxied SearXNG
     local searx_url="http://localhost:8080/api/searxng/search?q=monitoring&format=json"
-    log "Проверка SearXNG..."
+    log "Checking SearXNG..."
     if ! curl -s -f --max-time 5 "$searx_url" &> /dev/null; then
-        warning "SearXNG недоступен, перезапускаем..."
+        warning "SearXNG not available, restarting..."
         docker compose restart searxng || true
         sleep 20
 
         if curl -s -f --max-time 5 "$searx_url" &> /dev/null; then
-            success "SearXNG восстановлен"
+            success "SearXNG restored"
         else
-            error "SearXNG все еще недоступен"
+            error "SearXNG still not available"
         fi
     else
-        success "SearXNG работает"
+        success "SearXNG is working"
     fi
 }
 
-# Проверка системы мониторинга
+# Verify monitoring system
 verify_monitoring_system() {
-    log "Проверка системы мониторинга..."
+    log "Verifying monitoring system..."
 
     local endpoints=(
         "http://localhost:9091/-/healthy:Prometheus"
@@ -284,77 +284,77 @@ verify_monitoring_system() {
         local service=$(echo "$endpoint_info" | cut -d: -f2)
 
         if curl -s -f "$endpoint" &> /dev/null; then
-            success "$service доступен"
+            success "$service is available"
             ((healthy_count++))
         else
-            error "$service недоступен ($endpoint)"
+            error "$service is not available ($endpoint)"
         fi
     done
 
-    log "Результат проверки: $healthy_count/$total_count сервисов здоровы"
+    log "Verification result: $healthy_count/$total_count services are healthy"
 
     if [[ $healthy_count -eq $total_count ]]; then
-        success "Система мониторинга полностью функциональна"
+        success "Monitoring system is fully functional"
         return 0
     else
-        error "Система мониторинга работает частично"
+        error "Monitoring system is partially operational"
         return 1
     fi
 }
 
-# Генерация отчета о развертывании
+# Generate deployment report
 generate_deployment_report() {
-    log "Генерация отчета о развертывании..."
+    log "Generating deployment report..."
 
     local report_file="$PROJECT_ROOT/.config-backup/monitoring-deployment-report-$(date +%Y%m%d_%H%M%S).txt"
 
     {
-        echo "=== ОТЧЕТ О РАЗВЕРТЫВАНИИ СИСТЕМЫ МОНИТОРИНГА ERNI-KI ==="
-        echo "Дата: $(date)"
-        echo "Хост: $(hostname)"
+        echo "=== ERNI-KI MONITORING SYSTEM DEPLOYMENT REPORT ==="
+        echo "Date: $(date)"
+        echo "Host: $(hostname)"
         echo ""
 
-        echo "=== СТАТУС КОМПОНЕНТОВ МОНИТОРИНГА ==="
+        echo "=== MONITORING COMPONENTS STATUS ==="
         cd "$PROJECT_ROOT/monitoring"
         docker compose -f docker-compose.monitoring.yml ps
         echo ""
 
-        echo "=== ДОСТУПНОСТЬ ENDPOINTS ==="
+        echo "=== ENDPOINT AVAILABILITY ==="
         curl -s http://localhost:9091/-/healthy && echo "Prometheus: ✅ Healthy" || echo "Prometheus: ❌ Unhealthy"
         curl -s http://localhost:3000/api/health && echo "Grafana: ✅ Healthy" || echo "Grafana: ❌ Unhealthy"
         curl -s http://localhost:9093/-/healthy && echo "Alertmanager: ✅ Healthy" || echo "Alertmanager: ❌ Unhealthy"
         curl -s http://localhost:9101/metrics > /dev/null && echo "Node Exporter: ✅ Healthy" || echo "Node Exporter: ❌ Unhealthy"
         echo ""
 
-        echo "=== ИСПОЛЬЗОВАНИЕ РЕСУРСОВ ==="
+        echo "=== RESOURCE USAGE ==="
         docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | grep -E "(prometheus|grafana|alertmanager|node-exporter|webhook)"
         echo ""
 
-        echo "=== СЛЕДУЮЩИЕ ШАГИ ==="
-        echo "1. Откройте Grafana: http://localhost:3000 (admin/admin123)"
-        echo "2. Откройте Prometheus: http://localhost:9091"
-        echo "3. Откройте Alertmanager: http://localhost:9093"
-        echo "4. Настройте дополнительные dashboard в Grafana"
-        echo "5. Протестируйте алерты"
+        echo "=== NEXT STEPS ==="
+        echo "1. Open Grafana: http://localhost:3000 (admin/admin123)"
+        echo "2. Open Prometheus: http://localhost:9091"
+        echo "3. Open Alertmanager: http://localhost:9093"
+        echo "4. Configure additional dashboards in Grafana"
+        echo "5. Test alerts"
 
     } > "$report_file"
 
-    success "Отчет сохранен: $report_file"
+    success "Report saved: $report_file"
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║           ERNI-KI Monitoring System Deployment              ║"
-    echo "║              Развертывание системы мониторинга              ║"
+    echo "║              Monitoring System Deployment              ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
-    # Переход в рабочую директорию
+    # Change to working directory
     cd "$PROJECT_ROOT"
 
-    # Выполнение развертывания
+    # Execute deployment
     check_prerequisites
     echo ""
 
@@ -385,19 +385,19 @@ main() {
     generate_deployment_report
     echo ""
 
-    success "Развертывание системы мониторинга завершено!"
+    success "Monitoring system deployment completed!"
     echo ""
-    echo -e "${GREEN}🎯 Следующие шаги:${NC}"
-    echo "1. Откройте Grafana: http://localhost:3000 (admin/admin123)"
-    echo "2. Откройте Prometheus: http://localhost:9091"
-    echo "3. Откройте Alertmanager: http://localhost:9093"
-    echo "4. Запустите полную диагностику: ./scripts/health_check.sh --report"
+    echo -e "${GREEN}🎯 Next steps:${NC}"
+    echo "1. Open Grafana: http://localhost:3000 (admin/admin123)"
+    echo "2. Open Prometheus: http://localhost:9091"
+    echo "3. Open Alertmanager: http://localhost:9093"
+    echo "4. Run full diagnostics: ./scripts/health_check.sh --report"
 }
 
-# Обработка аргументов командной строки
+# Handle command-line arguments
 case "${1:-}" in
     --quick)
-        log "Быстрое развертывание (только основные компоненты)"
+        log "Quick deployment (basic components only)"
         check_prerequisites
         create_directories
         create_monitoring_network
@@ -405,15 +405,15 @@ case "${1:-}" in
         verify_monitoring_system
         ;;
     --gpu-only)
-        log "Развертывание только GPU мониторинга"
+        log "Deploying GPU monitoring only"
         deploy_gpu_monitoring
         ;;
     --fix-services)
-        log "Исправление проблемных сервисов"
+        log "Fixing problematic services"
         fix_problematic_services
         ;;
     --verify)
-        log "Проверка системы мониторинга"
+        log "Verifying monitoring system"
         verify_monitoring_system
         ;;
     *)

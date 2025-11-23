@@ -1,36 +1,36 @@
-// Глобальная настройка окружения для тестов проекта erni-ki
+// Global environment setup for erni-ki project tests
 import { execSync } from 'node:child_process';
 import { existsSync, mkdirSync } from 'node:fs';
 
 export async function setup() {
-  console.log('🚀 Настройка тестового окружения...');
+  console.log('🚀 Setting up test environment...');
 
-  // Создаем необходимые директории для тестов
+  // Create necessary directories for tests
   const testDirs = ['tests/fixtures', 'tests/mocks', 'tests/integration', 'tests/unit', 'coverage'];
 
   testDirs.forEach(dir => {
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
-      console.log(`✅ Создана директория: ${dir}`);
+      console.log(`✅ Directory created: ${dir}`);
     }
   });
 
-  // Проверяем доступность тестовых сервисов
+  // Check availability of test services
   await checkTestServices();
 
-  // Настраиваем тестовую базу данных (если нужно)
+  // Configure test database (if needed)
   await setupTestDatabase();
 
-  console.log('✅ Тестовое окружение готово');
+  console.log('✅ Test environment ready');
 }
 
 export async function teardown() {
-  console.log('🧹 Очистка тестового окружения...');
+  console.log('🧹 Cleaning up test environment...');
 
-  // Очищаем тестовые данные
+  // Clean up test data
   await cleanupTestData();
 
-  console.log('✅ Тестовое окружение очищено');
+  console.log('✅ Test environment cleaned');
 }
 
 async function checkTestServices() {
@@ -50,37 +50,37 @@ async function checkTestServices() {
   for (const service of services) {
     try {
       execSync(service.command, { stdio: 'ignore' });
-      console.log(`✅ ${service.name} доступен`);
+      console.log(`✅ ${service.name} available`);
     } catch (error) {
       if (service.optional) {
-        console.log(`⚠️  ${service.name} недоступен (опционально)`);
+        console.log(`⚠️  ${service.name} unavailable (optional)`);
       } else {
-        throw new Error(`❌ ${service.name} недоступен и требуется для тестов`);
+        throw new Error(`❌ ${service.name} unavailable and required for tests`);
       }
     }
   }
 }
 
 async function setupTestDatabase() {
-  // Здесь можно добавить настройку тестовой БД
-  // Например, создание схемы, миграции и т.д.
-  console.log('📊 Настройка тестовой базы данных...');
+  // Here you can add test DB configuration
+  // For example, schema creation, migrations, etc.
+  console.log('📊 Setting up test database...');
 
-  // Пример настройки (раскомментировать при необходимости)
+  // Setup example (uncomment if needed)
   /*
   try {
     execSync('createdb test_erni_ki', { stdio: 'ignore' });
-    console.log('✅ Тестовая база данных создана');
+    console.log('✅ Test database created');
   } catch (error) {
-    console.log('⚠️  Тестовая база данных уже существует или недоступна');
+    console.log('⚠️  Test database already exists or is unavailable');
   }
   */
 }
 
 async function cleanupTestData() {
-  // Очистка временных файлов и данных после тестов
-  console.log('🗑️  Очистка временных данных...');
+  // Cleanup temporary files and data after tests
+  console.log('🗑️  Cleaning up temporary data...');
 
-  // Здесь можно добавить логику очистки
-  // Например, удаление тестовых файлов, очистка кэша и т.д.
+  // Here you can add cleanup logic
+  // For example, deleting test files, clearing cache, etc.
 }

@@ -1,4 +1,5 @@
 ---
+language: ru
 page_id: academy.prompting-101
 translation_status: complete
 ---

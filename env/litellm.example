@@ -1,74 +1,73 @@
-# LiteLLM Context Engineering Environment Configuration для ERNI-KI
-# Скопировать в env/litellm.env и настроить значения
-# Дата обновления: 2025-09-19
-# Статус: Production Ready - Context7 интеграция включена
-# Возможности: Унифицированный API для LLM провайдеров + Context Engineering
+# LiteLLM Context Engineering Environment Configuration for ERNI-KI
+# Copy to env/litellm.env and set values
+# Updated: 2025-09-19 | Status: Production Ready (Context7 integration enabled)
+# Capabilities: Unified API for LLM providers + Context Engineering
 
-# === ОСНОВНЫЕ НАСТРОЙКИ ===
-# Master key для администрирования LiteLLM (обязательно начинается с sk-)
+# === Core settings ===
+# Master key for LiteLLM admin (must start with sk-)
 LITELLM_MASTER_KEY=sk-CHANGE_THIS_MASTER_KEY_BEFORE_PRODUCTION
 
-# Salt key для шифрования API ключей (НЕ МЕНЯТЬ после первого запуска!)
-# Генерировать через: openssl rand -hex 32
+# Salt key for encrypting API keys (DO NOT CHANGE after first run)
+# Generate via: openssl rand -hex 32
 LITELLM_SALT_KEY=CHANGE_THIS_SALT_KEY_64_CHARS_LONG_NEVER_CHANGE_AFTER_FIRST_RUN
 
 # === DATABASE INTEGRATION ===
-# PostgreSQL connection для metadata storage
-# ⚠️ ВАЖНО: Пароль должен совпадать с POSTGRES_PASSWORD в db.env
+# PostgreSQL connection for metadata storage
+# ⚠️ Password must match POSTGRES_PASSWORD in db.env
 DATABASE_URL=postgresql://postgres:CHANGE_THIS_PASSWORD_BEFORE_PRODUCTION@db:5432/openwebui
 
-# Включить хранение моделей в БД
+# Enable model storage in DB
 STORE_MODEL_IN_DB=True
 
-# Database schema для изоляции данных LiteLLM
+# Database schema for LiteLLM isolation
 DATABASE_SCHEMA=litellm
 
 # === REDIS INTEGRATION ===
-# Redis для кэширования и rate limiting
+# Redis for caching and rate limiting
 REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_PASSWORD=
 REDIS_DB=1
 
 # === OLLAMA INTEGRATION ===
-# Ollama API base URL для local LLM
+# Ollama API base URL for local LLM
 OLLAMA_API_BASE=http://ollama:11434
 
 # === EXTERNAL LLM PROVIDERS ===
-# OpenAI API (опционально)
+# OpenAI API (optional)
 OPENAI_API_KEY=sk-your-openai-api-key-here
 OPENAI_API_BASE=https://api.openai.com/v1
 
-# Anthropic Claude API (опционально)
+# Anthropic Claude API (optional)
 ANTHROPIC_API_KEY=sk-ant-your-anthropic-key-here
 
-# Google Gemini API (опционально)
+# Google Gemini API (optional)
 GOOGLE_API_KEY=your-google-api-key-here
 
 # === SECURITY SETTINGS ===
-# Отключить spend логирование для безопасности
+# Disable spend logging for security
 LITELLM_LOG_LEVEL=INFO
 DISABLE_SPEND_LOGS=True
 
-# Максимальный бюджет в USD
+# Max budget in USD
 MAX_BUDGET=1000
 
-# Включить аудит логи
+# Enable audit logs
 ENABLE_AUDIT_LOGS=True
 
 # === PERFORMANCE SETTINGS ===
-# Количество worker процессов
+# Worker process count
 NUM_WORKERS=4
 
-# Batch размер для записи в БД
+# Batch size for DB writes
 PROXY_BATCH_WRITE_AT=100
 
-# Timeout настройки (в секундах)
+# Timeout settings (seconds)
 REQUEST_TIMEOUT=600
 CONNECT_TIMEOUT=10
 
 # === MONITORING & HEALTH ===
-# Включить health checks
+# Enable health checks
 ENABLE_HEALTH_CHECKS=True
 
 # Prometheus metrics endpoint
@@ -76,16 +75,16 @@ ENABLE_PROMETHEUS_METRICS=True
 PROMETHEUS_PORT=9090
 
 # === CONTEXT ENGINEERING SETTINGS ===
-# Включить intelligent routing
+# Enable intelligent routing
 ENABLE_INTELLIGENT_ROUTING=True
 
 # Routing strategy (cost-based, latency-based, usage-based-routing-v2)
 ROUTING_STRATEGY=usage-based-routing-v2
 
-# Включить pre-call checks для оптимизации
+# Enable pre-call checks
 ENABLE_PRE_CALL_CHECK=True
 
-# Fallback модель при недоступности primary
+# Fallback model if primary unavailable
 FALLBACK_MODEL=ollama/llama3.2:3b
 
 # === RATE LIMITING ===
@@ -98,10 +97,10 @@ USER_RPM_LIMIT=60
 USER_TPM_LIMIT=10000
 
 # === CACHING SETTINGS ===
-# Включить кэширование ответов
+# Enable response caching
 ENABLE_CACHING=True
 
-# Cache TTL в секундах
+# Cache TTL (seconds)
 CACHE_TTL=3600
 
 # Cache type (redis, memory)
@@ -114,7 +113,7 @@ LOG_LEVEL=INFO
 # Log format (json, text)
 LOG_FORMAT=json
 
-# Отключить verbose логирование для production
+# Disable verbose logging for production
 LITELLM_LOG=INFO
 
 # === INTEGRATION SETTINGS ===
@@ -125,26 +124,26 @@ OPENWEBUI_BASE_URL=http://openwebui:8080
 AUTH_SERVER_URL=http://auth:9090
 
 # === BACKUP & RECOVERY ===
-# Backup конфигурации в S3/GCS (опционально)
+# Backup config to S3/GCS (optional)
 # LITELLM_CONFIG_BUCKET_TYPE=s3
 # LITELLM_CONFIG_BUCKET_NAME=erni-ki-backups
 # LITELLM_CONFIG_BUCKET_OBJECT_KEY=litellm/config.yaml
 
 # === DEVELOPMENT SETTINGS ===
-# Включить только для разработки
+# Enable for development only
 # DETAILED_DEBUG=False
 # DROP_PARAMS=True
 
 # === CUSTOM HEADERS ===
-# Добавить custom headers для всех requests
+# Add custom headers to all requests
 CUSTOM_HEADERS='{"X-ERNI-KI-Version": "1.0", "X-Service": "LiteLLM"}'
 
 # === WEBHOOK NOTIFICATIONS ===
-# Webhook URL для уведомлений о событиях
+# Webhook URL for event notifications
 # WEBHOOK_URL=https://your-webhook-endpoint.com/litellm
 
 # === SSL/TLS SETTINGS ===
-# SSL настройки для production (если нужны)
+# SSL settings for production (if needed)
 # SSL_KEYFILE_PATH=/app/ssl/keyfile.key
 # SSL_CERTFILE_PATH=/app/ssl/certfile.crt
 
@@ -152,32 +151,31 @@ CUSTOM_HEADERS='{"X-ERNI-KI-Version": "1.0", "X-Service": "LiteLLM"}'
 # Environment type
 ENV=production
 
-# Service name для логирования
+# Service name for logging
 SERVICE_NAME=litellm-erni-ki
 
-# Version для мониторинга
+# Version for monitoring
 SERVICE_VERSION=main-stable
 
-# === CONTEXT7 ИНТЕГРАЦИЯ ===
-# Context Engineering для улучшенного AI контекста
-# API ключ Context7 (получить на https://context7.com)
+# === CONTEXT7 INTEGRATION ===
+# Context Engineering for improved AI context
+# Context7 API key (get at https://context7.com)
 CONTEXT7_API_KEY=CHANGE_THIS_CONTEXT7_API_KEY_BEFORE_PRODUCTION
 CONTEXT7_ENABLED=true
 CONTEXT7_ENHANCEMENT_LEVEL=advanced
 CONTEXT7_INCLUDE_EXAMPLES=true
 
-# === ИНТЕГРАЦИЯ С СИСТЕМОЙ МОНИТОРИНГА ===
-# Настройки для интеграции с оптимизированной системой мониторинга ERNI-KI
-# Статус: 18 дашбордов Grafana (100% функциональны)
+# === Monitoring integration ===
+# Settings for ERNI-KI monitoring stack (18 Grafana dashboards)
 PROMETHEUS_METRICS_ENABLED=true
 GRAFANA_DASHBOARD_INTEGRATION=true
 MONITORING_SYSTEM_VERSION=2025-09-19
 
-# === ВАЖНО: ИЗМЕНИТЬ ПЕРЕД ПРОДАКШЕНОМ ===
-# ⚠️ Замените CHANGE_THIS_MASTER_KEY_BEFORE_PRODUCTION на уникальный master key
-# ⚠️ Замените CHANGE_THIS_SALT_KEY_64_CHARS_LONG_NEVER_CHANGE_AFTER_FIRST_RUN на 64-символьный salt key
-# ⚠️ Замените CHANGE_THIS_PASSWORD_BEFORE_PRODUCTION на реальный пароль PostgreSQL
-# ⚠️ Замените CHANGE_THIS_CONTEXT7_API_KEY_BEFORE_PRODUCTION на ваш Context7 API ключ
-# ⚠️ Настройте OLLAMA_BASE_URL согласно вашей конфигурации Ollama
-# ⚠️ Проверьте доступность всех внешних API провайдеров
-# ⚠️ Убедитесь в корректной работе Context7 интеграции
+# === IMPORTANT: CHANGE BEFORE PRODUCTION ===
+# ⚠️ Replace CHANGE_THIS_MASTER_KEY_BEFORE_PRODUCTION with a unique master key
+# ⚠️ Replace CHANGE_THIS_SALT_KEY_64_CHARS_LONG_NEVER_CHANGE_AFTER_FIRST_RUN with a 64-char salt key
+# ⚠️ Replace CHANGE_THIS_PASSWORD_BEFORE_PRODUCTION with real PostgreSQL password
+# ⚠️ Replace CHANGE_THIS_CONTEXT7_API_KEY_BEFORE_PRODUCTION with your Context7 API key
+# ⚠️ Set OLLAMA_BASE_URL to your Ollama config
+# ⚠️ Verify all external API providers are reachable
+# ⚠️ Ensure Context7 integration works

@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Nginx access sync & Fluent Bit DB monitoring
 
 ## 1. Автоматическая синхронизация access.log

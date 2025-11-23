@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # ERNI-KI System Diagnostics — 2025-11-18
 
 ## Исходные данные

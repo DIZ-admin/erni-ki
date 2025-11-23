@@ -1,51 +1,51 @@
-# MkDocs configuration для проекта erni-ki
-# Генерация технической документации
+# MkDocs configuration for erni-ki project
+# Technical documentation generation
 
 site_name: ERNI-KI Documentation
-site_description: "Документация проекта ERNI-KI - AI платформа с Open WebUI"
+site_description: "ERNI-KI Project Documentation - AI platform with Open WebUI"
 site_author: "ERNI-KI Team"
 site_url: "https://docs.erni-gruppe.ch"
 
-# Репозиторий
+# Repository
 repo_name: "DIZ-admin/erni-ki"
 repo_url: "https://github.com/DIZ-admin/erni-ki"
 edit_uri: "edit/main/docs/"
 
-# Конфигурация
+# Configuration
 docs_dir: "docs"
 site_dir: "site"
 
-# Тема оформления
+# Theme
 theme:
   name: "material"
   language: "ru"
 
-  # Цветовая схема
+  # Color scheme
   palette:
     - scheme: default
       primary: "blue"
       accent: "light blue"
       toggle:
         icon: material/brightness-7
-        name: Переключить на темную тему
+        name: Switch to dark mode
     - scheme: slate
       primary: "blue"
       accent: "light blue"
       toggle:
         icon: material/brightness-4
-        name: Переключить на светлую тему
+        name: Switch to light mode
 
-  # Шрифты
+  # Fonts
   font:
     text: "Roboto"
     code: "Roboto Mono"
 
-  # Иконки
+  # Icons
   icon:
     repo: fontawesome/brands/github
     logo: material/robot
 
-  # Функции
+  # Features
   features:
     - navigation.tabs
     - navigation.tabs.sticky
@@ -66,7 +66,7 @@ theme:
     - content.action.edit
     - content.action.view
 
-# Плагины
+# Plugins
 plugins:
   - search:
       lang:
@@ -85,52 +85,214 @@ plugins:
       languages:
         - locale: ru
           default: true
-          name: "Русский"
+          name: "Russian"
           site_name: "ERNI Academy KI"
-        - locale: de
-          name: "Deutsch"
           nav_translations:
-            Главная: Startseite
-            Academy KI: Academy KI
-            "Основы Open WebUI": "Open WebUI Grundlagen"
-            "Промптинг 101": "Prompting 101"
-            "HowTo": "HowTo"
-            "Новости": "News"
-            Система: System
-            "Статус системы": "Systemstatus"
-            "Nginx configuration": "Nginx-Konfiguration"
-            Операции: Betrieb
-            "Operations Handbook": Betriebshandbuch
-            "Admin Guide": Admin-Handbuch
-            "Status page": Statusseite
-            Monitoring: Monitoring
-            "Monitoring Guide": Monitoring-Leitfaden
-            "Monitoring Playbook": Monitoring-Runbook
-            "Documentation audit": "Dokumentations-Audit"
-            "Runbooks (DE summary)": "Runbooks (DE Kurzübersicht)"
-            "VERSION": "VERSION"
-        - locale: en
-          name: "English"
-          nav_translations:
-            Главная: Home
-            Academy KI: Academy KI
-            "Основы Open WebUI": "Open WebUI basics"
-            "Промптинг 101": "Prompting 101"
-            "HowTo": "HowTo"
-            "Новости": "News"
-            Система: System
-            "Статус системы": "System status"
+            Home: Home
+            "Platform Overview": "Platform Overview"
+            "Quick Start": "Quick Start"
+            "Installation": "Installation"
+            "Configuration": "Configuration"
+            "Users": "Users"
+            "External Access": "External Access"
+            "Local DNS": "Local DNS"
+            "DNSMasq": "DNSMasq"
+            "Port Forwarding": "Port Forwarding"
+            Architecture: Architecture
+            Overview: Overview
+            "Services": "Services"
+            "Inventory": "Inventory"
             "Nginx configuration": "Nginx configuration"
-            Операции: Operations
+            Glossary: Glossary
+            "Academy KI": "Academy KI"
+            "Open WebUI Basics": "Open WebUI Basics"
+            "Prompting 101": "Prompting 101"
+            "HowTo": "HowTo"
+            "Create JIRA Ticket": "Create JIRA Ticket"
+            "Write Customer Email": "Write Customer Email"
+            "Summarize Meeting": "Summarize Meeting"
+            "News": "News"
+            "Feed": "Feed"
+            System: System
+            "System Status": "System Status"
+            "News (Archive)": "News (Archive)"
+            "HowTo (Archive)": "HowTo (Archive)"
+            "Create JIRA Description": "Create JIRA Description"
+            "Summarize Meeting (Archive)": "Summarize Meeting (Archive)"
+            "Customer Email in OpenWebUI": "Customer Email in OpenWebUI"
+            "Trainings (Archive)": "Trainings (Archive)"
+            Operations: Operations
+            "CI Health": "CI health"
+            "GitHub Governance": "GitHub governance"
+            "Monitoring Audit": "Monitoring audit"
+            "Documentation Audit": "Documentation audit"
             "Operations Handbook": "Operations Handbook"
             "Admin Guide": "Admin Guide"
-            "Status page": "Status page"
+            "Status Page": "Status page"
             Monitoring: Monitoring
             "Monitoring Guide": "Monitoring Guide"
             "Monitoring Playbook": "Monitoring Playbook"
-            "Documentation audit": "Documentation audit"
-            "Runbooks (DE summary)": "Runbooks (DE summary)"
-            "VERSION": "VERSION"
+            "Monitoring Troubleshooting": "Monitoring Troubleshooting"
+            "Grafana Dashboards": "Grafana dashboards"
+            "Prometheus Alerts Guide": "Prometheus alerts guide"
+            "Prometheus Queries Reference": "Prometheus queries reference"
+            Automation: Automation
+            "Automated Maintenance": "Automated maintenance"
+            "Backup Guide": "Backup Guide"
+            "Docker Cleanup": "Docker cleanup"
+            "Docker Log Rotation": "Docker log rotation"
+            "Image Upgrade Checklist": "Image upgrade checklist"
+            "RAG & Search": "RAG & Search"
+            "RAG Monitoring": "RAG monitoring"
+            "SearXNG Redis Troubleshooting": "SearXNG Redis troubleshooting"
+            Runbooks: Runbooks
+            "Backup & Restore": "Backup & Restore"
+            "Configuration Changes": "Configuration changes"
+            "Docling Shared Volume": "Docling Shared Volume"
+            "Access Log Sync & Fluent Bit": "Access log sync & Fluent Bit"
+            "Service Restart": "Service Restart"
+            "Alertmanager Noise Reduction": "Alertmanager noise reduction"
+            "Troubleshooting": "Troubleshooting"
+            "Runbooks (DE Summary)": "Runbooks (DE Summary)"
+            Diagnostics: Diagnostics
+            "Diagnostics Overview": "Diagnostics Overview"
+            "Diagnostic Methodology": "Diagnostic methodology"
+            "Troubleshooting Guide": "Troubleshooting guide"
+            "Data & Storage": "Data & Storage"
+            "Database Monitoring Plan": "Database monitoring plan"
+            "Database Optimizations": "Database optimizations"
+            "Database Troubleshooting": "Database troubleshooting"
+            "Redis Monitoring": "Redis monitoring"
+            "Redis Operations": "Redis operations"
+            "VLLM Resource Optimization": "VLLM resource optimization"
+            Security: Security
+            "Security Policy": "Security policy"
+            "Log Audit": "Log audit"
+            "Reference": "Reference"
+            "API Reference": "API reference"
+            Development: Development
+            "GitHub Environments": "GitHub environments"
+            "MCPO Integration": "MCPO integration"
+            "Pre-commit Hooks": "Pre-commit hooks"
+            "Documentation Refactoring Plan": "Documentation refactoring plan"
+            "Status Snippet": "Status snippet"
+            VERSION: VERSION
+            CHANGELOG: CHANGELOG
+            "Reports & Archive": "Reports & Archive"
+            "Archive Overview": "Archive Overview"
+            "Archive READMEs": "Archive READMEs"
+            Audits: Audits
+            "Legacy Index": "Legacy index"
+            "Legacy Academy Index": "Legacy academy index"
+            "Incidents & Remediation": "Incidents & Remediation"
+            "Config Archives": "Config Archives"
+            Other: Other
+            "Remote Branch Cleanup": "Remote branch cleanup"
+        - locale: de
+          name: "Deutsch"
+          nav_translations:
+            Home: Startseite
+            "Platform Overview": "Plattformübersicht"
+            "Quick Start": "Schnellstart"
+            "Installation": "Installation"
+            "Configuration": "Konfiguration"
+            "Users": "Benutzer"
+            "External Access": "Externer Zugriff"
+            "Local DNS": "Lokales DNS"
+            "DNSMasq": "DNSMasq"
+            "Port Forwarding": "Portweiterleitung"
+            Architecture: Architektur
+            Overview: Übersicht
+            "Services": "Dienste"
+            "Inventory": "Inventar"
+            "Nginx configuration": "Nginx-Konfiguration"
+            Glossary: Glossar
+            "Academy KI": "Academy KI"
+            "Open WebUI Basics": "Open WebUI Grundlagen"
+            "Prompting 101": "Prompting 101"
+            "HowTo": "HowTo"
+            "Create JIRA Ticket": "JIRA-Ticket erstellen"
+            "Write Customer Email": "Kunden-E-Mail schreiben"
+            "Summarize Meeting": "Meeting zusammenfassen"
+            "News": "News"
+            "Feed": "Feed"
+            System: System
+            "System Status": "Systemstatus"
+            "News (Archive)": "News (Archiv)"
+            "HowTo (Archive)": "HowTo (Archiv)"
+            "Create JIRA Description": "JIRA-Beschreibung erstellen"
+            "Summarize Meeting (Archive)": "Meeting zusammenfassen (Archiv)"
+            "Customer Email in OpenWebUI": "Kunden-E-Mail in OpenWebUI"
+            "Trainings (Archive)": "Schulungen (Archiv)"
+            Operations: Betrieb
+            "CI Health": "CI-Gesundheit"
+            "GitHub Governance": "GitHub-Governance"
+            "Monitoring Audit": "Monitoring-Audit"
+            "Documentation Audit": "Dokumentations-Audit"
+            "Operations Handbook": "Betriebshandbuch"
+            "Admin Guide": "Admin-Handbuch"
+            "Status Page": "Statusseite"
+            Monitoring: Monitoring
+            "Monitoring Guide": "Monitoring-Leitfaden"
+            "Monitoring Playbook": "Monitoring-Runbook"
+            "Monitoring Troubleshooting": "Monitoring-Fehlerbehebung"
+            "Grafana Dashboards": "Grafana-Dashboards"
+            "Prometheus Alerts Guide": "Prometheus-Alarm-Leitfaden"
+            "Prometheus Queries Reference": "Prometheus-Abfrage-Referenz"
+            Automation: Automatisierung
+            "Automated Maintenance": "Automatisierte Wartung"
+            "Backup Guide": "Backup-Leitfaden"
+            "Docker Cleanup": "Docker-Bereinigung"
+            "Docker Log Rotation": "Docker-Log-Rotation"
+            "Image Upgrade Checklist": "Image-Upgrade-Checkliste"
+            "RAG & Search": "RAG & Suche"
+            "RAG Monitoring": "RAG-Monitoring"
+            "SearXNG Redis Troubleshooting": "SearXNG Redis Fehlerbehebung"
+            Runbooks: Runbooks
+            "Backup & Restore": "Backup & Wiederherstellung"
+            "Configuration Changes": "Konfigurationsänderungen"
+            "Docling Shared Volume": "Docling Shared Volume"
+            "Access Log Sync & Fluent Bit": "Access Log Sync & Fluent Bit"
+            "Service Restart": "Dienst-Neustart"
+            "Alertmanager Noise Reduction": "Alertmanager-Rauschunterdrückung"
+            "Troubleshooting": "Fehlerbehebung"
+            "Runbooks (DE Summary)": "Runbooks (DE Kurzübersicht)"
+            Diagnostics: Diagnose
+            "Diagnostics Overview": "Diagnose-Übersicht"
+            "Diagnostic Methodology": "Diagnose-Methodik"
+            "Troubleshooting Guide": "Fehlerbehebungs-Leitfaden"
+            "Data & Storage": "Daten & Speicher"
+            "Database Monitoring Plan": "Datenbank-Monitoring-Plan"
+            "Database Optimizations": "Datenbank-Optimierungen"
+            "Database Troubleshooting": "Datenbank-Fehlerbehebung"
+            "Redis Monitoring": "Redis-Monitoring"
+            "Redis Operations": "Redis-Betrieb"
+            "VLLM Resource Optimization": "VLLM-Ressourcenoptimierung"
+            Security: Sicherheit
+            "Security Policy": "Sicherheitsrichtlinie"
+            "Log Audit": "Log-Audit"
+            "Reference": "Referenz"
+            "API Reference": "API-Referenz"
+            Development: Entwicklung
+            "GitHub Environments": "GitHub-Umgebungen"
+            "MCPO Integration": "MCPO-Integration"
+            "Pre-commit Hooks": "Pre-commit-Hooks"
+            "Documentation Refactoring Plan": "Dokumentations-Refactoring-Plan"
+            "Status Snippet": "Status-Snippet"
+            VERSION: VERSION
+            CHANGELOG: CHANGELOG
+            "Reports & Archive": "Berichte & Archiv"
+            "Archive Overview": "Archiv-Übersicht"
+            "Archive READMEs": "Archiv-READMEs"
+            Audits: Audits
+            "Legacy Index": "Legacy-Index"
+            "Legacy Academy Index": "Legacy-Academy-Index"
+            "Incidents & Remediation": "Vorfälle & Behebung"
+            "Config Archives": "Konfigurationsarchive"
+            Other: Sonstiges
+            "Remote Branch Cleanup": "Remote-Branch-Bereinigung"
+        - locale: en
+          name: "English"
   - git-revision-date-localized:
       type: datetime
       locale: ru
@@ -138,7 +300,7 @@ plugins:
   - minify:
       minify_html: true
 
-# Расширения Markdown
+# Markdown Extensions
 markdown_extensions:
   # Python Markdown
   - abbr
@@ -149,7 +311,7 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
-      title: "Содержание"
+      title: "Table of Contents"
 
   # Python Markdown Extensions
   - pymdownx.arithmatex:
@@ -184,7 +346,7 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.tilde
 
-# Дополнительные CSS и JS
+# Extra CSS and JS
 extra_css:
   - stylesheets/extra.css
 
@@ -193,7 +355,7 @@ extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
-# Дополнительные настройки
+# Extra settings
 extra:
   version:
     provider: mike
@@ -203,7 +365,7 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://github.com/DIZ-admin/erni-ki/pkgs/container/erni-ki%2Fauth
   alternate:
-    - name: "Русский"
+    - name: "Russian"
       link: /
       lang: ru
     - name: "Deutsch"
@@ -216,158 +378,158 @@ extra:
     provider: google
     property: G-XXXXXXXXXX
   consent:
-    title: Согласие на использование cookies
+    title: Cookie Consent
     description: >-
-      Мы используем cookies для улучшения работы документации и аналитики.
-      С вашего согласия, это поможет нам улучшить документацию.
+      We use cookies to improve documentation and analytics.
+      With your consent, this helps us improve the documentation.
 
-# Структура навигации
+# Navigation Structure
 nav:
-  - Главная: index.md
-  - Обзор платформы: overview.md
-  - Быстрый старт:
-      - "Установка": getting-started/installation.md
-      - "Конфигурация": getting-started/configuration-guide.md
-      - "Пользователи": getting-started/user-guide.md
-      - "Доступ из интернета": getting-started/external-access-setup.md
-      - "Локальный DNS": getting-started/local-network-dns-setup.md
+  - Home: index.md
+  - "Platform Overview": overview.md
+  - "Quick Start":
+      - "Installation": getting-started/installation.md
+      - "Configuration": getting-started/configuration-guide.md
+      - "Users": getting-started/user-guide.md
+      - "External Access": getting-started/external-access-setup.md
+      - "Local DNS": getting-started/local-network-dns-setup.md
       - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
-      - "Проброс портов": getting-started/port-forwarding-setup.md
-  - Архитектура:
-      - Обзор: architecture/architecture.md
-      - "Сервисы": architecture/services-overview.md
-      - "Инвентаризация": architecture/service-inventory.md
-      - Nginx configuration: architecture/nginx-configuration.md
+      - "Port Forwarding": getting-started/port-forwarding-setup.md
+  - Architecture:
+      - Overview: architecture/architecture.md
+      - "Services": architecture/services-overview.md
+      - "Inventory": architecture/service-inventory.md
+      - "Nginx configuration": architecture/nginx-configuration.md
   - Glossary: GLOSSARY.md
-  - Academy KI:
-      - Обзор: academy/index.md
-      - "Основы Open WebUI": academy/openwebui-basics.md
-      - "Промптинг 101": academy/prompting-101.md
+  - "Academy KI":
+      - Overview: academy/index.md
+      - "Open WebUI Basics": academy/openwebui-basics.md
+      - "Prompting 101": academy/prompting-101.md
       - "HowTo":
-          - Обзор: academy/howto/index.md
-          - "Создать тикет JIRA": academy/howto/create-jira-ticket.md
-          - "Написать письмо клиенту": academy/howto/write-customer-email.md
-          - "Резюме встречи": academy/howto/summarize-meeting-notes.md
-          - "Создать тикет JIRA": academy/howto/create-jira-ticket-with-ai.md
-      - "Новости":
-          - Лента: academy/news/index.md
+          - Overview: academy/howto/index.md
+          - "Create JIRA Ticket": academy/howto/create-jira-ticket.md
+          - "Write Customer Email": academy/howto/write-customer-email.md
+          - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
+          - "Create JIRA Ticket": academy/howto/create-jira-ticket-with-ai.md
+      - "News":
+          - Feed: academy/news/index.md
           - "2025-01-release-x": academy/news/2025-01-release-x.md
-  - Система:
-      - "Статус системы": system/status.md
-  - Новости (архив):
-      - Обзор: archive/news-overview.md
-      - "2025-11: запуск статус-страницы": news/index.md
-  - HowTo (архив):
-      - "Создать описание JIRA": archive/howto/create-jira-description-with-ai.md
-      - "Резюмировать встречу": archive/howto/summarize-meeting-notes.md
-      - "Письмо клиенту в OpenWebUI": archive/howto/write-customer-email-with-openwebui.md
-  - Тренинги (архив):
-      - "Open WebUI basics": archive/training/openwebui-basics.md
+  - System:
+      - "System Status": system/status.md
+  - "News (Archive)":
+      - Overview: archive/news-overview.md
+      - "2025-11: Status Page Launch": news/index.md
+  - "HowTo (Archive)":
+      - "Create JIRA Description": archive/howto/create-jira-description-with-ai.md
+      - "Summarize Meeting (Archive)": archive/howto/summarize-meeting-notes.md
+      - "Customer Email in OpenWebUI": archive/howto/write-customer-email-with-openwebui.md
+  - "Trainings (Archive)":
+      - "Open WebUI Basics": archive/training/openwebui-basics.md
       - "Prompting 101": archive/training/prompting-101.md
-  - Операции:
-      - CI health: operations/ci-health.md
-      - GitHub governance: operations/github-governance.md
-      - Monitoring audit: operations/monitoring-audit.md
-      - Documentation audit: operations/documentation-audit.md
-      - Operations Handbook: operations/operations-handbook.md
-      - Admin Guide: operations/admin-guide.md
-      - Status page: operations/status-page.md
+  - Operations:
+      - "CI Health": operations/ci-health.md
+      - "GitHub Governance": operations/github-governance.md
+      - "Monitoring Audit": operations/monitoring-audit.md
+      - "Documentation Audit": operations/documentation-audit.md
+      - "Operations Handbook": operations/operations-handbook.md
+      - "Admin Guide": operations/admin-guide.md
+      - "Status Page": operations/status-page.md
       - Monitoring:
-          - Monitoring Guide: operations/monitoring-guide.md
-          - Monitoring Playbook: operations/monitoring.md
-          - Monitoring Troubleshooting: operations/monitoring-troubleshooting-v2.md
-          - Grafana dashboards: operations/grafana-dashboards-guide.md
-          - Prometheus alerts guide: operations/prometheus-alerts-guide.md
-          - Prometheus queries reference: operations/prometheus-queries-reference.md
+          - "Monitoring Guide": operations/monitoring-guide.md
+          - "Monitoring Playbook": operations/monitoring.md
+          - "Monitoring Troubleshooting": operations/monitoring-troubleshooting-v2.md
+          - "Grafana Dashboards": operations/grafana-dashboards-guide.md
+          - "Prometheus Alerts Guide": operations/prometheus-alerts-guide.md
+          - "Prometheus Queries Reference": operations/prometheus-queries-reference.md
       - Automation:
-          - Automated maintenance: operations/automated-maintenance-guide.md
-          - Backup Guide: operations/backup-guide.md
-          - Docker cleanup: operations/docker-cleanup-guide.md
-          - Docker log rotation: operations/docker-log-rotation.md
-          - Image upgrade checklist: operations/image-upgrade-checklist.md
-      - RAG & Search:
-          - RAG monitoring: operations/rag-monitoring.md
-          - SearXNG Redis troubleshooting: operations/searxng-redis-issue-analysis.md
+          - "Automated Maintenance": operations/automated-maintenance-guide.md
+          - "Backup Guide": operations/backup-guide.md
+          - "Docker Cleanup": operations/docker-cleanup-guide.md
+          - "Docker Log Rotation": operations/docker-log-rotation.md
+          - "Image Upgrade Checklist": operations/image-upgrade-checklist.md
+      - "RAG & Search":
+          - "RAG Monitoring": operations/rag-monitoring.md
+          - "SearXNG Redis Troubleshooting": operations/searxng-redis-issue-analysis.md
       - Runbooks:
-          - Backup & Restore: operations/runbooks/backup-restore-procedures.md
-          - Configuration changes: operations/runbooks/configuration-change-process.md
-          - Docling shared volume: operations/runbooks/docling-shared-volume.md
-          - Access log sync & Fluent Bit: operations/runbooks/access-log-sync-and-fluentbit.md
-          - Service restart: operations/runbooks/service-restart-procedures.md
-          - Alertmanager noise reduction: operations/runbooks/alertmanager-noise-reduction.md
-          - Troubleshooting: operations/runbooks/troubleshooting-guide.md
-          - Runbooks (DE summary): operations/runbooks-de.md
+          - "Backup & Restore": operations/runbooks/backup-restore-procedures.md
+          - "Configuration Changes": operations/runbooks/configuration-change-process.md
+          - "Docling Shared Volume": operations/runbooks/docling-shared-volume.md
+          - "Access Log Sync & Fluent Bit": operations/runbooks/access-log-sync-and-fluentbit.md
+          - "Service Restart": operations/runbooks/service-restart-procedures.md
+          - "Alertmanager Noise Reduction": operations/runbooks/alertmanager-noise-reduction.md
+          - "Troubleshooting": operations/runbooks/troubleshooting-guide.md
+          - "Runbooks (DE Summary)": de/operations/runbooks-summary.md
       - Diagnostics:
-          - Diagnostics Overview: operations/diagnostics/README.md
-          - Diagnostic methodology: operations/diagnostics/erni-ki-diagnostic-methodology.md
-      - Troubleshooting guide: operations/troubleshooting.md
-  - Data & Storage:
-      - Обзор: data/README.md
-      - Database monitoring plan: data/database-monitoring-plan.md
-      - Database optimizations: data/database-production-optimizations.md
-      - Database troubleshooting: data/database-troubleshooting.md
-      - Redis monitoring: data/redis-monitoring-grafana.md
-      - Redis operations: data/redis-operations-guide.md
-      - VLLM resource optimization: data/vllm-resource-optimization.md
-  - Безопасность:
-      - Security policy: security/security-policy.md
-      - Log audit: security/log-audit.md
-      - Log audit (2025-11-14): log-audit-2025-11-14.md
-      - Log audit (2025-11-14 repeat): log-audit-2025-11-14-repeat.md
-      - Logging system audit: logging-system-audit-2025-11-14.md
-      - Monitoring & logging audit: monitoring-logging-audit-2025-11-14.md
-  - Справочник:
-      - API reference: reference/api-reference.md
+          - "Diagnostics Overview": operations/diagnostics/README.md
+          - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
+      - "Troubleshooting Guide": operations/troubleshooting.md
+  - "Data & Storage":
+      - Overview: data/README.md
+      - "Database Monitoring Plan": data/database-monitoring-plan.md
+      - "Database Optimizations": data/database-production-optimizations.md
+      - "Database Troubleshooting": data/database-troubleshooting.md
+      - "Redis Monitoring": data/redis-monitoring-grafana.md
+      - "Redis Operations": data/redis-operations-guide.md
+      - "VLLM Resource Optimization": data/vllm-resource-optimization.md
+  - Security:
+      - "Security Policy": security/security-policy.md
+      - "Log Audit": security/log-audit.md
+      - "Log Audit (2025-11-14)": log-audit-2025-11-14.md
+      - "Log Audit (2025-11-14 repeat)": log-audit-2025-11-14-repeat.md
+      - "Logging System Audit": logging-system-audit-2025-11-14.md
+      - "Monitoring & Logging Audit": monitoring-logging-audit-2025-11-14.md
+  - Reference:
+      - "API Reference": reference/api-reference.md
       - Development: reference/development.md
-      - GitHub environments: reference/github-environments-setup.md
-      - MCPO integration: reference/mcpo-integration-guide.md
-      - Pre-commit hooks: reference/pre-commit-hooks.md
-      - Documentation refactoring plan: reference/documentation-refactoring-plan.md
-      - Status snippet: reference/status-snippet.md
+      - "GitHub Environments": reference/github-environments-setup.md
+      - "MCPO Integration": reference/mcpo-integration-guide.md
+      - "Pre-commit Hooks": reference/pre-commit-hooks.md
+      - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
+      - "Status Snippet": reference/status-snippet.md
       - VERSION: VERSION.md
       - CHANGELOG: reference/CHANGELOG.md
 
-  - Отчёты и архив:
-      - Обзор архивов: archive/README.md
-      - Архивные README:
+  - "Reports & Archive":
+      - "Archive Overview": archive/README.md
+      - "Archive READMEs":
           - archive/audits/README.md
           - archive/diagnostics/README.md
           - archive/incidents/README.md
           - archive/diagnostics/system-diagnostics-2025-11-18.md
-      - Аудиты:
-          - documentation-audit (2025-10-24): archive/audits/documentation-audit-2025-10-24.md
-          - documentation-cleanup-audit (2025-10-24): archive/audits/documentation-cleanup-audit-2025-10-24.md
-          - documentation-cleanup-summary (2025-10-24): archive/audits/documentation-cleanup-summary-2025-10-24.md
-          - best-practices-audit (2025-10-20): archive/audits/best-practices-audit-2025-10-20.md
-          - comprehensive-audit (2025-10-14): archive/audits/comprehensive-audit-2025-10-14.md
-          - comprehensive-project-audit (2025-10-17): archive/audits/comprehensive-project-audit-2025-10-17.md
-          - comprehensive-project-audit part 2 (2025-10-17): archive/audits/comprehensive-project-audit-2025-10-17-part2.md
-          - legacy index: archive/legacy-index.md
-          - legacy academy index: archive/legacy-academy-index.md
-      - Диагностика:
-          - Full server diagnostics (2025-11-04): archive/diagnostics/full-server-diagnostics-2025-11-04.md
-          - RAG system diagnostic (2025-10-30): archive/diagnostics/rag-system-diagnostic-report-20251030.md
-          - RAG vector search test (2025-10-30): archive/diagnostics/rag-vector-search-test-report-20251030.md
-          - Log analysis correction (2025-11-04): archive/diagnostics/log-analysis-correction-2025-11-04.md
-      - Инциденты и remediation:
-          - Phase 1 critical fixes (2025-10-30): archive/incidents/phase1-critical-fixes-report-20251030.md
-          - Project audit remediation (2025-10-30): archive/incidents/project-audit-report-20251030.md
-          - Docx upload fix (2025-10-30): archive/incidents/docx-upload-fix-20251030.md
-          - Phase 2 completion (2025-11-04): archive/incidents/phase-2-completion-2025-11-04.md
-          - System repair (2025-10-16): archive/incidents/system-repair-2025-10-16.md
-      - Архивы конфигураций:
-          - Update execution report: archive/config-backup/update-execution-report-2025-10-02.md
-          - Monitoring report: archive/config-backup/monitoring-report-2025-10-02.md
-          - Update analysis: archive/config-backup/update-analysis-2025-10-02.md
-      - Прочее:
-          - Remote branch cleanup: remote-branch-cleanup.md
+      - Audits:
+          - "documentation-audit (2025-10-24)": archive/audits/documentation-audit-2025-10-24.md
+          - "documentation-cleanup-audit (2025-10-24)": archive/audits/documentation-cleanup-audit-2025-10-24.md
+          - "documentation-cleanup-summary (2025-10-24)": archive/audits/documentation-cleanup-summary-2025-10-24.md
+          - "best-practices-audit (2025-10-20)": archive/audits/best-practices-audit-2025-10-20.md
+          - "comprehensive-audit (2025-10-14)": archive/audits/comprehensive-audit-2025-10-14.md
+          - "comprehensive-project-audit (2025-10-17)": archive/audits/comprehensive-project-audit-2025-10-17.md
+          - "comprehensive-project-audit part 2 (2025-10-17)": archive/audits/comprehensive-project-audit-2025-10-17-part2.md
+          - "legacy index": archive/legacy-index.md
+          - "legacy academy index": archive/legacy-academy-index.md
+      - Diagnostics:
+          - "Full server diagnostics (2025-11-04)": archive/diagnostics/full-server-diagnostics-2025-11-04.md
+          - "RAG system diagnostic (2025-10-30)": archive/diagnostics/rag-system-diagnostic-report-20251030.md
+          - "RAG vector search test (2025-10-30)": archive/diagnostics/rag-vector-search-test-report-20251030.md
+          - "Log analysis correction (2025-11-04)": archive/diagnostics/log-analysis-correction-2025-11-04.md
+      - "Incidents & Remediation":
+          - "Phase 1 critical fixes (2025-10-30)": archive/incidents/phase1-critical-fixes-report-20251030.md
+          - "Project audit remediation (2025-10-30)": archive/incidents/project-audit-report-20251030.md
+          - "Docx upload fix (2025-10-30)": archive/incidents/docx-upload-fix-20251030.md
+          - "Phase 2 completion (2025-11-04)": archive/incidents/phase-2-completion-2025-11-04.md
+          - "System repair (2025-10-16)": archive/incidents/system-repair-2025-10-16.md
+      - "Config Archives":
+          - "Update execution report": archive/config-backup/update-execution-report-2025-10-02.md
+          - "Monitoring report": archive/config-backup/monitoring-report-2025-10-02.md
+          - "Update analysis": archive/config-backup/update-analysis-2025-10-02.md
+      - Other:
+          - "Remote Branch Cleanup": remote-branch-cleanup.md
 
-# Настройки валидации
+# Validation Settings
 validation:
   omitted_files: warn
   absolute_links: warn
   unrecognized_links: warn
 
-# Настройки сборки
+# Build Settings
 strict: false
 use_directory_urls: true

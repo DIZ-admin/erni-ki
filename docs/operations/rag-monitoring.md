@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # RAG System Monitoring Guide
 
 **Дата создания**: 2025-10-24  

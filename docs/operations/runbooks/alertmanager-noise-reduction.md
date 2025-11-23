@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Alertmanager Noise Reduction & Redis Autoscaling
 
 ## Цели

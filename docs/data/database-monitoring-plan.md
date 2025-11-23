@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Database Monitoring Plan
 
 - Используйте PostgreSQL Exporter (`9188`) и LVM metrics.

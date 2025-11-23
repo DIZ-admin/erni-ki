@@ -1,6 +1,6 @@
 # ERNI-KI Prometheus Alert Rules
-# Дата создания: 2025-10-24
-# Проактивный мониторинг критических метрик системы
+# Date created: 2025-10-24
+# Proactive monitoring of critical system metrics
 
 groups:
   - name: erni-ki-critical-alerts
@@ -14,9 +14,9 @@ groups:
           severity: critical
           component: infrastructure
         annotations:
-          summary: "Критически мало места на диске"
-          description: "Доступно менее 15% дискового пространства ({{ $value | humanizePercentage }})"
-          action: "Немедленно очистить Docker кэш и старые данные"
+          summary: "Critical low disk space"
+          description: "Less than 15% disk space available ({{ $value | humanizePercentage }})"
+          action: "Immediately clean Docker cache and old data"
 
       - alert: DiskSpaceWarning
         expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.25
@@ -25,9 +25,9 @@ groups:
           severity: warning
           component: infrastructure
         annotations:
-          summary: "Мало места на диске"
-          description: "Доступно менее 25% дискового пространства ({{ $value | humanizePercentage }})"
-          action: "Запланировать очистку Docker кэша"
+          summary: "Low disk space"
+          description: "Less than 25% disk space available ({{ $value | humanizePercentage }})"
+          action: "Schedule Docker cache cleanup"
 
       # === MEMORY ALERTS ===
       - alert: MemoryCritical
@@ -37,9 +37,9 @@ groups:
           severity: critical
           component: infrastructure
         annotations:
-          summary: "Критически мало памяти"
-          description: "Доступно менее 5% памяти ({{ $value | humanizePercentage }})"
-          action: "Проверить memory leaks, перезапустить проблемные контейнеры"
+          summary: "Critical low memory"
+          description: "Less than 5% memory available ({{ $value | humanizePercentage }})"
+          action: "Check for memory leaks, restart problematic containers"
 
       - alert: MemoryWarning
         expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) < 0.15
@@ -48,9 +48,9 @@ groups:
           severity: warning
           component: infrastructure
         annotations:
-          summary: "Мало доступной памяти"
-          description: "Доступно менее 15% памяти ({{ $value | humanizePercentage }})"
-          action: "Мониторить использование памяти контейнерами"
+          summary: "Low available memory"
+          description: "Less than 15% memory available ({{ $value | humanizePercentage }})"
+          action: "Monitor container memory usage"
 
       # === CONTAINER HEALTH ALERTS ===
       - alert: ContainerDown
@@ -60,9 +60,9 @@ groups:
           severity: critical
           component: "{{ $labels.job }}"
         annotations:
-          summary: "Контейнер {{ $labels.job }} недоступен"
-          description: "Сервис {{ $labels.job }} не отвечает более 2 минут"
-          action: "Проверить логи: docker compose logs {{ $labels.job }}"
+          summary: "Container {{ $labels.job }} is down"
+          description: "Service {{ $labels.job }} has not responded for more than 2 minutes"
+          action: "Check logs: docker compose logs {{ $labels.job }}"
 
       - alert: ContainerRestarting
         expr: |
@@ -85,9 +85,9 @@ groups:
           severity: warning
           component: "{{ $labels.service }}"
         annotations:
-          summary: "Контейнер {{ $labels.service }} перезапускается слишком часто"
-          description: "У сервиса {{ $labels.service }} зафиксировано {{ printf \"%.0f\" $value }} перезапусков за последние 30 минут"
-          action: "Проверить docker logs {{ $labels.service }} и причины перезапусков"
+          summary: "Container {{ $labels.service }} restarting too often"
+          description: "Service {{ $labels.service }} has restarted {{ printf \"%.0f\" $value }} times in the last 30 minutes"
+          action: "Check docker logs {{ $labels.service }} and restart reasons"
 
       # === CPU ALERTS ===
       - alert: HighCPUUsage
@@ -97,9 +97,9 @@ groups:
           severity: warning
           component: infrastructure
         annotations:
-          summary: "Высокая загрузка CPU"
-          description: "CPU загружен более чем на 90% в течение 10 минут ({{ $value }}%)"
-          action: "Проверить top процессы: docker stats"
+          summary: "High CPU usage"
+          description: "CPU usage above 90% for 10 minutes ({{ $value }}%)"
+          action: "Check top processes: docker stats"
 
       # === POSTGRESQL ALERTS ===
       - alert: PostgreSQLTooManyConnections
@@ -109,9 +109,9 @@ groups:
           severity: warning
           component: postgresql
         annotations:
-          summary: "Слишком много подключений к PostgreSQL"
-          description: "{{ $value }} активных подключений к БД openwebui"
-          action: "Проверить connection pooling в OpenWebUI"
+          summary: "Too many PostgreSQL connections"
+          description: "{{ $value }} active connections to openwebui DB"
+          action: "Check connection pooling in OpenWebUI"
 
       - alert: PostgreSQLDown
         expr: pg_up == 0
@@ -120,9 +120,9 @@ groups:
           severity: critical
           component: postgresql
         annotations:
-          summary: "PostgreSQL недоступен"
-          description: "PostgreSQL не отвечает более 1 минуты"
-          action: "Немедленно проверить статус: docker compose ps db"
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL has not responded for more than 1 minute"
+          action: "Immediately check status: docker compose ps db"
 
       # === REDIS ALERTS ===
       - alert: RedisDown
@@ -132,9 +132,9 @@ groups:
           severity: critical
           component: redis
         annotations:
-          summary: "Redis недоступен"
-          description: "Redis не отвечает более 1 минуты"
-          action: "Проверить статус: docker compose ps redis"
+          summary: "Redis is down"
+          description: "Redis has not responded for more than 1 minute"
+          action: "Check status: docker compose ps redis"
 
       - alert: RedisLowHitRatio
         expr: (redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total)) < 0.80
@@ -143,9 +143,9 @@ groups:
           severity: warning
           component: redis
         annotations:
-          summary: "Низкий hit ratio в Redis"
-          description: "Hit ratio {{ $value | humanizePercentage }} (норма >90%)"
-          action: "Проверить TTL ключей и паттерны кэширования"
+          summary: "Low Redis hit ratio"
+          description: "Hit ratio {{ $value | humanizePercentage }} (normal >90%)"
+          action: "Check key TTL and caching patterns"
 
       # === OLLAMA GPU ALERTS ===
       - alert: OllamaGPUMemoryHigh
@@ -155,9 +155,9 @@ groups:
           severity: warning
           component: ollama
         annotations:
-          summary: "Высокое использование GPU памяти"
-          description: "VRAM использовано более 90% ({{ $value | humanizePercentage }})"
-          action: "Проверить загруженные модели: docker compose exec ollama ollama list"
+          summary: "High GPU memory usage"
+          description: "VRAM usage above 90% ({{ $value | humanizePercentage }})"
+          action: "Check loaded models: docker compose exec ollama ollama list"
 
       # === NGINX ALERTS ===
       - alert: NginxHighErrorRate
@@ -167,9 +167,9 @@ groups:
           severity: warning
           component: nginx
         annotations:
-          summary: "Высокий процент 5xx ошибок в Nginx"
-          description: "{{ $value }} ошибок 5xx в секунду"
-          action: "Проверить upstream сервисы и логи Nginx"
+          summary: "High Nginx 5xx error rate"
+          description: "{{ $value }} 5xx errors per second"
+          action: "Check upstream services and Nginx logs"
 
       # === PROMETHEUS SELF-MONITORING ===
       - alert: PrometheusTSDBCompactionsFailing
@@ -179,9 +179,9 @@ groups:
           severity: warning
           component: prometheus
         annotations:
-          summary: "Ошибки компакции TSDB в Prometheus"
-          description: "TSDB компакция завершается с ошибками"
-          action: "Проверить место на диске и логи Prometheus"
+          summary: "Prometheus TSDB compaction failures"
+          description: "TSDB compaction is failing"
+          action: "Check disk space and Prometheus logs"
 
       - alert: PrometheusTargetDown
         expr: up == 0
@@ -190,9 +190,9 @@ groups:
           severity: warning
           component: prometheus
         annotations:
-          summary: "Prometheus target {{ $labels.job }} недоступен"
-          description: "Target {{ $labels.job }} не отвечает более 3 минут"
-          action: "Проверить статус сервиса: docker compose ps {{ $labels.job }}"
+          summary: "Prometheus target {{ $labels.job }} is down"
+          description: "Target {{ $labels.job }} has not responded for more than 3 minutes"
+          action: "Check service status: docker compose ps {{ $labels.job }}"
 
   - name: erni-ki-performance-alerts
     interval: 1m
@@ -205,9 +205,9 @@ groups:
           severity: warning
           component: openwebui
         annotations:
-          summary: "Медленные ответы OpenWebUI"
-          description: "95-й перцентиль времени ответа > 5 секунд"
-          action: "Проверить производительность PostgreSQL и Ollama"
+          summary: "Slow OpenWebUI responses"
+          description: "95th percentile response time > 5 seconds"
+          action: "Check PostgreSQL and Ollama performance"
 
       # === SEARXNG PERFORMANCE ===
       - alert: SearXNGSlowSearch
@@ -217,9 +217,9 @@ groups:
           severity: warning
           component: searxng
         annotations:
-          summary: "Медленный поиск в SearXNG"
-          description: "95-й перцентиль времени поиска > 3 секунд"
-          action: "Проверить доступность поисковых движков и Redis кэш"
+          summary: "Slow SearXNG search"
+          description: "95th percentile search time > 3 seconds"
+          action: "Check search engines availability and Redis cache"
 
       # === DOCKER STORAGE ===
       - alert: DockerStoragePoolAlmostFull
@@ -229,9 +229,9 @@ groups:
           severity: warning
           component: docker
         annotations:
-          summary: "Docker storage pool почти заполнен"
-          description: "Использовано {{ $value | humanizePercentage }} storage pool"
-          action: "Выполнить docker system prune"
+          summary: "Docker storage pool almost full"
+          description: "Used {{ $value | humanizePercentage }} of storage pool"
+          action: "Run docker system prune"
 
       # === LITELLM PUBLICAI MONITORING ===
       - alert: LiteLLMPublicAIHighErrorRate
@@ -246,8 +246,8 @@ groups:
           component: litellm
         annotations:
           summary: "PublicAI error rate > 10%"
-          description: "Доля 4xx/5xx ответов PublicAI превысила 10% за последние 5 минут"
-          action: "Проверить ключ PublicAI, ограничения тарифа и логи litellm"
+          description: "PublicAI 4xx/5xx response rate exceeded 10% in the last 5 minutes"
+          action: "Check PublicAI key, rate limits, and litellm logs"
 
       - alert: LiteLLMPublicAIRepeated404
         expr: rate(litellm_publicai_requests_total{status="404"}[5m]) > 0.05
@@ -256,6 +256,6 @@ groups:
           severity: warning
           component: litellm
         annotations:
-          summary: "Модель PublicAI отсутствует"
-          description: "liteLLM получает непрерывные 404 ('Model not found') от PublicAI"
-          action: "Проверить, что модель publicai-apertus-70b активна и настроены алиасы"
+          summary: "PublicAI model missing"
+          description: "liteLLM is receiving continuous 404 ('Model not found') from PublicAI"
+          action: "Check that publicai-apertus-70b model is active and aliases are configured"

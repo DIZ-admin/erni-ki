@@ -1,4 +1,5 @@
 ---
+language: ru
 page_id: howto.summarize-meeting-notes
 translation_status: complete
 ---

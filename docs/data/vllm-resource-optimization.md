@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # vLLM Resource Optimization для ERNI-KI
 
 ## Обзор конфигурации

@@ -163,11 +163,11 @@ create_quick_commands() {
     # Status command
     cat > scripts/status.sh << 'EOF'
 #!/bin/bash
-echo "📊 Статус ERNI-KI:"
+echo "📊 ERNI-KI Status:"
 docker compose ps
 echo ""
-echo "🌐 Доступные URL:"
-echo "  - Веб-интерфейс: http://localhost"
+echo "🌐 Available URLs:"
+echo "  - Web interface: http://localhost"
 echo "  - Ollama API: http://localhost:11434"
 echo "  - Auth API: http://localhost:9090"
 EOF
@@ -175,16 +175,16 @@ EOF
     # Logs command
     cat > scripts/logs.sh << 'EOF'
 #!/bin/bash
-echo "📋 Логи ERNI-KI (Ctrl+C для выхода):"
+echo "📋 ERNI-KI Logs (Ctrl+C to exit):"
 docker compose logs -f
 EOF
 
     # Stop command
     cat > scripts/stop.sh << 'EOF'
 #!/bin/bash
-echo "🛑 Остановка ERNI-KI..."
+echo "🛑 Stopping ERNI-KI..."
 docker compose down
-echo "✅ Все сервисы остановлены"
+echo "✅ All services stopped"
 EOF
 
     chmod +x scripts/*.sh
@@ -196,32 +196,32 @@ show_next_steps() {
     echo ""
     echo -e "${GREEN}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                🎉 ERNI-KI готов к работе! 🎉                ║"
+    echo "║                🎉 ERNI-KI is ready! 🎉                ║"
     echo "╠══════════════════════════════════════════════════════════════╣"
     echo "║                                                              ║"
-    echo "║  🌐 Откройте браузер: http://localhost                      ║"
+    echo "║  🌐 Open browser: http://localhost                      ║"
     echo "║                                                              ║"
-    echo "║  📝 Первые шаги:                                            ║"
-    echo "║     1. Создайте аккаунт администратора                      ║"
-    echo "║     2. Настройте подключение к Ollama                       ║"
-    echo "║     3. Начните общение с AI!                                ║"
+    echo "║  📝 First steps:                                            ║"
+    echo "║     1. Create an administrator account                      ║"
+    echo "║     2. Configure Ollama connection                       ║"
+    echo "║     3. Start chatting with AI!                                ║"
     echo "║                                                              ║"
-    echo "║  🔧 Полезные команды:                                       ║"
-    echo "║     ./scripts/status.sh  - статус сервисов                 ║"
-    echo "║     ./scripts/logs.sh    - просмотр логов                  ║"
-    echo "║     ./scripts/stop.sh    - остановка системы               ║"
+    echo "║  🔧 Useful commands:                                       ║"
+    echo "║     ./scripts/status.sh  - service status                 ║"
+    echo "║     ./scripts/logs.sh    - view logs                  ║"
+    echo "║     ./scripts/stop.sh    - stop system               ║"
     echo "║                                                              ║"
-    echo "║  📚 Документация: DEPLOYMENT_GUIDE.md                       ║"
+    echo "║  📚 Documentation: DEPLOYMENT_GUIDE.md                       ║"
     echo "║                                                              ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
-    # Показ важной информации
+    # Show important information
     echo -e "${YELLOW}"
-    echo "⚠️  ВАЖНО:"
-    echo "   - Секретные ключи сохранены в .secrets_backup"
-    echo "   - Для продакшена настройте домен и SSL"
-    echo "   - Регулярно создавайте бэкапы данных"
+    echo "⚠️  IMPORTANT:"
+    echo "   - Secret keys saved in .secrets_backup"
+    echo "   - For production, configure domain and SSL"
+    echo "   - Regularly create data backups"
     echo -e "${NC}"
 }
 
@@ -230,19 +230,19 @@ main() {
     echo -e "${PURPLE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║                  🚀 ERNI-KI Quick Start 🚀                  ║"
-    echo "║                   Запуск за 5 минут                         ║"
+    echo "║                   Launch in 5 minutes                         ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
-    echo -e "${BLUE}Этот скрипт выполнит быстрый запуск ERNI-KI с настройками по умолчанию.${NC}"
-    echo -e "${BLUE}Для продвинутой настройки используйте: ./scripts/setup.sh${NC}"
+    echo -e "${BLUE}This script will perform a quick launch of ERNI-KI with default settings.${NC}"
+    echo -e "${BLUE}For advanced configuration, use: ./scripts/setup.sh${NC}"
     echo ""
 
-    echo -n "Продолжить быстрый запуск? (Y/n): "
+    echo -n "Continue with quick start? (Y/n): "
     read -r confirm
 
     if [[ "$confirm" =~ ^[Nn]$ ]]; then
-        echo "Отменено пользователем"
+        echo "Cancelled by user"
         exit 0
     fi
 

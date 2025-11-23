@@ -3,7 +3,7 @@ title: '📚 ERNI-KI Dokumentation (Deutsch)'
 version: '12.1'
 date: '2025-11-22'
 status: 'Production Ready'
-language: 'de'
+language: de
 audience: 'administrators'
 ---
 
@@ -54,8 +54,8 @@ Sprachinteraktion.
   Wartung
 - **[Monitoring Übersicht](operations/monitoring.md)** - Kennzahlen, Skripte und
   Alerts
-- **[Runbooks](../operations/runbooks-de.md)** - Deutsche Zusammenfassungen der
-  wichtigsten Abläufe (englische Originale в `operations/runbooks/`)
+- **[Runbooks](../operations/runbooks-summary.md)** - Deutsche Zusammenfassungen
+  der wichtigsten Abläufe (englische Originale в `operations/runbooks/`)
 - **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 

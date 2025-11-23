@@ -1,3 +1,7 @@
+---
+language: ru
+---
+
 # Backup Guide
 
 См. `docs/operations/automated-maintenance-guide.md` и

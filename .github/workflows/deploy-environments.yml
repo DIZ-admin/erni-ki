@@ -1,7 +1,7 @@
-# Environment-Specific Deployment Pipeline для ERNI-KI
-# Деплой в development, staging, production с environment-specific секретами
-# Автор: Альтэон Шульц (Tech Lead)
-# Дата: 2025-09-19
+# Environment-Specific Deployment Pipeline for ERNI-KI
+# Deploy to development, staging, production with environment-specific secrets
+# Author: Alteon Schultz (Tech Lead)
+# Date: 2025-09-19
 
 name: 🚀 Environment Deployment
 
@@ -30,25 +30,25 @@ on:
         default: false
         type: boolean
 
-# Разрешения для деплоя и работы с секретами
+# Permissions for deploy and secrets access
 permissions:
   contents: read
   packages: write
   deployments: write
   actions: read
 
-# Переменные окружения
+# Environment variables
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
-# Отмена предыдущих запусков
+# Cancel previous runs
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.environment || 'auto' }}
   cancel-in-progress: true
 
 jobs:
-  # Определение целевого окружения
+  # Determine target environment
   determine-environment:
     name: 🎯 Determine Target Environment
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
 
           echo "🎯 Target environment: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
 
-  # Валидация секретов для целевого окружения
+  # Validate secrets for target environment
   validate-secrets:
     name: 🔐 Validate Environment Secrets
     runs-on: ubuntu-latest
@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "Validating environment config for: ${{ needs['determine-environment'].outputs.environment }}"
 
-          # Определяем суффикс для окружения
+          # Determine suffix for environment
           ENV_SUFFIX=""
           case "${{ needs['determine-environment'].outputs.environment }}" in
             "development") ENV_SUFFIX="_DEV" ;;
@@ -101,7 +101,7 @@ jobs:
             "production") ENV_SUFFIX="_PROD" ;;
           esac
 
-          # Проверяем наличие обязательных ключей среды
+          # Check for required environment keys
           required_env_keys=(
             "TUNNEL_TOKEN${ENV_SUFFIX}"
             "OPENAI_API_KEY${ENV_SUFFIX}"
@@ -109,7 +109,7 @@ jobs:
 
           missing_env_keys=()
           for env_key in "${required_env_keys[@]}"; do
-            # Проверяем, что ключ не пустой и не содержит placeholder
+            # Check that key is not empty and does not contain placeholder
             env_value="${!env_key:-}"
             if [ -z "$env_value" ] || [[ "$env_value" == *"REPLACE_WITH_REAL"* ]]; then
               missing_env_keys+=("$env_key")
@@ -148,7 +148,7 @@ jobs:
           GOOGLE_API_KEY_STAGING: ${{ secrets.GOOGLE_API_KEY_STAGING }}
           GOOGLE_API_KEY_PROD: ${{ secrets.GOOGLE_API_KEY_PROD }}
 
-  # Сборка Docker образов с environment-specific конфигурацией
+  # Build Docker images with environment-specific configuration
   build-and-deploy:
     name: 🏗️ Build & Deploy to ${{ needs['determine-environment'].outputs.environment }}
     runs-on: ubuntu-latest
@@ -200,7 +200,7 @@ jobs:
             tunnel_token=${{ secrets[format('TUNNEL_TOKEN_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
             openai_key=${{ secrets[format('OPENAI_API_KEY_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
 
-  # Деплой в целевое окружение
+  # Deploy to target environment
   deploy:
     name: 🚀 Deploy to ${{ needs['determine-environment'].outputs.environment }}
     runs-on: ubuntu-latest
@@ -216,10 +216,10 @@ jobs:
         run: |
           echo "Preparing configuration for: ${{ needs['determine-environment'].outputs.environment }}"
 
-          # Создаем environment-specific конфигурацию
+          # Create environment-specific configuration
           mkdir -p .deploy-config
 
-          # Определяем суффикс для секретов
+          # Determine suffix for secrets
           ENV_SUFFIX=""
           case "${{ needs['determine-environment'].outputs.environment }}" in
             "development") ENV_SUFFIX="_DEV" ;;
@@ -227,7 +227,7 @@ jobs:
             "production") ENV_SUFFIX="_PROD" ;;
           esac
 
-          # Создаем файл с переменными окружения для деплоя
+          # Create file with environment variables for deploy
           cat > .deploy-config/environment.env << EOF
           ENVIRONMENT=${{ needs['determine-environment'].outputs.environment }}
           TUNNEL_TOKEN=${TUNNEL_TOKEN}
@@ -254,20 +254,20 @@ jobs:
           echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs['determine-environment'].outputs.environment }}-latest"
           echo "🔧 Configuration: .deploy-config/environment.env"
 
-          # Примечание: Актуальная логика деплоя реализуется через внешние инструменты
-          # (например, kubectl, docker-compose, Ansible) и настраивается через GitHub Secrets
+          # Note: Actual deploy logic is implemented via external tools
+          # (e.g., kubectl, docker-compose, Ansible) and configured via GitHub Secrets
           echo "✅ Deployment completed successfully"
 
       - name: 📊 Post-deployment verification
         run: |
           echo "🔍 Verifying deployment in ${{ needs['determine-environment'].outputs.environment }}"
 
-          # Здесь можно добавить проверки здоровья сервисов
-          # Например, health checks, smoke tests, etc.
+          # Here you can add service health checks
+          # For example, health checks, smoke tests, etc.
 
           echo "✅ Deployment verification completed"
 
-  # Уведомления о результатах деплоя
+  # Deployment result notifications
   notify:
     name: 📢 Deployment Notification
     runs-on: ubuntu-latest

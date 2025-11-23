@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ERNI-KI Backrest Integration Setup
-# Настройка резервного копирования и интеграции с мониторингом
-# Автор: Альтэон Шульц (Tech Lead)
+# Backup configuration and monitoring integration
+# Author: Alteon Schulz (Tech Lead)
 
 set -euo pipefail
 
@@ -11,7 +11,7 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 BACKUP_DIR="$PROJECT_ROOT/.config-backup"
 BACKREST_API="http://localhost:9898/v1.Backrest"
 
-# === Функции логирования ===
+# === Logging functions ===
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
@@ -24,35 +24,35 @@ success() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $*"
 }
 
-# === Проверка доступности Backrest ===
+# === Check Backrest availability ===
 check_backrest_availability() {
-    log "Проверка доступности Backrest..."
+    log "Checking Backrest availability..."
 
     if curl -s -f "$BACKREST_API/GetConfig" --data '{}' -H 'Content-Type: application/json' >/dev/null 2>&1; then
-        success "Backrest API доступен"
+        success "Backrest API is available"
         return 0
     else
-        error "Backrest API недоступен"
+        error "Backrest API is not available"
         return 1
     fi
 }
 
-# === Создание локального репозитория ===
+# === Create local repository ===
 create_local_repository() {
-    log "Создание локального репозитория резервного копирования..."
+    log "Creating local backup repository..."
 
-    # Создание директории для резервных копий
+    # Create directory for backups
     mkdir -p "$BACKUP_DIR"
 
-    # Генерация пароля для репозитория
+    # Generate repository password
     local repo_password
     repo_password=$(openssl rand -base64 32)
 
-    # Сохранение пароля в безопасном месте
+    # Save password in a secure location
     echo "$repo_password" > "$PROJECT_ROOT/conf/backrest/repo-password.txt"
     chmod 600 "$PROJECT_ROOT/conf/backrest/repo-password.txt"
 
-    # Конфигурация репозитория через API
+    # Configure repository via API
     local repo_config
     repo_config=$(cat <<EOF
 {
@@ -73,17 +73,17 @@ create_local_repository() {
 EOF
     )
 
-    log "Конфигурация репозитория создана"
+    log "Repository configuration created"
     echo "$repo_config" > "$PROJECT_ROOT/conf/backrest/repo-config.json"
 
-    success "Локальный репозиторий настроен в $BACKUP_DIR"
+    success "Local repository configured in $BACKUP_DIR"
 }
 
-# === Создание планов резервного копирования ===
+# === Create backup plans ===
 create_backup_plans() {
-    log "Создание планов резервного копирования..."
+    log "Creating backup plans..."
 
-    # План для ежедневного резервного копирования
+    # Plan for daily backups
     local daily_plan
     daily_plan=$(cat <<EOF
 {
@@ -113,7 +113,7 @@ create_backup_plans() {
 EOF
     )
 
-    # План для еженедельного резервного копирования
+    # Plan for weekly backups
     local weekly_plan
     weekly_plan=$(cat <<EOF
 {
@@ -146,32 +146,32 @@ EOF
     echo "$daily_plan" > "$PROJECT_ROOT/conf/backrest/daily-plan.json"
     echo "$weekly_plan" > "$PROJECT_ROOT/conf/backrest/weekly-plan.json"
 
-    success "Планы резервного копирования созданы"
+    success "Backup plans created"
 }
 
-# === Создание webhook для интеграции с мониторингом ===
+# === Create webhook for monitoring integration ===
 create_monitoring_webhook() {
-    log "Создание webhook для интеграции с мониторингом rate limiting..."
+    log "Creating webhook for rate limiting monitoring integration..."
 
-    # Создание скрипта webhook
+    # Create webhook script
     cat > "$PROJECT_ROOT/scripts/backrest-webhook.sh" <<'EOF'
 #!/bin/bash
 
-# Backrest Webhook для интеграции с системой мониторинга
-# Получает уведомления от Backrest и отправляет их в систему мониторинга
+# Backrest Webhook for monitoring system integration
+# Receives notifications from Backrest and sends them to the monitoring system
 
 WEBHOOK_DATA="$1"
 MONITORING_LOG="/home/konstantin/Documents/augment-projects/erni-ki/logs/backrest-notifications.log"
 
-# Создание директории для логов
+# Create log directory
 mkdir -p "$(dirname "$MONITORING_LOG")"
 
-# Логирование уведомления
+# Log notification
 echo "[$(date -Iseconds)] Backrest notification: $WEBHOOK_DATA" >> "$MONITORING_LOG"
 
-# Отправка в систему мониторинга rate limiting (если настроена)
+# Send to rate limiting monitoring system (if configured)
 if [[ -f "/home/konstantin/Documents/augment-projects/erni-ki/scripts/monitor-rate-limiting.sh" ]]; then
-    # Интеграция с системой мониторинга
+    # Integration with monitoring system
     echo "Backrest notification: $WEBHOOK_DATA" | logger -t "erni-ki-backrest"
 fi
 
@@ -180,14 +180,14 @@ EOF
 
     chmod +x "$PROJECT_ROOT/scripts/backrest-webhook.sh"
 
-    success "Webhook для мониторинга создан"
+    success "Monitoring webhook created"
 }
 
-# === Создание hooks для уведомлений ===
+# === Create notification hooks ===
 create_notification_hooks() {
-    log "Создание hooks для уведомлений..."
+    log "Creating notification hooks..."
 
-    # Hook для успешного резервного копирования
+    # Hook for successful backups
     local success_hook
     success_hook=$(cat <<EOF
 {
@@ -202,7 +202,7 @@ create_notification_hooks() {
 EOF
     )
 
-    # Hook для ошибок резервного копирования
+    # Hook for backup errors
     local error_hook
     error_hook=$(cat <<EOF
 {
@@ -220,26 +220,26 @@ EOF
     echo "$success_hook" > "$PROJECT_ROOT/conf/backrest/success-hook.json"
     echo "$error_hook" > "$PROJECT_ROOT/conf/backrest/error-hook.json"
 
-    success "Hooks для уведомлений созданы"
+    success "Notification hooks created"
 }
 
-# === Тестирование интеграции ===
+# === Integration testing ===
 test_integration() {
-    log "Тестирование интеграции Backrest..."
+    log "Testing Backrest integration..."
 
-    # Проверка API
+    # Check API
     if ! check_backrest_availability; then
-        error "Backrest API недоступен для тестирования"
+        error "Backrest API not available for testing"
         return 1
     fi
 
-    # Тестирование webhook
+    # Test webhook
     if [[ -x "$PROJECT_ROOT/scripts/backrest-webhook.sh" ]]; then
         "$PROJECT_ROOT/scripts/backrest-webhook.sh" "Test notification from setup script"
-        success "Webhook протестирован"
+        success "Webhook tested"
     fi
 
-    # Проверка созданных файлов
+    # Check created files
     local required_files=(
         "$PROJECT_ROOT/conf/backrest/repo-password.txt"
         "$PROJECT_ROOT/conf/backrest/repo-config.json"
@@ -250,9 +250,9 @@ test_integration() {
 
     for file in "${required_files[@]}"; do
         if [[ -f "$file" ]]; then
-            success "Файл создан: $file"
+            success "File created: $file"
         else
-            error "Файл не найден: $file"
+            error "File not found: $file"
             return 1
         fi
     done
@@ -260,118 +260,118 @@ test_integration() {
     return 0
 }
 
-# === Создание документации ===
+# === Create documentation ===
 create_documentation() {
-    log "Создание документации по интеграции..."
+    log "Creating integration documentation..."
 
     cat > "$PROJECT_ROOT/docs/backrest-integration.md" <<EOF
-# Backrest Integration для ERNI-KI
+# Backrest Integration for ERNI-KI
 
-## Обзор
+## Overview
 
-Система резервного копирования ERNI-KI использует Backrest для автоматического создания резервных копий критически важных данных.
+The ERNI-KI backup system uses Backrest for automatic creation of backups of critical data.
 
-## Конфигурация
+## Configuration
 
-### Репозиторий
-- **Тип**: Локальное хранилище
-- **Путь**: \`.config-backup/\`
-- **Шифрование**: AES-256 (пароль в \`conf/backrest/repo-password.txt\`)
+### Repository
+- **Type**: Local storage
+- **Path**: \`.config-backup/\`
+- **Encryption**: AES-256 (password in \`conf/backrest/repo-password.txt\`)
 
-### Планы резервного копирования
+### Backup Plans
 
-#### Ежедневные резервные копии
-- **Расписание**: 01:00 каждый день
-- **Хранение**: 7 дней
-- **Содержимое**: env/, conf/, data/postgres/, data/openwebui/, data/ollama/
+#### Daily Backups
+- **Schedule**: 01:00 daily
+- **Retention**: 7 days
+- **Contents**: env/, conf/, data/postgres/, data/openwebui/, data/ollama/
 
-#### Еженедельные резервные копии
-- **Расписание**: 02:00 каждое воскресенье
-- **Хранение**: 4 недели
-- **Содержимое**: env/, conf/, data/postgres/, data/openwebui/, data/ollama/
+#### Weekly Backups
+- **Schedule**: 02:00 every Sunday
+- **Retention**: 4 weeks
+- **Contents**: env/, conf/, data/postgres/, data/openwebui/, data/ollama/
 
-## Мониторинг
+## Monitoring
 
-### Интеграция с системой мониторинга
+### Monitoring System Integration
 - Webhook: \`scripts/backrest-webhook.sh\`
-- Логи: \`logs/backrest-notifications.log\`
-- Системный журнал: \`journalctl -t erni-ki-backrest\`
+- Logs: \`logs/backrest-notifications.log\`
+- System log: \`journalctl -t erni-ki-backrest\`
 
-### Уведомления
-- Успешные резервные копии логируются
-- Ошибки отправляются в систему мониторинга
-- Интеграция с rate limiting мониторингом
+### Notifications
+- Successful backups are logged
+- Errors are sent to the monitoring system
+- Integration with rate limiting monitoring
 
 ## API Endpoints
 
-- **Конфигурация**: \`POST /v1.Backrest/GetConfig\`
-- **Операции**: \`POST /v1.Backrest/GetOperations\`
-- **Запуск резервного копирования**: \`POST /v1.Backrest/Backup\`
+- **Configuration**: \`POST /v1.Backrest/GetConfig\`
+- **Operations**: \`POST /v1.Backrest/GetOperations\`
+- **Start Backup**: \`POST /v1.Backrest/Backup\`
 
-## Восстановление
+## Restoration
 
-Для восстановления данных используйте веб-интерфейс Backrest:
+To restore data, use the Backrest web interface:
 \`\`\`
 http://localhost:9898
 \`\`\`
 
-## Безопасность
+## Security
 
-- Пароль репозитория хранится в зашифрованном виде
-- Доступ к API ограничен localhost
-- Резервные копии создаются с правами root
+- Repository password is stored encrypted
+- API access is restricted to localhost
+- Backups are created with root privileges
 EOF
 
-    success "Документация создана: docs/backrest-integration.md"
+    success "Documentation created: docs/backrest-integration.md"
 }
 
-# === Основная функция ===
+# === Main function ===
 main() {
-    log "Настройка интеграции Backrest для ERNI-KI"
+    log "Setting up Backrest integration for ERNI-KI"
 
-    # Проверка доступности Backrest
+    # Check Backrest availability
     if ! check_backrest_availability; then
-        error "Backrest недоступен. Убедитесь, что сервис запущен."
+        error "Backrest is not available. Make sure the service is running."
         exit 1
     fi
 
-    # Создание структуры
+    # Create directory structure
     mkdir -p "$PROJECT_ROOT/conf/backrest"
     mkdir -p "$PROJECT_ROOT/docs"
     mkdir -p "$PROJECT_ROOT/logs"
 
-    # Выполнение настройки
+    # Perform setup
     create_local_repository
     create_backup_plans
     create_monitoring_webhook
     create_notification_hooks
     create_documentation
 
-    # Тестирование
+    # Testing
     if test_integration; then
-        success "Интеграция Backrest настроена успешно!"
+        success "Backrest integration configured successfully!"
 
         echo
-        echo "📋 Что было настроено:"
-        echo "  ✅ Локальный репозиторий в .config-backup/"
-        echo "  ✅ Ежедневные резервные копии (7 дней хранения)"
-        echo "  ✅ Еженедельные резервные копии (4 недели хранения)"
-        echo "  ✅ Webhook для интеграции с мониторингом"
-        echo "  ✅ Hooks для уведомлений о статусе"
-        echo "  ✅ Документация по интеграции"
+        echo "📋 What was configured:"
+        echo "  ✅ Local repository in .config-backup/"
+        echo "  ✅ Daily backups (7 days retention)"
+        echo "  ✅ Weekly backups (4 weeks retention)"
+        echo "  ✅ Webhook for monitoring integration"
+        echo "  ✅ Hooks for status notifications"
+        echo "  ✅ Integration documentation"
 
         echo
-        echo "🚀 Следующие шаги:"
-        echo "  1. Откройте http://localhost:9898 для настройки через веб-интерфейс"
-        echo "  2. Добавьте репозиторий используя конфигурацию из conf/backrest/repo-config.json"
-        echo "  3. Создайте планы резервного копирования из conf/backrest/*-plan.json"
-        echo "  4. Настройте hooks используя conf/backrest/*-hook.json"
+        echo "🚀 Next steps:"
+        echo "  1. Open http://localhost:9898 to configure via web interface"
+        echo "  2. Add repository using configuration from conf/backrest/repo-config.json"
+        echo "  3. Create backup plans from conf/backrest/*-plan.json"
+        echo "  4. Configure hooks using conf/backrest/*-hook.json"
 
     else
-        error "Ошибка при настройке интеграции Backrest"
+        error "Error configuring Backrest integration"
         exit 1
     fi
 }
 
-# Запуск
+# Launch
 main "$@"
