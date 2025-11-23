@@ -15,7 +15,7 @@ permissions:
   contents: read
   security-events: write
   actions: read
-  packages: write
+  packages: read
 
 # Environment variables
 env:
@@ -213,7 +213,7 @@ jobs:
 
       # Dependency Scanning
       - name: 🔍 Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: "fs"
           scan-ref: "."
@@ -275,6 +275,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [test-go, security]
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
 
     steps:
       - name: 📥 Checkout code
