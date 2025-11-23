@@ -1,58 +1,58 @@
-// Глобальная настройка тестов для проекта erni-ki
+// Global test setup for the erni-ki project
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 
 import testUtils from './utils/test-utils';
 
-// Сохраняем оригинальные методы консоли
+// Keep original console methods
 const originalConsoleLog = console.log;
 const originalConsoleWarn = console.warn;
 const originalConsoleError = console.error;
 
-// Настройка переменных окружения для тестов
+// Configure environment variables for tests
 beforeAll(() => {
-  // Устанавливаем тестовые переменные окружения
+  // Set test environment variables
   process.env.NODE_ENV = 'test';
   process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
   process.env.WEBUI_SECRET_KEY = 'test-webui-secret-key-for-testing-only';
   process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
   process.env.REDIS_URL = 'redis://localhost:6379/1';
 
-  // Отключаем логирование в тестах
+  // Silence logging during tests
   console.log = () => {};
   console.warn = () => {};
   console.error = () => {};
 });
 
-// Очистка после всех тестов
+// Cleanup after all tests
 afterAll(() => {
-  // Восстанавливаем оригинальные методы консоли
+  // Restore console originals
   console.log = originalConsoleLog;
   console.warn = originalConsoleWarn;
   console.error = originalConsoleError;
 });
 
-// Настройка перед каждым тестом
+// Setup before each test
 beforeEach(() => {
-  // Очищаем все моки
+  // Clear all mocks
   vi.clearAllMocks();
 
-  // Сбрасываем состояние модулей
+  // Reset module state
   vi.resetModules();
 });
 
-// Очистка после каждого теста
+// Cleanup after each test
 afterEach(() => {
-  // Восстанавливаем все моки
+  // Restore all mocks
   vi.restoreAllMocks();
 });
 
-// Глобальные утилиты для тестов
+// Global utilities for tests
 globalThis.testUtils = testUtils;
 
-// Настройка fetch для тестов (если нужно)
+// Configure fetch for tests (mocked)
 global.fetch = vi.fn();
 
-// Настройка для работы с таймерами
+// Setup fake timers for determinism
 vi.useFakeTimers();
 
 export {};
