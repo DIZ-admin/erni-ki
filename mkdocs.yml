@@ -458,7 +458,7 @@ nav:
           - "Service Restart": operations/runbooks/service-restart-procedures.md
           - "Alertmanager Noise Reduction": operations/runbooks/alertmanager-noise-reduction.md
           - "Troubleshooting": operations/runbooks/troubleshooting-guide.md
-          - "Runbooks (DE Summary)": operations/runbooks-de.md
+          - "Runbooks (DE Summary)": de/operations/runbooks-summary.md
       - Diagnostics:
           - "Diagnostics Overview": operations/diagnostics/README.md
           - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md

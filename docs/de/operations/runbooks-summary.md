@@ -9,8 +9,8 @@ audience: 'administrators'
 
 # Runbooks & Troubleshooting (DE summary)
 
-Краткое резюме ключевых runbook'ов на немецком. Полные версии остаются в
-`docs/operations/runbooks/` (EN).
+Kurzer Überblick über die wichtigsten Runbooks auf Deutsch. Die vollständigen
+Versionen finden sich weiterhin unter `docs/operations/runbooks/` (EN).
 
 | Thema                 | Referenzdatei (EN)                                    | Hinweis (DE)                                                               |
 | --------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------- |

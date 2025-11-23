@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ручная проверка SSL certificates ERNI-KI
+# Manual SSL certificate validation for ERNI-KI
 
 cd "$(dirname "$0")/../.."
 ./scripts/ssl/monitor-certificates.sh check
