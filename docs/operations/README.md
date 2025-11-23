@@ -1,3 +1,10 @@
+---
+language: ru
+page_id: operations.index
+translation_status: complete
+doc_version: '2025.11'
+---
+
 # Operations Documentation
 
 This directory contains operational guides, runbooks, and procedures for
@@ -16,13 +23,14 @@ managing the ERNI-KI platform.
 - **[monitoring-guide.md](monitoring-guide.md)** - Comprehensive monitoring
   documentation
   - Prometheus metrics and alerts
-  - Grafana dashboards (18 total)
+  - Grafana dashboards (5 provisioned)
   - Loki log aggregation
   - SLO tracking
 
 ### Runbooks
 
-- **[runbooks/](runbooks/)** - Step-by-step operational procedures
+- **[runbooks/README.md](runbooks/README.md)** - Step-by-step operational
+  procedures
   - Service restart procedures
   - Incident response playbooks
   - Alert remediation guides
@@ -39,13 +47,14 @@ managing the ERNI-KI platform.
 
 ### Diagnostics
 
-- **[diagnostics/](diagnostics/)** - Diagnostic reports and methodologies
+- **[diagnostics/README.md](diagnostics/README.md)** - Diagnostic reports and
+  methodologies
 
 ## Quick Start
 
 **For Operators:** Start with the [admin-guide.md](admin-guide.md) **For
 Monitoring:** See [monitoring-guide.md](monitoring-guide.md) **For Incidents:**
-Check [runbooks/](runbooks/)
+Check [runbooks/README.md](runbooks/README.md)
 
 ## Related Documentation
 

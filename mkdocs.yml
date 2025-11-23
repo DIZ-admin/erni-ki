@@ -388,6 +388,7 @@ nav:
   - Home: index.md
   - "Platform Overview": overview.md
   - "Quick Start":
+      - "Overview": getting-started/README.md
       - "Installation": getting-started/installation.md
       - "Configuration": getting-started/configuration-guide.md
       - "Users": getting-started/user-guide.md
@@ -396,6 +397,7 @@ nav:
       - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
       - "Port Forwarding": getting-started/port-forwarding-setup.md
   - Architecture:
+      - "Overview (README)": architecture/README.md
       - Overview: architecture/architecture.md
       - "Services": architecture/services-overview.md
       - "Inventory": architecture/service-inventory.md
@@ -418,7 +420,7 @@ nav:
       - "System Status": system/status.md
   - "News (Archive)":
       - Overview: archive/news-overview.md
-      - "2025-11: Status Page Launch": news/index.md
+      - Feed: news/index.md
   - "HowTo (Archive)":
       - "Create JIRA Description": archive/howto/create-jira-description-with-ai.md
       - "Summarize Meeting (Archive)": archive/howto/summarize-meeting-notes.md
@@ -427,6 +429,7 @@ nav:
       - "Open WebUI Basics": archive/training/openwebui-basics.md
       - "Prompting 101": archive/training/prompting-101.md
   - Operations:
+      - "Overview": operations/README.md
       - "CI Health": operations/ci-health.md
       - "GitHub Governance": operations/github-governance.md
       - "Monitoring Audit": operations/monitoring-audit.md
@@ -451,6 +454,8 @@ nav:
           - "RAG Monitoring": operations/rag-monitoring.md
           - "SearXNG Redis Troubleshooting": operations/searxng-redis-issue-analysis.md
       - Runbooks:
+          - "Runbooks Overview": operations/runbooks/README.md
+          - "Runbooks Summary": operations/runbooks-summary.md
           - "Backup & Restore": operations/runbooks/backup-restore-procedures.md
           - "Configuration Changes": operations/runbooks/configuration-change-process.md
           - "Docling Shared Volume": operations/runbooks/docling-shared-volume.md
@@ -458,7 +463,6 @@ nav:
           - "Service Restart": operations/runbooks/service-restart-procedures.md
           - "Alertmanager Noise Reduction": operations/runbooks/alertmanager-noise-reduction.md
           - "Troubleshooting": operations/runbooks/troubleshooting-guide.md
-          - "Runbooks (DE Summary)": de/operations/runbooks-summary.md
       - Diagnostics:
           - "Diagnostics Overview": operations/diagnostics/README.md
           - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
@@ -472,13 +476,14 @@ nav:
       - "Redis Operations": data/redis-operations-guide.md
       - "VLLM Resource Optimization": data/vllm-resource-optimization.md
   - Security:
+      - "Overview": security/README.md
       - "Security Policy": security/security-policy.md
+      - "Authentication": security/authentication.md
+      - "Security Best Practices": security/security-best-practices.md
+      - "SSL/TLS Setup": security/ssl-tls-setup.md
       - "Log Audit": security/log-audit.md
-      - "Log Audit (2025-11-14)": log-audit-2025-11-14.md
-      - "Log Audit (2025-11-14 repeat)": log-audit-2025-11-14-repeat.md
-      - "Logging System Audit": logging-system-audit-2025-11-14.md
-      - "Monitoring & Logging Audit": monitoring-logging-audit-2025-11-14.md
   - Reference:
+      - "Overview": reference/README.md
       - "API Reference": reference/api-reference.md
       - Development: reference/development.md
       - "GitHub Environments": reference/github-environments-setup.md
@@ -486,6 +491,7 @@ nav:
       - "Pre-commit Hooks": reference/pre-commit-hooks.md
       - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
       - "Status Snippet": reference/status-snippet.md
+      - "Language Policy": reference/language-policy.md
       - VERSION: VERSION.md
       - CHANGELOG: reference/CHANGELOG.md
 
@@ -521,8 +527,6 @@ nav:
           - "Update execution report": archive/config-backup/update-execution-report-2025-10-02.md
           - "Monitoring report": archive/config-backup/monitoring-report-2025-10-02.md
           - "Update analysis": archive/config-backup/update-analysis-2025-10-02.md
-      - Other:
-          - "Remote Branch Cleanup": remote-branch-cleanup.md
 
 # Validation Settings
 validation:

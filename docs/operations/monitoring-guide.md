@@ -12,16 +12,16 @@ standardized healthchecks, and production-ready observability stack.
 ERNI-KI monitoring system includes:
 
 - **8 Specialized Exporters** - optimized and standardized (September 19, 2025)
-- **Prometheus v3.0.1** - metrics collection and storage (updated October
+- **Prometheus v3.0.0** - metrics collection and storage (updated October
   24, 2025)
-- **27 Alert Rules** - proactive monitoring (18 new system alerts + 9 existing)
-- **Grafana v11.6.6** - visualization and dashboards
-- **Loki v3.5.5 + Fluent Bit v3.2.0** - centralized logging
-- **AlertManager v0.28.0** - notifications and alerting
-- **Network hardening** - публичный доступ только через nginx/Cloudflare;
-  сервисы с API (EdgeTTS, Tika, LiteLLM, OpenWebUI) привязаны к `127.0.0.1` или
-  внутренним сетям; используются отдельные сети ingress/services/logging/data
-  вместо единого bridge.
+- **20 Alert Rules** - proactive monitoring (синхронизировано с
+  `conf/prometheus/alerts.yml`)
+- **Grafana v11.3.0** - visualization and dashboards (5 provisioned dashboards)
+- **Loki v3.0.0 + Fluent Bit v3.1.0** - centralized logging
+- **AlertManager v0.27.0** - notifications and alerting
+- **Network topology (current)** - стандартный docker bridge; большинство
+  мониторинговых портов привязаны к `127.0.0.1`; Ollama открыт на хост-порту
+  `11434`; сегментация ingress/services/logging/data планируется отдельно.
 
 ### 🗺️ Architecture Snapshot
 
@@ -285,7 +285,7 @@ cat data/node-exporter-textfile/cron_watchdogs.prom
 
 - Счетчик несоответствий из
   `docs/archive/reports/documentation-audit-2025-10-24.md` больше не включает
-  мониторинг: 27 активных правил и Prometheus v3.0.1 задокументированы и
+  мониторинг: 20 активных правил и Prometheus v3.0.0 задокументированы и
   отражены в разделе «Prometheus Alerts Configuration».
 - Все 18 новых системных предупреждений сгруппированы по критичности (Critical,
   Performance, Database, GPU, Nginx) и сопровождаются списоком индикаций, что
@@ -724,12 +724,8 @@ curl -s http://localhost:PORT/metrics
 
 ### Overview
 
-ERNI-KI uses **27 active alert rules** for proactive monitoring (added October
-24, 2025):
-
-- **18 new system alerts** in `conf/prometheus/alerts.yml`
-- **9 existing alerts** in `conf/prometheus/alert_rules.yml` and
-  `logging-alerts.yml`
+ERNI-KI uses **20 active alert rules** for proactive monitoring (per
+`conf/prometheus/alerts.yml` and `conf/prometheus/alert_rules.yml`):
 
 ### Alert Groups
 
