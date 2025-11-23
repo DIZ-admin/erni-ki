@@ -1,63 +1,63 @@
-# Alertmanager Configuration для ERNI-KI
-# Система управления алертами от Prometheus
+# Alertmanager Configuration for ERNI-KI
+# Alert routing for Prometheus
 
-# === Основные настройки ===
-# Путь к конфигурационному файлу
+# === Basics ===
+# Config file path
 ALERTMANAGER_CONFIG_FILE=/etc/alertmanager/alertmanager.yml
-# Путь к данным
+# Data path
 ALERTMANAGER_STORAGE_PATH=/alertmanager
-# Время хранения данных (120 часов = 5 дней)
+# Data retention (120h = 5 days)
 ALERTMANAGER_DATA_RETENTION=120h
 
-# === Веб-интерфейс ===
-# Адрес для привязки
+# === Web UI ===
+# Listen address
 ALERTMANAGER_WEB_LISTEN_ADDRESS=0.0.0.0:9093
-# Внешний URL
+# External URL
 ALERTMANAGER_WEB_EXTERNAL_URL=http://alertmanager.your-domain.com:9093
-# Путь к статическим файлам
+# Static route prefix
 ALERTMANAGER_WEB_ROUTE_PREFIX=/
 
-# === Кластеризация ===
-# Адрес для кластерного взаимодействия
+# === Clustering ===
+# Cluster listen address
 ALERTMANAGER_CLUSTER_LISTEN_ADDRESS=0.0.0.0:9094
-# Отключить кластеризацию (single node)
+# Disable clustering (single node)
 ALERTMANAGER_CLUSTER_PEER=
-# Время жизни кластерных сообщений
+# Gossip interval
 ALERTMANAGER_CLUSTER_GOSSIP_INTERVAL=200ms
 
-# === Логирование ===
-# Уровень логирования
+# === Logging ===
+# Log level
 ALERTMANAGER_LOG_LEVEL=info
-# Формат логов
+# Log format
 ALERTMANAGER_LOG_FORMAT=logfmt
 
-# === Производительность ===
-# Интервал группировки алертов
+# === Delivery timing ===
+# Group interval
 ALERTMANAGER_GROUP_INTERVAL=10s
-# Время ожидания перед отправкой группы алертов
+# Group wait
 ALERTMANAGER_GROUP_WAIT=10s
-# Интервал повторной отправки алертов
+# Repeat interval
 ALERTMANAGER_REPEAT_INTERVAL=12h
 
-# === Webhook настройки ===
-# URL для webhook уведомлений
+# === Webhook ===
+# Webhook URL
 ALERTMANAGER_WEBHOOK_URL=http://webhook-receiver:9093/webhook
-# Таймаут для webhook запросов
+# Webhook timeout
 ALERTMANAGER_WEBHOOK_TIMEOUT=10s
 
-# === Email настройки (опционально) ===
-# SMTP сервер
+# === Email (optional) ===
+# SMTP server
 ALERTMANAGER_SMTP_SMARTHOST=your-smtp-server:587
-# От кого отправлять письма
+# From address
 ALERTMANAGER_SMTP_FROM=alerts@your-domain.com
-# Требовать TLS
+# Require TLS
 ALERTMANAGER_SMTP_REQUIRE_TLS=true
-# Пользователь SMTP
+# SMTP user
 ALERTMANAGER_SMTP_AUTH_USERNAME=your-smtp-username
-# Пароль SMTP
+# SMTP password
 ALERTMANAGER_SMTP_AUTH_PASSWORD=your-smtp-password
 
-# === Безопасность ===
+# === Security ===
 # Отключить аутентификацию для внутренней сети
 ALERTMANAGER_WEB_CONFIG_FILE=
 # Отключить HTTPS

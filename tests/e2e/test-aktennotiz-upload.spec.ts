@@ -1,9 +1,9 @@
 // @ts-nocheck
 /**
- * Автоматизированный тест загрузки DOCX файла "Aktennotiz_Andre Arnold 10.10.2025.docx"
- * через веб-интерфейс OpenWebUI с использованием Playwright
+ * Automated test for uploading DOCX file "Aktennotiz_Andre Arnold 10.10.2025.docx"
+ * through OpenWebUI web interface using Playwright
  *
- * Цель: Проверить end-to-end процесс загрузки и обработки DOCX файла через RAG систему ERNI-KI
+ * Goal: Verify end-to-end process of uploading and processing DOCX file through ERNI-KI RAG system
  */
 
 import { test, expect } from '@playwright/test';
@@ -13,13 +13,13 @@ import path from 'node:path';
 const BASE = process.env.PW_BASE_URL || 'http://localhost:8080';
 const DOCX_FILE = 'tests/fixtures/Aktennotiz_Andre Arnold 10.10.2025.docx';
 
-// Логирование с временными метками
+// Logging with timestamps
 function log(message: string) {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] ${message}`);
 }
 
-// Попытка логина
+// Attempt login
 async function tryLogin(page: any) {
   log('🔍 Checking for login form...');
 

@@ -45,9 +45,9 @@ MCP, окружённая полным стеком наблюдаемости, 
 - **Безопасность** — `security/security-policy.md` и related compliance notes.
 - **Academy KI** — входная точка для сотрудников:
   [портал](../ru/academy/index.md), базовые уроки
-  ([Open WebUI basics](../training/openwebui-basics.md),
-  [Prompting 101](../training/prompting-101.md)), сценарии
-  ([HowTo](../howto/write-customer-email-with-openwebui.md)) и
+  ([Open WebUI basics](../academy/openwebui-basics.md),
+  [Prompting 101](../academy/prompting-101.md)), сценарии
+  ([HowTo](../academy/howto/write-customer-email.md)) и
   [News](../news/index.md).
 - **Проверить статус ERNI-KI** — смотрите
   [status page](../operations/status-page.md) (ссылку на конкретный URL укажите

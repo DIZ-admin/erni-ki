@@ -1,6 +1,6 @@
 #!/bin/bash
 # ERNI-KI Log Rotation Setup Script
-# Настройка автоматической ротации логов с 7-дневным retention
+# Configure automatic log rotation with 7-day retention
 
 set -e
 
@@ -8,89 +8,89 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOGROTATE_CONFIG="$PROJECT_ROOT/conf/logrotate/erni-ki"
 
-echo "🔄 Настройка автоматической ротации логов ERNI-KI..."
+echo "🔄 Configuring automatic ERNI-KI log rotation..."
 
-# Проверка прав доступа
+# Permission check
 if [ "$EUID" -eq 0 ]; then
-    echo "⚠️  Не запускайте этот скрипт от root. Используйте sudo только для установки конфигурации."
+    echo "⚠️  Do not run this script as root. Use sudo only when installing the configuration."
     exit 1
 fi
 
-# Создание необходимых директорий
-echo "📁 Создание директорий для логов..."
+# Create required directories
+echo "📁 Creating log directories..."
 mkdir -p "$PROJECT_ROOT/logs"
 mkdir -p "$PROJECT_ROOT/.config-backup/logs"
 mkdir -p "$PROJECT_ROOT/monitoring/logs/critical"
 
-# Проверка существования logrotate конфигурации
+# Ensure logrotate configuration exists
 if [ ! -f "$LOGROTATE_CONFIG" ]; then
-    echo "❌ Конфигурация logrotate не найдена: $LOGROTATE_CONFIG"
+    echo "❌ Logrotate configuration not found: $LOGROTATE_CONFIG"
     exit 1
 fi
 
-# Тестирование конфигурации logrotate
-echo "🧪 Тестирование конфигурации logrotate..."
+# Dry-run logrotate configuration
+echo "🧪 Testing logrotate configuration..."
 if ! logrotate -d "$LOGROTATE_CONFIG" >/dev/null 2>&1; then
-    echo "❌ Ошибка в конфигурации logrotate"
+    echo "❌ Logrotate configuration error"
     logrotate -d "$LOGROTATE_CONFIG"
     exit 1
 fi
 
-# Установка конфигурации в систему (требует sudo)
-echo "⚙️  Установка конфигурации logrotate в систему..."
+# Install configuration system-wide (requires sudo)
+echo "⚙️  Installing logrotate configuration system-wide..."
 if sudo cp "$LOGROTATE_CONFIG" /etc/logrotate.d/erni-ki; then
-    echo "✅ Конфигурация logrotate установлена в /etc/logrotate.d/erni-ki"
+    echo "✅ Logrotate configuration installed to /etc/logrotate.d/erni-ki"
 else
-    echo "❌ Ошибка установки конфигурации logrotate"
+    echo "❌ Failed to install logrotate configuration"
     exit 1
 fi
 
-# Проверка синтаксиса установленной конфигурации
-echo "🔍 Проверка установленной конфигурации..."
+# Validate installed configuration
+echo "🔍 Validating installed configuration..."
 if sudo logrotate -d /etc/logrotate.d/erni-ki >/dev/null 2>&1; then
-    echo "✅ Конфигурация logrotate корректна"
+    echo "✅ Logrotate configuration is valid"
 else
-    echo "❌ Ошибка в установленной конфигурации"
+    echo "❌ Error in installed configuration"
     sudo logrotate -d /etc/logrotate.d/erni-ki
     exit 1
 fi
 
-# Создание тестового лога для проверки
-echo "📝 Создание тестового лога..."
+# Create test log for verification
+echo "📝 Creating test log..."
 echo "$(date): Test log entry for rotation" >> "$PROJECT_ROOT/logs/test-rotation.log"
 
-# Тестовый запуск ротации
-echo "🔄 Тестовый запуск ротации..."
+# Test rotation run
+echo "🔄 Test rotation run..."
 if sudo logrotate -f /etc/logrotate.d/erni-ki; then
-    echo "✅ Тестовая ротация выполнена успешно"
+    echo "✅ Test rotation completed successfully"
 else
-    echo "⚠️  Предупреждения при тестовой ротации (это нормально для первого запуска)"
+    echo "⚠️  Warnings during test rotation (expected on first run)"
 fi
 
-# Проверка cron задачи для logrotate
-echo "⏰ Проверка cron задачи для logrotate..."
+# Check cron job for logrotate
+echo "⏰ Checking cron entry for logrotate..."
 if crontab -l 2>/dev/null | grep -q logrotate; then
-    echo "✅ Cron задача для logrotate уже настроена"
+    echo "✅ Cron job for logrotate already configured"
 else
-    echo "ℹ️  Logrotate будет запускаться через системный cron (/etc/cron.daily/logrotate)"
+    echo "ℹ️  Logrotate will run via system cron (/etc/cron.daily/logrotate)"
 fi
 
 echo ""
-echo "🎉 Настройка автоматической ротации логов завершена!"
+echo "🎉 Automatic log rotation setup complete!"
 echo ""
-echo "📊 Конфигурация:"
-echo "   • Ежедневная ротация логов"
-echo "   • 7 дней хранения обычных логов"
-echo "   • 30 дней хранения критических логов"
-echo "   • Сжатие старых логов"
-echo "   • Автоматическое создание новых файлов"
+echo "📊 Configuration:"
+echo "   • Daily log rotation"
+echo "   • 7-day retention for standard logs"
+echo "   • 30-day retention for critical logs"
+echo "   • Compression of old logs"
+echo "   • Automatic creation of new files"
 echo ""
-echo "📁 Директории логов:"
-echo "   • Основные логи: $PROJECT_ROOT/logs/"
-echo "   • Логи бэкапов: $PROJECT_ROOT/.config-backup/logs/"
-echo "   • Критические логи: $PROJECT_ROOT/monitoring/logs/critical/"
+echo "📁 Log directories:"
+echo "   • Primary logs: $PROJECT_ROOT/logs/"
+echo "   • Backup logs: $PROJECT_ROOT/.config-backup/logs/"
+echo "   • Critical logs: $PROJECT_ROOT/monitoring/logs/critical/"
 echo ""
-echo "🔧 Управление:"
-echo "   • Ручная ротация: sudo logrotate -f /etc/logrotate.d/erni-ki"
-echo "   • Проверка конфигурации: sudo logrotate -d /etc/logrotate.d/erni-ki"
-echo "   • Просмотр статуса: sudo cat /var/lib/logrotate/status"
+echo "🔧 Operations:"
+echo "   • Manual rotation: sudo logrotate -f /etc/logrotate.d/erni-ki"
+echo "   • Config check: sudo logrotate -d /etc/logrotate.d/erni-ki"
+echo "   • Status: sudo cat /var/lib/logrotate/status"

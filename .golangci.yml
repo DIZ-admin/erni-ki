@@ -160,7 +160,7 @@ linters:
     - forbidigo # Запрет функций
     - funlen # Длина функций (может быть слишком строгим)
     - gci # Импорты (может конфликтовать с goimports)
-    - godox # TODO комментарии
+    - godox # Отключен: TODO комментарии отслеживаются через pre-commit hooks
     - nestif # Вложенность if
     - paralleltest # Параллельные тесты (может быть излишним)
     - testpackage # Тестовые пакеты

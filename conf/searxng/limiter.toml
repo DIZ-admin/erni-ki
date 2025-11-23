@@ -1,25 +1,25 @@
 # SearXNG Rate Limiter Configuration
-# Оптимизированная конфигурация для интеграции с OpenWebUI
+# Optimized configuration for OpenWebUI integration
 
 [botdetection.ip_limit]
-# Мягкие ограничения для предотвращения блокировок поисковых движков
+# Soft limits to avoid search engine blocks
 filter_link_local = false
 link_token = false
 
 [botdetection.ip_lists]
-# Разрешить все запросы от внутренних сетей и внешних через Cloudflare
+# Allow all requests from internal networks and external via Cloudflare
 pass_searxng_org = true
 pass_ip = [
     "127.0.0.0/8",
     "10.0.0.0/8",
     "172.16.0.0/12",
     "192.168.0.0/16",
-    # Временно разрешить все внешние IP для тестирования
+    # Temporarily allow all external IPs for testing
     "0.0.0.0/0"
 ]
 
 [botdetection]
-# Доверенные прокси для получения реального IP
+# Trusted proxies to obtain the real IP
 trusted_proxies = [
     "127.0.0.0/8",
     "10.0.0.0/8",

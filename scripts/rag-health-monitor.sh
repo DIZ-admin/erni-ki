@@ -1,34 +1,34 @@
 #!/bin/bash
 
 # RAG Health Monitor Script
-# Проверяет здоровье и производительность RAG системы ERNI-KI
-# Автор: Augment Agent
-# Дата: 2025-10-24
+# Checks ERNI-KI RAG system health and performance
+# Author: Augment Agent
+# Date: 2025-10-24
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Пороговые значения (в миллисекундах)
-SEARXNG_THRESHOLD=2000  # 2 секунды
-PGVECTOR_THRESHOLD=100  # 100 мс
-OLLAMA_THRESHOLD=2000   # 2 секунды
+# Thresholds (milliseconds)
+SEARXNG_THRESHOLD=2000  # 2 seconds
+PGVECTOR_THRESHOLD=100  # 100 ms
+OLLAMA_THRESHOLD=2000   # 2 seconds
 
-# Лог файл
+# Log file
 LOG_FILE="logs/rag-health-$(date +%Y%m%d).log"
 mkdir -p logs
 
-# Функция логирования
+# Logging
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-# Функция проверки статуса
+# Service status check
 check_status() {
     local service=$1
     local status=$(docker ps --filter "name=$service" --format "{{.Status}}" 2>/dev/null || echo "not found")
@@ -45,7 +45,7 @@ check_status() {
     fi
 }
 
-# Функция измерения времени ответа
+# Response time measurement
 measure_response_time() {
     local url=$1
     local start=$(date +%s%3N)
@@ -56,18 +56,18 @@ measure_response_time() {
     echo "$duration|$response"
 }
 
-# Заголовок
+# Header
 echo ""
 echo "========================================="
 echo "   RAG HEALTH MONITOR - ERNI-KI"
 echo "========================================="
-echo "Дата: $(date '+%Y-%m-%d %H:%M:%S')"
+echo "Date: $(date '+%Y-%m-%d %H:%M:%S')"
 echo ""
 
 log "=== RAG Health Check Started ==="
 
-# 1. Проверка статуса сервисов
-echo -e "${BLUE}1. СТАТУС RAG СЕРВИСОВ${NC}"
+# 1. Service status
+echo -e "${BLUE}1. RAG SERVICES STATUS${NC}"
 echo "-----------------------------------"
 
 services=("erni-ki-openwebui-1" "erni-ki-searxng-1" "erni-ki-db-1" "erni-ki-ollama-1" "erni-ki-nginx-1")
@@ -83,8 +83,8 @@ done
 
 echo ""
 
-# 2. Проверка SearXNG производительности
-echo -e "${BLUE}2. SEARXNG ПРОИЗВОДИТЕЛЬНОСТЬ${NC}"
+# 2. SearXNG performance
+echo -e "${BLUE}2. SEARXNG PERFORMANCE${NC}"
 echo "-----------------------------------"
 
 result=$(measure_response_time "http://localhost:8080/api/searxng/search?q=test&format=json")
@@ -111,8 +111,8 @@ fi
 
 echo ""
 
-# 3. Проверка pgvector производительности
-echo -e "${BLUE}3. PGVECTOR ПРОИЗВОДИТЕЛЬНОСТЬ${NC}"
+# 3. pgvector performance
+echo -e "${BLUE}3. PGVECTOR PERFORMANCE${NC}"
 echo "-----------------------------------"
 
 pg_result=$(docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "\timing on" -c "SELECT COUNT(*) FROM document_chunk;" 2>&1 | grep "Time:" | awk '{print $2}' | sed 's/ ms//')
@@ -134,7 +134,7 @@ else
     all_healthy=false
 fi
 
-# Статистика векторов
+# Vector stats
 chunk_count=$(docker exec erni-ki-db-1 psql -U postgres -d openwebui -t -c "SELECT COUNT(*) FROM document_chunk;" 2>/dev/null | tr -d ' ')
 collection_count=$(docker exec erni-ki-db-1 psql -U postgres -d openwebui -t -c "SELECT COUNT(DISTINCT collection_name) FROM document_chunk;" 2>/dev/null | tr -d ' ')
 
@@ -143,7 +143,7 @@ echo "Collections:   $collection_count"
 
 echo ""
 
-# 4. Проверка Ollama
+# 4. Ollama
 echo -e "${BLUE}4. OLLAMA EMBEDDING MODEL${NC}"
 echo "-----------------------------------"
 
@@ -159,16 +159,16 @@ fi
 
 echo ""
 
-# 5. Проверка nginx кэширования
+# 5. Nginx caching
 echo -e "${BLUE}5. NGINX CACHING${NC}"
 echo "-----------------------------------"
 
-# Первый запрос (не кэшированный)
+# First request (cold)
 CACHE_QUERY="cache-test-query"
 result1=$(measure_response_time "http://localhost:8080/api/searxng/search?q=${CACHE_QUERY}&format=json")
 duration1=$(echo "$result1" | cut -d'|' -f1)
 
-# Второй запрос (должен быть кэшированный - тот же query)
+# Second request (should be cached - same query)
 sleep 1
 result2=$(measure_response_time "http://localhost:8080/api/searxng/search?q=${CACHE_QUERY}&format=json")
 duration2=$(echo "$result2" | cut -d'|' -f1)
@@ -187,7 +187,7 @@ fi
 
 echo ""
 
-# 7. Итоговый статус
+# 7. Final status
 echo "========================================="
 if $all_healthy; then
     echo -e "${GREEN}✅ RAG SYSTEM HEALTHY${NC}"

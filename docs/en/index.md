@@ -1,6 +1,6 @@
 ---
 page_id: site.home
-translation_status: partial
+translation_status: complete
 doc_version: '2025.02'
 ---
 
@@ -11,8 +11,8 @@ this version tracks them and highlights the most important user links.
 
 - Start here: [Academy KI](academy/index.md) — Open WebUI basics, Prompting 101,
   HowTo, News.
-- Quick start: [Open WebUI basics](../training/openwebui-basics.md) and
-  [Prompting 101](../training/prompting-101.md).
+- Quick start: [Open WebUI basics](../academy/openwebui-basics.md) and
+  [Prompting 101](../academy/prompting-101.md).
 - Practical scenarios: [HowTo collection](academy/howto/index.md).
 - Uptime first: **[System status](system/status.md)** before you escalate an
   issue.

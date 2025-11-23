@@ -1,40 +1,40 @@
-# Ollama Configuration для ERNI-KI
-# Конфигурация AI сервера с GPU ускорением
+# Ollama Configuration for ERNI-KI
+# AI server with GPU acceleration
 
-# === Основные настройки ===
-# Хост и порт для API сервера
+# === Basics ===
+# API host/port
 OLLAMA_HOST=0.0.0.0:11434
-# Разрешенные источники для CORS
+# Allowed CORS origins
 OLLAMA_ORIGINS=*
 
-# === GPU настройки ===
-# Использовать все доступные GPU слои (-1 = автоматически)
+# === GPU ===
+# Use all GPU layers (-1 = auto)
 OLLAMA_GPU_LAYERS=-1
-# Максимальное использование VRAM (80% от доступной памяти GPU)
+# Max VRAM fraction (0.8 = 80%)
 OLLAMA_MAX_VRAM=0.8
-# CUDA устройство (0 = первая GPU)
+# CUDA device (0 = first GPU)
 CUDA_VISIBLE_DEVICES=0
 
-# === Производительность и оптимизация ===
-# Включить Flash Attention для ускорения
+# === Performance ===
+# Enable Flash Attention
 OLLAMA_FLASH_ATTENTION=1
-# Количество параллельных запросов
+# Parallel requests
 OLLAMA_NUM_PARALLEL=4
-# Максимальное количество загруженных моделей в памяти
+# Max loaded models in memory
 OLLAMA_MAX_LOADED_MODELS=2
-# Время жизни модели в памяти после последнего использования
+# Model keepalive after last use
 OLLAMA_KEEP_ALIVE=5m
-# Количество потоков (0 = автоматически)
+# Threads (0 = auto)
 OLLAMA_NUM_THREAD=0
 
-# === Логирование и отладка ===
-# Отключить debug режим для production
+# === Logging/debug ===
+# Disable debug in production
 OLLAMA_DEBUG=0
-# Уровень логирования
+# Log level
 OLLAMA_LOG_LEVEL=INFO
 
-# === Кэширование и память ===
-# Тип кэша для ключ-значение (f16 для экономии памяти)
+# === Cache/memory ===
+# KV cache type (f16 saves memory)
 OLLAMA_KV_CACHE_TYPE=f16
 
 # === NVIDIA Container Runtime ===

@@ -1,10 +1,10 @@
 #!/bin/bash
-# Комплексный предпродакшн аудит системы ERNI-KI
-# Проводит полную проверку безопасности, производительности, надежности и конфигурации
+# Comprehensive pre-production audit of ERNI-KI system
+# Performs complete security, performance, reliability and configuration checks
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -13,7 +13,7 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Функции логирования
+# Logging functions
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -38,7 +38,7 @@ section() {
     echo -e "${PURPLE}[SECTION]${NC} $1"
 }
 
-# Глобальные переменные для отчета
+# Global variables for report
 AUDIT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 AUDIT_REPORT_FILE="audit-report-$(date +%Y%m%d_%H%M%S).md"
 SECURITY_ISSUES=()
@@ -50,7 +50,7 @@ HIGH_COUNT=0
 MEDIUM_COUNT=0
 LOW_COUNT=0
 
-# Функция добавления проблемы в отчет
+# Function to add issue to report
 add_issue() {
     local category="$1"
     local severity="$2"
@@ -75,25 +75,25 @@ add_issue() {
     esac
 }
 
-# Проверка предварительных условий
+# Check prerequisites
 check_prerequisites() {
     section "Проверка предварительных условий"
 
-    # Проверка Docker
+    # Check Docker
     if ! command -v docker &> /dev/null; then
         critical "Docker не установлен"
         add_issue "CONFIG" "CRITICAL" "Docker не найден" "Docker не установлен в системе" "Установите Docker"
         return 1
     fi
 
-    # Проверка Docker Compose
+    # Check Docker Compose
     if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
         critical "Docker Compose не найден"
         add_issue "CONFIG" "CRITICAL" "Docker Compose не найден" "Docker Compose не установлен" "Установите Docker Compose"
         return 1
     fi
 
-    # Проверка файлов проекта
+    # Check project files
     if [ ! -f "compose.yml" ]; then
         critical "Файл compose.yml не найден"
         add_issue "CONFIG" "CRITICAL" "Отсутствует compose.yml" "Основной файл конфигурации не найден" "Создайте compose.yml из compose.yml.example"
@@ -104,55 +104,55 @@ check_prerequisites() {
     return 0
 }
 
-# Аудит безопасности
+# Security audit
 audit_security() {
     section "АУДИТ БЕЗОПАСНОСТИ"
 
-    # Проверка файлов с секретами
+    # Check secret files
     log "Проверка управления секретами..."
 
-    # Проверка .env файлов
+    # Check .env files
     if find env/ -name "*.env" -exec grep -l "password\|secret\|key" {} \; 2>/dev/null | grep -q .; then
         warning "Найдены секреты в .env файлах"
 
-        # Проверка на дефолтные пароли (исключая example файлы)
+        # Check for default passwords (excluding example files)
         if grep -r "CHANGE_BEFORE_GOING_LIVE\|password123\|admin123" env/ --exclude="*.example" 2>/dev/null; then
             critical "Найдены дефолтные пароли"
             add_issue "SECURITY" "CRITICAL" "Дефолтные пароли" "Обнаружены незамененные дефолтные пароли в production файлах" "Замените все дефолтные пароли на безопасные"
         fi
 
-        # Проверка прав доступа к файлам с секретами (исключая example файлы)
+        # Check secret file permissions (excluding example files)
         if find env/ -name "*.env" -not -name "*.example" -not -perm 600 2>/dev/null | grep -q .; then
             error "Небезопасные права доступа к .env файлам"
             add_issue "SECURITY" "HIGH" "Небезопасные права доступа" "Файлы с секретами имеют слишком открытые права" "Установите права 600 для всех .env файлов"
         fi
     fi
 
-    # Проверка Docker конфигурации безопасности
+    # Check Docker security configuration
     log "Проверка конфигурации Docker..."
 
-    # Проверка на privileged контейнеры
+    # Check for privileged containers
     if grep -q "privileged.*true" compose.yml 2>/dev/null; then
         error "Найдены privileged контейнеры"
         add_issue "SECURITY" "HIGH" "Privileged контейнеры" "Контейнеры запущены с привилегированными правами" "Удалите privileged: true или обоснуйте необходимость"
     fi
 
-    # Проверка монтирования Docker socket
+    # Check Docker socket mounting
     if grep -q "/var/run/docker.sock" compose.yml 2>/dev/null; then
         warning "Docker socket монтируется в контейнеры"
         add_issue "SECURITY" "MEDIUM" "Docker socket доступ" "Контейнеры имеют доступ к Docker socket" "Ограничьте доступ только необходимым сервисам"
     fi
 
-    # Проверка сетевой конфигурации
+    # Check network configuration
     log "Проверка сетевой безопасности..."
 
-    # Проверка открытых портов
+    # Check open ports
     if grep -E "ports:" compose.yml | grep -E "0\.0\.0\.0|::" 2>/dev/null; then
         warning "Порты открыты для всех интерфейсов"
         add_issue "SECURITY" "MEDIUM" "Открытые порты" "Сервисы доступны на всех сетевых интерфейсах" "Ограничьте доступ к портам только необходимыми интерфейсами"
     fi
 
-    # Проверка SSL/TLS конфигурации
+    # Check SSL/TLS configuration
     if ! grep -q "ssl\|tls\|https" conf/nginx/ 2>/dev/null; then
         error "SSL/TLS не настроен"
         add_issue "SECURITY" "HIGH" "Отсутствует SSL/TLS" "Веб-трафик не зашифрован" "Настройте SSL/TLS сертификаты"
@@ -161,35 +161,35 @@ audit_security() {
     success "Аудит безопасности завершен"
 }
 
-# Аудит производительности
+# Performance audit
 audit_performance() {
     section "АУДИТ ПРОИЗВОДИТЕЛЬНОСТИ"
 
-    # Проверка ресурсов системы
+    # Check system resources
     log "Анализ системных ресурсов..."
 
-    # Проверка использования CPU
+    # Check CPU usage
     CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1 | cut -d'.' -f1)
     if [ "$CPU_USAGE" -gt 80 ] 2>/dev/null; then
         warning "Высокое использование CPU: ${CPU_USAGE}%"
         add_issue "PERFORMANCE" "MEDIUM" "Высокая нагрузка CPU" "CPU загружен на ${CPU_USAGE}%" "Оптимизируйте процессы или увеличьте ресурсы"
     fi
 
-    # Проверка использования памяти
+    # Check memory usage
     MEMORY_USAGE=$(free | grep Mem | awk '{printf "%.0f", $3/$2 * 100.0}')
     if [ "$MEMORY_USAGE" -gt 85 ] 2>/dev/null; then
         warning "Высокое использование памяти: ${MEMORY_USAGE}%"
         add_issue "PERFORMANCE" "MEDIUM" "Высокое использование памяти" "ОЗУ загружено на ${MEMORY_USAGE}%" "Оптимизируйте использование памяти или увеличьте ОЗУ"
     fi
 
-    # Проверка дискового пространства
+    # Check disk space
     DISK_USAGE=$(df -h . | awk 'NR==2 {print $5}' | cut -d'%' -f1)
     if [ "$DISK_USAGE" -gt 85 ]; then
         error "Критически мало дискового пространства: ${DISK_USAGE}%"
         add_issue "PERFORMANCE" "HIGH" "Недостаток дискового пространства" "Диск заполнен на ${DISK_USAGE}%" "Очистите диск или увеличьте объем хранилища"
     fi
 
-    # Проверка конфигурации Docker ресурсов
+    # Check Docker resource configuration
     log "Проверка ресурсных ограничений контейнеров..."
 
     if ! grep -q "mem_limit\|cpus\|memory" compose.yml 2>/dev/null; then
@@ -197,11 +197,11 @@ audit_performance() {
         add_issue "PERFORMANCE" "MEDIUM" "Отсутствуют ограничения ресурсов" "Контейнеры могут потреблять неограниченные ресурсы" "Настройте mem_limit и cpus для всех сервисов"
     fi
 
-    # Проверка конфигурации базы данных
+    # Check database configuration
     log "Проверка конфигурации PostgreSQL..."
 
     if [ -f "conf/postgres/postgresql.conf" ]; then
-        # Проверка shared_buffers
+        # Check shared_buffers
         if ! grep -q "shared_buffers" conf/postgres/postgresql.conf 2>/dev/null; then
             warning "shared_buffers не настроен"
             add_issue "PERFORMANCE" "MEDIUM" "PostgreSQL не оптимизирован" "shared_buffers не настроен" "Настройте shared_buffers = 25% от ОЗУ"
@@ -211,11 +211,11 @@ audit_performance() {
     success "Аудит производительности завершен"
 }
 
-# Аудит надежности
+# Reliability audit
 audit_reliability() {
     section "АУДИТ НАДЕЖНОСТИ"
 
-    # Проверка health checks
+    # Check health checks
     log "Проверка health checks..."
 
     SERVICES_WITHOUT_HEALTHCHECK=()
@@ -230,7 +230,7 @@ audit_reliability() {
         add_issue "RELIABILITY" "MEDIUM" "Отсутствуют health checks" "Сервисы ${SERVICES_WITHOUT_HEALTHCHECK[*]} не имеют проверок здоровья" "Добавьте healthcheck для всех критических сервисов"
     fi
 
-    # Проверка restart policies
+    # Check restart policies
     log "Проверка политик перезапуска..."
 
     if grep -c "restart:" compose.yml | grep -q "0"; then
@@ -238,7 +238,7 @@ audit_reliability() {
         add_issue "RELIABILITY" "MEDIUM" "Отсутствуют restart policies" "Некоторые сервисы не перезапустятся автоматически" "Добавьте restart: unless-stopped для всех сервисов"
     fi
 
-    # Проверка резервного копирования
+    # Check backup system
     log "Проверка системы резервного копирования..."
 
     if [ ! -d ".config-backup" ] || [ ! "$(ls -A .config-backup 2>/dev/null)" ]; then
@@ -246,7 +246,7 @@ audit_reliability() {
         add_issue "RELIABILITY" "HIGH" "Отсутствует резервное копирование" "Backrest не настроен или не содержит данных" "Настройте и протестируйте систему резервного копирования"
     fi
 
-    # Проверка логирования
+    # Check logging system
     log "Проверка системы логирования..."
 
     if ! grep -q "logging:" compose.yml 2>/dev/null; then
@@ -257,11 +257,11 @@ audit_reliability() {
     success "Аудит надежности завершен"
 }
 
-# Аудит конфигурации
+# Configuration audit
 audit_configuration() {
     section "АУДИТ КОНФИГУРАЦИИ"
 
-    # Проверка Docker Compose версии
+    # Check Docker Compose version
     log "Проверка версии Docker Compose файла..."
 
     COMPOSE_VERSION=$(grep "version:" compose.yml | head -1 | awk '{print $2}' | tr -d '"' | tr -d "'")
@@ -273,10 +273,10 @@ audit_configuration() {
         add_issue "CONFIG" "MEDIUM" "Устаревшая версия Compose" "Используется версия $COMPOSE_VERSION" "Обновите до версии 3.8 или выше"
     fi
 
-    # Проверка переменных окружения
+    # Check environment variables
     log "Проверка переменных окружения..."
 
-    # Проверка наличия example файлов
+    # Check for example files
     for env_file in env/*.env; do
         if [ -f "$env_file" ]; then
             example_file="${env_file}.example"
@@ -287,16 +287,16 @@ audit_configuration() {
         fi
     done
 
-    # Проверка volumes
+    # Check volumes
     log "Проверка конфигурации volumes..."
 
-    # Проверка на использование bind mounts в production
+    # Check for bind mounts in production
     if grep -E "^\s*-\s*\./.*:" compose.yml | grep -v ":ro" 2>/dev/null; then
         warning "Используются bind mounts без read-only"
         add_issue "CONFIG" "MEDIUM" "Небезопасные bind mounts" "Bind mounts без :ro могут быть изменены контейнерами" "Добавьте :ro для read-only bind mounts где возможно"
     fi
 
-    # Проверка networks
+    # Check networks
     log "Проверка сетевой конфигурации..."
 
     if ! grep -q "networks:" compose.yml 2>/dev/null; then
@@ -307,20 +307,20 @@ audit_configuration() {
     success "Аудит конфигурации завершен"
 }
 
-# Основная функция аудита
+# Main audit function
 main() {
     log "Запуск комплексного предпродакшн аудита ERNI-KI..."
     echo "Дата аудита: $AUDIT_DATE"
     echo "Отчет будет сохранен в: $AUDIT_REPORT_FILE"
     echo ""
 
-    # Проверка предварительных условий
+    # Check prerequisites
     if ! check_prerequisites; then
         error "Не удалось выполнить предварительные проверки"
         exit 1
     fi
 
-    # Выполнение аудитов
+    # Execute audits
     audit_security
     echo ""
     audit_performance
@@ -344,7 +344,7 @@ main() {
     echo "  🟢 Низкие: $LOW_COUNT"
 }
 
-# Генерация отчета
+# Generate report
 generate_report() {
     log "Создание детального отчета..."
 
@@ -371,7 +371,7 @@ generate_report() {
 
 EOF
 
-    # Определение общей готовности
+    # Determine overall readiness
     if [ $CRITICAL_COUNT -eq 0 ] && [ $HIGH_COUNT -eq 0 ]; then
         echo "✅ **ГОТОВ К ПРОДАКШНУ** - Критические и высокие проблемы отсутствуют" >> "$AUDIT_REPORT_FILE"
     elif [ $CRITICAL_COUNT -eq 0 ] && [ $HIGH_COUNT -le 2 ]; then
@@ -380,7 +380,7 @@ EOF
         echo "❌ **НЕ ГОТОВ К ПРОДАКШНУ** - Требуется устранение критических проблем" >> "$AUDIT_REPORT_FILE"
     fi
 
-    # Добавление детальных разделов
+    # Add detailed sections
     add_security_section
     add_performance_section
     add_reliability_section
@@ -391,7 +391,7 @@ EOF
     success "Отчет создан: $AUDIT_REPORT_FILE"
 }
 
-# Добавление разделов отчета
+# Add report sections
 add_security_section() {
     cat >> "$AUDIT_REPORT_FILE" << EOF
 
@@ -581,5 +581,5 @@ add_action_plan_section() {
 EOF
 }
 
-# Запуск аудита
+# Run audit
 main "$@"

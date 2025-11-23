@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
 ERNI-KI Webhook Receiver
-Простой webhook receiver для обработки алертов от Alertmanager
+Simple webhook receiver for Alertmanager alerts
 """
 
 import json
 import logging
 import os
+from pathlib import Path
 from datetime import datetime
 from flask import Flask, request, jsonify
-from pathlib import Path
+from subprocess import CalledProcessError, run
 
-# Настройка логирования
+# Logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -20,13 +21,14 @@ logger = logging.getLogger('webhook-receiver')
 
 app = Flask(__name__)
 
-# Конфигурация
+# Configuration
 WEBHOOK_PORT = int(os.getenv('WEBHOOK_PORT', 9093))
 LOG_DIR = Path('/app/logs')
 LOG_DIR.mkdir(exist_ok=True)
+RECOVERY_DIR = Path(os.getenv('RECOVERY_DIR', '/app/scripts/recovery'))
 
 def save_alert_to_file(alert_data, alert_type='general'):
-    """Сохранить алерт в файл для дальнейшей обработки"""
+    """Save alert to file for further processing"""
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     filename = LOG_DIR / f'alert_{alert_type}_{timestamp}.json'
 
@@ -38,7 +40,7 @@ def save_alert_to_file(alert_data, alert_type='general'):
         logger.error(f"Failed to save alert to file: {e}")
 
 def process_alert(alert_data, alert_type='general'):
-    """Обработать алерт и выполнить необходимые действия"""
+    """Process alert and execute necessary actions"""
     try:
         alerts = alert_data.get('alerts', [])
 
@@ -47,7 +49,7 @@ def process_alert(alert_data, alert_type='general'):
             annotations = alert.get('annotations', {})
             status = alert.get('status', 'unknown')
 
-            # Логирование алерта
+            # Alert logging
             logger.info(f"Processing {alert_type} alert:")
             logger.info(f"  Status: {status}")
             logger.info(f"  Alert: {labels.get('alertname', 'Unknown')}")
@@ -55,11 +57,11 @@ def process_alert(alert_data, alert_type='general'):
             logger.info(f"  Severity: {labels.get('severity', 'Unknown')}")
             logger.info(f"  Summary: {annotations.get('summary', 'No summary')}")
 
-            # Специальная обработка для критических алертов
+            # Special handling for critical alerts
             if alert_type == 'critical' or labels.get('severity') == 'critical':
                 handle_critical_alert(alert)
 
-            # Специальная обработка для GPU алертов
+            # Special handling for GPU alerts
             if alert_type == 'gpu' or labels.get('service') == 'gpu':
                 handle_gpu_alert(alert)
 
@@ -67,33 +69,57 @@ def process_alert(alert_data, alert_type='general'):
         logger.error(f"Error processing alert: {e}")
 
 def handle_critical_alert(alert):
-    """Обработка критических алертов"""
+    """Critical alert handling"""
     labels = alert.get('labels', {})
     service = labels.get('service', 'unknown')
 
     logger.critical(f"🚨 CRITICAL ALERT for service: {service}")
 
-    # Здесь можно добавить автоматические действия:
-    # - Отправка SMS/email
-    # - Запуск скриптов восстановления
-    # - Уведомления в Slack/Teams
+    # Automatic actions can be added here:
+    # - Send SMS/email
+    # - Notifications to Slack/Teams
+    # - Recovery scripts per service
 
-    # Пример: запуск скрипта восстановления для определенных сервисов
     if service in ['ollama', 'openwebui', 'searxng']:
-        logger.info(f"Triggering recovery script for {service}")
-        # os.system(f"/app/scripts/recover_{service}.sh")
+        run_recovery_script(service)
+    else:
+        logger.info(f"Service {service} has no recovery script configured; manual intervention may be required")
 
 def handle_gpu_alert(alert):
-    """Обработка GPU алертов"""
+    """GPU alert handling"""
     labels = alert.get('labels', {})
     gpu_id = labels.get('gpu_id', 'unknown')
     component = labels.get('component', 'unknown')
 
     logger.warning(f"🎮 GPU Alert - GPU {gpu_id}, Component: {component}")
 
-    # Специальная обработка для GPU температуры
+    # Special handling for GPU temperature
     if component == 'nvidia' and 'temperature' in labels.get('alertname', '').lower():
         logger.warning("GPU temperature alert - consider reducing workload")
+
+
+def run_recovery_script(service: str) -> None:
+    """Execute recovery script for a critical service if available."""
+    script_path = RECOVERY_DIR / f"{service}-recovery.sh"
+
+    if not script_path.exists():
+        logger.warning(f"No recovery script found for {service} at {script_path}")
+        return
+
+    if not os.access(script_path, os.X_OK):
+        logger.warning(f"Recovery script for {service} is not executable: {script_path}")
+        return
+
+    try:
+        logger.info(f"Running recovery script for {service}: {script_path}")
+        result = run([str(script_path)], check=True, capture_output=True, text=True)
+        logger.info("Recovery script output:\n%s", result.stdout)
+        if result.stderr:
+            logger.warning("Recovery script stderr:\n%s", result.stderr)
+    except CalledProcessError as exc:
+        logger.error("Recovery script failed for %s (exit %s): %s", service, exc.returncode, exc.stderr)
+    except Exception as exc:
+        logger.error("Unexpected error executing recovery script for %s: %s", service, exc)
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -106,7 +132,7 @@ def health_check():
 
 @app.route('/webhook', methods=['POST'])
 def webhook_general():
-    """Общий webhook endpoint"""
+    """General webhook endpoint"""
     try:
         alert_data = request.get_json()
         if not alert_data:
@@ -123,7 +149,7 @@ def webhook_general():
 
 @app.route('/webhook/critical', methods=['POST'])
 def webhook_critical():
-    """Критические алерты"""
+    """Critical alerts"""
     try:
         alert_data = request.get_json()
         if not alert_data:
@@ -140,7 +166,7 @@ def webhook_critical():
 
 @app.route('/webhook/warning', methods=['POST'])
 def webhook_warning():
-    """Предупреждения"""
+    """Warnings"""
     try:
         alert_data = request.get_json()
         if not alert_data:
@@ -157,7 +183,7 @@ def webhook_warning():
 
 @app.route('/webhook/gpu', methods=['POST'])
 def webhook_gpu():
-    """GPU алерты"""
+    """GPU alerts"""
     try:
         alert_data = request.get_json()
         if not alert_data:
@@ -174,7 +200,7 @@ def webhook_gpu():
 
 @app.route('/webhook/ai', methods=['POST'])
 def webhook_ai():
-    """AI сервисы алерты"""
+    """AI services alerts"""
     try:
         alert_data = request.get_json()
         if not alert_data:
@@ -191,7 +217,7 @@ def webhook_ai():
 
 @app.route('/webhook/database', methods=['POST'])
 def webhook_database():
-    """База данных алерты"""
+    """Database alerts"""
     try:
         alert_data = request.get_json()
         if not alert_data:
@@ -208,7 +234,7 @@ def webhook_database():
 
 @app.route('/alerts', methods=['GET'])
 def list_alerts():
-    """Список последних алертов"""
+    """List of recent alerts"""
     try:
         alert_files = sorted(LOG_DIR.glob('alert_*.json'), reverse=True)[:20]
         alerts = []

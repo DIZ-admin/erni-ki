@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Скрипт проверки доступности всех веб-интерфейсов ERNI-KI
-# Автор: Альтэон Шульц (ERNI-KI Tech Lead)
+# Web interface availability check for ERNI-KI
+# Author: Alteon Schultz (ERNI-KI Tech Lead)
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -13,12 +13,12 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# Параметры
+# Parameters
 VERBOSE=false
 MAIN_ONLY=false
 TIMEOUT=10
 
-# Функции логирования
+# Logging helpers
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -39,7 +39,7 @@ header() {
     echo -e "${PURPLE}=== $1 ===${NC}"
 }
 
-# Функция проверки URL
+# URL checker
 check_url() {
     local name="$1"
     local url="$2"
@@ -62,9 +62,9 @@ check_url() {
     fi
 }
 
-# Проверка основных AI-сервисов
+# Check core AI services
 check_ai_services() {
-    header "AI СЕРВИСЫ"
+    header "AI SERVICES"
     printf "%-25s %-30s %s\n" "SERVICE" "URL" "STATUS"
     echo "------------------------------------------------------------------------"
 
@@ -76,17 +76,17 @@ check_ai_services() {
 
     echo ""
     if [ $failed -eq 0 ]; then
-        success "Все AI-сервисы доступны"
+        success "All AI services are reachable"
     else
-        warning "$failed AI-сервисов недоступны"
+        warning "$failed AI services are unreachable"
     fi
 
     return $failed
 }
 
-# Проверка мониторинга
+# Check monitoring and analytics
 check_monitoring() {
-    header "МОНИТОРИНГ И АНАЛИТИКА"
+    header "MONITORING & ANALYTICS"
     printf "%-25s %-30s %s\n" "SERVICE" "URL" "STATUS"
     echo "------------------------------------------------------------------------"
 
@@ -99,17 +99,17 @@ check_monitoring() {
 
     echo ""
     if [ $failed -eq 0 ]; then
-        success "Все сервисы мониторинга доступны"
+        success "All monitoring services are reachable"
     else
-        warning "$failed сервисов мониторинга недоступны"
+        warning "$failed monitoring services are unreachable"
     fi
 
     return $failed
 }
 
-# Проверка администрирования
+# Check admin services
 check_admin() {
-    header "АДМИНИСТРИРОВАНИЕ"
+    header "ADMINISTRATION"
     printf "%-25s %-30s %s\n" "SERVICE" "URL" "STATUS"
     echo "------------------------------------------------------------------------"
 
@@ -122,17 +122,17 @@ check_admin() {
 
     echo ""
     if [ $failed -eq 0 ]; then
-        success "Все административные сервисы доступны"
+        success "All admin services are reachable"
     else
-        warning "$failed административных сервисов недоступны"
+        warning "$failed admin services are unreachable"
     fi
 
     return $failed
 }
 
-# Проверка exporters
+# Check exporters
 check_exporters() {
-    header "EXPORTERS И МЕТРИКИ"
+    header "EXPORTERS & METRICS"
     printf "%-25s %-30s %s\n" "SERVICE" "URL" "STATUS"
     echo "------------------------------------------------------------------------"
 
@@ -147,18 +147,18 @@ check_exporters() {
 
     echo ""
     if [ $failed -eq 0 ]; then
-        success "Все exporters доступны"
+        success "All exporters are reachable"
     else
-        warning "$failed exporters недоступны"
+        warning "$failed exporters are unreachable"
     fi
 
     return $failed
 }
 
-# Проверка учетных данных
+# Credentials reference
 check_credentials() {
-    header "УЧЕТНЫЕ ДАННЫЕ"
-    echo "Основные учетные данные для доступа:"
+    header "CREDENTIALS"
+    echo "Default credentials for local access:"
     echo ""
     echo "OpenWebUI:"
     echo "  Email: diz-admin@proton.me"
@@ -172,55 +172,55 @@ check_credentials() {
     echo ""
     echo "Backrest:"
     echo "  Login: admin"
-    echo "  Password: (не установлен - настроить!)"
+    echo "  Password: (not set - configure!)"
     echo "  URL: http://localhost:9898"
     echo ""
-    warning "ВАЖНО: Смените пароли по умолчанию в production!"
+    warning "IMPORTANT: Change all default passwords in production!"
 }
 
-# Сводка результатов
+# Summary
 show_summary() {
     local total_failed=$1
 
-    header "СВОДКА РЕЗУЛЬТАТОВ"
+    header "RESULT SUMMARY"
 
     if [ $total_failed -eq 0 ]; then
-        success "🎉 ВСЕ ВЕБ-ИНТЕРФЕЙСЫ ДОСТУПНЫ!"
+        success "🎉 ALL WEB INTERFACES ARE AVAILABLE!"
         echo ""
-        echo "✅ AI-сервисы: Работают"
-        echo "✅ Мониторинг: Работает"
-        echo "✅ Администрирование: Работает"
-        echo "✅ Exporters: Работают"
+        echo "✅ AI services: Healthy"
+        echo "✅ Monitoring: Healthy"
+        echo "✅ Administration: Healthy"
+        echo "✅ Exporters: Healthy"
         echo ""
-        echo "Система ERNI-KI полностью готова к работе!"
+        echo "ERNI-KI is ready for use."
     else
-        error "⚠️ ОБНАРУЖЕНЫ ПРОБЛЕМЫ: $total_failed сервисов недоступны"
+        error "⚠️ ISSUES DETECTED: $total_failed services unreachable"
         echo ""
-        echo "Рекомендации:"
-        echo "1. Проверьте логи проблемных сервисов"
-        echo "2. Убедитесь что все контейнеры запущены"
-        echo "3. Проверьте сетевые настройки"
-        echo "4. Перезапустите проблемные сервисы"
+        echo "Recommendations:"
+        echo "1. Check logs of problematic services"
+        echo "2. Ensure all containers are running"
+        echo "3. Verify network settings"
+        echo "4. Restart problematic services"
     fi
 }
 
-# Показать помощь
+# Help
 show_help() {
-    echo "Использование: $0 [OPTIONS]"
+    echo "Usage: $0 [OPTIONS]"
     echo ""
-    echo "Опции:"
-    echo "  --main-only    Проверить только основные сервисы"
-    echo "  --verbose      Подробный вывод"
-    echo "  --timeout N    Таймаут подключения (по умолчанию: 10 сек)"
-    echo "  --help         Показать эту справку"
+    echo "Options:"
+    echo "  --main-only    Check only core services"
+    echo "  --verbose      Verbose output"
+    echo "  --timeout N    Connection timeout (default: 10s)"
+    echo "  --help         Show this help"
     echo ""
-    echo "Примеры:"
-    echo "  $0                    # Полная проверка"
-    echo "  $0 --main-only       # Только основные сервисы"
-    echo "  $0 --verbose         # С подробным выводом"
+    echo "Examples:"
+    echo "  $0                    # Full check"
+    echo "  $0 --main-only       # Core services only"
+    echo "  $0 --verbose         # Verbose mode"
 }
 
-# Обработка аргументов
+# Arguments handling
 while [[ $# -gt 0 ]]; do
     case $1 in
         --main-only)
@@ -240,57 +240,57 @@ while [[ $# -gt 0 ]]; do
             exit 0
             ;;
         *)
-            echo "Неизвестная опция: $1"
+            echo "Unknown option: $1"
             show_help
             exit 1
             ;;
     esac
 done
 
-# Основная функция
+# Main
 main() {
     echo "=================================================="
-    echo "🔍 ПРОВЕРКА ВЕБ-ИНТЕРФЕЙСОВ ERNI-KI"
+    echo "🔍 ERNI-KI WEB INTERFACE CHECK"
     echo "=================================================="
-    echo "Дата: $(date '+%Y-%m-%d %H:%M:%S')"
-    echo "Хост: $(hostname)"
-    echo "Таймаут: ${TIMEOUT}s"
+    echo "Date: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "Host: $(hostname)"
+    echo "Timeout: ${TIMEOUT}s"
     echo ""
 
     local total_failed=0
 
-    # Проверка AI-сервисов
+    # AI services
     check_ai_services || total_failed=$((total_failed + $?))
     echo ""
 
-    # Проверка мониторинга
+    # Monitoring
     check_monitoring || total_failed=$((total_failed + $?))
     echo ""
 
-    # Проверка администрирования
+    # Administration
     check_admin || total_failed=$((total_failed + $?))
     echo ""
 
-    # Проверка exporters (если не только основные)
+    # Exporters (when not limited to core)
     if [ "$MAIN_ONLY" = false ]; then
         check_exporters || total_failed=$((total_failed + $?))
         echo ""
     fi
 
-    # Показать учетные данные (если verbose)
+    # Show credentials (when verbose)
     if [ "$VERBOSE" = true ]; then
         check_credentials
         echo ""
     fi
 
-    # Сводка
+    # Summary
     show_summary $total_failed
     echo ""
     echo "=================================================="
 
-    # Возврат кода ошибки если есть проблемы
+    # Exit with error count
     exit $total_failed
 }
 
-# Запуск
+# Entry
 main "$@"

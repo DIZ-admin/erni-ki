@@ -1,52 +1,52 @@
-# Node Exporter Configuration для ERNI-KI
-# Экспортер системных метрик для Prometheus
+# Node Exporter Configuration for ERNI-KI
+# System metrics exporter for Prometheus
 
-# === Основные настройки ===
-# Адрес для привязки веб-сервера
+# === Basics ===
+# Web listen address
 NODE_EXPORTER_WEB_LISTEN_ADDRESS=0.0.0.0:9100
-# Путь к метрикам
+# Metrics path
 NODE_EXPORTER_WEB_TELEMETRY_PATH=/metrics
 
-# === Коллекторы (включенные) ===
-# Системная информация
+# === Collectors (enabled) ===
+# System info
 NODE_EXPORTER_COLLECTOR_UNAME=true
-# Информация о CPU
+# CPU info
 NODE_EXPORTER_COLLECTOR_CPU=true
-# Информация о памяти
+# Memory info
 NODE_EXPORTER_COLLECTOR_MEMINFO=true
-# Информация о дисках
+# Disk stats
 NODE_EXPORTER_COLLECTOR_DISKSTATS=true
-# Информация о файловых системах
+# Filesystem info
 NODE_EXPORTER_COLLECTOR_FILESYSTEM=true
-# Сетевая статистика
+# Network stats
 NODE_EXPORTER_COLLECTOR_NETSTAT=true
-# Информация о сетевых интерфейсах
+# Network interfaces
 NODE_EXPORTER_COLLECTOR_NETDEV=true
-# Средняя нагрузка системы
+# Load average
 NODE_EXPORTER_COLLECTOR_LOADAVG=true
-# Время работы системы
+# Uptime
 NODE_EXPORTER_COLLECTOR_UPTIME=true
 
-# === Коллекторы (отключенные для безопасности) ===
-# Отключить коллектор процессов (может быть ресурсоемким)
+# === Collectors (disabled) ===
+# Disable processes collector (heavy)
 NODE_EXPORTER_COLLECTOR_PROCESSES=false
-# Отключить коллектор systemd (не нужен в Docker)
+# Disable systemd collector (not needed in Docker)
 NODE_EXPORTER_COLLECTOR_SYSTEMD=false
 
-# === Фильтры файловых систем ===
-# Игнорировать временные файловые системы
+# === Filesystem filters ===
+# Ignore temporary filesystems
 NODE_EXPORTER_COLLECTOR_FILESYSTEM_IGNORED_FS_TYPES=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
-# Игнорировать системные точки монтирования
+# Ignore system mount points
 NODE_EXPORTER_COLLECTOR_FILESYSTEM_IGNORED_MOUNT_POINTS=^/(dev|proc|run|sys|var/lib/docker/.+)($|/)
 
-# === Логирование ===
-# Уровень логирования
+# === Logging ===
+# Log level
 NODE_EXPORTER_LOG_LEVEL=info
-# Формат логов
+# Log format
 NODE_EXPORTER_LOG_FORMAT=logfmt
 
-# === Производительность ===
-# Максимальное количество одновременных запросов
+# === Performance ===
+# Max concurrent requests
 NODE_EXPORTER_WEB_MAX_REQUESTS=40
-# Таймаут для коллекторов
+# Collector timeout
 NODE_EXPORTER_COLLECTOR_TIMEOUT=10s

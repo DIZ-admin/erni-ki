@@ -1,33 +1,33 @@
 # SearXNG Favicons Configuration
-# Конфигурация иконок для результатов поиска
+# Favicons configuration for search results
 
 [favicons]
 cfg_schema = 1
 
 [favicons.cache]
-# Путь к базе данных кэша иконок
+# Path to favicon cache database
 db_url = "/tmp/faviconcache.db"
 
-# Максимальный размер кэша (50 MB)
+# Max cache size (50 MB)
 LIMIT_TOTAL_BYTES = 52428800
 
-# Время хранения иконок (30 дней)
+# Favicon retention (30 days)
 HOLD_TIME = 2592000
 
-# Максимальный размер одной иконки (20 KB)
+# Max single favicon size (20 KB)
 BLOB_MAX_BYTES = 20480
 
-# Режим обслуживания кэша
+# Cache maintenance mode
 MAINTENANCE_MODE = "auto"
 
-# Период обслуживания (1 час)
+# Maintenance period (1 hour)
 MAINTENANCE_PERIOD = 3600
 
 [favicons.proxy]
-# Максимальное время кэширования в браузере (7 дней)
+# Max browser cache time (7 days)
 max_age = 604800
 
-# Автоматическая карта резолверов
+# Automatic resolver map
 [favicons.proxy.resolver_map]
 "duckduckgo" = "searx.favicons.resolvers.duckduckgo"
 "google" = "searx.favicons.resolvers.google"
