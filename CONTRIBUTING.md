@@ -45,6 +45,7 @@
 - Линтеры кода: `pip install -r requirements-dev.txt && npm run lint` (ESLint +
   Ruff).
 - Подробные правила описаны в `docs/reference/language-policy.md`.
+- Стандарты метаданных (frontmatter) — в `docs/reference/metadata-standards.md`.
 
 ### 🧪 Тестирование
 

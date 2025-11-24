@@ -2,6 +2,7 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
+last_updated: '2025-11-24'
 ---
 
 # Руководство по эксплуатации Redis в ERNI-KI
@@ -225,13 +226,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 
 ---
 
-## 📞 Поддержка
-
-### Контакты
-
-- **Tech Lead:** Альтэон Шульц
-- **Система:** ERNI-KI
-- **Документация:** `/docs/operations/database/redis-operations-guide.md`
+## 📞 Поддержка и ссылки
 
 ### Полезные ссылки
 

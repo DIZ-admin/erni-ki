@@ -1,8 +1,8 @@
 ---
 language: ru
-page_id: academy.news.2025-01-release-x
 translation_status: complete
 doc_version: '2025.11'
+last_updated: '2025-11-24'
 ---
 
 # Январь 2025 — Release X

@@ -3,14 +3,15 @@ language: ru
 translation_status: complete
 doc_version: '2025.11'
 title: 'admin-guide'
-version: '12.1'
-date: '2025-11-22'
-status: 'Production Ready'
+system_version: '12.1'
+last_updated: '2025-11-22'
+system_status: 'Production Ready'
 ---
 
 # 👨‍💼 Administration Guide - ERNI-KI
 
-> **Версия:** 8.1 **Дата обновления:** 24.10.2025 **Статус:** Production Ready
+> **Версия:** 8.1 **Дата обновления:** 24.10.2025 **Статус системы:** Production
+> Ready
 
 ## 1. Введение
 

@@ -3,9 +3,9 @@ language: ru
 translation_status: complete
 doc_version: '2025.11'
 title: 'create-jira-ticket'
-version: '12.1'
-date: '2025-11-22'
-status: 'Production Ready'
+system_version: '12.1'
+last_updated: '2025-11-22'
+system_status: 'Production Ready'
 ---
 
 # Как оформить задачу в Jira с помощью Open WebUI

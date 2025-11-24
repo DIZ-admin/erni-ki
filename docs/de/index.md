@@ -1,8 +1,8 @@
 ---
 language: de
-page_id: site.home
 translation_status: pending
 doc_version: '2025.11'
+last_updated: '2025-11-24'
 ---
 
 # ERNI Academy KI

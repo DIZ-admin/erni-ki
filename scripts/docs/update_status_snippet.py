@@ -79,21 +79,6 @@ def render_snippet(data: dict[str, str], locale: str = "ru") -> str:
     return "\n".join(lines) + "\n"
 
 
-def add_frontmatter(body: str, locale: str) -> str:
-    """Wrap snippet with minimal frontmatter for language check."""
-    fm = [
-        "---",
-        f"language: {locale}",
-        "translation_status: complete",
-        "doc_version: '2025.11'",
-        "---",
-        "",
-        body.strip(),
-        "",
-    ]
-    return "\n".join(fm)
-
-
 def write_snippet(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
@@ -157,8 +142,8 @@ def snippet_present(target: Path, marker_start: str, marker_end: str, content: s
 
 def run_update() -> None:
     data = parse_simple_yaml(STATUS_YAML)
-    snippet_ru = add_frontmatter(render_snippet(data, "ru"), "ru")
-    snippet_de = add_frontmatter(render_snippet(data, "de"), "de")
+    snippet_ru = render_snippet(data, "ru")
+    snippet_de = render_snippet(data, "de")
 
     write_snippet(SNIPPET_MD, snippet_ru)
 
@@ -190,8 +175,8 @@ def run_update() -> None:
 
 def run_check() -> None:
     data = parse_simple_yaml(STATUS_YAML)
-    snippet_ru = prettier_format(add_frontmatter(render_snippet(data, "ru"), "ru"), SNIPPET_MD)
-    snippet_de = prettier_format(add_frontmatter(render_snippet(data, "de"), "de"), SNIPPET_DE_MD)
+    snippet_ru = prettier_format(render_snippet(data, "ru"), SNIPPET_MD)
+    snippet_de = prettier_format(render_snippet(data, "de"), SNIPPET_DE_MD)
 
     errors = []
     if SNIPPET_MD.read_text(encoding="utf-8").strip() != snippet_ru:

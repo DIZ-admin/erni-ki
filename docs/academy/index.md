@@ -1,8 +1,8 @@
 ---
 language: ru
-page_id: academy.index
 translation_status: complete
 doc_version: '2025.11'
+last_updated: '2025-11-24'
 ---
 
 # Academy KI

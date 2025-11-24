@@ -244,7 +244,6 @@ jobs:
     name: 🔗 Check Documentation Links
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -281,6 +280,26 @@ jobs:
           echo "## 🔗 Link Check Results" >> $GITHUB_STEP_SUMMARY
           cat lychee/out.md >> $GITHUB_STEP_SUMMARY || echo "No broken links found! ✅" >> $GITHUB_STEP_SUMMARY
 
+  metadata-validation:
+    name: 📋 Validate Docs Metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Install dependencies
+        run: pip install pyyaml
+
+      - name: ✅ Validate metadata
+        run: python scripts/docs/validate_metadata.py
+
   # Docker Image Build
   docker-build:
     name: 🐳 Docker Build
@@ -306,11 +325,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🔡 Normalize repository to lowercase
+        id: repo-lc
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=${repo_lc}" >> "$GITHUB_OUTPUT"
+
       - name: 📋 Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth
+          images: ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -333,7 +358,8 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/${{ github.repository }}/auth:${{ steps.trivy-tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:codex
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -341,9 +367,7 @@ jobs:
             SKIP_TESTS=true
 
       - name: 🧾 Set image ref for Trivy
-        run: |
-          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
-          echo "TRIVY_IMAGE_REF=${REGISTRY}/${repo_lc}/auth:${{ steps.trivy-tag.outputs.tag }}" >> "${GITHUB_ENV}"
+        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}" >> "${GITHUB_ENV}"
 
       - name: 🔍 Run Trivy on Docker image
         uses: aquasecurity/trivy-action@0.28.0

@@ -1,7 +1,8 @@
 ---
 language: de
-translation_status: outdated
+translation_status: pending
 doc_version: '2025.11'
+last_updated: '2025-11-24'
 title: '👨‍💼 ERNI-KI Administrator-Handbuch'
 version: '12.1'
 date: '2025-11-22'
@@ -221,7 +222,7 @@ docker compose exec db pg_dump -U openwebui openwebui > backup_$(date +%Y%m%d).s
     {
       "id": "local-backup",
       "uri": "/data/repositories/erni-ki",
-      "password": "your-encryption-password"
+      "password": "<REPLACE_WITH_ENCRYPTION_KEY>"
     }
   ],
   "plans": [
@@ -272,7 +273,7 @@ curl -X POST http://localhost:8080/api/v1/auths/signup \
   -d '{
     "name": "Neuer Benutzer",
     "email": "user@example.com",
-    "password": "sicheres-passwort"
+    "password": "<SET_STRONG_PASSWORD>"
   }'
 
 # Benutzerliste anzeigen (erfordert Admin-Rechte)
