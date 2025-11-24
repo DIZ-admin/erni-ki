@@ -352,3 +352,22 @@ repos:
         language: system
         pass_filenames: false
         files: ^docs/.*\.md$
+
+      # Prevent accidental Finder/OS duplicates like "file 2.md"
+      - id: forbid-numbered-copies
+        name: "Docs: forbid numbered filename copies"
+        entry: bash
+        language: system
+        files: ^docs/.*$
+        args:
+          - -c
+          - |
+            status=0
+            for f in "$@"; do
+              base="${f##*/}"
+              if [[ "$base" =~ [[:space:]][0-9]+(\.|$) ]]; then
+                echo "Duplicate-style filename detected: $f"
+                status=1
+              fi
+            done
+            exit $status
