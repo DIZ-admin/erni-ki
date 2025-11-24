@@ -1,16 +1,9 @@
----
-language: ru
-translation_status: complete
-doc_version: '2025.11'
-last_updated: '2025-11-24'
----
-
 # Справочник сервисов ERNI-KI
 
 Документ агрегирует сведения из `compose.yml` и `env/*.env` о каждом сервисе,
 чтобы инженеры могли быстро понять назначение контейнеров, точки входа,
 зависимости и требования к безопасности. Для обновлений образов используйте
-[checklist](../operations/maintenance/image-upgrade-checklist.md).
+[checklist](../operations/image-upgrade-checklist.md).
 
 ## Базовая инфраструктура и хранение
 
@@ -23,19 +16,19 @@ last_updated: '2025-11-24'
 
 ## Сервисы доступа и периферия
 
-| Сервис        | Назначение                                       | Порты                                            | Зависимости и конфигурация                                                                                                                                                                                                                                                             | Обновления и замечания                                                                                                                                                                    |
-| ------------- | ------------------------------------------------ | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `nginx`       | Реверс‑прокси, TLS терминация.                   | `80`, `443`, `8080`.                             | Конфиги из `./conf/nginx`, SSL в `./conf/nginx/ssl`.                                                                                                                                                                                                                                   | Watchtower выключен (критический прокси); healthcheck `/etc/nginx/healthcheck.sh`.                                                                                                        |
-| `cloudflared` | Публикация Nginx наружу через Cloudflare Tunnel. | Нет внешних портов.                              | `env/cloudflared.env`, конфиг `./conf/cloudflare/config`.                                                                                                                                                                                                                              | Watchtower включён; требует валидного токена Cloudflare.                                                                                                                                  |
-| `auth`        | Сервис JWT-аутентификации для внутренних API.    | `9092:9090`.                                     | `env/auth.env`, image собирается из `./auth`.                                                                                                                                                                                                                                          | Автообновление разрешено (`auth-services`).                                                                                                                                               |
-| `mcposerver`  | MCP сервер OpenWebUI (git-91e8f94).              | `8000:8000`.                                     | `env/mcposerver.env`, конфиг `./conf/mcposerver`, данные `./data`.                                                                                                                                                                                                                     | Автообновление включено; зависит от `db`.                                                                                                                                                 |
-| `searxng`     | Метапоиск, источник веб‑результатов.             | Нет публичного порта (internal).                 | `env/searxng.env`, конфиги `./conf/searxng/*.yml`.                                                                                                                                                                                                                                     | Watchtower включён; образ закреплён на digest `searxng/searxng@sha256:aaa855e8...` (linux/amd64).                                                                                         |
-| `edgetts`     | Синтез речи (Edge TTS).                          | `5050:5050`.                                     | `env/edgetts.env`. Healthcheck через Python socket.                                                                                                                                                                                                                                    | Watchtower включён; используется digest `travisvn/openai-edge-tts@sha256:4e7e2773...` (schema2 совместим).                                                                                |
-| `tika`        | Экстракция контента/метаданных из файлов.        | `9998:9998`.                                     | `env/tika.env`.                                                                                                                                                                                                                                                                        | Watchtower включён; образ закреплён на `apache/tika@sha256:3fafa194...` (linux/amd64).                                                                                                    |
-| `litellm`     | Прокси LiteLLM с thinking tokens.                | `127.0.0.1:4000:4000` (host-only, bridge).       | `env/litellm.env`, `./conf/litellm/config.yaml`, данные `./data/litellm`, entrypoint `scripts/entrypoints/litellm.sh`, secrets `litellm_db_password`, `litellm_master_key`, `litellm_salt_key`, `litellm_ui_password`, `litellm_api_key`, `openai_api_key`. Зависит от `db`, `ollama`. | Watchtower monitor-only (`ai-services`, автообновления отключены); лимиты `mem_limit=12G`, `mem_reservation=6G`, `cpus=1.0`, `oom_score_adj=-300` защищают от OOM.                        |
-| `ollama`      | GPU LLM сервер, хранит модели в `./data/ollama`. | `11434:11434` (публичный хост-порт).             | `env/ollama.env`, GPU определяется через `.env` (`OLLAMA_GPU_VISIBLE_DEVICES`, `OLLAMA_GPU_DEVICE_IDS`).                                                                                                                                                                               | Watchtower выключен; `mem_limit=16G`, `mem_reservation=8G`, `cpus=12`, `oom_score_adj=-900`; GPU закрепляется через `.env`.                                                               |
-| `openwebui`   | Основной UI (Next.js) с GPU поддержкой.          | Через Nginx (`8080` внутри, стандартный bridge). | `env/openwebui.env`, shared данные `./data/openwebui`, `./data/docling/shared`, entrypoint `scripts/entrypoints/openwebui.sh`, secrets `postgres_password`, `litellm_api_key`, `openwebui_secret_key`, GPU через `.env` (`OPENWEBUI_GPU_*`).                                           | Watchtower monitor-only (`web-interface`, автообновления отключены); лимиты `mem_limit=8G`, `mem_reservation=4G`, `cpus=4`, `oom_score_adj=-600`, общий volume синхронизирован с Docling. |
-| `docling`     | OCR/Doc ingestion pipeline (Docling Serve).      | Внутренняя сеть (`5001`).                        | `env/docling.env`, образы `./data/docling/*`, артефакты `./data/docling/docling-models` (монтируются как `/docling-artifacts` и как кэш Docling), shared volume `./data/docling/shared`, GPU через `.env` (`DOCLING_GPU_*`).                                                           | Автообновление включено (`document-processing`); лимиты `mem_limit=12G`, `mem_reservation=8G`, `cpus=8`, `oom_score_adj=-500`, shared volume синхронизирован с OpenWebUI.                 |
+| Сервис        | Назначение                                                                                                                                      | Порты                            | Зависимости и конфигурация                                                                                                                                                                                                                                                             | Обновления и замечания                                                                                                                                                    |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nginx`       | Реверс‑прокси, TLS терминация.                                                                                                                  | `80`, `443`, `8080`.             | Конфиги из `./conf/nginx`, SSL в `./conf/nginx/ssl`.                                                                                                                                                                                                                                   | Watchtower выключен (критический прокси); healthcheck `/etc/nginx/healthcheck.sh`.                                                                                        |
+| `cloudflared` | Публикация Nginx наружу через Cloudflare Tunnel.                                                                                                | Нет внешних портов.              | `env/cloudflared.env`, конфиг `./conf/cloudflare/config`.                                                                                                                                                                                                                              | Watchtower включён; требует валидного токена Cloudflare.                                                                                                                  |
+| `auth`        | Сервис JWT-аутентификации для внутренних API.                                                                                                   | `9092:9090`.                     | `env/auth.env`, image собирается из `./auth`.                                                                                                                                                                                                                                          | Автообновление разрешено (`auth-services`).                                                                                                                               |
+| `mcposerver`  | MCP сервер OpenWebUI (git-91e8f94). 7 инструментов: Time, Context7 Docs, PostgreSQL, Filesystem, Memory, SearXNG Web Search, Desktop Commander. | `127.0.0.1:8000->8000`.          | `env/mcposerver.env`, конфиг `./conf/mcposerver`, данные `./data`, Desktop Commander HOME `./data/desktop-commander`, рабочая FS для MCP `/app/data/mcpo-desktop`.                                                                                                                     | Автообновление включено; зависит от `db`. Binding только на localhost; Desktop Commander ограничен каталогами (`allowedDirectories`) и отключённой телеметрией.           |
+| `searxng`     | Метапоиск, источник веб‑результатов.                                                                                                            | Нет публичного порта (internal). | `env/searxng.env`, конфиги `./conf/searxng/*.yml`.                                                                                                                                                                                                                                     | Watchtower включён; образ закреплён на digest `searxng/searxng@sha256:aaa855e8...` (linux/amd64).                                                                         |
+| `edgetts`     | Синтез речи (Edge TTS).                                                                                                                         | `5050:5050`.                     | `env/edgetts.env`. Healthcheck через Python socket.                                                                                                                                                                                                                                    | Watchtower включён; используется digest `travisvn/openai-edge-tts@sha256:4e7e2773...` (schema2 совместим).                                                                |
+| `tika`        | Экстракция контента/метаданных из файлов.                                                                                                       | `9998:9998`.                     | `env/tika.env`.                                                                                                                                                                                                                                                                        | Watchtower включён; образ закреплён на `apache/tika@sha256:3fafa194...` (linux/amd64).                                                                                    |
+| `litellm`     | Прокси LiteLLM с thinking tokens.                                                                                                               | `4000:4000`.                     | `env/litellm.env`, `./conf/litellm/config.yaml`, данные `./data/litellm`, entrypoint `scripts/entrypoints/litellm.sh`, secrets `litellm_db_password`, `litellm_master_key`, `litellm_salt_key`, `litellm_ui_password`, `litellm_api_key`, `openai_api_key`. Зависит от `db`, `ollama`. | Auto-update включён (`ai-services`); лимиты `mem_limit=12G`, `mem_reservation=6G`, `cpus=1.0`, `oom_score_adj=-300` защищают от OOM.                                      |
+| `ollama`      | GPU LLM сервер, хранит модели в `./data/ollama`.                                                                                                | `11434:11434`.                   | `env/ollama.env`, GPU определяется через `.env` (`OLLAMA_GPU_VISIBLE_DEVICES`, `OLLAMA_GPU_DEVICE_IDS`).                                                                                                                                                                               | Watchtower выключен; `mem_limit=16G`, `mem_reservation=8G`, `cpus=12`, `oom_score_adj=-900`; GPU закрепляется через `.env`.                                               |
+| `openwebui`   | Основной UI (Next.js) с GPU поддержкой.                                                                                                         | Через Nginx (`8080` внутри).     | `env/openwebui.env`, shared данные `./data/openwebui`, `./data/docling/shared`, entrypoint `scripts/entrypoints/openwebui.sh`, secrets `postgres_password`, `litellm_api_key`, `openwebui_secret_key`, GPU через `.env` (`OPENWEBUI_GPU_*`).                                           | Watchtower включён; лимиты `mem_limit=8G`, `mem_reservation=4G`, `cpus=4`, `oom_score_adj=-600`, общий volume синхронизирован с Docling.                                  |
+| `docling`     | OCR/Doc ingestion pipeline (Docling Serve).                                                                                                     | Внутренняя сеть (`5001`).        | `env/docling.env`, образы `./data/docling/*`, артефакты `./data/docling/docling-models` (монтируются как `/docling-artifacts` и как кэш Docling), shared volume `./data/docling/shared`, GPU через `.env` (`DOCLING_GPU_*`).                                                           | Автообновление включено (`document-processing`); лимиты `mem_limit=12G`, `mem_reservation=8G`, `cpus=8`, `oom_score_adj=-500`, shared volume синхронизирован с OpenWebUI. |
 
 ## Мониторинг и логирование
 
@@ -58,8 +51,8 @@ last_updated: '2025-11-24'
 | `rag-exporter`            | SLA-мониторинг RAG.                                   | `127.0.0.1:9808->9808`.           | Переменные `RAG_TEST_URL`, зависит от `openwebui`.                                        | Endpoint виден только локально.                                                                                              |
 | `webhook-receiver`        | Приём уведомлений Alertmanager и кастомные скрипты.   | `127.0.0.1:9095->9093`.           | Скрипты `./conf/webhook-receiver`, логи `./data/webhook-logs`.                            | Endpoint доступен через локальный прокси; лимиты `mem_limit=256M`, `mem_reservation=128M`, `cpus=0.25`, `oom_score_adj=250`. |
 
-> ℹ️ **Информация:** Docling восстановлен в основном `compose.yml`; shared
-> volume `./data/docling/shared` используется совместно с OpenWebUI.
+> **Примечание:** Docling восстановлен в основном `compose.yml`; shared volume
+> `./data/docling/shared` используется совместно с OpenWebUI.
 
 > **Доступ к метрикам:** все мониторинговые сервисы проброшены только на
 > `127.0.0.1`. Для удалённого просмотра используйте Nginx (с auth/TLS), VPN или
@@ -83,7 +76,7 @@ last_updated: '2025-11-24'
 - Структура тома: `uploads/` (сырьё, 2 дня), `processed/` (промежуточные
   артефакты, 14 дней), `exports/` (результаты, 30 дней), `quarantine/`
   (инциденты, 60 дней), `tmp/` (1 день). Детали —
-  `docs/operations/maintenance/docling-shared-volume.md`.
+  `docs/operations/runbooks/docling-shared-volume.md`.
 - Права доступа: владелец — пользователь docker host; группа `docling-data`
   имеет `rwx`; аудиторы добавляются через ACL `docling-readonly` с `rx` на
   `exports/`.
@@ -144,22 +137,22 @@ last_updated: '2025-11-24'
 - **LLM & Model Context**: LiteLLM v1.80.0.rc.1, MCP Server 8000 и RAG API
   (`/api/mcp/*`, `/api/search`) используют PostgreSQL + Redis для context
   storage; `docs/reference/api-reference.md` и
-  `docs/operations/core/operations-handbook.md` содержат маршруты, SLA и список
+  `docs/operations/operations-handbook.md` содержат маршруты, SLA и список
   инструментов.
 - **Docling/EdgeTTS**: работают через internal ports, используют CPU,
   обеспечивают многоязычный RAG pipeline и служат источником для
-  `docs/operations/monitoring/monitoring-guide.md`.
+  `docs/operations/monitoring-guide.md`.
 
 - Журналы высылаются во Fluent Bit (24224 forward, 2020 HTTP) и передаются в
   Loki, а критические сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx) также пишут
   в `json-file` с tag `critical.*` по настройке `compose.yml`.
-- Прометей 3.0.0 опрашивает 32 target’а и содержит 20 активных правил в
+- Прометей 3.0.1 опрашивает 32 target’а и содержит 27 активных правил в
   `conf/prometheus/alerts.yml` (Critical, Performance, Database, GPU, Nginx).
-  Alertmanager v0.27.0 отправляет оповещения по предопределённому каналу
+  Alertmanager v0.28.0 отправляет оповещения по предопределённому каналу
   (Slack/Teams через Watchtower metrics API).
-- Grafana v11.3.0 содержит 5 provisioned дашбордов (GPU/LLM, инфраструктура,
-  SLA). Каждое обновление дашборда фиксируется в
-  `docs/operations/monitoring/grafana-dashboards-guide.md`.
+- Grafana v11.6.6 содержит 18 дашбордов, включая GPU/LLM, PostgreSQL, Redis,
+  Docker-хост. Каждое обновление дашборда фиксируется в
+  `docs/operations/grafana-dashboards-guide.md`.
 - Безопасность базируется на Nginx WAF, Cloudflare Zero Trust (5 туннелей), JWT
   Go-сервисе и секретах в `secrets/`. Подробнее см.
   `security/security-policy.md`.
@@ -170,11 +163,10 @@ last_updated: '2025-11-24'
   GPU labels).
 - Конфигурации: `env/*.env`, `conf/nginx`, `conf/redis/redis.conf`,
   `conf/litellm`, `conf/prometheus`.
-- Мониторинг и runbooks: `docs/operations/monitoring/monitoring-guide.md`,
-  `docs/operations/automation/automated-maintenance-guide.md`,
-  `docs/operations/`.
+- Мониторинг и runbooks: `docs/operations/monitoring-guide.md`,
+  `docs/operations/automated-maintenance-guide.md`, `docs/operations/runbooks/`.
 - Архитектура: `docs/architecture/architecture.md` (GPU allocation, Cloudflare
-  tunnels, 32 сервисов).
+  tunnels, 30 сервисов).
 - Безопасность: `security/security-policy.md`,
   `docs/archive/reports/documentation-audit-2025-10-24.md` (указаны риски и
   необходимые актуализации).
