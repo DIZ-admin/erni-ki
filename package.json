@@ -36,8 +36,8 @@
     }
   ],
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=22.14.0",
+    "npm": ">=10.8.2"
   },
   "scripts": {
     "dev": "vitest",
@@ -102,6 +102,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
+    "rollup": "^4.52.5",
     "semantic-release": "^21.1.2",
     "typescript": "^5.7.2",
     "vitest": "^4.0.6"
@@ -159,7 +160,7 @@
     "@rollup/rollup-linux-x64-gnu": "4.52.5"
   },
   "volta": {
-    "node": "20.18.0",
+    "node": "22.14.0",
     "npm": "10.8.2"
   }
 }
