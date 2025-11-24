@@ -9,6 +9,7 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
+
 # 🔧 ERNI-KI Konfigurationsleitfaden
 
 > **Version:** 11.0 **Aktualisierungsdatum:** 2025-09-25 **Status:** Production

@@ -9,6 +9,7 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
+
 # 📚 ERNI-KI Dokumentation (Deutsch)
 
 > **Willkommen zur deutschen Dokumentation von ERNI-KI** **Version:** 12.1

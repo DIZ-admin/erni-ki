@@ -10,27 +10,26 @@ Usage:
     python3 scripts/fix-deprecated-metadata.py [--dry-run] [--verbose]
 """
 
-import os
+import argparse
 import re
 import sys
 from pathlib import Path
-from typing import List, Tuple
-import argparse
 
 
 def parse_args():
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description='Fix deprecated metadata in docs')
-    parser.add_argument('--dry-run', action='store_true',
-                       help='Show what would be changed without modifying files')
-    parser.add_argument('--verbose', '-v', action='store_true',
-                       help='Show detailed output')
-    parser.add_argument('--path', default='docs',
-                       help='Path to documentation directory (default: docs)')
+    parser = argparse.ArgumentParser(description="Fix deprecated metadata in docs")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Show what would be changed without modifying files"
+    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
+    parser.add_argument(
+        "--path", default="docs", help="Path to documentation directory (default: docs)"
+    )
     return parser.parse_args()
 
 
-def fix_frontmatter(content: str, filepath: str, verbose: bool = False) -> Tuple[str, List[str]]:
+def fix_frontmatter(content: str, filepath: str, verbose: bool = False) -> tuple[str, list[str]]:
     """
     Fix deprecated fields in YAML frontmatter.
 
@@ -39,7 +38,7 @@ def fix_frontmatter(content: str, filepath: str, verbose: bool = False) -> Tuple
     changes = []
 
     # Match YAML frontmatter
-    match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+    match = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
     if not match:
         return content, changes
 
@@ -48,31 +47,25 @@ def fix_frontmatter(content: str, filepath: str, verbose: bool = False) -> Tuple
 
     # Replace 'status:' with 'system_status:'
     # Only replace if it's not 'translation_status'
-    status_pattern = r'^(\s*)(?<!translation_)status:\s*(.+)$'
+    status_pattern = r"^(\s*)(?<!translation_)status:\s*(.+)$"
     if re.search(status_pattern, frontmatter, re.MULTILINE):
         new_frontmatter = re.sub(
-            status_pattern,
-            r'\1system_status: \2',
-            new_frontmatter,
-            flags=re.MULTILINE
+            status_pattern, r"\1system_status: \2", new_frontmatter, flags=re.MULTILINE
         )
         changes.append("status → system_status")
 
     # Replace 'version:' with 'system_version:'
     # Only replace if it's not 'doc_version'
-    version_pattern = r'^(\s*)(?<!doc_)version:\s*(.+)$'
+    version_pattern = r"^(\s*)(?<!doc_)version:\s*(.+)$"
     if re.search(version_pattern, frontmatter, re.MULTILINE):
         new_frontmatter = re.sub(
-            version_pattern,
-            r'\1system_version: \2',
-            new_frontmatter,
-            flags=re.MULTILINE
+            version_pattern, r"\1system_version: \2", new_frontmatter, flags=re.MULTILINE
         )
         changes.append("version → system_version")
 
     if changes:
         # Reconstruct content with updated frontmatter
-        body = content[match.end():]
+        body = content[match.end() :]
         new_content = f"---\n{new_frontmatter}\n---\n{body}"
         return new_content, changes
 
@@ -86,7 +79,7 @@ def process_file(filepath: Path, dry_run: bool = False, verbose: bool = False) -
     Returns: True if file was modified, False otherwise
     """
     try:
-        content = filepath.read_text(encoding='utf-8')
+        content = filepath.read_text(encoding="utf-8")
         new_content, changes = fix_frontmatter(content, str(filepath), verbose)
 
         if changes:
@@ -99,7 +92,7 @@ def process_file(filepath: Path, dry_run: bool = False, verbose: bool = False) -
                 print(f"  ✓ {change}")
 
             if not dry_run:
-                filepath.write_text(new_content, encoding='utf-8')
+                filepath.write_text(new_content, encoding="utf-8")
 
             return True
         elif verbose:
@@ -138,9 +131,9 @@ def main():
 
     # Find all markdown files (excluding archive)
     md_files = []
-    for md_file in docs_root.rglob('*.md'):
+    for md_file in docs_root.rglob("*.md"):
         # Skip archive directory in dry run check
-        if 'archive' not in md_file.parts or not args.dry_run:
+        if "archive" not in md_file.parts or not args.dry_run:
             md_files.append(md_file)
 
     print(f"Found {len(md_files)} markdown files")
@@ -174,5 +167,5 @@ def main():
     print("=" * 70)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
