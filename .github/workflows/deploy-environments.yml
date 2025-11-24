@@ -93,28 +93,15 @@ jobs:
         run: |
           echo "Validating environment config for: ${{ needs['determine-environment'].outputs.environment }}"
 
-          # Determine suffix for environment
-          ENV_SUFFIX=""
-          case "${{ needs['determine-environment'].outputs.environment }}" in
-            "development") ENV_SUFFIX="_DEV" ;;
-            "staging") ENV_SUFFIX="_STAGING" ;;
-            "production") ENV_SUFFIX="_PROD" ;;
-          esac
-
-          # Check for required environment keys
-          required_env_keys=(
-            "TUNNEL_TOKEN${ENV_SUFFIX}"
-            "OPENAI_API_KEY${ENV_SUFFIX}"
-          )
-
+          env_keys=(TUNNEL_TOKEN OPENAI_API_KEY)
           missing_env_keys=()
-          for env_key in "${required_env_keys[@]}"; do
-            # Check that key is not empty and does not contain placeholder
-            env_value="${!env_key:-}"
-            if [ -z "$env_value" ] || [[ "$env_value" == *"REPLACE_WITH_REAL"* ]]; then
-              missing_env_keys+=("$env_key")
+
+          for key in "${env_keys[@]}"; do
+            value="${!key:-}"
+            if [ -z "$value" ] || [[ "$value" == *"REPLACE_WITH_REAL"* ]]; then
+              missing_env_keys+=("$key")
             else
-              echo "✅ $env_key: configured"
+              echo "✅ $key: configured"
             fi
           done
 
@@ -132,12 +119,8 @@ jobs:
             echo "✅ All required environment keys are configured"
           fi
         env:
-          TUNNEL_TOKEN_DEV: ${{ secrets.TUNNEL_TOKEN_DEV }}
-          TUNNEL_TOKEN_STAGING: ${{ secrets.TUNNEL_TOKEN_STAGING }}
-          TUNNEL_TOKEN_PROD: ${{ secrets.TUNNEL_TOKEN_PROD }}
-          OPENAI_API_KEY_DEV: ${{ secrets.OPENAI_API_KEY_DEV }}
-          OPENAI_API_KEY_STAGING: ${{ secrets.OPENAI_API_KEY_STAGING }}
-          OPENAI_API_KEY_PROD: ${{ secrets.OPENAI_API_KEY_PROD }}
+          TUNNEL_TOKEN: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.TUNNEL_TOKEN_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.TUNNEL_TOKEN_STAGING || secrets.TUNNEL_TOKEN_PROD }}
+          OPENAI_API_KEY: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.OPENAI_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.OPENAI_API_KEY_STAGING || secrets.OPENAI_API_KEY_PROD }}
           CONTEXT7_API_KEY_DEV: ${{ secrets.CONTEXT7_API_KEY_DEV }}
           CONTEXT7_API_KEY_STAGING: ${{ secrets.CONTEXT7_API_KEY_STAGING }}
           CONTEXT7_API_KEY_PROD: ${{ secrets.CONTEXT7_API_KEY_PROD }}
@@ -155,6 +138,10 @@ jobs:
     needs: [determine-environment, validate-secrets]
     environment: ${{ needs['determine-environment'].outputs.environment }}
     if: needs['determine-environment'].outputs.should_deploy == 'true'
+    env:
+      ENVIRONMENT: ${{ needs['determine-environment'].outputs.environment }}
+      TUNNEL_TOKEN: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.TUNNEL_TOKEN_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.TUNNEL_TOKEN_STAGING || secrets.TUNNEL_TOKEN_PROD }}
+      OPENAI_API_KEY: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.OPENAI_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.OPENAI_API_KEY_STAGING || secrets.OPENAI_API_KEY_PROD }}
 
     steps:
       - name: 📥 Checkout code
@@ -196,9 +183,9 @@ jobs:
             VCS_REF=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          secrets: |
-            tunnel_token=${{ secrets[format('TUNNEL_TOKEN_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
-            openai_key=${{ secrets[format('OPENAI_API_KEY_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
+          secrets: | # pragma: allowlist secret
+            tunnel_token=${{ env.TUNNEL_TOKEN }} # pragma: allowlist secret
+            openai_key=${{ env.OPENAI_API_KEY }} # pragma: allowlist secret
 
   # Deploy to target environment
   deploy:
@@ -207,6 +194,13 @@ jobs:
     needs: [determine-environment, validate-secrets, build-and-deploy]
     environment: ${{ needs['determine-environment'].outputs.environment }}
     if: needs['determine-environment'].outputs.should_deploy == 'true'
+    env:
+      ENVIRONMENT: ${{ needs['determine-environment'].outputs.environment }}
+      TUNNEL_TOKEN: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.TUNNEL_TOKEN_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.TUNNEL_TOKEN_STAGING || secrets.TUNNEL_TOKEN_PROD }}
+      OPENAI_API_KEY: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.OPENAI_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.OPENAI_API_KEY_STAGING || secrets.OPENAI_API_KEY_PROD }}
+      CONTEXT7_API_KEY: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.CONTEXT7_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.CONTEXT7_API_KEY_STAGING || secrets.CONTEXT7_API_KEY_PROD }}
+      ANTHROPIC_API_KEY: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.ANTHROPIC_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.ANTHROPIC_API_KEY_STAGING || secrets.ANTHROPIC_API_KEY_PROD }}
+      GOOGLE_API_KEY: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.GOOGLE_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.GOOGLE_API_KEY_STAGING || secrets.GOOGLE_API_KEY_PROD }}
 
     steps:
       - name: 📥 Checkout code
@@ -242,11 +236,11 @@ jobs:
 
           echo "✅ Environment configuration prepared"
         env:
-          TUNNEL_TOKEN: ${{ secrets[format('TUNNEL_TOKEN_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
-          OPENAI_API_KEY: ${{ secrets[format('OPENAI_API_KEY_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
-          CONTEXT7_API_KEY: ${{ secrets[format('CONTEXT7_API_KEY_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
-          ANTHROPIC_API_KEY: ${{ secrets[format('ANTHROPIC_API_KEY_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
-          GOOGLE_API_KEY: ${{ secrets[format('GOOGLE_API_KEY_{0}', needs['determine-environment'].outputs.environment == 'development' && 'DEV' || needs['determine-environment'].outputs.environment == 'staging' && 'STAGING' || 'PROD')] }}
+          TUNNEL_TOKEN: ${{ env.TUNNEL_TOKEN }}
+          OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
+          CONTEXT7_API_KEY: ${{ env.CONTEXT7_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ env.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ env.GOOGLE_API_KEY }}
 
       - name: 🎯 Deploy to ${{ needs['determine-environment'].outputs.environment }}
         run: |
