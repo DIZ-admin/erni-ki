@@ -69,6 +69,7 @@
     "docker:logs": "docker compose logs -f",
     "security:scan": "npm audit --audit-level=high && docker run --rm -v $(pwd)/auth:/src -w /src securecodewarrior/docker-gosec ./...",
     "docs:lint": "python3 scripts/docs/content_lint.py --fix-headings --add-toc",
+    "docs:translations": "python3 scripts/docs/translation_report.py",
     "docs:report": "python3 scripts/docs/content_lint.py",
     "prepare": "husky install",
     "commit": "git-cz",
