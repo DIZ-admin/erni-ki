@@ -45,3 +45,9 @@ last_updated: '2025-11-24'
 
 - **Рестарт сервисов после восстановления:**  
   см. `operations/maintenance/service-restart-procedures.md`
+
+## RPO/RTO
+
+- **RPO:** ≤ 15 минут (инкрементальные бэкапы + WAL streaming)
+- **RTO:** ≤ 45 минут для OpenWebUI + БД
+- Проверяйте показатели ежемесячно и фиксируйте результат в Backrest dashboard.

@@ -509,8 +509,8 @@ graph TB
 
 ### Dokumentenverarbeitung
 
-2. **Open WebUI** → **PostgreSQL/pgvector** (Vektor-Speicherung)
-3. **Open WebUI** → **Ollama** (Inhalts-Analyse)
+1. **Open WebUI** → **PostgreSQL/pgvector** (Vektor-Speicherung)
+2. **Open WebUI** → **Ollama** (Inhalts-Analyse)
 
 ## 📊 Monitoring und Observability
 

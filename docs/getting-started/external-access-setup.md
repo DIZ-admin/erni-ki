@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Настройка внешнего доступа к ERNI-KI системе
 
+[TOC]
+
 **Дата**: 2025-10-27  
 **Статус**: ТРЕБУЕТСЯ ДЕЙСТВИЕ  
 **Приоритет**: ВЫСОКИЙ
@@ -51,10 +53,10 @@ last_updated: '2025-11-24'
 
 **Настроенные домены**:
 
-- `webui.diz.zone` → http://openwebui:8080 ✅
-- `search.diz.zone` → http://searxng:8080 ✅
-- `diz.zone` → http://nginx:8080 ✅
-- `lite.diz.zone` → http://nginx:8080 ✅
+- `webui.diz.zone` → <http://openwebui:8080> ✅
+- `search.diz.zone` → <http://searxng:8080> ✅
+- `diz.zone` → <http://nginx:8080> ✅
+- `lite.diz.zone` → <http://nginx:8080> ✅
 
 **Отсутствует**:
 
@@ -64,7 +66,7 @@ last_updated: '2025-11-24'
 
 **Модель**: LANCOM (корпоративный роутер)  
 **IP**: 192.168.62.1  
-**Веб-интерфейс**: https://192.168.62.1/ (WEBconfig)  
+**Веб-интерфейс**: <https://192.168.62.1/> (WEBconfig)  
 **Доступ**: Требуются учетные данные администратора
 
 **Port Forwarding**: НЕ ПРОВЕРЕН (требуется доступ к роутеру)
@@ -97,7 +99,7 @@ last_updated: '2025-11-24'
 
 **Вариант A: Через Cloudflare Dashboard (рекомендуется)**
 
-1. Войти в Cloudflare Dashboard: https://dash.cloudflare.com/
+1. Войти в Cloudflare Dashboard: <https://dash.cloudflare.com/>
 2. Выбрать аккаунт и перейти в Zero Trust → Access → Tunnels
 3. Найти tunnel ID: `02a58963-3f79-4fc0-82ff-f79503366f86`
 4. Нажать "Configure" → "Public Hostname" → "Add a public hostname"
@@ -161,7 +163,7 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 
 ---
 
-### ВАРИАНТ 2: Port Forwarding на роутере LANCOM
+## ВАРИАНТ 2: Port Forwarding на роутере LANCOM
 
 **Преимущества**:
 
@@ -179,7 +181,7 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 
 **Действия**:
 
-#### 2.1 Получить доступ к роутеру LANCOM
+### 2.1 Получить доступ к роутеру LANCOM
 
 **Требуется**:
 
@@ -190,7 +192,7 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 
 #### 2.2 Настроить Port Forwarding
 
-1. Войти в WEBconfig: https://192.168.62.1/
+1. Войти в WEBconfig: <https://192.168.62.1/>
 2. Перейти в раздел "Firewall" → "Port Forwarding" (или аналогичный)
 3. Добавить правила:
 
@@ -199,7 +201,7 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 | 80           | 192.168.62.153 | 80              | TCP      | ERNI-KI HTTP  |
 | 443          | 192.168.62.153 | 443             | TCP      | ERNI-KI HTTPS |
 
-4. Сохранить и применить изменения
+1. Сохранить и применить изменения
 
 #### 2.3 Настроить публичный DNS
 
@@ -241,7 +243,7 @@ nc -zv 185.242.201.210 443
 
 ---
 
-### ВАРИАНТ 3: Гибридное решение (Cloudflare + Port Forwarding)
+## ВАРИАНТ 3: Гибридное решение (Cloudflare + Port Forwarding)
 
 **Описание**: Использовать Cloudflare как прокси перед прямым подключением
 
@@ -321,15 +323,15 @@ Rule 2:
 
 ## ТЕКУЩИЙ СТАТУС
 
-| Компонент             | Статус         | Комментарий             |
-| --------------------- | -------------- | ----------------------- |
-| Локальный доступ      | ✅ Работает    | https://192.168.62.153/ |
-| SSL сертификат        | ✅ Валиден     | Let's Encrypt E5        |
-| Nginx                 | ✅ Работает    | Порты 80/443 открыты    |
-| Cloudflare Tunnel     | ✅ Работает    | webui.diz.zone доступен |
-| DNS ki.erni-gruppe.ch | ❌ Не настроен | Только /etc/hosts       |
-| Port Forwarding       | ❓ Неизвестно  | Требуется проверка      |
-| Внешний доступ        | ❌ Не работает | Требуется настройка     |
+| Компонент             | Статус         | Комментарий               |
+| --------------------- | -------------- | ------------------------- |
+| Локальный доступ      | ✅ Работает    | <https://192.168.62.153/> |
+| SSL сертификат        | ✅ Валиден     | Let's Encrypt E5          |
+| Nginx                 | ✅ Работает    | Порты 80/443 открыты      |
+| Cloudflare Tunnel     | ✅ Работает    | webui.diz.zone доступен   |
+| DNS ki.erni-gruppe.ch | ❌ Не настроен | Только /etc/hosts         |
+| Port Forwarding       | ❓ Неизвестно  | Требуется проверка        |
+| Внешний доступ        | ❌ Не работает | Требуется настройка       |
 
 ---
 

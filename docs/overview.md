@@ -8,6 +8,8 @@ title: 'ERNI-KI — Профессиональная сводка проекта
 
 # ERNI-KI — Профессиональная сводка проекта
 
+[TOC]
+
 <!-- STATUS_SNIPPET_START -->
 
 > **Статус системы (2025-11-21) — Production Ready v12.2**
@@ -127,7 +129,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   headers, Cloudflare туннели, rate limiting.
 - **Мониторинг безопасности**: Prometheus алерты (`SuspiciousAuthActivity`,
   `HighErrorRate`), логирование через Loki.
-- **Контакты**: security@erni-ki.local, emergency hotline, PGP key.
+- **Контакты**: <security@erni-ki.local>, emergency hotline, PGP key.
 
 ## 7. Риски и планы развития
 

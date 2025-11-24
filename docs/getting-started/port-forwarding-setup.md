@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Port Forwarding Setup для ERNI-KI
 
+[TOC]
+
 **Дата**: 2025-10-27  
 **Роутер**: LANCOM (192.168.62.1)  
 **Назначение**: Настройка внешнего доступа к ERNI-KI через прямое подключение
@@ -88,7 +90,7 @@ Advanced Settings → NAT → Port Forwarding
 
 ### Шаг 3: Добавление правил
 
-#### Для HTTP (порт 80):
+#### Для HTTP (порт 80)
 
 1. Нажать "Add" или "New Rule"
 2. Заполнить поля:
@@ -101,7 +103,7 @@ Advanced Settings → NAT → Port Forwarding
    - **Enabled**: `Yes` или `On`
 3. Нажать "Save" или "Apply"
 
-#### Для HTTPS (порт 443):
+#### Для HTTPS (порт 443)
 
 1. Нажать "Add" или "New Rule"
 2. Заполнить поля:
@@ -145,7 +147,7 @@ netstat -tlnp | grep -E ":80 |:443 "
 # tcp6  0  0 :::443  :::*  LISTEN  <pid>/docker-proxy
 ```
 
-### Тест 2: Проверка с другого компьютера в локальной сети
+## Тест 2: Проверка с другого компьютера в локальной сети
 
 ```bash
 # С компьютера в той же подсети (192.168.62.x)
@@ -156,7 +158,7 @@ curl -I -k https://192.168.62.153/
 # server: nginx/1.28.0
 ```
 
-### Тест 3: Проверка внешнего доступа
+## Тест 3: Проверка внешнего доступа
 
 ```bash
 # С компьютера вне локальной сети или через мобильный интернет
@@ -167,7 +169,7 @@ curl -I https://ki.erni-gruppe.ch/
 # server: nginx/1.28.0
 ```
 
-### Тест 4: Проверка портов извне
+## Тест 4: Проверка портов извне
 
 ```bash
 # С внешнего компьютера
@@ -255,12 +257,14 @@ SSL certificate problem: unable to get local issuer certificate
 1. Войти в панель управления регистратора `erni-gruppe.ch`
 2. Перейти в раздел DNS Management
 3. Добавить A запись:
+
    ```
    Type: A
    Name: ki
    Value: 185.242.201.210
    TTL: 3600
    ```
+
 4. Сохранить изменения
 5. Подождать 5-60 минут для распространения DNS
 
@@ -269,6 +273,7 @@ SSL certificate problem: unable to get local issuer certificate
 1. Добавить домен `erni-gruppe.ch` в Cloudflare
 2. Обновить NS записи у регистратора на Cloudflare NS
 3. В Cloudflare Dashboard → DNS → Records:
+
    ```
    Type: A
    Name: ki
@@ -276,6 +281,7 @@ SSL certificate problem: unable to get local issuer certificate
    Proxy status: DNS only (серое облако)
    TTL: Auto
    ```
+
 4. Сохранить
 
 ### Проверка DNS
@@ -285,11 +291,11 @@ SSL certificate problem: unable to get local issuer certificate
 nslookup ki.erni-gruppe.ch 8.8.8.8
 
 # Ожидаемый результат:
-# Server:		8.8.8.8
-# Address:	8.8.8.8#53
+# Server:  8.8.8.8
+# Address: 8.8.8.8#53
 #
 # Non-authoritative answer:
-# Name:	ki.erni-gruppe.ch
+# Name: ki.erni-gruppe.ch
 # Address: 185.242.201.210
 ```
 
@@ -332,7 +338,7 @@ nslookup ki.erni-gruppe.ch 8.8.8.8
 
 **Ответственный за ERNI-KI**: [ТРЕБУЕТСЯ УТОЧНИТЬ]
 
-**Документация LANCOM**: https://www.lancom-systems.com/support/
+**Документация LANCOM**: <https://www.lancom-systems.com/support/>
 
 ---
 

@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # 🌐 Nginx Configuration Guide - ERNI-KI
 
-> **Версия:** 9.0 | **Дата:** 2025-09-11 | **Статус:** Production Ready
+> **Версия:** 9.0 | **Дата:** 2025-09-11 | **Статус:** Production Ready [TOC]
 
 ## 📋 Обзор
 
@@ -61,7 +61,7 @@ map $is_cloudflare_tunnel $universal_request_id {
 }
 ```
 
-### 2. Upstream блоки
+## 2. Upstream блоки
 
 ```nginx
 # OpenWebUI backend
@@ -81,7 +81,7 @@ upstream searxngUpstream {
 }
 ```
 
-### 3. Rate Limiting
+## 3. Rate Limiting
 
 ```nginx
 # Зоны ограничения скорости
@@ -109,7 +109,7 @@ server {
 }
 ```
 
-### Port 443 - HTTPS Production
+## Port 443 - HTTPS Production
 
 ```nginx
 server {
@@ -129,7 +129,7 @@ server {
 }
 ```
 
-### Port 8080 - Cloudflare Tunnel
+## Port 8080 - Cloudflare Tunnel
 
 ```nginx
 server {
@@ -172,7 +172,7 @@ proxy_read_timeout 60s;
 proxy_pass http://openwebui_backend;
 ```
 
-### searxng-api-common.conf
+## searxng-api-common.conf
 
 ```nginx
 # Rate limiting для SearXNG API
@@ -240,7 +240,7 @@ docker exec erni-ki-nginx-1 nginx -s reload
 docker cp conf/nginx/includes/ erni-ki-nginx-1:/etc/nginx/
 ```
 
-### Мониторинг
+## Мониторинг
 
 ```bash
 # Проверка логов

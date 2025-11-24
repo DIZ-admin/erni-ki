@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # 🔐 GitHub Environments Setup für ERNI-KI
 
+[TOC]
+
 **Datum:** 2025-09-19 **Version:** 1.0
 
 ## 📋 Überblick
@@ -105,7 +107,7 @@ gh api repos/:owner/:repo/environments/production -X PUT \
   --field "deployment_branch_policy={\"protected_branches\":true}"
 ```
 
-### Secrets hinzufügen
+## Secrets hinzufügen
 
 ```bash
 # Environment-secrets

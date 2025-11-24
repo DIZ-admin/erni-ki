@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # 🔧 Leitfaden zur Problemdiagnose ERNI-KI
 
-> **Version:** 1.0 **Datum:** 25.09.2025 **Status:** Production Ready
+> **Version:** 1.0 **Datum:** 25.09.2025 **Status:** Production Ready [TOC]
 
 ## 1. Einführung
 
@@ -32,7 +32,7 @@ Für wirksame Diagnose benötigt man:
 #### **Symptome:**
 
 - Externe Domains antworten nicht (ki.erni-gruppe.ch, webui.diz.zone)
-- Lokaler Zugriff http://localhost nicht erreichbar
+- Lokaler Zugriff <http://localhost> nicht erreichbar
 - Viele Container "unhealthy" oder "exited"
 
 #### **Diagnose:**
@@ -51,7 +51,7 @@ docker system df                 # Docker-Platzverbrauch
 docker system events --since 1h  # Events letzte Stunde
 ```
 
-#### **Lösung:**
+## **Lösung:**
 
 ```bash
 # 1. Notfall-Neustart
@@ -68,11 +68,11 @@ docker system prune -a -f
 docker compose up -d
 ```
 
-### **❌ OpenWebUI nicht erreichbar (Haupt-UI)**
+## **❌ OpenWebUI nicht erreichbar (Haupt-UI)**
 
-#### **Symptome:**
+### **Symptome:**
 
-- http://localhost/health liefert 502/503/504
+- <http://localhost/health> liefert 502/503/504
 - Nutzer können sich nicht anmelden
 - DB-Verbindungsfehler
 
@@ -92,7 +92,7 @@ docker exec erni-ki-db-1 pg_isready -U postgres
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-#### **Lösung:**
+## **Lösung:**
 
 ```bash
 # 1. Abhängigkeiten neu starten
@@ -125,7 +125,7 @@ docker compose restart ollama
 docker exec erni-ki-ollama-1 nvidia-smi
 ```
 
-#### **Problem: LiteLLM liefert 500**
+## **Problem: LiteLLM liefert 500**
 
 ```bash
 # Diagnose
@@ -138,9 +138,9 @@ sleep 15
 curl -f http://localhost:4000/health
 ```
 
-### **🔴 Netzwerk**
+## **🔴 Netzwerk**
 
-#### **Problem: Nginx 502 Bad Gateway**
+### **Problem: Nginx 502 Bad Gateway**
 
 ```bash
 # Diagnose
@@ -155,7 +155,7 @@ curl -f http://localhost:8080/health  # direkt
 docker compose restart nginx
 ```
 
-#### **Problem: Cloudflare-Tunnel down**
+## **Problem: Cloudflare-Tunnel down**
 
 ```bash
 # Diagnose
@@ -166,9 +166,9 @@ docker exec erni-ki-cloudflared-1 nslookup nginx
 docker compose restart cloudflared
 ```
 
-### **🔴 Datenbank**
+## **🔴 Datenbank**
 
-#### **Problem: PostgreSQL connection refused**
+### **Problem: PostgreSQL connection refused**
 
 ```bash
 # Diagnose
@@ -184,7 +184,7 @@ sleep 10
 docker exec erni-ki-db-1 pg_isready -U postgres
 ```
 
-#### **Problem: Redis connection timeout**
+## **Problem: Redis connection timeout**
 
 ```bash
 # Diagnose
@@ -197,9 +197,9 @@ sleep 5
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-### **🔴 Monitoring**
+## **🔴 Monitoring**
 
-#### **Problem: Prometheus sammelt keine Metriken**
+### **Problem: Prometheus sammelt keine Metriken**
 
 ```bash
 # Diagnose
@@ -211,7 +211,7 @@ docker exec erni-ki-prometheus promtool check config /etc/prometheus/prometheus.
 docker compose restart prometheus
 ```
 
-#### **Problem: Grafana zeigt keine Daten**
+## **Problem: Grafana zeigt keine Daten**
 
 ```bash
 # Diagnose
@@ -246,7 +246,7 @@ docker network ls
 docker network inspect erni-ki_default
 ```
 
-### Log-Diagnose
+## Log-Diagnose
 
 ```bash
 # Fehler der letzten Stunde
@@ -262,7 +262,7 @@ docker compose logs --since 1h | grep -E "(connection|timeout|refused)"
 docker compose logs --since 1h | grep -E "(cuda|gpu|nvidia)"
 ```
 
-### Konfiguration prüfen
+## Konfiguration prüfen
 
 ```bash
 # Nginx-Konfiguration

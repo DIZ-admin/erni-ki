@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Настройка локального DNS для ERNI-KI в корпоративной сети
 
+[TOC]
+
 **Дата**: 2025-10-27  
 **Цель**: Настроить доступ к `ki.erni-gruppe.ch` для всех компьютеров в
 локальной сети 192.168.62.0/24  
@@ -116,16 +118,16 @@ curl -I https://ki.erni-gruppe.ch/
 **Ожидаемый результат**:
 
 ```
-Server:		192.168.62.32
-Address:	192.168.62.32#53
+Server:  192.168.62.32
+Address: 192.168.62.32#53
 
-Name:	ki.erni-gruppe.ch
+Name: ki.erni-gruppe.ch
 Address: 192.168.62.153
 ```
 
 ---
 
-### ВАРИАНТ 2: Настройка DNS на роутере LANCOM
+## ВАРИАНТ 2: Настройка DNS на роутере LANCOM
 
 **Описание**: Добавить локальную DNS запись на роутере LANCOM (192.168.62.1)
 
@@ -142,7 +144,7 @@ Address: 192.168.62.153
 
 **Действия**:
 
-#### 2.1 Доступ к WEBconfig роутера
+### 2.1 Доступ к WEBconfig роутера
 
 1. Открыть браузер: `https://192.168.62.1/`
 2. Ввести учетные данные администратора
@@ -237,7 +239,7 @@ log-queries
 log-facility=/var/log/dnsmasq.log
 ```
 
-#### 3.2 Docker Compose конфигурация
+## 3.2 Docker Compose конфигурация
 
 Добавить в `compose.yml`:
 
@@ -263,7 +265,7 @@ dnsmasq:
       max-file: '3'
 ```
 
-#### 3.3 Запуск
+### 3.3 Запуск
 
 ```bash
 # Создать директории
@@ -281,7 +283,7 @@ docker ps --filter name=dnsmasq
 docker logs erni-ki-dnsmasq
 ```
 
-#### 3.4 Настройка клиентов
+## 3.4 Настройка клиентов
 
 **Вариант A: Изменить DHCP на роутере** (рекомендуется)
 
@@ -305,7 +307,7 @@ sudo nmcli connection up <connection-name>
 
 ---
 
-### ВАРИАНТ 4: Временное решение через /etc/hosts
+## ВАРИАНТ 4: Временное решение через /etc/hosts
 
 **Описание**: Обновить /etc/hosts на каждом компьютере вручную
 
@@ -364,11 +366,11 @@ sudo systemd-resolve --flush-caches
 nslookup ki.erni-gruppe.ch
 
 # Ожидаемый результат:
-# Name:	ki.erni-gruppe.ch
+# Name: ki.erni-gruppe.ch
 # Address: 192.168.62.153
 ```
 
-### Тест 2: HTTP доступ
+## Тест 2: HTTP доступ
 
 ```bash
 curl -I http://ki.erni-gruppe.ch/
@@ -378,7 +380,7 @@ curl -I http://ki.erni-gruppe.ch/
 # Location: https://ki.erni-gruppe.ch/
 ```
 
-### Тест 3: HTTPS доступ
+## Тест 3: HTTPS доступ
 
 ```bash
 curl -I https://ki.erni-gruppe.ch/
@@ -388,7 +390,7 @@ curl -I https://ki.erni-gruppe.ch/
 # server: nginx/1.28.0
 ```
 
-### Тест 4: SSL сертификат
+## Тест 4: SSL сертификат
 
 ```bash
 openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch 2>&1 | grep -E "subject=|issuer=|Verify"
@@ -399,7 +401,7 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch 2>
 # Verify return code: 0 (ok)
 ```
 
-### Тест 5: Веб-интерфейс
+## Тест 5: Веб-интерфейс
 
 Открыть в браузере: `https://ki.erni-gruppe.ch/`
 

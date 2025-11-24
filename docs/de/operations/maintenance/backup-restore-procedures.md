@@ -14,6 +14,8 @@ last_updated: '2025-11-24'
 
 ---
 
+[TOC]
+
 ## 📋 GRUNDPRINZIPIEN
 
 ### ✅ **Backup-Strategie**
@@ -46,7 +48,7 @@ curl -f http://localhost:9898/api/v1/status
 docker exec erni-ki-backrest-1 cat /config/config.json
 ```
 
-### **Monitoring automatischer Backups**
+## **Monitoring automatischer Backups**
 
 ```bash
 # Letzte Backups prüfen
@@ -59,12 +61,12 @@ docker compose logs backrest --tail=50
 du -sh .config-backup/
 ```
 
-### **Backup-Benachrichtigungen einrichten**
+## **Backup-Benachrichtigungen einrichten**
 
 ```bash
 # Skript zur Backup-Prüfung anlegen
 cat > check-backups.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 WEBHOOK_URL="YOUR_WEBHOOK_URL"  # Webhook für Benachrichtigungen setzen
 
 # Letztes Backup prüfen
@@ -95,7 +97,7 @@ echo "0 9 * * * /path/to/check-backups.sh" | crontab -
 ### **Vollständiges System-Backup**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Vollständiges Backup von ERNI-KI
 
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
@@ -174,10 +176,10 @@ echo "✅ Voll-Backup abgeschlossen: $BACKUP_DIR"
 echo "📄 Manifest: $BACKUP_DIR/backup-manifest.txt"
 ```
 
-### **Schnelles Konfig-Backup**
+## **Schnelles Konfig-Backup**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Schnelles Backup nur der Konfiguration (ohne Services zu stoppen)
 
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
@@ -197,10 +199,10 @@ docker compose config > "$BACKUP_DIR/compose-resolved.yml"
 echo "✅ Konfig-Backup abgeschlossen: $BACKUP_DIR"
 ```
 
-### **Nur die Datenbank sichern**
+## **Nur die Datenbank sichern**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Backup nur der PostgreSQL-Datenbank
 
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
@@ -233,7 +235,7 @@ echo "✅ DB-Backup abgeschlossen: $BACKUP_DIR"
 ### **Vollständige Systemwiederherstellung**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Vollständige Wiederherstellung von ERNI-KI aus einem Backup
 
 BACKUP_DIR="$1"
@@ -335,10 +337,10 @@ echo "📄 Backup des vorherigen Zustands: $CURRENT_BACKUP"
 echo "📄 Manifest des wiederhergestellten Backups: $BACKUP_DIR/backup-manifest.txt"
 ```
 
-### **Nur Konfigurationen wiederherstellen**
+## **Nur Konfigurationen wiederherstellen**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Wiederherstellung nur der Konfigurationen ohne Services zu stoppen
 
 BACKUP_DIR="$1"
@@ -366,10 +368,10 @@ echo "✅ Konfigurationen wiederhergestellt"
 echo "📄 Backup der vorherigen Konfigurationen: $CURRENT_BACKUP"
 ```
 
-### **Nur die Datenbank wiederherstellen**
+## **Nur die Datenbank wiederherstellen**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Wiederherstellung nur der PostgreSQL-Datenbank
 
 BACKUP_FILE="$1"
@@ -421,7 +423,7 @@ echo "📄 Backup der vorherigen DB: $CURRENT_DB_BACKUP"
 ### **Monatlicher Restore-Test**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Skript zum Testen der Wiederherstellungsprozedur
 
 echo "🧪 Teste Wiederherstellung"
@@ -466,7 +468,7 @@ echo "📄 Bericht: $TEST_DIR/restore-test-report.txt"
 ### **Backup-Status-Dashboard**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Backup-Status-Dashboard erzeugen
 
 echo "📊 BACKUP-STATUS ERNI-KI"

@@ -115,7 +115,7 @@ docker-compose exec vllm env | grep VLLM
 docker-compose logs vllm --tail=50
 ```
 
-### Проблема: Низкая производительность
+## Проблема: Низкая производительность
 
 ```bash
 # Проверить CPU binding
@@ -125,7 +125,7 @@ docker-compose exec vllm cat /proc/self/status | grep Cpus_allowed_list
 export VLLM_CPU_KVCACHE_SPACE=6
 ```
 
-### Проблема: Конфликт с Ollama
+## Проблема: Конфликт с Ollama
 
 ```bash
 # Убедиться что vLLM использует только CPU

@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Руководство по эксплуатации Redis в ERNI-KI
 
+[TOC]
+
 **Версия:** 1.0 **Дата:** 23 сентября 2025 **Система:** ERNI-KI
 
 ---
@@ -34,7 +36,7 @@ docker exec -it erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024"
 docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
 ```
 
-### Мониторинг
+## Мониторинг
 
 ```bash
 # Информация о памяти
@@ -47,7 +49,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" dbsize
 ```
 
-### Резервное копирование
+## Резервное копирование
 
 ```bash
 # Создание снапшота
@@ -81,8 +83,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Доступ к мониторингу
 
-- **Prometheus:** http://localhost:9091
-- **Redis Exporter:** http://localhost:9121/metrics
+- **Prometheus:** <http://localhost:9091>
+- **Redis Exporter:** <http://localhost:9121/metrics>
 - **Grafana:** Через основной интерфейс ERNI-KI
 
 ---
@@ -105,7 +107,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 ./scripts/redis-backup-metrics.sh success
 ```
 
-### Восстановление
+## Восстановление
 
 ```bash
 # Тестовое восстановление
@@ -159,7 +161,7 @@ docker-compose restart redis
 docker logs erni-ki-redis-1 --tail 50
 ```
 
-### Высокое использование памяти
+## Высокое использование памяти
 
 ```bash
 # Проверка использования памяти
@@ -172,7 +174,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" memory 
 docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" --bigkeys
 ```
 
-### Проблемы с производительностью
+## Проблемы с производительностью
 
 ```bash
 # Проверка медленных запросов
