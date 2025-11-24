@@ -295,7 +295,8 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=sha,prefix={{branch}}-
+            # Для тега по SHA всегда используем безопасный префикс, чтобы избежать пустого имени
+            type=sha,format=short,prefix=sha-
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: 🏗️ Build and push Docker image
