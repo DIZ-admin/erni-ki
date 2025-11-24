@@ -1,39 +1,22 @@
 ---
 language: de
-translation_status: in_progress
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
+title: 'Authentifizierung und Autorisierung'
 ---
 
 # Authentifizierung & Autorisierung
 
-## Überblick
+- JWT werden vom Auth-Service (`auth/main.go`) ausgegeben; der geheime Schlüssel
+  `WEBUI_SECRET_KEY` kommt aus Docker-Secrets bzw. `.env`.
+- Für externen Zugriff empfiehlt sich Cloudflare Zero Trust mit mTLS oder SSO,
+  damit keine offenen Ports exponiert werden.
+- Token-Lebensdauer so kurz wie möglich halten und jeder Anfrage eine
+  `X-Request-ID` hinzufügen, um Traceability sicherzustellen.
+- Bei **jedem** API- und Frontend-Request Token validieren und ein dediziertes
+  `/validate`-Healthcheck implementieren, damit Automatisierungen Tokens testen
+  können.
 
-- OpenWebUI/LiteLLM nutzen Token-basierte Authentifizierung
-- Admin- und Nutzerrollen klar trennen (RBAC)
-- MFA empfehlen, wo verfügbar
-
-## Token-Handling
-
-- Access Tokens kurzlebig halten
-- Refresh Tokens sicher speichern, Rotation ermöglichen
-- Keine Tokens in Logs; Maskierung aktivieren
-
-## Service-Zugänge
-
-- Interne Services (Prometheus, Grafana, Alertmanager) hinter Auth/Reverse-Proxy
-- MCP/AI-APIs mit API-Key/Token absichern
-- SSH/Zugänge nur per Key, kein Passwort-Login
-
-## Best Practices
-
-- Starke Passwortrichtlinien, keine Wiederverwendung
-- Rate-Limiting und Captcha bei Login-Formularen, falls öffentlich
-- Session-Invalidierung nach Logout oder Rollenänderung
-- Regelmäßige Audit-Checks: wer hat Admin, wer hat Tokens
-
-## Fehlerbehebung
-
-- „401/403“: Token abgelaufen oder Rollen fehlen
-- „CSRF/Origin Fehler“: CORS/CSRF-Header prüfen
-- „Login-Loop“: Cookies/SameSite/Domain-Einstellungen prüfen
+Siehe außerdem [security-policy.md](security-policy.md) für Rollen und Prozesse
+sowie [ssl-tls-setup.md](ssl-tls-setup.md) für TLS-Konfiguration.

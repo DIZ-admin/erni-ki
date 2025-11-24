@@ -1,45 +1,55 @@
 ---
 language: de
-translation_status: in_progress
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Checklist: Image Upgrade
+# 📋 Checkliste: ERNI-KI Docker-Image-Upgrade
 
-Kurzer Leitfaden für sichere Image-Updates.
+Diese Checkliste definiert den Prozess zur Aktualisierung von Container-Images
+ohne Rückfall auf instabile `latest` Tags.
 
-## Vorbereitung
+1. **Release-Auswahl**
+   - Finden Sie einen stabilen semantischen Tag oder SHA256 Digest (in allen
+     Fällen – `docker pull IMAGE@digest`).
+   - Speichern Sie den Link zum Changelog/Release, wo die Änderungen beschrieben
+     sind.
 
-- Notieren: aktuelle Versionsstände/Tags
-- Backup configs (`env/`, `conf/`, `compose.yml`)
-- Prüfen: Changelogs/Breaking Changes
+2. **Repository-Aktualisierung**
+   - Ersetzen Sie in `compose.yml` und `compose.yml.example` den Tag durch den
+     gewählten.
+   - Aktualisieren Sie die Dokumentation (Service-Inventory, Monitoring-Guide,
+     Architecture usw.), damit die Tags mit der Konfiguration übereinstimmen.
+   - Wenn das Image Docker Secrets/Entrypoint verwendet, stellen Sie sicher,
+     dass die Anweisungen in `docs/` ebenfalls aktualisiert sind.
 
-## Ablauf
+3. **Testen**
+   - `docker compose pull SERVICE && docker compose up -d SERVICE` (oder
+     `--no-deps`).
+   - Überprüfen Sie Healthchecks und wichtige Endpunkte:
+     ```bash
+     docker compose ps SERVICE
+     docker compose logs SERVICE --tail=50
+     ```
+   - Für Exporter: `curl -s http://localhost:<port>/metrics | head`.
 
-1. **Pull neue Images**
-   ```bash
-   docker compose pull
-   ```
-2. **Optional: Test im Staging**
-   - `docker compose -f compose.yml -f compose.staging.yml up -d`
-   - Smoke-Tests (Healthchecks, UI, API)
-3. **Deploy in Prod**
-   ```bash
-   docker compose up -d
-   ```
-4. **Verifikation**
-   - `docker compose ps` – Status
-   - Healthchecks: OpenWebUI, LiteLLM, Prometheus, Grafana
-   - Logs: `docker compose logs --tail=50`
+4. **Watchtower**
+   - Stellen Sie sicher, dass für Dienste mit automatischer Aktualisierung
+     (`watchtower.enable=true`) der neue Tag angegeben ist. Watchtower übernimmt
+     diesen beim nächsten Zyklus.
+   - Für kritische Dienste (Nginx, DB) bleibt die automatische Aktualisierung
+     deaktiviert.
 
-## Rollback
+5. **Release-Dokumentation**
+   - Listen Sie in `CHANGELOG.md`/Release-Notes die aktualisierten Images auf.
+   - Fügen Sie bei Bedarf Anweisungen zum Rollback (vorheriger Digest) hinzu.
 
-- Vorherige Tags notieren (z.B. `:prev`)
-- `docker compose down` + `docker compose up -d` mit alten Tags
-- Nach Rollback Healthchecks wiederholen
+6. **Validierung**
+   - Führen Sie `docker compose config` aus und stellen Sie sicher, dass das
+     Ergebnis nur gepinnte Tags enthält.
+   - Führen Sie `rg ':latest'` aus – im Repository sollten keine Erwähnungen von
+     Container-Images mit diesem Tag verbleiben.
 
-## Nacharbeiten
-
-- Versionen in Docs/Statussnippet aktualisieren
-- ggf. Alerting/Monitoringschwellen prüfen
+Die Einhaltung der Checkliste garantiert, dass Watchtower keine inkompatiblen
+Releases zieht und vereinfacht Rollbacks bei Problemen mit Updates.

@@ -4,12 +4,11 @@ translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: '📊 Detaillierte Tabelle der aktiven Services des ERNI-KI Systems'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 audience: 'administrators'
 ---
-
 # 📊 Detaillierte Tabelle der aktiven Services des ERNI-KI Systems
 
 > **Referenzdokumentation für die Administration des ERNI-KI Systems** >
