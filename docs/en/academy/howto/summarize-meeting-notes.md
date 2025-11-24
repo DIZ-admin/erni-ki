@@ -7,6 +7,11 @@ last_updated: '2025-11-24'
 
 # Summarize meeting notes
 
+## Introduction
+
+This guide explains how to efficiently summarize meeting notes using AI tools,
+providing a template and best practices for quick and accurate documentation.
+
 ## Preparation
 
 1. Collect raw notes or transcript (clean obvious typos if possible).
