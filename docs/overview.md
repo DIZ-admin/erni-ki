@@ -169,8 +169,7 @@ flowchart LR
   [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md),
   [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md)
 - **Runbooks и troubleshooting:**
-  [`Troubleshooting guide`](operations/troubleshooting/troubleshooting-guide.md),
-  [`Troubleshooting README`](operations/troubleshooting/README.md)
+  [`Troubleshooting`](operations/troubleshooting/README.md)
 - **Безопасность:**
   [`security/security-policy.md`](security/security-policy.md),
   [`log-audit.md`](security/log-audit.md)
