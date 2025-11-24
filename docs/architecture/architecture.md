@@ -247,13 +247,13 @@ conf/nginx/
 - **`/api/mcp/`** ✅ - Model Context Protocol
 - **WebSocket endpoints** ✅ - Real-time коммуникация
 
-## 🏛️ Диаграмма архитектуры системы (v12.0 - обновлено 2025-10-02)
+## 🏛️ Диаграмма архитектуры системы (v12.1 - обновлено 2025-11-24)
 
 ```mermaid
 graph TB
     %% External Access Layer
     subgraph "🌐 External Access"
-        CF[Cloudflare Tunnels 2025.9.1<br/>5 доменов активны]
+        CF[Cloudflare Tunnels 2024.10.0<br/>5 активных доменов]
         NGINX[Nginx 1.28.0<br/>:80, :443, :8080<br/>SSL/TLS + WAF]
     end
 
@@ -262,7 +262,7 @@ graph TB
         WEBUI[OpenWebUI v0.6.36<br/>:8080 GPU<br/>✅ Healthy]
         OLLAMA[Ollama 0.12.11<br/>:11434 GPU<br/>4GB VRAM limit<br/>✅ Healthy]
         LITELLM[LiteLLM v1.80.0.rc.1<br/>:4000<br/>12GB memory<br/>✅ Healthy]
-        MCP[MCP Server<br/>:8000<br/>4 инструмента<br/>✅ Healthy]
+        MCP[MCP Server<br/>:8000<br/>7 инструментов<br/>✅ Healthy]
     end
 
     %% Document Processing
@@ -279,7 +279,7 @@ graph TB
         BACKREST[Backrest v1.9.2<br/>:9898<br/>7д + 4н<br/>✅ Healthy]
     end
 
-    subgraph "📊 Monitoring & Observability (30/30 Healthy)"
+    subgraph "📊 Monitoring & Observability (32/32 Healthy)"
         PROMETHEUS[Prometheus v3.0.0<br/>:9091<br/>20 правил<br/>✅ Healthy]
         GRAFANA[Grafana v11.3.0<br/>:3000<br/>5 дашбордов<br/>✅ Healthy]
         ALERTMANAGER[Alertmanager v0.27.0<br/>:9093-9094<br/>✅ Healthy]
@@ -304,7 +304,7 @@ graph TB
     subgraph "🛠️ Infrastructure Layer"
         WATCHTOWER[Watchtower 1.7.1<br/>:8091<br/>Селективные обновления<br/>✅ Healthy]
         AUTH[Auth Service<br/>:9092<br/>JWT<br/>✅ Healthy]
-        DOCKER[Docker + NVIDIA Runtime<br/>GPU Support<br/>30/30 Healthy]
+        DOCKER[Docker + NVIDIA Runtime<br/>GPU Support<br/>32/32 Healthy]
     end
 
     %% External connections

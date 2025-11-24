@@ -29,6 +29,107 @@ full observability stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager
 v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0, 8 exporters + RAG Exporter). External
 access is via Cloudflare tunnels (5 domains).
 
+## 🏛️ System Architecture Diagram (v12.1 – 2025-11-24)
+
+```mermaid
+graph TB
+    subgraph "🌐 External Access"
+        CF[Cloudflare Tunnels 2024.10.0<br/>5 domains live]
+        NGINX[Nginx 1.28.0<br/>:80/:443/:8080<br/>SSL/TLS + WAF]
+    end
+
+    subgraph "🤖 AI & ML Services"
+        WEBUI[OpenWebUI v0.6.36<br/>:8080 GPU<br/>✅ Healthy]
+        OLLAMA[Ollama 0.12.11<br/>:11434 GPU<br/>4GB VRAM limit<br/>✅ Healthy]
+        LITELLM[LiteLLM v1.80.0.rc.1<br/>:4000<br/>12GB memory<br/>✅ Healthy]
+        MCP[MCP Server<br/>:8000<br/>7 tools<br/>✅ Healthy]
+    end
+
+    subgraph "📄 Document Processing"
+        DOCLING[Docling<br/>:5001 OCR CPU<br/>✅ Healthy]
+        TIKA[Apache Tika<br/>:9998<br/>✅ Healthy]
+        EDGETTS[EdgeTTS<br/>:5050<br/>✅ Healthy]
+        SEARXNG[SearXNG<br/>:8080<br/>6+ sources<br/>✅ Healthy]
+    end
+
+    subgraph "💾 Data Layer"
+        POSTGRES[(PostgreSQL 17 + pgvector<br/>:5432 internal<br/>✅ Healthy)]
+        REDIS[(Redis 7-alpine<br/>:6379 internal<br/>✅ Healthy)]
+        BACKREST[Backrest v1.9.2<br/>:9898<br/>✅ Healthy]
+    end
+
+    subgraph "📊 Observability (32/32 Healthy)"
+        PROMETHEUS[Prometheus v3.0.0<br/>:9091<br/>20 alert rules<br/>✅]
+        GRAFANA[Grafana v11.3.0<br/>:3000<br/>5 dashboards<br/>✅]
+        ALERTMANAGER[Alertmanager v0.27.0<br/>:9093-9094<br/>✅]
+        LOKI[Loki v3.0.0<br/>:3100<br/>TSDB v13<br/>✅]
+        FLUENT_BIT[Fluent Bit v3.1.0<br/>:24224/:2020<br/>✅]
+        WEBHOOK_REC[Webhook Receiver<br/>:9095<br/>✅]
+    end
+
+    subgraph "📈 Exporters (8 + RAG + Proxy)"
+        NODE_EXP[Node Exporter v1.9.1<br/>:9101]
+        PG_EXP[PostgreSQL Exporter v0.15.0<br/>:9187]
+        PG_PROXY[Socat Proxy<br/>:9188 IPv4→IPv6]
+        REDIS_EXP[Redis Exporter v1.62.0<br/>:9121]
+        NVIDIA_EXP[NVIDIA GPU Exporter<br/>:9445]
+        BLACKBOX_EXP[Blackbox Exporter v0.27.0<br/>:9115]
+        CADVISOR[cAdvisor v0.52.1<br/>:8081]
+        OLLAMA_EXP[Ollama Exporter<br/>:9778]
+        NGINX_EXP[Nginx Exporter v1.4.2<br/>:9113]
+        RAG_EXP[RAG Exporter<br/>:9808<br/>SLA metrics]
+    end
+
+    subgraph "🛠️ Infrastructure"
+        WATCHTOWER[Watchtower 1.7.1<br/>:8091<br/>Monitor-only]
+        AUTH[Auth Service<br/>:9092<br/>JWT]
+        DOCKER[Docker + NVIDIA Runtime<br/>32/32 Healthy]
+    end
+
+    %% External
+    USER --> CF
+    CF --> NGINX
+
+    %% Gateway
+    NGINX --> AUTH
+    NGINX --> WEBUI
+    NGINX --> SEARXNG
+    NGINX --> LITELLM
+
+    %% AI/Data flows
+    WEBUI --> OLLAMA
+    WEBUI --> LITELLM
+    LITELLM --> OLLAMA
+    LITELLM --> REDIS
+    WEBUI --> DOCLING
+    WEBUI --> TIKA
+    WEBUI --> EDGETTS
+    WEBUI --> SEARXNG
+    WEBUI --> POSTGRES
+
+    %% Exporters → Observability
+    NODE_EXP --> PROMETHEUS
+    PG_EXP --> PROMETHEUS
+    PG_PROXY --> PG_EXP
+    REDIS_EXP --> PROMETHEUS
+    NVIDIA_EXP --> PROMETHEUS
+    BLACKBOX_EXP --> PROMETHEUS
+    CADVISOR --> PROMETHEUS
+    OLLAMA_EXP --> PROMETHEUS
+    NGINX_EXP --> PROMETHEUS
+    RAG_EXP --> PROMETHEUS
+    FLUENT_BIT --> LOKI
+    GRAFANA --> PROMETHEUS
+    GRAFANA --> LOKI
+    ALERTMANAGER --> PROMETHEUS
+    ALERTMANAGER --> WEBHOOK_REC
+
+    %% Watchtower (monitor-only)
+    WATCHTOWER -.-> WEBUI
+    WATCHTOWER -.-> OLLAMA
+    WATCHTOWER -.-> SEARXNG
+```
+
 ### 🚀 Latest updates (v12.1 — Nov 2025)
 
 #### 🔧 Prometheus Exporters fix (07 Nov 2025)
