@@ -1,28 +1,25 @@
----
-language: ru
-translation_status: complete
-doc_version: '2025.11'
-last_updated: '2025-11-24'
----
-
 # 🔧 Руководство по интеграции MCP в ERNI-KI
 
-> **Версия документа:** 9.0 **Дата обновления:** 2025-11-14 **Статус:** ✅
-> Healthy (порт 8000, интеграция с LiteLLM/Context7 подтверждена)
+> **Версия документа:** 9.1 **Дата обновления:** 2025-11-21 **Статус:** ✅
+> Healthy (порт 8000 на 127.0.0.1, интеграция с LiteLLM/Context7 подтверждена)
 
 ## 📋 Обзор MCP (Model Context Protocol)
 
 MCP Server в ERNI-KI предоставляет стандартизированный интерфейс для интеграции
 AI-инструментов с OpenWebUI v0.6.36 через Model Context Protocol. Система
-включает 4 активных MCP инструмента:
+включает 7 активных MCP инструментов:
 
-- **Time Server** - работа с временем и часовыми поясами
-- **PostgreSQL Server** - выполнение SQL запросов к базе данных (PostgreSQL
-  15.13 + pgvector 0.8.0)
-- **Filesystem Server** - операции с файловой системой
-- **Memory Server** - управление графом знаний
+- **Time Server** — работа с временем и часовыми поясами
+- **Context7 Docs** — доступ к документации Context7
+- **PostgreSQL Server** — SQL к openwebui БД (PostgreSQL 17 + pgvector)
+- **Filesystem Server** — операции с файловой системой (`/app/data`, `/app/conf`
+  readonly)
+- **Memory Server** — граф знаний
+- **SearXNG Web Search** — веб‑поиск
+- **Desktop Commander** — терминал/редактор с ограниченными каталогами
+  (`/app/data/mcpo-desktop`, `/app/conf`) и включённым блок-листом команд
 
-**Текущий статус:** ✅ Healthy, 2 часа работы, порт 8000
+**Текущий статус:** ✅ Healthy, порт 8000 (локальный bind)
 
 ## 🏗️ Архитектура системы
 
@@ -31,10 +28,12 @@ graph TB
     A[OpenWebUI] --> B[Nginx Proxy]
     B --> C[MCPO Server :8000]
     C --> D[Time MCP Server]
-    C --> E[PostgreSQL MCP Server]
-    C --> F[Filesystem MCP Server]
-    C --> G[Memory MCP Server]
-    C --> H[SearXNG MCP Server]
+    C --> E[Context7 Docs MCP Server]
+    C --> F[PostgreSQL MCP Server]
+    C --> G[Filesystem MCP Server]
+    C --> H[Memory MCP Server]
+    C --> I[SearXNG MCP Server]
+    C --> J[Desktop Commander MCP Server]
 
     E --> I[PostgreSQL Database]
     H --> J[SearXNG Service]
@@ -58,13 +57,13 @@ graph TB
 
 ### ✅ Что работает
 
-1. **MCPO Server** - здоров и доступен на порту 8000
-2. **Swagger UI** - доступен по адресу http://localhost:8000/docs
-3. **OpenAPI спецификация** - доступна по адресу
-   http://localhost:8000/openapi.json
-4. **Все 5 MCP серверов** - инициализированы и отвечают на запросы
-5. **Nginx proxy** - корректно проксирует запросы к MCP серверам
-6. **OpenWebUI конфигурация** - TOOL_SERVER_CONNECTIONS настроены
+1. **MCPO Server** - здоров и доступен на порту 8000 (127.0.0.1 биндинг)
+2. **Swagger UI** - http://localhost:8000/docs
+3. **OpenAPI спецификация** - http://localhost:8000/openapi.json
+4. **Все MCP серверы** - инициализированы: time, context7, postgres, filesystem,
+   memory, searxng, desktop-commander
+5. **OpenWebUI конфигурация** - TOOL_SERVER_CONNECTIONS содержит Time, Context7,
+   PostgreSQL, Desktop Commander
 
 ### 📊 Производительность
 
@@ -146,25 +145,36 @@ curl -X POST "http://localhost:8000/postgres/query" \
 - `POST /searxng/searxng_web_search` - веб-поиск
 - `POST /searxng/web_url_read` - чтение контента по URL
 
+### 6. Desktop Commander (`/desktop-commander`)
+
+_Назначение:_ терминал/файловые операции с блок-листом опасных команд и
+ограниченными каталогами.
+
+_Каталоги:_ `/app/data/mcpo-desktop`, `/app/conf` (см.
+`data/desktop-commander/.claude-server-commander/config.json`).
+
+_Примечание:_ команда блок-листа встроена в сервер; телеметрия отключена.
+
 ## 🌐 Интеграция с OpenWebUI
 
 ### Конфигурация TOOL_SERVER_CONNECTIONS
 
-В файле `env/openwebui.env` настроены подключения к MCP серверам через nginx
-proxy:
+В файле `env/openwebui.env` подключены MCP сервера напрямую к `mcposerver:8000`
+через Docker-сеть:
 
 ```bash
-TOOL_SERVER_CONNECTIONS=[
-  {"name": "Time Server", "url": "http://nginx:8080/api/mcp/time", "enabled": true},
-  {"name": "PostgreSQL Server", "url": "http://nginx:8080/api/mcp/postgres", "enabled": true},
-  {"name": "Filesystem Server", "url": "http://nginx:8080/api/mcp/filesystem", "enabled": true},
-  {"name": "Memory Server", "url": "http://nginx:8080/api/mcp/memory", "enabled": true}
-]
+TOOL_SERVER_CONNECTIONS='[
+  {"name": "Time Server", "url": "http://mcposerver:8000/time", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
+  {"name": "Context7", "url": "http://mcposerver:8000/context7", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
+  {"name": "PostgreSQL", "url": "http://mcposerver:8000/postgres", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
+  {"name": "Desktop Commander", "url": "http://mcposerver:8000/desktop-commander", "enabled": true, "path": "/", "auth_type": "none", "config": {}}
+]'
 ```
 
 ### Nginx Proxy Configuration
 
-Nginx проксирует запросы от OpenWebUI к MCPO серверу:
+Nginx может проксировать `/api/mcp/*` при необходимости внешнего доступа, но по
+умолчанию OpenWebUI ходит к `mcposerver:8000` напрямую по внутренней сети.
 
 ```nginx
 # MCP (Model Context Protocol) API endpoints
