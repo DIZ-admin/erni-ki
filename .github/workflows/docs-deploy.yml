@@ -48,6 +48,9 @@ jobs:
       - name: 🧱 Build documentation
         run: mkdocs build --site-dir site
 
+      - name: 🚫 Disable Jekyll
+        run: touch site/.nojekyll
+
       - name: ⚙️ Setup Pages
         id: pages
         uses: actions/configure-pages@v5
