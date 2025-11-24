@@ -312,6 +312,14 @@ repos:
         language: system
         pass_filenames: false
 
+      - id: markdownlint-cli2
+        name: "Docs: markdownlint"
+        entry: npx markdownlint-cli2
+        language: node
+        files: \.(md|markdown)$
+        additional_dependencies:
+          - markdownlint-cli2@0.19.1
+
       - id: visuals-and-links-check
         name: "Docs: visuals/TOC/link check"
         entry: python3 scripts/docs/visuals_and_links_check.py
