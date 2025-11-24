@@ -3,15 +3,16 @@ language: ru
 translation_status: complete
 doc_version: '2025.11'
 title: 'installation'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 ---
 
 # 📦 Installation Guide - ERNI-KI
 
-> **Версия:** 12.1 **Дата обновления:** 22.11.2025 **Статус:** Production Ready
-> (Система мониторинга: 5 provisioned дашбордов Grafana, актуальные Prometheus
+> **Версия:** 12.1 **Дата обновления:** 22.11.2025 **Статус системы:**
+> Production Ready (Система мониторинга: 5 provisioned дашбордов Grafana,
+> актуальные Prometheus
 
 ## 📋 Обзор
 
