@@ -7,7 +7,7 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   schedule:
     # Default severity level2:00 UTC
     - cron: "0 2 * * *"

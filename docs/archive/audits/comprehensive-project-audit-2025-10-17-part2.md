@@ -15,6 +15,8 @@ doc_version: '2025.11'
 
 ### Проверка статуса системы
 
+{% raw %}
+
 ```bash
 # Общий статус всех контейнеров
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.State}}"
@@ -34,6 +36,8 @@ df -h | grep nvme0n1p2
 # GPU utilization
 nvidia-smi --query-gpu=name,utilization.gpu,memory.used,memory.total,temperature.gpu --format=csv,noheader
 ```
+
+{% endraw %}
 
 ### Проверка критических интеграций
 

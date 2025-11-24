@@ -278,4 +278,4 @@ docker compose config | grep -A 5 -B 5 "environment:"
 
 - [Admin Guide](../core/admin-guide.md)
 - [Monitoring Guide](../monitoring/monitoring-guide.md)
-- [Service Restart Procedures](../maintenance/service-restart-procedures.md)
+- [Service Restart Procedures](../../operations/maintenance/service-restart-procedures.md)

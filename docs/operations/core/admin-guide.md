@@ -497,6 +497,8 @@ docker exec erni-ki-nginx-1 grep "universal_request_id" /etc/nginx/nginx.conf
 
 ### Процедуры проверки
 
+{% raw %}
+
 ```bash
 # 1. Проверка статуса всех сервисов
 docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "(healthy|Up)" | wc -l
@@ -522,6 +524,8 @@ docker exec erni-ki-ollama-1 nvidia-smi -L | grep -c "GPU"
 curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health
 # Ожидаемый результат: 200
 ```
+
+{% endraw %}
 
 ### Rollback процедуры
 
