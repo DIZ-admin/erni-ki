@@ -157,6 +157,8 @@ gh api repos/:owner/:repo/environments/production | jq '.protection_rules'
 
 ### Environment-specific деплой
 
+{% raw %}
+
 ```yaml
 name: Deploy to Environment
 
@@ -189,6 +191,8 @@ jobs:
             'development' && 'DEV' || inputs.environment == 'staging' &&
             'STAGING' || 'PROD')] }}
 ```
+
+{% endraw %}
 
 ### Автоматический выбор окружения
 

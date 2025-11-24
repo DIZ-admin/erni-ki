@@ -482,6 +482,8 @@ curl -s http://localhost:9090/api/v1/status/config
 
 **Рекомендации:**
 
+{% raw %}
+
 ```bash
 # Получить список образов с latest
 docker images --format "{{.Repository}}:{{.Tag}}" | grep ":latest"
@@ -497,6 +499,8 @@ nano compose.yml
 # Пересоздать контейнеры с фиксированными версиями
 docker-compose up -d
 ```
+
+{% endraw %}
 
 **Estimated Time to Fix:** 2-3 часа **Приоритет:** 3 (В ТЕЧЕНИЕ НЕДЕЛИ)
 
