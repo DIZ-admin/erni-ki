@@ -55,7 +55,6 @@ managing the ERNI-KI platform.
 [troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
 
 ## Операционный ритм
-
 - **Ежедневно:** проверка статус-страницы, `CronJobFailed`, контроль бэкапов.
 - **Еженедельно:** аудит изменений по `configuration-change-process.md` и
   обновление журнала maintenance.

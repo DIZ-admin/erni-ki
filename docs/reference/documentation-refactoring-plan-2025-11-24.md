@@ -9,6 +9,7 @@ last_updated: '2025-11-24'
 
 > **Полный аудит:**
 > [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
+> [TOC]
 
 ## Краткое резюме аудита
 
@@ -52,23 +53,16 @@ last_updated: '2025-11-24'
   - 1 ссылка в `operations/monitoring/prometheus-alerts-guide.md`
 
 - [ ] **Добавить TOC в топ-10 документов** (1 час)
-  - [architecture/architecture.md](../architecture/architecture.md) (4323 слов)
-  - [operations/monitoring/monitoring-guide.md](../operations/monitoring/monitoring-guide.md)
-    (3531 слов)
-  - [security/log-audit.md](../security/log-audit.md) (2249 слов)
-  - [operations/diagnostics/erni-ki-diagnostic-methodology.md](../operations/diagnostics/erni-ki-diagnostic-methodology.md)
-    (2057 слов)
-  - [de/architecture/architecture.md](../de/architecture/architecture.md) (2030
-    слов)
-  - [reference/api-reference.md](api-reference.md) (2023 слов)
-  - [getting-started/installation.md](../getting-started/installation.md) (1881
-    слов)
-  - [operations/maintenance/backup-restore-procedures.md](../operations/maintenance/backup-restore-procedures.md)
-    (1879 слов)
-  - [de/operations/maintenance/backup-restore-procedures.md](../de/operations/maintenance/backup-restore-procedures.md)
-    (1839 слов)
-  - [architecture/service-inventory.md](../architecture/service-inventory.md)
-    (1742 слов)
+  - `architecture/architecture.md` (4323 слов)
+  - `operations/monitoring/monitoring-guide.md` (3531 слов)
+  - `security/log-audit.md` (2249 слов)
+  - `operations/diagnostics/erni-ki-diagnostic-methodology.md` (2057 слов)
+  - `de/architecture/architecture.md` (2030 слов)
+  - `reference/api-reference.md` (2023 слов)
+  - `getting-started/installation.md` (1881 слов)
+  - `operations/maintenance/backup-restore-procedures.md` (1879 слов)
+  - `de/operations/maintenance/backup-restore-procedures.md` (1839 слов)
+  - `architecture/service-inventory.md` (1742 слов)
 
 - [ ] **Создать README для operations/**
   - `operations/automation/README.md`
@@ -103,10 +97,10 @@ last_updated: '2025-11-24'
   - Либо добавить контент, либо удалить и настроить redirect
 
 - [ ] **Завершить TODO/FIXME** (2 часа)
-  - [security/security-policy.md](../security/security-policy.md)
-  - [en/security/security-policy.md](../en/security/security-policy.md)
-  - [de/security/security-policy.md](../de/security/security-policy.md)
-  - [operations/core/configuration-change-process.md](../operations/core/configuration-change-process.md)
+  - `security/security-policy.md`
+  - `en/security/security-policy.md`
+  - `de/security/security-policy.md`
+  - `operations/core/configuration-change-process.md`
 
 - [ ] **Добавить TOC в остальные документы** (4 часа)
   - 51 документ >500 слов без TOC
@@ -129,6 +123,15 @@ last_updated: '2025-11-24'
 - ✅ 0 TODO/FIXME в production docs
 - ✅ Все документы >500 слов с TOC
 - ✅ Автоматическая валидация в CI
+- 🛈 Короткие документы остались только в DE-разделах и включены в Phase 3
+
+### Автоматизация
+
+- Добавлен `scripts/docs/content_lint.py` (fix headings, [TOC], отчёт по
+  коротким файлам).
+- npm-скрипты:
+  - `npm run docs:lint` — применяет фиксы (используется локально/pre-commit).
+  - `npm run docs:report` — выводит список коротких файлов для Phase 3.
 
 ---
 
@@ -349,7 +352,7 @@ repos:
         files: 'docs/.*\.md$'
 ```
 
-### GitHub Actions
+## GitHub Actions
 
 ```yaml
 # .github/workflows/docs.yml
