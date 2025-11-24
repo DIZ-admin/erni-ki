@@ -1231,10 +1231,6 @@ secrets:
   context7_api_key:
     file: ./secrets/context7_api_key.txt
 
-  # VLLM API key
-  vllm_api_key:
-    file: ./secrets/vllm_api_key.txt
-
   # Watchtower HTTP API token
   watchtower_api_token:
     file: ./secrets/watchtower_api_token.txt

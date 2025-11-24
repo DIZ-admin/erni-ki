@@ -12,7 +12,6 @@ secrets/
 ├── litellm_api_key.txt            # API ключ LiteLLM
 ├── publicai_api_key.txt           # PublicAI ключ для внешних моделей LiteLLM
 ├── context7_api_key.txt           # API ключ Context7
-├── vllm_api_key.txt               # API ключ VLLM
 ├── watchtower_api_token.txt       # Токен доступа к HTTP API Watchtower
 ├── grafana_admin_password.txt     # Пароль администратора Grafana
 ├── postgres_exporter_dsn.txt      # DSN для postgres-exporter
@@ -36,7 +35,6 @@ cp secrets/litellm_db_password.txt.example secrets/litellm_db_password.txt
 cp secrets/litellm_api_key.txt.example secrets/litellm_api_key.txt
 cp secrets/publicai_api_key.txt.example secrets/publicai_api_key.txt
 cp secrets/context7_api_key.txt.example secrets/context7_api_key.txt
-cp secrets/vllm_api_key.txt.example secrets/vllm_api_key.txt
 cp secrets/watchtower_api_token.txt.example secrets/watchtower_api_token.txt
 cp secrets/grafana_admin_password.txt.example secrets/grafana_admin_password.txt
 cp secrets/postgres_exporter_dsn.txt.example secrets/postgres_exporter_dsn.txt
@@ -69,9 +67,6 @@ echo "zpka_your_publicai_key" > secrets/publicai_api_key.txt
 
 # Context7 API key
 echo "ctx7sk-your-key" > secrets/context7_api_key.txt
-
-# VLLM API key
-echo "your-vllm-key" > secrets/vllm_api_key.txt
 
 # Watchtower HTTP API token
 echo "long-random-token" > secrets/watchtower_api_token.txt
@@ -207,6 +202,4 @@ ls -l secrets/*.txt
 
 ---
 
-**Создано:** 2025-10-30  
-**Обновлено:** 2025-10-30  
-**Версия:** 1.0
+**Создано:** 2025-10-30 **Обновлено:** 2025-10-30 **Версия:** 1.0
