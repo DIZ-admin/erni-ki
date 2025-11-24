@@ -265,8 +265,13 @@ repos:
         args:
           - -c
           - |
-            # Scan source files for inline task markers
-            matches=$(find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.go" -o -name "*.yml" -o -name "*.yaml" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" ! -name ".pre-commit-config.yaml" -exec grep -Hn "TODO\\|FIXME" {} \; 2>/dev/null | grep -v "pragma: allowlist todo" | head -10)
+            # Scan source files for inline task markers (TODO/FIXME), prefer ripgrep for speed
+            if command -v rg >/dev/null 2>&1; then
+              matches=$(rg --no-heading --line-number --glob '*.{py,js,ts,go,yml,yaml}' --iglob '!node_modules/**' --iglob '!.venv/**' --iglob '!site/**' --iglob '!*.pre-commit-config.yaml' "TODO|FIXME" || true)
+            else
+              matches=$(find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.go" -o -name "*.yml" -o -name "*.yaml" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" ! -name ".pre-commit-config.yaml" -exec grep -Hn "TODO\\|FIXME" {} \; 2>/dev/null)
+            fi
+            matches=$(echo "$matches" | grep -v "pragma: allowlist todo" | head -20)
             if [[ -n "$matches" ]]; then
               echo "❌ Inline tasks detected; create a GitHub Issue instead of a comment."
               echo "$matches"
@@ -337,9 +342,9 @@ repos:
           - -c
           - |
             # Check for .tmp files and other temporary artifacts
-            if find . -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" -o -name ".DS_Store" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" ! -path "*/.git/*" ! -path "*/data/*" ! -path "*/logs/*" 2>/dev/null | head -1 | grep -q .; then
+            if find . -type d \( -path "./.git" -o -path "./node_modules" -o -path "./.venv" -o -path "./site" -o -path "./coverage" \) -prune -o -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" -o -name ".DS_Store" \) -print | head -1 | grep -q .; then
               echo "❌ Found temporary files that should not be committed:"
-              find . -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" -o -name ".DS_Store" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" ! -path "*/.git/*" ! -path "*/data/*" ! -path "*/logs/*" 2>/dev/null | head -20
+              find . -type d \( -path "./.git" -o -path "./node_modules" -o -path "./.venv" -o -path "./site" -o -path "./coverage" \) -prune -o -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" -o -name ".DS_Store" \) -print | head -20
               echo ""
               echo "Please remove these files before committing."
               exit 1
@@ -370,4 +375,25 @@ repos:
                 status=1
               fi
             done
+            exit $status
+
+      # Forbid Finder-style duplicate filenames anywhere in repo (except ignored dirs)
+      - id: forbid-numbered-copies-any
+        name: "Repo: forbid numbered filename copies"
+        entry: bash
+        language: system
+        pass_filenames: false
+        args:
+          - -c
+          - |
+            status=0
+            find -E . \
+              -path './.git' -prune -o \
+              -path './node_modules' -prune -o \
+              -path './.venv' -prune -o \
+              -path './site' -prune -o \
+              -regex '.* [0-9]+(\.[^/]+)?' -print | while read -r f; do
+                echo "Duplicate-style filename detected: $f"
+                status=1
+              done
             exit $status
