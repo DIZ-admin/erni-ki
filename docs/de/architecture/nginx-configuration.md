@@ -9,6 +9,7 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
+
 # 🌐 Nginx Konfigurationsleitfaden - ERNI-KI
 
 > **Version:** 9.0 | **Datum:** 2025-09-11 | **Status:** Production Ready [TOC]
