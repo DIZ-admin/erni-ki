@@ -215,13 +215,15 @@ docker compose exec db pg_dump -U openwebui openwebui > backup_$(date +%Y%m%d).s
 
 ### Backup-Konfiguration
 
+# pragma: allowlist secret (Beispiel-Config, без боевых значений)
+
 ```json
 {
   "repos": [
     {
       "id": "local-backup",
       "uri": "/data/repositories/erni-ki",
-      "password": "your-encryption-password"
+      "password": "<encryption-password>"
     }
   ],
   "plans": [
@@ -249,6 +251,8 @@ docker compose exec db pg_dump -U openwebui openwebui > backup_$(date +%Y%m%d).s
 
 ### Wiederherstellung aus Backup
 
+# pragma: allowlist secret (пример пароля в payload)
+
 ```bash
 # Services stoppen
 docker compose down
@@ -272,7 +276,7 @@ curl -X POST http://localhost:8080/api/v1/auths/signup \
   -d '{
     "name": "Neuer Benutzer",
     "email": "user@example.com",
-    "password": "sicheres-passwort"
+    "password": "<secure-password>"
   }'
 
 # Benutzerliste anzeigen (erfordert Admin-Rechte)

@@ -231,9 +231,10 @@ if docker ps --filter "name=erni-ki-redis-litellm-1" --format "{{.Status}}" | gr
     echo "Status: ✅ Healthy"
 
     # Try without password, then with password
+    # pragma: allowlist secret (test credentials for diagnostics only)
     if connected_clients=$(get_redis_metric "erni-ki-redis-litellm-1" "" "connected_clients" 2>/dev/null); then
         password_status="No password"
-    elif connected_clients=$(get_redis_metric "erni-ki-redis-litellm-1" "ErniKiRedisLiteLLMPassword2024" "connected_clients" 2>/dev/null); then
+    elif connected_clients=$(get_redis_metric "erni-ki-redis-litellm-1" "<redis-litellm-password>" "connected_clients" 2>/dev/null); then # pragma: allowlist secret
         password_status="With password"
     else
         echo "❌ Unable to connect"
@@ -246,8 +247,9 @@ if docker ps --filter "name=erni-ki-redis-litellm-1" --format "{{.Status}}" | gr
 
     if [[ "$connected_clients" != "N/A" ]]; then
         if [[ "$password_status" == "With password" ]]; then
-            used_memory_human=$(get_redis_metric "erni-ki-redis-litellm-1" "ErniKiRedisLiteLLMPassword2024" "used_memory_human")
-            dbsize=$(docker exec erni-ki-redis-litellm-1 redis-cli -a 'ErniKiRedisLiteLLMPassword2024' dbsize 2>/dev/null)
+            # pragma: allowlist secret (placeholder password, non-prod)
+            used_memory_human=$(get_redis_metric "erni-ki-redis-litellm-1" "<redis-litellm-password>" "used_memory_human") # pragma: allowlist secret
+            dbsize=$(docker exec erni-ki-redis-litellm-1 redis-cli -a '<redis-litellm-password>' dbsize 2>/dev/null) # pragma: allowlist secret
         else
             used_memory_human=$(get_redis_metric "erni-ki-redis-litellm-1" "" "used_memory_human")
             dbsize=$(docker exec erni-ki-redis-litellm-1 redis-cli dbsize 2>/dev/null)
