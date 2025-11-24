@@ -7,18 +7,21 @@ last_updated: '2025-11-24'
 
 # План рефакторинга документации ERNI-KI (2025-11-24)
 
-> **Полный аудит:** [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
+> **Полный аудит:**
+> [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
 
 ## Краткое резюме аудита
 
 **Оценка:** 7.5/10
 
 **Статистика:**
+
 - Всего файлов: 194 (161 активных + 33 архивных)
 - Покрытие переводов: DE 74.4%, EN 19.5%
 - Проблем: 37 deprecated метаданных, 6 битых ссылок, 61 файл без TOC
 
 **Критические проблемы:**
+
 1. 🔴 Низкое покрытие EN переводов (19.5%)
 2. 🔴 37 файлов с deprecated полями метаданных
 3. 🔴 61 длинный документ без оглавления
@@ -50,15 +53,22 @@ last_updated: '2025-11-24'
 
 - [ ] **Добавить TOC в топ-10 документов** (1 час)
   - [architecture/architecture.md](../architecture/architecture.md) (4323 слов)
-  - [operations/monitoring/monitoring-guide.md](../operations/monitoring/monitoring-guide.md) (3531 слов)
+  - [operations/monitoring/monitoring-guide.md](../operations/monitoring/monitoring-guide.md)
+    (3531 слов)
   - [security/log-audit.md](../security/log-audit.md) (2249 слов)
-  - [operations/diagnostics/erni-ki-diagnostic-methodology.md](../operations/diagnostics/erni-ki-diagnostic-methodology.md) (2057 слов)
-  - [de/architecture/architecture.md](../de/architecture/architecture.md) (2030 слов)
+  - [operations/diagnostics/erni-ki-diagnostic-methodology.md](../operations/diagnostics/erni-ki-diagnostic-methodology.md)
+    (2057 слов)
+  - [de/architecture/architecture.md](../de/architecture/architecture.md) (2030
+    слов)
   - [reference/api-reference.md](api-reference.md) (2023 слов)
-  - [getting-started/installation.md](../getting-started/installation.md) (1881 слов)
-  - [operations/maintenance/backup-restore-procedures.md](../operations/maintenance/backup-restore-procedures.md) (1879 слов)
-  - [de/operations/maintenance/backup-restore-procedures.md](../de/operations/maintenance/backup-restore-procedures.md) (1839 слов)
-  - [architecture/service-inventory.md](../architecture/service-inventory.md) (1742 слов)
+  - [getting-started/installation.md](../getting-started/installation.md) (1881
+    слов)
+  - [operations/maintenance/backup-restore-procedures.md](../operations/maintenance/backup-restore-procedures.md)
+    (1879 слов)
+  - [de/operations/maintenance/backup-restore-procedures.md](../de/operations/maintenance/backup-restore-procedures.md)
+    (1839 слов)
+  - [architecture/service-inventory.md](../architecture/service-inventory.md)
+    (1742 слов)
 
 - [ ] **Создать README для operations/**
   - `operations/automation/README.md`
@@ -68,6 +78,7 @@ last_updated: '2025-11-24'
   - `operations/troubleshooting/README.md`
 
 **Результат:**
+
 - ✅ 100% файлов с корректными метаданными
 - ✅ 0 битых ссылок
 - ✅ Топ-10 документов с TOC
@@ -113,6 +124,7 @@ last_updated: '2025-11-24'
   - Документация по процессам
 
 **Результат:**
+
 - ✅ 100% документов с правильной структурой заголовков
 - ✅ 0 TODO/FIXME в production docs
 - ✅ Все документы >500 слов с TOC
@@ -196,6 +208,7 @@ last_updated: '2025-11-24'
    - [ ] README.md
 
 **Результат:**
+
 - ✅ EN покрытие >60% (с 19.5%)
 - ✅ DE покрытие >95% (с 74.4%)
 - ✅ Все критичные разделы переведены
@@ -241,6 +254,7 @@ last_updated: '2025-11-24'
   - Admin панель
 
 **Результат:**
+
 - ✅ Минимум 1 диаграмма в каждом ключевом документе
 - ✅ Скриншоты для всех UI-related инструкций
 
@@ -250,16 +264,16 @@ last_updated: '2025-11-24'
 
 ### Целевые показатели (через 3 месяца)
 
-| Метрика                        | Текущее | Цель   | Прогресс |
-|--------------------------------|---------|--------|----------|
-| Файлов с корректными метаданными | 99%   | 100%   | ⏳ |
-| EN покрытие                    | 19.5%   | 60%    | ⏳ |
-| DE покрытие                    | 74.4%   | 95%    | ⏳ |
-| Документов с TOC (>500 слов)   | 0%      | 100%   | ⏳ |
-| Битых ссылок                   | 6       | 0      | ⏳ |
-| Документов с изображениями     | 0       | 20+    | ⏳ |
-| Средний размер EN документа    | 268     | 500+   | ⏳ |
-| Файлов с TODO/FIXME           | 5       | 0      | ⏳ |
+| Метрика                          | Текущее | Цель | Прогресс |
+| -------------------------------- | ------- | ---- | -------- |
+| Файлов с корректными метаданными | 99%     | 100% | ⏳       |
+| EN покрытие                      | 19.5%   | 60%  | ⏳       |
+| DE покрытие                      | 74.4%   | 95%  | ⏳       |
+| Документов с TOC (>500 слов)     | 0%      | 100% | ⏳       |
+| Битых ссылок                     | 6       | 0    | ⏳       |
+| Документов с изображениями       | 0       | 20+  | ⏳       |
+| Средний размер EN документа      | 268     | 500+ | ⏳       |
+| Файлов с TODO/FIXME              | 5       | 0    | ⏳       |
 
 ---
 
@@ -362,16 +376,16 @@ jobs:
 
 ## Ownership
 
-| Раздел          | Владелец          | Ответственность |
-|-----------------|-------------------|-----------------|
-| Overall         | Documentation Lead | Стратегия, стандарты |
-| RU Content      | Content Team      | Канонический контент |
-| DE Translation  | DE Translator     | Немецкие переводы |
-| EN Translation  | EN Translator     | Английские переводы |
-| Academy         | Technical Writers | User-facing контент |
-| Operations      | DevOps Team       | Operational docs |
-| Architecture    | Architects        | Technical design |
-| Security        | Security Team     | Security policies |
+| Раздел         | Владелец           | Ответственность      |
+| -------------- | ------------------ | -------------------- |
+| Overall        | Documentation Lead | Стратегия, стандарты |
+| RU Content     | Content Team       | Канонический контент |
+| DE Translation | DE Translator      | Немецкие переводы    |
+| EN Translation | EN Translator      | Английские переводы  |
+| Academy        | Technical Writers  | User-facing контент  |
+| Operations     | DevOps Team        | Operational docs     |
+| Architecture   | Architects         | Technical design     |
+| Security       | Security Team      | Security policies    |
 
 ---
 
@@ -410,6 +424,5 @@ jobs:
 
 ---
 
-**План создан:** 2025-11-24
-**Следующий пересмотр:** 2025-12-24 (через месяц)
+**План создан:** 2025-11-24 **Следующий пересмотр:** 2025-12-24 (через месяц)
 **Статус:** 🔴 Фаза 1 ожидает начала
