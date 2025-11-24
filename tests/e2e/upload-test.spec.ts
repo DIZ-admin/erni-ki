@@ -55,11 +55,9 @@ async function tryLogin(page: any) {
 test('Upload file via icon buttons', async ({ page }) => {
   const path = 'tests/fixtures/sample.md';
 
-  // Создаем тестовый файл если его нет
-  if (!fs.existsSync(path)) {
-    fs.mkdirSync('tests/fixtures', { recursive: true });
-    fs.writeFileSync(path, '# Test Document\n\nThis is a test markdown file for upload testing.');
-  }
+  // Создаем тестовый файл (без проверки существования, чтобы избежать race)
+  fs.mkdirSync('tests/fixtures', { recursive: true });
+  fs.writeFileSync(path, '# Test Document\n\nThis is a test markdown file for upload testing.');
 
   await page.goto(BASE);
 
