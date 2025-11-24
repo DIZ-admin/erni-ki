@@ -8,13 +8,11 @@ title: 'ERNI-KI — Профессиональная сводка проекта
 
 # ERNI-KI — Профессиональная сводка проекта
 
-[TOC]
-
 <!-- STATUS_SNIPPET_START -->
 
 > **Статус системы (2025-11-23) — Production Ready v12.1**
 >
-> - Контейнеры: 32/32 services healthy
+> - Контейнеры: 34/34 services healthy
 > - Графана: 5/5 Grafana dashboards (provisioned)
 > - Алерты: 20 Prometheus alert rules active
 > - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
@@ -62,8 +60,8 @@ flowchart LR
 
 | Область                     | Показатель                                                                                                                  |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **Здоровье сервисов**       | 30/30 контейнеров healthy (см. README.md в корне репозитория и [`services-overview.md`](architecture/services-overview.md)) |
-| **Мониторинг**              | Prometheus v3.0.1, Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0                                    |
+| **Здоровье сервисов**       | 34/34 контейнеров healthy (см. README.md в корне репозитория и [`services-overview.md`](architecture/services-overview.md)) |
+| **Мониторинг**              | Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0                                    |
 | **GPU & AI стэк**           | OpenWebUI v0.6.36, Ollama 0.12.11, LiteLLM v1.80.0.rc.1, MCP Server (7 инструментов), RAG через SearXNG                     |
 | **Автоматизация**           | Cron: PostgreSQL VACUUM (вс. 03:00), Docker cleanup (вс. 04:00), Backrest бэкапы (ежедневно 01:30)                          |
 | **Безопасность**            | JWT Auth сервис, Nginx WAF (rate limiting + security headers), Cloudflare Zero Trust (5 доменов)                            |

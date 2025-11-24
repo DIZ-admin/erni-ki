@@ -1,7 +1,7 @@
 # Shared ERNI-KI status block used in README and MkDocs (Wave 1)
 date: "2025-11-23"
 release: "Production Ready v12.1"
-containers: "32/32 services healthy"
+containers: "34/34 services healthy"
 grafana_dashboards: "5/5 Grafana dashboards (provisioned)"
 prometheus_alerts: "20 Prometheus alert rules active"
 gpu_stack: "Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)"
