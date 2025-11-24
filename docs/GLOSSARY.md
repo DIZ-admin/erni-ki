@@ -8,7 +8,7 @@ title: 'Глоссарий'
 # Глоссарий (RU)
 
 Перевод глоссария готовится. Временно используйте английскую версию:
-[docs/en/GLOSSARY.md](en/GLOSSARY.md).
+en/GLOSSARY.md.
 
 Ключевые разделы будут включать терминологию AI/ML, Context7, Docling, LiteLLM,
 MCP, observability и процессы эксплуатации ERNI-KI.
