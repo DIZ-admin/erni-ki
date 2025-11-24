@@ -7,6 +7,12 @@ last_updated: '2025-11-24'
 
 # Prompting 101
 
+## Introduction
+
+This guide introduces basic prompting techniques, covering essential concepts,
+best practices, and example prompts to help you get started with effective AI
+interactions.
+
 ## Golden rules
 
 1. **Role → Task → Context → Format.** Explicitly set the assistant role, what

@@ -487,14 +487,16 @@ extra:
 [ ] EN: getting-started/* (8 файлов, 8 часов)
 [ ] EN: academy/* (5 файлов, 4 часа)
 [ ] EN: operations/core/* (6 файлов, 8 часов)
+[ ] EN: reference (API, metadata-standards, language-policy) — 8 файлов
+[ ] DE: reference (API, metadata-standards, language-policy) — 8 файлов
 [ ] DE: getting-started/* (4 файла, 4 часа)
 [ ] DE: architecture/* (2 файла, 4 часа)
 ```
 
 **Результат:**
 
-- EN покрытие >50%
-- DE покрытие >90%
+- EN покрытие >50% (текущее ≈6%, 5 complete / 88 RU)
+- DE покрытие >90% (текущее ≈41%, 36 complete / 88 RU)
 
 ### Фаза 4: Визуальный контент (постоянно)
 

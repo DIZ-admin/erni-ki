@@ -7,6 +7,11 @@ last_updated: '2025-11-24'
 
 # System status
 
+## Introduction
+
+This document provides an overview of the system status dashboard and how to
+interpret its indicators.
+
 Status dashboard: **https://status.ki.erni-gruppe.ch** (Uptime Kuma).
 
 ## How to use it

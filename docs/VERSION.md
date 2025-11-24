@@ -40,12 +40,13 @@ system_status: current
 
 ## Покрытие переводов (состояние на 2025-11-24)
 
-- RU: 80 файлов — 100% (канонический источник)
-- DE: 44 файла — 55%
-- EN: 16 файлов — 20%
+- RU: 88 файлов — 100% (канон)
+- DE: 60 файлов присутствуют (36 complete) ≈ 41% покрытия
+- EN: 16 файлов присутствуют (5 complete) ≈ 6% покрытия
 
 ### Фокус переводов
 
-- DE: Core operations, database, automation, architecture — complete.
-  Monitoring, maintenance, reference — в процессе.
-- EN: Academy полностью переведена. Технические документы — выборочно.
+- DE: Основные операционные и архитектурные документы переведены. Monitoring,
+  maintenance, reference — в процессе (22 pending).
+- EN: Academy полностью переведена. Технические документы — выборочно, большая
+  часть reference/architecture отсутствует.
