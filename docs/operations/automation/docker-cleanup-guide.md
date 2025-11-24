@@ -92,6 +92,8 @@ docker rmi alpine:2024.05
 
 ### 2. Автоматическая очистка всех неиспользуемых образов
 
+{% raw %}
+
 ```bash
 # ВНИМАНИЕ: Удалит ВСЕ образы без контейнеров!
 # Рекомендуется только если уверены, что образы не понадобятся
@@ -104,11 +106,15 @@ docker images --filter "dangling=false" --format "table {{.Repository}}:{{.Tag}}
 docker image prune -a --filter "until=720h"
 ```
 
+{% endraw %}
+
 ---
 
 ## Неиспользуемые Docker Volumes
 
 ### Проверка содержимого перед удалением
+
+{% raw %}
 
 ```bash
 # Список всех неиспользуемых volumes
@@ -121,6 +127,8 @@ for vol in $(docker volume ls -qf dangling=true | head -10); do
   echo ""
 done
 ```
+
+{% endraw %}
 
 ### Удаление неиспользуемых volumes
 
@@ -152,6 +160,8 @@ docker system prune -a --volumes
 
 ### Безопасная комплексная очистка
 
+{% raw %}
+
 ```bash
 # 1. Удалить остановленные контейнеры
 docker container prune -f
@@ -168,6 +178,8 @@ docker builder prune -af
 # 5. Проверить статистику
 docker system df
 ```
+
+{% endraw %}
 
 ---
 
@@ -232,6 +244,8 @@ chmod +x scripts/cleanup-docker.sh
 
 ### Команды для проверки
 
+{% raw %}
+
 ```bash
 # Общая статистика
 docker system df
@@ -254,6 +268,8 @@ docker images --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}" | sort -k2 -h
 # Топ-10 самых больших volumes
 docker volume ls --format "{{.Name}}" | xargs -I {} sh -c 'echo "{}:$(docker volume inspect {} --format "{{.Mountpoint}}" | xargs sudo du -sh 2>/dev/null | awk "{print \$1}")"' | sort -t: -k2 -h | tail -10
 ```
+
+{% endraw %}
 
 ---
 

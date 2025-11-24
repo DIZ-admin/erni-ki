@@ -317,6 +317,13 @@ jobs:
             type=sha,format=short,prefix=sha-
             type=raw,value=latest,enable={{is_default_branch}}
 
+      - name: 🏷️ Compute sanitized tag for scans
+        id: trivy-tag
+        run: |
+          ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          safe_ref=$(echo "${ref,,}" | tr '/:@' '-')
+          echo "tag=${safe_ref}" >> "$GITHUB_OUTPUT"
+
       - name: 🏗️ Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -324,7 +331,10 @@ jobs:
           file: ./auth/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ github.repository }}/auth:${{ steps.trivy-tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ toLower(github.repository) }}/auth:codex
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -332,7 +342,7 @@ jobs:
             SKIP_TESTS=true
 
       - name: 🧾 Set image ref for Trivy
-        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${GITHUB_REPOSITORY,,}/auth:${GITHUB_REF_NAME#refs/heads/}" >> "${GITHUB_ENV}"
+        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${GITHUB_REPOSITORY,,}/auth:${{ steps.trivy-tag.outputs.tag }}" >> "${GITHUB_ENV}"
 
       - name: 🔍 Run Trivy on Docker image
         uses: aquasecurity/trivy-action@0.28.0

@@ -17,6 +17,8 @@ doc_version: '2025.11'
 
 {% raw %}
 
+{% raw %}
+
 ```bash
 # Общий статус всех контейнеров
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.State}}"
@@ -36,6 +38,8 @@ df -h | grep nvme0n1p2
 # GPU utilization
 nvidia-smi --query-gpu=name,utilization.gpu,memory.used,memory.total,temperature.gpu --format=csv,noheader
 ```
+
+{% endraw %}
 
 {% endraw %}
 
@@ -377,6 +381,8 @@ ollama-exporter:
 
 **Применить изменения:**
 
+{% raw %}
+
 ```bash
 # Пересоздать контейнеры с новыми health checks
 docker compose up -d --force-recreate fluent-bit redis-exporter nginx-exporter nvidia-exporter ollama-exporter
@@ -388,6 +394,8 @@ sleep 30
 docker ps --filter "name=exporter" --format "table {{.Names}}\t{{.Status}}"
 docker ps --filter "name=fluent-bit" --format "table {{.Names}}\t{{.Status}}"
 ```
+
+{% endraw %}
 
 ---
 

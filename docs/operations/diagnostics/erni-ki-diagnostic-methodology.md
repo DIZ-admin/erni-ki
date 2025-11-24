@@ -408,6 +408,8 @@ Docling сервится в составе стека (см. `docker compose ps 
 
 ### 🔄 Полная диагностика системы (5-минутный чек-лист):
 
+{% raw %}
+
 ```bash
 #!/bin/bash
 # ERNI-KI Quick Health Check Script
@@ -449,6 +451,8 @@ echo
 
 echo "=== DIAGNOSTICS COMPLETE ==="
 ```
+
+{% endraw %}
 
 ### 📋 Детальная диагностика интеграций:
 
@@ -508,6 +512,8 @@ Internet → Cloudflare → Nginx (8080) → OpenWebUI (8080)
 
 ### 🔧 Команды для устранения типичных проблем:
 
+{% raw %}
+
 ```bash
 # Перезапуск проблемного контейнера
 docker restart erni-ki-[service-name]
@@ -522,6 +528,8 @@ docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 # Проверка сетевых подключений
 docker network inspect erni-ki_default | jq -r '.[] | .Containers | keys[]'
 ```
+
+{% endraw %}
 
 ---
 

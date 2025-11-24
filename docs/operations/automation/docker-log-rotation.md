@@ -219,6 +219,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Docker logs: $DOCKER_LOGS_SIZE" >> "$LOG_FI
 
 ### Syslog (для централизованного логирования)
 
+{% raw %}
+
 ```yaml
 logging:
   driver: 'syslog'
@@ -236,6 +238,8 @@ logging:
     max-size: '10m'
     max-file: '3'
 ```
+
+{% endraw %}
 
 ---
 
