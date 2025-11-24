@@ -61,7 +61,7 @@ ERNI-KI implements multiple security layers:
 **DO NOT** create public GitHub issues for security vulnerabilities. Contact:
 <security@erni-gruppe.ch>
 
-## Related Documentation
+## 🔗 Связанная документация
 
 - [Architecture](../architecture/README.md)
 - [Operations](../operations/README.md)

@@ -60,7 +60,7 @@ the ERNI-KI platform.
 - 50GB storage minimum (200GB+ recommended)
 - NVIDIA GPU optional (RTX 4060+ recommended)
 
-## Related Documentation
+## 🔗 Связанная документация
 
 - [Architecture Overview](../architecture/README.md)
 - [Operations Guide](../operations/README.md)
