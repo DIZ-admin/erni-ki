@@ -334,7 +334,6 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.tags }}
             ${{ env.REGISTRY }}/${{ github.repository }}/auth:${{ steps.trivy-tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ toLower(github.repository) }}/auth:codex
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -342,7 +341,9 @@ jobs:
             SKIP_TESTS=true
 
       - name: 🧾 Set image ref for Trivy
-        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${GITHUB_REPOSITORY,,}/auth:${{ steps.trivy-tag.outputs.tag }}" >> "${GITHUB_ENV}"
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "TRIVY_IMAGE_REF=${REGISTRY}/${repo_lc}/auth:${{ steps.trivy-tag.outputs.tag }}" >> "${GITHUB_ENV}"
 
       - name: 🔍 Run Trivy on Docker image
         uses: aquasecurity/trivy-action@0.28.0
