@@ -55,6 +55,7 @@ managing the ERNI-KI platform.
 [troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
 
 ## Операционный ритм
+
 - **Ежедневно:** проверка статус-страницы, `CronJobFailed`, контроль бэкапов.
 - **Еженедельно:** аудит изменений по `configuration-change-process.md` и
   обновление журнала maintenance.
@@ -62,6 +63,7 @@ managing the ERNI-KI platform.
   `maintenance/backup-restore-procedures.md`.
 
 ## 🔗 Связанная документация
+
 - [Architecture Overview](../architecture/README.md)
 - [Getting Started](../getting-started/README.md)
 - [Security Guide](../security/README.md)
