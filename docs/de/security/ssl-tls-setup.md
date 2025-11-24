@@ -1,45 +1,23 @@
 ---
 language: de
-translation_status: in_progress
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
+title: 'SSL/TLS Setup'
 ---
 
-# SSL/TLS Setup
+# SSL/TLS-Konfiguration
 
-## Ziele
+- Für öffentliche Domains Cloudflare Managed Certificates oder Let’s Encrypt
+  einsetzen; interner Traffic idealerweise via mTLS.
+- Nur TLS 1.2/1.3 erlauben, veraltete Cipher verbieten und HSTS am Front-Proxy
+  aktivieren.
+- Zertifikate automatisch erneuern (certbot/Cloudflare-API) und Laufzeiten
+  monitoren.
+- Private Keys außerhalb des Repos speichern (`secrets/`, Docker-Secrets) und
+  Zugriffe beschränken.
+- Konfigurationen regelmäßig mit `openssl s_client` und externen Scannern (z.B.
+  Mozilla Observatory, Qualys SSL Labs) testen.
 
-- TLS für externe und interne Endpunkte
-- Gültige Zertifikate, HSTS, sichere Ciphers
-
-## Zertifikate
-
-- Bevorzugt öffentliche CAs (Let's Encrypt) für externe Domains
-- Interne Self-Signed/CAs nur mit sauberem CA-Store
-- Schlüssel/Zertifikate nicht im Repo speichern
-
-## Nginx/Proxy (Beispiel)
-
-```nginx
-ssl_protocols TLSv1.2 TLSv1.3;
-ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
-ssl_prefer_server_ciphers on;
-ssl_session_cache shared:SSL:10m;
-add_header Strict-Transport-Security "max-age=31536000" always;
-```
-
-## Cloudflare/Zero Trust
-
-- TLS end-to-end sicherstellen (Origin Pull mit gültigem Zertifikat)
-- Keine gemischten Inhalte (HTTPS erzwingen)
-
-## Prüfung
-
-- `openssl s_client -connect host:443 -servername host`
-- `curl -Iv https://host`
-- SSL Labs Test für öffentliche Domains
-
-## Erneuerung/Rotation
-
-- Automatisieren (z.B. certbot) und Reminder setzen
-- Downtime vermeiden: Renew vor Ablauf + Reload statt Restart
+Weitere Richtlinien siehe [security-policy.md](security-policy.md); Netzwerk-
+und Proxy-Details stehen in `compose.yml` und `conf/nginx/`.
