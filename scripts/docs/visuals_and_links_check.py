@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 RE_VISUAL = re.compile(r"```mermaid|!\[.*?\]\(", re.IGNORECASE)
 RE_HEADINGS = re.compile(r"^#{2,6}\s+", re.MULTILINE)
@@ -18,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 TARGETS = ROOT / "docs" / "visuals_targets.json"
 
 
-def load_targets() -> list[dict]:
+def load_targets() -> list[dict[str, Any]]:
     if not TARGETS.exists():
         raise SystemExit(f"Missing config file: {TARGETS}")
     with TARGETS.open("r", encoding="utf-8") as f:
