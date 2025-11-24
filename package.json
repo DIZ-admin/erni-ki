@@ -114,12 +114,7 @@
       "ruff check --fix",
       "ruff format"
     ],
-    "*.{json,yaml,yml}": [
-      "prettier --write --log-level=warn",
-      "npm run lint:language -- --all"
-    ],
-    "*.md": [
-      "npx -y markdownlint-cli --fix --disable MD013 MD025 MD028 MD040 MD060",
+    "*.{json,yaml,yml,md}": [
       "prettier --write --log-level=warn",
       "npm run lint:language -- --all"
     ],
