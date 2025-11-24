@@ -13,6 +13,7 @@ system_status: 'Production Ready'
 
 > **Version:** 12.1 · **Updated:** 2025-11-22 · **Status:** Production Ready  
 > Monitoring stack: 5 provisioned Grafana dashboards, up-to-date Prometheus
+> [TOC]
 
 ## 📋 Overview
 
@@ -53,7 +54,7 @@ sudo usermod -aG docker $USER
 sudo reboot
 ```
 
-### 2) Install Docker Compose v2
+## 2) Install Docker Compose v2
 
 ```bash
 sudo apt update
@@ -112,7 +113,7 @@ cd erni-ki
 ./scripts/setup/quick-start.sh
 ```
 
-### 3) Verify install
+## 3) Verify install
 
 ```bash
 ./scripts/maintenance/health-check.sh
@@ -135,7 +136,7 @@ nano env/openwebui.env
 > Config structure optimized (Aug 2025); duplicates removed, naming
 > standardized.
 
-### 2) SSL certificates
+## 2) SSL certificates
 
 ```bash
 ./conf/ssl/generate-ssl-certs.sh
@@ -144,7 +145,7 @@ cp your-cert.pem conf/ssl/cert.pem
 cp your-key.pem conf/ssl/key.pem
 ```
 
-### 3) Cloudflare Tunnel (optional)
+## 3) Cloudflare Tunnel (optional)
 
 ```bash
 nano env/cloudflared.env
@@ -197,13 +198,13 @@ curl -s http://localhost:9095/health  # webhook receiver
 
 ### Monitoring UIs
 
-- **Grafana:** http://localhost:3000 (admin/admin)
-- **Prometheus:** http://localhost:9091
-- **Alertmanager:** http://localhost:9093
-- **Loki:** http://localhost:3100 (header `X-Scope-OrgID: erni-ki`)
+- **Grafana:** <http://localhost:3000> (admin/admin)
+- **Prometheus:** <http://localhost:9091>
+- **Alertmanager:** <http://localhost:9093>
+- **Loki:** <http://localhost:3100> (header `X-Scope-OrgID: erni-ki`)
 - **Exporters:** node 9101, postgres 9187, redis 9121, nvidia 9445, blackbox
   9115, ollama 9778, nginx 9113, rag 9808
-- **Fluent Bit metrics:** http://localhost:2020/api/v1/metrics/prometheus
+- **Fluent Bit metrics:** <http://localhost:2020/api/v1/metrics/prometheus>
 
 ### Exporter checks
 
@@ -238,7 +239,7 @@ docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "ALTER SYSTEM SET log_
 docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "ALTER SYSTEM SET log_min_duration_statement = '100ms';"
 ```
 
-### RAG monitoring
+## RAG monitoring
 
 - `rag-exporter` (port 9808) metrics:
   - `erni_ki_rag_response_latency_seconds` (histogram)
@@ -270,12 +271,12 @@ curl -X POST http://localhost:9093/-/reload
 
 ## 🌐 Access
 
-- **OpenWebUI:** https://your-domain/
-- **Grafana:** https://your-domain/grafana (incl. Loki via Explore)
+- **OpenWebUI:** <https://your-domain/>
+- **Grafana:** <https://your-domain/grafana> (incl. Loki via Explore)
 
 ### First login
 
-1. Open https://your-domain/
+1. Open <https://your-domain/>
 2. Create first user
 3. Configure models in Ollama
 4. Verify integrations
@@ -294,5 +295,5 @@ nvidia-smi
 
 - Docs:
   [Troubleshooting Guide](../../operations/troubleshooting/troubleshooting-guide.md)
-- Issues: https://github.com/DIZ-admin/erni-ki/issues
-- Discussions: https://github.com/DIZ-admin/erni-ki/discussions
+- Issues: <https://github.com/DIZ-admin/erni-ki/issues>
+- Discussions: <https://github.com/DIZ-admin/erni-ki/discussions>

@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # ⚙️ Konfigurationsänderungsprozess ERNI-KI
 
+[TOC]
+
 **Version:** 1.0 **Erstellungsdatum:** 2025-09-25 **Letzte Aktualisierung:**
 2025-09-25 **Verantwortlich:** Tech Lead
 
@@ -45,7 +47,7 @@ echo "Erwartete Ausfallzeit: [Minuten]"
 echo "Rollback-Zeit: [Minuten]"
 ```
 
-#### **1.2 Change Request erstellen**
+## **1.2 Change Request erstellen**
 
 ```markdown
 ## Change Request #CR-YYYYMMDD-XXX
@@ -102,12 +104,12 @@ docker compose config > "$BACKUP_DIR/compose-config-before.yml"
 echo "Backup erstellt in: $BACKUP_DIR"
 ```
 
-#### **2.2 Rollback-Skript vorbereiten**
+## **2.2 Rollback-Skript vorbereiten**
 
 ```bash
 # rollback.sh erstellen
 cat > rollback.sh <<'EOF'
-#!/bin/bash
+# !/bin/bash
 set -e
 
 BACKUP_DIR="$1"
@@ -135,9 +137,9 @@ EOF
 chmod +x rollback.sh
 ```
 
-### **PHASE 3: ÄNDERUNGEN AUSFÜHREN**
+## **PHASE 3: ÄNDERUNGEN AUSFÜHREN**
 
-#### **3.1 Für KRITISCHE Änderungen**
+### **3.1 Für KRITISCHE Änderungen**
 
 ```bash
 # 1. Benutzer benachrichtigen
@@ -160,7 +162,7 @@ docker compose up -d
 docker stop maintenance && docker rm maintenance
 ```
 
-#### **3.2 Für WICHTIGE Änderungen**
+## **3.2 Für WICHTIGE Änderungen**
 
 ```bash
 # 1. Über mögliche kurze Unterbrechungen benachrichtigen
@@ -173,7 +175,7 @@ echo "ℹ️ Geplante Konfigurationsänderungen werden durchgeführt"
 docker compose restart [service_liste]
 ```
 
-#### **3.3 Für MINOR-Änderungen**
+## **3.3 Für MINOR-Änderungen**
 
 ```bash
 # 1. Änderungen ohne Stopp der Services ausführen
@@ -183,9 +185,9 @@ docker compose restart [service_liste]
 docker compose up -d --no-recreate
 ```
 
-### **PHASE 4: TESTEN**
+## **PHASE 4: TESTEN**
 
-#### **4.1 Basis-Checks (für alle Änderungen)**
+### **4.1 Basis-Checks (für alle Änderungen)**
 
 ```bash
 # Service-Status prüfen
@@ -202,7 +204,7 @@ curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo "✅ Externer Zugr
 docker compose logs --since 5m | grep -i error | tail -10
 ```
 
-#### **4.2 Erweiterte Checks (für kritische Änderungen)**
+## **4.2 Erweiterte Checks (für kritische Änderungen)**
 
 ```bash
 # Funktionstests

@@ -8,6 +8,7 @@ last_updated: '2025-11-24'
 # 🔧 Руководство по конфигурации ERNI-KI
 
 > **Версия:** 11.0 **Дата обновления:** 2025-09-25 **Статус:** Production Ready
+> [TOC]
 
 Данное руководство содержит production-ready конфигурации для всех компонентов
 системы ERNI-KI с русскими комментариями для ключевых настроек.
@@ -68,7 +69,7 @@ WEBUI_SESSION_COOKIE_SAME_SITE="lax"     # Совместимость с iframe
 WEBUI_SESSION_COOKIE_SECURE=true         # HTTPS only cookies
 ```
 
-### Ollama Configuration
+## Ollama Configuration
 
 **Файл:** `env/ollama.env`
 
@@ -92,7 +93,7 @@ OLLAMA_DEBUG=false                        # Отключить debug в прод
 OLLAMA_VERBOSE=false                      # Минимальное логирование
 ```
 
-### LiteLLM Configuration
+## LiteLLM Configuration
 
 **Файл:** `env/litellm.env`
 
@@ -226,7 +227,7 @@ POSTGRES_INITDB_ARGS="--auth-host=md5"     # Инициализация с MD5
 POSTGRES_EXTENSIONS="pgvector,pg_stat_statements"  # Необходимые расширения
 ```
 
-### Redis Configuration
+## Redis Configuration
 
 **Файл:** `env/redis.env`
 
@@ -379,7 +380,7 @@ REDIS_PASSWORD="$(openssl rand -base64 32)"
 SEARXNG_SECRET_KEY="$(openssl rand -hex 16)"
 ```
 
-### 2. SSL/TLS Настройки
+## 2. SSL/TLS Настройки
 
 ```nginx
 # === СОВРЕМЕННЫЕ SSL НАСТРОЙКИ ===
@@ -393,7 +394,7 @@ ssl_session_timeout 8h;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 ```
 
-### 3. Файловые разрешения
+## 3. Файловые разрешения
 
 ```bash
 # === БЕЗОПАСНЫЕ РАЗРЕШЕНИЯ ===
@@ -417,7 +418,7 @@ docker exec erni-ki-prometheus promtool check config /etc/prometheus/prometheus.
 docker exec erni-ki-db-1 pg_isready -U erni_ki
 ```
 
-### 2. Мониторинг конфигурации
+## 2. Мониторинг конфигурации
 
 ```bash
 # Проверка статуса всех сервисов
@@ -427,7 +428,7 @@ docker-compose ps
 docker-compose logs --tail=50 openwebui ollama litellm nginx postgres
 ```
 
-### 3. Резервное копирование конфигурации
+## 3. Резервное копирование конфигурации
 
 ```bash
 # Создание резервной копии

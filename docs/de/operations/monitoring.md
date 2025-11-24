@@ -33,7 +33,7 @@ Weitere Details:
 - **Archive Diagnostics:** `docs/archive/diagnostics/README.md` – detaillierte
   Server/RAG-Berichte.
 
-### Beispielchecks
+## Beispielchecks
 
 ```bash
 # Prometheus Health

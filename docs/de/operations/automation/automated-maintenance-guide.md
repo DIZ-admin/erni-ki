@@ -111,7 +111,7 @@ grep "cleanup completed" /tmp/docker-cleanup.log | tail -n 5
 tail -n 20 .config-backup/monitoring/cron.log
 ```
 
-### Cron Jobs prüfen
+## Cron Jobs prüfen
 
 ```bash
 # Cron-Dienststatus
@@ -121,7 +121,7 @@ systemctl status cron
 journalctl -u cron --since "1 day ago"
 ```
 
-### Erfolgskriterien
+## Erfolgskriterien
 
 | Metrik                  | Ziel        | Ist   | Status |
 | :---------------------- | :---------- | :---- | :----- |

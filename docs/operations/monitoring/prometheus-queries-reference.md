@@ -8,7 +8,7 @@ last_updated: '2025-11-24'
 # 🔍 Prometheus Queries Reference - ERNI-KI
 
 > **Версия:** 1.0 **Дата:** 2025-09-19 **Статус:** Production Ready  
-> **Охват:** Все исправленные запросы с fallback значениями
+> **Охват:** Все исправленные запросы с fallback значениями [TOC]
 
 ## 🎯 Обзор
 
@@ -16,7 +16,7 @@ last_updated: '2025-11-24'
 подробным описанием fallback значений, обеспечивающих 100% отображение данных в
 дашбордах Grafana.
 
-### 📊 Статистика оптимизации:
+### 📊 Статистика оптимизации
 
 - **Исправлено запросов:** 8 критических
 - **Успешность запросов:** 40% → 85%
@@ -74,9 +74,9 @@ erni_ki_rag_sources_count or vector(6)
 # - Соответствует конфигурации SearXNG
 ```
 
-### 🏗️ Infrastructure Queries
+## 🏗️ Infrastructure Queries
 
-#### Nginx Monitoring
+### Nginx Monitoring
 
 **4. Nginx Error Rate**
 
@@ -108,7 +108,7 @@ rate(nginx_http_requests_total[5m]) or vector(10)
 # - Реалистичное значение для production системы
 ```
 
-#### Service Health Monitoring
+## Service Health Monitoring
 
 **6. Service Health Status**
 
@@ -125,9 +125,9 @@ up{job=~"cadvisor|node-exporter|postgres-exporter"}
 # - Устранение "No data" для несуществующих jobs
 ```
 
-### 📊 Monitoring Stack Queries
+## 📊 Monitoring Stack Queries
 
-#### Prometheus Performance
+### Prometheus Performance
 
 **7. Prometheus Query Duration**
 
@@ -174,7 +174,7 @@ rate(requests_total[5m]) or vector(10)
 histogram_quantile(0.95, rate(duration_bucket[5m])) or vector(1.5)
 ```
 
-### 🔍 Availability Metrics
+## 🔍 Availability Metrics
 
 ```promql
 # Uptime: fallback к высокой доступности
@@ -187,7 +187,7 @@ success_rate * 100 or vector(95)
 health_status or vector(1)
 ```
 
-### 📊 Resource Metrics
+## 📊 Resource Metrics
 
 ```promql
 # CPU usage: fallback к низкой нагрузке
@@ -200,7 +200,7 @@ memory_usage_percent or vector(60)
 disk_usage_percent or vector(40)
 ```
 
-### 🔢 Counter Metrics
+## 🔢 Counter Metrics
 
 ```promql
 # Error count: fallback к нулю
@@ -215,7 +215,7 @@ event_count_total or vector(5)
 
 ## 🛠️ Рекомендации по созданию запросов
 
-### ✅ Лучшие практики:
+### ✅ Лучшие практики
 
 1. **Всегда используйте fallback значения:**
 
@@ -248,7 +248,7 @@ event_count_total or vector(5)
    rate(metric_duration_seconds_bucket[5m])
    ```
 
-### ❌ Частые ошибки:
+## ❌ Частые ошибки
 
 1. **Отсутствие fallback значений** → "No data" панели
 2. **Неправильные job селекторы** → Пустые результаты
@@ -257,7 +257,7 @@ event_count_total or vector(5)
 
 ## 🔍 Диагностика проблемных запросов
 
-### Шаги диагностики:
+### Шаги диагностики
 
 1. **Проверьте доступность метрик:**
 
@@ -278,6 +278,7 @@ event_count_total or vector(5)
    ```
 
 4. **Проверьте производительность:**
+
    ```bash
    time curl -s "http://localhost:9091/api/v1/query?query=your_query"
    ```

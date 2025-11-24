@@ -54,6 +54,15 @@ managing the ERNI-KI platform.
 **For Incidents:** Check
 [troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
 
+## Operational cadence
+
+- **Daily** – review status page, check `CronJobFailed` alerts, and verify
+  backups.
+- **Weekly** – audit changes via `configuration-change-process.md` and update
+  the maintenance log.
+- **Monthly** – run through disaster recovery drills using
+  `maintenance/backup-restore-procedures.md`.
+
 ## Related Documentation
 
 - [Architecture Overview](../architecture/README.md)

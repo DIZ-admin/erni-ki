@@ -39,14 +39,17 @@ last_updated: '2025-11-24'
    скрипт bump'ит `maxmemory` через `CONFIG SET` и перезаписывает конфиг.
 2. **Как включить**:
    - Экспортировать переменные (например, в cron):
+
      ```bash
      export REDIS_AUTOSCALE_ENABLED=true
      export REDIS_AUTOSCALE_STEP_MB=512
      export REDIS_AUTOSCALE_MAX_GB=4
      ```
+
    - Запустить watchdog (cron/systemd) и убедиться, что в
      `logs/redis-fragmentation-watchdog.log` появляются строки
      `Autoscaling Redis maxmemory...`.
+
 3. **Мониторинг** — держим метрики `mem_fragmentation_ratio` и `maxmemory`
    (внутри watchdog выводятся значения в MB). Дополнительно рекомендуется
    добавить панель в Grafana (Redis dashboard) для отслеживания bump'ов.

@@ -17,7 +17,7 @@ Redis-exporter и обеспечивает стабильный монитори
 
 ### Доступ к Grafana
 
-- **URL**: http://localhost:3000
+- **URL**: <http://localhost:3000>
 - **Логин**: admin
 - **Пароль**: admin123
 
@@ -119,7 +119,7 @@ docker-compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 ping
 docker-compose logs grafana --tail=20
 ```
 
-### Переустановка плагина
+## Переустановка плагина
 
 ```bash
 # Переустановка Redis Data Source plugin

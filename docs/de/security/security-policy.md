@@ -19,7 +19,7 @@ last_updated: '2025-11-24'
 ### Schwachstellen melden
 
 1. **Kein** öffentliches GitHub-Issue erstellen.
-2. Bericht an security@erni-ki.local senden.
+2. Bericht an <security@erni-ki.local> senden.
 3. Bitte folgende Angaben ergänzen:
    - Beschreibung der Schwachstelle
    - Schritte zur Reproduktion
@@ -101,7 +101,7 @@ POSTGRES_PASSWORD: 'komplexes Passwort (>=16 Zeichen)'
 REDIS_PASSWORD: 'komplexes Passwort (>=16 Zeichen)'
 ```
 
-#### Empfohlene Nginx-Settings
+## Empfohlene Nginx-Settings
 
 ```nginx
 # Server-Version verstecken
@@ -123,7 +123,7 @@ limit_req_zone $binary_remote_addr zone=auth:10m rate=10r/m;
 limit_req zone=auth burst=5 nodelay;
 ```
 
-#### Docker-Sicherheit
+## Docker-Sicherheit
 
 ```yaml
 # Nicht privilegierter User
@@ -151,9 +151,9 @@ deploy:
       cpus: '0.5'
 ```
 
-### Sicherheitsmonitoring
+## Sicherheitsmonitoring
 
-#### Zu überwachende Logs
+### Zu überwachende Logs
 
 1. Fehlgeschlagene Anmeldeversuche
 2. Verdächtige HTTP-Anfragen
@@ -180,9 +180,9 @@ deploy:
     category: security
 ```
 
-### Kontakte
+## Kontakte
 
-- **Security Team**: security@erni-ki.local
+- **Security Team**: <security@erni-ki.local>
 - **Notfall**: +7-XXX-XXX-XXXX
 - **PGP-Key**: siehe veröffentlichter Public Key
 

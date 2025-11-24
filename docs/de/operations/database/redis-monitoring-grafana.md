@@ -17,7 +17,7 @@ Redis-Exporter und bietet stabiles Monitoring für Redis 7.4.5 Alpine.
 
 ### Grafana-Zugriff
 
-- **URL**: http://localhost:3000
+- **URL**: <http://localhost:3000>
 - **Login**: admin
 - **Passwort**: admin123
 
@@ -119,7 +119,7 @@ docker-compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 ping
 docker-compose logs grafana --tail=20
 ```
 
-### Plugin neu installieren
+## Plugin neu installieren
 
 ```bash
 # Redis Data Source Plugin neu installieren

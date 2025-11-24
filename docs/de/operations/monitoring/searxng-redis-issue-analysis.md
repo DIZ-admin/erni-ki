@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # SearXNG Redis/Valkey Verbindungsproblem - Analyse und Lösung
 
+[TOC]
+
 **Datum**: 2025-10-27 **Status**: NICHT KRITISCH (kompensiert durch
 Nginx-Caching) **Priorität**: NIEDRIG
 
@@ -70,7 +72,7 @@ $ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 PONG  # ✅ Redis funktioniert
 ```
 
-### 2. SearXNG-Konfiguration ✅
+## 2. SearXNG-Konfiguration ✅
 
 **URL-Format ist korrekt**:
 
@@ -87,7 +89,7 @@ SEARXNG_VALKEY_URL=redis://:ErniKiRedisSecurePassword2024@redis:6379/0
 - Port: `6379`
 - Datenbank: `0`
 
-### 3. Valkey-Modul ✅
+## 3. Valkey-Modul ✅
 
 **Modul installiert**:
 
@@ -96,7 +98,7 @@ $ docker exec erni-ki-searxng-1 /usr/local/searxng/.venv/bin/python3 -c "import 
 # Modul gefunden in /usr/local/searxng/.venv/lib/python3.13/site-packages/valkey
 ```
 
-### 4. Verbindungstest ❌
+## 4. Verbindungstest ❌
 
 **Direkter Test aus dem SearXNG-Container**:
 
@@ -175,6 +177,7 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
    ```
 
 3. Logs auf Fehlerfreiheit prüfen:
+
    ```bash
    docker logs --tail 50 erni-ki-searxng-1 | grep -E "ERROR|WARN"
    ```
@@ -193,18 +196,18 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
 
 ---
 
-### Option 2: Redis-Verbindung reparieren (KOMPLEXER)
+## Option 2: Redis-Verbindung reparieren (KOMPLEXER)
 
 **Maßnahmen**:
 
-#### 2.1 Format mit Benutzername "default" versuchen
+### 2.1 Format mit Benutzername "default" versuchen
 
 ```bash
 # env/searxng.env
 SEARXNG_VALKEY_URL=redis://default:ErniKiRedisSecurePassword2024@redis:6379/0  # pragma: allowlist secret
 ```
 
-#### 2.2 Redis ACL konfigurieren
+## 2.2 Redis ACL konfigurieren
 
 ```bash
 # Benutzer für SearXNG erstellen
@@ -214,7 +217,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL SETUS
 SEARXNG_VALKEY_URL=redis://searxng:ErniKiRedisSecurePassword2024@redis:6379/0  # pragma: allowlist secret
 ```
 
-#### 2.3 Valkey-Modul aktualisieren
+## 2.3 Valkey-Modul aktualisieren
 
 ```bash
 # In den SearXNG-Container wechseln
@@ -241,7 +244,7 @@ docker restart erni-ki-searxng-1
 
 ---
 
-### Option 3: Wechsel auf Standard redis-py Modul
+## Option 3: Wechsel auf Standard redis-py Modul
 
 **Maßnahmen**:
 
@@ -313,12 +316,12 @@ docker restart erni-ki-searxng-1
 
 ### Langfristig (1-7 Tage)
 
-4. **Leistungsüberwachung**:
+1. **Leistungsüberwachung**:
    - SearXNG Antwortzeit überwachen
    - Nginx Cache-Trefferquote prüfen
    - Rate Limiting Logs analysieren
 
-5. **Optimierung**:
+2. **Optimierung**:
    - Nginx Cache Purging konfigurieren
    - Cache TTL optimieren
    - Alarme für Leistungsabfall einrichten

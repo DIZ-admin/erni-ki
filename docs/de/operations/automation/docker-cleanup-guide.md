@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Leitfaden zur Bereinigung ungenutzter Docker-Ressourcen
 
+[TOC]
+
 ## Überblick
 
 Auf Basis der Docker-Analyse wurden folgende ungenutzte Ressourcen gefunden:
@@ -91,7 +93,7 @@ docker rmi alpine:2024.05
 
 **Erwartete Einsparung: ~21,78 GB**
 
-### 2. Automatische Bereinigung aller ungenutzten Images
+## 2. Automatische Bereinigung aller ungenutzten Images
 
 {% raw %}
 
@@ -131,7 +133,7 @@ done
 
 {% endraw %}
 
-### Ungenutzte Volumes löschen
+## Ungenutzte Volumes löschen
 
 ```bash
 # VORSICHT: Kann wichtige Daten löschen!
@@ -159,7 +161,7 @@ docker system prune -a --volumes -f
 docker system prune -a --volumes
 ```
 
-### Sichere umfassende Bereinigung
+## Sichere umfassende Bereinigung
 
 {% raw %}
 
@@ -190,7 +192,7 @@ docker system df
 
 ```bash
 cat > scripts/cleanup-docker.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 # Automatische Bereinigung der Docker-Ressourcen von ERNI-KI
 # Läuft wöchentlich samstags um 04:00 per cron
 
@@ -232,7 +234,7 @@ EOF
 chmod +x scripts/cleanup-docker.sh
 ```
 
-### In crontab eintragen
+## In crontab eintragen
 
 ```bash
 # Docker-Cleanup (jeden Samstag um 04:00)

@@ -13,7 +13,7 @@ audience: 'administrators'
 # 📚 ERNI-KI Dokumentation (Deutsch)
 
 > **Willkommen zur deutschen Dokumentation von ERNI-KI** **Version:** 12.1
-> (Wave 3) · **Aktualisiert:** 2025-11-14
+> (Wave 3) · **Aktualisiert:** 2025-11-14 [TOC]
 
 ## 🎯 Über ERNI-KI
 
@@ -118,7 +118,7 @@ docker compose exec ollama ollama pull llama3.2:3b
 
 → **Weiter mit:** [Installationsanleitung](getting-started/installation.md)
 
-### 🎯 **Erste Nutzung (10 Minuten)**
+## 🎯 **Erste Nutzung (10 Minuten)**
 
 1. Browser öffnen: `https://ki.erni-gruppe.ch` (oder lokal:
    `http://localhost:8080`)

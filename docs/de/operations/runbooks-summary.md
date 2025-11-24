@@ -27,7 +27,7 @@ Versionen finden sich weiterhin unter `docs/operations/runbooks/` (EN).
 > entsprechenden Berichte (Phase 1/2 usw.). Archon Tasks sollten alle Schritte
 > spiegeln.
 
-### Beispielbefehle
+## Beispielbefehle
 
 ```bash
 # Container neu starten (aus dem Service-Runbook)
