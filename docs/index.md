@@ -2,6 +2,7 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
+last_updated: '2025-11-24'
 ---
 
 # ERNI Academy KI
@@ -18,12 +19,6 @@ doc_version: '2025.11'
 ## Актуальное состояние платформы
 
 <!-- STATUS_SNIPPET_START -->
-
----
-
-language: ru translation_status: complete doc_version: '2025.11'
-
----
 
 > **Статус системы (2025-11-23) — Production Ready v12.1**
 >

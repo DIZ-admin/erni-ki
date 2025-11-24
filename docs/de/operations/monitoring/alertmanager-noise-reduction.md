@@ -2,6 +2,7 @@
 language: de
 translation_status: in_progress
 doc_version: '2025.11'
+last_updated: '2025-11-24'
 ---
 
 # Alertmanager Noise Reduction & Redis Autoscaling
