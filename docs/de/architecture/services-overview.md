@@ -166,7 +166,8 @@ curl -s -H "X-Scope-OrgID: erni-ki" http://localhost:3100/ready
   Verwaltungsanweisungen
 - **[Monitoring und Alerts](../operations/monitoring/monitoring-guide.md)** -
   Prometheus/Grafana Konfiguration
-- **[Backup-Handbuch](../operations/backup-guide.md)** - Backrest Konfiguration
+- **[Backup-Handbuch](../../operations/backup-guide.md)** - Backrest
+  Konfiguration
 - **[Fehlerbehebung](../operations/troubleshooting/troubleshooting-guide.md)** -
   Lösung typischer Probleme
 

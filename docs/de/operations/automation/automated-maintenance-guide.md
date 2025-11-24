@@ -135,4 +135,5 @@ journalctl -u cron --since "1 day ago"
 - [Admin Guide](../core/admin-guide.md) – Systemadministration
 - [Monitoring Guide](../monitoring/monitoring-guide.md) – Monitoring und Alerts
 - [Docker Cleanup Guide](docker-cleanup-guide.md) – Detailprozeduren
-- [Docker Log Rotation](docker-log-rotation.md) – Log-Management
+- [Docker Log Rotation](../../operations/automation/docker-log-rotation.md) –
+  Log-Management

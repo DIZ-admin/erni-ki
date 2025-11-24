@@ -292,6 +292,6 @@ nvidia-smi
 ## 📞 Support
 
 - Docs:
-  [`../operations/troubleshooting/troubleshooting-guide.md`](../operations/troubleshooting/troubleshooting-guide.md)
+  [Troubleshooting Guide](../operations/troubleshooting/troubleshooting-guide.md)
 - Issues: https://github.com/DIZ-admin/erni-ki/issues
 - Discussions: https://github.com/DIZ-admin/erni-ki/discussions
