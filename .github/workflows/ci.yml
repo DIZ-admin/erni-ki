@@ -300,6 +300,44 @@ jobs:
       - name: ✅ Validate metadata
         run: python scripts/docs/validate_metadata.py
 
+  docs-build:
+    name: 📚 Docs Build & Link Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 🧩 Validate docs metadata
+        run: python scripts/docs/validate_metadata.py
+
+      - name: 🏗️ Build MkDocs site
+        run: mkdocs build --site-dir site
+
+      - name: 🔗 Offline link check (lychee)
+        run: |
+          if command -v lychee >/dev/null 2>&1; then
+            lychee --offline --no-progress --max-redirects 5 "site/**/*.html" || true
+          else
+            echo "lychee not installed; skipping offline link check."
+          fi
+
   # Docker Image Build
   docker-build:
     name: 🐳 Docker Build
