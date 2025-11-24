@@ -25,7 +25,7 @@ managing the ERNI-KI platform.
   - Prometheus metrics and alerts
   - Grafana dashboards (5 provisioned)
   - Loki log aggregation
-  - SLO tracking
+  - SLO (Service Level Objective) tracking
 
 ### Troubleshooting & Runbooks
 
@@ -54,7 +54,7 @@ managing the ERNI-KI platform.
 **For Incidents:** Check
 [troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
 
-## Related Documentation
+## 🔗 Связанная документация
 
 - [Architecture Overview](../architecture/README.md)
 - [Getting Started](../getting-started/README.md)

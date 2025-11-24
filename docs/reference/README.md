@@ -53,7 +53,7 @@ advanced users.
 - MCP Integration: See [mcpo-integration-guide.md](mcpo-integration-guide.md)
 - CI/CD Setup: See [github-environments-setup.md](github-environments-setup.md)
 
-## Related Documentation
+## 🔗 Связанная документация
 
 - [Architecture](../architecture/README.md)
 - [Operations](../operations/README.md)
