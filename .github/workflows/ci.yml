@@ -244,7 +244,6 @@ jobs:
     name: 🔗 Check Documentation Links
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -280,6 +279,26 @@ jobs:
         run: |
           echo "## 🔗 Link Check Results" >> $GITHUB_STEP_SUMMARY
           cat lychee/out.md >> $GITHUB_STEP_SUMMARY || echo "No broken links found! ✅" >> $GITHUB_STEP_SUMMARY
+
+  metadata-validation:
+    name: 📋 Validate Docs Metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Install dependencies
+        run: pip install pyyaml
+
+      - name: ✅ Validate metadata
+        run: python scripts/docs/validate_metadata.py
 
   # Docker Image Build
   docker-build:
