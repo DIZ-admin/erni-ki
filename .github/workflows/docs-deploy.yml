@@ -15,8 +15,10 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+  # Queue Pages deployments per branch to avoid overlapping runs that trigger
+  # "deployment in progress" API errors from actions/deploy-pages.
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
