@@ -10,8 +10,3 @@
 > - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
 >   01:30, Watchtower selective updates
 > - Примечание: Versions and dashboard/alert counts synced with compose.yml
----
-language: ru
-translation_status: complete
-doc_version: '2025.11'
----
