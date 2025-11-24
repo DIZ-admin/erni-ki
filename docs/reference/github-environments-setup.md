@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # 🔐 GitHub Environments Setup для ERNI-KI
 
+[TOC]
+
 **Дата:** 2025-09-19 **Версия:** 1.0
 
 ## 📋 Обзор
@@ -17,7 +19,7 @@ ERNI-KI с трехуровневой архитектурой управлен�
 
 ## 🏗️ Архитектура
 
-### Трехуровневая структура секретов:
+### Трехуровневая структура секретов
 
 ```mermaid
 graph TB
@@ -61,14 +63,14 @@ sudo apt update && sudo apt install gh
 gh auth login --scopes repo,admin:org
 ```
 
-### 2. Создание окружений
+## 2. Создание окружений
 
 ```bash
 # Выполнить из корня проекта ERNI-KI
 ./scripts/infrastructure/security/setup-github-environments.sh
 ```
 
-### 3. Настройка protection rules
+## 3. Настройка protection rules
 
 ```bash
 ./scripts/infrastructure/security/configure-environment-protection.sh
@@ -110,7 +112,7 @@ gh api repos/:owner/:repo/environments/production -X PUT \
   --field "deployment_branch_policy={\"protected_branches\":true}"
 ```
 
-### Добавление секретов вручную
+## Добавление секретов вручную
 
 ```bash
 # Environment-specific секреты
@@ -135,7 +137,7 @@ gh api repos/:owner/:repo/environments | jq '.[].name'
 gh api repos/:owner/:repo/environments/production | jq '.'
 ```
 
-### Просмотр секретов
+## Просмотр секретов
 
 ```bash
 # Repository секреты
@@ -147,7 +149,7 @@ gh secret list --env staging
 gh secret list --env production
 ```
 
-### Проверка protection rules
+## Проверка protection rules
 
 ```bash
 # Получение protection rules для окружения
@@ -239,7 +241,7 @@ gh api repos/:owner/:repo/environments | jq '.[].name'
 gh api repos/:owner/:repo/environments/development -X PUT
 ```
 
-### Проблема: "Secret not found"
+## Проблема: "Secret not found"
 
 **Причина:** Секрет не добавлен в нужное окружение.
 
@@ -253,7 +255,7 @@ gh secret list --env development
 gh secret set SECRET_NAME --env development --body "secret-value"
 ```
 
-### Проблема: "Insufficient permissions"
+## Проблема: "Insufficient permissions"
 
 **Причина:** Недостаточно прав для создания окружений или секретов.
 
@@ -268,7 +270,7 @@ gh api repos/:owner/:repo | jq '.permissions'
 gh auth login --scopes repo,admin:org
 ```
 
-### Проблема: "Protection rules not working"
+## Проблема: "Protection rules not working"
 
 **Причина:** Неправильно настроены protection rules.
 
@@ -295,7 +297,7 @@ gh api repos/:owner/:repo/environments/production -X PUT \
 gh api repos/:owner/:repo/actions/secrets | jq '.secrets[] | {name, updated_at}'
 ```
 
-### Аудит доступа
+## Аудит доступа
 
 ```bash
 # Просмотр истории деплоев
@@ -329,7 +331,7 @@ for env in development staging production; do
 done
 ```
 
-### Плановая ротация
+## Плановая ротация
 
 ```bash
 # Использовать существующий скрипт ротации

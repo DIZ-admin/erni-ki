@@ -166,6 +166,8 @@ conf/**/*.yml
 !conf/**/*.example
 !conf/**/*.template
 !conf/**/*.sample
+!conf/nginx/nginx.conf
+!conf/nginx/conf.d/default.conf
 
 # Временные конфигурационные файлы
 *.conf.new

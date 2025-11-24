@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Pre-commit Hooks für ERNI-KI
 
+[TOC]
+
 ## Überblick
 
 Pre-commit-Hooks prüfen den Code automatisch vor jedem Commit und verhindern,
@@ -137,7 +139,7 @@ pre-commit run prettier --all-files
 pre-commit run eslint --all-files
 ```
 
-### Hooks aktualisieren
+## Hooks aktualisieren
 
 ```bash
 npm run pre-commit:update
@@ -147,7 +149,7 @@ source .venv/bin/activate
 pre-commit autoupdate
 ```
 
-### Checks überspringen (nicht empfohlen)
+## Checks überspringen (nicht empfohlen)
 
 ```bash
 git commit --no-verify -m "Commit-Nachricht"
@@ -174,7 +176,7 @@ npm run format:py
 npm run lint:fix
 ```
 
-### Secret-Warnungen
+## Secret-Warnungen
 
 ```bash
 # Baseline aktualisieren
@@ -182,7 +184,7 @@ source .venv/bin/activate
 detect-secrets scan --baseline .secrets.baseline
 ```
 
-### Temporäre Dateien gefunden
+## Temporäre Dateien gefunden
 
 ```bash
 # Alle temporären Dateien finden
@@ -195,7 +197,7 @@ find . -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" \) ! -path "*/nod
 find . -name ".DS_Store" -delete
 ```
 
-### Cache leeren
+## Cache leeren
 
 ```bash
 source .venv/bin/activate

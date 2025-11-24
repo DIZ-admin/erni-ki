@@ -10,6 +10,7 @@ title: 'Руководство по интеграции MCP в ERNI-KI'
 
 > **Версия документа:** 9.1 **Дата обновления:** 2025-11-21 **Статус:** ✅
 > Healthy (порт 8000 на 127.0.0.1, интеграция с LiteLLM/Context7 подтверждена)
+> [TOC]
 
 ## 📋 Обзор MCP (Model Context Protocol)
 
@@ -72,6 +73,7 @@ graph TB
    memory, searxng, desktop-commander
 5. **OpenWebUI конфигурация** - TOOL_SERVER_CONNECTIONS содержит Time, Context7,
    PostgreSQL, Desktop Commander
+6. **Nginx proxy** - корректно проксирует запросы к MCP серверам
 
 ### 📊 Производительность
 
@@ -217,7 +219,7 @@ docker-compose logs --tail=20 mcposerver
 curl -s "http://localhost:8000/docs" | grep -q "swagger" && echo "✅ OK" || echo "❌ Failed"
 ```
 
-### Тестирование MCP инструментов
+## Тестирование MCP инструментов
 
 ```bash
 # Тест Time Server
@@ -234,7 +236,7 @@ curl -X POST "http://localhost:8000/postgres/query" \
 curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo "✅ Proxy OK"
 ```
 
-### Автоматическая диагностика
+## Автоматическая диагностика
 
 Используйте скрипт для комплексной диагностики:
 
@@ -324,6 +326,7 @@ AI: Использует Filesystem Server для поиска файлов с �
    - Перезапустите OpenWebUI: `docker-compose restart openwebui`
 
 3. **Ошибки в логах MCPO**
+
    ```bash
    docker-compose logs --tail=50 mcposerver | grep -i error
    ```

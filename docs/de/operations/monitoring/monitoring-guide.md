@@ -4,13 +4,15 @@ translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: '📊 ERNI-KI Monitoring-Leitfaden'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
 # 📊 ERNI-KI Monitoring-Leitfaden
+
+[TOC]
 
 Umfassender Leitfaden für die Überwachung des ERNI-KI Systems mit 9
 spezialisierten Exporters, standardisierten Healthchecks und produktionsreifen
@@ -118,7 +120,7 @@ timeout 5 sh -c '</dev/tcp/localhost/9121' && echo "Redis Exporter verfügbar"
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-### 🎮 NVIDIA GPU Exporter (Port 9445) - ✅ Verbessert 19.09.2025
+## 🎮 NVIDIA GPU Exporter (Port 9445) - ✅ Verbessert 19.09.2025
 
 **Zweck:** GPU-Auslastung und Leistungsmetriken
 
@@ -245,7 +247,7 @@ curl -s http://localhost:9113/metrics | grep nginx_connections_active
 timeout 5 sh -c '</dev/tcp/localhost/9113' && echo "Nginx Exporter verfügbar"
 ```
 
-### 📈 RAG SLA Exporter (Port 9808)
+## 📈 RAG SLA Exporter (Port 9808)
 
 **Zweck:** RAG (Retrieval-Augmented Generation) Leistungsmetriken
 
@@ -315,7 +317,7 @@ done
 # Erwartete Ausgabe: Alle Ports sollten 200 zurückgeben
 ```
 
-### Docker-Gesundheitsstatus
+## Docker-Gesundheitsstatus
 
 ```bash
 # Docker-Gesundheitsstatus prüfen
@@ -344,7 +346,7 @@ healthcheck:
   test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
 ```
 
-#### 2. Redis Exporter zeigt redis_up = 0
+## 2. Redis Exporter zeigt redis_up = 0
 
 **Problem:** Authentifizierungsproblem mit Redis **Lösung:**
 Redis-Verbindungsstring und Passwort überprüfen
@@ -357,7 +359,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 docker logs erni-ki-Redis Monitoring über Grafana --tail 20
 ```
 
-### 🔔 Alarmierung testen {#alert-testing}
+## 🔔 Alarmierung testen {#alert-testing}
 
 Um die Alarmierung zu testen, können Sie manuell einen Alarm auslösen:
 

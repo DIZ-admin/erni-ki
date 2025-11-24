@@ -28,4 +28,4 @@ last_updated: '2025-11-24'
 
 ## Куда писать вопросы
 
-- Внутренний канал поддержки ERNI KI или на почту support@erni-gruppe.ch.
+- Внутренний канал поддержки ERNI KI или на почту <support@erni-gruppe.ch>.

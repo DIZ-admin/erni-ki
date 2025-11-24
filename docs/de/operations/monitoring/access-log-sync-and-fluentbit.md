@@ -1,55 +1,49 @@
 ---
 language: de
-translation_status: in_progress
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Access-Log-Sync & Fluent Bit
+# Nginx Access Sync & Fluent Bit DB Monitoring
 
-Kurzanleitung zur Synchronisation von Access-Logs und Fluent-Bit-Pipeline.
+## 1. Automatische Synchronisierung von access.log
 
-## Ziele
+1. Skript: `scripts/infrastructure/monitoring/sync-nginx-access.sh` kopiert
+   `/var/log/nginx/access.log` aus dem Container nach
+   `data/nginx/logs/access.log`.
+2. Unit-Dateien befinden sich in `ops/systemd/nginx-access-sync.service` und
+   `.timer`.
+3. Installation:
 
-- Nginx/OpenWebUI Access-Logs zentralisieren
-- Weiterleitung an Loki/Grafana sicherstellen
-
-## Schritte
-
-1. **Pfad prüfen**
-   - Standard: `logs/openwebui/access.log` (oder Mount aus nginx)
-
-2. **Fluent Bit Input** (Beispiel)
-
-   ```ini
-   [INPUT]
-       Name              tail
-       Path              /logs/openwebui/access.log
-       Tag               openwebui.access
-       Parser            nginx
-       Refresh_Interval  5
+   ```bash
+   ./scripts/maintenance/install-docling-cleanup-unit.sh  # Beispiel — für Sync analog vorgehen
+   cp ops/systemd/nginx-access-sync.service ~/.config/systemd/user/
+   cp ops/systemd/nginx-access-sync.timer ~/.config/systemd/user/
+   mkdir -p ~/.config && cp ops/systemd/nginx-access-sync.env.example ~/.config/nginx-access-sync.env
+   systemctl --user daemon-reload
+   systemctl --user enable --now nginx-access-sync.timer
    ```
 
-3. **Parser**
-   - `Parsers_File` sicherstellen (nginx-Parser konfiguriert)
+4. Konfigurieren Sie die Variable `NGINX_SYNC_TARGET` in der env-Datei, falls
+   das Log an einem anderen Ort gespeichert werden soll.
+5. Arbeitslog — `logs/nginx-access-sync.log`.
 
-4. **Output zu Loki** (Beispiel)
+## 2. Fluent Bit DB Monitoring
 
-   ```ini
-   [OUTPUT]
-       Name              loki
-       Match             openwebui.access
-       Url               http://loki:3100/loki/api/v1/push
-       Labels            job=openwebui,app=openwebui,stream=access
-       Log_Format        json
+1. Skript: `scripts/infrastructure/monitoring/check-fluentbit-db.sh` berechnet
+   die Größe des Verzeichnisses `data/fluent-bit/db` und schreibt in
+   `logs/fluentbit-db-monitor.log`.
+2. Variablen:
+   - `FLUENTBIT_DB_DIR` — Pfad zur Datenbank.
+   - `FLUENTBIT_DB_WARN_GB`/`FLUENTBIT_DB_CRIT_GB` — Schwellenwerte (Standard
+     5/8).
+3. Beispiel Cron:
+
+   ```cron
+   0 * * * * cd /home/konstantin/Documents/augment-projects/erni-ki && ./scripts/infrastructure/monitoring/check-fluentbit-db.sh
    ```
 
-5. **Redeploy**
-   - Fluent Bit neu starten: `docker compose restart fluent-bit`
-   - Logs prüfen: `docker compose logs fluent-bit --tail=50`
-
-## Troubleshooting
-
-- Keine Logs: Pfad/Parser prüfen, Dateirechte
-- Loki-Fehler: URL/Labels/Authentifizierung prüfen
-- Hohe Latenz: `Mem_Buf_Limit`, `Refresh_Interval`, Batch-Größe anpassen
+4. Für Alertmanager kann eine Regel erstellt werden, die das Log über Fluent Bit
+   → Loki liest oder eine Metrik hinzufügt. Siehe Details im
+   [Monitoring Guide](monitoring-guide.md).

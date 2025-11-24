@@ -34,7 +34,7 @@ docker exec -it erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024"
 docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
 ```
 
-### Monitoring
+## Monitoring
 
 ```bash
 # Speicherinfo
@@ -47,7 +47,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" dbsize
 ```
 
-### Backups
+## Backups
 
 ```bash
 # Snapshot erstellen
@@ -81,8 +81,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Monitoring-Zugriff
 
-- **Prometheus:** http://localhost:9091
-- **Redis Exporter:** http://localhost:9121/metrics
+- **Prometheus:** <http://localhost:9091>
+- **Redis Exporter:** <http://localhost:9121/metrics>
 - **Grafana:** über das ERNI-KI UI
 
 ---

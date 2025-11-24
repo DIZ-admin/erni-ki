@@ -115,6 +115,8 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-database"
+    mem_limit: 4g
+    cpus: "2.0"
 
   # Redis cache and queues (optimized network configuration)
   redis:
@@ -139,6 +141,8 @@ services:
       # Allow auto-updates for Redis
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=cache-services"
+    mem_limit: 1g
+    cpus: "1.0"
 
   # LiteLLM Context Engineering Gateway (optimized network configuration)
   litellm:
@@ -374,6 +378,8 @@ services:
       # Allow auto-updates for SearXNG
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=search-services"
+    mem_limit: 1g
+    cpus: "1.0"
 
   # Ollama LLM server with GPU acceleration (optimized network configuration)
   ollama:
@@ -399,7 +405,7 @@ services:
     image: ollama/ollama:0.12.11 # Updated to 0.12.11 (2025-11-18) - upstream security fixes and GPU stability
     logging: *critical-logging
     ports:
-      - 11434:11434
+      - "127.0.0.1:11434:11434"
     restart: unless-stopped
     volumes:
       - ./data/ollama:/root/.ollama
@@ -445,6 +451,8 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-proxy"
+    mem_limit: 512m
+    cpus: "1.0"
 
   # OpenWebUI main interface with GPU acceleration (optimized network configuration)
   openwebui:

@@ -11,7 +11,7 @@ system_status: 'Production Ready'
 # 👨‍💼 Administration Guide - ERNI-KI
 
 > **Версия:** 8.1 **Дата обновления:** 24.10.2025 **Статус системы:** Production
-> Ready
+> Ready [TOC]
 
 ## 1. Введение
 
@@ -65,7 +65,7 @@ ERNI-KI — это Production-Ready AI Platform с архитектурой 15+ 
 ./scripts/maintenance/check-web-interfaces.sh
 ```
 
-#### Мониторинг ресурсов
+## Мониторинг ресурсов
 
 ```bash
 # Мониторинг системы
@@ -78,9 +78,9 @@ ERNI-KI — это Production-Ready AI Platform с архитектурой 15+ 
 df -h
 ```
 
-### 3.2 Система мониторинга
+## 3.2 Система мониторинга
 
-#### Healthcheck Стандартизация
+### Healthcheck Стандартизация
 
 Система использует стандартизированные healthcheck'и для всех компонентов.
 
@@ -114,7 +114,7 @@ docker compose pull [service-name]
 docker compose up -d [service-name]
 ```
 
-### Управление Ollama
+## Управление Ollama
 
 ```bash
 # Просмотр доступных моделей
@@ -127,7 +127,7 @@ docker compose exec ollama ollama pull llama2
 docker compose exec ollama ollama rm model-name
 ```
 
-### Управление PostgreSQL
+## Управление PostgreSQL
 
 ```bash
 # Подключение к базе данных
@@ -155,7 +155,7 @@ docker compose logs -f openwebui
 docker compose logs --since="1h" --until="30m"
 ```
 
-### Ротация логов
+## Ротация логов
 
 ```bash
 # Автоматическая ротация логов
@@ -183,7 +183,7 @@ docker compose logs --since="1h" --until="30m"
 ./scripts/security/rotate-secrets.sh
 ```
 
-### Управление SSL сертификатами
+## Управление SSL сертификатами
 
 ```bash
 # Проверка срока действия сертификатов
@@ -211,7 +211,7 @@ docker compose restart nginx
 ./scripts/performance/load-testing.sh
 ```
 
-### Оптимизация ресурсов
+## Оптимизация ресурсов
 
 ```bash
 # Оптимизация сети
@@ -246,7 +246,7 @@ grep "completed successfully" /tmp/pg_vacuum.log | tail -n 1
 /tmp/pg_vacuum.sh
 ```
 
-#### Docker Cleanup
+## Docker Cleanup
 
 - **Расписание:** Каждое воскресенье в 4:00
 - **Скрипт:** `/tmp/docker-cleanup.sh`
@@ -261,13 +261,13 @@ grep "cleanup completed" /tmp/docker-cleanup.log | tail -n 1
 /tmp/docker-cleanup.sh
 ```
 
-#### Log Rotation
+## Log Rotation
 
 - **Конфигурация:** `compose.yml` (x-critical-logging)
 - **Параметры:** max-size=10m, max-file=3, compress=true
 - **Назначение:** Автоматическая ротация логов контейнеров
 
-#### Мониторинг автоматизации
+### Мониторинг автоматизации
 
 ```bash
 # Проверка cron jobs
@@ -281,7 +281,7 @@ journalctl -u cron --since "1 day ago"
 **📚 Подробная документация:**
 [Automated Maintenance Guide](../automation/automated-maintenance-guide.md)
 
-### Еженедельные задачи
+## Еженедельные задачи
 
 ```bash
 # Полный аудит системы
@@ -294,7 +294,7 @@ docker system prune -f
 docker compose pull
 ```
 
-### Ежемесячные задачи
+## Ежемесячные задачи
 
 ```bash
 # Обновление системы
@@ -322,7 +322,7 @@ sudo apt update && sudo apt upgrade
 ./scripts/troubleshooting/fix-unhealthy-services.sh
 ```
 
-### Ручное восстановление
+## Ручное восстановление
 
 ```bash
 # Корректный перезапуск системы
@@ -347,7 +347,7 @@ docker compose up -d --scale openwebui=3
 nano conf/nginx/nginx.conf
 ```
 
-### Вертикальное масштабирование
+## Вертикальное масштабирование
 
 ```bash
 # Увеличение ресурсов для сервисов
@@ -373,7 +373,7 @@ docker stats
 docker network ls
 ```
 
-### Специфичная диагностика
+## Специфичная диагностика
 
 ```bash
 # Диагностика Ollama
@@ -386,9 +386,9 @@ docker network ls
 ./scripts/troubleshooting/test-network-simple.sh
 ```
 
-### 🌐 Nginx и API диагностика (обновлено v7.0)
+## 🌐 Nginx и API диагностика (обновлено v7.0)
 
-#### Проверка nginx конфигурации
+### Проверка nginx конфигурации
 
 ```bash
 # Проверка синтаксиса конфигурации
@@ -402,7 +402,7 @@ docker exec erni-ki-nginx-1 ls -la /etc/nginx/includes/
 docker exec erni-ki-nginx-1 cat /etc/nginx/includes/searxng-api-common.conf
 ```
 
-#### Тестирование API эндпоинтов
+## Тестирование API эндпоинтов
 
 ```bash
 # Проверка health endpoint
@@ -418,7 +418,7 @@ curl -v http://localhost:8080/api/config
 # Ожидаемый ответ: JSON с настройками OpenWebUI
 ```
 
-#### Диагностика WebSocket соединений
+## Диагностика WebSocket соединений
 
 ```bash
 # Проверка WebSocket заголовков в логах nginx
@@ -428,7 +428,7 @@ docker logs --tail=20 erni-ki-nginx-1 | grep -i upgrade
 wscat -c ws://localhost:8080/ws
 ```
 
-#### Решение частых проблем
+## Решение частых проблем
 
 **1. 404 ошибки на API эндпоинтах:**
 
@@ -467,9 +467,9 @@ docker exec erni-ki-nginx-1 grep "universal_request_id" /etc/nginx/nginx.conf
 
 ### Внутренние ресурсы
 
-- **Мониторинг:** https://your-domain/grafana
-- **Логи:** https://your-domain/grafana (Explore → Loki)
-- **Метрики:** https://your-domain/prometheus
+- **Мониторинг:** <https://your-domain/grafana>
+- **Логи:** <https://your-domain/grafana> (Explore → Loki)
+- **Метрики:** <https://your-domain/prometheus>
 
 ### Внешние ресурсы
 
@@ -528,7 +528,7 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health
 
 {% endraw %}
 
-### Rollback процедуры
+## Rollback процедуры
 
 ```bash
 # 1. Остановка сервисов

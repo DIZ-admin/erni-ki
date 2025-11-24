@@ -1,39 +1,77 @@
 ---
 language: de
-translation_status: in_progress
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Sicherheit – Übersicht
+# Sicherheitsdokumentation
 
-Kurzer Überblick über die Sicherheitsprinzipien von ERNI-KI.
+Dieses Verzeichnis enthält alle sicherheitsrelevanten Richtlinien, Leitfäden und
+Prozesse für die ERNI-KI-Plattform.
 
-## Grundprinzipien
+## Inhalt
 
-- **Least privilege**: minimal nötige Rechte für Dienste und Nutzer
-- **Secrets nicht im Repo**: nur über `.env`/CI-Secrets
-- **TLS überall**: interne/externe Pfade TLS-geschützt
-- **Audits & Logging**: sicherheitsrelevante Events werden geloggt
+### Security Guides
 
-## Kernbereiche
+- **[authentication.md](authentication.md)** – Authentifizierung und
+  Autorisierung
+  - JWT- und Token-Handling
+  - Nutzer- und Service-Authentifizierung
+  - API-Key-Verwaltung
+  - Rate-Limiting
 
-- [Security Policy](security-policy.md) – Rollen, Verantwortlichkeiten,
-  Incident-Flow
-- [Authentication](authentication.md) – AuthN/AuthZ, Token-Handling
-- [Security Best Practices](security-best-practices.md) – Härtung, Prozesse
-- [SSL/TLS Setup](ssl-tls-setup.md) – Zertifikate, CAs, HSTS
-- [Log Audit](log-audit.md) – Prüf- und Review-Checklisten
+- **[ssl-tls-setup.md](ssl-tls-setup.md)** – SSL/TLS-Konfiguration
+  - Zertifikatsverwaltung
+  - Cloudflare- und Zero-Trust-Anbindung
+  - Überwachung von Ablaufdaten
 
-## Betrieb
+### Security Policies
 
-- Secrets rotieren (mind. vierteljährlich oder nach Incident)
-- Regelmäßige Scans (Trivy, Grype, Detect Secrets, CodeQL)
-- CI/CD: geschützte Branches, Environments mit Approvals
+- **[security-best-practices.md](security-best-practices.md)** – Richtlinien
+  - Sichere Konfiguration
+  - Netzwerksicherheit
+  - Datenschutz und Zugriffskontrolle
 
-## Incident Response (Kurz)
+- **[log-audit.md](log-audit.md)** – Prüf- und Audit-Report
+  - Quellen und Methodik
+  - Findings und Remediation
 
-1. Erkennen und isolieren
-2. Geheimnisse rotieren, Zugänge entziehen
-3. Forensik-Logs sichern, Ursache identifizieren
-4. Fix deployen, Tests und Monitoring prüfen
+- **[security-policy.md](security-policy.md)** – Rollen, Prozesse,
+  Versionspolitik
+
+## Quick Reference
+
+**Für Administrator:innen**
+
+- Authentifizierung konfigurieren: [authentication.md](authentication.md)
+- TLS/SSL bereitstellen: [ssl-tls-setup.md](ssl-tls-setup.md)
+
+**Für Entwickler:innen**
+
+- Best Practices lesen: [security-best-practices.md](security-best-practices.md)
+
+## Sicherheitsarchitektur
+
+ERNI-KI setzt auf mehrere Schutzschichten:
+
+- **JWT-Authentifizierung** – sichere Sessions für UI und API
+- **SSL/TLS** – Verschlüsselung aller Kommunikationswege
+- **Cloudflare Zero Trust** – DDoS-Schutz und abgesicherte Tunnel
+- **Rate-Limiting** – Schutz vor Missbrauch
+- **Lokale Datenspeicherung** – Datenhoheit und Backups on-prem
+
+## Sicherheitsvorfälle melden
+
+**Kein** öffentliches GitHub-Issue erstellen. Bitte melden an:
+<security@erni-gruppe.ch>
+
+## Verwandte Dokumentation
+
+- [Architecture](../architecture/README.md)
+- [Operations](../operations/README.md)
+- [Getting Started](../getting-started/README.md)
+
+## Version
+
+Dokumentationsversion: **12.1** – Letzte Aktualisierung: **2025-11-22**

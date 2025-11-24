@@ -14,6 +14,8 @@ system_status: 'Production Ready'
 > Production Ready (Система мониторинга: 5 provisioned дашбордов Grafana,
 > актуальные Prometheus
 
+[TOC]
+
 ## 📋 Обзор
 
 Детальное руководство по установке и настройке системы ERNI-KI -
@@ -56,7 +58,7 @@ sudo usermod -aG docker $USER
 sudo reboot
 ```
 
-### 2. Установка Docker Compose v2
+## 2. Установка Docker Compose v2
 
 ```bash
 # Установка Docker Compose v2
@@ -67,7 +69,7 @@ sudo apt install docker-compose-plugin
 docker compose version
 ```
 
-### 3. Настройка NVIDIA Container Toolkit (для GPU)
+## 3. Настройка NVIDIA Container Toolkit (для GPU)
 
 ```bash
 # Добавление репозитория NVIDIA
@@ -122,7 +124,7 @@ cd erni-ki
 ./scripts/setup/quick-start.sh
 ```
 
-### 3. Проверка установки
+## 3. Проверка установки
 
 ```bash
 # Проверка статуса всех сервисов
@@ -152,7 +154,7 @@ nano env/openwebui.env
 > ℹ️ **Информация:** Структура конфигураций оптимизирована (август 2025). Все
 > дублирующиеся конфигурации удалены, naming convention стандартизирован.
 
-### 2. Настройка SSL сертификатов
+## 2. Настройка SSL сертификатов
 
 ```bash
 # Генерация самоподписанных сертификатов (для тестирования)
@@ -163,7 +165,7 @@ cp your-cert.pem conf/ssl/cert.pem
 cp your-key.pem conf/ssl/key.pem
 ```
 
-### 3. Настройка Cloudflare Tunnel (опционально)
+## 3. Настройка Cloudflare Tunnel (опционально)
 
 ```bash
 # Настройка cloudflared
@@ -173,7 +175,7 @@ nano env/cloudflared.env
 echo "TUNNEL_TOKEN=your_tunnel_token_here" >> env/cloudflared.env
 ```
 
-### 4. Запуск системы
+## 4. Запуск системы
 
 ```bash
 # Создание Docker сетей
@@ -198,7 +200,7 @@ nvidia-smi
 docker run --rm --gpus all nvidia/cuda:11.8-base-ubuntu20.04 nvidia-smi
 ```
 
-### 2. Настройка Ollama для GPU
+## 2. Настройка Ollama для GPU
 
 ```bash
 # Запуск скрипта настройки GPU
@@ -209,7 +211,7 @@ nano env/ollama.env
 # Добавить: OLLAMA_GPU_ENABLED=true
 ```
 
-### 3. Проверка GPU в Ollama
+## 3. Проверка GPU в Ollama
 
 ```bash
 # Проверка использования GPU
@@ -239,7 +241,7 @@ done
 curl -s http://localhost:9095/health
 ```
 
-### 2. Доступ к интерфейсам мониторинга
+## 2. Доступ к интерфейсам мониторинга
 
 **Основные сервисы:**
 
@@ -300,7 +302,7 @@ curl -s http://localhost:9113/metrics | grep nginx_connections_active  # Nginx W
 curl -s http://localhost:9808/metrics | grep erni_ki_rag_response      # RAG SLA Exporter
 ```
 
-### 4. Настройка GPU мониторинга
+## 4. Настройка GPU мониторинга
 
 ```bash
 # Проверка NVIDIA GPU Exporter (улучшен с TCP healthcheck)
@@ -313,7 +315,7 @@ curl -s http://localhost:9445/metrics | grep nvidia_gpu
 docker exec erni-ki-nvidia-exporter nvidia-smi
 ```
 
-### 5. Troubleshooting мониторинга
+## 5. Troubleshooting мониторинга
 
 ```bash
 # Если exporter показывает <nil> healthcheck статус
@@ -373,7 +375,7 @@ docker-compose restart db
 
 ````
 
-### 2. Оптимизация Redis
+## 2. Оптимизация Redis
 
 ```bash
 # Настройка memory limits
@@ -385,7 +387,7 @@ sudo sysctl vm.overcommit_memory=1
 echo 'vm.overcommit_memory = 1' | sudo tee -a /etc/sysctl.conf
 ````
 
-### 3. Верификация оптимизаций
+## 3. Верификация оптимизаций
 
 ```bash
 # Проверка PostgreSQL настроек
@@ -421,7 +423,7 @@ FROM pg_statio_user_tables;"
 ./scripts/backup/check-local-backup.sh
 ```
 
-### 2. Настройка расписания backup
+## 2. Настройка расписания backup
 
 ```bash
 # Настройка cron для автоматических backup
@@ -440,7 +442,7 @@ FROM pg_statio_user_tables;"
 ./scripts/security/security-monitor.sh
 ```
 
-### 2. Настройка firewall
+## 2. Настройка firewall
 
 ```bash
 # UFW (Ubuntu)
@@ -487,7 +489,7 @@ docker compose restart service-name
 ./scripts/troubleshooting/automated-recovery.sh
 ```
 
-### Проблемы с GPU
+## Проблемы с GPU
 
 ```bash
 # Диагностика GPU

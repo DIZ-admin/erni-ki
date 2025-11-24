@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # SearXNG Redis/Valkey Connection Issue - Анализ и Решение
 
+[TOC]
+
 **Дата**: 2025-10-27 **Статус**: НЕКРИТИЧНО (компенсируется nginx кэшированием)
 **Приоритет**: НИЗКИЙ
 
@@ -66,7 +68,7 @@ $ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 PONG  # ✅ Redis работает
 ```
 
-### 2. Конфигурация SearXNG ✅
+## 2. Конфигурация SearXNG ✅
 
 **URL формат правильный**:
 
@@ -83,7 +85,7 @@ SEARXNG_VALKEY_URL=redis://:ErniKiRedisSecurePassword2024@redis:6379/0
 - Port: `6379`
 - Database: `0`
 
-### 3. Модуль Valkey ✅
+## 3. Модуль Valkey ✅
 
 **Модуль установлен**:
 
@@ -92,7 +94,7 @@ $ docker exec erni-ki-searxng-1 /usr/local/searxng/.venv/bin/python3 -c "import 
 # Модуль найден в /usr/local/searxng/.venv/lib/python3.13/site-packages/valkey
 ```
 
-### 4. Тест подключения ❌
+## 4. Тест подключения ❌
 
 **Прямой тест из SearXNG контейнера**:
 
@@ -170,6 +172,7 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
    ```
 
 3. Проверить логи на отсутствие ошибок:
+
    ```bash
    docker logs --tail 50 erni-ki-searxng-1 | grep -E "ERROR|WARN"
    ```
@@ -188,18 +191,18 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
 
 ---
 
-### Вариант 2: Исправить подключение к Redis (СЛОЖНЕЕ)
+## Вариант 2: Исправить подключение к Redis (СЛОЖНЕЕ)
 
 **Действия**:
 
-#### 2.1 Попробовать формат с username "default"
+### 2.1 Попробовать формат с username "default"
 
 ```bash
 # env/searxng.env
 SEARXNG_VALKEY_URL=redis://default:ErniKiRedisSecurePassword2024@redis:6379/0  # pragma: allowlist secret
 ```
 
-#### 2.2 Настроить Redis ACL
+## 2.2 Настроить Redis ACL
 
 ```bash
 # Создать пользователя для SearXNG
@@ -209,7 +212,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL SETUS
 SEARXNG_VALKEY_URL=redis://searxng:ErniKiRedisSecurePassword2024@redis:6379/0  # pragma: allowlist secret
 ```
 
-#### 2.3 Обновить модуль Valkey
+## 2.3 Обновить модуль Valkey
 
 ```bash
 # Войти в контейнер SearXNG
@@ -236,7 +239,7 @@ docker restart erni-ki-searxng-1
 
 ---
 
-### Вариант 3: Переключиться на стандартный redis-py модуль
+## Вариант 3: Переключиться на стандартный redis-py модуль
 
 **Действия**:
 
@@ -308,12 +311,12 @@ docker restart erni-ki-searxng-1
 
 ### Долгосрочные (1-7 дней)
 
-4. **Мониторинг производительности**:
+1. **Мониторинг производительности**:
    - Отслеживать SearXNG response time
    - Проверять nginx cache hit rate
    - Анализировать rate limiting логи
 
-5. **Оптимизация**:
+2. **Оптимизация**:
    - Настроить nginx cache purging
    - Оптимизировать TTL кэша
    - Настроить алерты на деградацию производительности

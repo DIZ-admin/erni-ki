@@ -4,7 +4,7 @@ translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 released: 2025-11-23
-status: current
+system_status: current
 ---
 
 # Версионирование документации ERNI-KI
