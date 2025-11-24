@@ -375,6 +375,7 @@ extra:
 nav:
   - Home: index.md
   - "Platform Overview": overview.md
+  - Glossary: GLOSSARY.md
   - "Quick Start":
       - "Overview": getting-started/README.md
       - "Installation": getting-started/installation.md
