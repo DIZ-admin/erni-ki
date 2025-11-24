@@ -24,10 +24,10 @@ Das ERNI-KI Monitoring-System umfasst:
 
 - **9 spezialisierte Exporters** - optimiert und standardisiert (25.
   September 2025)
-- **Prometheus v2.55.1** - Metriken-Sammlung und -Speicherung
-- **Grafana** - 18 Dashboards (100% funktional) - Visualisierung
-- **Loki + Fluent Bit** - zentralisierte Protokollierung
-- **AlertManager** - Benachrichtigungen und Alarmierung
+- **Prometheus v3.0.0** - Metriken-Sammlung und -Speicherung
+- **Grafana v11.3.0** - 18 Dashboards (100% funktional) - Visualisierung
+- **Loki v3.0.0 + Fluent Bit v3.1.0** - zentralisierte Protokollierung
+- **AlertManager v0.27.0** - Benachrichtigungen und Alarmierung
 - **System Health:** 96,4% (26/30 Container gesund)
 
 ## 📈 Exporter-Konfiguration
