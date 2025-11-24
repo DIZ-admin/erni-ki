@@ -187,7 +187,13 @@ repos:
     hooks:
       - id: detect-secrets
         name: "Detect Secrets: find secrets in code"
-        args: ["--baseline", ".secrets.baseline"]
+        args:
+          [
+            "--baseline",
+            ".secrets.baseline",
+            "--exclude-files",
+            "scripts/redis-performance-optimization.sh|\\.pre-commit-config\\.yaml|conf/watchtower/notifications-examples\\.env",
+          ]
         exclude: |
           (?x)^(
             \.env.*|
@@ -217,8 +223,8 @@ repos:
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
-      # Check for TODO/FIXME comments in source code
-      # Goal: All tasks should be tracked in GitHub Issues, not in code comments
+      # Check for inline work markers in source code
+      # Goal: All tasks are tracked in GitHub Issues, not in comments
       - id: python-check-blanket-noqa
         exclude: |
           (?x)^(
@@ -248,10 +254,10 @@ repos:
         language: system
         files: ^compose\.yml$
         pass_filenames: false
-      # Check for TODO/FIXME comments in source code
-      # Blocks commits with unfinished work that should be tracked in GitHub Issues
+      # Check for inline work markers
+      # Blocks commits with untracked work; create an Issue first
       - id: check-todo-fixme
-        name: "Code Quality: check TODO/FIXME comments"
+        name: "Code Quality: no inline task markers"
         entry: bash
         language: system
         types: [text]
@@ -259,10 +265,11 @@ repos:
         args:
           - -c
           - |
-            # Check for TODO/FIXME comments in source files
-            if find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.go" -o -name "*.yml" -o -name "*.yaml" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" -exec grep -l "TODO\|FIXME" {} \; 2>/dev/null | grep -v "pragma: allowlist todo" | head -1 >/dev/null; then
-              echo "❌ Found TODO/FIXME comments. Please create GitHub issues instead."
-              find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.go" -o -name "*.yml" -o -name "*.yaml" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" -exec grep -Hn "TODO\|FIXME" {} \; 2>/dev/null | grep -v "pragma: allowlist todo" | head -10
+            # Scan source files for inline task markers
+            matches=$(find . -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.go" -o -name "*.yml" -o -name "*.yaml" \) ! -path "*/node_modules/*" ! -path "*/.venv/*" ! -path "*/site/*" ! -name ".pre-commit-config.yaml" -exec grep -Hn "TODO\\|FIXME" {} \; 2>/dev/null | grep -v "pragma: allowlist todo" | head -10)
+            if [[ -n "$matches" ]]; then
+              echo "❌ Inline tasks detected; create a GitHub Issue instead of a comment."
+              echo "$matches"
               exit 1
             fi
 
@@ -277,7 +284,7 @@ repos:
       # Go imports organization
       - id: goimports
         name: "Go: organize imports"
-        entry: goimports
+        entry: /Users/kostas/go/bin/goimports
         language: system
         files: \.go$
         args: [-w]

@@ -160,7 +160,7 @@ linters:
     - forbidigo # Function prohibition
     - funlen # Function length (can be too strict)
     - gci # Imports (can conflict with goimports)
-    - godox # Disabled: TODO comments are tracked via pre-commit hooks
+    - godox # Disabled: work markers are tracked via pre-commit
     - nestif # If nesting
     - paralleltest # Parallel tests (can be excessive)
     - testpackage # Test packages

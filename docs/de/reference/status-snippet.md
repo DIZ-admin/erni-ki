@@ -1,3 +1,9 @@
+---
+language: de
+translation_status: complete
+doc_version: '2025.11'
+---
+
 > **Systemstatus (2025-11-23) — Production Ready v12.1**
 >
 > - Container: 32/32 services healthy
