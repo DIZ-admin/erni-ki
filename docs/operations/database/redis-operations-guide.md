@@ -225,13 +225,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 
 ---
 
-## 📞 Поддержка
-
-### Контакты
-
-- **Tech Lead:** Альтэон Шульц
-- **Система:** ERNI-KI
-- **Документация:** `/docs/operations/database/redis-operations-guide.md`
+## 📞 Поддержка и ссылки
 
 ### Полезные ссылки
 
