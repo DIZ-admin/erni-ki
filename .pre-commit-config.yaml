@@ -284,7 +284,7 @@ repos:
       # Go imports organization
       - id: goimports
         name: "Go: organize imports"
-        entry: /Users/kostas/go/bin/goimports
+        entry: goimports
         language: system
         files: \.go$
         args: [-w]

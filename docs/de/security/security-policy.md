@@ -93,12 +93,12 @@ last_updated: '2025-11-24'
 
 ```yaml
 # Starke Secret-Keys
-WEBUI_SECRET_KEY: 'generierter 256-Bit-Schlüssel'
-JWT_SECRET: 'generierter 256-Bit-Schlüssel'
+WEBUI_SECRET_KEY: 'generierter 256-Bit-Schlüssel' # pragma: allowlist secret
+JWT_SECRET: 'generierter 256-Bit-Schlüssel' # pragma: allowlist secret
 
 # Sichere Datenbank-Passwörter
-POSTGRES_PASSWORD: 'komplexes Passwort (>=16 Zeichen)'
-REDIS_PASSWORD: 'komplexes Passwort (>=16 Zeichen)'
+POSTGRES_PASSWORD: 'komplexes Passwort (>=16 Zeichen)' # pragma: allowlist secret
+REDIS_PASSWORD: 'komplexes Passwort (>=16 Zeichen)' # pragma: allowlist secret
 ```
 
 ## Empfohlene Nginx-Settings
