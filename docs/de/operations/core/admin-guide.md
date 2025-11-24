@@ -77,6 +77,8 @@ docker cp conf/nginx/includes/ erni-ki-nginx-1:/etc/nginx/
 
 ### Service-Status prüfen
 
+{% raw %}
+
 ```bash
 # Allgemeiner Status aller Container
 docker compose ps
@@ -90,6 +92,8 @@ docker compose logs -f service-name
 # Ressourcen-Monitoring in Echtzeit
 docker stats
 ```
+
+{% endraw %}
 
 ### Wichtige Monitoring-Metriken
 
@@ -106,6 +110,8 @@ docker stats
 
 #### Ressourcenverbrauch
 
+{% raw %}
+
 ```bash
 # CPU und Speicher pro Container
 docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
@@ -117,6 +123,8 @@ docker system df
 # GPU-Verbrauch (falls installiert)
 nvidia-smi
 ```
+
+{% endraw %}
 
 ### Automatisiertes Monitoring
 

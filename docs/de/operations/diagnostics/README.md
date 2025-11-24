@@ -41,6 +41,8 @@ cd /path/to/erni-ki
 
 ### Manuelle Diagnose der Kernkomponenten
 
+{% raw %}
+
 ```bash
 # 1. Docker-Container prüfen
 docker ps --filter "name=erni-ki" --format "table {{.Names}}\t{{.Status}}" | grep -c "healthy"
@@ -58,6 +60,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
 # 5. Externen Zugriff prüfen
 curl -I "https://ki.erni-gruppe.ch"
 ```
+
+{% endraw %}
 
 ## 📊 Ergebnisinterpretation
 
