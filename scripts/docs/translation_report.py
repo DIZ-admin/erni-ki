@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -23,7 +24,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def parse_frontmatter(path: Path) -> dict:
+def parse_frontmatter(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8", errors="ignore")
     if not text.startswith("---"):
         return {}
@@ -37,7 +38,7 @@ def parse_frontmatter(path: Path) -> dict:
 
 
 def collect_ru_files(root: Path, exclude: set[str]) -> list[Path]:
-    ru_files = []
+    ru_files: list[Path] = []
     for p in root.rglob("*.md"):
         parts = set(p.parts)
         if parts & exclude:

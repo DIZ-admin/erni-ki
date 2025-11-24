@@ -185,7 +185,7 @@ format с correlation IDs **Metrics**: ⚠️ Prometheus endpoint не реал�
 router_settings:
   # redis_host: "redis"
   # redis_port: 6379
-  # redis_password: "ErniKiRedisSecurePassword2024"
+  # redis_password: "ErniKiRedisSecurePassword2024"  # pragma: allowlist secret
   # redis_db: 1
 ````
 
@@ -277,7 +277,7 @@ litellm:
 # - litellm_params:
 #     model: "meta-llama/Llama-3.1-8B-Instruct"
 #     api_base: "http://vllm:8000/v1"
-#     api_key: "erni-ki-vllm-secure-key-2024"
+#     api_key: "erni-ki-vllm-secure-key-2024"  # pragma: allowlist secret
 ```
 
 ## Решение

@@ -1,3 +1,10 @@
+---
+language: de
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+---
+
 # 📊 Budgetanalyse des ERNI-KI Projekts
 
 **Analysedatum:** 24. November 2025 **Projektversion:** Production Ready v12.1
