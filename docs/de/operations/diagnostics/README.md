@@ -15,7 +15,7 @@ mit kritischen Testfehlern, die zu zu niedrigen Bewertungen führten.
 
 ### 📖 Kerndokumente
 
-1. **[erni-ki-diagnostic-methodology.md](./erni-ki-diagnostic-methodology.md)**
+1. **[erni-ki-diagnostic-methodology.md](../../operations/diagnostics/erni-ki-diagnostic-methodology.md)**
    - End-to-end Diagnoseleitfaden
    - Korrekte Testmethodik für Komponenten
    - Vermeidung typischer Diagnosefehler
