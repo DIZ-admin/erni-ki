@@ -312,6 +312,12 @@ repos:
         language: system
         pass_filenames: false
 
+      - id: visuals-and-links-check
+        name: "Docs: visuals/TOC/link check"
+        entry: python3 scripts/docs/visuals_and_links_check.py
+        language: system
+        pass_filenames: false
+
       # Check for temporary files
       - id: check-temporary-files
         name: "Cleanup: prevent .tmp and temporary files from being committed"

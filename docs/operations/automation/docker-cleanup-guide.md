@@ -24,6 +24,17 @@ last_updated: '2025-11-24'
 
 ---
 
+## Визуализация: cleanup-пайплайн
+
+```mermaid
+flowchart TD
+  Detect[Оценка docker system df] --> Plan[План очистки: images/volumes/cache]
+  Plan --> DryRun[docker system prune --all --volumes --dry-run]
+  DryRun --> Clean[docker system prune --all --volumes -f]
+  Clean --> Verify[docker system df повторно]
+  Verify --> Report[Запись в maintenance log]
+```
+
 ## Неиспользуемые Docker Images
 
 ### Список неиспользуемых образов (без контейнеров)

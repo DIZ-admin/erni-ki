@@ -22,6 +22,19 @@ configuration files checked into the repository.
 | Automation    | Host-level cron jobs & watchdog scripts (`conf/cron/logging-reports.cron:5-27`, `scripts/monitoring/alertmanager-queue-watch.sh:1-62`).                 | Cron outputs to `/var/log`, watchdogs restart services on thresholds without incident context.         |
 | Documentation | `docs/operations/monitoring/monitoring-guide.md`, `docs/archive/config-backup/*.md`.                                                                    | Guide enumerates exporters & scripts but lacks objective health scoring/SLO references.                |
 
+```mermaid
+flowchart LR
+    Apps[Сервисы] --> Exporters[Exporters]
+    Exporters --> Prom[Prometheus]
+    Prom --> Alert[Alertmanager]
+    Prom --> Grafana
+    Logs[Loki] --> Grafana
+    Alert --> Oncall[On-call]
+    Oncall --> Runbooks
+    Runbooks --> Fix[Исправление]
+    Fix --> Apps
+```
+
 ## 2. Key Findings
 
 ### 2.1 Platform Resilience & Data Safety (High)
