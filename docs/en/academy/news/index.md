@@ -1,6 +1,5 @@
 ---
 language: en
-page_id: academy.news.index
 translation_status: pending
 doc_version: '2025.11'
 ---

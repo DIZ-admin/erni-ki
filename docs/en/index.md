@@ -1,6 +1,5 @@
 ---
 language: en
-page_id: site.home
 translation_status: pending
 doc_version: '2025.11'
 ---

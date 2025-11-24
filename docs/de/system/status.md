@@ -1,6 +1,5 @@
 ---
 language: de
-page_id: system.status
 translation_status: pending
 doc_version: '2025.11'
 ---

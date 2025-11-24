@@ -1,6 +1,5 @@
 ---
 language: ru
-page_id: operations.index
 translation_status: complete
 doc_version: '2025.11'
 ---
