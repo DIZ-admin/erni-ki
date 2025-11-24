@@ -178,7 +178,8 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=sha,prefix={{branch}}-
+            # Для SHA добавляем явный префикс, чтобы не получить пустой тег
+            type=sha,format=short,prefix=sha-
             type=raw,value=${{ needs['determine-environment'].outputs.environment }}-latest
 
       - name: 🏗️ Build and push Docker image
