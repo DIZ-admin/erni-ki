@@ -115,6 +115,8 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-database"
+    mem_limit: 4g
+    cpus: "2.0"
 
   # Redis cache and queues (optimized network configuration)
   redis:
@@ -139,6 +141,8 @@ services:
       # Allow auto-updates for Redis
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=cache-services"
+    mem_limit: 1g
+    cpus: "1.0"
 
   # LiteLLM Context Engineering Gateway (optimized network configuration)
   litellm:
@@ -193,7 +197,8 @@ services:
       - ./conf/litellm/custom_providers:/app/custom_providers:ro # Custom providers LiteLLM
 
     # Command with basic settings
-    command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
+    command:
+      ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
 
     # Extra hosts for Ollama host connection
     extra_hosts:
@@ -299,7 +304,8 @@ services:
   tika:
     env_file: env/tika.env
     healthcheck:
-      test: ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/9998' || exit 1"]
+      test:
+        ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/9998' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -370,6 +376,8 @@ services:
       # Allow auto-updates for SearXNG
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=search-services"
+    mem_limit: 1g
+    cpus: "1.0"
 
   # Ollama LLM server with GPU acceleration (optimized network configuration)
   ollama:
@@ -395,7 +403,7 @@ services:
     image: ollama/ollama:0.12.11 # Updated to 0.12.11 (2025-11-18) - upstream security fixes and GPU stability
     logging: *critical-logging
     ports:
-      - 11434:11434
+      - "127.0.0.1:11434:11434"
     restart: unless-stopped
     volumes:
       - ./data/ollama:/root/.ollama
@@ -441,6 +449,8 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-proxy"
+    mem_limit: 512m
+    cpus: "1.0"
 
   # OpenWebUI main interface with GPU acceleration (optimized network configuration)
   openwebui:
@@ -821,7 +831,11 @@ services:
       - --no-collector.stat_bgwriter
     logging: *monitoring-logging
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3

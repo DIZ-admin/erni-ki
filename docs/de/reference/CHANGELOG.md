@@ -1,6 +1,6 @@
 ---
 language: de
-translation_status: in_progress
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
@@ -198,4 +198,46 @@ last_updated: '2025-11-24'
 
 #### ✅ **Mehrsprachige Unterstützung**
 - [x] Deutsche Lokalisierung synchronisiert  
-- [x] Konsistente Terminologie
+- [x] Konsistente Terminologie  
+- [x] Versionsangaben aktualisiert
+
+#### ✅ **Backups & Versionierung**
+- [x] Backup der Vorversion erstellt  
+- [x] Versionssprung 4.0 → 5.0 dokumentiert  
+- [x] Dieser Changelog enthält alle Schritte  
+- [x] `last_updated`-Werte aktualisiert
+
+### 🔗 **Verknüpfte Änderungen**
+
+#### 🐳 **Docker Compose**
+- webhook-receiver zu `compose.production.yml` hinzugefügt  
+- Port 9095:9093 gemappt  
+- Healthchecks aktiviert
+
+#### 📈 **Monitoring Stack**
+- Prometheus-Konfiguration aktualisiert  
+- Grafana-Dashboards mit GPU-Metriken erweitert  
+- Alertmanager → webhook-receiver angebunden
+
+### 📊 **Änderungs-Statistik**
+
+- **Aktualisierte Dateien**: 5  
+- **Hinzugefügte Zeilen**: ~200  
+- **Neue Abschnitte**: 3  
+- **Aktualisierte Diagramme**: 2  
+- **Synchronisierte Sprachen**: 2 (RU, DE)
+
+---
+
+## [4.0.0] - 2025-07-15
+
+### Änderungen der Vorgängerversion
+- LiteLLM-Integration  
+- Docling-Service ergänzt  
+- Context Engineering implementiert  
+- Netzwerkoptimierung abgeschlossen
+
+---
+
+**Hinweis:** Dieser Changelog fasst die Doku-Aktualisierungen zusammen, die mit
+der Wiederherstellung und Optimierung des ERNI-KI-Monitorings einhergingen.
