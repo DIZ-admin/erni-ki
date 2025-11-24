@@ -65,7 +65,7 @@ router_settings:
   # Redis settings for router are temporarily disabled due to incompatibility
   # redis_host: "redis"
   # redis_port: 6379
-  # redis_password: "ErniKiRedisSecurePassword2024"
+  # redis_password: "ErniKiRedisSecurePassword2024" # pragma: allowlist secret
   # redis_db: 1 # Use the same DB as caching
 ```
 
@@ -103,7 +103,7 @@ router_settings:
   # ... другие настройки ...
   redis_host: 'redis'
   redis_port: 6379
-  redis_password: 'ErniKiRedisSecurePassword2024'
+  redis_password: 'ErniKiRedisSecurePassword2024' # pragma: allowlist secret
   redis_db: 1
 ```
 
@@ -116,7 +116,7 @@ litellm_settings:
     type: 'redis' # Было: "local"
     host: 'redis'
     port: 6379
-    password: 'ErniKiRedisSecurePassword2024'
+    password: 'ErniKiRedisSecurePassword2024' # pragma: allowlist secret
     db: 1
     ttl: 1800
     supported_call_types:
@@ -173,7 +173,7 @@ router_settings:
   # Redis settings for router are temporarily disabled due to incompatibility
   # redis_host: "redis"
   # redis_port: 6379
-  # redis_password: "ErniKiRedisSecurePassword2024"
+  # redis_password: "ErniKiRedisSecurePassword2024" # pragma: allowlist secret
   # redis_db: 1
 ```
 
