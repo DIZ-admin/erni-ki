@@ -63,7 +63,6 @@ managing the ERNI-KI platform.
   `maintenance/backup-restore-procedures.md`.
 
 ## 🔗 Связанная документация
-
 - [Architecture Overview](../architecture/README.md)
 - [Getting Started](../getting-started/README.md)
 - [Security Guide](../security/README.md)
