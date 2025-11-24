@@ -7,8 +7,6 @@ last_updated: '2025-11-24'
 
 # ERNI-KI — Log-Audit (12. November 2025)
 
-[TOC]
-
 ## Umfang & Quellen
 
 - `data/webhook-logs/` – 69 235 Alertmanager-JSONs (314 MB) vom 29.08. bis

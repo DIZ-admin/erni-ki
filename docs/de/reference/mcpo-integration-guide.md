@@ -8,7 +8,7 @@ last_updated: '2025-11-24'
 # 🔧 MCP-Integrationsleitfaden für ERNI-KI
 
 > **Dokumentversion:** 9.0 **Stand:** 2025-11-14 **Status:** ✅ Healthy (Port
-> 8000, LiteLLM/Context7-Integration geprüft) [TOC]
+> 8000, LiteLLM/Context7-Integration geprüft)
 
 ## 📋 MCP-Überblick
 
@@ -58,8 +58,8 @@ graph TB
 ### ✅ Läuft stabil
 
 1. **MCPO Server** – Port 8000 erreichbar
-2. **Swagger UI** – <http://localhost:8000/docs>
-3. **OpenAPI** – <http://localhost:8000/openapi.json>
+2. **Swagger UI** – http://localhost:8000/docs
+3. **OpenAPI** – http://localhost:8000/openapi.json
 4. **Alle 5 MCP-Server** – initialisiert und antworten
 5. **Nginx Proxy** – routet korrekt zu den MCP-Servern
 6. **OpenWebUI Konfiguration** – `TOOL_SERVER_CONNECTIONS` gesetzt
@@ -206,7 +206,7 @@ curl -X POST "http://localhost:8000/postgres/query" \
 curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo "✅ Proxy OK"
 ```
 
-## Automatische Diagnostik
+### Automatische Diagnostik
 
 ```bash
 ./scripts/mcp/test-mcp-integration.sh

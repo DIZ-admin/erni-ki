@@ -9,7 +9,6 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
-
 # Troubleshooting (DE)
 
 Verwenden Sie `docs/operations/runbooks/troubleshooting-guide.md` für typische
