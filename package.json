@@ -152,6 +152,9 @@
     "js-yaml": "4.1.1",
     "tmp": "0.2.5"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.52.5"
+  },
   "volta": {
     "node": "20.18.0",
     "npm": "10.8.2"
