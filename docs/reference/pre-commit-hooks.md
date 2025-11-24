@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Pre-commit Hooks для ERNI-KI
 
+[TOC]
+
 ## Обзор
 
 Pre-commit hooks автоматически проверяют качество кода перед каждым коммитом,
@@ -136,7 +138,7 @@ pre-commit run prettier --all-files
 pre-commit run eslint --all-files
 ```
 
-### Обновление hooks
+## Обновление hooks
 
 ```bash
 npm run pre-commit:update
@@ -146,7 +148,7 @@ source .venv/bin/activate
 pre-commit autoupdate
 ```
 
-### Пропуск проверок (не рекомендуется)
+## Пропуск проверок (не рекомендуется)
 
 ```bash
 git commit --no-verify -m "сообщение коммита"
@@ -173,7 +175,7 @@ npm run format:py
 npm run lint:fix
 ```
 
-### Проблемы с секретами
+## Проблемы с секретами
 
 ```bash
 # Обновление baseline
@@ -181,7 +183,7 @@ source .venv/bin/activate
 detect-secrets scan --baseline .secrets.baseline
 ```
 
-### Обнаружены временные файлы
+## Обнаружены временные файлы
 
 ```bash
 # Найти все временные файлы
@@ -194,7 +196,7 @@ find . -type f \( -name "*.tmp" -o -name "*~" -o -name "*.bak" \) ! -path "*/nod
 find . -name ".DS_Store" -delete
 ```
 
-### Очистка кэша
+## Очистка кэша
 
 ```bash
 source .venv/bin/activate

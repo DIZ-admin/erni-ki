@@ -4,16 +4,16 @@ translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: '👤 ERNI-KI Benutzerhandbuch'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
 # 👤 ERNI-KI Benutzerhandbuch
 
 > **Dokumentversion:** 3.0 **Aktualisierungsdatum:** 2025-07-15 **Zielgruppe:**
-> Endbenutzer
+> Endbenutzer [TOC]
 
 ## 🎯 Einführung
 

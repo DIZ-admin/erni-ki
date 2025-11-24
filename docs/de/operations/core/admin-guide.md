@@ -4,9 +4,9 @@ translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: '👨‍💼 ERNI-KI Administrator-Handbuch'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
@@ -14,7 +14,7 @@ audience: 'administrators'
 
 > **Dokumentversion:** 7.0 **Aktualisierungsdatum:** 2025-09-11 **Zielgruppe:**
 > Systemadministratoren (Optimiertes Nginx + Korrigierte APIs + Verbesserte
-> Diagnose)
+> Diagnose) [TOC]
 
 ## 🎯 Überblick der administrativen Aufgaben
 
@@ -70,7 +70,7 @@ docker exec erni-ki-nginx-1 nginx -s reload
 docker cp conf/nginx/includes/ erni-ki-nginx-1:/etc/nginx/
 ```
 
-#monitoring
+# monitoring
 
 ## Monitoring
 
@@ -96,9 +96,9 @@ docker stats
 
 {% endraw %}
 
-### Wichtige Monitoring-Metriken
+## Wichtige Monitoring-Metriken
 
-#### Service-Status (sollten "healthy" sein)
+### Service-Status (sollten "healthy" sein)
 
 - **nginx** - Web-Gateway und Load Balancer
 - **auth** - JWT-Authentifizierung
@@ -127,12 +127,12 @@ nvidia-smi
 
 {% endraw %}
 
-### Automatisiertes Monitoring
+## Automatisiertes Monitoring
 
 ```bash
 # Tägliches Health-Check-Skript erstellen
 cat > /usr/local/bin/erni-ki-health.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 LOG_FILE="/var/log/erni-ki-health.log"
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
@@ -191,7 +191,7 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 "
 ```
 
-### Datenbank-Wartung
+## Datenbank-Wartung
 
 ```bash
 # Alte Daten löschen (älter als 90 Tage)
@@ -258,7 +258,7 @@ docker compose exec db pg_dump -U openwebui openwebui > backup_$(date +%Y%m%d).s
 }
 ```
 
-### Wiederherstellung aus Backup
+## Wiederherstellung aus Backup
 
 # pragma: allowlist secret (пример пароля в payload)
 
@@ -294,7 +294,7 @@ SELECT id, name, email, role, created_at FROM user ORDER BY created_at DESC;
 "
 ```
 
-### SSL/TLS-Konfiguration
+## SSL/TLS-Konfiguration
 
 ```bash
 # SSL-Zertifikate aktualisieren
@@ -307,7 +307,7 @@ cp new-key.pem conf/nginx/ssl/
 docker compose restart nginx
 ```
 
-### Sicherheits-Audit
+## Sicherheits-Audit
 
 ```bash
 # Offene Ports prüfen
@@ -338,7 +338,7 @@ docker compose exec redis redis-cli info memory
 docker compose exec redis redis-cli info stats
 ```
 
-### GPU-Nutzung optimieren
+## GPU-Nutzung optimieren
 
 ```bash
 # GPU-Nutzung prüfen
@@ -351,7 +351,7 @@ watch -n 1 'nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheade
 docker compose exec ollama ollama show llama3.2:3b --modelfile
 ```
 
-### Service-Skalierung
+## Service-Skalierung
 
 ```bash
 # Anzahl nginx-Instanzen erhöhen
@@ -377,9 +377,9 @@ docker compose exec nginx ping ollama
 docker compose exec openwebui curl -I http://ollama:11434
 ```
 
-### Häufige Probleme und Lösungen
+## Häufige Probleme und Lösungen
 
-#### Service startet nicht
+### Service startet nicht
 
 ```bash
 # Ressourcen prüfen
@@ -393,7 +393,7 @@ docker system prune -f
 docker compose restart service-name
 ```
 
-#### Langsame AI-Performance
+## Langsame AI-Performance
 
 ```bash
 # GPU-Last prüfen
@@ -406,7 +406,7 @@ free -h
 docker compose restart ollama
 ```
 
-#### Such-Probleme
+## Such-Probleme
 
 ```bash
 # SearXNG prüfen
@@ -463,7 +463,7 @@ docker compose up -d
 docker compose ps
 ```
 
-### Rollback zur vorherigen Version
+## Rollback zur vorherigen Version
 
 ```bash
 # Zu vorherigem Commit zurückkehren
@@ -481,7 +481,7 @@ docker compose up -d
 
 ## ⏱️ RAG SLA Exporter
 
-- **URL:** http://localhost:9808/metrics
+- **URL:** <http://localhost:9808/metrics>
 - **Metriken:**
   - `erni_ki_rag_response_latency_seconds` — Latenz-Histogramm
   - `erni_ki_rag_sources_count` — Anzahl der Quellen

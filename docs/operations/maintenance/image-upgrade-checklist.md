@@ -26,10 +26,12 @@ last_updated: '2025-11-24'
    - `docker compose pull SERVICE && docker compose up -d SERVICE` (или
      `--no-deps`).
    - Проверьте healthchecks и основные эндпоинты:
+
      ```bash
      docker compose ps SERVICE
      docker compose logs SERVICE --tail=50
      ```
+
    - Для экспортёров: `curl -s http://localhost:<port>/metrics | head`.
 
 4. **Watchtower**

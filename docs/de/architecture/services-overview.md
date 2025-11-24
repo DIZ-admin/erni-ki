@@ -4,9 +4,9 @@ translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: '📊 Detaillierte Tabelle der aktiven Services des ERNI-KI Systems'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
@@ -14,7 +14,7 @@ audience: 'administrators'
 
 > **Referenzdokumentation für die Administration des ERNI-KI Systems** >
 > **Erstellungsdatum**: 2025-09-25 **Systemversion**: v11.0 Production Ready
-> **Status**: ✅ 26 von 30 Services gesund (96,4% System Health)
+> **Status**: ✅ 26 von 30 Services gesund (96,4% System Health) [TOC]
 
 ---
 
@@ -136,7 +136,7 @@ docker-compose logs db --tail=50
 docker-compose logs nginx --tail=50
 ```
 
-### GPU-Ressourcen überwachen
+## GPU-Ressourcen überwachen
 
 ```bash
 # GPU Status prüfen
@@ -146,7 +146,7 @@ nvidia-smi
 curl -s http://localhost:9445/metrics | grep nvidia
 ```
 
-### Integrationen prüfen
+## Integrationen prüfen
 
 ```bash
 # Fluent Bit Metriken

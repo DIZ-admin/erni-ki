@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Operations Handbook ERNI-KI
 
+[TOC]
+
 Сводный справочник для DevOps/SRE, управляющих наблюдаемостью, SLA и реакцией на
 инциденты.
 

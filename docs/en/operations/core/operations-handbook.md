@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # ERNI-KI Operations Handbook
 
+[TOC]
+
 A compact guide for DevOps/SRE managing observability, SLA, and incident
 response.
 

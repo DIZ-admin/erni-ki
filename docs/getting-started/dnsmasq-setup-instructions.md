@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Настройка локального DNS для ERNI-KI системы
 
+[TOC]
+
 **Дата**: 2025-10-27 **Статус**: ✅ ЗАВЕРШЕНО **Цель**: Настроить локальный DNS
 сервер для резолвинга ki.erni-gruppe.ch в корпоративной сети
 
@@ -48,7 +50,7 @@ DNS=192.168.62.153
 FallbackDNS=192.168.62.32 185.242.202.231
 ```
 
-### 2. Установлен DNSMasq на хост
+## 2. Установлен DNSMasq на хост
 
 ```bash
 sudo apt-get update
@@ -76,7 +78,7 @@ tcp  0  0 192.168.62.153:53  0.0.0.0:*  LISTEN  729392/dnsmasq
 
 # DNS резолвинг работает
 $ nslookup ki.erni-gruppe.ch 192.168.62.153
-Name:	ki.erni-gruppe.ch
+Name: ki.erni-gruppe.ch
 Address: 192.168.62.153
 
 # HTTPS доступ работает
@@ -147,7 +149,7 @@ nslookup ki.erni-gruppe.ch
 3. DNS → Добавить `192.168.62.153`
 4. Применить
 
-### Вариант C: Настроить корпоративный DNS сервер (192.168.62.32)
+## Вариант C: Настроить корпоративный DNS сервер (192.168.62.32)
 
 **Преимущества**: Профессиональное решение, интеграция с существующей
 инфраструктурой
@@ -228,7 +230,7 @@ address=/ki.erni-gruppe.ch/192.168.62.153
 cache-size=1000
 ```
 
-### Конфигурация systemd-resolved
+## Конфигурация systemd-resolved
 
 **Файл**: `/etc/systemd/resolved.conf.d/dnsmasq.conf`
 
@@ -257,7 +259,7 @@ sudo kill -USR1 $(pidof dnsmasq)
 sudo journalctl -u dnsmasq | tail -20
 ```
 
-### Перезапуск после изменений
+## Перезапуск после изменений
 
 ```bash
 # Проверить конфигурацию
@@ -270,7 +272,7 @@ sudo systemctl restart dnsmasq
 nslookup ki.erni-gruppe.ch 192.168.62.153
 ```
 
-### Откат изменений
+## Откат изменений
 
 Если что-то пошло не так:
 
@@ -318,7 +320,7 @@ sudo systemctl status systemd-resolved
 resolvectl status
 ```
 
-### Шаг 2: Обновить /etc/resolv.conf
+## Шаг 2: Обновить /etc/resolv.conf
 
 ```bash
 # Создать новый resolv.conf
@@ -335,7 +337,7 @@ EOF
 sudo chattr +i /etc/resolv.conf
 ```
 
-### Шаг 3: Перезапустить DNSMasq контейнер
+## Шаг 3: Перезапустить DNSMasq контейнер
 
 ```bash
 cd /home/konstantin/Documents/augment-projects/erni-ki
@@ -350,7 +352,7 @@ docker ps --filter name=dnsmasq
 docker logs --tail 20 erni-ki-dnsmasq
 ```
 
-### Шаг 4: Проверить работу DNS
+## Шаг 4: Проверить работу DNS
 
 ```bash
 # Проверить что порт 53 слушает dnsmasq
@@ -382,10 +384,10 @@ tcp        0      0 192.168.62.153:53       0.0.0.0:*               <pid>/dnsmas
 
 ```bash
 $ nslookup ki.erni-gruppe.ch 192.168.62.153
-Server:		192.168.62.153
-Address:	192.168.62.153#53
+Server:  192.168.62.153
+Address: 192.168.62.153#53
 
-Name:	ki.erni-gruppe.ch
+Name: ki.erni-gruppe.ch
 Address: 192.168.62.153
 ```
 
@@ -423,7 +425,7 @@ docker stop erni-ki-dnsmasq
 
 ### Вариант A: Настроить DHCP на роутере LANCOM (РЕКОМЕНДУЕТСЯ)
 
-1. Войти в WEBconfig роутера: https://192.168.62.1/
+1. Войти в WEBconfig роутера: <https://192.168.62.1/>
 2. Изменить Primary DNS с 192.168.62.32 на 192.168.62.153
 3. Клиенты автоматически получат новый DNS при следующем DHCP lease
 

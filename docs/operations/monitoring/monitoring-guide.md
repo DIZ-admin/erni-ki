@@ -7,15 +7,15 @@ last_updated: '2025-11-24'
 
 # 📊 ERNI-KI Monitoring Guide
 
-Comprehensive guide for monitoring ERNI-KI system with 8 specialized exporters,
-standardized healthchecks, and production-ready observability stack.
+[TOC] Comprehensive guide for monitoring ERNI-KI system with 8 specialized
+exporters, standardized healthchecks, and production-ready observability stack.
 
 ## 1. Введение
 
 Система мониторинга ERNI-KI обеспечивает полную наблюдаемость (observability) за
 состоянием инфраструктуры, сервисов AI и баз данных.
 
-### Основные компоненты:
+### Основные компоненты
 
 - **8 Specialized Exporters** - оптимизированы и стандартизированы.
 - **Prometheus v3.0.0** - сбор и хранение метрик.
@@ -285,7 +285,7 @@ node-exporter:
 curl -s http://localhost:9101/metrics | grep node_up
 ```
 
-### 🐘 PostgreSQL Exporter (Port 9188 via IPv4 proxy)
+## 🐘 PostgreSQL Exporter (Port 9188 via IPv4 proxy)
 
 **Purpose:** Database performance and health metrics
 
@@ -324,7 +324,7 @@ postgres-exporter:
 curl -s http://localhost:9188/metrics | grep pg_up
 ```
 
-### 🔴 Redis Exporter (Port 9121) - 🔧 Fixed 19.09.2025
+## 🔴 Redis Exporter (Port 9121) - 🔧 Fixed 19.09.2025
 
 **Purpose:** Redis cache performance and health metrics
 
@@ -371,7 +371,7 @@ timeout 5 sh -c '</dev/tcp/localhost/9121' && echo "Redis Exporter available"
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-### 🎮 NVIDIA GPU Exporter (Port 9445) - ✅ Improved 19.09.2025
+## 🎮 NVIDIA GPU Exporter (Port 9445) - ✅ Improved 19.09.2025
 
 **Purpose:** GPU utilization and performance metrics
 
@@ -404,7 +404,7 @@ nvidia-exporter:
 curl -s http://localhost:9445/metrics | grep nvidia_gpu_utilization
 ```
 
-### 📦 Blackbox Exporter (Port 9115)
+## 📦 Blackbox Exporter (Port 9115)
 
 **Purpose:** External service availability monitoring
 
@@ -437,7 +437,7 @@ blackbox-exporter:
 curl -s http://localhost:9115/metrics | grep probe_success
 ```
 
-### 🧠 Ollama AI Exporter (Port 9778) - ✅ Standardized 19.09.2025
+## 🧠 Ollama AI Exporter (Port 9778) - ✅ Standardized 19.09.2025
 
 **Purpose:** AI model performance and availability metrics
 
@@ -470,7 +470,7 @@ ollama-exporter:
 curl -s http://localhost:9778/metrics | grep ollama_models_total
 ```
 
-### 🚪 Nginx Web Exporter (Port 9113) - 🔧 Fixed 19.09.2025
+## 🚪 Nginx Web Exporter (Port 9113) - 🔧 Fixed 19.09.2025
 
 **Purpose:** Web server performance and traffic metrics
 
@@ -510,7 +510,7 @@ curl -s http://localhost:9113/metrics | grep nginx_connections_active
 timeout 5 sh -c '</dev/tcp/localhost/9113' && echo "Nginx Exporter available"
 ```
 
-### 📈 RAG SLA Exporter (Port 9808)
+## 📈 RAG SLA Exporter (Port 9808)
 
 **Purpose:** RAG (Retrieval-Augmented Generation) performance metrics
 
@@ -598,7 +598,7 @@ done
 # Expected output: All ports should return 200
 ```
 
-### Docker Health Status
+## Docker Health Status
 
 ```bash
 # Check Docker health status
@@ -627,7 +627,7 @@ healthcheck:
   test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
 ```
 
-#### 2. Redis Exporter Shows redis_up = 0
+## 2. Redis Exporter Shows redis_up = 0
 
 **Problem:** Authentication issue with Redis **Solution:** Verify Redis
 connection string and password
@@ -640,7 +640,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 docker logs erni-ki-Redis мониторинг через Grafana --tail 20
 ```
 
-#### 3. NVIDIA Exporter Not Showing GPU Metrics
+## 3. NVIDIA Exporter Not Showing GPU Metrics
 
 **Problem:** GPU not accessible or NVIDIA runtime not configured **Solution:**
 Verify GPU access and runtime
@@ -656,7 +656,7 @@ docker exec erni-ki-nvidia-exporter nvidia-smi
 runtime: nvidia
 ```
 
-#### 4. Metrics Endpoint Returns 404
+## 4. Metrics Endpoint Returns 404
 
 **Problem:** Incorrect endpoint path or port configuration **Solution:** Verify
 exporter configuration
@@ -775,7 +775,7 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | select(.name |
 curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[].rules[] | select(.labels.severity) | .labels.severity' | sort | uniq -c
 ```
 
-### Alert Testing
+## Alert Testing
 
 **Trigger test alert:**
 
@@ -790,7 +790,7 @@ watch -n 5 'curl -s http://localhost:9091/api/v1/alerts | jq ".data.alerts[] | s
 rm /tmp/test-alert.img
 ```
 
-### Monitoring Alertmanager Queue & Disk Alerts
+## Monitoring Alertmanager Queue & Disk Alerts
 
 - **Alertmanager queue:** Grafana dashboard `Observability / Alertmanager` →
   панель _Queue Depth_ (метрика `alertmanager_cluster_messages_queued`). После
@@ -825,10 +825,10 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | .name'
 ```yaml
 # In conf/prometheus/alerts.yml, comment out the rule
 # - alert: AlertName
-#   expr: ...
+# expr: ...
 ```
 
-### Related Documentation
+## Related Documentation
 
 - [Prometheus Alerts Guide](prometheus-alerts-guide.md) - Detailed alert
   documentation
@@ -849,6 +849,7 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | .name'
    - Low-resolution: 1 year
 
 3. **Resource Allocation:** Monitor exporter resource usage
+
    ```bash
    # Check exporter resource usage
    docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | grep exporter

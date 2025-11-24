@@ -12,6 +12,8 @@ last_updated: '2025-11-24'
 
 ## 📋 Обзор API
 
+[TOC]
+
 ERNI-KI предоставляет RESTful API для интеграции с внешними системами. API
 включает endpoints для работы с чатами, моделями, поиском, резервным
 копированием и управлением пользователями.
@@ -418,7 +420,7 @@ curl "https://ki.erni-gruppe.ch/api/searxng/search?q=artificial%20intelligence&f
 }
 ```
 
-### POST /api/v1/search
+## POST /api/v1/search
 
 RAG поиск через OpenWebUI (с интеграцией в чат).
 
@@ -671,7 +673,7 @@ client = ERNIKIClient("https://ki.erni-gruppe.ch/api/v1", "your-token")
 response = client.send_message("chat-id", "Привет!")
 ```
 
-### JavaScript
+## JavaScript
 
 ```javascript
 class ERNIKIClient {

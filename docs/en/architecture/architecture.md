@@ -4,9 +4,9 @@ translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: 'architecture'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 ---
 
 # 🏗️ ERNI-KI System Architecture
@@ -17,6 +17,7 @@ status: 'Production Ready'
 > alert rules. LiteLLM v1.80.0.rc.1, Docling, MCP Server, Apache Tika,
 > Watchtower monitor-only. Monitoring: Prometheus v3.0.0, Loki v3.0.0, Fluent
 > Bit v3.1.0, Alertmanager v0.27.0. **Prometheus targets: 32/32 UP (100%)** ✅
+> [TOC]
 
 ## 📋 Architecture Overview
 

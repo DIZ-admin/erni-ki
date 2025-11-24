@@ -4,9 +4,9 @@ translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: 'Runbooks & Troubleshooting (DE summary)'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
@@ -28,7 +28,7 @@ Versionen finden sich weiterhin unter `docs/operations/maintenance/` und
 > entsprechenden Berichte (Phase 1/2 usw.). Archon Tasks sollten alle Schritte
 > spiegeln.
 
-### Beispielbefehle
+## Beispielbefehle
 
 ```bash
 # Container neu starten (aus dem Service-Runbook)

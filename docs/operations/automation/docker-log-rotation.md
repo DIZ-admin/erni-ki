@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Docker Log Rotation для ERNI-KI
 
+[TOC]
+
 ## Описание
 
 Настройка автоматической ротации логов Docker контейнеров для предотвращения
@@ -54,7 +56,7 @@ services:
         max-file: '3'
 ```
 
-#### Рекомендации по размерам для разных сервисов:
+## Рекомендации по размерам для разных сервисов
 
 **Высоконагруженные сервисы (больше логов):**
 
@@ -124,7 +126,7 @@ cd /home/konstantin/Documents/augment-projects/erni-ki
 docker compose up -d --force-recreate
 ```
 
-### Вариант 2: Настройка в compose.yml
+## Вариант 2: Настройка в compose.yml
 
 ```bash
 # 1. Создать backup
@@ -133,12 +135,12 @@ cp compose.yml .config-backup/compose.yml.backup-$(date +%Y%m%d-%H%M%S)
 # 2. Добавить logging в каждый сервис (вручную или через sed)
 # Пример для одного сервиса:
 # services:
-#   openwebui:
-#     logging:
-#       driver: "json-file"
-#       options:
-#         max-size: "10m"
-#         max-file: "3"
+# openwebui:
+# logging:
+# driver: "json-file"
+# options:
+# max-size: "10m"
+# max-file: "3"
 
 # 3. Применить изменения
 docker compose up -d --force-recreate

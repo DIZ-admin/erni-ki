@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # Systemstatus
 
-Status-Dashboard: **https://status.ki.erni-gruppe.ch** (Uptime Kuma).
+Status-Dashboard: **<https://status.ki.erni-gruppe.ch>** (Uptime Kuma).
 
 ## So nutzen Sie die Statusseite
 

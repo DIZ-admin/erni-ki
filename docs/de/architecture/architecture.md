@@ -4,9 +4,9 @@ translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: '🏗️ ERNI-KI Systemarchitektur'
-version: '12.1'
+system_version: '12.1'
 date: '2025-11-22'
-status: 'Production Ready'
+system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
@@ -509,8 +509,8 @@ graph TB
 
 ### Dokumentenverarbeitung
 
-2. **Open WebUI** → **PostgreSQL/pgvector** (Vektor-Speicherung)
-3. **Open WebUI** → **Ollama** (Inhalts-Analyse)
+1. **Open WebUI** → **PostgreSQL/pgvector** (Vektor-Speicherung)
+2. **Open WebUI** → **Ollama** (Inhalts-Analyse)
 
 ## 📊 Monitoring und Observability
 

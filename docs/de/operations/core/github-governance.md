@@ -14,6 +14,7 @@ _Aktualisiert: 2025-11-17_
 - 🔁 **Haupt-Branch:** `main`
 - 🛠️ **Arbeits-Branch:** `develop` (früher `dev`). Remote-Branch umbenennen und
   Branch Protection via GitHub UI/CLI neu konfigurieren:
+
   ```bash
   git push origin develop:develop
   git push origin :dev
