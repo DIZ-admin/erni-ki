@@ -109,11 +109,11 @@
       "prettier --write"
     ],
     "*.py": [
-      "python3 -m ruff check --fix",
-      "python3 -m ruff format"
+      "ruff check --fix",
+      "ruff format"
     ],
     "*.{json,yaml,yml,md}": [
-      "prettier --write",
+      "prettier --write --log-level=warn",
       "npm run lint:language -- --all"
     ],
     "*.go": [

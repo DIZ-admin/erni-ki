@@ -8,6 +8,7 @@ system_version: '12.1'
 date: '2025-11-22'
 system_status: 'Production Ready'
 ---
+
 # 📦 Installation Guide - ERNI-KI
 
 > **Version:** 12.1 · **Updated:** 2025-11-22 · **Status:** Production Ready  
