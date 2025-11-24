@@ -546,6 +546,28 @@ docker compose up -d
 # Время выполнения: 5-10 минут
 ```
 
+## Визуализация: контур администрирования
+
+```mermaid
+flowchart TD
+    U[Пользователи/бизнес] -->|Запрос/инцидент| SD[Service Desk]
+    SD --> ONCALL[Дежурный инженер]
+    ONCALL --> MON[Grafana/Prometheus]
+    ONCALL --> LOGS[Loki/ELK]
+    ONCALL --> RUN[Runbooks]
+    RUN --> FIX[Исправление]
+    FIX --> DEPLOY[CI/CD rollout]
+    DEPLOY --> VERIFY[Верификация]
+    VERIFY --> SD
+    MON --> ALERT[Alertmanager]
+    ALERT --> ONCALL
+    subgraph Platform
+      MON
+      LOGS
+      DEPLOY
+    end
+```
+
 ---
 
 **📝 Примечание:** Данное руководство актуализировано для архитектуры 29

@@ -37,17 +37,33 @@ last_updated: '2025-11-24'
 
 ## Когда что использовать
 
-- **Рутинные бэкапы и vacuum/maintenance:**  
-  см. `operations/automation/automated-maintenance-guide.md`
+- **Рутинные бэкапы и vacuum/maintenance:** см.
+  `operations/automation/automated-maintenance-guide.md`
 
-- **Полные пошаговые процедуры бэкапа/рестора:**  
-  см. `operations/maintenance/backup-restore-procedures.md`
+- **Полные пошаговые процедуры бэкапа/рестора:** см.
+  `operations/maintenance/backup-restore-procedures.md`
 
-- **Рестарт сервисов после восстановления:**  
-  см. `operations/maintenance/service-restart-procedures.md`
+- **Рестарт сервисов после восстановления:** см.
+  `operations/maintenance/service-restart-procedures.md`
 
 ## RPO/RTO
 
 - **RPO:** ≤ 15 минут (инкрементальные бэкапы + WAL streaming)
 - **RTO:** ≤ 45 минут для OpenWebUI + БД
 - Проверяйте показатели ежемесячно и фиксируйте результат в Backrest dashboard.
+
+## Визуализация: цикл бэкапов
+
+```mermaid
+flowchart LR
+  Schedule[Cron 01:30] --> Backrest[Backrest backup]
+  Backrest --> Store[Хранилище ./data/backrest]
+  Store --> Verify[Проверка restore --dry-run]
+  Verify --> Report[Отчёт в Archon/Jira]
+```
+
+## Контрольный список
+
+- Проверить успешность ночного бэкапа в Backrest logs.
+- Раз в неделю выполнять `--dry-run` восстановление на стенд.
+- Обновлять инструкции в runbook при смене расписания/хранилища.

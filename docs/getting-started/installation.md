@@ -22,6 +22,18 @@ system_status: 'Production Ready'
 Production-Ready AI Platform с архитектурой 29 микросервисов и enterprise-grade
 производительностью БД.
 
+## Визуализация: путь установки
+
+```mermaid
+flowchart TD
+  Prep[1. Подготовка окружения] --> Docker[2. Установка Docker/Compose]
+  Docker --> GPU[3. NVIDIA Toolkit (опционально)]
+  GPU --> Env[4. Копирование env/*.example]
+  Env --> Up[5. docker compose up -d]
+  Up --> Health[6. Проверка healthcheck и ports]
+  Health --> Smoke[7. Smoke-тесты OpenWebUI/LLM]
+```
+
 ## 📋 Системные требования
 
 ### Минимальные требования
