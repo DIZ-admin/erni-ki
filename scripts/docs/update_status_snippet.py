@@ -17,7 +17,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 STATUS_YAML = REPO_ROOT / "docs/reference/status.yml"
 SNIPPET_MD = REPO_ROOT / "docs/reference/status-snippet.md"
-SNIPPET_DE_MD = REPO_ROOT / "docs/de/status-snippet.md"
+SNIPPET_DE_MD = REPO_ROOT / "docs/de/reference/status-snippet.md"
 README_FILE = REPO_ROOT / "README.md"
 DOC_INDEX_FILE = REPO_ROOT / "docs/index.md"
 DOC_OVERVIEW_FILE = REPO_ROOT / "docs/overview.md"
