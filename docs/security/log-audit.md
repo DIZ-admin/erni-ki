@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # ERNI-KI — аудит логов (12 ноября 2025)
 
+[TOC]
+
 ## Область и источники
 
 - `data/webhook-logs/` — 69 235 JSON-артефактов Alertmanager (314 МБ) с

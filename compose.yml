@@ -331,7 +331,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
-    image: ghcr.io/open-webui/mcpo:git-91e8f94 # Обновлено: 2025-11-04 с latest на git-91e8f94 (стабильный коммит)
+    image: ghcr.io/open-webui/mcpo:git-91e8f94 # Updated: 2025-11-04 from latest to git-91e8f94 (stable commit)
     logging: *auxiliary-logging
     ports:
       - "127.0.0.1:8000:8000"
