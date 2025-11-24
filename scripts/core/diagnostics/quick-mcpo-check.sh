@@ -3,7 +3,7 @@
 # ERNI-KI Quick MCPO Health Check Script
 # Быстрая проверка состояния MCPO-сервиса и интеграции
 
-set -euo pipefail
+set -uo pipefail
 
 # Цвета для вывода
 RED='\033[0;31m'
@@ -23,13 +23,23 @@ check_endpoint() {
 
     echo -n "Checking $description... "
 
-    if curl -s --max-time $timeout "$url" > /dev/null 2>&1; then
-        echo -e "${GREEN}✅ OK${NC}"
-        return 0
-    else
-        echo -e "${RED}❌ Failed${NC}"
-        return 1
-    fi
+    local code
+    code=$(curl -s -o /dev/null -w "%{http_code}" --max-time "$timeout" "$url" || echo "000")
+
+    case "$code" in
+        200)
+            echo -e "${GREEN}✅ OK${NC}"
+            return 0
+            ;;
+        404)
+            echo -e "${YELLOW}⚠️  404 (endpoint missing)${NC}"
+            return 1
+            ;;
+        *)
+            echo -e "${RED}❌ Failed (HTTP $code)${NC}"
+            return 1
+            ;;
+    esac
 }
 
 # Функция для тестирования MCP инструмента
@@ -87,7 +97,7 @@ fi
 echo -e "\n${BLUE}⚙️ MCP Servers${NC}"
 echo "==============="
 
-for server in time postgres filesystem memory searxng; do
+for server in time postgres desktop-commander; do
     ((total_checks++))
     if check_endpoint "http://localhost:8000/$server/docs" "$server server"; then
         ((passed_checks++))
@@ -145,9 +155,10 @@ echo -e "\n${BLUE}📋 Error Check${NC}"
 echo "==============="
 
 echo -n "Checking for errors in logs... "
-error_count=$(docker logs erni-ki-mcposerver-1 --tail=50 2>/dev/null | grep -c -E "(ERROR|error|Error|FATAL|fatal|Exception)" || echo "0")
+error_count=$(docker logs erni-ki-mcposerver-1 --tail=50 2>/dev/null | grep -c -E "(ERROR|error|Error|FATAL|fatal|Exception)" || true)
+error_count=$(echo "${error_count:-0}" | tr -d '\r')
 
-if [ "$error_count" -eq 0 ]; then
+if [[ "$error_count" =~ ^[0-9]+$ ]] && [ "$error_count" -eq 0 ]; then
     echo -e "${GREEN}✅ No errors${NC}"
     ((passed_checks++))
 else
