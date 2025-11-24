@@ -13,7 +13,7 @@ audience: 'administrators'
 # 📚 ERNI-KI Dokumentation (Deutsch)
 
 > **Willkommen zur deutschen Dokumentation von ERNI-KI** **Version:** 12.1
-> (Wave 3) · **Aktualisiert:** 2025-11-14 [TOC]
+> (Wave 3) · **Aktualisiert:** 2025-11-14
 
 ## 🎯 Über ERNI-KI
 

@@ -1,6 +1,6 @@
 > **Статус системы (2025-11-23) — Production Ready v12.1**
 >
-> - Контейнеры: 32/32 services healthy
+> - Контейнеры: 34/34 services healthy
 > - Графана: 5/5 Grafana dashboards (provisioned)
 > - Алерты: 20 Prometheus alert rules active
 > - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
