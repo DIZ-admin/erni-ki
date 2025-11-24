@@ -13,6 +13,8 @@ title: 'Справочник сервисов ERNI-KI'
 зависимости и требования к безопасности. Для обновлений образов используйте
 [checklist](../operations/image-upgrade-checklist.md).
 
+[TOC]
+
 ## Базовая инфраструктура и хранение
 
 | Сервис       | Назначение                                         | Порты                                                 | Зависимости и конфигурация                                                                         | Обновления и замечания                                                                                                                           |
@@ -101,10 +103,12 @@ title: 'Справочник сервисов ERNI-KI'
 релизы.
 
 1. Получите свежий digest для amd64:
+
    ```bash
    docker manifest inspect <image>:latest | jq -r '.manifests[] | select(.platform.architecture=="amd64") | .digest' | head -n1
    # EdgeTTS использует однoарх. образ → можно .config.digest
    ```
+
 2. Обновите `compose.yml`, заменив строку вида `image: <img>@sha256:...`.
 3. Зафиксируйте новый digest в таблице выше и в Archon документе (раздел
    «recent_updates»).

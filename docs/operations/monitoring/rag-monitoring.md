@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # RAG System Monitoring Guide
 
+[TOC]
+
 **Дата создания**: 2025-10-24  
 **Версия**: 1.0  
 **Автор**: Augment Agent
@@ -63,7 +65,7 @@ last_updated: '2025-11-24'
 
 ---
 
-### 2. Webhook Notifications (`scripts/rag-webhook-notify.sh`)
+## 2. Webhook Notifications (`scripts/rag-webhook-notify.sh`)
 
 Отправка уведомлений о состоянии RAG системы через webhook (Discord/Slack).
 
@@ -113,7 +115,7 @@ crontab -e
 */15 * * * * cd /home/konstantin/Documents/augment-projects/erni-ki && ./scripts/rag-health-monitor.sh || ./scripts/rag-webhook-notify.sh "error" "RAG health check failed" "Check logs/rag-health-$(date +\%Y\%m\%d).log"
 ```
 
-### Systemd Timer (альтернатива cron)
+## Systemd Timer (альтернатива cron)
 
 Создать systemd service и timer для более надёжного мониторинга:
 
@@ -211,7 +213,7 @@ grep "pgvector:" logs/rag-health-*.log | awk '{print $3}' | sed 's/ms//' | sort 
 ```bash
 # Создать скрипт экспорта метрик
 cat > scripts/rag-metrics-exporter.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 METRICS_FILE="/var/lib/node_exporter/textfile_collector/rag_metrics.prom"
 
 # Запуск health monitor и парсинг результатов
@@ -272,7 +274,7 @@ docker exec erni-ki-redis-1 redis-cli INFO stats
 
 ---
 
-### Проблема: pgvector медленные запросы (>100ms)
+## Проблема: pgvector медленные запросы (>100ms)
 
 **Диагностика**:
 
@@ -295,7 +297,7 @@ docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "EXPLAIN ANALYZE SELEC
 
 ---
 
-### Проблема: Ollama embedding модель недоступна
+## Проблема: Ollama embedding модель недоступна
 
 **Диагностика**:
 
@@ -329,7 +331,7 @@ docker exec erni-ki-ollama-1 ollama pull nomic-embed-text:latest
 ## Контакты
 
 **Администратор системы**: Kostiantyn Konstantinov  
-**Email**: kostiantyn.konstantinov@erni-gruppe.ch  
+**Email**: <kostiantyn.konstantinov@erni-gruppe.ch>  
 **Teams**: Доступен для вопросов
 
 ---

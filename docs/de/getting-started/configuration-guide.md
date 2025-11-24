@@ -13,7 +13,7 @@ audience: 'administrators'
 # 🔧 ERNI-KI Konfigurationsleitfaden
 
 > **Version:** 11.0 **Aktualisierungsdatum:** 2025-09-25 **Status:** Production
-> Ready
+> Ready [TOC]
 
 Dieser Leitfaden enthält production-ready Konfigurationen für alle Komponenten
 des ERNI-KI Systems mit deutschen Kommentaren für wichtige Einstellungen.
@@ -74,7 +74,7 @@ WEBUI_SESSION_COOKIE_SAME_SITE="lax"     # iframe-Kompatibilität
 WEBUI_SESSION_COOKIE_SECURE=true         # Nur HTTPS Cookies
 ```
 
-### Ollama Konfiguration
+## Ollama Konfiguration
 
 **Datei:** `env/ollama.env`
 
@@ -98,7 +98,7 @@ OLLAMA_DEBUG=false                        # Debug in Production deaktivieren
 OLLAMA_VERBOSE=false                      # Minimale Protokollierung
 ```
 
-### LiteLLM Konfiguration
+## LiteLLM Konfiguration
 
 **Datei:** `env/litellm.env`
 
@@ -232,7 +232,7 @@ POSTGRES_INITDB_ARGS="--auth-host=md5"     # Initialisierung mit MD5
 POSTGRES_EXTENSIONS="pgvector,pg_stat_statements"  # Erforderliche Erweiterungen
 ```
 
-### Redis Konfiguration
+## Redis Konfiguration
 
 **Datei:** `env/redis.env`
 
@@ -385,7 +385,7 @@ REDIS_PASSWORD="$(openssl rand -base64 32)"
 SEARXNG_SECRET_KEY="$(openssl rand -hex 16)"
 ```
 
-### 2. SSL/TLS Einstellungen
+## 2. SSL/TLS Einstellungen
 
 ```nginx
 # === MODERNE SSL EINSTELLUNGEN ===
@@ -399,7 +399,7 @@ ssl_session_timeout 8h;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 ```
 
-### 3. Dateiberechtigungen
+## 3. Dateiberechtigungen
 
 ```bash
 # === SICHERE BERECHTIGUNGEN ===
@@ -423,7 +423,7 @@ docker exec erni-ki-prometheus promtool check config /etc/prometheus/prometheus.
 docker exec erni-ki-db-1 pg_isready -U erni_ki
 ```
 
-### 2. Konfigurationsmonitoring
+## 2. Konfigurationsmonitoring
 
 ```bash
 # Status aller Services prüfen
@@ -433,7 +433,7 @@ docker-compose ps
 docker-compose logs --tail=50 openwebui ollama litellm nginx postgres
 ```
 
-### 3. Konfigurationsbackup
+## 3. Konfigurationsbackup
 
 ```bash
 # Backup erstellen

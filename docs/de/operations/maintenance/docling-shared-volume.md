@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # Zugriffs- und Bereinigungsrichtlinie für Docling Shared Volume
 
+[TOC]
+
 Das Shared Volume `./data/docling/shared` wird von den Diensten Docling und
 OpenWebUI zum Austausch von Dateien verwendet, die OCR/Extraktion durchlaufen.
 Das Volume kann personenbezogene Daten (PII) enthalten, daher sind eine

@@ -389,6 +389,14 @@ extra:
    - security/log-audit.md (2249 слов)
    - ETA: 1 час
 
+#### Статус фазы 1 (2025-11-24)
+
+- ✅ Скрипты `fix-deprecated-metadata.py` и `add-missing-frontmatter.py`
+  прогнаны и задокументированы.
+- ✅ Все 6 битых ссылок поправлены (DE security/install, Prometheus guides).
+- ✅ Топ-10 документов получили `[TOC]`.
+- ✅ README созданы для operations подразделов.
+
 ### ⚠️ P1 - Важные (в течение недели)
 
 5. **Расширить короткие файлы EN/DE** (29 файлов)

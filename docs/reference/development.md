@@ -46,11 +46,11 @@ docker compose ps
 
 ## Мониторинг и отладка
 
-- Prometheus: http://localhost:9091
-- Grafana: http://localhost:3000 (admin/admin123)
-- Fluent Bit (Prometheus): http://localhost:2020/api/v1/metrics/prometheus
-- RAG Exporter: http://localhost:9808/metrics
-- LiteLLM Context7: http://localhost:4000/health (liveliness/readiness)
+- Prometheus: <http://localhost:9091>
+- Grafana: <http://localhost:3000> (admin/admin123)
+- Fluent Bit (Prometheus): <http://localhost:2020/api/v1/metrics/prometheus>
+- RAG Exporter: <http://localhost:9808/metrics>
+- LiteLLM Context7: <http://localhost:4000/health> (liveliness/readiness)
 
 Горячая перезагрузка конфигов:
 

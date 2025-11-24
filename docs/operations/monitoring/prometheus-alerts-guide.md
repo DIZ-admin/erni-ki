@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # 🚨 Prometheus Alerts Guide - ERNI-KI
 
+[TOC]
+
 **Version:** 1.0  
 **Last Updated:** 2025-10-24  
 **Status:** Production Ready
@@ -79,7 +81,7 @@ docker system prune -a --volumes -f
 
 ---
 
-### 2. MemoryCritical
+## 2. MemoryCritical
 
 **Severity:** Critical  
 **Component:** System  
@@ -118,7 +120,7 @@ docker compose restart SERVICE_NAME
 
 ---
 
-### 3. ContainerDown
+## 3. ContainerDown
 
 **Severity:** Critical  
 **Component:** Docker  
@@ -157,7 +159,7 @@ docker inspect SERVICE_NAME | jq '.[0].State.Health'
 
 ---
 
-### 4. PostgreSQLDown
+## 4. PostgreSQLDown
 
 **Severity:** Critical  
 **Component:** Database  
@@ -196,7 +198,7 @@ docker compose restart db
 
 ---
 
-### 5. RedisDown
+## 5. RedisDown
 
 **Severity:** Critical  
 **Component:** Cache  
@@ -235,7 +237,7 @@ docker compose restart redis
 
 ---
 
-### 6. OllamaGPUDown
+## 6. OllamaGPUDown
 
 **Severity:** Critical  
 **Component:** AI/GPU  
@@ -277,7 +279,7 @@ docker compose restart ollama
 
 ---
 
-### 7. NginxDown
+## 7. NginxDown
 
 **Severity:** Critical  
 **Component:** Gateway  
@@ -378,7 +380,7 @@ docker stats --no-stream --format "table {{.Container}}\t{{CPUPerc}}"
 
 ---
 
-### 11. ContainerRestarting
+## 11. ContainerRestarting
 
 **Severity:** Warning  
 **Component:** Docker  
@@ -421,7 +423,7 @@ docker inspect SERVICE_NAME | jq '.[0].State | {Status, ExitCode, Health}'
 
 ---
 
-### 12. PostgreSQLHighConnections
+## 12. PostgreSQLHighConnections
 
 **Severity:** Warning  
 **Component:** Database  
@@ -449,7 +451,7 @@ docker compose exec db psql -U postgres -d openwebui -c "SELECT pg_terminate_bac
 
 ---
 
-### 13. RedisHighMemory
+## 13. RedisHighMemory
 
 **Severity:** Warning  
 **Component:** Cache  
@@ -477,7 +479,7 @@ docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 FLUSHDB
 
 ---
 
-### 14. RedisHighFragmentation
+## 14. RedisHighFragmentation
 
 **Severity:** Warning  
 **Component:** Cache  
@@ -509,7 +511,7 @@ runbook на раздел _docs/security/log-audit.md › Выполненные
 
 ---
 
-### 15. OllamaHighVRAM
+## 15. OllamaHighVRAM
 
 **Severity:** Warning  
 **Component:** AI/GPU  
@@ -537,7 +539,7 @@ docker compose exec ollama ollama rm MODEL_NAME
 
 ---
 
-### 16. NginxHighErrorRate
+## 16. NginxHighErrorRate
 
 **Severity:** Warning  
 **Component:** Gateway  
@@ -589,7 +591,7 @@ time curl -X POST http://localhost:11434/api/generate -d '{"model":"llama3.2","p
 
 ---
 
-### 18. SearXNGSlowSearch
+## 18. SearXNGSlowSearch
 
 **Severity:** Warning  
 **Component:** Search  
@@ -611,7 +613,7 @@ docker compose logs searxng --tail 50
 
 ---
 
-### 19. DockerStoragePoolAlmostFull
+## 19. DockerStoragePoolAlmostFull
 
 **Severity:** Warning  
 **Component:** Infrastructure  
@@ -656,7 +658,7 @@ curl -s http://localhost:9091/api/v1/alerts | jq '.data.alerts[] | select(.state
 curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[].rules[] | select(.labels.severity=="critical")'
 ```
 
-### Testing Alerts
+## Testing Alerts
 
 See [Monitoring Guide](monitoring-guide.md#alert-testing) for alert testing
 procedures.

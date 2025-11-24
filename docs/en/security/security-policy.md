@@ -24,7 +24,7 @@ We ship security updates for the following versions:
 If you discover a vulnerability in erni-ki, please:
 
 1. **Do NOT open a public GitHub issue**
-2. Send a report to: security@erni-ki.local
+2. Send a report to: <security@erni-ki.local>
 3. Include:
    - Vulnerability description
    - Reproduction steps
@@ -106,7 +106,7 @@ POSTGRES_PASSWORD: '<complex-password-16+ chars>'
 REDIS_PASSWORD: '<complex-password-16+ chars>'
 ```
 
-#### Recommended Nginx settings
+## Recommended Nginx settings
 
 ```nginx
 # Hide server version
@@ -128,7 +128,7 @@ limit_req_zone $binary_remote_addr zone=auth:10m rate=10r/m;
 limit_req zone=auth burst=5 nodelay;
 ```
 
-#### Docker hardening
+## Docker hardening
 
 ```yaml
 # Run as non-root
@@ -156,9 +156,9 @@ deploy:
       cpus: '0.5'
 ```
 
-### Security monitoring
+## Security monitoring
 
-#### Logs to monitor
+### Logs to monitor
 
 1. **Failed authentication attempts**
 2. **Suspicious HTTP requests**
@@ -185,9 +185,9 @@ deploy:
     category: security
 ```
 
-### Contacts
+## Contacts
 
-- **Security Team:** security@erni-ki.local
+- **Security Team:** <security@erni-ki.local>
 - **Emergency Contact:** +7-XXX-XXX-XXXX
 - **PGP Key:** [Public key link]
 

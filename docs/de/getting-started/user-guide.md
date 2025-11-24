@@ -13,7 +13,7 @@ audience: 'administrators'
 # 👤 ERNI-KI Benutzerhandbuch
 
 > **Dokumentversion:** 3.0 **Aktualisierungsdatum:** 2025-07-15 **Zielgruppe:**
-> Endbenutzer
+> Endbenutzer [TOC]
 
 ## 🎯 Einführung
 

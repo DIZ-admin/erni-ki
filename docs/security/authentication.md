@@ -8,13 +8,37 @@ title: 'Аутентификация и авторизация'
 
 # Аутентификация и авторизация
 
-- Используйте JWT, выпускаемые auth-сервисом (`auth/main.go`), с секретом
-  `WEBUI_SECRET_KEY` из Docker secrets/ENV.
-- Для внешнего доступа рекомендуются Cloudflare Zero Trust туннели с mTLS или
-  SSO.
-- Минимизируйте срок жизни токенов и включайте `X-Request-ID` для трассировки.
-- Проверяйте токены на каждом запросе к API и фронтенду; добавьте health-check
-  `/validate` для автоматизации.
+## Архитектура
 
-Дополнительно см. [security-policy.md](security-policy.md) для общих требований
-и [ssl-tls-setup.md](ssl-tls-setup.md) для настройки TLS.
+- **Auth service** (`auth/main.go`) выдаёт JWT с aud=\"erni-ki\" и scope
+  (`user`, `admin`, `service`).
+- **Open WebUI** проверяет подпись через секрет `WEBUI_SECRET_KEY`,
+  дополнительно сверяет `session_id` в Redis.
+- **Внешние клиенты** подключаются через Cloudflare Zero Trust либо OpenID
+  Provider (переносимый `id_token`).
+
+## Рекомендации
+
+1. **Срок жизни** токена ≤ 30 минут, рефреш через mTLS или SSO.
+2. **Принудительный logout** – инвалидация токена при смене пароля/ролей.
+3. **Tracing** – добавляйте `X-Request-ID` и сохраняйте связь токена с этим
+   идентификатором.
+4. **Health-check** `/validate` – автоматическая проверка подписи и срока
+   действия.
+
+## Onboarding новых пользователей
+
+1. Создайте запись в `users` с минимальными правами.
+2. Выдайте временный пароль по out-of-band каналу.
+3. Принудите смену пароля при первом входе и активируйте 2FA (TOTP).
+4. Добавьте пользователя в соответствующую группу Archon/LDAP.
+
+## Incident response
+
+- При подозрении на компрометацию токена используйте `revoke-token` API auth
+  сервиса (встроенный CLI `make auth-revoke <token>`).
+- Снимите дамп активных сессий и сравните IP/UA с baseline.
+- Обновите секреты в Docker secrets, перезапустите `auth` и Open WebUI.
+
+Дополнительно см. [security-policy.md](security-policy.md) и
+[ssl-tls-setup.md](ssl-tls-setup.md).

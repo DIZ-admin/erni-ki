@@ -13,7 +13,7 @@ audience: 'administrators'
 # 🚀 Detaillierte Installationsanleitung für ERNI-KI
 
 > **Dokumentversion:** 2.0 **Aktualisierungsdatum:** 2025-07-04
-> **Installationszeit:** 30-60 Minuten
+> **Installationszeit:** 30-60 Minuten [TOC]
 
 ## 📋 Systemanforderungen
 
@@ -77,7 +77,7 @@ docker --version
 docker compose version
 ```
 
-#### Manuelle Docker Installation (Ubuntu)
+## Manuelle Docker Installation (Ubuntu)
 
 ```bash
 # Alte Versionen entfernen
@@ -97,9 +97,9 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
-### 3. NVIDIA GPU Konfiguration (optional)
+## 3. NVIDIA GPU Konfiguration (optional)
 
-#### NVIDIA Treiber Installation
+### NVIDIA Treiber Installation
 
 ```bash
 # GPU-Verfügbarkeit prüfen
@@ -112,7 +112,7 @@ sudo apt install -y nvidia-driver-535 nvidia-utils-535
 sudo reboot
 ```
 
-#### NVIDIA Container Toolkit Installation
+## NVIDIA Container Toolkit Installation
 
 ```bash
 # NVIDIA Repository hinzufügen
@@ -144,9 +144,9 @@ cd erni-ki
 ls -la
 ```
 
-### 2. Konfigurationsdateien einrichten
+## 2. Konfigurationsdateien einrichten
 
-#### Beispiel-Konfigurationen kopieren
+### Beispiel-Konfigurationen kopieren
 
 ```bash
 # Haupt-Compose-Datei kopieren
@@ -162,12 +162,12 @@ cp conf/nginx/nginx.example conf/nginx/nginx.conf
 cp conf/nginx/conf.d/default.example conf/nginx/conf.d/default.conf
 ```
 
-#### Geheime Schlüssel generieren
+## Geheime Schlüssel generieren
 
 ```bash
 # Skript für Schlüsselgenerierung erstellen
 cat > scripts/generate-secrets.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 
 # Zufällige Schlüssel generieren
 JWT_SECRET=$(openssl rand -hex 32)
@@ -188,9 +188,9 @@ chmod +x scripts/generate-secrets.sh
 ./scripts/generate-secrets.sh
 ```
 
-### 3. Umgebungsvariablen konfigurieren
+## 3. Umgebungsvariablen konfigurieren
 
-#### Grundeinstellungen (env/openwebui.env)
+### Grundeinstellungen (env/openwebui.env)
 
 ```bash
 # Grundeinstellungen bearbeiten
@@ -214,7 +214,7 @@ ENABLE_RAG_WEB_SEARCH=true
 FILE_UPLOAD_LIMIT=104857600
 ```
 
-#### Cloudflare-Konfiguration (optional)
+## Cloudflare-Konfiguration (optional)
 
 ```bash
 # Tunnel-Einstellungen bearbeiten
@@ -226,7 +226,7 @@ nano env/cloudflared.env
 TUNNEL_TOKEN=your-cloudflare-tunnel-token
 ```
 
-#### Datenbank-Konfiguration
+## Datenbank-Konfiguration
 
 ```bash
 # PostgreSQL-Einstellungen prüfen
@@ -240,16 +240,16 @@ POSTGRES_USER=openwebui
 POSTGRES_PASSWORD=generated-password
 ```
 
-### 4. Nginx-Konfiguration
+## 4. Nginx-Konfiguration
 
-#### Domain-Namen aktualisieren
+### Domain-Namen aktualisieren
 
 ```bash
 # Platzhalter durch Ihre Domain ersetzen
 sed -i 's/<domain-name>/your-domain.com/g' conf/nginx/conf.d/default.conf
 ```
 
-#### SSL-Zertifikate einrichten (ohne Cloudflare)
+## SSL-Zertifikate einrichten (ohne Cloudflare)
 
 ```bash
 # Selbstsignierte Zertifikate für Tests erstellen
@@ -275,7 +275,7 @@ docker compose ps
 docker compose logs -f
 ```
 
-### 2. Initialisierung abwarten
+## 2. Initialisierung abwarten
 
 ```bash
 # Service-Bereitschaft prüfen (kann 2-5 Minuten dauern)
@@ -284,7 +284,7 @@ watch -n 5 'docker compose ps --format "table {{.Name}}\t{{.Status}}"'
 # Warten bis alle Services "healthy" sind
 ```
 
-### 3. Erstes Sprachmodell laden
+## 3. Erstes Sprachmodell laden
 
 ```bash
 # Leichtes Modell zum Testen laden (3B Parameter)
@@ -315,15 +315,15 @@ curl -s "http://localhost:8080/api/searxng/search?q=test&format=json" | head -5
 # Erwartetes Ergebnis: JSON mit Suchergebnissen
 ```
 
-### 3. Monitoring-Dienste (lokal)
+## 3. Monitoring-Dienste (lokal)
 
-- Prometheus: http://localhost:9091
-- Grafana: http://localhost:3000
-- Alertmanager: http://localhost:9093
-- Loki: http://localhost:3100 (verwenden Sie den Header
+- Prometheus: <http://localhost:9091>
+- Grafana: <http://localhost:3000>
+- Alertmanager: <http://localhost:9093>
+- Loki: <http://localhost:3100> (verwenden Sie den Header
   `X-Scope-OrgID: erni-ki`)
-- Fluent Bit (Prometheus): http://localhost:2020/api/v1/metrics/prometheus
-- RAG Exporter: http://localhost:9808/metrics
+- Fluent Bit (Prometheus): <http://localhost:2020/api/v1/metrics/prometheus>
+- RAG Exporter: <http://localhost:9808/metrics>
 
 ### 2. GPU prüfen (falls installiert)
 
@@ -335,7 +335,7 @@ docker exec erni-ki-ollama-1 nvidia-smi
 docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 ```
 
-### 3. Erste Anmeldung
+## 3. Erste Anmeldung
 
 1. Browser öffnen und zu `http://localhost:8080` navigieren
 2. Administrator-Account erstellen
@@ -371,12 +371,12 @@ sudo systemctl enable erni-ki.service
 sudo systemctl start erni-ki.service
 ```
 
-### 2. Monitoring einrichten
+## 2. Monitoring einrichten
 
 ```bash
 # Monitoring-Skript erstellen
 cat > scripts/health-check.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 echo "=== ERNI-KI Health Check ==="
 echo "Datum: $(date)"
 echo ""
@@ -401,7 +401,7 @@ EOF
 chmod +x scripts/health-check.sh
 ```
 
-### 3. Backup-Konfiguration
+## 3. Backup-Konfiguration
 
 ```bash
 # Backrest über Web-Interface konfigurieren
@@ -425,7 +425,7 @@ docker compose restart service-name
 docker compose down && docker compose up -d
 ```
 
-### GPU-Probleme
+## GPU-Probleme
 
 ```bash
 # NVIDIA-Treiber prüfen
@@ -438,7 +438,7 @@ docker run --rm --gpus all nvidia/cuda:11.8-base-ubuntu20.04 nvidia-smi
 sed -i 's/# deploy: \*gpu-deploy/deploy: *gpu-deploy/g' compose.yml
 ```
 
-### Netzwerk-Probleme
+## Netzwerk-Probleme
 
 ```bash
 # Docker-Netzwerke prüfen

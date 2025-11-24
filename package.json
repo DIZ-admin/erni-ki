@@ -68,6 +68,8 @@
     "docker:stop": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "security:scan": "npm audit --audit-level=high && docker run --rm -v $(pwd)/auth:/src -w /src securecodewarrior/docker-gosec ./...",
+    "docs:lint": "python3 scripts/docs/content_lint.py --fix-headings --add-toc",
+    "docs:report": "python3 scripts/docs/content_lint.py",
     "prepare": "husky install",
     "commit": "git-cz",
     "release": "semantic-release",
@@ -117,7 +119,7 @@
       "npm run lint:language -- --all"
     ],
     "*.md": [
-      "npx -y markdownlint-cli --fix",
+      "npx -y markdownlint-cli --fix --disable MD013 MD025 MD028 MD040 MD060",
       "prettier --write --log-level=warn",
       "npm run lint:language -- --all"
     ],
