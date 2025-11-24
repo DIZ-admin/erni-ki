@@ -9,6 +9,17 @@ last_updated: '2025-11-24'
 
 _Обновлено: 2025-11-17_
 
+## Визуализация: поток работы с PR
+
+```mermaid
+flowchart TD
+  Dev[Feature branch] --> PR[Pull Request]
+  PR --> Checks[CI: lint/test/security]
+  Checks --> Review[Code Review >=1]
+  Review --> Merge[Merge to develop]
+  Merge --> Main[Release via main]
+```
+
 ## 1. Структура веток
 
 - 🔁 **Основная ветка:** `main`

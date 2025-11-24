@@ -20,6 +20,17 @@ last_updated: '2025-11-24'
 - Поддерживать response targets по 20 активным alert rules и ежедневным
   cron-скриптам.
 
+```mermaid
+flowchart TD
+    Detect[Alert / Incident] --> Triage[Триаж]
+    Triage --> Observe[Графана/Логи]
+    Observe --> Runbook[Runbooks]
+    Runbook --> Fix[Фикс/Роллбек]
+    Fix --> Validate[Healthchecks]
+    Validate --> Update[Статус в Archon]
+    Update --> Prevent[Post-mortem/улучшения]
+```
+
 ## 2. Алерты и мониторинг
 
 - Все правила задокументированы в `conf/prometheus/alerts.yml` (Critical,

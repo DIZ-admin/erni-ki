@@ -911,6 +911,21 @@ curl -H 'X-Scope-OrgID: erni-ki' \
 - **Resource Usage:** <5% CPU, <500MB RAM per exporter
 - **Data Freshness:** <30s lag for real-time metrics
 
+## Визуализация: контур мониторинга
+
+```mermaid
+flowchart LR
+    Apps[Сервисы ERNI-KI] -->|metrics| Exporters
+    Exporters --> Prom[Prometheus]
+    Prom --> Alerts[Alertmanager]
+    Prom --> Grafana[Grafana Dashboards]
+    Logs[Loki/ELK] --> Grafana
+    Alerts --> Oncall[On-call]
+    Oncall --> Runbooks[Runbooks]
+    Runbooks --> Fix[Rollback/Fix]
+    Fix --> Apps
+```
+
 ## 🔗 Related Documentation
 
 - [Admin Guide](../core/admin-guide.md) - System administration

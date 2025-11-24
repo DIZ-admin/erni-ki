@@ -10,6 +10,20 @@ last_updated: '2025-11-24'
 Этот чеклист фиксирует процесс обновления любых контейнерных образов без
 возврата к плавучим тегам `latest`.
 
+## Поток обновления
+
+```mermaid
+flowchart LR
+    Plan[Выбор тега/digest] --> Update[Обновить compose]
+    Update --> Pull[Pull & rollout]
+    Pull --> Validate[Healthcheck/metrics]
+    Validate --> Watchtower[Watchtower config]
+    Watchtower --> Docs[Документация/Changelog]
+    Docs --> Rollback[Rollback plan готов]
+```
+
+## Чеклист
+
 1. **Выбор релиза**
    - Найдите стабильный семантический тег или SHA256 digest (во всех случаях –
      `docker pull IMAGE@digest`).

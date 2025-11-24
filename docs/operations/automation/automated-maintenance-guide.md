@@ -132,6 +132,21 @@ journalctl -u cron --since "1 day ago"
 | **Disk Usage**          | <60%          | 60%     | ✅     |
 | **Backup Success Rate** | >99%          | 100%    | ✅     |
 
+## Визуализация: автоподдержание
+
+```mermaid
+flowchart TD
+    Cron[CRON schedule] --> Checks[Health checks]
+    Cron --> Cleanup[Docker cleanup]
+    Cron --> Backups[Backups verify]
+    Cron --> Logs[Log rotation]
+    Checks --> Alerts[Alertmanager]
+    Backups --> Reports[Status report]
+    Cleanup --> Reports
+    Logs --> Reports
+    Reports --> Ops[Ops channel]
+```
+
 ## 5. Связанная документация
 
 - [Admin Guide](../core/admin-guide.md) - Администрирование системы

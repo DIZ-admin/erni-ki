@@ -35,6 +35,19 @@ conf/                   # Конфигурационные файлы
 └── ...
 ```
 
+## Визуализация: конфигурационные артефакты
+
+```mermaid
+flowchart TD
+  Env[env/*.env] --> Compose[compose.yml]
+  Compose --> Nginx[conf/nginx]
+  Compose --> Prometheus[conf/prometheus]
+  Compose --> LiteLLM[conf/litellm]
+  Compose --> Grafana[conf/grafana]
+  Env --> Secrets[secrets/*]
+  Secrets --> Runtime[Запуск docker compose]
+```
+
 ## 🤖 AI & ML Services
 
 ### OpenWebUI Configuration

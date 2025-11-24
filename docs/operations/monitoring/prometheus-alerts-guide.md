@@ -682,6 +682,25 @@ curl -X POST http://localhost:9093/api/v1/silences \
 
 ---
 
+## Визуализация: путь алерта
+
+```mermaid
+sequenceDiagram
+    participant Exporter
+    participant Prom as Prometheus
+    participant Alert as Alertmanager
+    participant Oncall
+    Exporter->>Prom: /metrics scrape
+    Prom-->>Prom: eval rules
+    Prom->>Alert: send alert
+    Alert->>Oncall: route (Slack/Email)
+    Oncall->>Alert: acknowledge
+    Oncall->>Exporter: fix/runbook
+    Alert-->>Prom: resolved
+```
+
+---
+
 ## 📚 Related Documentation
 
 - [Monitoring Guide](monitoring-guide.md) - Complete monitoring documentation

@@ -54,4 +54,18 @@ GitHub Expressions не позволяют обращаться к ключам 
    [документацию GitHub](https://docs.github.com/en/actions/learn-github-actions/expressions#example-access-properties-using-keys)
    для подробностей.
 
+## Визуализация: поток CI
+
+```mermaid
+flowchart LR
+    dev[Pull Request] --> lint[Lint + Type Check]
+    lint --> unit[Vitest]
+    unit --> build[Docker Build]
+    build --> sec[Security Scan]
+    sec --> deploy[Preview Deploy]
+    deploy --> status[GitHub Checks]
+    status -->|pass| merge[Merge]
+    status -->|fail| triage[Fix & rerun]
+```
+
 > Ответственный: Codex · 2025-11-17
