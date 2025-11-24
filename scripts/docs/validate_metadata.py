@@ -45,6 +45,10 @@ TARGET_DOC_VERSION = "2025.11"
 def validate_file(path: Path):
     errors = []
 
+    # Skip snippet templates that intentionally lack frontmatter
+    if path.name == "status-snippet.md":
+        return errors
+
     # Skip archives
     if "archive" in path.parts:
         return errors
