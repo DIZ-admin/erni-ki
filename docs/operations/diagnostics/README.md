@@ -45,6 +45,8 @@ cd /path/to/erni-ki
 
 ### Ручная диагностика ключевых компонентов
 
+{% raw %}
+
 ```bash
 # 1. Проверка Docker контейнеров
 docker ps --filter "name=erni-ki" --format "table {{.Names}}\t{{.Status}}" | grep -c "healthy"
@@ -62,6 +64,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
 # 5. Тестирование внешнего доступа
 curl -I "https://ki.erni-gruppe.ch"
 ```
+
+{% endraw %}
 
 ## 📊 Интерпретация результатов
 
