@@ -334,7 +334,7 @@ jobs:
           tags: |
             ${{ steps.meta.outputs.tags }}
             ${{ env.REGISTRY }}/${{ github.repository }}/auth:${{ steps.trivy-tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ github.repository }}/auth:codex
+            ${{ env.REGISTRY }}/${{ github.repository | toLowerCase }}/auth:codex
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
