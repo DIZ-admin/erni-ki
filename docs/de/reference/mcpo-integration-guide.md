@@ -256,15 +256,15 @@ AI: Nutzt Filesystem-Server für eine rekursive Suche
       "command": "uvx",
       "args": ["mcp-server-time", "--local-timezone=Europe/Berlin"]
     },
-    "postgres": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-postgres",
-        "postgresql://postgres:postgres@db/openwebui"
-      ]
+      "postgres": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-postgres",
+          "postgresql://postgres:postgres@db/openwebui" # pragma: allowlist secret
+        ]
+      }
     }
-  }
 }
 ```
 

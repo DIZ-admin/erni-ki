@@ -12,36 +12,18 @@ title: 'ERNI-KI — Профессиональная сводка проекта
 
 <!-- STATUS_SNIPPET_START -->
 
-> **Статус системы (2025-11-21) — Production Ready v12.2**
+> **Статус системы (2025-11-23) — Production Ready v12.1**
 >
-> - Контейнеры: 30/30 контейнеров healthy
-> - Графана: 18/18 Grafana дашбордов
-> - Алерты: 27 Prometheus alert rules активны
-> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU), Go 1.24.10
-> - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, MCP Server (7 инструментов,
->   включая Desktop Commander), Docling, Tika, EdgeTTS
-> - Мониторинг: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
->   v3.2.0, Alertmanager v0.28.0
+> - Контейнеры: 32/32 services healthy
+> - Графана: 5/5 Grafana dashboards (provisioned)
+> - Алерты: 20 Prometheus alert rules active
+> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
+> - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
+> - Мониторинг: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
+>   v3.1.0, Alertmanager v0.27.0
 > - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
 >   01:30, Watchtower selective updates
-> - Примечание: Наблюдаемость, MCP и AI стек актуализированы в ноябре 2025
-
-## Визуализация: обзор платформы
-
-```mermaid
-flowchart LR
-  UI[OpenWebUI] -->|API| Nginx
-  Nginx --> LiteLLM
-  LiteLLM -->|LLM| Ollama
-  LiteLLM -->|Tools| MCP
-  MCP --> Postgres
-  MCP --> Files[Filesystem]
-  UI --> RAG[SearXNG / Docling / Tika]
-  Monitoring[Prometheus/Grafana] --> Nginx
-  Monitoring --> LiteLLM
-  Monitoring --> Ollama
-  Backup[Backrest] --> Postgres
-```
+> - Примечание: Versions and dashboard/alert counts synced with compose.yml
 
 <!-- STATUS_SNIPPET_END -->
 
@@ -49,6 +31,22 @@ flowchart LR
 
 ERNI-KI — корпоративная AI-платформа на базе OpenWebUI, Ollama и LiteLLM,
 окружённая полным стеком безопасности и наблюдаемости. Платформа предоставляет:
+
+## Визуализация: контур платформы
+
+```mermaid
+flowchart LR
+  Users --> Nginx[WAF / Proxy]
+  Nginx --> OpenWebUI
+  OpenWebUI --> LiteLLM
+  LiteLLM --> Ollama
+  LiteLLM --> SearXNG
+  OpenWebUI --> MCP[MCP tools]
+  Prom[Prometheus/Grafana] --> Nginx
+  Prom --> LiteLLM
+  Prom --> Ollama
+  Backup[Backrest] --> Postgres
+```
 
 - **Единую точку доступа к LLM** с GPU-ускорением и Context Engineering (LiteLLM
   v1.80.0.rc.1, MCP Server).

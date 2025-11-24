@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Iterable
 
 RE_VISUAL = re.compile(r"```mermaid|!\[.*?\]\(", re.IGNORECASE)
 RE_HEADINGS = re.compile(r"^#{2,6}\s+", re.MULTILINE)
