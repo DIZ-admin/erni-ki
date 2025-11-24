@@ -28,12 +28,10 @@ ohne Rückfall auf instabile `latest` Tags.
    - `docker compose pull SERVICE && docker compose up -d SERVICE` (oder
      `--no-deps`).
    - Überprüfen Sie Healthchecks und wichtige Endpunkte:
-
      ```bash
      docker compose ps SERVICE
      docker compose logs SERVICE --tail=50
      ```
-
    - Für Exporter: `curl -s http://localhost:<port>/metrics | head`.
 
 4. **Watchtower**

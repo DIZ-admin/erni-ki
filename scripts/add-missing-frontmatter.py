@@ -8,48 +8,52 @@ Usage:
     python3 scripts/add-missing-frontmatter.py [--dry-run] [--verbose]
 """
 
-import argparse
+import os
 import re
 import sys
-from datetime import datetime
 from pathlib import Path
+from datetime import datetime
+from typing import Optional
+import argparse
 
 
 def parse_args():
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description="Add missing frontmatter to docs")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Show what would be changed without modifying files"
-    )
-    parser.add_argument("--verbose", "-v", action="store_true", help="Show detailed output")
-    parser.add_argument(
-        "--path", default="docs", help="Path to documentation directory (default: docs)"
-    )
+    parser = argparse.ArgumentParser(description='Add missing frontmatter to docs')
+    parser.add_argument('--dry-run', action='store_true',
+                       help='Show what would be changed without modifying files')
+    parser.add_argument('--verbose', '-v', action='store_true',
+                       help='Show detailed output')
+    parser.add_argument('--path', default='docs',
+                       help='Path to documentation directory (default: docs)')
     return parser.parse_args()
 
 
 def detect_language(filepath: Path) -> str:
     """Detect language from file path."""
     parts = filepath.parts
-    if "de" in parts:
-        return "de"
-    elif "en" in parts:
-        return "en"
-    return "ru"
+    if 'de' in parts:
+        return 'de'
+    elif 'en' in parts:
+        return 'en'
+    return 'ru'
 
 
 def has_frontmatter(content: str) -> bool:
     """Check if content has YAML frontmatter."""
-    return bool(re.match(r"^---\s*\n.*?\n---\s*\n", content, re.DOTALL))
+    return bool(re.match(r'^---\s*\n.*?\n---\s*\n', content, re.DOTALL))
 
 
 def create_frontmatter(filepath: Path) -> str:
     """Create minimal frontmatter for a file."""
     language = detect_language(filepath)
-    today = datetime.now().strftime("%Y-%m-%d")
+    today = datetime.now().strftime('%Y-%m-%d')
 
     # Determine translation status
-    translation_status = "complete" if language == "ru" else "pending"
+    if language == 'ru':
+        translation_status = 'complete'  # Russian is canonical
+    else:
+        translation_status = 'pending'  # Other languages need translation
 
     frontmatter = f"""---
 language: {language}
@@ -69,7 +73,7 @@ def process_file(filepath: Path, dry_run: bool = False, verbose: bool = False) -
     Returns: True if file was modified, False otherwise
     """
     try:
-        content = filepath.read_text(encoding="utf-8")
+        content = filepath.read_text(encoding='utf-8')
 
         if has_frontmatter(content):
             if verbose:
@@ -92,7 +96,7 @@ def process_file(filepath: Path, dry_run: bool = False, verbose: bool = False) -
         print(f"  ✓ Adding frontmatter (language: {detect_language(filepath)})")
 
         if not dry_run:
-            filepath.write_text(new_content, encoding="utf-8")
+            filepath.write_text(new_content, encoding='utf-8')
 
         return True
 
@@ -122,7 +126,7 @@ def main():
         print()
 
     # Find all markdown files without frontmatter
-    md_files = list(docs_root.rglob("*.md"))
+    md_files = list(docs_root.rglob('*.md'))
 
     print(f"Found {len(md_files)} markdown files")
     print()
@@ -156,5 +160,5 @@ def main():
     print("=" * 70)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

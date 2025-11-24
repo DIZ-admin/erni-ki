@@ -7,15 +7,11 @@ last_updated: '2025-11-24'
 
 # 📋 CHANGELOG - ERNI-KI Dokumentation
 
-
-[TOC]
-
 ## [5.2.0] - 2025-11-18
 
 ### 🚀 OpenWebUI-Update
 
 #### ✅ **OpenWebUI v0.6.34 → v0.6.36**
-
 - **Aktualisierungsdatum**: 2025-11-18  
 - **Version**: v0.6.34 → v0.6.36  
 - **Status**: ✅ Erfolgreich aktualisiert  
@@ -23,30 +19,25 @@ last_updated: '2025-11-24'
 - **Kompatibilität**: LiteLLM, Docling, RAG und MCP-Integrationen bleiben erhalten
 
 #### 🧹 **Veraltete Patches entfernt**
-
 - Verzeichnis `patches/openwebui` geleert – Container läuft ohne lokale Patches
 - Skript `scripts/entrypoints/openwebui.sh` wendet keine Patches mehr an
 - `compose.yml` mountet das Patch-Verzeichnis nicht mehr
 
 #### 📝 **Dokumentation synchronisiert**
-
 - ✅ README.md / docs/index.md / docs/overview.md – Statusblöcke auf v0.6.36 gebracht
 - ✅ docs/architecture/* (RU/DE) – Diagramme und Beschreibungen aktualisiert
 - ✅ docs/reference/status*.md/yml – gemeinsame Snippets verweisen auf v0.6.36
 - ✅ docs/operations/core/operations-handbook.md – Zielversionen aktualisiert
 
 #### 🧪 **Post-Update-Checks**
-
 - Voller Health-Check ausgeführt (`scripts/health-monitor.sh`)
 - Service-Endpunkte OpenWebUI, LiteLLM, Docling, Monitoring sind healthy
 
 #### 📟 **Monitoring**
-
 - `postgres-exporter` erhält Flag `--no-collector.stat_bgwriter`, Fehler `checkpoints_timed` verschwinden
 - Container neu gebaut (`docker compose up -d postgres-exporter postgres-exporter-proxy`), Logs sauber
 
 #### 🔒 **Zusätzliche Härtung**
-
 - Stub-Config `conf/postgres-exporter/config.yml` wird nun via `--config.file` übergeben
 - LiteLLM (Port `127.0.0.1:4000`) und OpenWebUI in Watchtower „monitor-only“
 - `scripts/health-monitor.sh` bekommt `HEALTH_MONITOR_LOG_WINDOW` und `HEALTH_MONITOR_LOG_IGNORE_REGEX`, entfernt Rauschen (LiteLLM cron, node-exporter broken pipe, cloudflared context canceled, redis-exporter Errorstats)
@@ -61,7 +52,6 @@ last_updated: '2025-11-24'
 ### 🚀 OpenWebUI-Update
 
 #### ✅ **OpenWebUI v0.6.32 → v0.6.34**
-
 - **Aktualisierungsdatum**: 2025-11-04  
 - **Version**: v0.6.32 → v0.6.34  
 - **Status**: ✅ Erfolgreich aktualisiert  
@@ -69,7 +59,6 @@ last_updated: '2025-11-24'
 - **Kompatibilität**: Alle Integrationen bleiben erhalten
 
 #### 🔧 **Beibehaltener Integrationen**
-
 - ✅ **PostgreSQL**: DB-Anbindung funktioniert
 - ✅ **Ollama**: 4 Modelle verfügbar (gpt-oss:20b, gemma3:12b, llama3.2 (128K), nomic-embed-text)
 - ✅ **SearXNG RAG**: Websuche funktionsfähig
@@ -77,7 +66,6 @@ last_updated: '2025-11-24'
 - ✅ **GPU Acceleration**: NVIDIA Runtime aktiv
 
 #### 🌐 **Cloudflare Tunnels – Routing-Fix**
-
 - **Problem**: nginx:8080 in Docker-Netz nicht erreichbar (i/o timeout)
 - **Lösung**: Konfiguration im Cloudflare-Dashboard angepasst  
   - `diz.zone`: `http://nginx:8080` → `http://openwebui:8080` ✅  
@@ -91,7 +79,6 @@ last_updated: '2025-11-24'
   - ✅ lite.diz.zone – HTTP 401 (LiteLLM erfordert Auth)
 
 #### 📊 **Systemstatus nach Update**
-
 - **Container**: 30/30 laufen
 - **Healthy Services**: 25/30 (5 Exporter ohne Healthcheck)
 - **Kritische Fehler**: Keine
@@ -99,14 +86,12 @@ last_updated: '2025-11-24'
 - **Performance**: Keine Degradierung
 
 #### 📝 **Dokumentation aktualisiert**
-
 - ✅ README.md – Version OpenWebUI auf v0.6.34
 - ✅ docs/architecture/architecture.md – Diagramm aktualisiert
 - ✅ docs/locales/de/architecture.md – deutsche Version synchronisiert
 - ✅ CHANGELOG.md – Eintrag hinzugefügt
 
 #### 🔍 **Gefundene Probleme**
-
 1. **PostgreSQL Exporter** (🟡 Mittel)  
    - Fehler: `column "checkpoints_timed" does not exist`  
    - Auswirkung: Einige PostgreSQL-Metriken fehlen  
@@ -118,7 +103,6 @@ last_updated: '2025-11-24'
    - Status: Weitere Analyse nötig
 
 #### 🎯 **Erfolgskriterien erfüllt**
-
 - ✅ OpenWebUI auf v0.6.34 aktualisiert  
 - ✅ Alle Domains via HTTPS (HTTP 200) erreichbar  
 - ✅ Alle Integrationen funktionsfähig  
@@ -133,28 +117,24 @@ last_updated: '2025-11-24'
 ### 🚀 Major Updates
 
 #### ✅ **Architekturdokumentation aktualisiert**
-
 - **Dokuversion**: 4.0 → 5.0  
 - **Services**: 24 → 25 (webhook-receiver hinzugefügt)  
 - **Mermaid-Diagramme**: Alle aktualisiert  
 - **Ports/Endpoints**: Vollständig aktualisiert
 
 #### 📨 **Webhook Receiver Integration**
-
 - **Neuer Service**: webhook-receiver zur Architektur hinzugefügt  
 - **Ports**: 9095 (extern), 9093 (intern)  
 - **Funktionen**: Alertmanager-Alerts empfangen, loggen, JSON formatieren  
 - **Diagramme**: In allen Architekturschemata ergänzt
 
 #### 🎮 **GPU-Monitoring erweitert**
-
 - **NVIDIA GPU Exporter**: Port 9445 dokumentiert  
 - **Metriken**: Temperatur, Auslastung, GPU-Speicher  
 - **Dashboards**: GPU-Dashboard in Grafana beschrieben  
 - **Alerts**: Kritische GPU-Parameter dokumentiert
 
 #### 📊 **Monitoring-System-Doku**
-
 - **Prometheus**: Port 9091 (statt 9090)  
 - **Grafana**: Port 3000  
 - **Alertmanager**: Ports 9093–9094  
@@ -163,7 +143,6 @@ last_updated: '2025-11-24'
 ### 🔧 **Operations-Dokumentation**
 
 #### 📖 **Troubleshooting Guide Updates**
-
 - **Webhook Receiver**: Neuer Diagnostik-Abschnitt  
   - Status- und Log-Checks  
   - Endpoint-Tests  
@@ -174,18 +153,16 @@ last_updated: '2025-11-24'
   - Container-GPU-Tests
 
 #### 🛠️ **Installation Guide Updates**
-
 - **Monitoring**: UI-URLs aktualisiert  
-  - Grafana: <http://localhost:3000>  
-  - Prometheus: <http://localhost:9091>  
-  - Alertmanager: <http://localhost:9093>  
-  - Webhook Receiver: <http://localhost:9095/health>  
+  - Grafana: http://localhost:3000  
+  - Prometheus: http://localhost:9091  
+  - Alertmanager: http://localhost:9093  
+  - Webhook Receiver: http://localhost:9095/health  
 - **GPU Setup**: Checks für GPU-Monitoring ergänzt
 
 ### 🌍 **Mehrsprachige Dokumentation**
 
 #### 🇩🇪 **Deutsche Lokalisierung**
-
 - **Architecture.md**: Mit russischer Version synchronisiert  
 - **Version**: 3.0 → 5.0  
 - **Services**: 16 → 25  
@@ -195,7 +172,6 @@ last_updated: '2025-11-24'
 ### 📁 **Geänderte Dateien**
 
 #### 🔄 **Aktualisierte Dateien**
-
 - `docs/architecture/architecture.md` – Hauptarchitektur-Doku  
 - `docs/operations/troubleshooting.md` – Troubleshooting Guide  
 - `docs/getting-started/installation.md` – Installationsanleitung  
@@ -203,34 +179,29 @@ last_updated: '2025-11-24'
 - `README.md` – Projektstartseite
 
 #### 📦 **Backups**
-
 - `.config-backup/docs/20250725_145457/` – Vollbackup der vorherigen Version  
 - Enthält alle Doku-Dateien und README.md
 
 ### 🎯 **Erfolgskriterien erreicht**
 
 #### ✅ **Architektur-Doku**
-
 - [x] Darstellung aller 25+ Services  
 - [x] Aktuelle Mermaid-Diagramme inkl. webhook-receiver  
 - [x] Ports und Endpoints aktualisiert  
 - [x] Integration mit Cloudflare Tunnels
 
 #### ✅ **Operations-Doku**
-
 - [x] Anleitungen für webhook-receiver  
 - [x] GPU-Monitoring-Prozeduren  
 - [x] Troubleshooting Guide erweitert  
 - [x] Installation Guide aktualisiert
 
 #### ✅ **Mehrsprachige Unterstützung**
-
 - [x] Deutsche Lokalisierung synchronisiert  
 - [x] Konsistente Terminologie  
 - [x] Versionsangaben aktualisiert
 
 #### ✅ **Backups & Versionierung**
-
 - [x] Backup der Vorversion erstellt  
 - [x] Versionssprung 4.0 → 5.0 dokumentiert  
 - [x] Dieser Changelog enthält alle Schritte  
@@ -239,13 +210,11 @@ last_updated: '2025-11-24'
 ### 🔗 **Verknüpfte Änderungen**
 
 #### 🐳 **Docker Compose**
-
 - webhook-receiver zu `compose.production.yml` hinzugefügt  
 - Port 9095:9093 gemappt  
 - Healthchecks aktiviert
 
 #### 📈 **Monitoring Stack**
-
 - Prometheus-Konfiguration aktualisiert  
 - Grafana-Dashboards mit GPU-Metriken erweitert  
 - Alertmanager → webhook-receiver angebunden
@@ -263,7 +232,6 @@ last_updated: '2025-11-24'
 ## [4.0.0] - 2025-07-15
 
 ### Änderungen der Vorgängerversion
-
 - LiteLLM-Integration  
 - Docling-Service ergänzt  
 - Context Engineering implementiert  

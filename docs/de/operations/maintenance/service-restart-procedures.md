@@ -7,8 +7,6 @@ last_updated: '2025-11-24'
 
 # 🔄 ERNI-KI Service-Neustartverfahren
 
-[TOC]
-
 **Version:** 1.0 **Erstellungsdatum:** 2025-09-25 **Zuletzt aktualisiert:**
 2025-09-25 **Verantwortlich:** Tech Lead
 
@@ -56,7 +54,7 @@ docker compose ps
 docker compose logs --tail=50
 ```
 
-## **Neustart kritischer Dienste**
+### **Neustart kritischer Dienste**
 
 ```bash
 # OpenWebUI (Hauptschnittstelle)
@@ -94,7 +92,7 @@ docker compose logs edgetts --tail=10
 curl -f http://localhost:5050/health && echo "EdgeTTS wiederhergestellt"
 ```
 
-## **Apache Tika (Dokumente)**
+#### **Apache Tika (Dokumente)**
 
 ```bash
 # Status prüfen
@@ -110,9 +108,9 @@ docker compose logs tika --tail=10
 curl -f http://localhost:9998/tika && echo "Tika wiederhergestellt"
 ```
 
-## **2. MONITORING SERVICES**
+### **2. MONITORING SERVICES**
 
-### **Prometheus (Metriken)**
+#### **Prometheus (Metriken)**
 
 ```bash
 # Konfiguration prüfen
@@ -126,7 +124,7 @@ sleep 10
 curl -f http://localhost:9090/-/healthy && echo "Prometheus wiederhergestellt"
 ```
 
-## **Grafana (Dashboards)**
+#### **Grafana (Dashboards)**
 
 ```bash
 # Neustart
@@ -137,9 +135,9 @@ sleep 15
 curl -f http://localhost:3000/api/health && echo "Grafana wiederhergestellt"
 ```
 
-## **3. INFRASTRUCTURE SERVICES**
+### **3. INFRASTRUCTURE SERVICES**
 
-### **Redis (Cache)**
+#### **Redis (Cache)**
 
 ```bash
 # Status prüfen
@@ -153,7 +151,7 @@ sleep 5
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-## **PostgreSQL (Datenbank)**
+#### **PostgreSQL (Datenbank)**
 
 ```bash
 # ACHTUNG: Kritischer Dienst! Benutzer benachrichtigen!
@@ -172,9 +170,9 @@ sleep 10
 docker exec erni-ki-db-1 pg_isready -U postgres
 ```
 
-## **4. AI SERVICES**
+### **4. AI SERVICES**
 
-### **Ollama (LLM Server)**
+#### **Ollama (LLM Server)**
 
 ```bash
 # ACHTUNG: GPU-Dienst! NVIDIA-Treiber prüfen!
@@ -196,7 +194,7 @@ curl -f http://localhost:11434/api/tags && echo "Ollama wiederhergestellt"
 docker exec erni-ki-ollama-1 nvidia-smi
 ```
 
-## **LiteLLM (AI Gateway)**
+#### **LiteLLM (AI Gateway)**
 
 ```bash
 # Status prüfen
@@ -210,9 +208,9 @@ sleep 15
 curl -f http://localhost:4000/health && echo "LiteLLM wiederhergestellt"
 ```
 
-## **5. CRITICAL SERVICES**
+### **5. CRITICAL SERVICES**
 
-### **OpenWebUI (Hauptschnittstelle)**
+#### **OpenWebUI (Hauptschnittstelle)**
 
 ```bash
 # ACHTUNG: Hauptbenutzeroberfläche!
@@ -231,7 +229,7 @@ curl -f http://localhost:8080/health && echo "OpenWebUI wiederhergestellt"
 curl -f http://localhost/health && echo "OpenWebUI über Nginx verfügbar"
 ```
 
-## **Nginx (Reverse Proxy)**
+#### **Nginx (Reverse Proxy)**
 
 ```bash
 # ACHTUNG: Kritischer Dienst für externen Zugriff!
@@ -255,7 +253,7 @@ curl -I https://localhost && echo "HTTPS funktioniert"
 ### **Automatische Überprüfung aller Dienste**
 
 ```bash
-# !/bin/bash
+#!/bin/bash
 # Skript zur Überprüfung des Systemzustands nach Neustart
 
 echo "=== STATUSPRÜFUNG DER DIENSTE ==="

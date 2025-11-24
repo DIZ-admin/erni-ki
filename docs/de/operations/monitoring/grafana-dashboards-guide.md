@@ -9,7 +9,6 @@ last_updated: '2025-11-24'
 
 > **Version:** 2.0 **Datum:** 2025-11-04 **Status:** Production Ready
 > **Umfang:** 20 Dashboards (100% funktional) **Optimierung:** Abgeschlossen
-> [TOC]
 
 ## 🎯 Übersicht
 
@@ -18,7 +17,7 @@ Grafana-Dashboards**, die für den Produktionseinsatz optimiert sind. Alle
 Prometheus-Abfragen wurden mit Fallback-Werten korrigiert, um eine 100%ige
 Datenanzeige ohne "No data"-Panels zu gewährleisten.
 
-### 📈 Wichtige Optimierungserfolge (aktualisiert 2025-11-04)
+### 📈 Wichtige Optimierungserfolge (aktualisiert 2025-11-04):
 
 - **3 Dashboards mit nicht verfügbaren LiteLLM-Metriken korrigiert** (14
   Metriken ersetzt)
@@ -306,7 +305,7 @@ Datenanzeige ohne "No data"-Panels zu gewährleisten.
 
 ## 🔧 Korrigierte Prometheus-Abfragen
 
-### Kritische Korrekturen mit Fallback-Werten
+### Kritische Korrekturen mit Fallback-Werten:
 
 1. **RAG Pipeline Success Rate:**
 
@@ -333,7 +332,6 @@ Datenanzeige ohne "No data"-Panels zu gewährleisten.
    ```
 
 4. **Prometheus Query Performance:**
-
    ```promql
    # ❌ War: rate(prometheus_engine_query_duration_seconds_bucket[5m])
    # ✅ Ist: rate(prometheus_engine_query_duration_seconds_sum[5m]) or vector(0.015)
@@ -342,21 +340,21 @@ Datenanzeige ohne "No data"-Panels zu gewährleisten.
 
 ## 🎯 Empfehlungen zur Nutzung
 
-### Für Administratoren
+### Für Administratoren:
 
 1. **Beginnen Sie mit System Overview** - Allgemeiner Systemstatus
 2. **Prüfen Sie Service Health** - Status aller Dienste
 3. **Überwachen Sie das SLA Dashboard** - Einhaltung der Zielvorgaben
 4. **Nutzen Sie Critical Alerts** - für schnelle Reaktionen
 
-### Für Entwickler
+### Für Entwickler:
 
 1. **AI Services Dashboards** - Leistung der AI-Komponenten
 2. **RAG Pipeline Monitoring** - Qualität von Suche und Generierung
 3. **LiteLLM Context Engineering** - Context7 Integration
 4. **Performance Overview** - Leistungsoptimierung
 
-### Für DevOps
+### Für DevOps:
 
 1. **Infrastructure Dashboards** - Zustand der Infrastruktur
 2. **Monitoring Stack** - Gesundheit des Monitoring-Systems
