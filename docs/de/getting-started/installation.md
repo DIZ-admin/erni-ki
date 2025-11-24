@@ -9,7 +9,6 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
-
 # 🚀 Detaillierte Installationsanleitung für ERNI-KI
 
 > **Dokumentversion:** 2.0 **Aktualisierungsdatum:** 2025-07-04

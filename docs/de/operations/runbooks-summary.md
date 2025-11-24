@@ -9,7 +9,6 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
-
 # Runbooks & Troubleshooting (DE summary)
 
 Kurzer Überblick über die wichtigsten Runbooks auf Deutsch. Die vollständigen

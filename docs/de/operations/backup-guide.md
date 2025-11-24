@@ -9,7 +9,6 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
-
 # Backup-Anleitung (DE)
 
 Verweise auf `docs/operations/automated-maintenance-guide.md` und

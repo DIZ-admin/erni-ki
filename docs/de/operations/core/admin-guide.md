@@ -9,7 +9,6 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
-
 # 👨‍💼 ERNI-KI Administrator-Handbuch
 
 > **Dokumentversion:** 7.0 **Aktualisierungsdatum:** 2025-09-11 **Zielgruppe:**
