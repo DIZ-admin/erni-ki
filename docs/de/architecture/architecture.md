@@ -12,6 +12,8 @@ audience: 'administrators'
 
 # 🏗️ ERNI-KI Systemarchitektur
 
+[TOC]
+
 > **Dokumentversion:** 12.1 **Aktualisierungsdatum:** 2025-11-23 **Status:**
 > Production Ready (compose.yml enthält 32 Services; 5/5 Grafana Dashboards
 > provisioniert; 20 aktive Alarmregeln. LiteLLM v1.80.0.rc.1, Docling, MCP

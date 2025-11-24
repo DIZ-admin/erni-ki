@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # ERNI-KI Quick MCPO Health Check Script
-# Быстрая проверка состояния MCPO-сервиса и интеграции
+# Quick check of MCPO service status and integration
 
 set -uo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}🔍 ERNI-KI Quick MCPO Health Check${NC}"
 echo "=========================================="
 
-# Функция для проверки endpoint
+# Function to check endpoint
 check_endpoint() {
     local url=$1
     local description=$2
@@ -42,7 +42,7 @@ check_endpoint() {
     esac
 }
 
-# Функция для тестирования MCP инструмента
+# Function to test MCP tool
 test_tool() {
     local url=$1
     local payload=$2
@@ -67,7 +67,7 @@ test_tool() {
 total_checks=0
 passed_checks=0
 
-# 1. Проверка статуса контейнера
+# 1. Container status check
 echo -e "\n${BLUE}🐳 Container Status${NC}"
 echo "==================="
 
@@ -79,7 +79,7 @@ else
 fi
 ((total_checks++))
 
-# 2. Проверка основных endpoints
+# 2. Main endpoints check
 echo -e "\n${BLUE}🌐 API Endpoints${NC}"
 echo "================"
 
@@ -93,7 +93,7 @@ if check_endpoint "http://localhost:8000/openapi.json" "MCPO OpenAPI spec"; then
     ((passed_checks++))
 fi
 
-# 3. Проверка MCP серверов
+# 3. MCP servers check
 echo -e "\n${BLUE}⚙️ MCP Servers${NC}"
 echo "==============="
 
@@ -104,7 +104,7 @@ for server in time postgres desktop-commander; do
     fi
 done
 
-# 4. Функциональное тестирование
+# 4. Functional testing
 echo -e "\n${BLUE}🔧 Functional Tests${NC}"
 echo "==================="
 
@@ -123,7 +123,7 @@ if test_tool "http://localhost:8000/memory/read_graph" '{}' "Memory server funct
     ((passed_checks++))
 fi
 
-# 5. Nginx Proxy проверка
+# 5. Nginx Proxy check
 echo -e "\n${BLUE}🌐 Nginx Proxy${NC}"
 echo "==============="
 
@@ -132,7 +132,7 @@ if check_endpoint "http://localhost:8080/api/mcp/time/docs" "Nginx proxy to Time
     ((passed_checks++))
 fi
 
-# 6. Проверка производительности
+# 6. Performance check
 echo -e "\n${BLUE}⚡ Performance${NC}"
 echo "=============="
 
@@ -150,7 +150,7 @@ else
 fi
 ((total_checks++))
 
-# 7. Проверка логов на ошибки
+# 7. Error log check
 echo -e "\n${BLUE}📋 Error Check${NC}"
 echo "==============="
 
@@ -166,7 +166,7 @@ else
 fi
 ((total_checks++))
 
-# 8. Итоговый отчет
+# 8. Summary report
 echo -e "\n${BLUE}📊 Summary${NC}"
 echo "=========="
 
@@ -214,7 +214,7 @@ echo "📖 Full integration guide: docs/reference/mcpo-integration-guide.md"
 echo "🌐 MCPO Swagger UI: http://localhost:8000/docs"
 echo "🔧 Test individual tools: http://localhost:8000/{server}/docs"
 
-# Возвращаем код ошибки если есть проблемы
+# Return error code if there are problems
 if [ $success_rate -lt 75 ]; then
     exit 1
 else
