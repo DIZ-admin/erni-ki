@@ -524,7 +524,7 @@ echo -e "\n✅ Prüfung abgeschlossen"
 - [Service Restart Procedures](../../operations/maintenance/service-restart-procedures.md)
 - [Troubleshooting Guide](../../operations/troubleshooting/troubleshooting-guide.md)
 - [Configuration Change Process](../../operations/core/configuration-change-process.md)
-- [System Architecture](../../operations/architecture/architecture.md)
+- [System Architecture](../../../architecture/architecture.md)
 
 ---
 
