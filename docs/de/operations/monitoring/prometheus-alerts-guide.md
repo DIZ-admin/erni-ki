@@ -7,6 +7,8 @@ last_updated: '2025-11-24'
 
 # 🚨 Prometheus Alerts Guide - ERNI-KI
 
+[TOC]
+
 **Version:** 1.0 **Zuletzt aktualisiert:** 2025-10-24 **Status:** Production
 Ready
 
@@ -78,7 +80,7 @@ docker system prune -a --volumes -f
 
 ---
 
-### 2. MemoryCritical
+## 2. MemoryCritical
 
 **Schweregrad:** Critical **Komponente:** System **Schwellenwert:** Verfügbarer
 Speicher <5% **Dauer:** 5 Minuten
@@ -116,7 +118,7 @@ docker compose restart SERVICE_NAME
 
 ---
 
-### 3. ContainerDown
+## 3. ContainerDown
 
 **Schweregrad:** Critical **Komponente:** Docker **Schwellenwert:** Container
 läuft nicht **Dauer:** 1 Minute
@@ -154,7 +156,7 @@ docker inspect SERVICE_NAME | jq '.[0].State.Health'
 
 ---
 
-### 4. PostgreSQLDown
+## 4. PostgreSQLDown
 
 **Schweregrad:** Critical **Komponente:** Database **Schwellenwert:** PostgreSQL
 nicht verfügbar **Dauer:** 1 Minute
@@ -192,7 +194,7 @@ docker compose restart db
 
 ---
 
-### 5. RedisDown
+## 5. RedisDown
 
 **Schweregrad:** Critical **Komponente:** Cache **Schwellenwert:** Redis nicht
 verfügbar **Dauer:** 1 Minute
@@ -229,7 +231,7 @@ docker compose restart redis
 
 ---
 
-### 6. OllamaGPUDown
+## 6. OllamaGPUDown
 
 **Schweregrad:** Critical **Komponente:** AI/GPU **Schwellenwert:** Ollama GPU
 nicht verfügbar **Dauer:** 2 Minuten
@@ -270,7 +272,7 @@ docker compose restart ollama
 
 ---
 
-### 7. NginxDown
+## 7. NginxDown
 
 **Schweregrad:** Critical **Komponente:** Gateway **Schwellenwert:** Nginx nicht
 verfügbar **Dauer:** 1 Minute
@@ -364,7 +366,7 @@ docker stats --no-stream --format "table {{.Container}}\t{{CPUPerc}}"
 
 ---
 
-### 11. ContainerRestarting
+## 11. ContainerRestarting
 
 **Schweregrad:** Warning **Komponente:** Docker **Schwellenwert:** ≥2 Neustarts
 pro Container innerhalb von 15 Minuten **Dauer:** 1 Minute (Debounce)
@@ -406,7 +408,7 @@ docker inspect SERVICE_NAME | jq '.[0].State | {Status, ExitCode, Health}'
 
 ---
 
-### 12. PostgreSQLHighConnections
+## 12. PostgreSQLHighConnections
 
 **Schweregrad:** Warning **Komponente:** Database **Schwellenwert:** >80
 Verbindungen **Dauer:** 5 Minuten
@@ -432,7 +434,7 @@ docker compose exec db psql -U postgres -d openwebui -c "SELECT pg_terminate_bac
 
 ---
 
-### 13. RedisHighMemory
+## 13. RedisHighMemory
 
 **Schweregrad:** Warning **Komponente:** Cache **Schwellenwert:**
 Speichernutzung >1GB **Dauer:** 10 Minuten
@@ -458,7 +460,7 @@ docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 FLUSHDB
 
 ---
 
-### 14. RedisHighFragmentation
+## 14. RedisHighFragmentation
 
 **Schweregrad:** Warning **Komponente:** Cache **Schwellenwert:**
 `redis_mem_fragmentation_ratio > 5` **Dauer:** 10 Minuten
@@ -489,7 +491,7 @@ Remediation_.
 
 ---
 
-### 15. OllamaHighVRAM
+## 15. OllamaHighVRAM
 
 **Schweregrad:** Warning **Komponente:** AI/GPU **Schwellenwert:**
 VRAM-Nutzung >80% **Dauer:** 10 Minuten
@@ -515,7 +517,7 @@ docker compose exec ollama ollama rm MODEL_NAME
 
 ---
 
-### 16. NginxHighErrorRate
+## 16. NginxHighErrorRate
 
 **Schweregrad:** Warning **Komponente:** Gateway **Schwellenwert:** >10 5xx
 Fehler/Min **Dauer:** 5 Minuten
@@ -563,7 +565,7 @@ time curl -X POST http://localhost:11434/api/generate -d '{"model":"llama3.2","p
 
 ---
 
-### 18. SearXNGSlowSearch
+## 18. SearXNGSlowSearch
 
 **Schweregrad:** Warning **Komponente:** Search **Schwellenwert:** Suchzeit >3s
 **Dauer:** 5 Minuten
@@ -583,7 +585,7 @@ docker compose logs searxng --tail 50
 
 ---
 
-### 19. DockerStoragePoolAlmostFull
+## 19. DockerStoragePoolAlmostFull
 
 **Schweregrad:** Warning **Komponente:** Infrastructure **Schwellenwert:**
 Docker-Speicher >85% **Dauer:** 10 Minuten
@@ -626,9 +628,9 @@ curl -s http://localhost:9091/api/v1/alerts | jq '.data.alerts[] | select(.state
 curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[].rules[] | select(.labels.severity=="critical")'
 ```
 
-### Alerts testen
+## Alerts testen
 
-Siehe [Monitoring Guide](monitoring-guide.md#alert-testing) für Testverfahren.
+Siehe [Monitoring Guide](monitoring-guide.md) für Testverfahren.
 
 ### Alerts stummschalten (Silencing)
 

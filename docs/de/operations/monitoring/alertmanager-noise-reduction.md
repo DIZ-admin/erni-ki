@@ -40,14 +40,17 @@ last_updated: '2025-11-24'
    `CONFIG SET` und überschreibt die Konfiguration.
 2. **Aktivierung**:
    - Variablen exportieren (z.B. in Cron):
+
      ```bash
      export REDIS_AUTOSCALE_ENABLED=true
      export REDIS_AUTOSCALE_STEP_MB=512
      export REDIS_AUTOSCALE_MAX_GB=4
      ```
+
    - Watchdog starten (Cron/Systemd) und sicherstellen, dass in
      `logs/redis-fragmentation-watchdog.log` Zeilen wie
      `Autoscaling Redis maxmemory...` erscheinen.
+
 3. **Monitoring** — Wir überwachen die Metriken `mem_fragmentation_ratio` und
    `maxmemory` (innerhalb des Watchdogs werden Werte in MB ausgegeben).
    Zusätzlich wird empfohlen, ein Panel in Grafana (Redis Dashboard)
