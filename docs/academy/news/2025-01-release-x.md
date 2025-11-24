@@ -1,6 +1,5 @@
 ---
 language: ru
-page_id: academy.news.2025-01-release-x
 translation_status: complete
 doc_version: '2025.11'
 ---

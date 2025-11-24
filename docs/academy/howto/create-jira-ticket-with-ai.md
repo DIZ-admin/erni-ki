@@ -1,6 +1,5 @@
 ---
 language: ru
-page_id: howto.create-jira-ticket-ai
 translation_status: complete
 doc_version: '2025.11'
 ---

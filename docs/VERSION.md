@@ -1,6 +1,5 @@
 ---
 language: ru
-page_id: docs.version
 translation_status: complete
 doc_version: '2025.11'
 released: 2025-11-23
