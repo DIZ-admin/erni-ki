@@ -7,6 +7,12 @@ last_updated: '2025-11-24'
 
 # Create a JIRA ticket with AI
 
+## Introduction
+
+This guide explains how to generate JIRA tickets using AI assistance. It covers
+required inputs, configuration steps, and example prompts to streamline ticket
+creation.
+
 ## Inputs required
 
 - Issue type (Bug/Story/Task) and priority.
