@@ -306,11 +306,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🔡 Normalize repository to lowercase
+        id: repo-lc
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=${repo_lc}" >> "$GITHUB_OUTPUT"
+
       - name: 📋 Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth
+          images: ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -333,8 +339,8 @@ jobs:
           push: true
           tags: |
             ${{ steps.meta.outputs.tags }}
-            ${{ env.REGISTRY }}/${{ github.repository }}/auth:${{ steps.trivy-tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ toLower(github.repository) }}/auth:codex
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:codex
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -342,7 +348,7 @@ jobs:
             SKIP_TESTS=true
 
       - name: 🧾 Set image ref for Trivy
-        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${GITHUB_REPOSITORY,,}/auth:${{ steps.trivy-tag.outputs.tag }}" >> "${GITHUB_ENV}"
+        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}" >> "${GITHUB_ENV}"
 
       - name: 🔍 Run Trivy on Docker image
         uses: aquasecurity/trivy-action@0.28.0
