@@ -532,7 +532,7 @@ test('RAG web search (<10s)', async ({ page }) => {
 
   // Проверить наличие ссылок/источников
   const content = await page.locator(selectors.answerBlock).first().innerText();
-  expect(/https?:\/\//.test(content) || /Источник|Source|[[]\d+[]]/i.test(content)).toBeTruthy();
+  expect(/https?:\/\//.test(content) || /Источник|Source|\[\d+\]/i.test(content)).toBeTruthy();
 
   await page.screenshot({ path: 'playwright-artifacts/03-web-search.png' });
   finalize();

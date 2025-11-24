@@ -8,7 +8,6 @@
 
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
-import path from 'node:path';
 
 const BASE = process.env.PW_BASE_URL || 'http://localhost:8080';
 const DOCX_FILE = 'tests/fixtures/Aktennotiz_Andre Arnold 10.10.2025.docx';
