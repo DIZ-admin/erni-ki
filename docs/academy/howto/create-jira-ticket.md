@@ -4,7 +4,7 @@ translation_status: complete
 doc_version: '2025.11'
 title: 'create-jira-ticket'
 system_version: '12.1'
-date: '2025-11-22'
+last_updated: '2025-11-22'
 system_status: 'Production Ready'
 ---
 
