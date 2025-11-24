@@ -58,8 +58,8 @@ last_updated: '2025-11-24'
 | `rag-exporter`            | SLA-мониторинг RAG.                                   | `127.0.0.1:9808->9808`.           | Переменные `RAG_TEST_URL`, зависит от `openwebui`.                                        | Endpoint виден только локально.                                                                                              |
 | `webhook-receiver`        | Приём уведомлений Alertmanager и кастомные скрипты.   | `127.0.0.1:9095->9093`.           | Скрипты `./conf/webhook-receiver`, логи `./data/webhook-logs`.                            | Endpoint доступен через локальный прокси; лимиты `mem_limit=256M`, `mem_reservation=128M`, `cpus=0.25`, `oom_score_adj=250`. |
 
-> **Примечание:** Docling восстановлен в основном `compose.yml`; shared volume
-> `./data/docling/shared` используется совместно с OpenWebUI.
+> ℹ️ **Информация:** Docling восстановлен в основном `compose.yml`; shared
+> volume `./data/docling/shared` используется совместно с OpenWebUI.
 
 > **Доступ к метрикам:** все мониторинговые сервисы проброшены только на
 > `127.0.0.1`. Для удалённого просмотра используйте Nginx (с auth/TLS), VPN или

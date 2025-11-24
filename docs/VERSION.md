@@ -44,8 +44,8 @@ status: current
 - DE: 44 файла — 55%
 - EN: 16 файлов — 20%
 
-Примечания:
+### Фокус переводов
 
-- DE: Основные операционные и архитектурные документы переведены. Monitoring,
-  maintenance, reference — в процессе.
+- DE: Core operations, database, automation, architecture — complete.
+  Monitoring, maintenance, reference — в процессе.
 - EN: Academy полностью переведена. Технические документы — выборочно.
