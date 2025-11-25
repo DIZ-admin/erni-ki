@@ -1,5 +1,5 @@
-# Security Pipeline для проекта erni-ki
-# CodeQL анализ безопасности и сканирование зависимостей
+# Security Pipeline for erni-ki project
+# CodeQL security analysis and dependency scanning
 
 name: 🔒 Security Analysis
 
@@ -7,25 +7,25 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   schedule:
-    # Запуск каждый день в 2:00 UTC
+    # Default severity level2:00 UTC
     - cron: "0 2 * * *"
   workflow_dispatch:
 
-# Разрешения для security events
+# Permissions for security events
 permissions:
   actions: read
   contents: read
   security-events: write
 
-# Отмена предыдущих запусков
+# Cancel previous runs
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # CodeQL анализ
+  # CodeQL analysis
   codeql:
     name: 🔍 CodeQL Analysis
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
           queries: +security-and-quality
           source-root: ${{ matrix.path }}
 
-      # Настройка окружения для Go
+      # Setup Go environment
       - name: 🐹 Setup Go
         if: matrix.language == 'go'
         uses: actions/setup-go@v5
@@ -60,7 +60,7 @@ jobs:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
 
-      # Настройка окружения для JavaScript/TypeScript
+      # Setup JavaScript/TypeScript environment
       - name: 🟢 Setup Node.js
         if: matrix.language == 'javascript'
         uses: actions/setup-node@v4
@@ -72,17 +72,17 @@ jobs:
         if: matrix.language == 'javascript' && hashFiles('package.json') != ''
         run: npm ci --prefer-offline --no-audit
 
-      # Автоматическая сборка
+      # Autobuild
       - name: 🏗️ Autobuild
         uses: github/codeql-action/autobuild@v4
 
-      # Выполнение анализа CodeQL
+      # Perform CodeQL analysis
       - name: 🔍 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
 
-  # Сканирование зависимостей
+  # Dependency scanning
   dependency-scan:
     name: 📦 Dependency Scan
     runs-on: ubuntu-latest
@@ -92,7 +92,7 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      # Сканирование Go зависимостей
+      # Scan Go dependencies
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
@@ -105,7 +105,7 @@ jobs:
           go install golang.org/x/vuln/cmd/govulncheck@latest
           govulncheck ./...
 
-      # Сканирование npm зависимостей (если есть)
+      # Scan npm dependencies (if any)
       - name: 🟢 Setup Node.js
         if: hashFiles('package.json') != ''
         uses: actions/setup-node@v4
@@ -127,7 +127,7 @@ jobs:
           path: npm-audit-results.json
           retention-days: 30
 
-  # Сканирование секретов
+  # Secret scanning
   secret-scan:
     name: 🔐 Secret Scan
     runs-on: ubuntu-latest
@@ -159,12 +159,11 @@ jobs:
           gitleaks detect --redact --source=. -c .gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
         continue-on-error: true
 
-  # Сканирование Docker образов
+  # Docker image scanning
   container-scan:
     name: 🐳 Container Security Scan
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: github.event_name != 'pull_request'
 
     steps:
       - name: 📥 Checkout repository
@@ -215,7 +214,7 @@ jobs:
         with:
           sarif_file: ${{ steps['grype-scan'].outputs.sarif }}
 
-  # Анализ конфигураций
+  # Configuration analysis
   config-scan:
     name: ⚙️ Configuration Security
     runs-on: ubuntu-latest
@@ -242,14 +241,14 @@ jobs:
         with:
           sarif_file: checkov-results.sarif
 
-      # Проверка Docker Compose конфигурации
+      # Validate Docker Compose configuration
       - name: 🐳 Validate Docker Compose
         run: |
           if [ -f "compose.yml.example" ]; then
             echo "Validating Docker Compose configuration..."
-            # Создаем временный файл с базовыми переменными для валидации
+            # Create temporary file with base variables for validation
             cp compose.yml.example compose.yml.temp
-            # Проверяем синтаксис без подстановки переменных
+            # Check syntax without variable substitution
             docker compose -f compose.yml.temp config --quiet --dry-run || echo "⚠️ Docker Compose validation skipped (requires env vars)"
             rm -f compose.yml.temp
             echo "✅ Docker Compose syntax check completed"
@@ -257,19 +256,19 @@ jobs:
             echo "⚠️ compose.yml.example not found, skipping validation"
           fi
 
-      # Проверка Nginx конфигурации
+      # Validate Nginx configuration
       - name: 🌐 Validate Nginx config
         run: |
           if [ -f "conf/nginx/nginx.conf" ]; then
             echo "Validating Nginx configuration..."
-            # Проверяем синтаксис Nginx конфигурации
+            # Check Nginx configuration syntax
             docker run --rm -v $(pwd)/conf/nginx:/etc/nginx/conf.d:ro nginx:alpine nginx -t -c /etc/nginx/nginx.conf || echo "⚠️ Nginx validation requires full config context"
             echo "✅ Nginx syntax check completed"
           else
             echo "⚠️ Nginx config not found, skipping validation"
           fi
 
-  # Тестирование environment-specific секретов
+  # Test environment-specific secrets
   test-environment-secrets:
     name: 🔐 Test Environment Secrets
     runs-on: ubuntu-latest
@@ -286,7 +285,7 @@ jobs:
         run: |
           echo "Testing secrets for environment: ${{ matrix.environment }}"
 
-          # Определяем суффикс для окружения
+          # Determine suffix for environment
           ENV_SUFFIX=""
           case "${{ matrix.environment }}" in
             "development") ENV_SUFFIX="_DEV" ;;
@@ -296,7 +295,7 @@ jobs:
 
           echo "Environment suffix: $ENV_SUFFIX"
 
-          # Проверяем структуру секретов (без раскрытия значений)
+          # Check secrets structure (without revealing values)
           expected_secrets=(
             "TUNNEL_TOKEN${ENV_SUFFIX}"
             "OPENAI_API_KEY${ENV_SUFFIX}"
@@ -308,14 +307,14 @@ jobs:
           echo "Expected secrets for ${{ matrix.environment }}:"
           printf '%s\n' "${expected_secrets[@]}"
 
-          # Проверяем, что секреты не содержат placeholder значения
+          # Check that secrets do not contain placeholder values
           if [ "${{ matrix.environment }}" = "production" ]; then
             echo "⚠️ Production secrets should be manually verified"
           fi
 
           echo "✅ Environment secrets structure validated"
 
-  # Отчет о безопасности
+  # Security report
   security-report:
     name: 📊 Security Report
     runs-on: ubuntu-latest

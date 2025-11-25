@@ -1,8 +1,8 @@
-# 🔐 GitHub Environments Security Scripts
+# GitHub Environments Security Scripts
 
 Набор скриптов для настройки и управления GitHub Environments в проекте ERNI-KI.
 
-## 🚀 Быстрый старт
+## Быстрый старт
 
 ### 1. Полная автоматическая настройка
 
@@ -30,7 +30,7 @@
 ./validate-environment-secrets.sh
 ```
 
-## 📁 Описание скриптов
+## Описание скриптов
 
 ### `setup-github-environments.sh`
 
@@ -78,8 +78,8 @@
 ./setup-environment-secrets.sh
 ```
 
-⚠️ **ВАЖНО:** Production секреты создаются с placeholder значениями и должны
-быть заменены на реальные!
+**ВАЖНО:** Production секреты создаются с placeholder значениями и должны быть
+заменены на реальные!
 
 ### `validate-environment-secrets.sh`
 
@@ -98,7 +98,7 @@
 ./validate-environment-secrets.sh --help
 ```
 
-## 🔧 Требования
+## Требования
 
 ### Предварительные требования
 
@@ -133,32 +133,32 @@ sudo apt install openssl
 - **repo** - полный доступ к репозиторию
 - **admin:org** - управление организацией (для создания environments)
 
-## 📊 Структура секретов
+## Структура секретов
 
 ### Repository Level (9 секретов)
 
 ```
-POSTGRES_PASSWORD      # Пароль PostgreSQL
-JWT_SECRET            # JWT секретный ключ
-WEBUI_SECRET_KEY      # Ключ OpenWebUI
-LITELLM_MASTER_KEY    # Мастер-ключ LiteLLM
-LITELLM_SALT_KEY      # Соль для шифрования LiteLLM
-RESTIC_PASSWORD       # Пароль шифрования бэкапов
-SEARXNG_SECRET        # Секретный ключ SearXNG
-REDIS_PASSWORD        # Пароль Redis
-BACKREST_PASSWORD     # Пароль Backrest
+POSTGRES_PASSWORD # Пароль PostgreSQL
+JWT_SECRET # JWT секретный ключ
+WEBUI_SECRET_KEY # Ключ OpenWebUI
+LITELLM_MASTER_KEY # Мастер-ключ LiteLLM
+LITELLM_SALT_KEY # Соль для шифрования LiteLLM
+RESTIC_PASSWORD # Пароль шифрования бэкапов
+SEARXNG_SECRET # Секретный ключ SearXNG
+REDIS_PASSWORD # Пароль Redis
+BACKREST_PASSWORD # Пароль Backrest
 ```
 
 ### Environment Level (5 секретов × 3 окружения = 15 секретов)
 
 ```
-TUNNEL_TOKEN_DEV/STAGING/PROD          # Cloudflare tunnel токены
-OPENAI_API_KEY_DEV/STAGING/PROD        # OpenAI API ключи
+TUNNEL_TOKEN_DEV/STAGING/PROD # Cloudflare tunnel токены
+OPENAI_API_KEY_DEV/STAGING/PROD # OpenAI API ключи
 ```
 
 **Всего: 18 секретов**
 
-## 🔍 Проверка и мониторинг
+## Проверка и мониторинг
 
 ### Просмотр окружений
 
@@ -184,7 +184,7 @@ gh secret list --env production
 gh api repos/:owner/:repo/environments/production | jq '.protection_rules'
 ```
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Ошибка: "Environment not found"
 
@@ -216,7 +216,7 @@ gh secret list --env production
 gh secret set SECRET_NAME --env production --body "value"
 ```
 
-## 📋 Чеклист после настройки
+## Чеклист после настройки
 
 - [ ] Все 3 окружения созданы
 - [ ] Protection rules настроены
@@ -225,7 +225,7 @@ gh secret set SECRET_NAME --env production --body "value"
 - [ ] Валидация прошла успешно
 - [ ] GitHub Actions workflows обновлены
 
-## 🔄 Регулярное обслуживание
+## Регулярное обслуживание
 
 ### Еженедельно
 
@@ -249,7 +249,7 @@ gh secret set SECRET_NAME --env production --body "value"
 ./rotate-secrets.sh --service all
 ```
 
-## 🎯 Best Practices
+## Best Practices
 
 1. **Никогда не коммитьте секреты в код**
 2. **Используйте разные API ключи для разных окружений**
@@ -257,7 +257,7 @@ gh secret set SECRET_NAME --env production --body "value"
 4. **Мониторьте использование API ключей**
 5. **Заменяйте placeholder значения перед production**
 
-## 📞 Поддержка
+## Поддержка
 
 Для вопросов и проблем:
 
@@ -268,5 +268,4 @@ gh secret set SECRET_NAME --env production --body "value"
 
 ---
 
-**Автор:** Альтэон Шульц (Tech Lead)  
-**Последнее обновление:** 2025-09-19
+**Автор:** Альтэон Шульц (Tech Lead) **Последнее обновление:** 2025-09-19

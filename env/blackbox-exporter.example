@@ -1,62 +1,62 @@
-# Blackbox Exporter Configuration для ERNI-KI
-# Мониторинг доступности внешних сервисов
+# Blackbox Exporter Configuration for ERNI-KI
+# Availability checks for external/internal services
 
-# === Основные настройки ===
-# Порт для веб-интерфейса
+# === Basics ===
+# Web listen address
 BLACKBOX_EXPORTER_WEB_LISTEN_ADDRESS=0.0.0.0:9115
-# Путь к конфигурационному файлу
+# Config file path
 BLACKBOX_EXPORTER_CONFIG_FILE=/etc/blackbox_exporter/config.yml
 
-# === HTTP проверки ===
-# Таймаут для HTTP запросов
+# === HTTP probes ===
+# HTTP request timeout
 BLACKBOX_HTTP_TIMEOUT=10s
-# Следовать редиректам
+# Follow redirects
 BLACKBOX_HTTP_FOLLOW_REDIRECTS=true
-# Максимальное количество редиректов
+# Max redirects
 BLACKBOX_HTTP_MAX_REDIRECTS=3
-# Проверять SSL сертификаты
+# Verify TLS certs
 BLACKBOX_HTTP_TLS_INSECURE_SKIP_VERIFY=false
 
-# === ICMP проверки ===
-# Таймаут для ICMP пингов
+# === ICMP probes ===
+# ICMP timeout
 BLACKBOX_ICMP_TIMEOUT=5s
-# Размер ICMP пакета
+# ICMP packet size
 BLACKBOX_ICMP_PACKET_SIZE=64
-# Количество пакетов для отправки
+# Packet count
 BLACKBOX_ICMP_PACKET_COUNT=3
 
-# === TCP проверки ===
-# Таймаут для TCP соединений
+# === TCP probes ===
+# TCP timeout
 BLACKBOX_TCP_TIMEOUT=5s
-# Проверять TLS соединения
+# Check TLS over TCP
 BLACKBOX_TCP_TLS=false
 
-# === DNS проверки ===
-# Таймаут для DNS запросов
+# === DNS probes ===
+# DNS timeout
 BLACKBOX_DNS_TIMEOUT=5s
-# DNS сервер для запросов
+# DNS server
 BLACKBOX_DNS_SERVER=8.8.8.8:53
-# Тип DNS записи
+# DNS record type
 BLACKBOX_DNS_QUERY_TYPE=A
 
-# === Логирование ===
-# Уровень логирования
+# === Logging ===
+# Log level
 BLACKBOX_EXPORTER_LOG_LEVEL=info
-# Формат логов
+# Log format
 BLACKBOX_EXPORTER_LOG_FORMAT=logfmt
 
-# === Производительность ===
-# Максимальное количество одновременных проверок
+# === Performance ===
+# Max concurrent probes
 BLACKBOX_EXPORTER_MAX_CONCURRENT_REQUESTS=20
-# Интервал между проверками
+# Scrape interval
 BLACKBOX_EXPORTER_SCRAPE_INTERVAL=30s
 
-# === Мониторируемые цели ===
-# URL для проверки основного сайта
+# === Targets ===
+# Main site URL
 BLACKBOX_TARGET_MAIN_URL=https://your-domain.com
-# URL для проверки API
+# API health URL
 BLACKBOX_TARGET_API_URL=http://localhost:8080/health
-# URL для проверки SearXNG
+# SearXNG health URL
 BLACKBOX_TARGET_SEARXNG_URL=http://localhost:8080/searxng/healthz
 
 # === SSL мониторинг ===

@@ -41,22 +41,40 @@
   "javascript.suggest.autoImports": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
 
-  // Настройки ESLint (закомментированы - требуют установки расширения)
-  // "eslint.validate": [
-  //   "javascript",
-  //   "javascriptreact",
-  //   "typescript",
-  //   "typescriptreact"
-  // ],
-  // "eslint.format.enable": true,
-  // "eslint.codeAction.showDocumentation": {
-  //   "enable": true
-  // },
+  // Настройки ESLint
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.format.enable": true,
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "eslint.useFlatConfig": true,
+  "eslint.options": {
+    "overrideConfigFile": "eslint.config.js"
+  },
 
   // Настройки Prettier
   "prettier.configPath": ".prettierrc.json",
   "prettier.ignorePath": ".prettierignore",
   "prettier.requireConfig": true,
+
+  // Настройки Python
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.linting.enabled": true,
+  "python.linting.ruffEnabled": true,
+  "python.formatting.provider": "none",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
 
   // Настройки для различных типов файлов
   "[go]": {
@@ -78,7 +96,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -252,10 +270,10 @@
     "editor.defaultFormatter": "raynigon.nginx-formatter"
   },
 
-  // Специальные настройки для конфигурационных файлов ERNI-KI
-  // Отключаем автоформатирование для сохранения структуры
+  // Special settings for ERNI-KI config files
+  // Disable auto-format to preserve structure
 
-  // Отключаем форматирование для конфигурационных файлов
+  // Disable formatting for config files
   "[properties]": {
     "editor.formatOnSave": false,
     "editor.formatOnPaste": false,
@@ -263,9 +281,9 @@
     "files.trimTrailingWhitespace": false
   },
 
-  // Настройки для работы с REST API удалены - требуют установки расширения
+  // REST API settings removed - require extension
 
-  // Настройки Snyk - полное отключение проблемных сканирований
+  // Snyk settings - fully disable problematic scans
   "snyk.enableCodeSecurity": false,
   "snyk.enableOpenSource": true,
   "snyk.enableIac": false,

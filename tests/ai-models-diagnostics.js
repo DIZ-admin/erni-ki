@@ -1,15 +1,15 @@
 /**
  * ERNI-KI AI Models Diagnostics with Playwright
- * Комплексная диагностика функционала AI моделей
+ * Comprehensive AI models functionality diagnostics
  *
- * @author Альтэон Шульц (Tech Lead)
+ * @author Alteon Schultz (Tech Lead)
  * @version 1.0.0
  */
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-// Конфигурация тестирования
+// Test configuration
 const CONFIG = {
   baseUrl: 'http://localhost:8080',
   timeout: 30000,
@@ -17,12 +17,12 @@ const CONFIG = {
   reportsDir: './test-results/reports',
   expectedModels: ['gpt-oss:20b', 'gemma3n:e4b', 'nomic-embed-text:latest'],
   testPrompts: [
-    'Привет! Как дела?',
-    'Расскажи о квантовой физике в двух предложениях.',
-    'Найди информацию о последних новостях в области AI',
+    'Hello! How are you?',
+    'Explain quantum physics in two sentences.',
+    'Find the latest news in the AI industry.',
   ],
-  maxResponseTime: 5000, // 5 секунд
-  ragTestQuery: 'Найди последние новости о искусственном интеллекте',
+  maxResponseTime: 5000, // 5 seconds
+  ragTestQuery: 'Find the latest news about artificial intelligence',
 };
 
 class AIModelsDiagnostics {
@@ -39,7 +39,7 @@ class AIModelsDiagnostics {
       recommendations: [],
     };
 
-    // Создание директорий для результатов
+    // Create directories for results
     this.ensureDirectories();
   }
 
@@ -52,20 +52,20 @@ class AIModelsDiagnostics {
   }
 
   async initialize() {
-    console.log('🚀 Инициализация Playwright браузера...');
+    console.log('🚀 Initializing Playwright browser...');
 
     this.browser = await chromium.launch({
-      headless: false, // Показывать браузер для отладки
-      slowMo: 1000, // Замедление для наблюдения
+      headless: false, // Show browser for debugging
+      slowMo: 1000, // Slow down for observation
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
     this.page = await this.browser.newPage();
 
-    // Настройка таймаутов
+    // Configure timeouts
     this.page.setDefaultTimeout(CONFIG.timeout);
 
-    // Перехват консольных сообщений
+    // Intercept console messages
     this.page.on('console', msg => {
       if (msg.type() === 'error') {
         this.results.errors.push({
@@ -76,21 +76,21 @@ class AIModelsDiagnostics {
       }
     });
 
-    console.log('✅ Браузер инициализирован');
+    console.log('✅ Browser initialized');
   }
 
   async navigateToOpenWebUI() {
-    console.log('🌐 Переход к OpenWebUI...');
+    console.log('🌐 Navigating to OpenWebUI...');
 
     try {
       await this.page.goto(CONFIG.baseUrl, { waitUntil: 'networkidle' });
 
-      // Скриншот главной страницы
+      // Screenshot of main page
       await this.takeScreenshot('01-main-page');
 
-      // Проверка загрузки страницы
+      // Check page load
       const title = await this.page.title();
-      console.log(`📄 Заголовок страницы: ${title}`);
+      console.log(`📄 Page title: ${title}`);
 
       this.results.systemStatus.webUIAccessible = true;
       this.results.systemStatus.pageTitle = title;
@@ -105,15 +105,15 @@ class AIModelsDiagnostics {
   }
 
   async checkAvailableModels() {
-    console.log('🤖 Проверка доступных моделей...');
+    console.log('🤖 Checking available models...');
 
     try {
-      // Ожидание загрузки интерфейса
+      // Wait for interface load
       await this.page.waitForSelector('[data-testid="model-selector"], .model-selector, select', {
         timeout: 10000,
       });
 
-      // Поиск селектора моделей (различные варианты)
+      // Search for model selector (various options)
       const modelSelectors = [
         '[data-testid="model-selector"]',
         '.model-selector',
@@ -132,28 +132,28 @@ class AIModelsDiagnostics {
       }
 
       if (!modelSelector) {
-        throw new Error('Селектор моделей не найден');
+        throw new Error('Model selector not found');
       }
 
-      // Клик по селектору моделей
+      // Click on model selector
       await this.page.click(modelSelector);
       await this.page.waitForTimeout(2000);
 
-      // Скриншот списка моделей
+      // Screenshot of models list
       await this.takeScreenshot('02-models-list');
 
-      // Получение списка доступных моделей
+      // Get list of available models
       const models = await this.page.$$eval('option, .dropdown-item, [role="option"]', elements =>
         elements.map(el => el.textContent?.trim()).filter(Boolean),
       );
 
-      console.log(`📋 Найдено моделей: ${models.length}`);
+      console.log(`📋 Models found: ${models.length}`);
       models.forEach(model => console.log(`  - ${model}`));
 
       this.results.systemStatus.availableModels = models;
       this.results.systemStatus.modelsCount = models.length;
 
-      // Проверка ожидаемых моделей
+      // Check expected models
       const missingModels = CONFIG.expectedModels.filter(
         expected => !models.some(available => available.includes(expected.split(':')[0])),
       );
@@ -161,7 +161,7 @@ class AIModelsDiagnostics {
       if (missingModels.length > 0) {
         this.results.errors.push({
           type: 'missing_models',
-          message: `Отсутствуют модели: ${missingModels.join(', ')}`,
+          message: `Missing models: ${missingModels.join(', ')}`,
           timestamp: new Date().toISOString(),
         });
       }
@@ -171,23 +171,22 @@ class AIModelsDiagnostics {
         message: error.message,
         timestamp: new Date().toISOString(),
       });
-      console.error('❌ Ошибка при проверке моделей:', error.message);
+      console.error('❌ Error checking models:', error.message);
     }
   }
 
   async testTextGeneration() {
-    console.log('✍️ Тестирование генерации текста...');
+    console.log('✍️ Testing text generation...');
 
     for (const prompt of CONFIG.testPrompts) {
-      console.log(`📝 Тестирование промпта: "${prompt}"`);
+      console.log(`📝 Testing prompt: "${prompt}"`);
 
       try {
         const startTime = Date.now();
 
-        // Поиск поля ввода
+        // Search for input field
         const inputSelectors = [
           'textarea[placeholder*="message"]',
-          'textarea[placeholder*="сообщение"]',
           '.chat-input textarea',
           'input[type="text"]',
           '[contenteditable="true"]',
@@ -203,18 +202,17 @@ class AIModelsDiagnostics {
         }
 
         if (!inputSelector) {
-          throw new Error('Поле ввода не найдено');
+          throw new Error('Input field not found');
         }
 
-        // Ввод текста
+        // Enter text
         await this.page.fill(inputSelector, prompt);
         await this.page.waitForTimeout(1000);
 
-        // Поиск кнопки отправки
+        // Search for send button
         const sendSelectors = [
           'button[type="submit"]',
           'button[aria-label*="send"]',
-          'button[aria-label*="отправить"]',
           '.send-button',
           '[data-testid="send-button"]',
         ];
@@ -229,20 +227,20 @@ class AIModelsDiagnostics {
         }
 
         if (!sendButton) {
-          // Попробовать Enter
+          // Try Enter
           await this.page.press(inputSelector, 'Enter');
         } else {
           await this.page.click(sendButton);
         }
 
-        // Ожидание ответа
+        // Wait for response
         await this.page.waitForSelector('.message, .chat-message, .response', {
           timeout: CONFIG.maxResponseTime,
         });
 
         const responseTime = Date.now() - startTime;
 
-        // Получение ответа
+        // Get response
         const responses = await this.page.$$eval('.message, .chat-message, .response', elements =>
           elements.map(el => el.textContent?.trim()).filter(Boolean),
         );
@@ -257,9 +255,9 @@ class AIModelsDiagnostics {
           timestamp: new Date().toISOString(),
         });
 
-        console.log(`✅ Ответ получен за ${responseTime}ms`);
+        console.log(`✅ Response received in ${responseTime}ms`);
 
-        // Скриншот диалога
+        // Screenshot of dialog
         await this.takeScreenshot(`03-chat-${this.results.modelTests.length}`);
 
         await this.page.waitForTimeout(2000);
@@ -273,16 +271,16 @@ class AIModelsDiagnostics {
           timestamp: new Date().toISOString(),
         });
 
-        console.error(`❌ Ошибка при тестировании промпта "${prompt}":`, error.message);
+        console.error(`❌ Error testing prompt "${prompt}":`, error.message);
       }
     }
   }
 
   async testRAGIntegration() {
-    console.log('🔍 Тестирование RAG-интеграции...');
+    console.log('🔍 Testing RAG integration...');
 
     try {
-      // Поиск настроек RAG или веб-поиска
+      // Search for RAG or web search settings
       const ragSelectors = [
         '[data-testid="web-search"]',
         '.web-search-toggle',
@@ -301,28 +299,24 @@ class AIModelsDiagnostics {
 
       if (ragToggle) {
         await this.page.click(ragToggle);
-        console.log('🔍 RAG/веб-поиск включен');
+        console.log('🔍 RAG/web search enabled');
       }
 
-      // Тестирование RAG запроса
+      // Testing RAG query
       const startTime = Date.now();
 
-      const inputSelector = [
-        'textarea[placeholder*="message"]',
-        'textarea[placeholder*="сообщение"]',
-        '.chat-input textarea',
-      ].join(', ');
+      const inputSelector = ['textarea[placeholder*="message"]', '.chat-input textarea'].join(', ');
       await this.page.fill(inputSelector, CONFIG.ragTestQuery);
 
       const sendButton = 'button[type="submit"], .send-button';
       await this.page.click(sendButton);
 
-      // Ожидание ответа с источниками
+      // Wait for response with references
       await this.page.waitForSelector('.message, .chat-message, .response', { timeout: 15000 });
 
       const responseTime = Date.now() - startTime;
 
-      // Поиск источников
+      // Collect sources
       const collectSources = elements =>
         elements.map(el => el.textContent || el.href).filter(Boolean);
 
@@ -332,14 +326,14 @@ class AIModelsDiagnostics {
         query: CONFIG.ragTestQuery,
         responseTime,
         sourcesFound: sources.length,
-        sources: sources.slice(0, 5), // Первые 5 источников
+        sources: sources.slice(0, 5), // First five sources
         success: true,
         timestamp: new Date().toISOString(),
       });
 
-      console.log(`✅ RAG тест завершен. Найдено источников: ${sources.length}`);
+      console.log(`✅ RAG test completed. Sources found: ${sources.length}`);
 
-      // Скриншот RAG ответа
+      // Screenshot of the RAG response
       await this.takeScreenshot('04-rag-response');
     } catch (error) {
       this.results.ragTests.push({
@@ -352,7 +346,7 @@ class AIModelsDiagnostics {
         timestamp: new Date().toISOString(),
       });
 
-      console.error('❌ Ошибка при тестировании RAG:', error.message);
+      console.error('❌ Error testing RAG:', error.message);
     }
   }
 
@@ -360,13 +354,13 @@ class AIModelsDiagnostics {
     const filename = `${name}-${Date.now()}.png`;
     const filepath = path.join(CONFIG.screenshotsDir, filename);
     await this.page.screenshot({ path: filepath, fullPage: true });
-    console.log(`📸 Скриншот сохранен: ${filename}`);
+    console.log(`📸 Screenshot saved: ${filename}`);
   }
 
   async generateReport() {
-    console.log('📊 Генерация отчета...');
+    console.log('📊 Generating report...');
 
-    // Расчет метрик производительности
+    // Calculate performance metrics
     const successfulTests = this.results.modelTests.filter(test => test.success);
     const avgResponseTime =
       successfulTests.length > 0
@@ -382,16 +376,16 @@ class AIModelsDiagnostics {
       totalErrors: this.results.errors.length,
     };
 
-    // Генерация рекомендаций
+    // Build recommendations
     this.generateRecommendations();
 
-    // Сохранение отчета
+    // Persist report
     const reportPath = path.join(CONFIG.reportsDir, `ai-diagnostics-${Date.now()}.json`);
     fs.writeFileSync(reportPath, JSON.stringify(this.results, null, 2));
 
-    console.log(`📋 Отчет сохранен: ${reportPath}`);
+    console.log(`📋 Report saved: ${reportPath}`);
 
-    // Вывод краткого отчета в консоль
+    // Print brief summary to the console
     this.printSummary();
   }
 
@@ -400,47 +394,45 @@ class AIModelsDiagnostics {
 
     if (performanceMetrics.averageResponseTime > CONFIG.maxResponseTime) {
       this.results.recommendations.push(
-        'Время отклика превышает ожидаемое. Рекомендуется оптимизация GPU или модели.',
+        'Response time exceeds the expected threshold. Consider optimizing the GPU or model.',
       );
     }
 
     if (performanceMetrics.failedTests > 0) {
-      this.results.recommendations.push(
-        'Обнаружены неудачные тесты. Проверьте логи Ollama и OpenWebUI.',
-      );
+      this.results.recommendations.push('Some tests failed. Review the Ollama and OpenWebUI logs.');
     }
 
     if (errors.some(error => error.type === 'missing_models')) {
       this.results.recommendations.push(
-        'Отсутствуют ожидаемые модели. Загрузите недостающие модели через Ollama.',
+        'Expected models are missing. Pull the required models through Ollama.',
       );
     }
 
     if (this.results.ragTests.length === 0 || !this.results.ragTests.some(test => test.success)) {
       this.results.recommendations.push(
-        'RAG-интеграция не работает. Проверьте SearXNG и настройки веб-поиска.',
+        'RAG integration failed. Inspect SearXNG and the web-search configuration.',
       );
     }
   }
 
   printSummary() {
     console.log('\n' + '='.repeat(60));
-    console.log('📊 КРАТКИЙ ОТЧЕТ ДИАГНОСТИКИ AI МОДЕЛЕЙ');
+    console.log('📊 AI MODELS DIAGNOSTICS SUMMARY');
     console.log('='.repeat(60));
 
     const { systemStatus, performanceMetrics } = this.results;
 
-    console.log(`🌐 OpenWebUI доступен: ${systemStatus.webUIAccessible ? '✅' : '❌'}`);
-    console.log(`🤖 Доступно моделей: ${systemStatus.modelsCount || 0}`);
+    console.log(`🌐 OpenWebUI accessible: ${systemStatus.webUIAccessible ? '✅' : '❌'}`);
+    console.log(`🤖 Models available: ${systemStatus.modelsCount || 0}`);
     console.log(
-      `✅ Успешных тестов: ${performanceMetrics.successfulTests}/${performanceMetrics.totalTests}`,
+      `✅ Successful tests: ${performanceMetrics.successfulTests}/${performanceMetrics.totalTests}`,
     );
-    console.log(`⏱️  Среднее время отклика: ${performanceMetrics.averageResponseTime}ms`);
-    console.log(`🔍 RAG тесты: ${performanceMetrics.ragTestsSuccessful} успешных`);
-    console.log(`❌ Всего ошибок: ${performanceMetrics.totalErrors}`);
+    console.log(`⏱️  Average response time: ${performanceMetrics.averageResponseTime}ms`);
+    console.log(`🔍 RAG tests: ${performanceMetrics.ragTestsSuccessful} successful`);
+    console.log(`❌ Total errors: ${performanceMetrics.totalErrors}`);
 
     if (this.results.recommendations.length > 0) {
-      console.log('\n📋 РЕКОМЕНДАЦИИ:');
+      console.log('\n📋 RECOMMENDATIONS:');
       this.results.recommendations.forEach((rec, index) => {
         console.log(`${index + 1}. ${rec}`);
       });
@@ -452,7 +444,7 @@ class AIModelsDiagnostics {
   async cleanup() {
     if (this.browser) {
       await this.browser.close();
-      console.log('🧹 Браузер закрыт');
+      console.log('🧹 Browser closed');
     }
   }
 
@@ -465,7 +457,7 @@ class AIModelsDiagnostics {
       await this.testRAGIntegration();
       await this.generateReport();
     } catch (error) {
-      console.error('💥 Критическая ошибка:', error.message);
+      console.error('💥 Critical error:', error.message);
       this.results.errors.push({
         type: 'critical_error',
         message: error.message,
@@ -477,7 +469,7 @@ class AIModelsDiagnostics {
   }
 }
 
-// Запуск диагностики
+// Standalone diagnostics execution
 if (require.main === module) {
   const diagnostics = new AIModelsDiagnostics();
   diagnostics.run().catch(console.error);

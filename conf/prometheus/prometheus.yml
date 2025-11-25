@@ -1,39 +1,39 @@
-# Prometheus configuration для проекта erni-ki
-# Сбор метрик сервисов и мониторинг AI инфраструктуры
-# Оптимизировано согласно best practices 2025 (обновлено 2025-09-25)
+# Prometheus configuration for erni-ki project
+# Service metrics collection and AI infrastructure monitoring
+# Optimized according to best practices 2025 (updated 2025-09-25)
 
 global:
-  scrape_interval: 30s # Оптимизировано для AI workloads
-  evaluation_interval: 30s # Синхронизировано с scrape_interval
-  scrape_timeout: 10s # Глобальный timeout для стабильности
+  scrape_interval: 30s # Optimized for AI workloads
+  evaluation_interval: 30s # Synchronized with scrape_interval
+  scrape_timeout: 10s # Global timeout for stability
   external_labels:
     cluster: "erni-ki"
     environment: "production"
     region: "eu-central"
-  # Retention policy оптимизирован для production AI метрик (обновлено)
-  # Хранение: 30 дней для детальных метрик (увеличено с 15 дней)
-  # Размер: 50GB максимум для оптимального использования диска
-  # Downsampling: 5m агрегация после 24h
+  # Retention policy optimized for production AI metrics (updated)
+  # Retention: 30 days for detailed metrics (increased from 15 days)
+  # Size: 50GB maximum for optimal disk usage
+  # Downsampling: 5m aggregation after 24h
 
-# Правила алертинга (оптимизированы для USE/RED + SLA)
+# Alerting rules (optimized for USE/RED + SLA)
 rule_files:
   - "alert_rules.yml"
   - "rules/erni-ki-alerts.yml"
   - "rules/logging-system-alerts.yml"
   - "rules/sla-alerts.yml"
-  - "rules/production-sla-alerts.yml"  # Добавлено: Production SLA алерты
-  - "rules/redis-alerts.yml"  # Добавлено: 2025-10-02 Redis мониторинг
-  - "alerts/litellm-memory.yml"  # Восстановлено: 2025-10-02 после добавления volume mount
-  - "alerts.yml"  # ДОБАВЛЕНО 2025-10-24: Основные системные алерты (disk, memory, CPU, containers)
+  - "rules/production-sla-alerts.yml"  # Added: Production SLA alerts
+  - "rules/redis-alerts.yml"  # Added: 2025-10-02 Redis monitoring
+  - "alerts/litellm-memory.yml"  # Restored: 2025-10-02 after adding volume mount
+  - "alerts.yml"  # ADDED 2025-10-24: Main system alerts (disk, memory, CPU, containers)
 
-# Конфигурация Alertmanager
+# Alertmanager configuration
 alerting:
   alertmanagers:
     - static_configs:
         - targets:
             - alertmanager:9093
 
-# Конфигурация сбора метрик
+# Metrics collection configuration
 scrape_configs:
   # ============================================================================
   # CORE INFRASTRUCTURE MONITORING (USE Methodology)
@@ -47,45 +47,45 @@ scrape_configs:
     metrics_path: /metrics
     scrape_timeout: 15s
 
-  # Alertmanager метрики для мониторинга cluster и queue
+  # Alertmanager metrics for cluster and queue monitoring
   - job_name: "alertmanager"
     static_configs:
       - targets: ["alertmanager:9093"]
-    scrape_interval: 30s # Оптимизировано для queue monitoring
+    scrape_interval: 30s # Optimized for queue monitoring
     metrics_path: /metrics
     scrape_timeout: 15s
-    # USE метрики:
+    # USE metrics:
     # - alertmanager_cluster_messages_queued (Saturation)
     # - alertmanager_cluster_health_score (Errors)
     # - alertmanager_cluster_members (Utilization)
 
-  # Node Exporter для системных метрик (USE: CPU, Memory, Disk, Network)
-  # ИСПРАВЛЕНО 2025-10-24: Увеличен timeout для предотвращения connection reset errors
+  # Node Exporter for system metrics (USE: CPU, Memory, Disk, Network)
+  # FIXED 2025-10-24: Increased timeout to prevent connection reset errors
   - job_name: "node-exporter"
     static_configs:
       - targets: ["node-exporter:9100"]
-    scrape_interval: 30s # Уменьшен с 60s для более частого сбора метрик
-    scrape_timeout: 25s  # Увеличен с 15s для предотвращения broken pipe errors
+    scrape_interval: 30s # Reduced from 60s for more frequent metrics collection
+    scrape_timeout: 25s  # Increased from 15s to prevent broken pipe errors
     metrics_path: /metrics
-    # USE метрики:
+    # USE metrics:
     # - node_cpu_seconds_total (Utilization)
     # - node_memory_MemAvailable_bytes (Utilization)
     # - node_load1, node_load5, node_load15 (Saturation)
     # - node_filesystem_avail_bytes (Utilization)
 
-  # cAdvisor для метрик контейнеров (USE: Container Resources)
+  # cAdvisor for container metrics (USE: Container Resources)
   - job_name: "cadvisor"
     static_configs:
       - targets: ["cadvisor:8080"]
-    scrape_interval: 15s # Частый сбор для контейнерных метрик
+    scrape_interval: 15s # Frequent collection for container metrics
     metrics_path: /metrics
     scrape_timeout: 10s
-    # USE метрики:
+    # USE metrics:
     # - container_cpu_usage_seconds_total (Utilization)
     # - container_memory_usage_bytes (Utilization)
     # - container_memory_working_set_bytes (Saturation)
 
-  # Auth service метрики - отключено (нет /metrics endpoint)
+  # Auth service metrics - disabled (no /metrics endpoint)
   # - job_name: "auth-service"
   #   static_configs:
   #     - targets: ["auth:9090"]
@@ -97,46 +97,46 @@ scrape_configs:
   # APPLICATION SERVICES MONITORING (RED Methodology)
   # ============================================================================
 
-  # Nginx метрики (RED: Request Rate, Error Rate, Duration)
+  # Nginx metrics (RED: Request Rate, Error Rate, Duration)
   - job_name: "nginx"
     static_configs:
       - targets: ["nginx-exporter:9113"]
-    scrape_interval: 15s # Частый сбор для веб-сервера
+    scrape_interval: 15s # Frequent collection for web server
     metrics_path: /metrics
     scrape_timeout: 10s
-    # RED метрики:
+    # RED metrics:
     # - nginx_http_requests_total (Rate)
     # - nginx_http_request_duration_seconds (Duration)
     # - nginx_connections_active (Utilization)
 
-  # PostgreSQL метрики (USE: Database Resources)
+  # PostgreSQL metrics (USE: Database Resources)
   - job_name: "postgres"
     static_configs:
       - targets: ["postgres-exporter:9187"]
-    scrape_interval: 30s # Стандартный интервал для БД
+    scrape_interval: 30s # Standard interval for DB
     metrics_path: /metrics
     scrape_timeout: 15s
-    # USE метрики:
+    # USE metrics:
     # - pg_stat_database_tup_fetched (Utilization)
     # - pg_stat_database_conflicts (Errors)
     # - pg_locks_count (Saturation)
 
-  # Redis метрики (USE: Cache Performance)
+  # Redis metrics (USE: Cache Performance)
   - job_name: "redis"
     static_configs:
       - targets: ["redis-exporter:9121"]
-    scrape_interval: 15s # Частый сбор для кэша
+    scrape_interval: 15s # Frequent collection for cache
     metrics_path: /metrics
     scrape_timeout: 10s
-    # USE метрики:
+    # USE metrics:
     # - redis_memory_used_bytes (Utilization)
     # - redis_connected_clients (Utilization)
     # - redis_commands_processed_total (Rate)
     # - redis_keyspace_hits_total/redis_keyspace_misses_total (Efficiency)
 
-  # Redis Backup метрики будут добавлены через webhook или pushgateway
-  # Пока используем алерты на основе существующих Redis метрик
-  # Backup метрики:
+  # Redis Backup metrics will be added via webhook or pushgateway
+  # Currently using alerts based on existing Redis metrics
+  # Backup metrics:
   # - redis_backup_source_up (Availability)
   # - redis_backup_last_success (Success Rate)
   # - redis_backup_integrity_ok (Quality)
@@ -146,38 +146,38 @@ scrape_configs:
   # AI SERVICES MONITORING (RED + Custom AI Metrics)
   # ============================================================================
 
-  # Ollama метрики - LLM inference сервер
+  # Ollama metrics - LLM inference server
   - job_name: "ollama-exporter"
     static_configs:
       - targets: ["ollama-exporter:9778"]
-    scrape_interval: 15s # Частый сбор для AI inference
+    scrape_interval: 15s # Frequent collection for AI inference
     metrics_path: /metrics
     scrape_timeout: 10s
-    # AI-specific метрики:
+    # AI-specific metrics:
     # - ollama_request_duration_seconds (Duration)
     # - ollama_active_requests (Utilization)
     # - ollama_model_load_duration_seconds (Performance)
 
-  # vLLM высокопроизводительный inference сервер метрики - ОТКЛЮЧЕНО (сервис не запущен)
+  # vLLM high-performance inference server metrics - DISABLED (service not running)
   # - job_name: "vllm"
   #   static_configs:
   #     - targets: ["vllm:8000"]
-  #   scrape_interval: 15s # Частый сбор для AI inference мониторинга
+  #   scrape_interval: 15s # Frequent collection for AI inference monitoring
   #   metrics_path: /metrics
   #   scrape_timeout: 10s
-  #   # Авторизация для доступа к метрикам
+  #   # Authorization for metrics access
   #   authorization:
   #     type: Bearer
   #     credentials: "erni-ki-vllm-secure-key-2024"
-  #   # Специальные метрики vLLM:
-  #   # - vllm:num_requests_running (активные запросы)
-  #   # - vllm:num_requests_waiting (очередь запросов)
-  #   # - vllm:gpu_cache_usage_perc (использование GPU кэша)
-  #   # - vllm:time_to_first_token_seconds (latency метрики)
-  #   # - vllm:time_per_output_token_seconds (throughput метрики)
+  #   # Special vLLM metrics:
+  #   # - vllm:num_requests_running (active requests)
+  #   # - vllm:num_requests_waiting (queued requests)
+  #   # - vllm:gpu_cache_usage_perc (GPU cache usage)
+  #   # - vllm:time_to_first_token_seconds (latency metrics)
+  #   # - vllm:time_per_output_token_seconds (throughput metrics)
   #   # - vllm:e2e_request_latency_seconds (end-to-end latency)
 
-  # SearXNG метрики - отключено (возвращает HTML вместо метрик)
+  # SearXNG metrics - disabled (returns HTML instead of metrics)
   # - job_name: "searxng"
   #   static_configs:
   #     - targets: ["searxng:8080"]
@@ -185,7 +185,7 @@ scrape_configs:
   #   metrics_path: /stats
   #   scrape_timeout: 15s
 
-  # Docling метрики - отключено (нет /metrics endpoint)
+  # Docling metrics - disabled (no /metrics endpoint)
   # - job_name: "docling"
   #   static_configs:
   #     - targets: ["docling:5001"]
@@ -193,7 +193,7 @@ scrape_configs:
   #   metrics_path: /metrics
   #   scrape_timeout: 15s
 
-  # EdgeTTS метрики - отключено (нет /metrics endpoint)
+  # EdgeTTS metrics - disabled (no /metrics endpoint)
   # - job_name: "edgetts"
   #   static_configs:
   #     - targets: ["edgetts:5050"]
@@ -201,7 +201,7 @@ scrape_configs:
   #   metrics_path: /metrics
   #   scrape_timeout: 15s
 
-  # Tika метрики - отключено (нет /metrics endpoint)
+  # Tika metrics - disabled (no /metrics endpoint)
   # - job_name: "tika"
   #   static_configs:
   #     - targets: ["tika:9998"]
@@ -209,7 +209,7 @@ scrape_configs:
   #   metrics_path: /metrics
   #   scrape_timeout: 15s
 
-  # Cloudflared метрики - ОТКЛЮЧЕНО (сервис не предоставляет /metrics endpoint)
+  # Cloudflared metrics - DISABLED (service does not provide /metrics endpoint)
   # - job_name: "cloudflared"
   #   static_configs:
   #     - targets: ["cloudflared:8080"]
@@ -239,10 +239,10 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: blackbox-exporter:9115
-    scrape_interval: 30s # SLA проверки каждые 30 секунд
+    scrape_interval: 30s # SLA checks every 30 seconds
     scrape_timeout: 15s
 
-  # Blackbox exporter для проверки TCP портов
+  # Blackbox exporter for TCP port checks
   - job_name: "blackbox-tcp"
     metrics_path: /probe
     params:
@@ -260,20 +260,20 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox-exporter:9115
 
-  # NVIDIA GPU Exporter для мониторинга GPU (USE + AI-specific)
+  # NVIDIA GPU Exporter for GPU monitoring (USE + AI-specific)
   - job_name: "nvidia-exporter"
     static_configs:
       - targets: ["nvidia-exporter:9445"]
-    scrape_interval: 10s # Высокочастотный сбор для GPU
+    scrape_interval: 10s # High-frequency collection for GPU
     metrics_path: /metrics
     scrape_timeout: 8s
-    # GPU USE метрики:
+    # GPU USE metrics:
     # - nvidia_gpu_utilization_gpu (Utilization)
     # - nvidia_gpu_memory_used_bytes (Utilization)
     # - nvidia_gpu_temperature_celsius (Saturation)
     # - nvidia_gpu_power_draw_watts (Utilization)
 
-  # Webhook receiver метрики - ОТКЛЮЧЕНО (сервис не предоставляет /metrics endpoint)
+  # Webhook receiver metrics - DISABLED (service does not provide /metrics endpoint)
   # - job_name: "webhook-receiver"
   #   static_configs:
   #     - targets: ["webhook-receiver:9093"]
@@ -281,8 +281,8 @@ scrape_configs:
   #   metrics_path: /metrics
   #   scrape_timeout: 10s
 
-  # Fluent Bit метрики (JSON format - будет конвертировано в алертах)
-  # Fluent Bit scrape отключен (экспортер Prometheus недоступен)
+  # Fluent Bit metrics (JSON format - will be converted in alerts)
+  # Fluent Bit scrape disabled (Prometheus exporter unavailable)
   # - job_name: "fluent-bit-prom"
   #   static_configs:
   #     - targets: ["fluent-bit:2021"]
@@ -290,7 +290,7 @@ scrape_configs:
   #   metrics_path: /metrics
   #   scrape_timeout: 10s
 
-  # Elasticsearch метрики - ОТКЛЮЧЕНО (требуется отдельный elasticsearch_exporter)
+  # Elasticsearch metrics - DISABLED (requires separate elasticsearch_exporter)
   # - job_name: "elasticsearch"
   #   static_configs:
   #     - targets: ["elasticsearch:9200"]
@@ -298,7 +298,7 @@ scrape_configs:
   #   metrics_path: /_prometheus/metrics
   #   scrape_timeout: 10s
 
-  # Blackbox exporter: проверяем доступность через внутренний порт 8080 (без TLS рукопожатий)
+  # Blackbox exporter: check availability via internal port 8080 (no TLS handshakes)
   - job_name: "blackbox-nginx-8080"
     metrics_path: /probe
     params:
@@ -315,7 +315,7 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox-exporter:9115
 
-  # Blackbox exporter для проверки внутренних сервисов (только активные HTTP endpoints)
+  # Blackbox exporter for internal services checks (only active HTTP endpoints)
   - job_name: "blackbox-internal"
     metrics_path: /probe
     params:
@@ -337,7 +337,7 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox-exporter:9115
 
-  # NVIDIA GPU метрики
+  # NVIDIA GPU metrics
   - job_name: "nvidia-gpu"
     static_configs:
       - targets: ["nvidia-exporter:9445"]
@@ -346,20 +346,20 @@ scrape_configs:
     scrape_timeout: 15s
 
   # ============================================================================
-  # MCP (Model Context Protocol) МОНИТОРИНГ
+  # MCP (Model Context Protocol) MONITORING
   # ============================================================================
 
   # LiteLLM Context Engineering Gateway (RED + AI Performance)
-  # ОТКЛЮЧЕНО: 2025-10-03 - Prometheus callbacks требуют Enterprise лицензию
-  # Endpoint /metrics/ возвращает 404 Not Found
-  # Альтернативы: Loki логи, health check endpoint /health/readiness, blackbox monitoring
+  # DISABLED: 2025-10-03 - Prometheus callbacks require Enterprise license
+  # Endpoint /metrics/ returns 404 Not Found
+  # Alternatives: Loki logs, health check endpoint /health/readiness, blackbox monitoring
   # - job_name: "litellm"
   #   static_configs:
   #     - targets: ["litellm:4000"]
-  #   scrape_interval: 15s # Частый сбор для AI gateway
+  #   scrape_interval: 15s # Frequent collection for AI gateway
   #   metrics_path: /metrics/
   #   scrape_timeout: 10s
-  #   # RED + AI метрики:
+  #   # RED + AI metrics:
   #   # - litellm_proxy_total_requests_metric (Rate)
   #   # - litellm_proxy_failed_requests_metric (Errors)
   #   # - litellm_request_total_latency_metric (Duration)
@@ -368,19 +368,19 @@ scrape_configs:
   #   # - litellm_deployment_success_responses (Success Rate)
   #   # - litellm_deployment_failure_responses (Error Rate)
 
-  # Custom PublicAI provider metrics exported из LiteLLM
+  # Custom PublicAI provider metrics exported from LiteLLM
   - job_name: "litellm-publicai"
     static_configs:
       - targets: ["litellm:9109"]
     scrape_interval: 15s
     metrics_path: /metrics
     scrape_timeout: 10s
-    # Метрики:
+    # Metrics:
     # - litellm_publicai_requests_total (Rate)
     # - litellm_publicai_request_latency_seconds (Duration)
     # - litellm_publicai_request_errors_total (Errors)
 
-  # MCP Tools доступность (blackbox monitoring) - ОТКЛЮЧЕНО (endpoints возвращают 404)
+  # MCP Tools availability (blackbox monitoring) - DISABLED (endpoints return 404)
   # - job_name: "mcp-tools-blackbox"
   #   metrics_path: /probe
   #   params:
@@ -400,11 +400,11 @@ scrape_configs:
   #     - target_label: __address__
   #       replacement: blackbox-exporter:9115
 
-  # SearXNG API производительность (blackbox monitoring) - ИСПРАВЛЕНО
+  # SearXNG API performance (blackbox monitoring) - FIXED
   - job_name: "blackbox-searxng-api"
     metrics_path: /probe
     params:
-      module: [searxng_api_json]  # Используем исправленный модуль с JSON валидацией
+      module: [searxng_api_json]  # Using fixed module with JSON validation
     static_configs:
       - targets:
           - http://nginx:8080/api/searxng/search?q=monitoring-test&format=json
@@ -437,12 +437,12 @@ scrape_configs:
     metrics_path: /metrics
     scrape_timeout: 10s
 
-  # RAG Exporter (latency & sources_count) - оптимизировано для non-critical
+  # RAG Exporter (latency & sources_count) - optimized for non-critical
   - job_name: "rag-exporter"
     static_configs:
       - targets: ["rag-exporter:9808"]
-    scrape_interval: 60s # Увеличено для non-critical метрик
+    scrape_interval: 60s # Increased for non-critical metrics
     metrics_path: /metrics
     scrape_timeout: 10s
-# Примечание: Конфигурация хранения данных и веб-интерфейса
-# задается через command line аргументы в docker-compose.monitoring.yml
+# Note: Data storage and web interface configuration
+# is set via command line arguments in docker-compose.monitoring.yml

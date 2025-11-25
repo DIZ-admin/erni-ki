@@ -1,9 +1,21 @@
-# 🚀 Detaillierte Installationsanleitung für ERNI-KI
+---
+language: de
+translation_status: pending
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+title: ' Detaillierte Installationsanleitung für ERNI-KI'
+system_version: '12.1'
+date: '2025-11-22'
+system_status: 'Production Ready'
+audience: 'administrators'
+---
+
+# Detaillierte Installationsanleitung für ERNI-KI
 
 > **Dokumentversion:** 2.0 **Aktualisierungsdatum:** 2025-07-04
-> **Installationszeit:** 30-60 Minuten
+> **Installationszeit:** 30-60 Minuten [TOC]
 
-## 📋 Systemanforderungen
+## Systemanforderungen
 
 ### Mindestanforderungen
 
@@ -27,7 +39,7 @@
 - **Minimaler VRAM**: 6GB für 7B-Parameter-Modelle
 - **Empfohlener VRAM**: 12GB+ für 13B+ Parameter-Modelle
 
-## 🔧 System-Vorbereitung
+## System-Vorbereitung
 
 ### 1. System-Update
 
@@ -65,7 +77,7 @@ docker --version
 docker compose version
 ```
 
-#### Manuelle Docker Installation (Ubuntu)
+## Manuelle Docker Installation (Ubuntu)
 
 ```bash
 # Alte Versionen entfernen
@@ -85,9 +97,9 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 ```
 
-### 3. NVIDIA GPU Konfiguration (optional)
+## 3. NVIDIA GPU Konfiguration (optional)
 
-#### NVIDIA Treiber Installation
+### NVIDIA Treiber Installation
 
 ```bash
 # GPU-Verfügbarkeit prüfen
@@ -100,7 +112,7 @@ sudo apt install -y nvidia-driver-535 nvidia-utils-535
 sudo reboot
 ```
 
-#### NVIDIA Container Toolkit Installation
+## NVIDIA Container Toolkit Installation
 
 ```bash
 # NVIDIA Repository hinzufügen
@@ -119,7 +131,7 @@ sudo systemctl restart docker
 docker run --rm --gpus all nvidia/cuda:11.8-base-ubuntu20.04 nvidia-smi
 ```
 
-## 📦 ERNI-KI Installation
+## ERNI-KI Installation
 
 ### 1. Repository klonen
 
@@ -132,9 +144,9 @@ cd erni-ki
 ls -la
 ```
 
-### 2. Konfigurationsdateien einrichten
+## 2. Konfigurationsdateien einrichten
 
-#### Beispiel-Konfigurationen kopieren
+### Beispiel-Konfigurationen kopieren
 
 ```bash
 # Haupt-Compose-Datei kopieren
@@ -142,7 +154,7 @@ cp compose.yml.example compose.yml
 
 # Alle Umgebungsvariablen kopieren
 for file in env/*.example; do
-  cp "$file" "${file%.example}"
+ cp "$file" "${file%.example}"
 done
 
 # Nginx-Konfigurationen kopieren
@@ -150,12 +162,12 @@ cp conf/nginx/nginx.example conf/nginx/nginx.conf
 cp conf/nginx/conf.d/default.example conf/nginx/conf.d/default.conf
 ```
 
-#### Geheime Schlüssel generieren
+## Geheime Schlüssel generieren
 
 ```bash
 # Skript für Schlüsselgenerierung erstellen
 cat > scripts/generate-secrets.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 
 # Zufällige Schlüssel generieren
 JWT_SECRET=$(openssl rand -hex 32)
@@ -169,16 +181,16 @@ sed -i "s/89f03e7ae86485051232d47071a15241ae727f705589776321b5a52e14a6fe57/$WEBU
 sed -i "s/CHANGE_BEFORE_GOING_LIVE/$SEARXNG_SECRET_KEY/g" env/searxng.env
 sed -i "s/CHANGE_BEFORE_GOING_LIVE/$POSTGRES_PASSWORD/g" env/postgres.env
 
-echo "✅ Geheime Schlüssel erfolgreich generiert!"
+echo " Geheime Schlüssel erfolgreich generiert!"
 EOF
 
 chmod +x scripts/generate-secrets.sh
 ./scripts/generate-secrets.sh
 ```
 
-### 3. Umgebungsvariablen konfigurieren
+## 3. Umgebungsvariablen konfigurieren
 
-#### Grundeinstellungen (env/openwebui.env)
+### Grundeinstellungen (env/openwebui.env)
 
 ```bash
 # Grundeinstellungen bearbeiten
@@ -202,7 +214,7 @@ ENABLE_RAG_WEB_SEARCH=true
 FILE_UPLOAD_LIMIT=104857600
 ```
 
-#### Cloudflare-Konfiguration (optional)
+## Cloudflare-Konfiguration (optional)
 
 ```bash
 # Tunnel-Einstellungen bearbeiten
@@ -214,7 +226,7 @@ nano env/cloudflared.env
 TUNNEL_TOKEN=your-cloudflare-tunnel-token
 ```
 
-#### Datenbank-Konfiguration
+## Datenbank-Konfiguration
 
 ```bash
 # PostgreSQL-Einstellungen prüfen
@@ -228,27 +240,27 @@ POSTGRES_USER=openwebui
 POSTGRES_PASSWORD=generated-password
 ```
 
-### 4. Nginx-Konfiguration
+## 4. Nginx-Konfiguration
 
-#### Domain-Namen aktualisieren
+### Domain-Namen aktualisieren
 
 ```bash
 # Platzhalter durch Ihre Domain ersetzen
 sed -i 's/<domain-name>/your-domain.com/g' conf/nginx/conf.d/default.conf
 ```
 
-#### SSL-Zertifikate einrichten (ohne Cloudflare)
+## SSL-Zertifikate einrichten (ohne Cloudflare)
 
 ```bash
 # Selbstsignierte Zertifikate für Tests erstellen
 sudo mkdir -p /etc/nginx/ssl
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout /etc/nginx/ssl/nginx-selfsigned.key \
-  -out /etc/nginx/ssl/nginx-selfsigned.crt \
-  -subj "/C=DE/ST=Berlin/L=Berlin/O=ERNI-KI/CN=localhost"
+ -keyout /etc/nginx/ssl/nginx-selfsigned.key \
+ -out /etc/nginx/ssl/nginx-selfsigned.crt \
+ -subj "/C=DE/ST=Berlin/L=Berlin/O=ERNI-KI/CN=localhost"
 ```
 
-## 🚀 System starten
+## System starten
 
 ### 1. Erster Start
 
@@ -263,7 +275,7 @@ docker compose ps
 docker compose logs -f
 ```
 
-### 2. Initialisierung abwarten
+## 2. Initialisierung abwarten
 
 ```bash
 # Service-Bereitschaft prüfen (kann 2-5 Minuten dauern)
@@ -272,7 +284,7 @@ watch -n 5 'docker compose ps --format "table {{.Name}}\t{{.Status}}"'
 # Warten bis alle Services "healthy" sind
 ```
 
-### 3. Erstes Sprachmodell laden
+## 3. Erstes Sprachmodell laden
 
 ```bash
 # Leichtes Modell zum Testen laden (3B Parameter)
@@ -285,7 +297,7 @@ docker compose exec ollama ollama pull llama3.1:8b
 docker compose exec ollama ollama list
 ```
 
-## ✅ Installation prüfen
+## Installation prüfen
 
 ### 1. Service-Verfügbarkeit prüfen
 
@@ -303,15 +315,15 @@ curl -s "http://localhost:8080/api/searxng/search?q=test&format=json" | head -5
 # Erwartetes Ergebnis: JSON mit Suchergebnissen
 ```
 
-### 3. Monitoring-Dienste (lokal)
+## 3. Monitoring-Dienste (lokal)
 
-- Prometheus: http://localhost:9091
-- Grafana: http://localhost:3000
-- Alertmanager: http://localhost:9093
-- Loki: http://localhost:3100 (verwenden Sie den Header
+- Prometheus: <http://localhost:9091>
+- Grafana: <http://localhost:3000>
+- Alertmanager: <http://localhost:9093>
+- Loki: <http://localhost:3100> (verwenden Sie den Header
   `X-Scope-OrgID: erni-ki`)
-- Fluent Bit (Prometheus): http://localhost:2020/api/v1/metrics/prometheus
-- RAG Exporter: http://localhost:9808/metrics
+- Fluent Bit (Prometheus): <http://localhost:2020/api/v1/metrics/prometheus>
+- RAG Exporter: <http://localhost:9808/metrics>
 
 ### 2. GPU prüfen (falls installiert)
 
@@ -323,14 +335,14 @@ docker exec erni-ki-ollama-1 nvidia-smi
 docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 ```
 
-### 3. Erste Anmeldung
+## 3. Erste Anmeldung
 
 1. Browser öffnen und zu `http://localhost:8080` navigieren
 2. Administrator-Account erstellen
 3. Ollama-Verbindung konfigurieren: `http://ollama:11434`
 4. Chat mit AI-Modell testen
 
-## 🔧 Konfiguration nach Installation
+## Konfiguration nach Installation
 
 ### 1. Autostart einrichten
 
@@ -359,28 +371,28 @@ sudo systemctl enable erni-ki.service
 sudo systemctl start erni-ki.service
 ```
 
-### 2. Monitoring einrichten
+## 2. Monitoring einrichten
 
 ```bash
 # Monitoring-Skript erstellen
 cat > scripts/health-check.sh << 'EOF'
-#!/bin/bash
+# !/bin/bash
 echo "=== ERNI-KI Health Check ==="
 echo "Datum: $(date)"
 echo ""
 
 # Container-Status prüfen
-echo "📊 Service-Status:"
+echo " Service-Status:"
 docker compose ps --format "table {{.Name}}\t{{.Status}}"
 echo ""
 
 # Ressourcenverbrauch prüfen
-echo "💾 Ressourcenverbrauch:"
+echo " Ressourcenverbrauch:"
 docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 echo ""
 
 # API-Verfügbarkeit prüfen
-echo "🌐 API-Prüfung:"
+echo " API-Prüfung:"
 curl -s -o /dev/null -w "OpenWebUI: %{http_code}\n" http://localhost:8080/
 curl -s -o /dev/null -w "Ollama: %{http_code}\n" http://localhost:11434/
 echo ""
@@ -389,7 +401,7 @@ EOF
 chmod +x scripts/health-check.sh
 ```
 
-### 3. Backup-Konfiguration
+## 3. Backup-Konfiguration
 
 ```bash
 # Backrest über Web-Interface konfigurieren
@@ -398,7 +410,7 @@ echo "Login: admin"
 echo "Passwort: siehe env/backrest.env"
 ```
 
-## 🛠️ Fehlerbehebung
+## Fehlerbehebung
 
 ### Startprobleme
 
@@ -413,7 +425,7 @@ docker compose restart service-name
 docker compose down && docker compose up -d
 ```
 
-### GPU-Probleme
+## GPU-Probleme
 
 ```bash
 # NVIDIA-Treiber prüfen
@@ -426,7 +438,7 @@ docker run --rm --gpus all nvidia/cuda:11.8-base-ubuntu20.04 nvidia-smi
 sed -i 's/# deploy: \*gpu-deploy/deploy: *gpu-deploy/g' compose.yml
 ```
 
-### Netzwerk-Probleme
+## Netzwerk-Probleme
 
 ```bash
 # Docker-Netzwerke prüfen
@@ -437,19 +449,20 @@ docker network inspect erni-ki_default
 sudo systemctl restart docker
 ```
 
-## 📚 Nächste Schritte
+## Nächste Schritte
 
 Nach erfolgreicher Installation wird empfohlen:
 
 1. **[Benutzerhandbuch](user-guide.md) studieren** - Grundlagen der
    Interface-Bedienung
-2. **[Monitoring](../operations/admin-guide.md#monitoring) konfigurieren** -
-   Systemzustand überwachen
+2. **[Monitoring](../operations/core/admin-guide.md#monitoring)
+   konfigurieren** - Systemzustand überwachen
 3. **[API-Dokumentation](../../reference/api-reference.md) studieren** -
    Integration mit externen Systemen
-4. **[Backup](../operations/admin-guide.md#backup) einrichten** - Datenschutz
+4. **[Backup](../operations/core/admin-guide.md#backup) einrichten** -
+   Datenschutz
 
 ---
 
-**🎉 Herzlichen Glückwunsch! ERNI-KI ist erfolgreich installiert und
+** Herzlichen Glückwunsch! ERNI-KI ist erfolgreich installiert und
 einsatzbereit!**

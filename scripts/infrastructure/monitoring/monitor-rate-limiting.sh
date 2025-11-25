@@ -1,26 +1,26 @@
 #!/bin/bash
 
 # ERNI-KI Rate Limiting Monitor
-# Мониторинг и анализ rate limiting событий в nginx
-# Автор: Альтэон Шульц (Tech Lead)
+# Monitoring and analysis of nginx rate limiting events
+# Author: Alteon Schultz (Tech Lead)
 
 set -euo pipefail
 
-# === Конфигурация ===
+# === Configuration ===
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LOG_FILE="$PROJECT_ROOT/logs/rate-limiting-monitor.log"
 STATE_FILE="$PROJECT_ROOT/logs/rate-limiting-state.json"
-ALERT_THRESHOLD=10  # Алерт при >10 блокировок в минуту
-WARNING_THRESHOLD=5 # Предупреждение при >5 блокировок в минуту
-CHECK_INTERVAL=60   # Интервал проверки в секундах
+ALERT_THRESHOLD=10  # Alert when >10 blocks per minute
+WARNING_THRESHOLD=5 # Warning when >5 blocks per minute
+CHECK_INTERVAL=60   # Check interval in seconds
 NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-$PROJECT_ROOT/data/nginx/logs/access.log}"
 COMPOSE_BIN="${DOCKER_COMPOSE_BIN:-docker compose}"
 
-# Создание директории для логов
+# Ensure log directory exists
 mkdir -p "$(dirname "$LOG_FILE")"
 
-# === Функции логирования ===
+# === Logging helpers ===
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"
 }
@@ -37,13 +37,13 @@ warning() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: $*" | tee -a "$LOG_FILE"
 }
 
-# === Функция анализа rate limiting ===
+# === Rate limiting analysis ===
 analyze_rate_limiting() {
-    local time_window="${1:-1m}"  # По умолчанию последняя минута
+    local time_window="${1:-1m}"  # Default: last minute
 
-    log "Анализ rate limiting за последние $time_window"
+    log "Analyzing rate limiting for the last $time_window"
 
-    # Получение логов nginx за указанный период
+    # Get nginx logs for the requested window
     local nginx_logs=""
     nginx_logs=$($COMPOSE_BIN -f "$PROJECT_ROOT/compose.yml" logs nginx --since "$time_window" 2>/dev/null || echo "")
 
@@ -88,26 +88,26 @@ PY
     fi
 
     if [[ -z "$nginx_logs" ]]; then
-        log "Нет логов nginx за указанный период, считаю блокировки равными 0"
+        log "No nginx logs for the selected window; assuming zero blocks"
     fi
 
-    # Подсчет rate limiting ошибок
+    # Count rate limiting errors
     local total_blocks
     total_blocks=$(printf '%s\n' "$nginx_logs" | grep -c "limiting requests" || true)
 
-    # Анализ по зонам
+    # Zone stats
     local zones_stats
     zones_stats=$(printf '%s\n' "$nginx_logs" | grep "limiting requests" | grep -o 'zone "[^"]*"' | sort | uniq -c || echo "")
 
-    # Анализ по IP адресам
+    # IP stats
     local ip_stats
     ip_stats=$(printf '%s\n' "$nginx_logs" | grep "limiting requests" | grep -o 'client: [^,]*' | sort | uniq -c | head -10 || echo "")
 
-    # Максимальное превышение
+    # Max excess
     local max_excess
     max_excess=$(printf '%s\n' "$nginx_logs" | grep "limiting requests" | grep -o 'excess: [0-9.]*' | sort -n | tail -1 | tr -d '\n' || echo "0")
 
-    # Создание JSON отчета
+    # Build JSON report
     local report
     report=$(cat <<EOF
 {
@@ -121,40 +121,40 @@ PY
 EOF
     )
 
-    # Сохранение состояния
+    # Persist state
     echo "$report" > "$STATE_FILE"
 
-    # Логирование результатов
-    log "Rate limiting статистика:"
-    log "  - Всего блокировок: $total_blocks"
-    log "  - Максимальное превышение: ${max_excess#excess: }"
+    # Log results
+    log "Rate limiting stats:"
+    log "  - Total blocks: $total_blocks"
+    log "  - Max excess: ${max_excess#excess: }"
 
     if [[ -n "$zones_stats" ]]; then
-        log "  - По зонам:"
+        log "  - By zones:"
         echo "$zones_stats" | while read -r count zone; do
-            log "    $zone: $count блокировок"
+            log "    $zone: $count blocks"
         done
     fi
 
-    # Проверка порогов и отправка алертов
+    # Threshold checks + alerts
     check_thresholds "$total_blocks" "$report"
 
     return 0
 }
 
-# === Функция проверки порогов ===
+# === Threshold checks ===
 check_thresholds() {
     local total_blocks="$1"
     local report="$2"
 
     if [[ $total_blocks -ge $ALERT_THRESHOLD ]]; then
-        send_alert "CRITICAL" "Rate limiting превысил критический порог: $total_blocks блокировок в минуту (порог: $ALERT_THRESHOLD)" "$report"
+        send_alert "CRITICAL" "Rate limiting exceeded critical threshold: $total_blocks blocks per minute (threshold: $ALERT_THRESHOLD)" "$report"
     elif [[ $total_blocks -ge $WARNING_THRESHOLD ]]; then
-        send_alert "WARNING" "Rate limiting превысил предупредительный порог: $total_blocks блокировок в минуту (порог: $WARNING_THRESHOLD)" "$report"
+        send_alert "WARNING" "Rate limiting exceeded warning threshold: $total_blocks blocks per minute (threshold: $WARNING_THRESHOLD)" "$report"
     fi
 }
 
-# === Функция отправки алертов ===
+# === Alert sending ===
 send_alert() {
     local level="$1"
     local message="$2"
@@ -162,27 +162,27 @@ send_alert() {
 
     log "[$level] $message"
 
-    # Отправка через системный журнал
+    # Send to system journal
     logger -t "erni-ki-rate-limiting" "[$level] $message"
 
-    # Сохранение алерта в файл
+    # Store alert to file
     local alert_file="$PROJECT_ROOT/logs/rate-limiting-alerts.log"
     echo "[$(date -Iseconds)] [$level] $message" >> "$alert_file"
     echo "$report" >> "$alert_file"
     echo "---" >> "$alert_file"
 
-    # Интеграция с Backrest (если доступен)
+    # Backrest integration (if available)
     if command -v curl >/dev/null 2>&1; then
         send_backrest_notification "$level" "$message" || true
     fi
 }
 
-# === Функция отправки уведомлений через Backrest ===
+# === Send notification via Backrest ===
 send_backrest_notification() {
     local level="$1"
     local message="$2"
 
-    # Попытка отправки через Backrest webhook (если настроен)
+    # Attempt Backrest webhook (if configured)
     local backrest_url="http://localhost:9898/api/v1/notifications"
 
     local payload
@@ -200,48 +200,48 @@ EOF
     if curl -s -f -X POST "$backrest_url" \
         -H "Content-Type: application/json" \
         -d "$payload" >/dev/null 2>&1; then
-        log "Уведомление отправлено через Backrest"
+        log "Notification delivered via Backrest"
     else
-        log "Не удалось отправить уведомление через Backrest"
+        log "Failed to send notification via Backrest"
     fi
 }
 
-# === Функция получения статистики ===
+# === Get statistics ===
 get_statistics() {
     if [[ -f "$STATE_FILE" ]]; then
         cat "$STATE_FILE"
     else
-        echo '{"error": "Нет данных статистики"}'
+        echo '{"error": "No statistics available"}'
     fi
 }
 
-# === Функция проверки здоровья nginx ===
+# === Nginx health check ===
 check_nginx_health() {
-    log "Проверка здоровья nginx..."
+    log "Checking nginx health..."
 
     if $COMPOSE_BIN -f "$PROJECT_ROOT/compose.yml" exec -T nginx nginx -t >/dev/null 2>&1; then
-        success "Конфигурация nginx корректна"
+        success "nginx configuration is valid"
     else
-        error "Ошибка в конфигурации nginx"
+        error "nginx configuration errors detected"
         return 1
     fi
 
-    # Проверка доступности
+    # Availability check
     if curl -s -f http://localhost/ >/dev/null 2>&1; then
-        success "Nginx отвечает на запросы"
+        success "nginx responds to requests"
     else
-        error "Nginx не отвечает на запросы"
+        error "nginx does not respond to requests"
         return 1
     fi
 
     return 0
 }
 
-# === Основная функция ===
+# === Main ===
 main() {
     case "${1:-monitor}" in
         "monitor")
-            log "Запуск мониторинга rate limiting"
+            log "Starting rate limiting monitor"
             analyze_rate_limiting "1m"
             ;;
         "stats")
@@ -251,7 +251,7 @@ main() {
             check_nginx_health
             ;;
         "daemon")
-            log "Запуск демона мониторинга (интервал: ${CHECK_INTERVAL}s)"
+            log "Starting monitoring daemon (interval: ${CHECK_INTERVAL}s)"
             while true; do
                 analyze_rate_limiting "1m"
                 sleep "$CHECK_INTERVAL"
@@ -261,29 +261,29 @@ main() {
             cat <<EOF
 ERNI-KI Rate Limiting Monitor
 
-Использование:
-  $0 [команда]
+Usage:
+  $0 [command]
 
-Команды:
-  monitor    Однократная проверка rate limiting (по умолчанию)
-  stats      Показать последнюю статистику
-  health     Проверить здоровье nginx
-  daemon     Запустить в режиме демона
-  help       Показать эту справку
+Commands:
+  monitor    Single rate-limiting check (default)
+  stats      Show last statistics
+  health     Check nginx health
+  daemon     Run in daemon mode
+  help       Show this help
 
-Примеры:
-  $0                    # Однократная проверка
-  $0 daemon            # Запуск в режиме демона
-  $0 stats | jq        # Показать статистику в JSON
+Examples:
+  $0                    # Single check
+  $0 daemon             # Run as daemon
+  $0 stats | jq         # Show statistics as JSON
 EOF
             ;;
         *)
-            error "Неизвестная команда: $1"
-            echo "Используйте '$0 help' для справки"
+            error "Unknown command: $1"
+            echo "Use '$0 help' for usage"
             exit 1
             ;;
     esac
 }
 
-# Запуск основной функции
+# Entrypoint
 main "$@"

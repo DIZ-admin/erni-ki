@@ -1,19 +1,27 @@
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+title: 'ERNI-KI — Профессиональная сводка проекта'
+---
+
 # ERNI-KI — Профессиональная сводка проекта
 
 <!-- STATUS_SNIPPET_START -->
 
-> **Статус системы (2025-11-14) — Production Ready v12.1**
+> **Статус системы (2025-11-23) — Production Ready v12.1**
 >
-> - Контейнеры: 30/30 контейнеров healthy
-> - Графана: 18/18 Grafana дашбордов
-> - Алерты: 27 Prometheus alert rules активны
+> - Контейнеры: 34/34 services healthy
+> - Графана: 5/5 Grafana dashboards (provisioned)
+> - Алерты: 20 Prometheus alert rules active
 > - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
 > - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
-> - Мониторинг: Prometheus v3.0.1, Grafana v11.6.6, Loki v3.5.5, Fluent Bit
->   v3.2.0, Alertmanager v0.28.0
+> - Мониторинг: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
+>   v3.1.0, Alertmanager v0.27.0
 > - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
 >   01:30, Watchtower selective updates
-> - Примечание: Наблюдаемость и AI стек актуализированы в ноябре 2025
+> - Примечание: Versions and dashboard/alert counts synced with compose.yml
 
 <!-- STATUS_SNIPPET_END -->
 
@@ -21,6 +29,22 @@
 
 ERNI-KI — корпоративная AI-платформа на базе OpenWebUI, Ollama и LiteLLM,
 окружённая полным стеком безопасности и наблюдаемости. Платформа предоставляет:
+
+## Визуализация: контур платформы
+
+```mermaid
+flowchart LR
+  Users --> Nginx[WAF / Proxy]
+  Nginx --> OpenWebUI
+  OpenWebUI --> LiteLLM
+  LiteLLM --> Ollama
+  LiteLLM --> SearXNG
+  OpenWebUI --> MCP[MCP tools]
+  Prom[Prometheus/Grafana] --> Nginx
+  Prom --> LiteLLM
+  Prom --> Ollama
+  Backup[Backrest] --> Postgres
+```
 
 - **Единую точку доступа к LLM** с GPU-ускорением и Context Engineering (LiteLLM
   v1.80.0.rc.1, MCP Server).
@@ -36,9 +60,9 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 
 | Область                     | Показатель                                                                                                                  |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| **Здоровье сервисов**       | 30/30 контейнеров healthy (см. README.md в корне репозитория и [`services-overview.md`](architecture/services-overview.md)) |
-| **Мониторинг**              | Prometheus v3.0.1, Grafana v11.6.6, Alertmanager v0.28.0, Loki v3.5.5, Fluent Bit v3.2.0                                    |
-| **GPU & AI стэк**           | OpenWebUI v0.6.36, Ollama 0.12.11, LiteLLM v1.80.0.rc.1, MCP Server, RAG через SearXNG                                      |
+| **Здоровье сервисов**       | 34/34 контейнеров healthy (см. README.md в корне репозитория и [`services-overview.md`](architecture/services-overview.md)) |
+| **Мониторинг**              | Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0                                    |
+| **GPU & AI стэк**           | OpenWebUI v0.6.36, Ollama 0.12.11, LiteLLM v1.80.0.rc.1, MCP Server (7 инструментов), RAG через SearXNG                     |
 | **Автоматизация**           | Cron: PostgreSQL VACUUM (вс. 03:00), Docker cleanup (вс. 04:00), Backrest бэкапы (ежедневно 01:30)                          |
 | **Безопасность**            | JWT Auth сервис, Nginx WAF (rate limiting + security headers), Cloudflare Zero Trust (5 доменов)                            |
 | **Документация & процессы** | Обновлённые гайды по архитектуре, операциям, мониторингу, runbook’и и security policy                                       |
@@ -54,8 +78,9 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 - **Ollama 0.12.11** — LLM-сервер с ограничением 4GB VRAM (GPU активен).
 - **LiteLLM v1.80.0.rc.1** — Context Engineering gateway
   (`conf/litellm/config.yaml`), поддержка thinking tokens и Context7.
-- **MCP Server** — 4 активных инструмента (Time, PostgreSQL, Filesystem, Memory)
-  на порту 8000.
+- **MCP Server** — 7 активных инструментов (Time, Context7 Docs, PostgreSQL,
+  Filesystem, Memory, SearXNG Web Search, Desktop Commander) на порту 8000
+  (binding 127.0.0.1).
 - **Docling + Apache Tika + EdgeTTS** — pipeline обработки документов и синтеза
   речи.
 
@@ -78,7 +103,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 - **Grafana** — 18 дашбордов (GPU, LLM, DB, Security).
 - **Loki + Fluent Bit** — централизованные логи.
 - **Automation scripts** — см.
-  [`automated-maintenance-guide.md`](operations/automated-maintenance-guide.md).
+  [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md).
 
 ## 4. Среды и деплоймент
 
@@ -95,12 +120,12 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
 ## 5. Операции и наблюдаемость
 
 - **Operations Handbook**: роли, SLA, реакция на алерты —
-  [`operations-handbook.md`](operations/operations-handbook.md).
+  [`operations-handbook.md`](operations/core/operations-handbook.md).
 - **Monitoring Guide**: Prometheus targets, health-checks, экспортёры —
-  [`monitoring-guide.md`](operations/monitoring-guide.md).
-- **Runbooks**: рестарты, бэкапы, Docling cleanup, troubleshooting —
-  [`service-restart-procedures.md`](operations/runbooks/service-restart-procedures.md),
-  [`troubleshooting-guide.md`](operations/runbooks/troubleshooting-guide.md).
+  [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md).
+- **Runbooks**: рестарты, бэкапы, troubleshooting —
+  [`service-restart-procedures.md`](operations/maintenance/service-restart-procedures.md),
+  [`troubleshooting-guide.md`](operations/troubleshooting/troubleshooting-guide.md).
 - **Diagnostics**: методология и чеклисты —
   [`diagnostics/`](operations/diagnostics/README.md).
 
@@ -117,7 +142,7 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   headers, Cloudflare туннели, rate limiting.
 - **Мониторинг безопасности**: Prometheus алерты (`SuspiciousAuthActivity`,
   `HighErrorRate`), логирование через Loki.
-- **Контакты**: security@erni-ki.local, emergency hotline, PGP key.
+- **Контакты**: <security@erni-ki.local>, emergency hotline, PGP key.
 
 ## 7. Риски и планы развития
 
@@ -140,19 +165,15 @@ ERNI-KI — корпоративная AI-платформа на базе OpenW
   [`configuration-guide.md`](getting-started/configuration-guide.md),
   [`external-access-setup.md`](getting-started/external-access-setup.md)
 - **Операции и мониторинг:**
-  [`operations-handbook.md`](operations/operations-handbook.md),
-  [`monitoring-guide.md`](operations/monitoring-guide.md),
-  [`automated-maintenance-guide.md`](operations/automated-maintenance-guide.md)
+  [`operations-handbook.md`](operations/core/operations-handbook.md),
+  [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md),
+  [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md)
 - **Runbooks и troubleshooting:**
-  [`Troubleshooting guide`](operations/runbooks/troubleshooting-guide.md),
-  [`troubleshooting.md`](operations/troubleshooting.md)
+  [`Troubleshooting`](operations/troubleshooting/README.md)
 - **Безопасность:**
   [`security/security-policy.md`](security/security-policy.md),
   [`log-audit.md`](security/log-audit.md)
-- **Data & Storage:**
-  [`data/database-monitoring-plan.md`](data/database-monitoring-plan.md),
-  [`data/redis-operations-guide.md`](data/redis-operations-guide.md),
-  [`data/vllm-resource-optimization.md`](data/vllm-resource-optimization.md)
+- **Data & Storage:** [`data/README.md`](data/README.md)
 - **API и интеграции:** [`api-reference.md`](reference/api-reference.md),
   [`mcpo-integration-guide.md`](reference/mcpo-integration-guide.md)
 

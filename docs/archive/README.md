@@ -1,3 +1,9 @@
+---
+language: ru
+translation_status: archived
+doc_version: '2025.11'
+---
+
 # ERNI-KI Archive Overview
 
 Архив содержит исторические документы (аудиты, диагностика, инциденты) и
@@ -27,7 +33,7 @@ runbook’ах/отчётах.
 1. **Новый инцидент или аудит** → добавить Markdown-файл в соответствующую
    директорию + запись в её README.
 2. **Обновить ссылки** в `mkdocs.yml` (раздел «Отчёты и архив») и в
-   `operations/operations-handbook.md`, если появился новый отчёт.
+   `operations/core/operations-handbook.md`, если появился новый отчёт.
 3. **Зафиксировать итоги** в Archon task или отчёте (чтобы история была
    связана).
 4. **Раз в неделю** проверить, что config-backup отчёты (monitoring/update)

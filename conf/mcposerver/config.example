@@ -60,20 +60,20 @@
   }
 }
 
-// MCP Server Configuration для ERNI-KI
-// Дата обновления: 2025-09-19
-// Статус: Production Ready - Context7 интеграция включена
+// MCP Server Configuration for ERNI-KI
+// Updated: 2025-09-19
+// Status: Production Ready - Context7 integration enabled
 //
-// ВАЖНО: Изменить перед продакшеном:
-// 1. Замените CHANGE_THIS_PASSWORD_BEFORE_PRODUCTION на реальный пароль PostgreSQL
-// 2. Замените CHANGE_THIS_CONTEXT7_API_KEY_BEFORE_PRODUCTION на ваш Context7 API ключ
-// 3. Настройте timezone согласно вашему региону
-// 4. Проверьте доступность всех MCP серверов
+// IMPORTANT: Update before production:
+// 1. Replace CHANGE_THIS_PASSWORD_BEFORE_PRODUCTION with the real PostgreSQL password
+// 2. Replace CHANGE_THIS_CONTEXT7_API_KEY_BEFORE_PRODUCTION with your Context7 API key
+// 3. Set the timezone according to your region
+// 4. Verify availability of all MCP servers
 //
-// Новые возможности в версии 2025-09-19:
-// - Context7 интеграция для улучшенного контекста AI
-// - Filesystem MCP для работы с файлами
-// - Git MCP для версионного контроля
-// - Memory MCP для долгосрочной памяти
-// - Web Search MCP для поиска в интернете
-// - Fetch MCP для загрузки веб-контента
+// What's new in the 2025-09-19 version:
+// - Context7 integration for improved AI context
+// - Filesystem MCP for file operations
+// - Git MCP for version control
+// - Memory MCP for long-term memory
+// - Web Search MCP for internet search
+// - Fetch MCP for fetching web content

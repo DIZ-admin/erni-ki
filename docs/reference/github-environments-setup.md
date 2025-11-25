@@ -1,46 +1,55 @@
-# 🔐 GitHub Environments Setup для ERNI-KI
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+---
 
-**Автор:** Альтэон Шульц (Tech Lead) **Дата:** 2025-09-19 **Версия:** 1.0
+# GitHub Environments Setup для ERNI-KI
 
-## 📋 Обзор
+[TOC]
+
+**Дата:** 2025-09-19 **Версия:** 1.0
+
+## Обзор
 
 Данная документация описывает процесс настройки GitHub Environments для проекта
 ERNI-KI с трехуровневой архитектурой управления секретами и environment-specific
 конфигурациями.
 
-## 🏗️ Архитектура
+## Архитектура
 
-### Трехуровневая структура секретов:
+### Трехуровневая структура секретов
 
 ```mermaid
 graph TB
-    A[Organization Level] --> B[Repository Level]
-    B --> C[Environment Level]
+ A[Organization Level] --> B[Repository Level]
+ B --> C[Environment Level]
 
-    A --> A1[DOCKER_REGISTRY_TOKEN]
-    A --> A2[MONITORING_WEBHOOK]
-    A --> A3[BACKUP_S3_CREDENTIALS]
+ A --> A1[DOCKER_REGISTRY_TOKEN]
+ A --> A2[MONITORING_WEBHOOK]
+ A --> A3[BACKUP_S3_CREDENTIALS]
 
-    B --> B1[POSTGRES_PASSWORD]
-    B --> B2[JWT_SECRET]
-    B --> B3[WEBUI_SECRET_KEY]
-    B --> B4[LITELLM_MASTER_KEY]
+ B --> B1[POSTGRES_PASSWORD]
+ B --> B2[JWT_SECRET]
+ B --> B3[WEBUI_SECRET_KEY]
+ B --> B4[LITELLM_MASTER_KEY]
 
-    C --> C1[Development]
-    C --> C2[Staging]
-    C --> C3[Production]
+ C --> C1[Development]
+ C --> C2[Staging]
+ C --> C3[Production]
 
-    C1 --> D1[TUNNEL_TOKEN_DEV]
-    C1 --> D2[OPENAI_API_KEY_DEV]
+ C1 --> D1[TUNNEL_TOKEN_DEV]
+ C1 --> D2[OPENAI_API_KEY_DEV]
 
-    C2 --> E1[TUNNEL_TOKEN_STAGING]
-    C2 --> E2[OPENAI_API_KEY_STAGING]
+ C2 --> E1[TUNNEL_TOKEN_STAGING]
+ C2 --> E2[OPENAI_API_KEY_STAGING]
 
-    C3 --> F1[TUNNEL_TOKEN_PROD]
-    C3 --> F2[OPENAI_API_KEY_PROD]
+ C3 --> F1[TUNNEL_TOKEN_PROD]
+ C3 --> F2[OPENAI_API_KEY_PROD]
 ```
 
-## 🚀 Быстрый старт
+## Быстрый старт
 
 ### 1. Предварительные требования
 
@@ -54,14 +63,14 @@ sudo apt update && sudo apt install gh
 gh auth login --scopes repo,admin:org
 ```
 
-### 2. Создание окружений
+## 2. Создание окружений
 
 ```bash
 # Выполнить из корня проекта ERNI-KI
 ./scripts/infrastructure/security/setup-github-environments.sh
 ```
 
-### 3. Настройка protection rules
+## 3. Настройка protection rules
 
 ```bash
 ./scripts/infrastructure/security/configure-environment-protection.sh
@@ -79,31 +88,31 @@ gh auth login --scopes repo,admin:org
 ./scripts/infrastructure/security/validate-environment-secrets.sh
 ```
 
-## 🔧 Детальная настройка
+## Детальная настройка
 
 ### Создание окружений вручную
 
 ```bash
 # Development окружение
 gh api repos/:owner/:repo/environments/development -X PUT \
-  --field "wait_timer=0" \
-  --field "prevent_self_review=false" \
-  --field "reviewers=[]"
+ --field "wait_timer=0" \
+ --field "prevent_self_review=false" \
+ --field "reviewers=[]"
 
 # Staging окружение
 gh api repos/:owner/:repo/environments/staging -X PUT \
-  --field "wait_timer=300" \
-  --field "prevent_self_review=true" \
-  --field "reviewers=[{\"type\":\"Team\",\"id\":null}]"
+ --field "wait_timer=300" \
+ --field "prevent_self_review=true" \
+ --field "reviewers=[{\"type\":\"Team\",\"id\":null}]"
 
 # Production окружение
 gh api repos/:owner/:repo/environments/production -X PUT \
-  --field "wait_timer=600" \
-  --field "prevent_self_review=true" \
-  --field "deployment_branch_policy={\"protected_branches\":true}"
+ --field "wait_timer=600" \
+ --field "prevent_self_review=true" \
+ --field "deployment_branch_policy={\"protected_branches\":true}"
 ```
 
-### Добавление секретов вручную
+## Добавление секретов вручную
 
 ```bash
 # Environment-specific секреты
@@ -116,7 +125,7 @@ gh secret set POSTGRES_PASSWORD --body "$(openssl rand -base64 32)"
 gh secret set JWT_SECRET --body "$(openssl rand -hex 32)"
 ```
 
-## 🔍 Проверка и мониторинг
+## Проверка и мониторинг
 
 ### Просмотр окружений
 
@@ -128,7 +137,7 @@ gh api repos/:owner/:repo/environments | jq '.[].name'
 gh api repos/:owner/:repo/environments/production | jq '.'
 ```
 
-### Просмотр секретов
+## Просмотр секретов
 
 ```bash
 # Repository секреты
@@ -140,79 +149,83 @@ gh secret list --env staging
 gh secret list --env production
 ```
 
-### Проверка protection rules
+## Проверка protection rules
 
 ```bash
 # Получение protection rules для окружения
 gh api repos/:owner/:repo/environments/production | jq '.protection_rules'
 ```
 
-## 🔄 Использование в GitHub Actions
+## Использование в GitHub Actions
 
 ### Environment-specific деплой
+
+{% raw %}
 
 ```yaml
 name: Deploy to Environment
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        options:
-          - development
-          - staging
-          - production
+ workflow_dispatch:
+ inputs:
+ environment:
+ type: choice
+ options:
+ - development
+ - staging
+ - production
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+ deploy:
+ runs-on: ubuntu-latest
+ environment: ${{ inputs.environment }}
 
-    steps:
-      - name: Deploy with environment secrets
-        run: |
-          echo "Deploying to ${{ inputs.environment }}"
-        env:
-          TUNNEL_TOKEN:
-            ${{ secrets[format('TUNNEL_TOKEN_{0}', inputs.environment ==
-            'development' && 'DEV' || inputs.environment == 'staging' &&
-            'STAGING' || 'PROD')] }}
-          OPENAI_API_KEY:
-            ${{ secrets[format('OPENAI_API_KEY_{0}', inputs.environment ==
-            'development' && 'DEV' || inputs.environment == 'staging' &&
-            'STAGING' || 'PROD')] }}
+ steps:
+ - name: Deploy with environment secrets
+ run: |
+ echo "Deploying to ${{ inputs.environment }}"
+ env:
+ TUNNEL_TOKEN:
+ ${{ secrets[format('TUNNEL_TOKEN_{0}', inputs.environment ==
+ 'development' && 'DEV' || inputs.environment == 'staging' &&
+ 'STAGING' || 'PROD')] }}
+ OPENAI_API_KEY:
+ ${{ secrets[format('OPENAI_API_KEY_{0}', inputs.environment ==
+ 'development' && 'DEV' || inputs.environment == 'staging' &&
+ 'STAGING' || 'PROD')] }}
 ```
+
+{% endraw %}
 
 ### Автоматический выбор окружения
 
 ```yaml
 jobs:
-  determine-environment:
-    outputs:
-      environment: ${{ steps.env.outputs.environment }}
-    steps:
-      - id: env
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
-          elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
-            echo "environment=development" >> $GITHUB_OUTPUT
-          else
-            echo "environment=staging" >> $GITHUB_OUTPUT
-          fi
+ determine-environment:
+ outputs:
+ environment: ${{ steps.env.outputs.environment }}
+ steps:
+ - id: env
+ run: |
+ if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+ echo "environment=production" >> $GITHUB_OUTPUT
+ elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+ echo "environment=development" >> $GITHUB_OUTPUT
+ else
+ echo "environment=staging" >> $GITHUB_OUTPUT
+ fi
 
-  deploy:
-    needs: determine-environment
-    environment: ${{ needs.determine-environment.outputs.environment }}
-    steps:
-      - name: Deploy
-        run:
-          echo "Deploying to ${{ needs.determine-environment.outputs.environment
-          }}"
+ deploy:
+ needs: determine-environment
+ environment: ${{ needs.determine-environment.outputs.environment }}
+ steps:
+ - name: Deploy
+ run:
+ echo "Deploying to ${{ needs.determine-environment.outputs.environment
+ }}"
 ```
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### Проблема: "Environment not found"
 
@@ -228,7 +241,7 @@ gh api repos/:owner/:repo/environments | jq '.[].name'
 gh api repos/:owner/:repo/environments/development -X PUT
 ```
 
-### Проблема: "Secret not found"
+## Проблема: "Secret not found"
 
 **Причина:** Секрет не добавлен в нужное окружение.
 
@@ -242,7 +255,7 @@ gh secret list --env development
 gh secret set SECRET_NAME --env development --body "secret-value"
 ```
 
-### Проблема: "Insufficient permissions"
+## Проблема: "Insufficient permissions"
 
 **Причина:** Недостаточно прав для создания окружений или секретов.
 
@@ -257,7 +270,7 @@ gh api repos/:owner/:repo | jq '.permissions'
 gh auth login --scopes repo,admin:org
 ```
 
-### Проблема: "Protection rules not working"
+## Проблема: "Protection rules not working"
 
 **Причина:** Неправильно настроены protection rules.
 
@@ -269,10 +282,10 @@ gh api repos/:owner/:repo/environments/production | jq '.protection_rules'
 
 # Обновить правила
 gh api repos/:owner/:repo/environments/production -X PUT \
-  --field "deployment_branch_policy={\"protected_branches\":true}"
+ --field "deployment_branch_policy={\"protected_branches\":true}"
 ```
 
-## 📊 Мониторинг и аудит
+## Мониторинг и аудит
 
 ### Регулярные проверки
 
@@ -284,7 +297,7 @@ gh api repos/:owner/:repo/environments/production -X PUT \
 gh api repos/:owner/:repo/actions/secrets | jq '.secrets[] | {name, updated_at}'
 ```
 
-### Аудит доступа
+## Аудит доступа
 
 ```bash
 # Просмотр истории деплоев
@@ -292,12 +305,12 @@ gh api repos/:owner/:repo/deployments | jq '.[] | {environment, created_at, crea
 
 # Проверка protection rules
 for env in development staging production; do
-  echo "=== $env ==="
-  gh api "repos/:owner/:repo/environments/$env" | jq '.protection_rules'
+ echo "=== $env ==="
+ gh api "repos/:owner/:repo/environments/$env" | jq '.protection_rules'
 done
 ```
 
-## 🔄 Ротация секретов
+## Ротация секретов
 
 ### Автоматическая ротация
 
@@ -307,25 +320,25 @@ NEW_SECRET=$(openssl rand -hex 32)
 
 # Обновить во всех окружениях
 for env in development staging production; do
-  suffix=""
-  case $env in
-    development) suffix="_DEV" ;;
-    staging) suffix="_STAGING" ;;
-    production) suffix="_PROD" ;;
-  esac
+ suffix=""
+ case $env in
+ development) suffix="_DEV" ;;
+ staging) suffix="_STAGING" ;;
+ production) suffix="_PROD" ;;
+ esac
 
-  gh secret set "JWT_SECRET${suffix}" --env "$env" --body "$NEW_SECRET"
+ gh secret set "JWT_SECRET${suffix}" --env "$env" --body "$NEW_SECRET"
 done
 ```
 
-### Плановая ротация
+## Плановая ротация
 
 ```bash
 # Использовать существующий скрипт ротации
 ./scripts/infrastructure/security/rotate-secrets.sh --service all
 ```
 
-## 📋 Чеклист для production
+## Чеклист для production
 
 - [ ] Все окружения созданы (development, staging, production)
 - [ ] Protection rules настроены корректно
@@ -336,61 +349,67 @@ done
 - [ ] Документация актуализирована
 - [ ] Команда обучена работе с новой системой
 
-## ✅ Журнал проверки (2025-11-17)
+## Журнал проверки (2025-11-17)
 
-| Шаг                                                                                                                         | Статус                     | Комментарий / следующее действие                                                                                                                                               |
-| --------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Создание окружений `development`, `staging`, `production`                                                                   | 🔶 Требуется подтверждение | Нет доступа к настройкам GitHub из текущей среды. Проверьте `gh api repos/:owner/:repo/environments` и задокументируйте результат.                                             |
-| Protection rules (reviewers, wait timers, запрет force push)                                                                | 🔶 Требуется подтверждение | Запустите `scripts/infrastructure/security/configure-environment-protection.sh` или обновите правила вручную и приложите вывод `gh api repos/:owner/:repo/environments/<env>`. |
-| Environment secrets (`TUNNEL_TOKEN_*`, `OPENAI_API_KEY_*`, `CONTEXT7_API_KEY_*`, `ANTHROPIC_API_KEY_*`, `GOOGLE_API_KEY_*`) | 🔶 Требуется подтверждение | Выполните `scripts/infrastructure/security/setup-environment-secrets.sh` и затем `gh secret list --env <env>` чтобы убрать placeholder-значения.                               |
-| Валидация (`validate-environment-secrets.sh`)                                                                               | 🔶 Требуется подтверждение | После обновления секретов запустите скрипт и приложите лог в `docs/operations/ci-health.md` или сюда.                                                                          |
+| Шаг                                                                                                                         | Статус                  | Комментарий / следующее действие                                                                                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Создание окружений `development`, `staging`, `production`                                                                   | Требуется подтверждение | Нет доступа к настройкам GitHub из текущей среды. Проверьте `gh api repos/:owner/:repo/environments` и задокументируйте результат.                                             |
+| Protection rules (reviewers, wait timers, запрет force push)                                                                | Требуется подтверждение | Запустите `scripts/infrastructure/security/configure-environment-protection.sh` или обновите правила вручную и приложите вывод `gh api repos/:owner/:repo/environments/<env>`. |
+| Environment secrets (`TUNNEL_TOKEN_*`, `OPENAI_API_KEY_*`, `CONTEXT7_API_KEY_*`, `ANTHROPIC_API_KEY_*`, `GOOGLE_API_KEY_*`) | Требуется подтверждение | Выполните `scripts/infrastructure/security/setup-environment-secrets.sh` и затем `gh secret list --env <env>` чтобы убрать placeholder-значения.                               |
+| Валидация (`validate-environment-secrets.sh`)                                                                               | Требуется подтверждение | После обновления секретов запустите скрипт и приложите лог в `docs/archive/audits/ci-health.md` или сюда.                                                                      |
 
 > Обновляйте таблицу после каждой проверки, чтобы команда видела фактическое
 > состояние GitHub Environments.
 
-## 🎯 Best Practices
+## Best Practices
 
 ### Безопасность секретов
 
 1. **Принцип минимальных привилегий**
-   - Используйте разные API ключи для разных окружений
-   - Ограничивайте scope API ключей до минимально необходимого
-   - Регулярно ротируйте секреты (каждые 90 дней)
+
+- Используйте разные API ключи для разных окружений
+- Ограничивайте scope API ключей до минимально необходимого
+- Регулярно ротируйте секреты (каждые 90 дней)
 
 2. **Мониторинг и аудит**
-   - Логируйте все изменения секретов
-   - Мониторьте использование API ключей
-   - Настройте алерты на подозрительную активность
+
+- Логируйте все изменения секретов
+- Мониторьте использование API ключей
+- Настройте алерты на подозрительную активность
 
 3. **Разделение окружений**
-   - Никогда не используйте production секреты в dev/staging
-   - Используйте тестовые API ключи с ограничениями для разработки
-   - Изолируйте production окружение максимально
+
+- Никогда не используйте production секреты в dev/staging
+- Используйте тестовые API ключи с ограничениями для разработки
+- Изолируйте production окружение максимально
 
 ### Управление окружениями
 
 1. **Naming conventions**
-   - Используйте консистентные суффиксы: `_DEV`, `_STAGING`, `_PROD`
-   - Группируйте связанные секреты логически
-   - Документируйте назначение каждого секрета
+
+- Используйте консистентные суффиксы: `_DEV`, `_STAGING`, `_PROD`
+- Группируйте связанные секреты логически
+- Документируйте назначение каждого секрета
 
 2. **Protection rules**
-   - Development: без ограничений для быстрой итерации
-   - Staging: минимум 1 reviewer для проверки
-   - Production: минимум 2 reviewers + branch protection
+
+- Development: без ограничений для быстрой итерации
+- Staging: минимум 1 reviewer для проверки
+- Production: минимум 2 reviewers + branch protection
 
 3. **Автоматизация**
-   - Используйте скрипты для массовых операций
-   - Автоматизируйте валидацию секретов в CI/CD
-   - Настройте автоматические уведомления об изменениях
 
-## 🚨 Критические предупреждения
+- Используйте скрипты для массовых операций
+- Автоматизируйте валидацию секретов в CI/CD
+- Настройте автоматические уведомления об изменениях
 
-⚠️ **НИКОГДА НЕ КОММИТЬТЕ СЕКРЕТЫ В КОД** ⚠️ **ЗАМЕНЯЙТЕ PLACEHOLDER ЗНАЧЕНИЯ
-ПЕРЕД PRODUCTION** ⚠️ **РЕГУЛЯРНО РОТИРУЙТЕ PRODUCTION СЕКРЕТЫ** ⚠️ **МОНИТОРЬТЕ
+## Критические предупреждения
+
+**НИКОГДА НЕ КОММИТЬТЕ СЕКРЕТЫ В КОД** **ЗАМЕНЯЙТЕ PLACEHOLDER ЗНАЧЕНИЯ ПЕРЕД
+PRODUCTION** **РЕГУЛЯРНО РОТИРУЙТЕ PRODUCTION СЕКРЕТЫ** **МОНИТОРЬТЕ
 ИСПОЛЬЗОВАНИЕ API КЛЮЧЕЙ**
 
-## 🔗 Полезные ссылки
+## Полезные ссылки
 
 - [GitHub Environments Documentation](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment)
 - [GitHub Secrets Documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)

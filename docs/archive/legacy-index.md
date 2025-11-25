@@ -1,3 +1,9 @@
+---
+language: ru
+translation_status: archived
+doc_version: '2025.11'
+---
+
 # ERNI-KI — портал документации (RU)
 
 ERNI-KI — production-ready AI платформа на базе OpenWebUI, Ollama, LiteLLM и
@@ -7,8 +13,8 @@ MCP, окружённая полным стеком наблюдаемости, 
 повседневных задачах.
 
 **Academy KI** — отдельный вход для сотрудников с быстрым стартом, обучением и
-готовыми сценариями. Начните с [портала Academy KI](../ru/academy/index.md),
-чтобы получить ссылки на базовые уроки, примеры промптов и актуальные новости.
+готовыми сценариями. Начните с [портала Academy KI](../academy/index.md), чтобы
+получить ссылки на базовые уроки, примеры промптов и актуальные новости.
 
 ## Обновления
 
@@ -34,24 +40,23 @@ MCP, окружённая полным стеком наблюдаемости, 
 - **Архитектура и сервисы** — `../architecture/architecture.md`,
   `../architecture/service-inventory.md`,
   `../architecture/services-overview.md`.
-- **Операции** — `../operations/operations-handbook.md`,
-  `../operations/monitoring-guide.md`,
-  `../operations/automated-maintenance-guide.md`, `../operations/runbooks/`.
-- **Хранилище и данные** — `../data/database-monitoring-plan.md`,
-  `../data/redis-operations-guide.md`,
-  `../data/database-production-optimizations.md`.
+- **Операции** — `../operations/core/operations-handbook.md`,
+  `../operations/monitoring/monitoring-guide.md`,
+  `../operations/automation/automated-maintenance-guide.md`, `../operations/`.
+- **Хранилище и данные** — `../operations/database/database-monitoring-plan.md`,
+  `../operations/database/redis-operations-guide.md`,
+  `../operations/database/database-production-optimizations.md`.
 - **ML и API** — `reference/api-reference.md`, `README.md` (вне MkDocs, но
   всегда актуален в корне репозитория).
 - **Безопасность** — `security/security-policy.md` и related compliance notes.
-- **Academy KI** — входная точка для сотрудников:
-  [портал](../ru/academy/index.md), базовые уроки
-  ([Open WebUI basics](../training/openwebui-basics.md),
-  [Prompting 101](../training/prompting-101.md)), сценарии
-  ([HowTo](../howto/write-customer-email-with-openwebui.md)) и
+- **Academy KI** — входная точка для сотрудников: [портал](../academy/index.md),
+  базовые уроки ([Open WebUI basics](../academy/openwebui-basics.md),
+  [Prompting 101](../academy/prompting-101.md)), сценарии
+  ([HowTo](../academy/howto/write-customer-email.md)) и
   [News](../news/index.md).
 - **Проверить статус ERNI-KI** — смотрите
-  [status page](../operations/status-page.md) (ссылку на конкретный URL укажите
-  в конфигурации).
+  [status page](../operations/core/status-page.md) (ссылку на конкретный URL
+  укажите в конфигурации).
 
 > Для быстрых решений используйте Archon (runbooks, checklists, status updates)
 > и держите синхронизацию с этими материалами.

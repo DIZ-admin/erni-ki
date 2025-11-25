@@ -1,13 +1,13 @@
-# LiteLLM Unified Configuration для ERNI-KI
-# Единый прокси для всех AI моделей с интеграцией OpenAI API и локальных Ollama моделей
+# LiteLLM Unified Configuration for ERNI-KI
+# Single proxy for all AI models with OpenAI API and local Ollama integration
 
-# Модели управляются через Database Models в LiteLLM Admin UI
-# Все модели мигрированы из конфигурации в базу данных для полного управления через веб-интерфейс
+# Models are managed via Database Models in the LiteLLM Admin UI
+# All models are migrated into the database for full control via the web UI
 #
 # === vLLM INTEGRATION CONFIGURATION ===
-# Для добавления vLLM моделей через Admin UI используйте следующие параметры:
+# To add vLLM models via Admin UI use:
 #
-# vLLM Model Configuration (добавить через LiteLLM Admin UI):
+# vLLM Model Configuration (add via LiteLLM Admin UI):
 # - model_name: "vllm/llama-3.1-8b-instruct"
 # - litellm_params:
 #     model: "meta-llama/Llama-3.1-8B-Instruct"
@@ -17,31 +17,29 @@
 #     max_tokens: 4096
 #     temperature: 0.7
 #
-# Fallback Configuration (настроить через Admin UI):
-# - Primary: vllm/llama-3.1-8b-instruct (высокая производительность)
-# - Fallback: ollama/llama3.1:8b (совместимость)
+# Fallback Configuration (configure via Admin UI):
+# - Primary: vllm/llama-3.1-8b-instruct (high performance)
+# - Fallback: ollama/llama3.1:8b (compatibility)
 #
 
-# Модели управляются через Database Models в LiteLLM Admin UI
-# Все модели мигрированы из конфигурации в базу данных для полного управления через веб-интерфейс
-#
+
 
 router_settings:
   num_retries: 3
   timeout: 600
   routing_strategy: "usage-based-routing-v2"
-  fallback_models: [] # Fallback модели будут настроены через Database Models
-  enable_fallbacks: true # Включить fallback для production
-  cooldown_time: 30 # Время ожидания перед повторной попыткой (секунды)
-  allowed_fails: 3 # Количество неудачных попыток перед fallback
+  fallback_models: [] # Fallback models will be configured via Database Models
+  enable_fallbacks: true # Enable fallback for production
+  cooldown_time: 30 # Cooldown before retry (seconds)
+  allowed_fails: 3 # Number of failures before fallback
   # === CONTEXT WINDOW FALLBACK CONFIGURATION ===
-  # Автоматическое переключение на модели с большим контекстом при превышении лимита
+  # Auto-switch to larger context models when exceeding limits
   context_window_fallbacks: []
-  # Redis настройки для router временно отключены из-за несовместимости
+  # Redis settings for router are temporarily disabled due to incompatibility
   # redis_host: "redis"
   # redis_port: 6379
   # redis_password: "ErniKiRedisSecurePassword2024"
-  # redis_db: 1 # Используем ту же DB что и для кэширования
+  # redis_db: 1 # Use the same DB as caching
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
@@ -50,45 +48,45 @@ general_settings:
   ui_password: os.environ/UI_PASSWORD
   max_budget: 100
   # === DATABASE STORAGE SETTINGS ===
-  # Используем Database Models — все модели добавляются через Admin UI/API.
+  # Using Database Models — all models are added via Admin UI/API.
   store_model_in_db: true
-  # Включить хранение промптов и ответов в логах трат (для детального логирования)
+  # Store prompts and responses in spend logs (detailed logging)
   store_prompts_in_spend_logs: true
-  # Принудительно сохранять все данные запросов
+  # Persist all request data
   store_audit_logs_in_db: true
-  # Отключить фильтрацию чувствительных данных для отладки
+  # Disable sensitive data filtering for debugging
   redact_user_api_key_info: false
-  # Дополнительные настройки для сохранения промптов
+  # Additional prompt logging settings
   disable_spend_logs: false
   disable_error_logs: false
   # === DETAILED LOGGING SETTINGS ===
-  # Включить детальное логирование запросов и ответов
+  # Enable detailed request/response logging
   detailed_debug: true
-  # Логировать все параметры запросов
+  # Log all request parameters
   log_raw_request: true
-  # Логировать полные ответы
+  # Log full responses
   log_raw_response: true
   # === SECURITY SETTINGS ===
-  # Обязательная авторизация для всех /v1/* эндпоинтов (отключено для совместимости с OpenWebUI)
+  # Enforce auth for all /v1/* endpoints (disabled for OpenWebUI compatibility)
   enforce_user_param: false
-  # Разрешить только аутентифицированные запросы
-  # Включить аудит логи для безопасности
+  # Allow authenticated requests only
+  # Enable audit logs for security
   enable_audit_logs: true
   # === HEALTH CHECK BYPASS ===
-  # Отключить аутентификацию для health check эндпоинтов
+  # Disable auth for health check endpoints
   disable_auth_on_health_check: true
-  # Отключить логирование health check запросов для уменьшения шума в логах
+  # Disable logging of health checks to reduce noise
   disable_health_check_logs: true
 
 # === OPENAI PASSTHROUGH CONFIGURATION ===
-# Настройка passthrough для OpenAI Assistant API (обновлено 2025-10-07)
+# Passthrough for OpenAI Assistant API (updated 2025-10-07)
 openai_route_config:
-  # Включить OpenAI passthrough
+  # Enable OpenAI passthrough
   enable_openai_passthrough: true
-  # OpenAI API настройки
+  # OpenAI API settings
   openai_api_key: os.environ/OPENAI_API_KEY
   openai_api_base: os.environ/OPENAI_API_BASE
-  # Разрешенные эндпоинты для passthrough
+  # Allowed endpoints for passthrough
   allowed_routes:
     - "/v1/assistants"
     - "/v1/assistants/*"
@@ -98,124 +96,124 @@ openai_route_config:
     - "/v1/threads/*/messages/*"
     - "/v1/threads/*/runs"
     - "/v1/threads/*/runs/*"
-  # Настройки безопасности для passthrough
+  # Security settings for passthrough
   require_auth: true
   budget_alerts: false
   fallbacks: false
 
 litellm_settings:
-  drop_params: false  # Не удалять параметры для детального логирования
-  # set_verbose: true   # Deprecated, используем LITELLM_LOG=DEBUG в env
+  drop_params: false  # Do not drop params; keep detailed logging
+  # set_verbose: true   # Deprecated; use LITELLM_LOG=DEBUG in env
   num_retries: 3
   request_timeout: 300
-  max_parallel_requests: 20  # Ограничение одновременных запросов для снижения пиков памяти
+  max_parallel_requests: 20  # Limit concurrent requests to reduce memory peaks
   custom_provider_map:
     - provider: "publicai"
       custom_handler: custom_providers.publicai.publicai_handler
   # === CONTEXT WINDOW MANAGEMENT ===
-  # Автоматическое усечение контекста при превышении лимита модели
+  # Auto-truncate context when exceeding model limits
   enable_context_window_fallback: true
-  # Стратегия усечения: "truncate" (обрезать старые сообщения) или "summarize" (суммаризация)
+  # Truncation strategy: "truncate" (drop oldest) or "summarize"
   context_window_fallback_strategy: "truncate"
-  # Резервировать 10% контекста для ответа модели
+  # Reserve 10% of context for the model response
   context_window_safety_margin: 0.1
-  # Максимальный размер контекста по умолчанию (32K для большинства моделей)
+  # Default context window size (32K for most models)
   max_context_window: 32768
   # === DETAILED LOGGING SETTINGS ===
-  # Включить детальное логирование запросов и ответов
+  # Enable detailed logging of requests/responses
   log_raw_request: true
   log_raw_response: true
-  # Сохранять промпты в логах
+  # Store prompts in logs
   store_prompts_in_logs: true
-  # Alias map для внешних моделей, чтобы сохранять дружественные имена в OpenWebUI.
+  # Alias map for external models to keep friendly names in OpenWebUI.
   model_alias_map:
     apertus-70b-instruct: "publicai/apertus-70b-instruct"
   # === PROMETHEUS METRICS ===
-  # Отключено: требует Enterprise лицензию
-  # callbacks: ["prometheus"]  # Включить экспорт Prometheus метрик
-  # service_callback: ["prometheus_system"]  # Мониторинг системных сервисов (Redis, PostgreSQL)
+  # Disabled: requires Enterprise license
+  # callbacks: ["prometheus"]  # Enable Prometheus metrics export
+  # service_callback: ["prometheus_system"]  # Monitor system services (Redis, PostgreSQL)
   # === CACHE CONFIGURATION ===
-  # Включено: 2025-10-02 после исправления конфигурации Redis
-  cache: true  # Включить кэширование
+  # Enabled: 2025-10-02 after Redis config fix
+  cache: true  # Enable caching
   # === DETAILED LOG SETTINGS ===
-  # Отключить логирование health check запросов для уменьшения шума
+  # Disable health check logging to reduce noise
   disable_health_check_logs: true
-  # Логировать все запросы для детальной отладки
+  # Log all requests for detailed debugging
   log_only_errors: false
-  # Детальный уровень логирования для отладки
+  # Detailed logging level
   log_level: "DEBUG"
   # === OLLAMA THINKING TOKENS COMPATIBILITY ===
-  # Настройки для правильной обработки thinking tokens
+  # Settings for correct handling of thinking tokens
   ignore_unknown_fields: true
   ollama_ignore_thinking: true
-  # Включить поддержку thinking tokens в streaming
+  # Enable thinking token support in streaming
   enable_thinking_tokens: true
-  # Обрабатывать thinking как часть response
+  # Treat thinking as part of the response
   thinking_as_response: true
-  # Настройки для Ollama провайдера
+  # Ollama provider settings
   ollama_thinking_mode: "stream"
-  # Разрешить неизвестные поля в chunk responses
+  # Allow unknown fields in chunk responses
   allow_unknown_chunk_fields: true
   # === vLLM INTEGRATION SETTINGS ===
-  # Настройки для интеграции с vLLM сервером
+  # vLLM server integration settings
   vllm_compatibility_mode: true
-  # Поддержка vLLM специфичных параметров
+  # Support vLLM-specific parameters
   vllm_enable_prefix_caching: true
-  # Timeout для vLLM запросов (увеличен для больших моделей)
+  # Timeout for vLLM requests (higher for large models)
   vllm_request_timeout: 600
-  # Поддержка streaming для vLLM
+  # Streaming support for vLLM
   vllm_enable_streaming: true
   # === MCP INTEGRATION SETTINGS ===
-  # MCP Aliases для упрощения доступа к серверам
+  # MCP Aliases for simpler server access
   mcp_aliases:
     "deepwiki": "deepwiki_mcp"
   # === KEY GENERATION SETTINGS ===
-  # Настройки по умолчанию для генерации ключей
+  # Default key generation settings
   default_key_generate_params:
-    max_budget: 10.0 # Максимальный бюджет по умолчанию $10
-    duration: "30d" # Срок действия ключа 30 дней
+    max_budget: 10.0 # Default budget $10
+    duration: "30d" # Key validity 30 days
     metadata:
       created_by: "erni-ki-system"
       environment: "production"
-  # Ограничения для генерации ключей
+  # Key generation limits
   upperbound_key_generate_params:
-    max_budget: 100.0 # Максимальный лимит бюджета $100
-    duration: "90d" # Максимальный срок действия 90 дней
-    max_parallel_requests: 50 # Максимум параллельных запросов
-    tpm_limit: 10000 # Лимит токенов в минуту
-    rpm_limit: 100 # Лимит запросов в минуту
+    max_budget: 100.0 # Max budget $100
+    duration: "90d" # Max validity 90 days
+    max_parallel_requests: 50 # Max parallel requests
+    tpm_limit: 10000 # Tokens per minute limit
+    rpm_limit: 100 # Requests per minute limit
   # === PERFORMANCE OPTIMIZATION ===
-  # Настройки кэширования для production
-  # Включено: 2025-10-02 с использованием in-memory кэширования
-  # Redis кэширование имеет баг в LiteLLM v1.80.0.rc.1 (socket_timeout: 5.0 hardcoded)
+  # Caching settings for production
+  # Enabled: 2025-10-02 using in-memory caching
+  # Redis caching has a bug in LiteLLM v1.80.0.rc.1 (socket_timeout: 5.0 hardcoded)
   cache_params:
-    type: "local" # Использовать in-memory кэширование
-    ttl: 1800 # TTL кэша в секундах (30 минут)
+    type: "local" # Use in-memory caching
+    ttl: 1800 # Cache TTL in seconds (30 minutes)
     supported_call_types: ["acompletion", "atext_completion", "aembedding", "atranscription"]
-  #   socket_connect_timeout: 10 # Timeout подключения
-  #   socket_timeout: 10 # Timeout операций
-  #   connection_pool_timeout: 5 # Timeout пула подключений
-  #   retry_on_timeout: true # Повторить при timeout
-  #   health_check_interval: 30 # Интервал проверки здоровья
-  # Настройки connection pooling
+  #   socket_connect_timeout: 10 # Connection timeout
+  #   socket_timeout: 10 # Operation timeout
+  #   connection_pool_timeout: 5 # Connection pool timeout
+  #   retry_on_timeout: true # Retry on timeout
+  #   health_check_interval: 30 # Health check interval
+  # Connection pooling
   connection_pool:
-    max_connections: 100 # Максимум подключений к БД
-    max_overflow: 20 # Дополнительные подключения при пиковой нагрузке
-    pool_timeout: 30 # Таймаут получения подключения
-    pool_recycle: 3600 # Время жизни подключения (1 час)
+    max_connections: 100 # Max DB connections
+    max_overflow: 20 # Extra connections during peak
+    pool_timeout: 30 # Connection acquire timeout
+    pool_recycle: 3600 # Connection lifetime (1 hour)
 
 # === OPENAI ASSISTANT API CONFIGURATION ===
-# Настройки для интеграции с OpenAI Assistant API (обновлено 2025-10-07)
+# Settings for OpenAI Assistant API integration (updated 2025-10-07)
 assistant_settings:
   custom_llm_provider: openai
   litellm_params:
     api_key: os.environ/OPENAI_API_KEY
     api_base: os.environ/OPENAI_API_BASE
-  # Настройки для конкретного Assistant
+  # Specific Assistant settings
   default_assistant_id: "asst_C8dUl6EKuR41O9sddVVuhTGn"
-  # Включить passthrough для Assistant API эндпоинтов
+  # Enable passthrough for Assistant API endpoints
   enable_assistant_passthrough: true
-  # Поддержка всех Assistant API операций
+  # Supported Assistant API operations
   supported_operations:
     - "create_assistant"
     - "get_assistant"
@@ -234,15 +232,15 @@ assistant_settings:
     - "cancel_run"
 
 # === MCP SERVERS CONFIGURATION ===
-# Интеграция с внешними MCP серверами (примеры из документации)
+# Integration with external MCP servers (documentation examples)
 mcp_servers:
-  # Пример внешнего MCP сервера - DeepWiki
+  # Example external MCP server - DeepWiki
   deepwiki_mcp:
     url: "https://mcp.deepwiki.com/mcp"
     transport: "http"
-    description: "DeepWiki MCP Server для поиска информации"
+    description: "DeepWiki MCP Server for search"
     auth_type: "none"
     spec_version: "2025-03-26"
     mcp_info:
       mcp_server_cost_info:
-        default_cost_per_query: 0.001 # $0.001 за запрос
+        default_cost_per_query: 0.001 # $0.001 per query

@@ -1,7 +1,7 @@
 import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
 
 // Playwright E2E config for ERNI-KI OpenWebUI RAG
-// Рус: визуальные тесты (headless: false), расширенные таймауты и артефакты
+// Visual tests (headless: false), extended timeouts and artifacts
 
 const baseURL = process.env.PW_FORCE_HOST
   ? `https://${process.env.PW_FORCE_HOST}`
@@ -9,14 +9,14 @@ const baseURL = process.env.PW_FORCE_HOST
 
 const launchArgs: string[] = [];
 if (process.env.PW_SNI_HOST && process.env.PW_SNI_IP) {
-  // Принудительное SNI + резолв домена на нужный IP
+  // Force SNI and resolve the domain to the required IP
   launchArgs.push(`--host-resolver-rules=MAP ${process.env.PW_SNI_HOST} ${process.env.PW_SNI_IP}`);
 }
 
 const mockMode = process.env.E2E_MOCK_MODE === 'true';
 const headless =
   process.env.PLAYWRIGHT_HEADFUL === 'true' ? false : process.env.CI ? true : mockMode;
-const testMatch = mockMode ? /mock-openwebui\.spec\.ts$/ : undefined;
+const testMatch = mockMode ? /mock-openwebui\.spec\.ts$/ : /.*\.spec\.ts$/;
 
 const reporter: ReporterDescription[] = process.env.CI
   ? [['dot'], ['html', { outputFolder: 'playwright-report', open: 'never' }]]
@@ -26,7 +26,7 @@ export default defineConfig({
   testDir: 'tests/e2e',
   testMatch,
   fullyParallel: !mockMode,
-  workers: mockMode ? 1 : undefined,
+  ...(mockMode ? { workers: 1 } : {}),
   timeout: mockMode ? 30_000 : 90_000,
   expect: {
     timeout: mockMode ? 10_000 : 30_000,

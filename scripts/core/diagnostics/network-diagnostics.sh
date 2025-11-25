@@ -1,19 +1,19 @@
 #!/bin/bash
 # ERNI-KI Network Diagnostics Script
-# Автоматическая диагностика сетевых проблем между nginx и backend сервисами
+# Automatic diagnostics of network issues between nginx and backend services
 
 set -e
 
 echo "🔍 ERNI-KI Network Diagnostics - $(date)"
 echo "=================================================="
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Функция для проверки доступности сервиса
+# Function to check service availability
 check_service() {
     local service_name=$1
     local service_ip=$2
@@ -31,7 +31,7 @@ check_service() {
     fi
 }
 
-# Функция для проверки DNS резолюции
+# Function to check DNS resolution
 check_dns() {
     local hostname=$1
     echo -n "DNS resolution for $hostname... "
@@ -45,7 +45,7 @@ check_dns() {
     fi
 }
 
-# 1. Проверка статуса контейнеров
+# 1. Check container status
 echo "1. Container Status Check"
 echo "------------------------"
 healthy_count=$(docker ps --format "table {{.Names}}\t{{.Status}}" | grep "healthy" | wc -l)
@@ -56,7 +56,7 @@ if [ "$healthy_count" -lt 20 ]; then
     echo -e "${YELLOW}⚠ Warning: Some containers are not healthy${NC}"
 fi
 
-# 2. Получение текущих IP адресов
+# 2. Get current IP addresses
 echo -e "\n2. Current IP Addresses"
 echo "----------------------"
 nginx_ip=$(docker inspect erni-ki-nginx-1 --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}')
@@ -73,7 +73,7 @@ echo "auth: $auth_ip"
 echo "redis: $redis_ip"
 echo "litellm: $litellm_ip"
 
-# 3. Проверка межконтейнерной связности
+# 3. Check inter-container connectivity
 echo -e "\n3. Inter-container Connectivity"
 echo "------------------------------"
 failed_services=0
@@ -84,7 +84,7 @@ check_service "Auth" "$auth_ip" "9090" "/" || ((failed_services++))
 check_service "Redis" "$redis_ip" "8001" "/" || ((failed_services++))
 check_service "LiteLLM" "$litellm_ip" "4000" "/health" || ((failed_services++))
 
-# 4. Проверка DNS резолюции
+# 4. Check DNS resolution
 echo -e "\n4. DNS Resolution Check"
 echo "----------------------"
 check_dns "openwebui" || ((failed_services++))
@@ -93,7 +93,7 @@ check_dns "auth" || ((failed_services++))
 check_dns "redis" || ((failed_services++))
 check_dns "litellm" || ((failed_services++))
 
-# 5. Проверка HTTPS endpoints
+# 5. Check HTTPS endpoints
 echo -e "\n5. HTTPS Endpoints Check"
 echo "-----------------------"
 echo -n "HTTPS Health Check... "
@@ -112,7 +112,7 @@ else
     ((failed_services++))
 fi
 
-# 6. Проверка Cloudflare tunnel
+# 6. Check Cloudflare tunnel
 echo -e "\n6. Cloudflare Tunnel Check"
 echo "-------------------------"
 echo -n "Port 8080 Access... "
@@ -123,7 +123,7 @@ else
     ((failed_services++))
 fi
 
-# 7. Проверка nginx логов на ошибки
+# 7. Check nginx logs for errors
 echo -e "\n7. Recent Nginx Errors"
 echo "---------------------"
 recent_errors=$(docker logs erni-ki-nginx-1 --since="5m" 2>/dev/null | grep -E "(error|timeout|upstream)" | wc -l)
@@ -134,7 +134,7 @@ else
     docker logs erni-ki-nginx-1 --since="5m" 2>/dev/null | grep -E "(error|timeout|upstream)" | tail -3
 fi
 
-# Итоговый отчет
+# Final report
 echo -e "\n📊 SUMMARY"
 echo "=========="
 if [ "$failed_services" -eq 0 ]; then

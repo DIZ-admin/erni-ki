@@ -1,10 +1,10 @@
 #!/bin/bash
-# Комплексный анализ железа сервера для ERNI-KI
-# Автор: Альтэон Шульц (Tech Lead)
+# Comprehensive server hardware analysis for ERNI-KI
+# Author: Alteon Schultz (Tech Lead)
 
 set -e
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -13,7 +13,7 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-# Функции логирования
+# Logging helpers
 log() { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
 success() { echo -e "${GREEN}✅ $1${NC}"; }
 warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
@@ -21,7 +21,7 @@ error() { echo -e "${RED}❌ $1${NC}"; }
 info() { echo -e "${CYAN}ℹ️  $1${NC}"; }
 section() { echo -e "${PURPLE}🔍 $1${NC}"; }
 
-# Функция для форматирования размеров
+# Helper to format sizes
 format_size() {
     local size=$1
     if [ "$size" -gt 1073741824 ]; then
@@ -35,79 +35,79 @@ format_size() {
     fi
 }
 
-# Анализ CPU
+# CPU analysis
 analyze_cpu() {
-    section "Анализ процессора (CPU)"
+    section "CPU analysis"
 
-    # Основная информация о CPU
+    # Core CPU information
     if [ -f /proc/cpuinfo ]; then
         local cpu_model=$(grep "model name" /proc/cpuinfo | head -1 | cut -d: -f2 | xargs)
         local cpu_cores=$(nproc)
         local cpu_threads=$(grep -c "processor" /proc/cpuinfo)
         local cpu_arch=$(uname -m)
 
-        success "Модель: $cpu_model"
-        success "Архитектура: $cpu_arch"
-        success "Физические ядра: $cpu_cores"
-        success "Логические потоки: $cpu_threads"
+        success "Model: $cpu_model"
+        success "Architecture: $cpu_arch"
+        success "Physical cores: $cpu_cores"
+        success "Logical threads: $cpu_threads"
 
-        # Частота процессора
+        # CPU frequency
         if [ -f /proc/cpuinfo ]; then
             local cpu_freq=$(grep "cpu MHz" /proc/cpuinfo | head -1 | cut -d: -f2 | xargs)
             if [ -n "$cpu_freq" ]; then
-                success "Текущая частота: ${cpu_freq} MHz"
+                success "Current frequency: ${cpu_freq} MHz"
             fi
         fi
 
-        # Максимальная частота
+        # Maximum frequency
         if [ -d /sys/devices/system/cpu/cpu0/cpufreq ]; then
             local max_freq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq 2>/dev/null)
             if [ -n "$max_freq" ]; then
-                success "Максимальная частота: $((max_freq / 1000)) MHz"
+                success "Max frequency: $((max_freq / 1000)) MHz"
             fi
         fi
 
-        # Кэш процессора
+        # Processor cache
         local l3_cache=$(grep "cache size" /proc/cpuinfo | head -1 | cut -d: -f2 | xargs)
         if [ -n "$l3_cache" ]; then
-            success "Кэш L3: $l3_cache"
+            success "L3 cache: $l3_cache"
         fi
 
-        # Флаги процессора (важные для виртуализации и производительности)
+        # CPU flags (virtualization/perf hints)
         local cpu_flags=$(grep "flags" /proc/cpuinfo | head -1 | cut -d: -f2)
         if echo "$cpu_flags" | grep -q "avx2"; then
-            success "AVX2 поддерживается (ускорение вычислений)"
+            success "AVX2 supported (accelerated workloads)"
         else
-            warning "AVX2 не поддерживается"
+            warning "AVX2 not supported"
         fi
 
         if echo "$cpu_flags" | grep -q "sse4_2"; then
-            success "SSE4.2 поддерживается"
+            success "SSE4.2 supported"
         else
-            warning "SSE4.2 не поддерживается"
+            warning "SSE4.2 not supported"
         fi
 
-        # Текущая загрузка CPU
+        # Current CPU load
         local cpu_load=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | sed 's/,//')
-        success "Текущая загрузка: $cpu_load"
+        success "Current load: $cpu_load"
 
-        # Оценка производительности для ERNI-KI
+        # ERNI-KI suitability
         if [ "$cpu_cores" -ge 8 ]; then
-            success "CPU отлично подходит для ERNI-KI (8+ ядер)"
+            success "CPU is excellent for ERNI-KI (8+ cores)"
         elif [ "$cpu_cores" -ge 4 ]; then
-            info "CPU подходит для ERNI-KI (4+ ядра)"
+            info "CPU is acceptable for ERNI-KI (4+ cores)"
         else
-            warning "CPU может быть недостаточно мощным (менее 4 ядер)"
+            warning "CPU may be insufficient (<4 cores)"
         fi
     else
-        error "Не удалось получить информацию о CPU"
+        error "Unable to read CPU information"
     fi
     echo ""
 }
 
-# Анализ памяти
+# Memory analysis
 analyze_memory() {
-    section "Анализ оперативной памяти (RAM)"
+    section "RAM analysis"
 
     if [ -f /proc/meminfo ]; then
         local total_mem=$(grep "MemTotal" /proc/meminfo | awk '{print $2}')
@@ -116,322 +116,322 @@ analyze_memory() {
         local cached_mem=$(grep "Cached" /proc/meminfo | head -1 | awk '{print $2}')
         local buffers_mem=$(grep "Buffers" /proc/meminfo | awk '{print $2}')
 
-        # Конвертация в человекочитаемый формат
+        # Convert to human-readable values
         local total_gb=$((total_mem / 1024 / 1024))
         local available_gb=$((available_mem / 1024 / 1024))
         local used_mem=$((total_mem - available_mem))
         local used_gb=$((used_mem / 1024 / 1024))
         local usage_percent=$((used_mem * 100 / total_mem))
 
-        success "Общий объем: ${total_gb} GB"
-        success "Используется: ${used_gb} GB (${usage_percent}%)"
-        success "Доступно: ${available_gb} GB"
-        success "Кэш: $((cached_mem / 1024)) MB"
-        success "Буферы: $((buffers_mem / 1024)) MB"
+        success "Total RAM: ${total_gb} GB"
+        success "Used: ${used_gb} GB (${usage_percent}%)"
+        success "Available: ${available_gb} GB"
+        success "Cache: $((cached_mem / 1024)) MB"
+        success "Buffers: $((buffers_mem / 1024)) MB"
 
-        # Информация о swap
+        # Swap details
         local swap_total=$(grep "SwapTotal" /proc/meminfo | awk '{print $2}')
         local swap_free=$(grep "SwapFree" /proc/meminfo | awk '{print $2}')
         local swap_used=$((swap_total - swap_free))
 
         if [ "$swap_total" -gt 0 ]; then
-            success "Swap общий: $((swap_total / 1024 / 1024)) GB"
-            success "Swap используется: $((swap_used / 1024)) MB"
+            success "Swap total: $((swap_total / 1024 / 1024)) GB"
+            success "Swap used: $((swap_used / 1024)) MB"
         else
-            warning "Swap не настроен"
+            warning "Swap is not configured"
         fi
 
-        # Оценка для ERNI-KI
+        # ERNI-KI guideline
         if [ "$total_gb" -ge 32 ]; then
-            success "RAM отлично подходит для ERNI-KI (32+ GB)"
+            success "RAM is excellent for ERNI-KI (32+ GB)"
         elif [ "$total_gb" -ge 16 ]; then
-            info "RAM подходит для ERNI-KI (16+ GB)"
+            info "RAM is acceptable for ERNI-KI (16+ GB)"
         elif [ "$total_gb" -ge 8 ]; then
-            warning "RAM минимально подходит для ERNI-KI (8+ GB)"
+            warning "RAM is minimal for ERNI-KI (8+ GB)"
         else
-            error "RAM недостаточно для ERNI-KI (менее 8 GB)"
+            error "RAM is insufficient (<8 GB)"
         fi
 
         if [ "$usage_percent" -gt 80 ]; then
-            warning "Высокое использование памяти (${usage_percent}%)"
+            warning "High memory usage (${usage_percent}%)"
         elif [ "$usage_percent" -gt 60 ]; then
-            info "Умеренное использование памяти (${usage_percent}%)"
+            info "Moderate memory usage (${usage_percent}%)"
         else
-            success "Низкое использование памяти (${usage_percent}%)"
+            success "Low memory usage (${usage_percent}%)"
         fi
     else
-        error "Не удалось получить информацию о памяти"
+        error "Unable to read memory info"
     fi
     echo ""
 }
 
-# Анализ дискового пространства
+# Storage analysis
 analyze_storage() {
-    section "Анализ дискового пространства"
+    section "Storage analysis"
 
-    # Основная информация о дисках
-    success "Использование дискового пространства:"
+    # Disk overview
+    success "Filesystem usage:"
     df -h | grep -E "^/dev/" | while read line; do
         echo "  $line"
     done
 
-    # Детальная информация о корневом разделе
+    # Root filesystem stats
     local root_usage=$(df / | tail -1 | awk '{print $5}' | sed 's/%//')
     local root_available=$(df -h / | tail -1 | awk '{print $4}')
 
-    success "Корневой раздел: ${root_usage}% использовано, ${root_available} доступно"
+    success "Root mount: ${root_usage}% used, ${root_available} free"
 
-    # Проверка места для Docker
+    # Docker storage
     local docker_dir="/var/lib/docker"
     if [ -d "$docker_dir" ]; then
         local docker_size=$(du -sh "$docker_dir" 2>/dev/null | cut -f1)
-        success "Размер Docker данных: $docker_size"
+        success "Docker data footprint: $docker_size"
     fi
 
-    # Проверка места для проекта
+    # Project directory size
     local project_size=$(du -sh . 2>/dev/null | cut -f1)
-    success "Размер проекта ERNI-KI: $project_size"
+    success "ERNI-KI project size: $project_size"
 
-    # Тест скорости записи/чтения
-    log "Тестирование скорости диска..."
+    # Disk speed benchmark
+    log "Benchmarking disk read/write..."
     local write_speed=$(dd if=/dev/zero of=/tmp/test_write bs=1M count=100 2>&1 | grep -o '[0-9.]* MB/s' | tail -1)
     local read_speed=$(dd if=/tmp/test_write of=/dev/null bs=1M 2>&1 | grep -o '[0-9.]* MB/s' | tail -1)
     rm -f /tmp/test_write
 
     if [ -n "$write_speed" ]; then
-        success "Скорость записи: $write_speed"
+        success "Write speed: $write_speed"
     fi
     if [ -n "$read_speed" ]; then
-        success "Скорость чтения: $read_speed"
+        success "Read speed: $read_speed"
     fi
 
-    # Оценка для ERNI-KI
+    # ERNI-KI guidance
     if [ "$root_usage" -lt 50 ]; then
-        success "Достаточно места для ERNI-KI"
+        success "Sufficient capacity for ERNI-KI"
     elif [ "$root_usage" -lt 80 ]; then
-        warning "Место ограничено, рекомендуется очистка"
+        warning "Storage becoming constrained – plan cleanup"
     else
-        error "Критически мало места (${root_usage}%)"
+        error "Critically low free space (${root_usage}%)"
     fi
     echo ""
 }
 
-# Анализ GPU
+# GPU analysis
 analyze_gpu() {
-    section "Анализ графического процессора (GPU)"
+    section "GPU capabilities"
 
-    # Проверка NVIDIA GPU
+    # NVIDIA GPU
     if command -v nvidia-smi &> /dev/null; then
-        success "NVIDIA GPU обнаружен:"
+        success "NVIDIA GPU detected:"
         nvidia-smi --query-gpu=name,memory.total,memory.used,memory.free,temperature.gpu,power.draw --format=csv,noheader,nounits | while read line; do
             echo "  $line"
         done
 
-        # Проверка CUDA
+        # CUDA availability
         if command -v nvcc &> /dev/null; then
             local cuda_version=$(nvcc --version | grep "release" | awk '{print $6}' | cut -d, -f1)
-            success "CUDA версия: $cuda_version"
+            success "CUDA version: $cuda_version"
         else
-            warning "CUDA toolkit не установлен"
+            warning "CUDA toolkit not installed"
         fi
 
-        # Проверка Docker GPU поддержки
+        # Docker GPU passthrough
         if docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi &> /dev/null; then
-            success "Docker GPU поддержка работает"
+            success "Docker GPU support verified"
         else
-            warning "Docker GPU поддержка не настроена"
+            warning "Docker GPU support unavailable"
         fi
 
-        success "GPU отлично подходит для Ollama с ускорением"
+        success "GPU ready for accelerated Ollama workloads"
     else
-        # Проверка AMD GPU
+        # AMD GPU
         if command -v rocm-smi &> /dev/null; then
-            success "AMD GPU обнаружен:"
+            success "AMD GPU detected:"
             rocm-smi --showproductname --showmeminfo
-            info "AMD GPU может работать с Ollama через ROCm"
+            info "AMD GPUs can run Ollama via ROCm"
         else
-            # Проверка Intel GPU
+            # Intel GPU fallback
             if lspci | grep -i "vga\|3d\|display" | grep -i intel &> /dev/null; then
                 local intel_gpu=$(lspci | grep -i "vga\|3d\|display" | grep -i intel | head -1)
-                info "Intel GPU обнаружен: $intel_gpu"
-                warning "Intel GPU имеет ограниченную поддержку для Ollama"
+                info "Intel GPU detected: $intel_gpu"
+                warning "Intel GPU has limited Ollama support"
             else
-                warning "Дискретный GPU не обнаружен"
-                info "Ollama будет работать на CPU (медленнее)"
+                warning "No discrete GPU detected"
+                info "Ollama will fall back to CPU (slower)"
             fi
         fi
     fi
     echo ""
 }
 
-# Анализ сети
+# Network analysis
 analyze_network() {
-    section "Анализ сетевых возможностей"
+    section "Network capabilities"
 
-    # Сетевые интерфейсы
-    success "Активные сетевые интерфейсы:"
+    # Interfaces
+    success "Active network interfaces:"
     ip addr show | grep -E "^[0-9]+:" | while read line; do
         local interface=$(echo "$line" | awk '{print $2}' | sed 's/://')
         local status=$(echo "$line" | grep -o "state [A-Z]*" | awk '{print $2}')
         echo "  $interface: $status"
     done
 
-    # Тест скорости интернета (если доступен)
+    # Download speed smoke test
     if command -v curl &> /dev/null; then
-        log "Тестирование скорости загрузки..."
+        log "Running download speed check..."
         local download_speed=$(curl -o /dev/null -s -w '%{speed_download}' http://speedtest.wdc01.softlayer.com/downloads/test10.zip | awk '{print int($1/1024/1024)}')
         if [ "$download_speed" -gt 0 ]; then
-            success "Скорость загрузки: ~${download_speed} MB/s"
+            success "Download throughput: ~${download_speed} MB/s"
         fi
     fi
 
-    # Проверка портов Docker
-    success "Проверка портов ERNI-KI:"
+    # Docker port status
+    success "ERNI-KI port status:"
     local ports=(80 5432 6379 8080 9090 11434)
     for port in "${ports[@]}"; do
         if netstat -tuln 2>/dev/null | grep ":$port " &> /dev/null; then
-            success "Порт $port: занят (сервис работает)"
+            success "Port $port: in use (service healthy)"
         else
-            info "Порт $port: свободен"
+            info "Port $port: available"
         fi
     done
 
-    # Проверка Docker сети
+    # Docker networks
     if command -v docker &> /dev/null; then
         local docker_networks=$(docker network ls --format "{{.Name}}" | wc -l)
-        success "Docker сетей: $docker_networks"
+        success "Docker networks: $docker_networks"
     fi
     echo ""
 }
 
-# Анализ операционной системы
+# Operating system analysis
 analyze_os() {
-    section "Анализ операционной системы"
+    section "Operating system analysis"
 
-    # Основная информация об ОС
+    # OS metadata
     if [ -f /etc/os-release ]; then
         local os_name=$(grep "PRETTY_NAME" /etc/os-release | cut -d= -f2 | tr -d '"')
         local os_version=$(grep "VERSION_ID" /etc/os-release | cut -d= -f2 | tr -d '"')
-        success "ОС: $os_name"
-        success "Версия: $os_version"
+        success "OS: $os_name"
+        success "Version: $os_version"
     fi
 
-    # Версия ядра
+    # Kernel version
     local kernel_version=$(uname -r)
-    success "Ядро: $kernel_version"
+    success "Kernel: $kernel_version"
 
-    # Время работы системы
-    local uptime_info=$(uptime -p)
-    success "Время работы: $uptime_info"
+    # System uptime
+   local uptime_info=$(uptime -p)
+    success "Uptime: $uptime_info"
 
-    # Проверка systemd
+    # systemd availability
     if command -v systemctl &> /dev/null; then
-        success "Systemd: доступен"
+        success "Systemd: available"
     else
-        warning "Systemd: недоступен"
+        warning "Systemd: not available"
     fi
 
-    # Проверка cgroups v2 (важно для Docker)
+    # cgroups support
     if [ -f /sys/fs/cgroup/cgroup.controllers ]; then
-        success "Cgroups v2: поддерживается"
+        success "Cgroups v2: supported"
     else
-        info "Cgroups v1: используется"
+        info "Cgroups v1: in use"
     fi
     echo ""
 }
 
-# Генерация итогового отчета
+# Final compatibility report
 generate_summary() {
-    section "Итоговая оценка совместимости с ERNI-KI"
+    section "ERNI-KI compatibility summary"
 
     local score=0
     local max_score=10
     local recommendations=()
 
-    # Оценка CPU
+    # CPU score
     local cpu_cores=$(nproc)
     if [ "$cpu_cores" -ge 8 ]; then
         score=$((score + 3))
-        success "CPU: Отлично (${cpu_cores} ядер)"
+        success "CPU: Excellent (${cpu_cores} cores)"
     elif [ "$cpu_cores" -ge 4 ]; then
         score=$((score + 2))
-        info "CPU: Хорошо (${cpu_cores} ядра)"
+        info "CPU: Good (${cpu_cores} cores)"
     else
         score=$((score + 1))
-        warning "CPU: Удовлетворительно (${cpu_cores} ядра)"
-        recommendations+=("Рекомендуется CPU с 4+ ядрами для лучшей производительности")
+        warning "CPU: Adequate (${cpu_cores} cores)"
+        recommendations+=("Upgrade to 4+ cores for better performance")
     fi
 
-    # Оценка RAM
+    # RAM score
     local total_mem=$(grep "MemTotal" /proc/meminfo | awk '{print $2}')
     local total_gb=$((total_mem / 1024 / 1024))
     if [ "$total_gb" -ge 32 ]; then
         score=$((score + 3))
-        success "RAM: Отлично (${total_gb} GB)"
+        success "RAM: Excellent (${total_gb} GB)"
     elif [ "$total_gb" -ge 16 ]; then
         score=$((score + 2))
-        info "RAM: Хорошо (${total_gb} GB)"
+        info "RAM: Good (${total_gb} GB)"
     elif [ "$total_gb" -ge 8 ]; then
         score=$((score + 1))
-        warning "RAM: Минимально (${total_gb} GB)"
-        recommendations+=("Рекомендуется 16+ GB RAM для комфортной работы")
+        warning "RAM: Minimal (${total_gb} GB)"
+        recommendations+=("Recommended 16+ GB RAM for smoother workloads")
     else
-        error "RAM: Недостаточно (${total_gb} GB)"
-        recommendations+=("КРИТИЧНО: Требуется минимум 8 GB RAM")
+        error "RAM: Insufficient (${total_gb} GB)"
+        recommendations+=("CRITICAL: minimum 8 GB RAM required")
     fi
 
-    # Оценка диска
+    # Disk score
     local root_usage=$(df / | tail -1 | awk '{print $5}' | sed 's/%//')
     if [ "$root_usage" -lt 50 ]; then
         score=$((score + 2))
-        success "Диск: Достаточно места"
+        success "Disk: ample free space"
     elif [ "$root_usage" -lt 80 ]; then
         score=$((score + 1))
-        warning "Диск: Ограниченное место"
-        recommendations+=("Рекомендуется освободить место на диске")
+        warning "Disk: limited free space"
+        recommendations+=("Free up disk capacity")
     else
-        error "Диск: Критически мало места"
-        recommendations+=("КРИТИЧНО: Освободите место на диске")
+        error "Disk: critical free space"
+        recommendations+=("CRITICAL: free disk space urgently")
     fi
 
-    # Оценка GPU
+    # GPU score
     if command -v nvidia-smi &> /dev/null; then
         score=$((score + 2))
-        success "GPU: NVIDIA GPU доступен"
+        success "GPU: NVIDIA GPU available"
     else
-        info "GPU: Работа на CPU"
-        recommendations+=("Для ускорения Ollama рекомендуется NVIDIA GPU")
+        info "GPU: CPU-only mode"
+        recommendations+=("NVIDIA GPU recommended for faster Ollama inference")
     fi
 
-    # Итоговая оценка
+    # Overall score
     local percentage=$((score * 100 / max_score))
     echo ""
     if [ "$percentage" -ge 80 ]; then
-        success "ИТОГОВАЯ ОЦЕНКА: ${percentage}% - Отлично подходит для ERNI-KI"
+        success "OVERALL SCORE: ${percentage}% — excellent fit"
     elif [ "$percentage" -ge 60 ]; then
-        info "ИТОГОВАЯ ОЦЕНКА: ${percentage}% - Хорошо подходит для ERNI-KI"
+        info "OVERALL SCORE: ${percentage}% — good fit"
     elif [ "$percentage" -ge 40 ]; then
-        warning "ИТОГОВАЯ ОЦЕНКА: ${percentage}% - Удовлетворительно для ERNI-KI"
+        warning "OVERALL SCORE: ${percentage}% — adequate"
     else
-        error "ИТОГОВАЯ ОЦЕНКА: ${percentage}% - Не рекомендуется для ERNI-KI"
+        error "OVERALL SCORE: ${percentage}% — not recommended"
     fi
 
-    # Рекомендации
+    # Recommendations
     if [ ${#recommendations[@]} -gt 0 ]; then
         echo ""
-        warning "Рекомендации по улучшению:"
+        warning "Suggested improvements:"
         for rec in "${recommendations[@]}"; do
             echo "  • $rec"
         done
     fi
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${PURPLE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                 ERNI-KI Hardware Analysis                   ║"
-    echo "║              Комплексный анализ железа сервера              ║"
+    echo "║                 ERNI-KI Hardware Analysis                    ║"
+    echo "║             Comprehensive server hardware check              ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
@@ -446,11 +446,11 @@ main() {
     echo ""
     echo -e "${GREEN}"
     echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                    Анализ завершен                          ║"
-    echo "║         Результаты сохранены в hardware_report.txt          ║"
+    echo "║                    Analysis complete                         ║"
+    echo "║         Results saved to hardware_report.txt                 ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 }
 
-# Запуск анализа
+# Run analysis
 main "$@" | tee hardware_report.txt

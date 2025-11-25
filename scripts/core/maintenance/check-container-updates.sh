@@ -1,22 +1,22 @@
 #!/bin/bash
-# Скрипт проверки обновлений Docker контейнеров в ERNI-KI
-# Автор: Альтэон Шульц, Tech Lead
-# Дата: 29 августа 2025
+# Script to check for Docker container updates in ERNI-KI
+# Author: Alteon Schultz, Tech Lead
+# Date: August 29, 2025
 
 set -euo pipefail
 
-# === КОНФИГУРАЦИЯ ===
+# === CONFIGURATION ===
 COMPOSE_FILE="compose.yml"
 REPORT_FILE="container-updates-report-$(date +%Y%m%d_%H%M%S).md"
 
-# === ЦВЕТА ДЛЯ ЛОГИРОВАНИЯ ===
+# === LOGGING COLORS ===
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# === ФУНКЦИИ ЛОГИРОВАНИЯ ===
+# === LOGGING FUNCTIONS ===
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -33,58 +33,58 @@ error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# === ПРОВЕРКА ПРЕДВАРИТЕЛЬНЫХ УСЛОВИЙ ===
+# === PREREQUISITES CHECK ===
 check_prerequisites() {
-    log "Проверка предварительных условий..."
+    log "Checking prerequisites..."
 
-    # Проверка Docker
+    # Check Docker
     if ! command -v docker &> /dev/null; then
-        error "Docker не установлен"
+        error "Docker is not installed"
         exit 1
     fi
 
-    # Проверка docker-compose
+    # Check docker-compose
     if ! command -v docker-compose &> /dev/null; then
-        error "docker-compose не установлен"
+        error "docker-compose is not installed"
         exit 1
     fi
 
-    # Проверка jq
+    # Check jq
     if ! command -v jq &> /dev/null; then
-        error "jq не установлен. Установите: sudo apt install jq"
+        error "jq is not installed. Install it: sudo apt install jq"
         exit 1
     fi
 
-    # Проверка curl
+    # Check curl
     if ! command -v curl &> /dev/null; then
-        error "curl не установлен"
+        error "curl is not installed"
         exit 1
     fi
 
-    # Проверка compose файла
+    # Check compose file
     if [[ ! -f "$COMPOSE_FILE" ]]; then
-        error "Файл $COMPOSE_FILE не найден"
+        error "File $COMPOSE_FILE not found"
         exit 1
     fi
 
-    success "Предварительные условия выполнены"
+    success "Prerequisites met"
 }
 
-# === ПОЛУЧЕНИЕ ТЕКУЩИХ ВЕРСИЙ ===
+# === GET CURRENT VERSIONS ===
 get_current_versions() {
-    log "Получение текущих версий контейнеров..."
+    log "Getting current container versions..."
 
-    # Извлечение образов из compose файла
+    # Extract images from compose file
     declare -gA CURRENT_IMAGES
 
-    # Парсинг compose.yml для получения образов
+    # Parse compose.yml to get images
     while IFS= read -r line; do
         if [[ $line =~ image:[[:space:]]*(.+) ]]; then
             image="${BASH_REMATCH[1]}"
-            # Удаление кавычек если есть
+            # Remove quotes if present
             image=$(echo "$image" | sed 's/["'"'"']//g')
 
-            # Разделение на repository и tag
+            # Split into repository and tag
             if [[ $image =~ (.+):(.+) ]]; then
                 repo="${BASH_REMATCH[1]}"
                 tag="${BASH_REMATCH[2]}"
@@ -97,21 +97,21 @@ get_current_versions() {
         fi
     done < "$COMPOSE_FILE"
 
-    success "Найдено ${#CURRENT_IMAGES[@]} образов в compose файле"
+    success "Found ${#CURRENT_IMAGES[@]} images in compose file"
 }
 
-# === ПРОВЕРКА ДОСТУПНЫХ ВЕРСИЙ ===
+# === CHECK AVAILABLE VERSIONS ===
 check_available_versions() {
-    log "Проверка доступных версий в registry..."
+    log "Checking available versions in registry..."
 
     declare -gA LATEST_VERSIONS
     declare -gA UPDATE_AVAILABLE
 
     for repo in "${!CURRENT_IMAGES[@]}"; do
         current_tag="${CURRENT_IMAGES[$repo]}"
-        log "Проверка $repo:$current_tag..."
+        log "Checking $repo:$current_tag..."
 
-        # Определение registry и метода проверки
+        # Determine registry and check method
         if [[ $repo =~ ^ghcr\.io/ ]]; then
             # GitHub Container Registry
             check_ghcr_version "$repo" "$current_tag"
@@ -119,7 +119,7 @@ check_available_versions() {
             # Quay.io Registry
             check_quay_version "$repo" "$current_tag"
         elif [[ $repo =~ / ]]; then
-            # Docker Hub (с namespace)
+            # Docker Hub (with namespace)
             check_dockerhub_version "$repo" "$current_tag"
         else
             # Docker Hub (official images)
@@ -128,16 +128,16 @@ check_available_versions() {
     done
 }
 
-# === ПРОВЕРКА GITHUB CONTAINER REGISTRY ===
+# === CHECK GITHUB CONTAINER REGISTRY ===
 check_ghcr_version() {
     local repo="$1"
     local current_tag="$2"
 
-    # Извлечение owner/repo из ghcr.io/owner/repo
+    # Extract owner/repo from ghcr.io/owner/repo
     local github_repo
     github_repo=$(echo "$repo" | sed 's|ghcr\.io/||')
 
-    # Получение latest release через GitHub API
+    # Get latest release via GitHub API
     local latest_tag
     latest_tag=$(curl -s "https://api.github.com/repos/$github_repo/releases/latest" | jq -r '.tag_name // empty' 2>/dev/null || echo "")
 
@@ -151,20 +151,20 @@ check_ghcr_version() {
     else
         LATEST_VERSIONS["$repo"]="unknown"
         UPDATE_AVAILABLE["$repo"]="unknown"
-        warning "Не удалось получить версию для $repo"
+        warning "Failed to get version for $repo"
     fi
 }
 
-# === ПРОВЕРКА DOCKER HUB ===
+# === CHECK DOCKER HUB ===
 check_dockerhub_version() {
     local repo="$1"
     local current_tag="$2"
 
-    # Получение тегов через Docker Hub API
+    # Get tags via Docker Hub API
     local api_url="https://registry.hub.docker.com/v2/repositories/$repo/tags/"
     local latest_tag
 
-    # Попытка получить latest tag
+    # Try to get latest tag
     latest_tag=$(curl -s "$api_url" | jq -r '.results[] | select(.name == "latest") | .name' 2>/dev/null || echo "")
 
     if [[ -n "$latest_tag" ]]; then
@@ -177,19 +177,19 @@ check_dockerhub_version() {
     else
         LATEST_VERSIONS["$repo"]="unknown"
         UPDATE_AVAILABLE["$repo"]="unknown"
-        warning "Не удалось получить версию для $repo"
+        warning "Failed to get version for $repo"
     fi
 }
 
-# === ПРОВЕРКА ОФИЦИАЛЬНЫХ ОБРАЗОВ DOCKER HUB ===
+# === CHECK DOCKER HUB OFFICIAL IMAGES ===
 check_dockerhub_official_version() {
     local repo="$1"
     local current_tag="$2"
 
-    # Для официальных образов используем library/ prefix
+    # For official images use library/ prefix
     check_dockerhub_version "library/$repo" "$current_tag"
 
-    # Копируем результат без library/ prefix
+    # Copy result without library/ prefix
     if [[ -n "${LATEST_VERSIONS["library/$repo"]:-}" ]]; then
         LATEST_VERSIONS["$repo"]="${LATEST_VERSIONS["library/$repo"]}"
         UPDATE_AVAILABLE["$repo"]="${UPDATE_AVAILABLE["library/$repo"]}"
@@ -198,12 +198,12 @@ check_dockerhub_official_version() {
     fi
 }
 
-# === ПРОВЕРКА QUAY.IO ===
+# === CHECK QUAY.IO ===
 check_quay_version() {
     local repo="$1"
     local current_tag="$2"
 
-    # Quay.io API для получения тегов
+    # Quay.io API to get tags
     local quay_repo
     quay_repo=$(echo "$repo" | sed 's|quay\.io/||')
 
@@ -222,13 +222,13 @@ check_quay_version() {
     else
         LATEST_VERSIONS["$repo"]="unknown"
         UPDATE_AVAILABLE["$repo"]="unknown"
-        warning "Не удалось получить версию для $repo"
+        warning "Failed to get version for $repo"
     fi
 }
 
-# === АНАЛИЗ КРИТИЧНОСТИ ОБНОВЛЕНИЙ ===
+# === ANALYZE UPDATE CRITICALITY ===
 analyze_update_criticality() {
-    log "Анализ критичности обновлений..."
+    log "Analyzing update criticality..."
 
     declare -gA UPDATE_PRIORITY
     declare -gA UPDATE_RISK
@@ -238,7 +238,7 @@ analyze_update_criticality() {
         current_tag="${CURRENT_IMAGES[$repo]}"
         latest_tag="${LATEST_VERSIONS[$repo]:-unknown}"
 
-        # Определение приоритета обновления
+        # Determine update priority
         case "$repo" in
             *postgres*|*postgresql*)
                 UPDATE_PRIORITY["$repo"]="HIGH"
@@ -274,9 +274,9 @@ analyze_update_criticality() {
                 ;;
         esac
 
-        # Проверка на security обновления (упрощенная логика)
+        # Check for security updates (simplified logic)
         if [[ "$current_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ "$latest_tag" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            # Сравнение версий для определения типа обновления
+            # Compare versions to determine update type
             local current_major current_minor current_patch
             local latest_major latest_minor latest_patch
 
@@ -295,51 +295,51 @@ analyze_update_criticality() {
     done
 }
 
-# === ГЕНЕРАЦИЯ ОТЧЕТА ===
+# === GENERATE REPORT ===
 generate_report() {
-    log "Генерация отчета обновлений..."
+    log "Generating update report..."
 
     cat > "$REPORT_FILE" << EOF
 # ERNI-KI Container Updates Report
 
-**Дата:** $(date)
-**Система:** ERNI-KI
-**Анализ:** $(whoami)
+**Date:** $(date)
+**System:** ERNI-KI
+**Analysis:** $(whoami)
 
-## 📊 Сводка обновлений
+## 📊 Updates Summary
 
 $(generate_summary_table)
 
-## 📋 Детальный анализ
+## 📋 Detailed Analysis
 
 $(generate_detailed_analysis)
 
-## 🚀 Рекомендуемый план обновления
+## 🚀 Recommended Update Plan
 
 $(generate_update_plan)
 
-## ⚠️ Риски и предупреждения
+## ⚠️ Risks and Warnings
 
 $(generate_risk_analysis)
 
-## 🔧 Команды для обновления
+## 🔧 Update Commands
 
 $(generate_update_commands)
 
-## 🧪 Процедуры тестирования
+## 🧪 Testing Procedures
 
 $(generate_testing_procedures)
 
 ---
-*Отчет сгенерирован автоматически скриптом check-container-updates.sh*
+*Report generated automatically by check-container-updates.sh script*
 EOF
 
-    success "Отчет сохранен: $REPORT_FILE"
+    success "Report saved: $REPORT_FILE"
 }
 
-# === ГЕНЕРАЦИЯ ТАБЛИЦЫ СВОДКИ ===
+# === GENERATE SUMMARY TABLE ===
 generate_summary_table() {
-    echo "| Сервис | Текущая версия | Доступная версия | Обновление | Приоритет | Риск |"
+    echo "| Service | Current Version | Available Version | Update | Priority | Risk |"
     echo "|--------|----------------|------------------|------------|-----------|------|"
 
     for repo in "${!CURRENT_IMAGES[@]}"; do
@@ -349,7 +349,7 @@ generate_summary_table() {
         priority="${UPDATE_PRIORITY[$repo]:-LOW}"
         risk="${UPDATE_RISK[$repo]:-LOW}"
 
-        # Определение статуса обновления
+        # Determine update status
         local status_icon
         case "$update_available" in
             "yes") status_icon="🔄" ;;
@@ -362,7 +362,7 @@ generate_summary_table() {
     done
 }
 
-# === ГЕНЕРАЦИЯ ДЕТАЛЬНОГО АНАЛИЗА ===
+# === GENERATE DETAILED ANALYSIS ===
 generate_detailed_analysis() {
     for repo in "${!CURRENT_IMAGES[@]}"; do
         current_tag="${CURRENT_IMAGES[$repo]}"
@@ -373,44 +373,44 @@ generate_detailed_analysis() {
 
         echo "### $repo"
         echo ""
-        echo "**Текущая версия:** $current_tag  "
-        echo "**Доступная версия:** $latest_tag  "
-        echo "**Приоритет обновления:** $priority  "
-        echo "**Риск обновления:** $risk  "
+        echo "**Current Version:** $current_tag  "
+        echo "**Available Version:** $latest_tag  "
+        echo "**Update Priority:** $priority  "
+        echo "**Update Risk:** $risk  "
 
         if [[ "${SECURITY_UPDATES[$repo]:-}" == "possible" ]]; then
-            echo "**⚠️ Возможные security обновления**"
+            echo "**⚠️ Possible security updates**"
         fi
 
-        # Специфичные рекомендации для каждого сервиса
+        # Specific recommendations for each service
         case "$repo" in
             *ollama*)
                 echo ""
-                echo "**Рекомендации:**"
-                echo "- Ollama активно развивается, рекомендуется обновление"
-                echo "- Проверьте совместимость с текущими моделями"
-                echo "- Сделайте backup моделей перед обновлением"
+                echo "**Recommendations:**"
+                echo "- Ollama is actively developing, update is recommended"
+                echo "- Check compatibility with current models"
+                echo "- Backup models before updating"
                 ;;
             *open-webui*)
                 echo ""
-                echo "**Рекомендации:**"
-                echo "- OpenWebUI часто выпускает обновления с новыми функциями"
-                echo "- Проверьте changelog на breaking changes"
-                echo "- Сделайте backup базы данных"
+                echo "**Recommendations:**"
+                echo "- OpenWebUI frequently releases updates with new features"
+                echo "- Check changelog for breaking changes"
+                echo "- Backup the database"
                 ;;
             *postgres*|*postgresql*)
                 echo ""
-                echo "**Рекомендации:**"
-                echo "- Критически важный сервис, требует осторожного обновления"
-                echo "- Обязательно сделайте полный backup базы данных"
-                echo "- Тестируйте на staging окружении"
+                echo "**Recommendations:**"
+                echo "- Critical service, requires careful update"
+                echo "- Mandatory full database backup"
+                echo "- Test on staging environment"
                 ;;
             *nginx*)
                 echo ""
-                echo "**Рекомендации:**"
-                echo "- Обычно безопасное обновление"
-                echo "- Проверьте конфигурацию после обновления"
-                echo "- Мониторьте производительность"
+                echo "**Recommendations:**"
+                echo "- Usually safe update"
+                echo "- Check configuration after update"
+                echo "- Monitor performance"
                 ;;
         esac
 
@@ -418,23 +418,23 @@ generate_detailed_analysis() {
     done
 }
 
-# === ГЕНЕРАЦИЯ ПЛАНА ОБНОВЛЕНИЯ ===
+# === GENERATE UPDATE PLAN ===
 generate_update_plan() {
-    echo "### Фаза 1: Подготовка (0 downtime)"
+    echo "### Phase 1: Preparation (0 downtime)"
     echo ""
-    echo "1. **Создание backup всех критических данных**"
+    echo "1. **Backup all critical data**"
     echo "   \`\`\`bash"
     echo "   # Backup PostgreSQL"
     echo "   docker-compose exec db pg_dump -U postgres openwebui > backup-$(date +%Y%m%d).sql"
     echo "   "
-    echo "   # Backup Ollama моделей"
+    echo "   # Backup Ollama models"
     echo "   docker-compose exec ollama ollama list > models-backup-$(date +%Y%m%d).txt"
     echo "   "
-    echo "   # Backup конфигураций"
+    echo "   # Backup configurations"
     echo "   tar -czf config-backup-$(date +%Y%m%d).tar.gz env/ conf/"
     echo "   \`\`\`"
     echo ""
-    echo "2. **Проверка доступности новых образов**"
+    echo "2. **Check availability of new images**"
     echo "   \`\`\`bash"
 
     for repo in "${!CURRENT_IMAGES[@]}"; do
@@ -446,10 +446,10 @@ generate_update_plan() {
 
     echo "   \`\`\`"
     echo ""
-    echo "### Фаза 2: Обновление низкорискованных сервисов (< 30 сек downtime)"
+    echo "### Phase 2: Low-risk service updates (< 30 sec downtime)"
     echo ""
 
-    # Сортировка по приоритету и риску
+    # Sort by priority and risk
     local low_risk_services=()
     for repo in "${!CURRENT_IMAGES[@]}"; do
         if [[ "${UPDATE_RISK[$repo]:-LOW}" == "LOW" && "${UPDATE_AVAILABLE[$repo]}" == "yes" ]]; then
@@ -458,7 +458,7 @@ generate_update_plan() {
     done
 
     if [[ ${#low_risk_services[@]} -gt 0 ]]; then
-        echo "**Низкорискованные сервисы:**"
+        echo "**Low-risk services:**"
         for service in "${low_risk_services[@]}"; do
             echo "- $service"
         done
@@ -468,14 +468,14 @@ generate_update_plan() {
             latest_tag="${LATEST_VERSIONS[$service]:-unknown}"
             echo "docker-compose stop ${service##*/}"
             echo "docker-compose up -d ${service##*/}"
-            echo "sleep 10  # Ожидание запуска"
+            echo "sleep 10  # Wait for startup"
             echo ""
         done
         echo "\`\`\`"
     fi
 
     echo ""
-    echo "### Фаза 3: Обновление критических сервисов (< 2 мин downtime)"
+    echo "### Phase 3: Critical service updates (< 2 min downtime)"
     echo ""
 
     local high_risk_services=()
@@ -486,29 +486,29 @@ generate_update_plan() {
     done
 
     if [[ ${#high_risk_services[@]} -gt 0 ]]; then
-        echo "**Критические сервисы (по одному):**"
+        echo "**Critical services (one by one):**"
         for service in "${high_risk_services[@]}"; do
             echo "- $service"
         done
         echo ""
         echo "\`\`\`bash"
-        echo "# Обновление по одному сервису с проверкой"
+        echo "# Update one service at a time with verification"
         for service in "${high_risk_services[@]}"; do
-            echo "echo 'Обновление $service...'"
+            echo "echo 'Updating $service...'"
             echo "docker-compose stop ${service##*/}"
             echo "docker-compose up -d ${service##*/}"
-            echo "sleep 30  # Ожидание полного запуска"
-            echo "docker-compose ps ${service##*/}  # Проверка статуса"
-            echo "# Проверьте работоспособность перед продолжением"
+            echo "sleep 30  # Wait for full startup"
+            echo "docker-compose ps ${service##*/}  # Check status"
+            echo "# Verify functionality before proceeding"
             echo ""
         done
         echo "\`\`\`"
     fi
 }
 
-# === ГЕНЕРАЦИЯ АНАЛИЗА РИСКОВ ===
+# === GENERATE RISK ANALYSIS ===
 generate_risk_analysis() {
-    echo "### 🔴 Высокорискованные обновления"
+    echo "### 🔴 High-risk updates"
     echo ""
 
     local high_risk_found=false
@@ -516,57 +516,57 @@ generate_risk_analysis() {
         if [[ "${UPDATE_RISK[$repo]:-LOW}" == "HIGH" ]]; then
             high_risk_found=true
             echo "**$repo**"
-            echo "- Может потребовать изменения конфигурации"
-            echo "- Возможны breaking changes в API"
-            echo "- Рекомендуется тестирование на staging"
+            echo "- May require configuration changes"
+            echo "- Possible breaking changes in API"
+            echo "- Testing on staging is recommended"
             echo ""
         fi
     done
 
     if [[ "$high_risk_found" == false ]]; then
-        echo "Высокорискованных обновлений не обнаружено."
+        echo "No high-risk updates found."
         echo ""
     fi
 
-    echo "### ⚠️ Общие предупреждения"
+    echo "### ⚠️ General Warnings"
     echo ""
-    echo "- **Всегда делайте backup перед обновлением**"
-    echo "- **Тестируйте обновления на staging окружении**"
-    echo "- **Мониторьте логи после обновления**"
-    echo "- **Имейте план отката**"
-    echo "- **Обновляйте по одному сервису за раз**"
+    echo "- **Always backup before updating**"
+    echo "- **Test updates on staging environment**"
+    echo "- **Monitor logs after update**"
+    echo "- **Have a rollback plan**"
+    echo "- **Update one service at a time**"
     echo ""
 
-    echo "### 🔄 План отката"
+    echo "### 🔄 Rollback Plan"
     echo ""
     echo "\`\`\`bash"
-    echo "# В случае проблем - откат к предыдущим версиям"
+    echo "# In case of problems - rollback to previous versions"
     echo "docker-compose down"
-    echo "# Восстановите предыдущие образы в compose.yml"
+    echo "# Restore previous images in compose.yml"
     echo "docker-compose up -d"
     echo ""
-    echo "# Восстановление базы данных (если нужно)"
+    echo "# Restore database (if needed)"
     echo "# docker-compose exec db psql -U postgres openwebui < backup-YYYYMMDD.sql"
     echo "\`\`\`"
 }
 
-# === ГЕНЕРАЦИЯ КОМАНД ОБНОВЛЕНИЯ ===
+# === GENERATE UPDATE COMMANDS ===
 generate_update_commands() {
-    echo "### 🚀 Автоматизированное обновление"
+    echo "### 🚀 Automated Update"
     echo ""
     echo "\`\`\`bash"
     echo "#!/bin/bash"
-    echo "# Скрипт автоматического обновления ERNI-KI контейнеров"
+    echo "# Script for automatic ERNI-KI container updates"
     echo ""
     echo "set -euo pipefail"
     echo ""
-    echo "# Создание backup"
-    echo "echo 'Создание backup...'"
+    echo "# Create backup"
+    echo "echo 'Creating backup...'"
     echo "mkdir -p .backups/$(date +%Y%m%d_%H%M%S)"
     echo "docker-compose exec db pg_dump -U postgres openwebui > .backups/$(date +%Y%m%d_%H%M%S)/db-backup.sql"
     echo ""
-    echo "# Обновление образов"
-    echo "echo 'Загрузка новых образов...'"
+    echo "# Update images"
+    echo "echo 'Downloading new images...'"
 
     for repo in "${!CURRENT_IMAGES[@]}"; do
         latest_tag="${LATEST_VERSIONS[$repo]:-unknown}"
@@ -576,12 +576,12 @@ generate_update_commands() {
     done
 
     echo ""
-    echo "# Обновление compose файла"
-    echo "echo 'Обновление compose.yml...'"
+    echo "# Update compose file"
+    echo "echo 'Updating compose.yml...'"
     echo "cp compose.yml compose.yml.backup"
     echo ""
 
-    # Генерация sed команд для обновления compose файла
+    # Generate sed commands to update compose file
     for repo in "${!CURRENT_IMAGES[@]}"; do
         current_tag="${CURRENT_IMAGES[$repo]}"
         latest_tag="${LATEST_VERSIONS[$repo]:-unknown}"
@@ -591,24 +591,24 @@ generate_update_commands() {
     done
 
     echo ""
-    echo "# Перезапуск сервисов"
-    echo "echo 'Перезапуск сервисов...'"
+    echo "# Restart services"
+    echo "echo 'Restarting services...'"
     echo "docker-compose down"
     echo "docker-compose up -d"
     echo ""
-    echo "# Проверка статуса"
-    echo "echo 'Проверка статуса сервисов...'"
+    echo "# Check status"
+    echo "echo 'Checking service status...'"
     echo "sleep 30"
     echo "docker-compose ps"
     echo ""
-    echo "echo 'Обновление завершено!'"
+    echo "echo 'Update completed!'"
     echo "\`\`\`"
     echo ""
-    echo "### 🎯 Выборочное обновление"
+    echo "### 🎯 Selective Update"
     echo ""
     echo "\`\`\`bash"
-    echo "# Обновление только конкретного сервиса"
-    echo "SERVICE_NAME=openwebui  # Замените на нужный сервис"
+    echo "# Update only specific service"
+    echo "SERVICE_NAME=openwebui  # Replace with desired service"
     echo "docker-compose stop \$SERVICE_NAME"
     echo "docker-compose pull \$SERVICE_NAME"
     echo "docker-compose up -d \$SERVICE_NAME"
@@ -616,68 +616,68 @@ generate_update_commands() {
     echo "\`\`\`"
 }
 
-# === ГЕНЕРАЦИЯ ПРОЦЕДУР ТЕСТИРОВАНИЯ ===
+# === GENERATE TESTING PROCEDURES ===
 generate_testing_procedures() {
-    echo "### ✅ Проверка работоспособности после обновления"
+    echo "### ✅ Post-update Health Check"
     echo ""
     echo "\`\`\`bash"
     echo "#!/bin/bash"
-    echo "# Скрипт проверки работоспособности ERNI-KI после обновления"
+    echo "# Script to check ERNI-KI health after update"
     echo ""
-    echo "echo '=== Проверка статуса контейнеров ==='"
+    echo "echo '=== Checking container status ==='"
     echo "docker-compose ps"
     echo ""
-    echo "echo '=== Проверка логов на ошибки ==='"
-    echo "docker-compose logs --tail=50 | grep -i error || echo 'Ошибок не найдено'"
+    echo "echo '=== Checking logs for errors ==='"
+    echo "docker-compose logs --tail=50 | grep -i error || echo 'No errors found'"
     echo ""
-    echo "echo '=== Проверка доступности сервисов ==='"
+    echo "echo '=== Checking service availability ==='"
     echo "# OpenWebUI"
-    echo "curl -f http://localhost:8080/health || echo 'OpenWebUI недоступен'"
+    echo "curl -f http://localhost:8080/health || echo 'OpenWebUI unavailable'"
     echo ""
     echo "# Ollama"
-    echo "curl -f http://localhost:11434/api/tags || echo 'Ollama недоступен'"
+    echo "curl -f http://localhost:11434/api/tags || echo 'Ollama unavailable'"
     echo ""
     echo "# PostgreSQL"
-    echo "docker-compose exec db pg_isready -U postgres || echo 'PostgreSQL недоступен'"
+    echo "docker-compose exec db pg_isready -U postgres || echo 'PostgreSQL unavailable'"
     echo ""
-    echo "echo '=== Проверка дискового пространства ==='"
+    echo "echo '=== Checking disk space ==='"
     echo "df -h"
     echo ""
-    echo "echo '=== Проверка использования памяти ==='"
+    echo "echo '=== Checking memory usage ==='"
     echo "docker stats --no-stream"
     echo ""
-    echo "echo 'Проверка завершена!'"
+    echo "echo 'Check completed!'"
     echo "\`\`\`"
     echo ""
-    echo "### 🔍 Мониторинг после обновления"
+    echo "### 🔍 Post-update Monitoring"
     echo ""
-    echo "**Что мониторить в первые 24 часа:**"
+    echo "**What to monitor in the first 24 hours:**"
     echo ""
-    echo "1. **Логи сервисов**"
+    echo "1. **Service Logs**"
     echo "   \`\`\`bash"
     echo "   docker-compose logs -f --tail=100"
     echo "   \`\`\`"
     echo ""
-    echo "2. **Производительность**"
+    echo "2. **Performance**"
     echo "   \`\`\`bash"
     echo "   docker stats"
     echo "   \`\`\`"
     echo ""
-    echo "3. **Доступность через браузер**"
+    echo "3. **Browser Availability**"
     echo "   - OpenWebUI: http://localhost:8080"
     echo "   - Grafana: http://localhost:3000"
     echo "   - Prometheus: http://localhost:9090"
     echo ""
-    echo "4. **Функциональность RAG**"
-    echo "   - Тестирование поиска документов"
-    echo "   - Проверка генерации ответов"
-    echo "   - Валидация интеграций (SearXNG, Ollama)"
+    echo "4. **RAG Functionality**"
+    echo "   - Document search testing"
+    echo "   - Response generation check"
+    echo "   - Integration validation (SearXNG, Ollama)"
 }
 
-# === ОСНОВНАЯ ФУНКЦИЯ ===
+# === MAIN FUNCTION ===
 main() {
-    echo "🔍 Проверка обновлений Docker контейнеров ERNI-KI"
-    echo "================================================="
+    echo "🔍 ERNI-KI Docker Container Update Check"
+    echo "========================================"
 
     check_prerequisites
     get_current_versions
@@ -686,10 +686,10 @@ main() {
     generate_report
 
     echo ""
-    success "✅ Анализ обновлений завершен!"
-    echo "📄 Отчет: $REPORT_FILE"
+    success "✅ Update analysis completed!"
+    echo "📄 Report: $REPORT_FILE"
     echo ""
-    echo "📋 Краткая сводка:"
+    echo "📋 Brief Summary:"
 
     local total_images=${#CURRENT_IMAGES[@]}
     local updates_available=0
@@ -704,12 +704,12 @@ main() {
         fi
     done
 
-    echo "- Всего образов: $total_images"
-    echo "- Доступно обновлений: $updates_available"
-    echo "- Высокий приоритет: $high_priority"
+    echo "- Total images: $total_images"
+    echo "- Updates available: $updates_available"
+    echo "- High priority: $high_priority"
 }
 
-# === ЗАПУСК ===
+# === RUN ===
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

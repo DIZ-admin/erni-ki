@@ -1,436 +1,189 @@
-# Glossary
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+title: 'Глоссарий'
+---
 
-This glossary defines key terms and concepts used throughout the ERNI-KI
-documentation.
+# Глоссарий
 
-## AI & ML Terms
+Ключевые термины и концепции, используемые в документации ERNI-KI.
+
+## Термины AI и ML
 
 ### Context7
 
-A context engineering framework integrated with LiteLLM that enhances AI
-responses by providing better context management and advanced reasoning
-capabilities. Used for improving the quality and relevance of LLM outputs.
+Фреймворк контекстной инженерии, интегрированный с LiteLLM, который улучшает
+ответы AI через лучшее управление контекстом и продвинутые рассуждения.
 
 ### Docling
 
-An AI-powered document processing service that provides:
+Сервис обработки документов с возможностями:
 
-- Multi-language OCR (EN, DE, FR, IT)
-- Text extraction from PDF, DOCX, PPTX
-- Structural analysis of documents
-- Table and image recognition
+- Многоязычное OCR (EN, DE, FR, IT)
+- Извлечение текста из PDF, DOCX, PPTX
+- Структурный анализ документов
+- Распознавание таблиц и изображений
 
-Port: 5001
+Порт: 5001
 
 ### EdgeTTS
 
-Microsoft Edge Text-to-Speech service providing high-quality speech synthesis
-with:
+Сервис преобразования текста в речь Microsoft Edge:
 
-- Multiple language support
-- Various voice options
-- Streaming audio output
-- Integration with Open WebUI
+- Поддержка множества языков
+- Различные варианты голосов
+- Потоковый вывод аудио
+- Интеграция с Open WebUI
 
-Port: 5050
+Порт: 5050
 
 ### LiteLLM
 
-A unified API gateway for Large Language Models that:
+Унифицированный API-шлюз для LLM:
 
-- Provides consistent API across multiple LLM providers (OpenAI, Anthropic,
-  Google, Azure)
-- Handles load balancing between models
-- Manages usage monitoring and cost tracking
-- Implements caching and rate limiting
-- Supports Context Engineering via Context7
+- Единый API для разных провайдеров (OpenAI, Anthropic, Google, Azure)
+- Балансировка нагрузки между моделями
+- Мониторинг использования и отслеживание затрат
+- Кэширование и ограничение скорости
+- Контекстная инженерия через Context7
 
-Port: 4000
+Порт: 4000
 
 ### MCP (Model Context Protocol)
 
-A protocol for extending AI capabilities through tools and integrations. The MCP
-Server provides:
+Протокол для расширения возможностей AI через инструменты и интеграции. MCP
+Server предоставляет:
 
-- Time tool
-- PostgreSQL database access
-- Filesystem operations
-- Memory management
-- Custom tool integration
+- Безопасное выполнение инструментов
+- Совместное использование контекста между агентами
+- Стандартизированные схемы инструментов
 
-Port: 8000
+Порт: 8000
 
 ### Ollama
 
-A local LLM server with:
+Локальный LLM-сервер с GPU-ускорением. Хранит модели в `./data/ollama`.
+Настраивается через `env/ollama.env`.
 
-- GPU acceleration support (NVIDIA CUDA)
-- Automatic GPU memory management
-- OpenAI-compatible API
-- Support for multiple models
-- Streaming responses
+### OpenWebUI
 
-Port: 11434
+Основной пользовательский интерфейс для AI-взаимодействий:
 
-### RAG (Retrieval-Augmented Generation)
+- Чат-интерфейс с поддержкой изображений и документов
+- Управление моделями и маршрутизация через LiteLLM/Ollama
+- RAG-интеграции через SearXNG/Docling
+- SSE-потоковые эндпоинты
 
-A technique that enhances AI responses by retrieving relevant information from
-external sources before generating answers. ERNI-KI implements RAG through:
-
-- SearXNG for web search
-- Document processing via Docling and Tika
-- Vector storage in PostgreSQL with pgvector
-- Custom RAG exporter for SLA monitoring
-
-Port for RAG Exporter: 9808
-
-## Infrastructure Terms
-
-### Backrest
-
-A backup solution built on Restic providing:
-
-- Automated incremental backups
-- AES-256 encryption
-- Deduplication and compression
-- Web interface for management
-- REST API for automation
-- Retention policy: 7 daily + 4 weekly backups
-
-Port: 9898
-
-### Blackbox Exporter
-
-A Prometheus exporter for probing endpoints over HTTP, HTTPS, DNS, TCP, and
-ICMP. Used for:
-
-- External service availability monitoring
-- Health check validation
-- Network connectivity testing
-
-Port: 9115
-
-### Cloudflared
-
-Cloudflare Tunnel client that:
-
-- Creates secure tunnels without open ports
-- Provides automatic SSL certificate management
-- Offers DDoS protection at Cloudflare level
-- Enables geographic traffic distribution
-- Currently manages 5 active domains
-
-### pgvector
-
-A PostgreSQL extension for vector similarity search, enabling:
-
-- Efficient storage of embedding vectors
-- Fast similarity searches for RAG
-- Integration with AI/ML pipelines
-- Currently storing 968 vector chunks (28MB)
-
-### SearXNG
-
-A privacy-respecting metasearch engine that:
-
-- Aggregates results from multiple search engines (Google, Bing, DuckDuckGo,
-  Brave, Startpage)
-- Provides private search without tracking
-- Offers JSON API for RAG integration
-- Caches results in Redis
-- Has rate limiting to prevent blocking
-
-Port: 8080 (internal) API Endpoint: `/api/searxng/search` (via nginx proxy)
-
-### Watchtower
-
-An automated Docker image updater that:
-
-- Monitors for new image versions
-- Performs graceful service restarts
-- Provides HTTP API for control
-- Supports selective updates
-- Sends update notifications
-
-Port: 8091
-
-## Monitoring Terms
-
-### Alertmanager
-
-Handles alerts from Prometheus:
-
-- Groups and routes notifications
-- Manages silences and inhibitions
-- Integrates with Slack and PagerDuty
-- Supports multi-channel delivery
-- Queue monitoring via custom watchdog
-
-Ports: 9093 (web UI), 9094 (cluster)
-
-### Fluent Bit
-
-Lightweight log processor and forwarder that:
-
-- Collects logs from Docker containers
-- Filters and transforms log data
-- Sends logs to Loki
-- Provides buffering for reliability
-- Uses 15GB disk buffer for network outages
-
-Ports: 24224 (input), 2020 (metrics)
-
-### Grafana
-
-Visualization and analytics platform featuring:
-
-- 18 production dashboards
-- Integration with Prometheus and Loki
-- Custom alerting rules
-- User and team management
-- Dashboard provisioning
-
-Port: 3000
-
-### Loki
-
-Log aggregation system that:
-
-- Stores logs with labels (like Prometheus for logs)
-- Integrates with Fluent Bit for log collection
-- Provides LogQL query language
-- Uses object storage (MinIO/S3) for chunks
-- Implements 30-day retention policy
-- Requires `X-Scope-OrgID: erni-ki` header
-
-Port: 3100
-
-### Prometheus
-
-Metrics collection and alerting system:
-
-- Scrapes metrics from 32 targets
-- Stores time-series data (30-day retention)
-- Executes 27 active alert rules
-- Provides PromQL query language
-- Supports service discovery
-
-Port: 9091
-
-## Exporters
-
-### cAdvisor
-
-Container Advisor for analyzing resource usage and performance of running
-containers.
-
-Port: 8081
-
-### NVIDIA GPU Exporter
-
-Exposes NVIDIA GPU metrics:
-
-- GPU utilization percentage
-- Memory usage
-- Temperature
-- Power consumption
-
-Port: 9445
-
-### Node Exporter
-
-System-level metrics exporter:
-
-- CPU, memory, disk, network stats
-- Load averages
-- Filesystem metrics
-- Hardware monitoring
-
-Port: 9101
-
-### PostgreSQL Exporter
-
-Database metrics exporter:
-
-- Connection counts
-- Query performance
-- Cache hit ratios
-- Lock statistics
-- Auto-discovery of databases
-- Uses IPv4→IPv6 proxy (socat) on port 9188
-
-Port: 9187 (internal), 9188 (via proxy)
+Порт: 8080 (проксируется через Nginx)
 
 ### RAG Exporter
 
-Custom exporter for RAG performance:
+Prometheus-экспортер для производительности RAG:
 
-- Response latency histogram
-- Source count tracking
-- SLA compliance monitoring
+- `erni_ki_rag_response_latency_seconds`
+- `erni_ki_rag_sources_count`
+- Мониторинг SLA для RAG-эндпоинтов
 
-Port: 9808
+Порт: 9808
 
-### Redis Exporter
+### SearXNG
 
-Cache performance metrics:
+Мета-поисковая система, используемая для RAG:
 
-- Memory usage
-- Client connections
-- Hit/miss ratios
-- Command statistics
+- Поддержка множества поисковых провайдеров (Brave, Startpage, Bing, Wikipedia)
+- API-эндпоинт: `/search?q=<query>&format=json`
 
-Port: 9121
+Порт: 8080
 
-## Security Terms
+## Операции и мониторинг
 
-### JWT (JSON Web Token)
+### Alertmanager
 
-Authentication tokens used by the Auth service for:
+Сервис маршрутизации и уведомлений об алертах:
 
-- Secure user sessions
-- API authentication
-- Integration with nginx auth_request
-- Rate limiting for authentication
+- Версия: v0.27.0
+- Каналы: Slack/Teams
+- Троттлинг и маршрутизация через конфигурацию Alertmanager
 
-Auth Service Port: 9092
+### Grafana Dashboards
 
-### Zero Trust
+Предустановленные дашборды (5):
 
-Security model where:
+- GPU/LLM
+- Инфраструктура
+- SLA/Alertmanager
+- Логи (Loki через Explore)
+- RAG-метрики
 
-- No implicit trust based on network location
-- All connections are authenticated and encrypted
-- Implemented via Cloudflare Tunnels
-- No exposed ports on public internet
-- Defense in depth approach
+### Prometheus Alerts
 
-## Network Terms
+20 активных правил алертов, покрывающих критические, производительность, базу
+данных, GPU, Nginx. Определены в `conf/prometheus/alerts.yml`.
 
-### Nginx
+### Watchtower (режим мониторинга)
 
-Reverse proxy and web server providing:
+Мониторит образы без автоматического обновления критических сервисов; только
+выборочные обновления.
 
-- SSL/TLS termination
-- Rate limiting (100 req/min general, 10 req/min for SearXNG)
-- WebSocket proxying
-- Static file serving
-- WAF (Web Application Firewall) functionality
-- Modular configuration with includes
+## Автоматизация
 
-Ports: 80 (HTTP), 443 (HTTPS), 8080 (internal/Cloudflare tunnel)
+### Maintenance Cron
 
-### Socat Proxy
+Запланированные задачи:
 
-TCP proxy used for IPv4→IPv6 translation:
+- PostgreSQL VACUUM — 03:00
+- Очистка Docker — 04:00
+- Резервные копии Backrest — 01:30
+- Ротация логов ежедневно
+- Выборочные обновления Watchtower
 
-- Enables IPv4 Prometheus to connect to IPv6-only PostgreSQL Exporter
-- Shared network namespace with exporter (\u003c1ms latency)
-- Transparent proxying without application changes
+### Scripts (Скрипты)
 
-Port: 9188 (IPv4 listener) → 9187 (IPv6 target)
+- `scripts/maintenance/docling-shared-cleanup.sh` — очистка shared volume
+  Docling
+- `scripts/maintenance/redis-fragmentation-watchdog.sh` — защита от фрагментации
+- `scripts/monitoring/alertmanager-queue-watch.sh` — мониторинг очереди
+- `scripts/infrastructure/security/monitor-certificates.sh` — мониторинг
+  истечения TLS/Cloudflare
 
-## Storage Terms
+## Данные и хранилище
 
-### Redis
+### PostgreSQL (17 + pgvector)
 
-In-memory data structure store used for:
+Общая БД для OpenWebUI и LiteLLM. См.:
 
-- Search query caching (SearXNG)
-- User sessions (OpenWebUI)
-- WebSocket connections
-- Pub/Sub messaging
-- Active defragmentation enabled
-- 2GB memory limit with allkeys-lru eviction
+- `docs/operations/database/database-monitoring-plan.md`
+- `docs/operations/database/database-production-optimizations.md`
+- `docs/operations/database/database-troubleshooting.md`
 
-Port: 6379
+### Redis (7-alpine)
 
-### PostgreSQL
+Менеджер кэша/WebSocket. См.:
 
-Primary database (version 17) with:
+- `docs/operations/database/redis-monitoring-grafana.md`
+- `docs/operations/database/redis-operations-guide.md`
 
-- Shared database for OpenWebUI and LiteLLM
-- pgvector extension for vector storage
-- Optimized configuration (256MB shared buffers, 200 max connections)
-- Aggressive autovacuum (4 workers, 15s naptime)
-- 99.76% cache hit ratio
-- Automated VACUUM every Sunday at 03:00
+### Backrest
 
-Port: 5432
+Локальные резервные копии (ежедневные + еженедельные) хранятся в
+`.config-backup/`. Скрипт интеграции:
+`scripts/setup/setup-backrest-integration.sh`.
 
-## Operations Terms
+## Безопасность
 
-### Cron Evidence
+### Authentication (Аутентификация)
 
-System for tracking automated job execution:
+JWT-аутентификация для сервисов; Auth-сервис проксируется через Nginx. Секреты
+хранятся в env-файлах (используйте `.example` и CI-секреты, не git).
 
-- Records job status (success/failure)
-- Publishes metrics via node_exporter textfile collector
-- Provides SLA monitoring via Prometheus alerts
-- Metrics: `erni_cron_job_success`, `erni_cron_job_age_seconds`
+### TLS
 
-### Health Check
+Nginx обрабатывает SSL-терминацию; Cloudflare-туннель опционален. Сертификаты в
+`conf/ssl/`.
 
-Automated service health verification:
+### Logging Pipeline (Конвейер логирования)
 
-- Docker native healthchecks for all containers
-- HTTP endpoint checks (\u003cservice\u003e/health, \u003cservice\u003e/metrics)
-- TCP connectivity checks
-- Process-based checks
-- Prometheus scrape success monitoring
-
-### Runbook
-
-Operational procedures documenting:
-
-- Service restart procedures
-- Troubleshooting steps
-- Incident response
-- Backup and restore procedures
-- Alert response cheat sheets
-
-### SLA (Service Level Agreement)
-
-Performance targets for services:
-
-- OpenWebUI response time: \u003c5s
-- SearXNG search time: \u003c3s
-- RAG latency monitoring
-- Database cache hit ratio: \u003e99%
-- Container availability: 100%
-
-### SLO (Service Level Objective)
-
-Specific measurable targets:
-
-- Tracked via SLO dashboards in Grafana
-- Error budget calculations (0.5% target)
-- Burn-rate monitoring
-- Platform SRE Overview dashboard
-
-## Acronyms
-
-- **AI**: Artificial Intelligence
-- **API**: Application Programming Interface
-- **CUDA**: Compute Unified Device Architecture (NVIDIA's parallel computing
-  platform)
-- **GPU**: Graphics Processing Unit
-- **HTTPS**: Hypertext Transfer Protocol Secure
-- **JWT**: JSON Web Token
-- **LLM**: Large Language Model
-- **OCR**: Optical Character Recognition
-- **RAG**: Retrieval-Augmented Generation
-- **SLA**: Service Level Agreement
-- **SLO**: Service Level Objective
-- **SRE**: Site Reliability Engineering
-- **SSL/TLS**: Secure Sockets Layer / Transport Layer Security
-- **TTS**: Text-to-Speech
-- **UI**: User Interface
-- **VRAM**: Video Random Access Memory
-- **WAF**: Web Application Firewall
-
-## Version Information
-
-This glossary reflects the state of ERNI-KI as of version 12.1 (November 2025).
-For the most up-to-date information, refer to the main documentation at
-`docs/overview.md`.
+Fluent Bit → Loki через TLS с общим ключом; управление сертификатами через
+`scripts/security/prepare-logging-tls.sh`.

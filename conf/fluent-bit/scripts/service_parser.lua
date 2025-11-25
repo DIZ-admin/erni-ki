@@ -1,14 +1,14 @@
 -- ============================================================================
--- Fluent Bit Lua Script - Service Name Parser для ERNI-KI
--- Цель: Извлечение чистого имени сервиса из container_name
+-- Fluent Bit Lua Script - Service Name Parser for ERNI-KI
+-- Goal: Extract clean service name from container_name
 -- ============================================================================
--- Версия: 1.0.0
--- Создано: 2025-09-01
--- Назначение: Парсинг имен сервисов для лучшей категоризации логов
+-- Version: 1.0.0
+-- Created: 2025-09-01
+-- Purpose: Parse service names for better log categorization
 -- ============================================================================
 
 function parse_service_name(tag, timestamp, record)
-    -- Получаем исходное имя контейнера
+    -- Get raw container name
     local service_raw = record["service_raw"]
 
     if service_raw == nil then
@@ -16,11 +16,11 @@ function parse_service_name(tag, timestamp, record)
         return 1, timestamp, record
     end
 
-    -- Убираем префикс "erni-ki-" и суффикс "-1", "-2" и т.д.
+    -- Strip prefix "erni-ki-" and suffix "-1", "-2", etc.
     local service_name = string.gsub(service_raw, "^erni%-ki%-", "")
     service_name = string.gsub(service_name, "%-[0-9]+$", "")
 
-    -- Маппинг специальных случаев
+    -- Special-case mapping
     local service_mapping = {
         ["db"] = "postgres",
         ["mcposerver"] = "mcp",
@@ -35,15 +35,15 @@ function parse_service_name(tag, timestamp, record)
         ["webhook-receiver"] = "webhooks"
     }
 
-    -- Применяем маппинг если есть
+    -- Apply mapping when available
     if service_mapping[service_name] then
         service_name = service_mapping[service_name]
     end
 
-    -- Устанавливаем финальное имя сервиса
+    -- Set final service name
     record["service"] = service_name
 
-    -- Добавляем категорию сервиса для лучшей группировки
+    -- Add service category for grouping
     local service_categories = {
         ["nginx"] = "web",
         ["openwebui"] = "web",
@@ -66,10 +66,10 @@ function parse_service_name(tag, timestamp, record)
         ["edgetts"] = "processing"
     }
 
-    -- Добавляем категорию
+    -- Add category
     record["service_category"] = service_categories[service_name] or "other"
 
-    -- Добавляем метрики для мониторинга
+    -- Add metrics flag for monitoring
     if string.find(service_name, "metrics") then
         record["service_category"] = "metrics"
         record["is_metrics"] = true

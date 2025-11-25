@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # ERNI-KI Security Fixes Application Script
-# Скрипт для применения исправлений безопасности nginx без полной перезагрузки системы
+# Apply nginx security fixes without full system restart
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функция логирования
+# Logging
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
@@ -29,110 +29,110 @@ error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Проверка прав доступа
+# Permissions check
 if [[ $EUID -eq 0 ]]; then
-   error "Этот скрипт не должен запускаться от root"
+   error "This script must not be run as root"
    exit 1
 fi
 
-# Проверка наличия docker-compose
+# docker-compose check
 if ! command -v docker-compose &> /dev/null; then
-    error "docker-compose не найден"
+    error "docker-compose not found"
     exit 1
 fi
 
-log "🔧 Начинаем применение исправлений безопасности ERNI-KI..."
+log "🔧 Applying ERNI-KI nginx security fixes..."
 
-# Создание резервной копии текущей конфигурации
+# Backup current configuration
 BACKUP_DIR=".config-backup/nginx-security-$(date +%Y%m%d-%H%M%S)"
-log "📦 Создание резервной копии в $BACKUP_DIR..."
+log "📦 Creating backup in $BACKUP_DIR..."
 mkdir -p "$BACKUP_DIR"
 cp -r conf/nginx/ "$BACKUP_DIR/"
-success "Резервная копия создана"
+success "Backup created"
 
-# Проверка синтаксиса nginx конфигурации
-log "🔍 Проверка синтаксиса nginx конфигурации..."
+# Validate nginx config syntax
+log "🔍 Checking nginx configuration syntax..."
 if docker-compose exec -T nginx nginx -t; then
-    success "Синтаксис конфигурации корректен"
+    success "Configuration syntax is valid"
 else
-    error "Ошибка в синтаксисе nginx конфигурации"
-    log "Восстанавливаем из резервной копии..."
+    error "nginx configuration syntax error"
+    log "Restoring from backup..."
     cp -r "$BACKUP_DIR/nginx/" conf/
     exit 1
 fi
 
-# Применение изменений с graceful reload
-log "🔄 Применение изменений nginx (graceful reload)..."
+# Apply changes with graceful reload
+log "🔄 Applying nginx reload..."
 if docker-compose exec -T nginx nginx -s reload; then
-    success "Конфигурация nginx успешно перезагружена"
+    success "nginx configuration reloaded"
 else
-    error "Ошибка при перезагрузке nginx"
-    log "Восстанавливаем из резервной копии..."
+    error "Error reloading nginx"
+    log "Restoring from backup..."
     cp -r "$BACKUP_DIR/nginx/" conf/
     docker-compose exec -T nginx nginx -s reload
     exit 1
 fi
 
-# Проверка статуса всех сервисов
-log "🏥 Проверка статуса всех сервисов..."
+# Check service status
+log "🏥 Checking service status..."
 UNHEALTHY_SERVICES=$(docker-compose ps --format "table {{.Service}}\t{{.Status}}" | grep -v "Up.*healthy" | grep -v "SERVICE" | wc -l)
 
 if [ "$UNHEALTHY_SERVICES" -gt 0 ]; then
-    warning "Обнаружены нездоровые сервисы:"
+    warning "Unhealthy services detected:"
     docker-compose ps --format "table {{.Service}}\t{{.Status}}" | grep -v "Up.*healthy" | grep -v "SERVICE"
 else
-    success "Все сервисы работают корректно"
+    success "All services are healthy"
 fi
 
-# Тестирование HTTPS доступа
-log "🔐 Тестирование HTTPS доступа..."
+# Test HTTPS
+log "🔐 Testing HTTPS..."
 if curl -s -I -k https://localhost >/dev/null 2>&1; then
-    success "HTTPS доступ работает"
+    success "HTTPS is reachable"
 else
-    warning "Проблемы с HTTPS доступом"
+    warning "HTTPS access has issues"
 fi
 
-# Проверка заголовков безопасности
-log "🛡️ Проверка заголовков безопасности..."
+# Security headers check
+log "🛡️ Checking security headers..."
 SECURITY_HEADERS=$(curl -s -I -k https://localhost | grep -E "(strict-transport-security|content-security-policy|x-frame-options)" | wc -l)
 if [ "$SECURITY_HEADERS" -ge 3 ]; then
-    success "Заголовки безопасности настроены корректно"
+    success "Security headers are present"
 else
-    warning "Некоторые заголовки безопасности отсутствуют"
+    warning "Some security headers are missing"
 fi
 
-# Проверка rate limiting
-log "⚡ Проверка rate limiting..."
+# Rate limiting check
+log "⚡ Checking rate limiting..."
 if docker-compose exec -T nginx test -f /var/log/nginx/rate_limit.log; then
-    success "Rate limiting логирование настроено"
+    success "Rate limiting logging is configured"
 else
-    warning "Rate limiting логирование не настроено"
+    warning "Rate limiting logging is not configured"
 fi
 
-# Финальная проверка
-log "✅ Финальная проверка системы..."
+# Final check
+log "✅ Final system check..."
 TOTAL_SERVICES=$(docker-compose ps --format "table {{.Service}}" | grep -v "SERVICE" | wc -l)
 HEALTHY_SERVICES=$(docker-compose ps --format "table {{.Service}}\t{{.Status}}" | grep "Up.*healthy" | wc -l)
 
 echo
-echo "📊 Статистика системы:"
-echo "   Всего сервисов: $TOTAL_SERVICES"
-echo "   Здоровых сервисов: $HEALTHY_SERVICES"
-echo "   Резервная копия: $BACKUP_DIR"
+echo "📊 System stats:"
+echo "   Total services: $TOTAL_SERVICES"
+echo "   Healthy services: $HEALTHY_SERVICES"
+echo "   Backup: $BACKUP_DIR"
 echo
 
 if [ "$HEALTHY_SERVICES" -eq "$TOTAL_SERVICES" ]; then
-    success "🎉 Исправления безопасности успешно применены!"
-    success "Все $TOTAL_SERVICES сервисов работают корректно"
+    success "🎉 Security fixes applied successfully!"
+    success "All $TOTAL_SERVICES services are healthy"
 else
-    warning "⚠️ Исправления применены, но есть проблемы с некоторыми сервисами"
-    echo "Проверьте логи проблемных сервисов: docker-compose logs [service_name]"
+    warning "⚠️ Fixes applied, but some services have issues"
+    echo "Check logs of problematic services: docker-compose logs [service_name]"
 fi
 
-log "🔍 Для мониторинга безопасности используйте:"
-echo "   - Логи rate limiting: docker-compose exec nginx tail -f /var/log/nginx/rate_limit.log"
-echo "   - Статус nginx: curl -s http://localhost:8080/nginx_status"
-echo "   - Проверка заголовков: curl -I -k https://localhost"
+log "🔍 For security monitoring:"
+echo "   - Rate limiting logs: docker-compose exec nginx tail -f /var/log/nginx/rate_limit.log"
+echo "   - Nginx status: curl -s http://localhost:8080/nginx_status"
+echo "   - Header check: curl -I -k https://localhost"
 
 echo
-success "Применение исправлений безопасности завершено!"
+success "Security fixes application completed!"

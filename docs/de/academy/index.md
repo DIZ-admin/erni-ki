@@ -1,7 +1,8 @@
 ---
-page_id: academy.index
+language: de
 translation_status: partial
-doc_version: '2025.02'
+doc_version: '2025.11'
+last_updated: '2025-11-24'
 ---
 
 # Academy KI

@@ -1,15 +1,15 @@
 #!/bin/bash
-# Очистка старых логов ERNI-KI
+# Cleanup old ERNI-KI logs
 
-echo "=== ОЧИСТКА ЛОГОВ ERNI-KI ==="
-echo "Дата: $(date)"
+echo "=== ERNI-KI LOG CLEANUP ==="
+echo "Date: $(date)"
 
-# Очистка Docker логов старше 7 дней
-echo "Очистка Docker логов старше 7 дней..."
+# Remove Docker logs older than 7 days
+echo "Cleaning Docker logs older than 7 days..."
 docker system prune -f --filter "until=168h"
 
-# Архивирование логов
+# Archive logs
 ARCHIVE_DIR="/var/log/erni-ki/archive/$(date +%Y%m%d)"
 mkdir -p "$ARCHIVE_DIR"
 
-echo "Архивирование завершено в: $ARCHIVE_DIR"
+echo "Archiving completed to: $ARCHIVE_DIR"

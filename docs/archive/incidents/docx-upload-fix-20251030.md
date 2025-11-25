@@ -1,14 +1,17 @@
+---
+language: ru
+translation_status: archived
+doc_version: '2025.11'
+---
+
 # Отчет: Исправление ошибки загрузки DOCX документов в Firefox
 
-**Дата:** 2025-10-30  
-**Автор:** ERNI-KI System Administrator  
-**Статус:** ✅ ИСПРАВЛЕНО  
-**Приоритет:** HIGH  
-**Затраченное время:** 45 минут
+**Дата:** 2025-10-30 **Автор:** ERNI-KI System Administrator **Статус:**
+ИСПРАВЛЕНО **Приоритет:** HIGH **Затраченное время:** 45 минут
 
 ---
 
-## 📋 Краткое описание проблемы
+## Краткое описание проблемы
 
 При попытке загрузки DOCX документов через OpenWebUI в браузере **Firefox**
 пользователи получали ошибку:
@@ -21,26 +24,29 @@ JSON.parse: unexpected end of data at line 1 column 1 of the JSON data
 
 ---
 
-## 🔍 Диагностика
+## Диагностика
 
 ### Симптомы
 
 1. **Firefox (v144.0):**
-   - ❌ Ошибка: `JSON.parse: unexpected end of data`
-   - ❌ HTTP Status: `400 Bad Request`
-   - ❌ Response: `400 Bad Request nginx/1.28.0`
-   - ❌ Nginx log:
-     `client prematurely closed stream: only 0 out of 151554 bytes received`
+
+- Ошибка: `JSON.parse: unexpected end of data`
+- HTTP Status: `400 Bad Request`
+- Response: `400 Bad Request nginx/1.28.0`
+- Nginx log:
+  `client prematurely closed stream: only 0 out of 151554 bytes received`
 
 2. **Chrome:**
-   - ✅ Загрузка работает нормально
-   - ✅ HTTP Status: `200 OK`
-   - ✅ Файлы успешно обрабатываются
+
+- Загрузка работает нормально
+- HTTP Status: `200 OK`
+- Файлы успешно обрабатываются
 
 3. **curl:**
-   - ✅ Загрузка работает с Authorization header
-   - ✅ Загрузка работает с Cookie session
-   - ✅ HTTP Status: `200 OK`
+
+- Загрузка работает с Authorization header
+- Загрузка работает с Cookie session
+- HTTP Status: `200 OK`
 
 ### Анализ логов
 
@@ -63,20 +69,20 @@ JSON.parse: unexpected end of data at line 1 column 1 of the JSON data
 
 **Nginx:**
 
-- ✅ `client_max_body_size 100M` - установлен корректно
-- ✅ `client_body_buffer_size 16M` - достаточно
-- ✅ CORS headers - настроены правильно
-- ✅ Proxy settings - корректны
+- `client_max_body_size 100M` - установлен корректно
+- `client_body_buffer_size 16M` - достаточно
+- CORS headers - настроены правильно
+- Proxy settings - корректны
 
 **OpenWebUI:**
 
-- ✅ `FILE_UPLOAD_MAX_SIZE=104857600` (100MB)
+- `FILE_UPLOAD_MAX_SIZE=104857600` (100MB)
 
 **Вывод:** Проблема не в размере файла или конфигурации лимитов.
 
 ---
 
-## 🎯 Причина проблемы
+## Причина проблемы
 
 **Корневая причина:** Известная несовместимость **Firefox + HTTP/2 +
 multipart/form-data** при загрузке файлов через nginx.
@@ -102,7 +108,7 @@ curl по умолчанию использует HTTP/1.1 для POST запр�
 
 ---
 
-## ✅ Решение
+## Решение
 
 ### Реализованное исправление
 
@@ -120,35 +126,35 @@ curl по умолчанию использует HTTP/1.1 для POST запр�
 # File upload endpoint - HTTP/1.1 only для совместимости с Firefox
 # Исправление: Firefox + HTTP/2 + multipart/form-data несовместимы
 location /api/v1/files/ {
-  limit_req zone=general burst=10 nodelay;
-  limit_conn perip 10;
-  limit_conn perserver 500;
+ limit_req zone=general burst=10 nodelay;
+ limit_conn perip 10;
+ limit_conn perserver 500;
 
-  # Принудительно использовать HTTP/1.1 для file uploads
-  proxy_http_version 1.1;
-  proxy_set_header Connection "";
+ # Принудительно использовать HTTP/1.1 для file uploads
+ proxy_http_version 1.1;
+ proxy_set_header Connection "";
 
-  # Увеличенные таймауты для больших файлов
-  client_max_body_size 100M;
-  client_body_timeout 300s;
-  client_body_buffer_size 16M;
+ # Увеличенные таймауты для больших файлов
+ client_max_body_size 100M;
+ client_body_timeout 300s;
+ client_body_buffer_size 16M;
 
-  # Отключить буферизацию для streaming uploads
-  proxy_buffering off;
-  proxy_request_buffering off;
+ # Отключить буферизацию для streaming uploads
+ proxy_buffering off;
+ proxy_request_buffering off;
 
-  # Таймауты для загрузки файлов
-  proxy_connect_timeout 30s;
-  proxy_send_timeout 300s;
-  proxy_read_timeout 300s;
+ # Таймауты для загрузки файлов
+ proxy_connect_timeout 30s;
+ proxy_send_timeout 300s;
+ proxy_read_timeout 300s;
 
-  # Стандартные proxy заголовки
-  proxy_pass http://openwebui_backend;
-  proxy_set_header Host $host;
-  proxy_set_header X-Real-IP $remote_addr;
-  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-  proxy_set_header X-Forwarded-Proto $scheme;
-  proxy_set_header X-Request-ID $final_request_id;
+ # Стандартные proxy заголовки
+ proxy_pass http://openwebui_backend;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+ proxy_set_header X-Forwarded-Proto $scheme;
+ proxy_set_header X-Request-ID $final_request_id;
 }
 ```
 
@@ -169,29 +175,29 @@ docker compose exec nginx nginx -s reload
 
 # Проверка статуса
 docker compose ps nginx
-# nginx     running   Up 3 hours (healthy)
+# nginx running Up 3 hours (healthy)
 ```
 
 ---
 
-## 🧪 Тестирование
+## Тестирование
 
 ### Тест 1: Firefox загрузка файла
 
 **До исправления:**
 
 ```
-❌ HTTP 400 Bad Request
-❌ JSON.parse error
-❌ Файл не загружен
+ HTTP 400 Bad Request
+ JSON.parse error
+ Файл не загружен
 ```
 
 **После исправления:**
 
 ```
-✅ Попробуйте загрузить DOCX файл через Firefox
-✅ Ожидается: HTTP 200 OK
-✅ Ожидается: Файл успешно загружен и обработан
+ Попробуйте загрузить DOCX файл через Firefox
+ Ожидается: HTTP 200 OK
+ Ожидается: Файл успешно загружен и обработан
 ```
 
 ### Тест 2: Chrome загрузка файла
@@ -199,8 +205,8 @@ docker compose ps nginx
 **До и после исправления:**
 
 ```
-✅ HTTP 200 OK
-✅ Файл успешно загружен
+ HTTP 200 OK
+ Файл успешно загружен
 ```
 
 ### Тест 3: curl загрузка файла
@@ -209,8 +215,8 @@ docker compose ps nginx
 
 ```bash
 curl -X POST "https://ki.erni-gruppe.ch/api/v1/files/" \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -F "file=@document.docx"
+ -H "Authorization: Bearer YOUR_TOKEN" \
+ -F "file=@document.docx"
 ```
 
 **Результат:**
@@ -226,15 +232,15 @@ curl -X POST "https://ki.erni-gruppe.ch/api/v1/files/" \
 
 ---
 
-## 📊 Результаты
+## Результаты
 
 ### Критерии успеха
 
-- ✅ **Ошибка JSON.parse устранена**
-- ✅ **DOCX документы успешно загружаются в Firefox**
-- ✅ **Логи не содержат ошибок обработки документов**
-- ✅ **Chrome продолжает работать корректно**
-- ✅ **Нет downtime при применении исправления**
+- **Ошибка JSON.parse устранена**
+- **DOCX документы успешно загружаются в Firefox**
+- **Логи не содержат ошибок обработки документов**
+- **Chrome продолжает работать корректно**
+- **Нет downtime при применении исправления**
 
 ### Метрики
 
@@ -248,7 +254,7 @@ curl -X POST "https://ki.erni-gruppe.ch/api/v1/files/" \
 
 ---
 
-## 🔮 Рекомендации по предотвращению в будущем
+## Рекомендации по предотвращению в будущем
 
 ### 1. Мониторинг загрузки файлов
 
@@ -271,14 +277,14 @@ rate(nginx_http_requests_total{location="/api/v1/files/", status="400"}[5m])
 
 ```yaml
 - alert: FileUploadErrors
-  expr:
-    rate(nginx_http_requests_total{location="/api/v1/files/",
-    status=~"4.."}[5m]) > 0.1
-  for: 5m
-  labels:
-    severity: warning
-  annotations:
-    summary: 'High rate of file upload errors'
+ expr:
+ rate(nginx_http_requests_total{location="/api/v1/files/",
+ status=~"4.."}[5m]) > 0.1
+ for: 5m
+ labels:
+ severity: warning
+ annotations:
+ summary: 'High rate of file upload errors'
 ```
 
 ### 3. Тестирование в разных браузерах
@@ -310,7 +316,7 @@ rate(nginx_http_requests_total{location="/api/v1/files/", status="400"}[5m])
 
 ---
 
-## 📚 Связанные ресурсы
+## Связанные ресурсы
 
 ### Документация
 
@@ -331,14 +337,11 @@ rate(nginx_http_requests_total{location="/api/v1/files/", status="400"}[5m])
 
 ---
 
-## 👥 Контакты
+## Контакты
 
-**Ответственный:** ERNI-KI System Administrator  
-**Email:** admin@erni-gruppe.ch  
+**Ответственный:** ERNI-KI System Administrator **Email:** admin@erni-gruppe.ch
 **Slack:** #erni-ki-support
 
 ---
 
-**Статус:** ✅ ИСПРАВЛЕНО  
-**Дата закрытия:** 2025-10-30  
-**Время решения:** 45 минут
+**Статус:** ИСПРАВЛЕНО **Дата закрытия:** 2025-10-30 **Время решения:** 45 минут

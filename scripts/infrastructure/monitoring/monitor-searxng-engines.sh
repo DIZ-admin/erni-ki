@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# SearXNG Engine Monitoring Script для ERNI-KI
-# Мониторинг ошибок поисковых движков и автоматическое отключение проблемных
+# SearXNG Engine Monitoring Script for ERNI-KI
+# Monitors engine errors and automatically disables problematic ones
 
 set -euo pipefail
 
-# === КОНФИГУРАЦИЯ ===
+# === CONFIGURATION ===
 LOG_FILE="/home/konstantin/Documents/augment-projects/erni-ki/logs/searxng-engine-monitor.log"
-ERROR_THRESHOLD=5  # Количество ошибок для отключения движка
-TIME_WINDOW=300    # Временное окно в секундах (5 минут)
+ERROR_THRESHOLD=5  # Error count threshold to disable an engine
+TIME_WINDOW=300    # Time window in seconds (5 minutes)
 SEARXNG_CONTAINER="erni-ki-searxng-1"
 
-# === ФУНКЦИИ ===
+# === FUNCTIONS ===
 log_message() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
 }
@@ -20,7 +20,7 @@ check_engine_errors() {
     local engine="$1"
     local error_count
 
-    # Подсчет ошибок за последние TIME_WINDOW секунд
+    # Count errors over the last TIME_WINDOW seconds
     error_count=$(docker logs --since="${TIME_WINDOW}s" "$SEARXNG_CONTAINER" 2>/dev/null | \
                   grep -c "ERROR:searx.engines.${engine}:" || echo "0")
 
@@ -29,48 +29,48 @@ check_engine_errors() {
 
 disable_engine() {
     local engine="$1"
-    log_message "WARNING: Отключение проблемного движка: $engine"
+    log_message "WARNING: Disabling problematic engine: $engine"
 
-    # Создание backup конфигурации
+    # Backup configuration
     cp conf/searxng/settings.yml "conf/searxng/settings.yml.backup.$(date +%Y%m%d_%H%M%S)"
 
-    # Отключение движка в конфигурации
+    # Disable engine in configuration
     sed -i "/name: $engine/,/disabled:/ s/disabled: false/disabled: true/" conf/searxng/settings.yml
 
-    # Перезапуск SearXNG для применения изменений
+    # Restart SearXNG to apply changes
     docker-compose restart searxng
 
-    log_message "INFO: Движок $engine отключен и SearXNG перезапущен"
+    log_message "INFO: Engine $engine disabled and SearXNG restarted"
 }
 
-# === ОСНОВНАЯ ЛОГИКА ===
+# === MAIN LOGIC ===
 main() {
-    log_message "INFO: Запуск мониторинга SearXNG движков"
+    log_message "INFO: Starting SearXNG engine monitoring"
 
-    # Список движков для мониторинга
+    # Engines to monitor
     engines=("bing" "google" "duckduckgo" "startpage" "brave")
 
     for engine in "${engines[@]}"; do
         error_count=$(check_engine_errors "$engine")
 
         if [[ $error_count -gt $ERROR_THRESHOLD ]]; then
-            log_message "ALERT: Движок $engine имеет $error_count ошибок за последние $TIME_WINDOW секунд"
+            log_message "ALERT: Engine $engine has $error_count errors in the last $TIME_WINDOW seconds"
 
-            # Проверяем, не отключен ли уже движок
+            # Check if engine is already disabled
             if grep -A2 "name: $engine" conf/searxng/settings.yml | grep -q "disabled: false"; then
                 disable_engine "$engine"
             else
-                log_message "INFO: Движок $engine уже отключен"
+                log_message "INFO: Engine $engine is already disabled"
             fi
         else
-            log_message "INFO: Движок $engine: $error_count ошибок (норма)"
+            log_message "INFO: Engine $engine: $error_count errors (normal)"
         fi
     done
 
-    log_message "INFO: Мониторинг завершен"
+    log_message "INFO: Monitoring finished"
 }
 
-# === ЗАПУСК ===
+# === RUN ===
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

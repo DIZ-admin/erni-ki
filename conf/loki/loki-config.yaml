@@ -1,4 +1,4 @@
-# Loki конфигурация для ERNI-KI (упрощенная для v3.4.1)
+# Loki configuration for ERNI-KI (simplified for v3.4.1)
 auth_enabled: true
 
 server:

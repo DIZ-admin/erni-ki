@@ -1,71 +1,59 @@
-# Prometheus Configuration для ERNI-KI
-# Система сбора метрик и мониторинга
-# Дата обновления: 2025-09-19
-# Статус: Production Ready - оптимизированные запросы с fallback значениями
-# Интеграция: 18 дашбордов Grafana (100% функциональны), 85% успешность запросов
+# Prometheus Configuration for ERNI-KI
+# Metrics and monitoring
+# Updated: 2025-09-19 | Status: Production Ready (optimized queries with fallbacks)
+# Integration: 18 Grafana dashboards (~85% query success)
 
-# === Основные настройки ===
-# Внешний URL для доступа к Prometheus
+# === Basics ===
+# External URL for Prometheus
 PROMETHEUS_EXTERNAL_URL=http://prometheus.your-domain.com
-# Порт веб-интерфейса
+# Web UI listen address
 PROMETHEUS_WEB_LISTEN_ADDRESS=0.0.0.0:9090
 
-# === Хранение данных ===
-# Путь к данным
+# === Storage ===
+# Data path
 PROMETHEUS_STORAGE_TSDB_PATH=/prometheus
-# Время хранения метрик (30 дней)
+# Retention time (30 days)
 PROMETHEUS_STORAGE_TSDB_RETENTION_TIME=30d
-# Максимальный размер хранилища (10GB)
+# Retention size cap (10GB)
 PROMETHEUS_STORAGE_TSDB_RETENTION_SIZE=10GB
 
-# === Конфигурация ===
-# Путь к файлу конфигурации
+# === Configuration ===
+# Config file
 PROMETHEUS_CONFIG_FILE=/etc/prometheus/prometheus.yml
-# Путь к правилам алертов
+# Alert rules path
 PROMETHEUS_RULE_FILES=/etc/prometheus/alert_rules.yml
 
-# === Веб-интерфейс ===
-# Включить lifecycle API для перезагрузки конфигурации
+# === Web interface ===
+# Enable lifecycle API for reloads
 PROMETHEUS_WEB_ENABLE_LIFECYCLE=true
-# Включить admin API
+# Enable admin API
 PROMETHEUS_WEB_ENABLE_ADMIN_API=true
-# Путь к консольным библиотекам
+# Console libraries path
 PROMETHEUS_WEB_CONSOLE_LIBRARIES=/etc/prometheus/console_libraries
-# Путь к консольным шаблонам
+# Console templates path
 PROMETHEUS_WEB_CONSOLE_TEMPLATES=/etc/prometheus/consoles
 
-# === Производительность ===
-# Интервал сбора метрик по умолчанию
+# === Performance ===
+# Default scrape interval
 PROMETHEUS_GLOBAL_SCRAPE_INTERVAL=15s
-# Интервал оценки правил
+# Rule evaluation interval
 PROMETHEUS_GLOBAL_EVALUATION_INTERVAL=15s
-# Таймаут сбора метрик
+# Scrape timeout
 PROMETHEUS_GLOBAL_SCRAPE_TIMEOUT=10s
 
-# === ЛОГИРОВАНИЕ ===
-# Уровень логирования (debug, info, warn, error)
+# === Logging ===
+# Log level (debug, info, warn, error)
 PROMETHEUS_LOG_LEVEL=info
-# Формат логов (logfmt, json)
+# Log format (logfmt, json)
 PROMETHEUS_LOG_FORMAT=logfmt
 
-# === ОПТИМИЗИРОВАННАЯ СИСТЕМА МОНИТОРИНГА (2025-09-19) ===
-# Статус: 18 дашбордов Grafana (100% функциональны)
-# Исправленные Prometheus запросы с fallback значениями:
-# - RAG Pipeline: probe_success с fallback vector(95) для 95% success rate
-# - Nginx Monitoring: error rate с fallback vector(0) для 0 error rate
-# - Service Health: корректные job селекторы для всех сервисов
-# - Infrastructure: оптимизированные запросы для PostgreSQL, Redis, SearXNG
-# - AI Services: мониторинг LiteLLM, Docling OCR, Context7 интеграции
-#
-# Производительность:
-# - Время отклика Prometheus: <0.005s
-# - Время загрузки дашбордов: <3s
-# - Успешность запросов: 85% (улучшено с 40%)
-# - Покрытие метрик: 29+ микросервисов
-
-# === ВАЖНО: ИЗМЕНИТЬ ПЕРЕД ПРОДАКШЕНОМ ===
-# ⚠️ Настройте PROMETHEUS_EXTERNAL_URL согласно вашему домену
-# ⚠️ Проверьте доступность всех target'ов в конфигурации
-# ⚠️ Настройте retention согласно доступному дисковому пространству
-# ⚠️ Убедитесь в корректной работе всех 18 дашбордов Grafana
-# ⚠️ Проверьте fallback значения в критических запросах
+# === Optimized monitoring notes (2025-09-19) ===
+# - 18 Grafana dashboards (100% functional)
+# - Queries include fallbacks for stability (RAG pipeline, Nginx, service health, infra, AI services)
+# Performance targets: <5ms query time, <3s dashboard load, ~85% query success, coverage 29+ services
+# === IMPORTANT BEFORE PRODUCTION ===
+# ⚠️ Set PROMETHEUS_EXTERNAL_URL to your domain
+# ⚠️ Verify all targets are reachable
+# ⚠️ Adjust retention to available disk
+# ⚠️ Confirm all 18 Grafana dashboards work
+# ⚠️ Validate fallback values in critical queries

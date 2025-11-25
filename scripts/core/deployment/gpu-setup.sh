@@ -1,17 +1,17 @@
 #!/bin/bash
-# Скрипт настройки GPU ускорения для ERNI-KI
-# Установка NVIDIA Container Toolkit и настройка Ollama
+# GPU acceleration setup script for ERNI-KI
+# Install NVIDIA Container Toolkit and configure Ollama
 
 set -euo pipefail
 
-# Цвета для вывода
+# Color definitions for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функции логирования
+# Logging functions
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -29,73 +29,73 @@ error() {
     exit 1
 }
 
-# Проверка наличия NVIDIA GPU
+# Check for NVIDIA GPU presence
 check_nvidia_gpu() {
-    log "Проверка наличия NVIDIA GPU..."
+    log "Checking for NVIDIA GPU..."
 
     if ! command -v nvidia-smi &> /dev/null; then
-        error "NVIDIA драйверы не установлены. Установите драйверы NVIDIA перед запуском этого скрипта."
+        error "NVIDIA drivers not installed. Install NVIDIA drivers before running this script."
     fi
 
     local gpu_count=$(nvidia-smi --list-gpus | wc -l)
     if [ "$gpu_count" -eq 0 ]; then
-        error "NVIDIA GPU не обнаружены"
+        error "No NVIDIA GPUs detected"
     fi
 
-    success "Обнаружено GPU: $gpu_count"
+    success "Detected GPUs: $gpu_count"
     nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader,nounits
 }
 
-# Определение дистрибутива Linux
+# Detect Linux distribution
 detect_distro() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         DISTRO=$ID
         VERSION=$VERSION_ID
     else
-        error "Не удалось определить дистрибутив Linux"
+        error "Unable to determine Linux distribution"
     fi
 
-    log "Обнаружен дистрибутив: $DISTRO $VERSION"
+    log "Detected distribution: $DISTRO $VERSION"
 }
 
-# Установка NVIDIA Container Toolkit для Ubuntu/Debian
+# Install NVIDIA Container Toolkit for Ubuntu/Debian
 install_nvidia_toolkit_debian() {
-    log "Установка NVIDIA Container Toolkit для Ubuntu/Debian..."
+    log "Installing NVIDIA Container Toolkit for Ubuntu/Debian..."
 
-    # Добавление репозитория
+    # Add repository
     curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
 
     curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
         sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
         sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
-    # Обновление пакетов и установка
+    # Update packages and install
     sudo apt-get update
     sudo apt-get install -y nvidia-container-toolkit
 
-    success "NVIDIA Container Toolkit установлен"
+    success "NVIDIA Container Toolkit installed"
 }
 
-# Установка NVIDIA Container Toolkit для CentOS/RHEL/Fedora
+# Install NVIDIA Container Toolkit for CentOS/RHEL/Fedora
 install_nvidia_toolkit_rhel() {
-    log "Установка NVIDIA Container Toolkit для CentOS/RHEL/Fedora..."
+    log "Installing NVIDIA Container Toolkit for CentOS/RHEL/Fedora..."
 
-    # Добавление репозитория
+    # Add repository
     curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | \
         sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo
 
-    # Установка
+    # Install
     if command -v dnf &> /dev/null; then
         sudo dnf install -y nvidia-container-toolkit
     else
         sudo yum install -y nvidia-container-toolkit
     fi
 
-    success "NVIDIA Container Toolkit установлен"
+    success "NVIDIA Container Toolkit installed"
 }
 
-# Установка NVIDIA Container Toolkit
+# Install NVIDIA Container Toolkit
 install_nvidia_container_toolkit() {
     detect_distro
 
@@ -107,104 +107,104 @@ install_nvidia_container_toolkit() {
             install_nvidia_toolkit_rhel
             ;;
         *)
-            error "Неподдерживаемый дистрибутив: $DISTRO"
+            error "Unsupported distribution: $DISTRO"
             ;;
     esac
 }
 
-# Настройка Docker для использования NVIDIA runtime
+# Configure Docker to use NVIDIA runtime
 configure_docker_nvidia() {
-    log "Настройка Docker для использования NVIDIA runtime..."
+    log "Configuring Docker to use NVIDIA runtime..."
 
-    # Настройка NVIDIA Container Runtime
+    # Configure NVIDIA Container Runtime
     sudo nvidia-ctk runtime configure --runtime=docker
 
-    # Перезапуск Docker
+    # Restart Docker
     sudo systemctl restart docker
 
-    # Проверка конфигурации
+    # Check configuration
     if docker run --rm --gpus all nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi; then
-        success "Docker успешно настроен для использования GPU"
+        success "Docker successfully configured to use GPU"
     else
-        error "Ошибка настройки Docker для GPU"
+        error "Error configuring Docker for GPU"
     fi
 }
 
-# Обновление compose.yml для включения GPU
+# Update compose.yml to enable GPU
 update_compose_gpu() {
-    log "Обновление compose.yml для включения GPU поддержки..."
+    log "Updating compose.yml to enable GPU support..."
 
     local compose_file="compose.yml"
 
-    # Проверка существования файла
+    # Check file existence
     if [ ! -f "$compose_file" ]; then
         if [ -f "compose.yml.example" ]; then
             cp "compose.yml.example" "$compose_file"
-            log "Создан compose.yml из примера"
+            log "Created compose.yml from example"
         else
-            error "Файл compose.yml не найден"
+            error "File compose.yml not found"
         fi
     fi
 
-    # Раскомментирование GPU deploy для Ollama
+    # Uncomment GPU deploy for Ollama
     if grep -q "# deploy: \*gpu-deploy" "$compose_file"; then
         sed -i 's/# deploy: \*gpu-deploy/deploy: *gpu-deploy/' "$compose_file"
-        success "GPU deploy включен для Ollama"
+        success "GPU deploy enabled for Ollama"
     else
-        warning "GPU deploy уже включен или не найден в конфигурации"
+        warning "GPU deploy already enabled or not found in configuration"
     fi
 
-    # Раскомментирование GPU deploy для Open WebUI (если есть)
+    # Uncomment GPU deploy for Open WebUI (if present)
     if grep -q "# deploy: \*gpu-deploy" "$compose_file"; then
         sed -i 's/# deploy: \*gpu-deploy/deploy: *gpu-deploy/' "$compose_file"
-        success "GPU deploy включен для Open WebUI"
+        success "GPU deploy enabled for Open WebUI"
     fi
 }
 
-# Создание оптимизированной конфигурации Ollama
+# Create optimized Ollama configuration
 create_ollama_config() {
-    log "Создание оптимизированной конфигурации Ollama..."
+    log "Creating optimized Ollama configuration..."
 
     local ollama_env="env/ollama.env"
 
-    # Создание или обновление конфигурации
+    # Create or update configuration
     cat > "$ollama_env" << 'EOF'
 # Ollama GPU Configuration
 OLLAMA_DEBUG=0
 OLLAMA_HOST=0.0.0.0:11434
 OLLAMA_ORIGINS=*
 
-# GPU настройки
+# GPU settings
 OLLAMA_GPU_LAYERS=-1
 OLLAMA_NUM_PARALLEL=4
 OLLAMA_MAX_LOADED_MODELS=3
 
-# Производительность
+# Performance
 OLLAMA_FLASH_ATTENTION=1
 OLLAMA_KV_CACHE_TYPE=f16
 OLLAMA_NUM_THREAD=0
 
-# Память
+# Memory
 OLLAMA_MAX_VRAM=0.9
 OLLAMA_KEEP_ALIVE=5m
 
-# Логирование
+# Logging
 OLLAMA_LOG_LEVEL=INFO
 EOF
 
-    success "Создана оптимизированная конфигурация Ollama"
+    success "Created optimized Ollama configuration"
 }
 
-# Загрузка рекомендуемых моделей
+# Download recommended models
 download_models() {
-    log "Загрузка рекомендуемых моделей..."
+    log "Downloading recommended models..."
 
-    # Проверка, что Ollama запущен
+    # Check if Ollama is running
     if ! docker compose ps ollama | grep -q "Up"; then
-        log "Запуск Ollama сервиса..."
+        log "Starting Ollama service..."
         docker compose up -d ollama
 
-        # Ожидание запуска
+        # Wait for startup
         local retries=30
         while [ $retries -gt 0 ]; do
             if docker compose exec ollama ollama list &>/dev/null; then
@@ -215,58 +215,58 @@ download_models() {
         done
 
         if [ $retries -eq 0 ]; then
-            error "Ollama не запустился в течение 60 секунд"
+            error "Ollama failed to start within 60 seconds"
         fi
     fi
 
-    # Список моделей для загрузки
+    # List of models to download
     local models=(
         "nomic-embed-text:latest"
         "llama3.2:3b"
     )
 
     for model in "${models[@]}"; do
-        log "Загрузка модели: $model"
+        log "Downloading model: $model"
         if docker compose exec ollama ollama pull "$model"; then
-            success "Модель $model загружена"
+            success "Model $model downloaded"
         else
-            warning "Не удалось загрузить модель $model"
+            warning "Failed to download model $model"
         fi
     done
 }
 
-# Тестирование GPU производительности
+# Test GPU performance
 test_gpu_performance() {
-    log "Тестирование GPU производительности..."
+    log "Testing GPU performance..."
 
-    # Простой тест генерации
+    # Simple generation test
     local test_prompt="Hello, how are you?"
 
-    log "Тестирование с моделью llama3.2:3b..."
+    log "Testing with model llama3.2:3b..."
     local start_time=$(date +%s.%N)
 
     if docker compose exec ollama ollama run llama3.2:3b "$test_prompt" &>/dev/null; then
         local end_time=$(date +%s.%N)
         local duration=$(echo "$end_time - $start_time" | bc -l)
-        success "Тест завершен за ${duration} секунд"
+        success "Test completed in ${duration} seconds"
 
         if (( $(echo "$duration < 1.0" | bc -l) )); then
-            success "Отличная производительность GPU! (<1s)"
+            success "Excellent GPU performance! (<1s)"
         elif (( $(echo "$duration < 3.0" | bc -l) )); then
-            success "Хорошая производительность GPU! (<3s)"
+            success "Good GPU performance! (<3s)"
         else
-            warning "Производительность GPU может быть улучшена (>3s)"
+            warning "GPU performance could be improved (>3s)"
         fi
     else
-        warning "Не удалось выполнить тест производительности"
+        warning "Failed to run performance test"
     fi
 }
 
-# Создание мониторинга GPU
+# Create GPU monitoring
 create_gpu_monitoring() {
-    log "Создание конфигурации мониторинга GPU..."
+    log "Creating GPU monitoring configuration..."
 
-    # Создание docker-compose override для мониторинга
+    # Create docker-compose override for monitoring
     cat > "docker-compose.gpu-monitoring.yml" << 'EOF'
 version: '3.8'
 
@@ -290,22 +290,22 @@ services:
               capabilities: [gpu]
 EOF
 
-    success "Создана конфигурация мониторинга GPU"
-    log "Для запуска мониторинга используйте: docker compose -f compose.yml -f docker-compose.gpu-monitoring.yml up -d"
+    success "GPU monitoring configuration created"
+    log "To start monitoring use: docker compose -f compose.yml -f docker-compose.gpu-monitoring.yml up -d"
 }
 
-# Основная функция
+# Main function
 main() {
-    log "Запуск настройки GPU ускорения для ERNI-KI..."
+    log "Starting GPU acceleration setup for ERNI-KI..."
 
-    # Проверка, что мы в корне проекта
+    # Check that we are in project root
     if [ ! -f "compose.yml.example" ]; then
-        error "Скрипт должен запускаться из корня проекта ERNI-KI"
+        error "Script must be run from ERNI-KI project root"
     fi
 
-    # Проверка прав sudo
+    # Check sudo rights
     if [ "$EUID" -eq 0 ]; then
-        error "Не запускайте скрипт от root. Используйте sudo при необходимости."
+        error "Do not run script as root. Use sudo when needed."
     fi
 
     check_nvidia_gpu
@@ -315,16 +315,16 @@ main() {
     create_ollama_config
     create_gpu_monitoring
 
-    success "Настройка GPU завершена!"
+    success "GPU setup completed!"
 
     echo ""
-    log "Следующие шаги:"
-    echo "1. Перезапустите сервисы: docker compose down && docker compose up -d"
-    echo "2. Дождитесь запуска Ollama сервиса"
-    echo "3. Загрузите модели: $0 --download-models"
-    echo "4. Протестируйте производительность: $0 --test-performance"
+    log "Next steps:"
+    echo "1. Restart services: docker compose down && docker compose up -d"
+    echo "2. Wait for Ollama service to start"
+    echo "3. Download models: $0 --download-models"
+    echo "4. Test performance: $0 --test-performance"
 
-    # Обработка аргументов командной строки
+    # Process command line arguments
     case "${1:-}" in
         --download-models)
             download_models
@@ -333,13 +333,13 @@ main() {
             test_gpu_performance
             ;;
         --help)
-            echo "Использование: $0 [--download-models|--test-performance|--help]"
-            echo "  --download-models   Загрузить рекомендуемые модели"
-            echo "  --test-performance  Протестировать производительность GPU"
-            echo "  --help             Показать эту справку"
+            echo "Usage: $0 [--download-models|--test-performance|--help]"
+            echo "  --download-models   Download recommended models"
+            echo "  --test-performance  Test GPU performance"
+            echo "  --help             Show this help"
             ;;
     esac
 }
 
-# Запуск скрипта
+# Run script
 main "$@"

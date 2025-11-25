@@ -1,15 +1,27 @@
-# 👤 ERNI-KI Benutzerhandbuch
+---
+language: de
+translation_status: pending
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+title: ' ERNI-KI Benutzerhandbuch'
+system_version: '12.1'
+date: '2025-11-22'
+system_status: 'Production Ready'
+audience: 'administrators'
+---
+
+# ERNI-KI Benutzerhandbuch
 
 > **Dokumentversion:** 3.0 **Aktualisierungsdatum:** 2025-07-15 **Zielgruppe:**
-> Endbenutzer
+> Endbenutzer [TOC]
 
-## 🎯 Einführung
+## Einführung
 
 ERNI-KI ist eine moderne AI-Plattform, die eine benutzerfreundliche
 Weboberfläche für die Arbeit mit Sprachmodellen bietet. Das System unterstützt
 AI-Chat, Internetsuche, Dokumentenverarbeitung und Sprachinteraktion.
 
-## 🚀 Erste Schritte
+## Erste Schritte
 
 ### Systemzugang
 
@@ -26,7 +38,7 @@ Das Hauptinterface besteht aus:
 - **Eingabefeld** - Feld für Nachrichten und Aktionsschaltflächen
 - **Obere Leiste** - Modellauswahl und zusätzliche Einstellungen
 
-## 💬 Arbeiten mit Chats
+## Arbeiten mit Chats
 
 ### Neuen Chat erstellen
 
@@ -49,7 +61,7 @@ Das Hauptinterface besteht aus:
 - **Dateien und Dokumente** - Upload zur Analyse
 - **Bilder** - Analyse und Beschreibung von Bildern
 
-## 🔍 RAG-Suche mit SearXNG
+## RAG-Suche mit SearXNG
 
 ### Was ist RAG-Suche
 
@@ -83,7 +95,7 @@ SearXNG sucht Informationen in:
 - Wissenschaftliche Publikationen
 - Spezialisierte Ressourcen
 
-## 📄 Arbeiten mit Dokumenten
+## Arbeiten mit Dokumenten
 
 ### Unterstützte Formate
 
@@ -96,7 +108,7 @@ SearXNG sucht Informationen in:
 
 ### Dokumente hochladen
 
-1. Klicken Sie auf die **"📎"** (Büroklammer) Schaltfläche im Eingabefeld
+1. Klicken Sie auf die **""** (Büroklammer) Schaltfläche im Eingabefeld
 2. Wählen Sie eine Datei vom Computer (bis zu 100MB)
 3. Warten Sie auf die Dokumentenverarbeitung
 4. Stellen Sie Fragen zum Dokumentinhalt
@@ -121,11 +133,11 @@ Erstelle einen Präsentationsplan aus diesem Material
 Hebe die Hauptthesen aus dem Dokument hervor
 ```
 
-## 🎤 Sprachfunktionen
+## Sprachfunktionen
 
 ### Spracheingabe
 
-1. Klicken Sie auf die **🎤** Schaltfläche im Eingabefeld
+1. Klicken Sie auf die \*\*\*\* Schaltfläche im Eingabefeld
 2. Erlauben Sie Mikrofon-Zugriff im Browser
 3. Sprechen Sie klar und deutlich
 4. Klicken Sie auf die Stopp-Schaltfläche
@@ -145,7 +157,7 @@ Hebe die Hauptthesen aus dem Dokument hervor
 - **Französisch, Spanisch, Italienisch**
 - **Chinesisch, Japanisch, Koreanisch**
 
-## ⚙️ Einstellungen und Personalisierung
+## Einstellungen und Personalisierung
 
 ### Modell-Einstellungen
 
@@ -168,7 +180,7 @@ Hebe die Hauptthesen aus dem Dokument hervor
 - **Such-Sprachen** - bevorzugte Ergebnis-Sprachen
 - **Sichere Suche** - Inhaltsfilterung
 
-## 🔧 Erweiterte Funktionen
+## Erweiterte Funktionen
 
 ### System-Prompts
 
@@ -198,7 +210,7 @@ Speichern Sie häufig verwendete Anfragen:
 - **Einstellungs-Export** - Backup der Konfiguration
 - **Anfrage-Historie** - Nutzungsanalyse
 
-## 🛡️ Sicherheit und Datenschutz
+## Sicherheit und Datenschutz
 
 ### Datenschutz
 
@@ -214,7 +226,7 @@ Speichern Sie häufig verwendete Anfragen:
 - Geben Sie keine vertraulichen Informationen weiter
 - Richten Sie Backups ein
 
-## ❓ Häufig gestellte Fragen
+## Häufig gestellte Fragen
 
 ### **F: Wie wähle ich das passende Modell?**
 
@@ -241,7 +253,7 @@ RAG-Suche benötigt Internet.
 A: Verwenden Sie `docker compose exec ollama ollama pull model-name` zum Laden
 neuer Modelle.
 
-## 🆘 Hilfe erhalten
+## Hilfe erhalten
 
 ### Technischer Support
 
@@ -251,7 +263,7 @@ neuer Modelle.
 
 ### Nützliche Ressourcen
 
-- [Administrator-Handbuch](../operations/admin-guide.md) - für
+- [Administrator-Handbuch](../operations/core/admin-guide.md) - für
   Systemkonfiguration
 - [API-Dokumentation](../../reference/api-reference.md) - für Integrationen
 - [Systemarchitektur](../architecture/architecture.md) - technische
@@ -259,5 +271,5 @@ neuer Modelle.
 
 ---
 
-**💡 Tipp**: Experimentieren Sie mit verschiedenen Einstellungen und Modellen,
-um die optimale Konfiguration für Ihre Aufgaben zu finden!
+** Tipp**: Experimentieren Sie mit verschiedenen Einstellungen und Modellen, um
+die optimale Konfiguration für Ihre Aufgaben zu finden!

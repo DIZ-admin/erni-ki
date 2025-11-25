@@ -1,11 +1,12 @@
 ---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
 title: 'ERNI-KI status page launch'
 date: 2025-11-20
 description: 'New user-friendly status view powered by Uptime Kuma'
 tags:
-  - status
-  - uptime-kuma
-  - release
 ---
 
 # ERNI-KI status page launch
@@ -34,8 +35,8 @@ monitoring network as other observability tools.
 
 ## How to get help
 
-- Check the [status page guide](../operations/status-page.md) for the current
-  URL and escalation path.
+- Check the [status page guide](../operations/core/status-page.md) for the
+  current URL and escalation path.
 - If the status page is red, notify the on-call engineer via the usual incident
   channel.
 - For documentation improvements, create an issue referencing this news item.

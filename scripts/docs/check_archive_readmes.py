@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import List
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCHIVE_CHECKS = {
@@ -17,9 +16,9 @@ DATA_DIR = ROOT / "docs/data"
 DATA_README = DATA_DIR / "README.md"
 
 
-def missing_entries(directory: Path, readme: Path, include_suffix: str = ".md") -> List[str]:
+def missing_entries(directory: Path, readme: Path, include_suffix: str = ".md") -> list[str]:
     text = readme.read_text(encoding="utf-8")
-    missing: List[str] = []
+    missing: list[str] = []
     for md_file in sorted(directory.glob(f"*{include_suffix}")):
         if md_file.name.lower() == "readme.md":
             continue
@@ -28,37 +27,29 @@ def missing_entries(directory: Path, readme: Path, include_suffix: str = ".md") 
     return missing
 
 
-def check_archive_readmes() -> List[str]:
-    errors: List[str] = []
+def check_archive_readmes() -> list[str]:
+    errors: list[str] = []
     for folder, readme in ARCHIVE_CHECKS.items():
         if not readme.exists():
-            errors.append(f"{readme} отсутствует.")
+            errors.append(f"{readme} is missing.")
             continue
         missing = missing_entries(folder, readme)
         if missing:
-            errors.append(
-                f"{readme} не содержит ссылки на: {', '.join(missing)}"
-            )
+            errors.append(f"{readme} does not contain references to: {', '.join(missing)}")
     return errors
 
 
-def check_data_readme() -> List[str]:
+def check_data_readme() -> list[str]:
     if not DATA_README.exists():
-        return [f"{DATA_README} отсутствует."]
+        return [f"{DATA_README} is missing."]
     text = DATA_README.read_text(encoding="utf-8")
     missing = missing_entries(DATA_DIR, DATA_README)
     if missing:
-        return [
-            f"{DATA_README} не содержит записи для: {', '.join(missing)}"
-        ]
-    # также проверим, что каждая запись содержит дату в таблице
-    table_rows = [
-        line for line in text.splitlines() if line.strip().startswith("| ")
-    ]
+        return [f"{DATA_README} does not contain entries for: {', '.join(missing)}"]
+    # Also ensure each entry has a date row in the table
+    table_rows = [line for line in text.splitlines() if line.strip().startswith("| ")]
     if len(table_rows) < 3:
-        return [
-            f"{DATA_README} таблица состояния выглядит неполной (найдено {len(table_rows)} строк)."
-        ]
+        return [f"{DATA_README} state table looks incomplete (found {len(table_rows)} rows)."]
     return []
 
 
@@ -66,7 +57,7 @@ def main() -> None:
     errors = check_archive_readmes()
     errors.extend(check_data_readme())
     if errors:
-        print("Проверка README архивов/данных не пройдена:", file=sys.stderr)
+        print("Archive/data README check failed:", file=sys.stderr)
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         sys.exit(1)

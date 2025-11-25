@@ -71,17 +71,17 @@ EOF
 
 ensure_environment() {
   if [[ ! -f "$COMPOSE_FILE" ]]; then
-    fail "compose.yml не найден. Запустите скрипт из корня репозитория."
+    fail "compose.yml not found. Run the script from the repository root."
     exit 1
   fi
 
   if ! command -v docker >/dev/null; then
-    fail "Docker не установлен."
+    fail "Docker is not installed."
     exit 1
   fi
 
   if ! docker compose version >/dev/null 2>&1; then
-    fail "Docker Compose V2 недоступен."
+    fail "Docker Compose V2 is not available."
     exit 1
   fi
 }
@@ -138,28 +138,28 @@ create_backup() {
 
   case "$service" in
     db)
-      log "Создание резервной копии PostgreSQL..."
+      log "Creating PostgreSQL backup..."
       if compose exec -T db pg_dumpall -U postgres > "$BACKUP_DIR/postgres-$TIMESTAMP.sql" 2>/dev/null; then
-        success "PostgreSQL dump сохранён: $BACKUP_DIR/postgres-$TIMESTAMP.sql"
+        success "PostgreSQL dump saved: $BACKUP_DIR/postgres-$TIMESTAMP.sql"
       else
-        warn "Не удалось создать dump PostgreSQL. Продолжаем без бэкапа."
+        warn "Failed to create PostgreSQL dump. Continuing without backup."
       fi
       ;;
     openwebui)
-      log "Архивация данных OpenWebUI..."
+      log "Archiving OpenWebUI data..."
       if tar -czf "$BACKUP_DIR/openwebui-data.tgz" -C "$PROJECT_ROOT/data" openwebui >/dev/null 2>&1; then
-        success "OpenWebUI архив создан: $BACKUP_DIR/openwebui-data.tgz"
+        success "OpenWebUI archive created: $BACKUP_DIR/openwebui-data.tgz"
       else
-        warn "Не удалось архивировать data/openwebui."
+        warn "Failed to archive data/openwebui."
       fi
       ;;
     ollama)
-      log "Архивация моделей Ollama..."
+      log "Archiving Ollama models..."
       compose exec -T ollama ollama list > "$BACKUP_DIR/ollama-models.txt" 2>/dev/null || true
       if tar -czf "$BACKUP_DIR/ollama-data.tgz" -C "$PROJECT_ROOT/data" ollama >/dev/null 2>&1; then
-        success "Ollama архив создан: $BACKUP_DIR/ollama-data.tgz"
+        success "Ollama archive created: $BACKUP_DIR/ollama-data.tgz"
       else
-        warn "Не удалось архивировать data/ollama."
+        warn "Failed to archive data/ollama."
       fi
       ;;
     *)
@@ -172,16 +172,16 @@ run_health_check() {
   local cmd="${SERVICE_HEALTHCHECKS[$service]:-}"
 
   if [[ -z "$cmd" ]]; then
-    log "Health-check для $service не определён, пропускаем."
+    log "Health-check for $service not defined, skipping."
     return 0
   fi
 
-  log "Проверка здоровья $service..."
+  log "Checking health of $service..."
   if (cd "$PROJECT_ROOT" && eval "$cmd"); then
-    success "$service в состоянии healthy"
+    success "$service is healthy"
     return 0
   else
-    fail "$service не прошёл health-check."
+    fail "$service failed health-check."
     return 1
   fi
 }
@@ -191,7 +191,7 @@ restart_dependents() {
   local deps="${SERVICE_DEPENDENTS[$service]:-}"
   [[ -z "$deps" ]] && return
 
-  log "Перезапуск зависимых сервисов: $deps"
+  log "Restarting dependent services: $deps"
   compose up -d $deps >/dev/null
 }
 
@@ -199,26 +199,26 @@ update_service() {
   local service="$1"
 
   if ! service_exists "$service"; then
-    warn "Сервис $service отсутствует в compose.yml — пропускаем."
+    warn "Service $service not found in compose.yml — skipping."
     return 0
   fi
 
-  log "=== Обновление сервиса $service ==="
+  log "=== Updating service $service ==="
   create_backup "$service"
 
-  log "Загрузка новых образов ($service)..."
+  log "Pulling new images ($service)..."
   compose pull "$service" >/dev/null
 
-  log "Запуск обновлённого сервиса $service..."
+  log "Starting updated service $service..."
   compose up -d "$service" >/dev/null
 
   restart_dependents "$service"
 
   if run_health_check "$service"; then
-    success "Сервис $service успешно обновлён."
+    success "Service $service successfully updated."
     return 0
   else
-    fail "Сервис $service обновлён, но не прошёл проверку."
+    fail "Service $service updated, but failed health check."
     return 1
   fi
 }
@@ -237,11 +237,11 @@ main() {
   done
 
   if [[ ${#failed[@]} -gt 0 ]]; then
-    fail "Следующие сервисы требуют внимания: ${failed[*]}"
+    fail "The following services require attention: ${failed[*]}"
     exit 1
   fi
 
-  success "Критические сервисы обновлены: ${SELECTED_SERVICES[*]}"
+  success "Critical services updated: ${SELECTED_SERVICES[*]}"
 }
 
 main "$@"

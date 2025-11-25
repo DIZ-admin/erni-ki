@@ -1,15 +1,24 @@
-# 🔌 Справочник API ERNI-KI
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+---
+
+# Справочник API ERNI-KI
 
 > **Версия документа:** 5.0 **Дата обновления:** 2025-11-14 **API Версия:** v1
-> **Статус:** ✅ Все core endpoints, LiteLLM Context7 и RAG интеграции проверены
+> **Статус:** Все core endpoints, LiteLLM Context7 и RAG интеграции проверены
 
-## 📋 Обзор API
+## Обзор API
+
+[TOC]
 
 ERNI-KI предоставляет RESTful API для интеграции с внешними системами. API
 включает endpoints для работы с чатами, моделями, поиском, резервным
 копированием и управлением пользователями.
 
-### 🧠 RAG и Model Context Protocol
+### RAG и Model Context Protocol
 
 - **LiteLLM Context Engineering** (`/lite/api/v1/context` и
   `/lite/api/v1/think`) собирает контексты, inject’ит history и маршрутизирует
@@ -19,12 +28,12 @@ ERNI-KI предоставляет RESTful API для интеграции с в
 - **RAG-эндпоинты** (`/api/search`, `/api/documents`,
   `/api/v1/chats/{chat_id}/rag`) обмениваются с `Docling`/`SearXNG`, возвращают
   `source_id`, `source_url`, `cursor`, `tokens_used`.
-- Все запросы требуют JWT (см. раздел `🔐 Аутентификация`), а ответы содержат
+- Все запросы требуют JWT (см. раздел ` Аутентификация`), а ответы содержат
   `model`, `estimated_tokens`, `sources[]`.
 - Для быстрой проверки доступны `curl -s https://localhost:8080/api/v1/chats` и
   `curl -s https://localhost:8080/api/v1/rag/status`.
 
-## ⚙️ LiteLLM Context7 Gateway
+## LiteLLM Context7 Gateway
 
 LiteLLM v1.80.0.rc.1 выступает в роли Context Engineering слоя, объединяя
 Context7 thinking tokens, MCP инструменты и локальные модели Ollama.
@@ -37,20 +46,20 @@ Context7 thinking tokens, MCP инструменты и локальные мо�
 | Совместимые клиенты | OpenWebUI, внешние агенты, cURL/MCPO                        |
 | Мониторинг          | `scripts/monitor-litellm-memory.sh`, Grafana панель LiteLLM |
 
-### 🔄 Пример запроса: LiteLLM Context API
+### Пример запроса: LiteLLM Context API
 
 ```bash
 curl -X POST http://localhost:4000/lite/api/v1/context \
-  -H "Authorization: Bearer $LITELLM_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "input": "Summarize the latest Alertmanager queue state",
-    "enable_thinking": true,
-    "metadata": {
-      "chat_id": "chat-uuid",
-      "source": "api-reference"
-    }
-  }'
+ -H "Authorization: Bearer $LITELLM_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "input": "Summarize the latest Alertmanager queue state",
+ "enable_thinking": true,
+ "metadata": {
+ "chat_id": "chat-uuid",
+ "source": "api-reference"
+ }
+ }'
 ```
 
 **Ответ:**
@@ -67,31 +76,31 @@ curl -X POST http://localhost:4000/lite/api/v1/context \
 }
 ```
 
-### 🧠 Thinking API /lite/api/v1/think
+### Thinking API /lite/api/v1/think
 
 Этот endpoint возвращает трассировку reasoning и финальный ответ модели.
 
 ```bash
 curl -X POST http://localhost:4000/lite/api/v1/think \
-  -H "Authorization: Bearer $LITELLM_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "Generate a remediation plan for redis fragmentation alert",
-    "stream": true,
-    "tools": ["docling", "mcp_postgres"]
-  }'
+ -H "Authorization: Bearer $LITELLM_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "prompt": "Generate a remediation plan for redis fragmentation alert",
+ "stream": true,
+ "tools": ["docling", "mcp_postgres"]
+ }'
 ```
 
 Ответ поступает как Server-Sent Events со стадиями `thinking`, `action`,
 `observation`, `final`. При отключенном streaming возвращается JSON с полями
 `reasoning_trace`, `output`, `tokens_used`.
 
-> ℹ️ При деградации LiteLLM мониторится через
+> ℹ При деградации LiteLLM мониторится через
 > `scripts/monitor-litellm-memory.sh` и
 > `scripts/infrastructure/monitoring/test-network-performance.sh` (см.
 > Operations Handbook).
 
-## 🔍 RAG endpoints (Docling + SearXNG)
+## RAG endpoints (Docling + SearXNG)
 
 - `GET /api/v1/rag/status` — health RAG pipeline (Docling, SearXNG, vector DB)
 - `POST /api/search` — federated поиск (Brave, Bing, Wikipedia)
@@ -102,9 +111,9 @@ curl -X POST http://localhost:4000/lite/api/v1/think \
 
 ```bash
 curl -X POST https://ki.erni-gruppe.ch/api/documents \
-  -H "Authorization: Bearer $TOKEN" \
-  -F "file=@sample.pdf" \
-  -F "metadata={\"category\":\"operations\",\"tags\":[\"redis\",\"alertmanager\"]};type=application/json"
+ -H "Authorization: Bearer $TOKEN" \
+ -F "file=@sample.pdf" \
+ -F "metadata={\"category\":\"operations\",\"tags\":[\"redis\",\"alertmanager\"]};type=application/json"
 ```
 
 **Ответ:**
@@ -118,23 +127,23 @@ curl -X POST https://ki.erni-gruppe.ch/api/documents \
 }
 ```
 
-## 🚀 Обновления API (сентябрь 2025)
+## Обновления API (сентябрь 2025)
 
-### ✅ Исправленные endpoints (11 сентября 2025)
+### Исправленные endpoints (11 сентября 2025)
 
-- **SearXNG API**: `/api/searxng/search` - **ИСПРАВЛЕНО** ✅
-  - Устранена проблема с 404 ошибками
-  - Восстановлена функциональность RAG поиска
-  - Время ответа: <2 секунд
-  - Поддержка 4 поисковых движков: Google, Bing, DuckDuckGo, Brave
-  - Возвращает 31+ результатов из 4500+ доступных
+- **SearXNG API**: `/api/searxng/search` - **ИСПРАВЛЕНО**
+- Устранена проблема с 404 ошибками
+- Восстановлена функциональность RAG поиска
+- Время ответа: <2 секунд
+- Поддержка 4 поисковых движков: Google, Bing, DuckDuckGo, Brave
+- Возвращает 31+ результатов из 4500+ доступных
 
-### 🔧 Стабильные endpoints
+### Стабильные endpoints
 
-- ✅ **Health Check**: `/health` - проверка состояния системы
-- ✅ **Backrest API**: `/v1.Backrest/Backup`, `/v1.Backrest/GetOperations` -
+- **Health Check**: `/health` - проверка состояния системы
+- **Backrest API**: `/v1.Backrest/Backup`, `/v1.Backrest/GetOperations` -
   управление бэкапами
-- ✅ **MCP API**: `/api/mcp/*` - Model Context Protocol endpoints
+- **MCP API**: `/api/mcp/*` - Model Context Protocol endpoints
 
 ### Базовые URL
 
@@ -150,7 +159,7 @@ curl -X POST https://ki.erni-gruppe.ch/api/documents \
 Authorization: Bearer your-jwt-token
 ```
 
-## 🔐 Аутентификация
+## Аутентификация
 
 ### POST /api/v1/auths/signin
 
@@ -197,7 +206,7 @@ Authorization: Bearer your-jwt-token
 
 Выход из системы (инвалидация токена).
 
-## 💬 Управление чатами
+## Управление чатами
 
 ### GET /api/v1/chats
 
@@ -305,7 +314,7 @@ data: {"content": " - это...", "done": true}
 
 Удаление чата.
 
-## 🧠 Управление моделями
+## Управление моделями
 
 ### GET /api/v1/models
 
@@ -358,20 +367,20 @@ data: {"status": "completed", "progress": 100}
 
 Удаление модели.
 
-## 🔍 SearXNG Search API ✅ ИСПРАВЛЕНО
+## SearXNG Search API ИСПРАВЛЕНО
 
 ### GET /api/searxng/search
 
-**Статус:** ✅ **ПОЛНОСТЬЮ ФУНКЦИОНАЛЕН** (исправлено 11 сентября 2025)
+**Статус:** **ПОЛНОСТЬЮ ФУНКЦИОНАЛЕН** (исправлено 11 сентября 2025)
 
 Поиск через SearXNG метапоисковый движок для RAG интеграции с OpenWebUI.
 
 **Исправления v9.0:**
 
-- ✅ Устранена проблема с 404 ошибками
-- ✅ Исправлена переменная `$universal_request_id` в nginx конфигурации
-- ✅ Восстановлена функциональность на всех портах (80, 443, 8080)
-- ✅ Время ответа оптимизировано до <2 секунд
+- Устранена проблема с 404 ошибками
+- Исправлена переменная `$universal_request_id` в nginx конфигурации
+- Восстановлена функциональность на всех портах (80, 443, 8080)
+- Время ответа оптимизировано до <2 секунд
 
 **Параметры запроса:**
 
@@ -411,7 +420,7 @@ curl "https://ki.erni-gruppe.ch/api/searxng/search?q=artificial%20intelligence&f
 }
 ```
 
-### POST /api/v1/search
+## POST /api/v1/search
 
 RAG поиск через OpenWebUI (с интеграцией в чат).
 
@@ -443,7 +452,7 @@ RAG поиск через OpenWebUI (с интеграцией в чат).
 }
 ```
 
-## 📄 Управление документами
+## Управление документами
 
 ### POST /api/v1/documents/upload
 
@@ -486,7 +495,7 @@ chat_id: chat-uuid
 }
 ```
 
-## 🎤 Speech API (EdgeTTS)
+## Speech API (EdgeTTS)
 
 ### POST /api/v1/speech/synthesize
 
@@ -537,7 +546,7 @@ Content-Length: 12345
 }
 ```
 
-## 🔧 MCP (Model Context Protocol)
+## MCP (Model Context Protocol)
 
 ### GET /api/v1/mcp/tools
 
@@ -578,7 +587,7 @@ Content-Length: 12345
 }
 ```
 
-## 📊 Системная информация
+## Системная информация
 
 ### GET /api/v1/system/status
 
@@ -627,7 +636,7 @@ Content-Length: 12345
 }
 ```
 
-## 🚨 Коды ошибок
+## Коды ошибок
 
 | Код | Описание               | Решение                   |
 | --- | ---------------------- | ------------------------- |
@@ -639,7 +648,7 @@ Content-Length: 12345
 | 500 | Внутренняя ошибка      | Проверьте логи сервера    |
 | 503 | Сервис недоступен      | Проверьте статус сервисов |
 
-## 📝 Примеры интеграции
+## Примеры интеграции
 
 ### Python
 
@@ -647,24 +656,24 @@ Content-Length: 12345
 import requests
 
 class ERNIKIClient:
-    def __init__(self, base_url, token):
-        self.base_url = base_url
-        self.headers = {"Authorization": f"Bearer {token}"}
+ def __init__(self, base_url, token):
+ self.base_url = base_url
+ self.headers = {"Authorization": f"Bearer {token}"}
 
-    def send_message(self, chat_id, content):
-        response = requests.post(
-            f"{self.base_url}/chats/{chat_id}/messages",
-            json={"content": content},
-            headers=self.headers
-        )
-        return response.json()
+ def send_message(self, chat_id, content):
+ response = requests.post(
+ f"{self.base_url}/chats/{chat_id}/messages",
+ json={"content": content},
+ headers=self.headers
+ )
+ return response.json()
 
 # Использование
 client = ERNIKIClient("https://ki.erni-gruppe.ch/api/v1", "your-token")
 response = client.send_message("chat-id", "Привет!")
 ```
 
-### JavaScript
+## JavaScript
 
 ```javascript
 class ERNIKIClient {
@@ -694,7 +703,7 @@ const client = new ERNIKIClient(
 const response = await client.sendMessage('chat-id', 'Привет!');
 ```
 
-## 🔍 SearXNG Integration API
+## SearXNG Integration API
 
 ### GET /api/searxng/search - Поиск через SearXNG
 
@@ -730,7 +739,7 @@ curl "http://localhost:8080/api/searxng/search?q=artificial+intelligence&format=
 }
 ```
 
-## 💾 Backrest Backup API
+## Backrest Backup API
 
 ### POST /v1.Backrest/Backup
 
@@ -783,35 +792,35 @@ curl "http://localhost:8080/api/searxng/search?q=artificial+intelligence&format=
 
 ---
 
-**📚 Дополнительная информация**: Полная OpenAPI спецификация доступна по адресу
+** Дополнительная информация**: Полная OpenAPI спецификация доступна по адресу
 `/api/v1/docs`
 
 ---
 
-## 🖥️ Системные сервисы и метрики
+## Системные сервисы и метрики
 
 - Prometheus
-  - Health: `GET /-/ready`, `GET /-/healthy`
-  - API: `GET /api/v1/targets`, `GET /api/v1/query`
+- Health: `GET /-/ready`, `GET /-/healthy`
+- API: `GET /api/v1/targets`, `GET /api/v1/query`
 - Alertmanager
-  - Status: `GET /api/v2/status`, `GET /api/v2/alerts`
+- Status: `GET /api/v2/status`, `GET /api/v2/alerts`
 - Loki
-  - Ready: `GET /ready`, `GET /metrics`
+- Ready: `GET /ready`, `GET /metrics`
 - Fluent Bit
-  - JSON: `GET /api/v1/metrics`
-  - Prometheus: `GET /api/v1/metrics/prometheus`
+- JSON: `GET /api/v1/metrics`
+- Prometheus: `GET /api/v1/metrics/prometheus`
 - Экспортеры
-  - Postgres Exporter: `GET /metrics` (9187)
-  - Redis Exporter: `GET /metrics` (9121)
-  - Node Exporter: `GET /metrics` (9101)
-  - cAdvisor: `GET /metrics` (8080 via host 8081)
-  - NVIDIA Exporter: `GET /metrics` (9445)
-  - Nginx Exporter: `GET /metrics` (9113)
-  - Blackbox Exporter: `GET /probe` (9115)
-  - Ollama Exporter: `GET /metrics` (9778)
-  - RAG Exporter: `GET /metrics` (9808)
+- Postgres Exporter: `GET /metrics` (9187)
+- Redis Exporter: `GET /metrics` (9121)
+- Node Exporter: `GET /metrics` (9101)
+- cAdvisor: `GET /metrics` (8080 via host 8081)
+- NVIDIA Exporter: `GET /metrics` (9445)
+- Nginx Exporter: `GET /metrics` (9113)
+- Blackbox Exporter: `GET /probe` (9115)
+- Ollama Exporter: `GET /metrics` (9778)
+- RAG Exporter: `GET /metrics` (9808)
 
-## 🆕 Новые API (v4.0 - 2025-09-19)
+## Новые API (v4.0 - 2025-09-19)
 
 ### LiteLLM Context Engineering API
 
@@ -845,7 +854,7 @@ curl "http://localhost:8080/api/searxng/search?q=artificial+intelligence&format=
 
 ```bash
 curl -X POST -F "file=@document.pdf" -F "ocr_languages=en,de,fr,it" \
-  http://localhost:5001/api/v1/convert
+ http://localhost:5001/api/v1/convert
 ```
 
 ### Context7 Integration API
@@ -856,9 +865,9 @@ curl -X POST -F "file=@document.pdf" -F "ocr_languages=en,de,fr,it" \
 
 **Endpoint:** `http://localhost:4000/api/v1/enhance-context`
 
-## 📊 Мониторинг API (обновлено)
+## Мониторинг API (обновлено)
 
-### Grafana Dashboards (18 дашбордов - 100% функциональны)
+### Grafana Dashboards (5 provisioned дашбордов)
 
 #### GET /api/dashboards/search
 
@@ -878,11 +887,11 @@ curl "http://localhost:9091/api/v1/query?query=vector(95)"
 curl "http://localhost:9091/api/v1/query?query=rate(nginx_http_requests_total{status=~\"5..\"}[5m])%20or%20vector(0)"
 ```
 
-## 🔗 Связанная документация
+## Связанная документация
 
-- [Grafana Dashboards Guide](../operations/grafana-dashboards-guide.md) -
+- [Grafana Dashboards Guide](../operations/monitoring/grafana-dashboards-guide.md) -
   руководство по 18 дашбордам
-- [Prometheus Queries Reference](../operations/prometheus-queries-reference.md) -
+- [Prometheus Queries Reference](../operations/monitoring/prometheus-queries-reference.md) -
   справочник запросов с fallback
-- [Monitoring Troubleshooting v2](../operations/monitoring-troubleshooting-v2.md) -
-  диагностика мониторинга
+
+диагностика мониторинга
