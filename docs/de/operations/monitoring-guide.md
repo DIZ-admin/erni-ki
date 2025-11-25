@@ -1,8 +1,8 @@
 ---
 language: de
-translation_status: pending
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-25'
 title: '📊 ERNI-KI Monitoring-Leitfaden'
 system_version: '12.1'
 date: '2025-11-22'

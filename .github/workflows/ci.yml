@@ -387,6 +387,13 @@ jobs:
           safe_ref=$(echo "${ref,,}" | tr '/:@' '-')
           echo "tag=${safe_ref}" >> "$GITHUB_OUTPUT"
 
+      - name: ✅ Validate Docker tags are lowercase
+        run: |
+          {
+            echo "${{ steps.meta.outputs.tags }}"
+            echo "${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}"
+          } | bash scripts/utilities/check-docker-tags.sh
+
       - name: 🏗️ Build and push Docker image
         uses: docker/build-push-action@v5
         with:
