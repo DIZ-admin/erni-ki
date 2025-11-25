@@ -410,6 +410,7 @@ nav:
   - "News (Archive)":
       - Overview: archive/news-overview.md
       - Feed: news/index.md
+      - "Status Page Launch (2025-11)": news/2025-11-erni-ki-status-page-launch.md
   - "HowTo (Archive)":
       - "Create JIRA Description": archive/howto/create-jira-description-with-ai.md
       - "Summarize Meeting (Archive)": archive/howto/summarize-meeting-notes.md
@@ -420,6 +421,7 @@ nav:
   - Operations:
       - "Overview": operations/README.md
       - Core:
+          - "Overview": operations/core/README.md
           - "Operations Handbook": operations/core/operations-handbook.md
           - "Runbooks Summary": operations/core/runbooks-summary.md
           - "Admin Guide": operations/core/admin-guide.md
@@ -436,16 +438,19 @@ nav:
           - "Alertmanager Noise Reduction": operations/monitoring/alertmanager-noise-reduction.md
           - "Access Log Sync": operations/monitoring/access-log-sync-and-fluentbit.md
       - Automation:
+          - "Overview": operations/automation/README.md
           - "Automated Maintenance": operations/automation/automated-maintenance-guide.md
           - "Docker Cleanup": operations/automation/docker-cleanup-guide.md
           - "Docker Log Rotation": operations/automation/docker-log-rotation.md
       - Maintenance:
+          - "Overview": operations/maintenance/README.md
           - "Backup Guide": operations/backup-guide.md
           - "Image Upgrade Checklist": operations/maintenance/image-upgrade-checklist.md
           - "Service Restart": operations/maintenance/service-restart-procedures.md
           - "Backup & Restore": operations/maintenance/backup-restore-procedures.md
           - "Docling Shared Volume": operations/maintenance/docling-shared-volume.md
       - Troubleshooting:
+          - "Overview": operations/troubleshooting/README.md
           - "Troubleshooting Guide": operations/troubleshooting/troubleshooting-guide.md
       - Database:
           - "Overview": operations/database/README.md
@@ -468,11 +473,15 @@ nav:
       - "Log Audit": security/log-audit.md
   - Reference:
       - "Overview": reference/README.md
+      - "API Overview": api/README.md
       - "API Reference": reference/api-reference.md
       - Development: reference/development.md
       - "GitHub Environments": reference/github-environments-setup.md
       - "MCPO Integration": reference/mcpo-integration-guide.md
       - "Pre-commit Hooks": reference/pre-commit-hooks.md
+      - "Metadata Standards": reference/metadata-standards.md
+      - "Style Guide": reference/style-guide.md
+      - "Emoji Style Guide": reference/emoji-style-guide.md
       - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
       - "Status Snippet": reference/status-snippet.md
       - "Language Policy": reference/language-policy.md
@@ -499,6 +508,11 @@ nav:
           - "CI Health": archive/audits/ci-health.md
           - "Monitoring Audit": archive/audits/monitoring-audit.md
           - "Documentation Audit": archive/audits/documentation-audit.md
+          - "Documentation Update Plan (2025-11-24)": reference/documentation-update-plan-2025-11-24.md
+          - "Documentation Refactoring Plan (2025-11-24)": reference/documentation-refactoring-plan-2025-11-24.md
+          - "Documentation Refactoring Plan v2 (2025-11-24)": reference/documentation-refactoring-plan-v2-2025-11-24.md
+          - "Code Audit Summary (2025-11-24)": reference/code-audit-summary-2025-11-24.md
+      - "Budget Analysis": budget-analysis.md
       - Diagnostics:
           - "Full server diagnostics (2025-11-04)": archive/diagnostics/full-server-diagnostics-2025-11-04.md
           - "RAG system diagnostic (2025-10-30)": archive/diagnostics/rag-system-diagnostic-report-20251030.md
