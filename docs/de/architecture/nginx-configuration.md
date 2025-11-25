@@ -3,66 +3,66 @@ language: de
 translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
-title: '🌐 Nginx Konfigurationsleitfaden - ERNI-KI'
+title: ' Nginx Konfigurationsleitfaden - ERNI-KI'
 system_version: '12.1'
 date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
-# 🌐 Nginx Konfigurationsleitfaden - ERNI-KI
+# Nginx Konfigurationsleitfaden - ERNI-KI
 
 > **Version:** 9.0 | **Datum:** 2025-09-11 | **Status:** Production Ready [TOC]
 
-## 📋 Überblick
+## Überblick
 
 Nginx in ERNI-KI fungiert als Reverse Proxy mit SSL/TLS-Unterstützung,
 WebSocket, Rate Limiting und Caching. Nach der Optimierung v9.0 ist die
 Konfiguration modular und wartbar geworden.
 
-## 🏗️ Konfigurationsarchitektur
+## Konfigurationsarchitektur
 
-### 📁 Dateistruktur
+### Dateistruktur
 
 ```bash
 conf/nginx/
-├── nginx.conf                    # Hauptkonfiguration
-│   ├── Map-Direktiven            # Bedingte Logik
-│   ├── Upstream-Blöcke           # Backend-Server
-│   ├── Rate Limiting Zonen       # DDoS-Schutz
-│   └── Proxy Cache Einstellungen # Caching
-├── conf.d/default.conf          # Server-Blöcke
-│   ├── Server :80               # HTTP → HTTPS Weiterleitung
-│   ├── Server :443              # HTTPS mit voller Funktionalität
-│   └── Server :8080             # Cloudflare-Tunnel
-└── includes/                     # Wiederverwendbare Module
-    ├── openwebui-common.conf     # OpenWebUI Proxy-Einstellungen
-    ├── searxng-api-common.conf   # SearXNG API-Konfiguration
-    ├── searxng-web-common.conf   # SearXNG Web-Interface
-    └── websocket-common.conf     # WebSocket Proxy
+ nginx.conf # Hauptkonfiguration
+ Map-Direktiven # Bedingte Logik
+ Upstream-Blöcke # Backend-Server
+ Rate Limiting Zonen # DDoS-Schutz
+ Proxy Cache Einstellungen # Caching
+ conf.d/default.conf # Server-Blöcke
+ Server :80 # HTTP → HTTPS Weiterleitung
+ Server :443 # HTTPS mit voller Funktionalität
+ Server :8080 # Cloudflare-Tunnel
+ includes/ # Wiederverwendbare Module
+ openwebui-common.conf # OpenWebUI Proxy-Einstellungen
+ searxng-api-common.conf # SearXNG API-Konfiguration
+ searxng-web-common.conf # SearXNG Web-Interface
+ websocket-common.conf # WebSocket Proxy
 ```
 
-## 🔧 Schlüsselkomponenten
+## Schlüsselkomponenten
 
 ### 1. Map-Direktiven (nginx.conf)
 
 ```nginx
 # Cloudflare-Tunnel Definition
 map $server_port $is_cloudflare_tunnel {
-  default 0;
-  8080 1;
+ default 0;
+ 8080 1;
 }
 
 # Bedingter X-Request-ID Header
 map $is_cloudflare_tunnel $request_id_header {
-  default "";
-  1 $final_request_id;
+ default "";
+ 1 $final_request_id;
 }
 
 # Universelle Variable für Include-Dateien
 map $is_cloudflare_tunnel $universal_request_id {
-  default $final_request_id;
-  1 $final_request_id;
+ default $final_request_id;
+ 1 $final_request_id;
 }
 ```
 
@@ -71,18 +71,18 @@ map $is_cloudflare_tunnel $universal_request_id {
 ```nginx
 # OpenWebUI Backend
 upstream openwebui_backend {
-  server openwebui:8080 max_fails=3 fail_timeout=30s weight=1;
-  keepalive 64;
-  keepalive_requests 1000;
-  keepalive_timeout 60s;
+ server openwebui:8080 max_fails=3 fail_timeout=30s weight=1;
+ keepalive 64;
+ keepalive_requests 1000;
+ keepalive_timeout 60s;
 }
 
 # SearXNG Upstream für RAG-Suche
 upstream searxngUpstream {
-  server searxng:8080 max_fails=3 fail_timeout=30s weight=1;
-  keepalive 48;
-  keepalive_requests 200;
-  keepalive_timeout 60s;
+ server searxng:8080 max_fails=3 fail_timeout=30s weight=1;
+ keepalive 48;
+ keepalive_requests 200;
+ keepalive_timeout 60s;
 }
 ```
 
@@ -100,17 +100,17 @@ limit_conn_zone $binary_remote_addr zone=perip:10m;
 limit_conn_zone $server_name zone=perserver:10m;
 ```
 
-## 🚪 Server-Blöcke
+## Server-Blöcke
 
 ### Port 80 - HTTP Weiterleitung
 
 ```nginx
 server {
-  listen 80;
-  server_name ki.erni-gruppe.ch diz.zone localhost;
+ listen 80;
+ server_name ki.erni-gruppe.ch diz.zone localhost;
 
-  # Zwangsweiterleitung zu HTTPS
-  return 301 https://$host$request_uri;
+ # Zwangsweiterleitung zu HTTPS
+ return 301 https://$host$request_uri;
 }
 ```
 
@@ -118,19 +118,19 @@ server {
 
 ```nginx
 server {
-  listen 443 ssl;
-  http2 on;
-  server_name ki.erni-gruppe.ch diz.zone localhost;
+ listen 443 ssl;
+ http2 on;
+ server_name ki.erni-gruppe.ch diz.zone localhost;
 
-  # SSL-Konfiguration
-  ssl_certificate /etc/nginx/ssl/nginx-fullchain.crt;
-  ssl_certificate_key /etc/nginx/ssl/nginx.key;
-  ssl_protocols TLSv1.2 TLSv1.3;
-  ssl_verify_client off;  # Korrektur für localhost
+ # SSL-Konfiguration
+ ssl_certificate /etc/nginx/ssl/nginx-fullchain.crt;
+ ssl_certificate_key /etc/nginx/ssl/nginx.key;
+ ssl_protocols TLSv1.2 TLSv1.3;
+ ssl_verify_client off; # Korrektur für localhost
 
-  # Security Headers (für localhost optimiert)
-  add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' localhost:*; ...";
-  add_header Access-Control-Allow-Origin "https://ki.erni-gruppe.ch https://localhost ...";
+ # Security Headers (für localhost optimiert)
+ add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' localhost:*; ...";
+ add_header Access-Control-Allow-Origin "https://ki.erni-gruppe.ch https://localhost ...";
 }
 ```
 
@@ -138,16 +138,16 @@ server {
 
 ```nginx
 server {
-  listen 8080;
-  server_name ki.erni-gruppe.ch diz.zone localhost;
+ listen 8080;
+ server_name ki.erni-gruppe.ch diz.zone localhost;
 
-  # Für externen Zugriff optimiert
-  # Ohne HTTPS-Weiterleitungen
-  # Verwendet $request_id_header für Protokollierung
+ # Für externen Zugriff optimiert
+ # Ohne HTTPS-Weiterleitungen
+ # Verwendet $request_id_header für Protokollierung
 }
 ```
 
-## 📦 Include-Dateien
+## Include-Dateien
 
 ### openwebui-common.conf
 
@@ -202,17 +202,17 @@ proxy_send_timeout 30s;
 proxy_read_timeout 30s;
 ```
 
-## 🔍 API-Endpunkte
+## API-Endpunkte
 
 ### Haupt-Endpunkte
 
 | Endpunkt              | Status | Beschreibung            | Antwortzeit |
 | --------------------- | ------ | ----------------------- | ----------- |
-| `/health`             | ✅     | Systemstatusüberprüfung | <100ms      |
-| `/api/config`         | ✅     | Systemkonfiguration     | <200ms      |
-| `/api/searxng/search` | ✅     | RAG Web-Suche           | <2s         |
-| `/api/mcp/`           | ✅     | Model Context Protocol  | <500ms      |
-| WebSocket-Endpunkte   | ✅     | Echtzeit-Kommunikation  | <50ms       |
+| `/health`             |        | Systemstatusüberprüfung | <100ms      |
+| `/api/config`         |        | Systemkonfiguration     | <200ms      |
+| `/api/searxng/search` |        | RAG Web-Suche           | <2s         |
+| `/api/mcp/`           |        | Model Context Protocol  | <500ms      |
+| WebSocket-Endpunkte   |        | Echtzeit-Kommunikation  | <50ms       |
 
 ### Verwendungsbeispiele
 
@@ -230,7 +230,7 @@ curl http://localhost:8080/api/config
 # Antwort: JSON mit OpenWebUI-Einstellungen
 ```
 
-## 🛠️ Administration
+## Administration
 
 ### Änderungen anwenden
 
@@ -258,21 +258,24 @@ docker ps | grep nginx
 netstat -tlnp | grep nginx
 ```
 
-## 🔧 Fehlerbehebung
+## Fehlerbehebung
 
 ### Häufige Probleme
 
 1. **404 bei API-Endpunkten**
-   - Include-Dateien im Container überprüfen
-   - Korrektheit der Upstream-Blöcke sicherstellen
+
+- Include-Dateien im Container überprüfen
+- Korrektheit der Upstream-Blöcke sicherstellen
 
 2. **WebSocket-Verbindungen funktionieren nicht**
-   - websocket-common.conf überprüfen
-   - Vorhandensein der Upgrade-Header sicherstellen
+
+- websocket-common.conf überprüfen
+- Vorhandensein der Upgrade-Header sicherstellen
 
 3. **SSL-Fehler bei localhost**
-   - ssl_verify_client off überprüfen
-   - Korrektheit der CSP-Richtlinie sicherstellen
+
+- ssl_verify_client off überprüfen
+- Korrektheit der CSP-Richtlinie sicherstellen
 
 ### Diagnosebefehle
 
@@ -287,7 +290,7 @@ docker exec erni-ki-nginx-1 curl -s http://openwebui:8080/health
 docker exec erni-ki-nginx-1 ls -la /etc/nginx/includes/
 ```
 
-## 📊 Leistungsmetriken
+## Leistungsmetriken
 
 - **API-Antwortzeit:** <2 Sekunden
 - **WebSocket-Latenz:** <50ms
@@ -295,7 +298,7 @@ docker exec erni-ki-nginx-1 ls -la /etc/nginx/includes/
 - **Cache-Hit-Rate:** >80%
 - **Rate Limiting:** 60 req/s für SearXNG API
 
-## 🔐 Sicherheit
+## Sicherheit
 
 - **SSL/TLS:** TLSv1.2, TLSv1.3
 - **HSTS:** max-age=31536000

@@ -8,7 +8,7 @@ last_updated: '2025-11-22'
 system_status: 'Production Ready'
 ---
 
-# 👨‍💼 Administration Guide - ERNI-KI
+# ‍ Administration Guide - ERNI-KI
 
 > **Версия:** 8.1 **Дата обновления:** 24.10.2025 **Статус системы:** Production
 > Ready [TOC]
@@ -35,16 +35,16 @@ ERNI-KI — это Production-Ready AI Platform с архитектурой 15+ 
 Для выполнения административных задач необходимо:
 
 - **Доступ:**
-  - SSH доступ к серверу с правами `sudo`.
-  - Доступ к веб-интерфейсам (Grafana, Portainer, OpenWebUI).
+- SSH доступ к серверу с правами `sudo`.
+- Доступ к веб-интерфейсам (Grafana, Portainer, OpenWebUI).
 - **Инструменты:**
-  - Docker & Docker Compose v2.
-  - `curl`, `jq`, `htop`, `nc` (netcat).
-  - `git` для управления конфигурациями.
+- Docker & Docker Compose v2.
+- `curl`, `jq`, `htop`, `nc` (netcat).
+- `git` для управления конфигурациями.
 - **Знания:**
-  - Базовое понимание Docker и Linux администрирования.
-  - Понимание архитектуры ERNI-KI (см.
-    [Architecture Guide](../../architecture/architecture.md)).
+- Базовое понимание Docker и Linux администрирования.
+- Понимание архитектуры ERNI-KI (см.
+  [Architecture Guide](../../architecture/architecture.md)).
 
 ## 3. Инструкции по администрированию
 
@@ -84,12 +84,12 @@ df -h
 
 Система использует стандартизированные healthcheck'и для всех компонентов.
 
-| Exporter   | Метод                           | Статус    |
-| :--------- | :------------------------------ | :-------- |
-| **Redis**  | TCP (`/dev/tcp/localhost/9121`) | ✅ Active |
-| **Nginx**  | TCP (`/dev/tcp/localhost/9113`) | ✅ Active |
-| **NVIDIA** | TCP (`/dev/tcp/localhost/9445`) | ✅ Active |
-| **Ollama** | HTTP (`wget localhost`)         | ✅ Active |
+| Exporter   | Метод                           | Статус |
+| :--------- | :------------------------------ | :----- |
+| **Redis**  | TCP (`/dev/tcp/localhost/9121`) | Active |
+| **Nginx**  | TCP (`/dev/tcp/localhost/9113`) | Active |
+| **NVIDIA** | TCP (`/dev/tcp/localhost/9445`) | Active |
+| **Ollama** | HTTP (`wget localhost`)         | Active |
 
 #### Доступ к дашбордам
 
@@ -140,7 +140,7 @@ docker compose exec db pg_dump -U postgres openwebui > backup.sql
 docker compose exec -T postgres psql -U postgres openwebui < backup.sql
 ```
 
-## 📝 Управление логами
+## Управление логами
 
 ### Просмотр логов
 
@@ -168,7 +168,7 @@ docker compose logs --since="1h" --until="30m"
 ./scripts/security/rotate-logs.sh
 ```
 
-## 🔒 Управление безопасностью
+## Управление безопасностью
 
 ### Мониторинг безопасности
 
@@ -196,7 +196,7 @@ openssl x509 -in conf/ssl/cert.pem -text -noout | grep "Not After"
 docker compose restart nginx
 ```
 
-## ⚡ Оптимизация производительности
+## Оптимизация производительности
 
 ### Мониторинг производительности
 
@@ -224,9 +224,9 @@ docker compose restart nginx
 ./scripts/performance/hardware-analysis.sh
 ```
 
-## 🔧 Обслуживание системы
+## Обслуживание системы
 
-### 🤖 Автоматизированное обслуживание (добавлено 24.10.2025)
+### Автоматизированное обслуживание (добавлено 24.10.2025)
 
 ERNI-KI использует полностью автоматизированное обслуживание для поддержания
 оптимальной производительности:
@@ -278,7 +278,7 @@ systemctl status cron
 journalctl -u cron --since "1 day ago"
 ```
 
-**📚 Подробная документация:**
+** Подробная документация:**
 [Automated Maintenance Guide](../automation/automated-maintenance-guide.md)
 
 ## Еженедельные задачи
@@ -307,7 +307,7 @@ sudo apt update && sudo apt upgrade
 ./scripts/maintenance/log-rotation-manager.sh --archive
 ```
 
-## 🚨 Аварийное восстановление
+## Аварийное восстановление
 
 ### Автоматическое восстановление
 
@@ -335,7 +335,7 @@ sudo apt update && sudo apt upgrade
 ./scripts/troubleshooting/test-healthcheck.sh
 ```
 
-## 📈 Масштабирование
+## Масштабирование
 
 ### Горизонтальное масштабирование
 
@@ -358,7 +358,7 @@ nano compose.yml
 docker compose up -d
 ```
 
-## 🔍 Диагностика проблем
+## Диагностика проблем
 
 ### Общая диагностика
 
@@ -386,7 +386,7 @@ docker network ls
 ./scripts/troubleshooting/test-network-simple.sh
 ```
 
-## 🌐 Nginx и API диагностика (обновлено v7.0)
+## Nginx и API диагностика (обновлено v7.0)
 
 ### Проверка nginx конфигурации
 
@@ -463,7 +463,7 @@ docker exec erni-ki-nginx-1 curl -s http://localhost/api/searxng/search?q=test&f
 docker exec erni-ki-nginx-1 grep "universal_request_id" /etc/nginx/nginx.conf
 ```
 
-## 📞 Контакты и поддержка
+## Контакты и поддержка
 
 ### Внутренние ресурсы
 
@@ -473,13 +473,13 @@ docker exec erni-ki-nginx-1 grep "universal_request_id" /etc/nginx/nginx.conf
 
 ### Внешние ресурсы
 
-- **📖 Документация:**
+- ** Документация:**
   [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
-- **🔧 Database Troubleshooting:**
+- ** Database Troubleshooting:**
   [docs/operations/database/database-troubleshooting.md](../database/database-troubleshooting.md)
-- **📊 Database Monitoring:**
+- ** Database Monitoring:**
   [docs/operations/database/database-monitoring-plan.md](../database/database-monitoring-plan.md)
-- **⚡ Production Optimizations:**
+- ** Production Optimizations:**
   [docs/operations/database/database-production-optimizations.md](../database/database-production-optimizations.md)
 
 ## 4. Верификация
@@ -550,25 +550,25 @@ docker compose up -d
 
 ```mermaid
 flowchart TD
-    U[Пользователи/бизнес] -->|Запрос/инцидент| SD[Service Desk]
-    SD --> ONCALL[Дежурный инженер]
-    ONCALL --> MON[Grafana/Prometheus]
-    ONCALL --> LOGS[Loki/ELK]
-    ONCALL --> RUN[Runbooks]
-    RUN --> FIX[Исправление]
-    FIX --> DEPLOY[CI/CD rollout]
-    DEPLOY --> VERIFY[Верификация]
-    VERIFY --> SD
-    MON --> ALERT[Alertmanager]
-    ALERT --> ONCALL
-    subgraph Platform
-      MON
-      LOGS
-      DEPLOY
-    end
+ U[Пользователи/бизнес] -->|Запрос/инцидент| SD[Service Desk]
+ SD --> ONCALL[Дежурный инженер]
+ ONCALL --> MON[Grafana/Prometheus]
+ ONCALL --> LOGS[Loki/ELK]
+ ONCALL --> RUN[Runbooks]
+ RUN --> FIX[Исправление]
+ FIX --> DEPLOY[CI/CD rollout]
+ DEPLOY --> VERIFY[Верификация]
+ VERIFY --> SD
+ MON --> ALERT[Alertmanager]
+ ALERT --> ONCALL
+ subgraph Platform
+ MON
+ LOGS
+ DEPLOY
+ end
 ```
 
 ---
 
-**📝 Примечание:** Данное руководство актуализировано для архитектуры 29
-сервисов ERNI-KI версии 5.1 (август 2025).
+** Примечание:** Данное руководство актуализировано для архитектуры 29 сервисов
+ERNI-KI версии 5.1 (август 2025).

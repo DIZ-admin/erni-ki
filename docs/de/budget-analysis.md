@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 📊 Budgetanalyse des ERNI-KI Projekts
+# Budgetanalyse des ERNI-KI Projekts
 
 **Analysedatum:** 24. November 2025 **Projektversion:** Production Ready v12.1
 **Technologie-Stack:** 32 Microservices, GPU-Beschleunigung, vollständige
@@ -26,7 +26,7 @@ Observability
 
 ### Hauptkomponenten des Systems:
 
-#### 🤖 Application Layer (AI & Core)
+#### Application Layer (AI & Core)
 
 - OpenWebUI (GPU) — Web-Interface mit CUDA Runtime
 - Ollama — LLM Inference Engine (RTX 5000, 16GB VRAM)
@@ -34,25 +34,25 @@ Observability
 - SearXNG — Suchmaschine für RAG
 - MCP Server — 7 aktive Tools
 
-#### 🔧 Processing Layer
+#### Processing Layer
 
 - Docling — OCR und Dokumentenverarbeitung (GPU)
 - Apache Tika — Textextraktion
 - EdgeTTS — Sprachsynthese
 
-#### 💾 Data Layer
+#### Data Layer
 
 - PostgreSQL 17 + pgvector — Hauptdatenbank
 - Redis 7 — Cache und Queues
 - Backrest — Backup-System
 
-#### 🚪 Gateway & Security
+#### Gateway & Security
 
 - Nginx 1.29.3 — Reverse Proxy, WAF, SSL/TLS
 - Auth (Go 1.24) — JWT-Authentifizierungsservice
 - Cloudflared — Cloudflare Tunnel für externen Zugriff
 
-#### 📊 Observability Stack
+#### Observability Stack
 
 - Prometheus v3.0.0 — Metrik-Sammlung (27 Alert Rules)
 - Grafana v11.3.0 — Visualisierung (18 Dashboards)
@@ -62,7 +62,7 @@ Observability
 - 8 Metrik-Exporters (node, postgres, redis, nvidia, cadvisor, blackbox, ollama,
   nginx)
 
-#### 🛠️ Infrastructure
+#### Infrastructure
 
 - Watchtower — Automatische Container-Updates
 - Uptime Kuma — Service-Verfügbarkeitsüberwachung
@@ -168,12 +168,12 @@ Observability
 
 | Komponente               | Rolle                      | Zeit       | Komplexität |
 | ------------------------ | -------------------------- | ---------- | ----------- |
-| Ollama Integration       | ML Engineer                | 1.5 Wochen | ⭐⭐⭐      |
-| OpenWebUI Setup & Config | Full-stack Developer       | 2 Wochen   | ⭐⭐⭐⭐    |
-| LiteLLM Gateway          | Backend Developer (Python) | 2 Wochen   | ⭐⭐⭐⭐    |
-| MCP Server (7 Tools)     | Backend Developer (Python) | 1.5 Wochen | ⭐⭐⭐⭐    |
-| Docling OCR Pipeline     | ML Engineer                | 1 Woche    | ⭐⭐⭐      |
-| SearXNG Integration      | Backend Developer          | 1 Woche    | ⭐⭐        |
+| Ollama Integration       | ML Engineer                | 1.5 Wochen |             |
+| OpenWebUI Setup & Config | Full-stack Developer       | 2 Wochen   |             |
+| LiteLLM Gateway          | Backend Developer (Python) | 2 Wochen   |             |
+| MCP Server (7 Tools)     | Backend Developer (Python) | 1.5 Wochen |             |
+| Docling OCR Pipeline     | ML Engineer                | 1 Woche    |             |
+| SearXNG Integration      | Backend Developer          | 1 Woche    |             |
 
 **Team:** 1 ML Engineer, 1 Full-stack Developer, 2 Backend Developers (Python)
 **Gesamt:** 4-6 Wochen parallele Arbeit
@@ -182,10 +182,10 @@ Observability
 
 | Komponente                | Rolle             | Zeit       | Komplexität |
 | ------------------------- | ----------------- | ---------- | ----------- |
-| PostgreSQL + pgvector     | Database Engineer | 1.5 Wochen | ⭐⭐⭐      |
-| Redis Setup & Optimierung | Database Engineer | 1 Woche    | ⭐⭐        |
-| Backrest Backup System    | DevOps Engineer   | 1 Woche    | ⭐⭐        |
-| Database Migrationen      | Backend Developer | 0.5 Wochen | ⭐⭐        |
+| PostgreSQL + pgvector     | Database Engineer | 1.5 Wochen |             |
+| Redis Setup & Optimierung | Database Engineer | 1 Woche    |             |
+| Backrest Backup System    | DevOps Engineer   | 1 Woche    |             |
+| Database Migrationen      | Backend Developer | 0.5 Wochen |             |
 
 **Team:** 1 Database Engineer, 1 DevOps Engineer, 1 Backend Developer
 **Gesamt:** 3-4 Wochen
@@ -194,9 +194,9 @@ Observability
 
 | Komponente               | Rolle             | Zeit    | Komplexität |
 | ------------------------ | ----------------- | ------- | ----------- |
-| Apache Tika Integration  | Backend Developer | 1 Woche | ⭐⭐        |
-| EdgeTTS Service          | Backend Developer | 1 Woche | ⭐⭐        |
-| File Processing Pipeline | Backend Developer | 1 Woche | ⭐⭐⭐      |
+| Apache Tika Integration  | Backend Developer | 1 Woche |             |
+| EdgeTTS Service          | Backend Developer | 1 Woche |             |
+| File Processing Pipeline | Backend Developer | 1 Woche |             |
 
 **Team:** 1-2 Backend Developers **Gesamt:** 2-3 Wochen
 
@@ -204,9 +204,9 @@ Observability
 
 | Komponente          | Rolle                  | Zeit       | Komplexität |
 | ------------------- | ---------------------- | ---------- | ----------- |
-| Nginx Konfiguration | DevOps Engineer        | 1.5 Wochen | ⭐⭐⭐⭐    |
-| Auth Service (Go)   | Backend Developer (Go) | 1.5 Wochen | ⭐⭐⭐      |
-| Cloudflared Tunnels | DevOps Engineer        | 1 Woche    | ⭐⭐        |
+| Nginx Konfiguration | DevOps Engineer        | 1.5 Wochen |             |
+| Auth Service (Go)   | Backend Developer (Go) | 1.5 Wochen |             |
+| Cloudflared Tunnels | DevOps Engineer        | 1 Woche    |             |
 
 **Team:** 1 DevOps Engineer, 1 Go Developer **Gesamt:** 2-3 Wochen
 
@@ -216,14 +216,14 @@ Observability
 
 | Komponente               | Rolle           | Zeit       | Komplexität |
 | ------------------------ | --------------- | ---------- | ----------- |
-| Prometheus Setup         | DevOps Engineer | 1 Woche    | ⭐⭐⭐      |
-| 27 Alert Rules           | DevOps + SRE    | 1.5 Wochen | ⭐⭐⭐⭐    |
-| 18 Grafana Dashboards    | DevOps Engineer | 2 Wochen   | ⭐⭐⭐⭐⭐  |
-| Loki Log Aggregation     | DevOps Engineer | 1 Woche    | ⭐⭐⭐      |
-| Fluent Bit Konfiguration | DevOps Engineer | 0.5 Wochen | ⭐⭐        |
-| Alertmanager Setup       | SRE Engineer    | 1 Woche    | ⭐⭐⭐      |
-| 8 Exporters Deployment   | DevOps Engineer | 1 Woche    | ⭐⭐⭐      |
-| Uptime Kuma              | DevOps Engineer | 0.5 Wochen | ⭐⭐        |
+| Prometheus Setup         | DevOps Engineer | 1 Woche    |             |
+| 27 Alert Rules           | DevOps + SRE    | 1.5 Wochen |             |
+| 18 Grafana Dashboards    | DevOps Engineer | 2 Wochen   |             |
+| Loki Log Aggregation     | DevOps Engineer | 1 Woche    |             |
+| Fluent Bit Konfiguration | DevOps Engineer | 0.5 Wochen |             |
+| Alertmanager Setup       | SRE Engineer    | 1 Woche    |             |
+| 8 Exporters Deployment   | DevOps Engineer | 1 Woche    |             |
+| Uptime Kuma              | DevOps Engineer | 0.5 Wochen |             |
 
 **Team:** 1 Senior DevOps Engineer, 1 SRE Engineer **Gesamt:** 4-5 Wochen
 
@@ -578,27 +578,30 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 ### Für Projektstart von Grund auf:
 
 1. **Mit MVP beginnen (6 Monate, 570K CHF)**
-   - Konzept beweisen
-   - Anforderungen validieren
-   - Schnelle Feedback-Schleife
+
+- Konzept beweisen
+- Anforderungen validieren
+- Schnelle Feedback-Schleife
 
 2. **Zu Production iterieren (zusätzlich 4 Monate, +800K CHF)**
-   - Basierend auf echtem Feedback skalieren
-   - Enterprise-Features schrittweise hinzufügen
-   - Risiken minimieren
+
+- Basierend auf echtem Feedback skalieren
+- Enterprise-Features schrittweise hinzufügen
+- Risiken minimieren
 
 3. **Hybrid-Ansatz**
-   - Managed Services wo möglich nutzen (DB, Monitoring)
-   - Nur kritische Komponenten anpassen
-   - Cloud-first für Dev/Staging, On-Premise für Production
+
+- Managed Services wo möglich nutzen (DB, Monitoring)
+- Nur kritische Komponenten anpassen
+- Cloud-first für Dev/Staging, On-Premise für Production
 
 ### Kritische Erfolgsfaktoren:
 
-✅ **Starke Architektur-Expertise** — Solution Architect ist kritisch ✅
-**DevOps Automation** — CI/CD von Tag 1 ✅ **Security by Design** — nicht
-nachträglich ✅ **Umfassende Dokumentation** — Wissen muss geteilt werden ✅
-**Agile Methodik** — iterative Lieferung, kein Wasserfall ✅ **Stakeholder
-Buy-in** — Executive Support und klarer ROI
+**Starke Architektur-Expertise** — Solution Architect ist kritisch **DevOps
+Automation** — CI/CD von Tag 1 **Security by Design** — nicht nachträglich
+**Umfassende Dokumentation** — Wissen muss geteilt werden **Agile Methodik** —
+iterative Lieferung, kein Wasserfall **Stakeholder Buy-in** — Executive Support
+und klarer ROI
 
 ---
 

@@ -3,14 +3,14 @@ language: de
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-25'
-title: '📊 ERNI-KI Monitoring-Leitfaden'
+title: ' ERNI-KI Monitoring-Leitfaden'
 system_version: '12.1'
 date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
-# 📊 ERNI-KI Monitoring-Leitfaden
+# ERNI-KI Monitoring-Leitfaden
 
 [TOC]
 
@@ -18,7 +18,7 @@ Umfassender Leitfaden für die Überwachung des ERNI-KI Systems mit 9
 spezialisierten Exporters, standardisierten Healthchecks und produktionsreifen
 Observability-Stack.
 
-## 🎯 Überblick
+## Überblick
 
 Das ERNI-KI Monitoring-System umfasst:
 
@@ -30,13 +30,13 @@ Das ERNI-KI Monitoring-System umfasst:
 - **AlertManager v0.27.0** - Benachrichtigungen und Alarmierung
 - **System Health:** 96,4% (26/30 Container gesund)
 
-## 📈 Exporter-Konfiguration
+## Exporter-Konfiguration
 
-### 🖥️ Node Exporter (Port 9101)
+### Node Exporter (Port 9101)
 
 **Zweck:** Systemebene-Metriken (CPU, Speicher, Festplatte, Netzwerk)
 
-**Status:** ✅ Healthy | HTTP 200 | Standard wget healthcheck
+**Status:** Healthy | HTTP 200 | Standard wget healthcheck
 
 **Wichtige Metriken:**
 
@@ -51,11 +51,11 @@ Das ERNI-KI Monitoring-System umfasst:
 curl -s http://localhost:9101/metrics | grep node_up
 ```
 
-### 🐘 PostgreSQL Exporter (Port 9187)
+### PostgreSQL Exporter (Port 9187)
 
 **Zweck:** Datenbankleistung und Gesundheitsmetriken
 
-**Status:** ✅ Healthy | HTTP 200 | Standard wget healthcheck
+**Status:** Healthy | HTTP 200 | Standard wget healthcheck
 
 **Wichtige Metriken:**
 
@@ -70,12 +70,12 @@ curl -s http://localhost:9101/metrics | grep node_up
 curl -s http://localhost:9187/metrics | grep pg_up
 ```
 
-### 🔴 Redis Exporter (Port 9121) - 🔧 Behoben 19.09.2025
+### Redis Exporter (Port 9121) - Behoben 19.09.2025
 
 **Zweck:** Redis Cache-Leistung und Gesundheitsmetriken
 
-**Status:** 🔧 Running | HTTP 200 | TCP healthcheck (behoben von wget)
-**Problem:** Redis-Authentifizierung (nicht kritisch für HTTP-Metriken-Endpunkt)
+**Status:** Running | HTTP 200 | TCP healthcheck (behoben von wget) **Problem:**
+Redis-Authentifizierung (nicht kritisch für HTTP-Metriken-Endpunkt)
 
 **Konfiguration (BEHOBEN):**
 
@@ -120,11 +120,11 @@ timeout 5 sh -c '</dev/tcp/localhost/9121' && echo "Redis Exporter verfügbar"
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-## 🎮 NVIDIA GPU Exporter (Port 9445) - ✅ Verbessert 19.09.2025
+## NVIDIA GPU Exporter (Port 9445) - Verbessert 19.09.2025
 
 **Zweck:** GPU-Auslastung und Leistungsmetriken
 
-**Status:** ✅ Healthy | HTTP 200 | TCP healthcheck (verbessert von pgrep)
+**Status:** Healthy | HTTP 200 | TCP healthcheck (verbessert von pgrep)
 
 **Konfiguration (VERBESSERT):**
 
@@ -134,11 +134,11 @@ nvidia-exporter:
   ports:
     - '9445:9445'
   healthcheck:
-    test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9445' || exit 1"] # VERBESSERT: TCP-Prüfung
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 15s
+  test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9445' || exit 1"] # VERBESSERT: TCP-Prüfung
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 15s
 ```
 
 **Wichtige Metriken:**
@@ -154,11 +154,11 @@ nvidia-exporter:
 curl -s http://localhost:9445/metrics | grep nvidia_gpu_utilization
 ```
 
-### 📦 Blackbox Exporter (Port 9115)
+### Blackbox Exporter (Port 9115)
 
 **Zweck:** Überwachung der Verfügbarkeit externer Services
 
-**Status:** ✅ Healthy | HTTP 200 | Standard wget healthcheck
+**Status:** Healthy | HTTP 200 | Standard wget healthcheck
 
 **Wichtige Metriken:**
 
@@ -172,20 +172,19 @@ curl -s http://localhost:9445/metrics | grep nvidia_gpu_utilization
 curl -s http://localhost:9115/metrics | grep probe_success
 ```
 
-### 🧠 Ollama AI Exporter (Port 9778) - ✅ Standardisiert 19.09.2025
+### Ollama AI Exporter (Port 9778) - Standardisiert 19.09.2025
 
 **Zweck:** AI-Modell-Leistung und Verfügbarkeitsmetriken
 
-**Status:** ✅ Healthy | HTTP 200 | wget healthcheck (standardisiert von
-127.0.0.1)
+**Status:** Healthy | HTTP 200 | wget healthcheck (standardisiert von 127.0.0.1)
 
 **Konfiguration (STANDARDISIERT):**
 
 ```yaml
 ollama-exporter:
   build:
-    context: ./monitoring
-    dockerfile: Dockerfile.ollama-exporter
+  context: ./monitoring
+  dockerfile: Dockerfile.ollama-exporter
   ports:
     - '127.0.0.1:9778:9778'
   environment:
@@ -206,11 +205,11 @@ ollama-exporter:
 curl -s http://localhost:9778/metrics | grep ollama_models_total
 ```
 
-### 🚪 Nginx Web Exporter (Port 9113) - 🔧 Behoben 19.09.2025
+### Nginx Web Exporter (Port 9113) - Behoben 19.09.2025
 
 **Zweck:** Webserver-Leistung und Traffic-Metriken
 
-**Status:** 🔧 Running | HTTP 200 | TCP healthcheck (behoben von wget)
+**Status:** Running | HTTP 200 | TCP healthcheck (behoben von wget)
 
 **Konfiguration (BEHOBEN):**
 
@@ -223,11 +222,11 @@ nginx-exporter:
     - '--nginx.scrape-uri=http://nginx:80/nginx_status'
     - '--web.listen-address=:9113'
   healthcheck:
-    test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9113' || exit 1"] # BEHOBEN: TCP-Prüfung
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+  test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9113' || exit 1"] # BEHOBEN: TCP-Prüfung
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 10s
 ```
 
 **Wichtige Metriken:**
@@ -247,11 +246,11 @@ curl -s http://localhost:9113/metrics | grep nginx_connections_active
 timeout 5 sh -c '</dev/tcp/localhost/9113' && echo "Nginx Exporter verfügbar"
 ```
 
-## 📈 RAG SLA Exporter (Port 9808)
+## RAG SLA Exporter (Port 9808)
 
 **Zweck:** RAG (Retrieval-Augmented Generation) Leistungsmetriken
 
-**Status:** ✅ Healthy | HTTP 200 | Python healthcheck
+**Status:** Healthy | HTTP 200 | Python healthcheck
 
 **Wichtige Metriken:**
 
@@ -265,53 +264,53 @@ timeout 5 sh -c '</dev/tcp/localhost/9113' && echo "Nginx Exporter verfügbar"
 curl -s http://localhost:9808/metrics | grep erni_ki_rag_response_latency
 ```
 
-## 🔧 Healthcheck-Standardisierung
+## Healthcheck-Standardisierung
 
 ### Probleme und Lösungen (19. September 2025)
 
-| Exporter            | Problem                           | Lösung                                 | Status            |
-| ------------------- | --------------------------------- | -------------------------------------- | ----------------- |
-| **Redis Exporter**  | wget nicht verfügbar im Container | TCP-Prüfung `</dev/tcp/localhost/9121` | 🔧 Behoben        |
-| **Nginx Exporter**  | wget nicht verfügbar im Container | TCP-Prüfung `</dev/tcp/localhost/9113` | 🔧 Behoben        |
-| **NVIDIA Exporter** | pgrep-Prozess ineffizient         | TCP-Prüfung `</dev/tcp/localhost/9445` | ✅ Verbessert     |
-| **Ollama Exporter** | 127.0.0.1 statt localhost         | wget localhost standardisiert          | ✅ Standardisiert |
+| Exporter            | Problem                           | Lösung                                 | Status         |
+| ------------------- | --------------------------------- | -------------------------------------- | -------------- |
+| **Redis Exporter**  | wget nicht verfügbar im Container | TCP-Prüfung `</dev/tcp/localhost/9121` | Behoben        |
+| **Nginx Exporter**  | wget nicht verfügbar im Container | TCP-Prüfung `</dev/tcp/localhost/9113` | Behoben        |
+| **NVIDIA Exporter** | pgrep-Prozess ineffizient         | TCP-Prüfung `</dev/tcp/localhost/9445` | Verbessert     |
+| **Ollama Exporter** | 127.0.0.1 statt localhost         | wget localhost standardisiert          | Standardisiert |
 
 ### Standard-Healthcheck-Methoden
 
 ```yaml
 # TCP-Prüfung (für minimale Container ohne wget/curl)
 healthcheck:
-  test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 10s
+ test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # HTTP-Prüfung (für Container mit wget)
 healthcheck:
-  test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:PORT/metrics || exit 1"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 10s
+ test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:PORT/metrics || exit 1"]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # Benutzerdefinierte Prüfung (für spezialisierte Container)
 healthcheck:
-  test: ["CMD-SHELL", "python -c \"import requests; requests.get('http://localhost:PORT/metrics')\""]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 10s
+ test: ["CMD-SHELL", "python -c \"import requests; requests.get('http://localhost:PORT/metrics')\""]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 ```
 
-## 📊 Metriken-Verifikation
+## Metriken-Verifikation
 
 ### Status-Prüfung aller Exporters
 
 ```bash
 # HTTP-Status aller Exporters prüfen
 for port in 9101 9187 9121 9445 9115 9778 9113 9808; do
-  echo "Port $port: $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)"
+ echo "Port $port: $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)"
 done
 
 # Erwartete Ausgabe: Alle Ports sollten 200 zurückgeben
@@ -327,7 +326,7 @@ docker ps --format "table {{.Names}}\t{{.Status}}" | grep exporter
 docker inspect erni-ki-Redis Monitoring über Grafana --format='{{.State.Health.Status}}'
 ```
 
-## 🚨 Fehlerbehebungsleitfaden
+## Fehlerbehebungsleitfaden
 
 ### Häufige Probleme und Lösungen
 
@@ -343,7 +342,7 @@ docker inspect CONTAINER_NAME --format='{{.State.Health}}'
 # Wenn <nil> zurückgegeben wird, funktioniert Healthcheck nicht
 # Lösung: compose.yml mit TCP-Prüfung aktualisieren
 healthcheck:
-  test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
+ test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
 ```
 
 ## 2. Redis Exporter zeigt redis_up = 0
@@ -359,7 +358,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 docker logs erni-ki-Redis Monitoring über Grafana --tail 20
 ```
 
-## 🔔 Alarmierung testen {#alert-testing}
+## Alarmierung testen {#alert-testing}
 
 Um die Alarmierung zu testen, können Sie manuell einen Alarm auslösen:
 
@@ -368,17 +367,17 @@ Um die Alarmierung zu testen, können Sie manuell einen Alarm auslösen:
 curl -H "Content-Type: application/json" -d '[{"labels":{"alertname":"TestAlert"}}]' http://localhost:9093/api/v1/alerts
 ```
 
-## 🎯 Erfolgskriterien
+## Erfolgskriterien
 
 Nach der Fehlerbehebung überprüfen:
 
-- ✅ Alle 8 Exporters geben HTTP 200 auf /metrics zurück
-- ✅ Docker-Healthcheck zeigt healthy/running Status
-- ✅ Keine Fehlermeldungen in Container-Logs
-- ✅ Metriken enthalten erwartete Daten
-- ✅ Ressourcennutzung innerhalb normaler Grenzen
+- Alle 8 Exporters geben HTTP 200 auf /metrics zurück
+- Docker-Healthcheck zeigt healthy/running Status
+- Keine Fehlermeldungen in Container-Logs
+- Metriken enthalten erwartete Daten
+- Ressourcennutzung innerhalb normaler Grenzen
 
-## 🔗 Verwandte Dokumentation
+## Verwandte Dokumentation
 
 - [Admin-Leitfaden](../core/admin-guide.md) - Systemverwaltung
 - [Architektur](../../architecture/architecture.md) - Systemarchitektur

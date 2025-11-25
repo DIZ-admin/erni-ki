@@ -14,32 +14,32 @@ last_updated: '2025-11-24'
 - [Повторный аудит с фокусом на рефакторинг](../audits/documentation-refactoring-audit-2025-11-24.md)
   > [TOC]
 
-## 🎯 Ключевые проблемы
+## Ключевые проблемы
 
 ### Критические
 
-1. 🔴 **101 orphaned документ** (54%) - нет входящих ссылок
-2. 🔴 **20 stub документов** (<50 слов) - нуждаются в действиях
-3. 🔴 **EN покрытие 18.2%** - критически низкое
+1. **101 orphaned документ** (54%) - нет входящих ссылок
+2. **20 stub документов** (<50 слов) - нуждаются в действиях
+3. **EN покрытие 18.2%** - критически низкое
 
 ### Важные
 
-4. 🟡 **39 guides** разбросаны - нужна консолидация
-5. 🟡 **4 дубликата** main/archive - требуют проверки
-6. 🟡 **4 документа** с deprecation markers - требуют обновления
+4. [WARNING] **39 guides** разбросаны - нужна консолидация
+5. [WARNING] **4 дубликата** main/archive - требуют проверки
+6. [WARNING] **4 документа** с deprecation markers - требуют обновления
 
 ### Положительное
 
-✅ Все документы свежие (<90 дней) ✅ Хорошие стандарты метаданных ✅ Отсутствие
+Все документы свежие (<90 дней) Хорошие стандарты метаданных Отсутствие
 критически устаревшего контента
 
 ---
 
-## 📋 Фазы рефакторинга
+## Фазы рефакторинга
 
-### 📅 Фаза 1: Критические исправления (3 дня)
+### Фаза 1: Критические исправления (3 дня)
 
-**Статус:** 🔴 Ожидает начала
+**Статус:** Ожидает начала
 
 #### День 1: Stub документы (20 файлов)
 
@@ -113,14 +113,14 @@ rm de/academy/news/2025-01-release-x.md
 
 **Результат Фазы 1:**
 
-- ✅ 0 stub документов
-- ✅ 0 дубликатов
-- ✅ 0 deprecation markers
-- ✅ 7/7 подразделов operations/ с README
+- 0 stub документов
+- 0 дубликатов
+- 0 deprecation markers
+- 7/7 подразделов operations/ с README
 
 ---
 
-### 📅 Фаза 2: Навигация и связность (1 неделя)
+### Фаза 2: Навигация и связность (1 неделя)
 
 **Статус:** ⏳ Запланировано
 
@@ -129,7 +129,7 @@ rm de/academy/news/2025-01-release-x.md
 **docs/index.md:**
 
 ```markdown
-## 📚 Разделы документации
+## Разделы документации
 
 ### Для пользователей
 
@@ -196,8 +196,8 @@ rm de/academy/news/2025-01-release-x.md
 
 ### Предыдущий/Следующий
 
-- ⬅️ [Предыдущий: Title](prev.md)
-- ➡️ [Следующий: Title](next.md)
+- [Предыдущий: Title](prev.md)
+- [Следующий: Title](next.md)
 ```
 
 #### Задача 2.3: Обновить academy/howto/index.md (1 час)
@@ -222,7 +222,7 @@ rm de/academy/news/2025-01-release-x.md
 
 ---
 
-### 📅 Фаза 3: Консолидация (3 недели)
+### Фаза 3: Консолидация (3 недели)
 
 **Статус:** ⏳ Запланировано
 
@@ -232,22 +232,22 @@ rm de/academy/news/2025-01-release-x.md
 
 ```
 operations/monitoring/
-├── README.md (обзор)
-├── monitoring-guide.md (главный)
-├── dashboards/
-│   ├── grafana-setup.md (было: grafana-dashboards-guide.md)
-│   └── dashboard-reference.md
-├── alerts/
-│   ├── prometheus-alerts.md (было: prometheus-alerts-guide.md)
-│   ├── alertmanager-config.md (было: alertmanager-noise-reduction.md)
-│   └── alert-examples.md
-├── queries/
-│   └── prometheus-queries.md (было: prometheus-queries-reference.md)
-├── components/
-│   ├── rag-monitoring.md
-│   ├── redis-monitoring.md (из database/)
-│   └── logs-sync.md (было: access-log-sync-and-fluentbit.md)
-└── troubleshooting.md (было: searxng-redis-issue-analysis.md + другие)
+ README.md (обзор)
+ monitoring-guide.md (главный)
+ dashboards/
+ grafana-setup.md (было: grafana-dashboards-guide.md)
+ dashboard-reference.md
+ alerts/
+ prometheus-alerts.md (было: prometheus-alerts-guide.md)
+ alertmanager-config.md (было: alertmanager-noise-reduction.md)
+ alert-examples.md
+ queries/
+ prometheus-queries.md (было: prometheus-queries-reference.md)
+ components/
+ rag-monitoring.md
+ redis-monitoring.md (из database/)
+ logs-sync.md (было: access-log-sync-and-fluentbit.md)
+ troubleshooting.md (было: searxng-redis-issue-analysis.md + другие)
 ```
 
 **Шаги:**
@@ -264,18 +264,18 @@ operations/monitoring/
 
 ```
 operations/database/
-├── README.md
-├── postgresql/
-│   ├── setup.md
-│   ├── optimizations.md (было: database-production-optimizations.md)
-│   ├── monitoring.md (было: database-monitoring-plan.md)
-│   └── troubleshooting.md (было: database-troubleshooting.md)
-├── redis/
-│   ├── operations.md (было: redis-operations-guide.md)
-│   ├── monitoring.md (переехало из monitoring/)
-│   └── troubleshooting.md
-└── vllm/
-    └── resource-optimization.md (было: vllm-resource-optimization.md)
+ README.md
+ postgresql/
+ setup.md
+ optimizations.md (было: database-production-optimizations.md)
+ monitoring.md (было: database-monitoring-plan.md)
+ troubleshooting.md (было: database-troubleshooting.md)
+ redis/
+ operations.md (было: redis-operations-guide.md)
+ monitoring.md (переехало из monitoring/)
+ troubleshooting.md
+ vllm/
+ resource-optimization.md (было: vllm-resource-optimization.md)
 ```
 
 #### Неделя 3: Troubleshooting (9 → 5-6 файлов)
@@ -284,20 +284,20 @@ operations/database/
 
 ```
 operations/troubleshooting/
-├── README.md (обзор)
-├── methodology.md (было: erni-ki-diagnostic-methodology.md)
-├── guides/
-│   ├── database-issues.md
-│   ├── monitoring-issues.md
-│   ├── application-issues.md
-│   └── network-issues.md
-└── runbooks/
-    └── common-scenarios.md
+ README.md (обзор)
+ methodology.md (было: erni-ki-diagnostic-methodology.md)
+ guides/
+ database-issues.md
+ monitoring-issues.md
+ application-issues.md
+ network-issues.md
+ runbooks/
+ common-scenarios.md
 ```
 
 ---
 
-### 📅 Фаза 4: Критичные переводы EN (1 месяц)
+### Фаза 4: Критичные переводы EN (1 месяц)
 
 **Статус:** ⏳ Запланировано
 
@@ -339,7 +339,7 @@ operations/troubleshooting/
 
 ---
 
-### 📅 Фаза 5: Расширенные переводы (1 месяц)
+### Фаза 5: Расширенные переводы (1 месяц)
 
 **Статус:** ⏳ Запланировано
 
@@ -395,7 +395,7 @@ operations/troubleshooting/
 
 ---
 
-## 📊 Метрики прогресса
+## Метрики прогресса
 
 ### Текущее состояние
 
@@ -448,7 +448,7 @@ operations/troubleshooting/
 
 ---
 
-## 🎯 Quick Start
+## Quick Start
 
 ### Начать сегодня - Фаза 1 День 1
 
@@ -482,7 +482,7 @@ gh pr create --title "docs: Phase 1 Day 1 - Remove stub documents"
 
 ---
 
-## 📚 Связанные документы
+## Связанные документы
 
 - [Первый комплексный аудит](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
 - [Повторный аудит с фокусом на рефакторинг](../archive/audits/documentation-refactoring-audit-2025-11-24.md)
@@ -494,4 +494,4 @@ gh pr create --title "docs: Phase 1 Day 1 - Remove stub documents"
 ---
 
 **План создан:** 2025-11-24 **Базируется на:** 2 комплексных аудитах **Статус:**
-🔴 Фаза 1 готова к началу **Следующий пересмотр:** После завершения Фазы 1
+Фаза 1 готова к началу **Следующий пересмотр:** После завершения Фазы 1

@@ -15,17 +15,17 @@ managing the ERNI-KI platform.
 ### Core Guides
 
 - **[admin-guide.md](core/admin-guide.md)** - System administration handbook
-  - User management
-  - Service configuration
-  - Backup and restore procedures
-  - Security management
+- User management
+- Service configuration
+- Backup and restore procedures
+- Security management
 
 - **[monitoring-guide.md](monitoring/monitoring-guide.md)** - Comprehensive
   monitoring documentation
-  - Prometheus metrics and alerts
-  - Grafana dashboards (5 provisioned)
-  - Loki log aggregation
-  - SLO (Service Level Objective) tracking
+- Prometheus metrics and alerts
+- Grafana dashboards (5 provisioned)
+- Loki log aggregation
+- SLO (Service Level Objective) tracking
 
 ### Troubleshooting & Runbooks
 
@@ -49,9 +49,9 @@ managing the ERNI-KI platform.
 
 ## Quick Start
 
-**For Operators:** Start with the [admin-guide.md](core/admin-guide.md).  
-**For Monitoring:** See [monitoring-guide.md](monitoring/monitoring-guide.md).  
-**For Incidents:** Check
+**For Operators:** Start with the [admin-guide.md](core/admin-guide.md). **For
+Monitoring:** See [monitoring-guide.md](monitoring/monitoring-guide.md). **For
+Incidents:** Check
 [troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
 
 ## Операционный ритм
@@ -62,7 +62,7 @@ managing the ERNI-KI platform.
 - **Ежемесячно:** тренировочные восстановления по
   `maintenance/backup-restore-procedures.md`.
 
-## 🔗 Связанная документация
+## Связанная документация
 
 - [Architecture Overview](../architecture/README.md)
 - [Getting Started](../getting-started/README.md)

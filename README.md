@@ -1,4 +1,4 @@
-# 🤖 ERNI-KI — Production AI Platform
+# ERNI-KI — Production AI Platform
 
 **ERNI-KI** — стэк из 30 сервисов вокруг OpenWebUI v0.6.36 и Ollama 0.12.11, Go
 1.24.10 в CI, с GPU-ускорением, Context7/LiteLLM gateway и полной обсервабилити.
@@ -23,12 +23,12 @@
 [![CI](https://github.com/DIZ-admin/erni-ki/actions/workflows/ci.yml/badge.svg)](https://github.com/DIZ-admin/erni-ki/actions/workflows/ci.yml)
 [![Security](https://github.com/DIZ-admin/erni-ki/actions/workflows/security.yml/badge.svg)](https://github.com/DIZ-admin/erni-ki/actions/workflows/security.yml)
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 git clone https://github.com/DIZ-admin/erni-ki.git
 cd erni-ki
-cp env/*.example env/   # заполните .env файлы
+cp env/*.example env/ # заполните .env файлы
 # (Рекомендуется) один раз скачать модели Docling
 ./scripts/maintenance/download-docling-models.sh
 docker compose up -d
@@ -38,7 +38,7 @@ docker compose ps
 Доступ: локально <http://localhost:8080>, production —
 `https://ki.erni-gruppe.ch`.
 
-## 🛠️ Branches, CI и политики
+## Branches, CI и политики
 
 - Работа ведётся в `develop`, релизы в `main`. Все изменения через PR + review.
 - Обязательные проверки: `ci` (ESLint/Ruff/Vitest/Go), `security`
@@ -53,7 +53,7 @@ docker compose ps
 - Инциденты CI/GitHub Actions фиксируются в
   [`docs/archive/audits/ci-health.md`](docs/archive/audits/ci-health.md).
 
-## 🧱 Архитектура (коротко)
+## Архитектура (коротко)
 
 - **AI слой:** OpenWebUI + Ollama (GPU), LiteLLM gateway, MCP Server, Docling,
   Tika, EdgeTTS, RAG через SearXNG. Детали — `docs/ai/` и
@@ -66,7 +66,7 @@ docker compose ps
   Docker Secrets, JWT-auth service. Инструкции —
   `scripts/infrastructure/security` и `docs/security/`.
 
-## 📚 Документация
+## Документация
 
 > **Версия документации:** см. [docs/VERSION.md](docs/VERSION.md) для текущего
 > номера версии, даты и правил обновления.
@@ -83,7 +83,7 @@ docker compose ps
 | Статус системы         | `docs/operations/core/status-page.md`, `docs/system/status.md`, `docs/en/system/status.md`, `docs/de/system/status.md` |
 | Аудит документации     | `docs/archive/audits/documentation-audit.md`                                                                           |
 
-## 🎓 Academy KI и пользовательские сценарии
+## Academy KI и пользовательские сценарии
 
 - **Портал для пользователей:** заходите в `docs/index.md` (каноничный русский
   портал) или локализации `docs/en/index.md` / `docs/de/index.md`. или
@@ -96,7 +96,7 @@ docker compose ps
   `docs/operations/core/status-page.md` или локализованные страницы статуса
   (`docs/*/system/status.md`).
 
-## 🤝 Участие
+## Участие
 
 1. Создайте issue (шаблоны в `.github/ISSUE_TEMPLATE/`).
 2. Фичи — из `develop`, фиксы в PR -> `develop` -> `main`.

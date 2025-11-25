@@ -16,23 +16,23 @@ auditor: 'Claude Code'
 структуры, метаданных, переводов, качества контента, навигации и соответствия
 лучшим практикам.
 
-**Общая оценка: 8.2/10** ⭐⭐⭐⭐
+**Общая оценка: 8.2/10**
 
 **Ключевые достижения:**
 
-- ✅ Отличное покрытие метаданными (99.2% файлов)
-- ✅ Нет дубликатов контента
-- ✅ Хорошо структурированная MkDocs конфигурация
-- ✅ Определены стандарты и style guide
-- ✅ Нет критически больших файлов
+- Отличное покрытие метаданными (99.2% файлов)
+- Нет дубликатов контента
+- Хорошо структурированная MkDocs конфигурация
+- Определены стандарты и style guide
+- Нет критически больших файлов
 
 **Критические проблемы:**
 
-- 🔴 27 sitemap.xml файлов в git (должны генерироваться)
-- 🔴 57 потенциально битых внутренних ссылок
-- 🔴 16 файлов не включены в навигацию
-- 🟡 Низкое покрытие EN переводами (25.3%)
-- 🟡 9 файлов с датами вне archive директории
+- 27 sitemap.xml файлов в git (должны генерироваться)
+- 57 потенциально битых внутренних ссылок
+- 16 файлов не включены в навигацию
+- [WARNING] Низкое покрытие EN переводами (25.3%)
+- [WARNING] 9 файлов с датами вне archive директории
 
 ---
 
@@ -41,18 +41,18 @@ auditor: 'Claude Code'
 ### 1.1 Общие показатели
 
 ```
-Всего markdown файлов:                    236
-Файлов с frontmatter:                     234 (99.2%)
-Файлов без обязательных полей:              0 (0%)
-Файлов без last_updated:                   38 (16.1%)
+Всего markdown файлов: 236
+Файлов с frontmatter: 234 (99.2%)
+Файлов без обязательных полей: 0 (0%)
+Файлов без last_updated: 38 (16.1%)
 
 Распределение по языкам:
-  - Русский (RU):                         133 файла (56.4%)
-  - Немецкий (DE):                         83 файла (35.2%)
-  - Английский (EN):                       18 файлов (7.6%)
+ - Русский (RU): 133 файла (56.4%)
+ - Немецкий (DE): 83 файла (35.2%)
+ - Английский (EN): 18 файлов (7.6%)
 
-Файлов в навигации mkdocs.yml:           110
-Файлов вне навигации:                      16
+Файлов в навигации mkdocs.yml: 110
+Файлов вне навигации: 16
 ```
 
 ### 1.2 Покрытие переводов
@@ -69,18 +69,18 @@ auditor: 'Claude Code'
 
 ### 1.3 Структура по категориям
 
-| Категория                                 | RU  | DE  | EN  | Приоритет      |
-| ----------------------------------------- | --- | --- | --- | -------------- |
-| `/academy` - обучение пользователей       | 10  | 9   | 9   | ✅ Отлично     |
-| `/operations` - операционная документация | 39  | 36  | 2   | 🔴 EN критично |
-| `/getting-started` - быстрый старт        | 8   | 3   | 1   | 🔴 Оба языка   |
-| `/reference` - справочники                | 17  | 17  | 3   | 🟡 EN нужен    |
-| `/security` - безопасность                | 6   | 6   | 1   | 🟡 EN нужен    |
-| `/architecture` - архитектура             | 5   | 5   | 2   | 🟢 Хорошо      |
-| `/api` - API документация                 | 1   | 1   | 0   | 🟡 EN нужен    |
-| `/data` - данные и хранилище              | 1   | 1   | 0   | 🟡 Оба нужны   |
-| `/system` - статус системы                | 1   | 1   | 1   | ✅ Отлично     |
-| `/news` - новости                         | 2   | 0   | 0   | ℹ️ Низкий      |
+| Категория                                 | RU  | DE  | EN  | Приоритет           |
+| ----------------------------------------- | --- | --- | --- | ------------------- |
+| `/academy` - обучение пользователей       | 10  | 9   | 9   | Отлично             |
+| `/operations` - операционная документация | 39  | 36  | 2   | EN критично         |
+| `/getting-started` - быстрый старт        | 8   | 3   | 1   | Оба языка           |
+| `/reference` - справочники                | 17  | 17  | 3   | [WARNING] EN нужен  |
+| `/security` - безопасность                | 6   | 6   | 1   | [WARNING] EN нужен  |
+| `/architecture` - архитектура             | 5   | 5   | 2   | [OK] Хорошо         |
+| `/api` - API документация                 | 1   | 1   | 0   | [WARNING] EN нужен  |
+| `/data` - данные и хранилище              | 1   | 1   | 0   | [WARNING] Оба нужны |
+| `/system` - статус системы                | 1   | 1   | 1   | Отлично             |
+| `/news` - новости                         | 2   | 0   | 0   | ℹ Низкий           |
 
 ---
 
@@ -90,170 +90,170 @@ auditor: 'Claude Code'
 
 ```
 docs/
-├── index.md                          # RU портал (канонический)
-├── overview.md                       # Обзор платформы
-├── GLOSSARY.md                       # Глоссарий терминов
-├── VERSION.md                        # Версионирование документации
-├── budget-analysis.md                # Анализ бюджета
-│
-├── academy/                          # 📚 Academy KI - обучение
-│   ├── index.md
-│   ├── openwebui-basics.md
-│   ├── prompting-101.md
-│   ├── howto/                        # Практические руководства
-│   │   ├── index.md
-│   │   ├── create-jira-ticket.md
-│   │   ├── create-jira-ticket-with-ai.md
-│   │   ├── write-customer-email.md
-│   │   └── summarize-meeting-notes.md
-│   └── news/                         # Новости Academy
-│       ├── index.md
-│       └── 2025-01-release-x.md
-│
-├── getting-started/                  # 🚀 Быстрый старт
-│   ├── README.md
-│   ├── installation.md
-│   ├── configuration-guide.md
-│   ├── user-guide.md
-│   ├── external-access-setup.md
-│   ├── local-network-dns-setup.md
-│   ├── dnsmasq-setup-instructions.md
-│   └── port-forwarding-setup.md
-│
-├── architecture/                     # 🏗️ Архитектура
-│   ├── README.md
-│   ├── architecture.md
-│   ├── services-overview.md
-│   ├── service-inventory.md
-│   └── nginx-configuration.md
-│
-├── operations/                       # ⚙️ Операции и администрирование
-│   ├── README.md
-│   ├── backup-guide.md
-│   ├── core/                         # Основные операции
-│   │   ├── README.md
-│   │   ├── operations-handbook.md
-│   │   ├── admin-guide.md
-│   │   ├── status-page.md
-│   │   ├── runbooks-summary.md
-│   │   ├── github-governance.md
-│   │   └── configuration-change-process.md
-│   ├── monitoring/                   # Мониторинг
-│   │   ├── README.md
-│   │   ├── monitoring-guide.md
-│   │   ├── grafana-dashboards-guide.md
-│   │   ├── prometheus-alerts-guide.md
-│   │   ├── prometheus-queries-reference.md
-│   │   ├── rag-monitoring.md
-│   │   ├── searxng-redis-issue-analysis.md
-│   │   ├── alertmanager-noise-reduction.md
-│   │   └── access-log-sync-and-fluentbit.md
-│   ├── automation/                   # Автоматизация
-│   │   ├── README.md
-│   │   ├── automated-maintenance-guide.md
-│   │   ├── docker-cleanup-guide.md
-│   │   └── docker-log-rotation.md
-│   ├── maintenance/                  # Обслуживание
-│   │   ├── README.md
-│   │   ├── backup-restore-procedures.md
-│   │   ├── service-restart-procedures.md
-│   │   ├── image-upgrade-checklist.md
-│   │   └── docling-shared-volume.md
-│   ├── troubleshooting/              # Устранение проблем
-│   │   ├── README.md
-│   │   └── troubleshooting-guide.md
-│   ├── database/                     # Базы данных
-│   │   ├── README.md
-│   │   ├── database-monitoring-plan.md
-│   │   ├── database-production-optimizations.md
-│   │   ├── database-troubleshooting.md
-│   │   ├── redis-monitoring-grafana.md
-│   │   ├── redis-operations-guide.md
-│   │   └── vllm-resource-optimization.md
-│   ├── diagnostics/                  # Диагностика
-│   │   ├── README.md
-│   │   └── erni-ki-diagnostic-methodology.md
-│   └── ai/                           # AI специфичные операции
-│       └── litellm-redis-caching.md
-│
-├── security/                         # 🔒 Безопасность
-│   ├── README.md
-│   ├── security-policy.md
-│   ├── authentication.md
-│   ├── security-best-practices.md
-│   ├── ssl-tls-setup.md
-│   └── log-audit.md
-│
-├── reference/                        # 📖 Справочники
-│   ├── README.md
-│   ├── api-reference.md
-│   ├── development.md
-│   ├── metadata-standards.md
-│   ├── style-guide.md
-│   ├── emoji-style-guide.md
-│   ├── language-policy.md
-│   ├── github-environments-setup.md
-│   ├── mcpo-integration-guide.md
-│   ├── pre-commit-hooks.md
-│   ├── status-snippet.md
-│   ├── CHANGELOG.md
-│   ├── documentation-refactoring-plan.md
-│   ├── documentation-refactoring-plan-2025-11-24.md          # ⚠️ Дата в имени
-│   ├── documentation-refactoring-plan-v2-2025-11-24.md       # ⚠️ Дата в имени
-│   ├── documentation-update-plan-2025-11-24.md               # ⚠️ Дата в имени
-│   └── code-audit-summary-2025-11-24.md                      # ⚠️ Дата в имени
-│
-├── data/                             # 💾 Данные
-│   └── README.md
-│
-├── api/                              # 🔌 API
-│   ├── README.md
-│   └── auth-service-openapi.yaml
-│
-├── system/                           # 📊 Система
-│   └── status.md
-│
-├── news/                             # 📰 Новости
-│   ├── index.md
-│   ├── 2025-11-erni-ki-status-page-launch.md
-│   └── archive/
-│       └── 2025.md
-│
-├── archive/                          # 🗄️ Архив
-│   ├── README.md
-│   ├── audits/                       # 13 аудитов
-│   ├── incidents/                    # 5 инцидентов
-│   ├── diagnostics/                  # 5 диагностик
-│   ├── config-backup/                # 3 бэкапа конфигов
-│   ├── howto/                        # Устаревшие howto
-│   ├── training/                     # Устаревшие тренинги
-│   ├── legacy-index.md
-│   ├── legacy-academy-index.md
-│   └── news-overview.md
-│
-├── de/                               # 🇩🇪 Немецкие переводы (88.4%)
-│   └── [зеркальная структура]
-│
-└── en/                               # 🇬🇧 Английские переводы (25.3%)
-    └── [частичная структура]
+ index.md # RU портал (канонический)
+ overview.md # Обзор платформы
+ GLOSSARY.md # Глоссарий терминов
+ VERSION.md # Версионирование документации
+ budget-analysis.md # Анализ бюджета
+
+ academy/ # Academy KI - обучение
+ index.md
+ openwebui-basics.md
+ prompting-101.md
+ howto/ # Практические руководства
+ index.md
+ create-jira-ticket.md
+ create-jira-ticket-with-ai.md
+ write-customer-email.md
+ summarize-meeting-notes.md
+ news/ # Новости Academy
+ index.md
+ 2025-01-release-x.md
+
+ getting-started/ # Быстрый старт
+ README.md
+ installation.md
+ configuration-guide.md
+ user-guide.md
+ external-access-setup.md
+ local-network-dns-setup.md
+ dnsmasq-setup-instructions.md
+ port-forwarding-setup.md
+
+ architecture/ # Архитектура
+ README.md
+ architecture.md
+ services-overview.md
+ service-inventory.md
+ nginx-configuration.md
+
+ operations/ # Операции и администрирование
+ README.md
+ backup-guide.md
+ core/ # Основные операции
+ README.md
+ operations-handbook.md
+ admin-guide.md
+ status-page.md
+ runbooks-summary.md
+ github-governance.md
+ configuration-change-process.md
+ monitoring/ # Мониторинг
+ README.md
+ monitoring-guide.md
+ grafana-dashboards-guide.md
+ prometheus-alerts-guide.md
+ prometheus-queries-reference.md
+ rag-monitoring.md
+ searxng-redis-issue-analysis.md
+ alertmanager-noise-reduction.md
+ access-log-sync-and-fluentbit.md
+ automation/ # Автоматизация
+ README.md
+ automated-maintenance-guide.md
+ docker-cleanup-guide.md
+ docker-log-rotation.md
+ maintenance/ # Обслуживание
+ README.md
+ backup-restore-procedures.md
+ service-restart-procedures.md
+ image-upgrade-checklist.md
+ docling-shared-volume.md
+ troubleshooting/ # Устранение проблем
+ README.md
+ troubleshooting-guide.md
+ database/ # Базы данных
+ README.md
+ database-monitoring-plan.md
+ database-production-optimizations.md
+ database-troubleshooting.md
+ redis-monitoring-grafana.md
+ redis-operations-guide.md
+ vllm-resource-optimization.md
+ diagnostics/ # Диагностика
+ README.md
+ erni-ki-diagnostic-methodology.md
+ ai/ # AI специфичные операции
+ litellm-redis-caching.md
+
+ security/ # Безопасность
+ README.md
+ security-policy.md
+ authentication.md
+ security-best-practices.md
+ ssl-tls-setup.md
+ log-audit.md
+
+ reference/ # Справочники
+ README.md
+ api-reference.md
+ development.md
+ metadata-standards.md
+ style-guide.md
+ emoji-style-guide.md
+ language-policy.md
+ github-environments-setup.md
+ mcpo-integration-guide.md
+ pre-commit-hooks.md
+ status-snippet.md
+ CHANGELOG.md
+ documentation-refactoring-plan.md
+ documentation-refactoring-plan-2025-11-24.md # Дата в имени
+ documentation-refactoring-plan-v2-2025-11-24.md # Дата в имени
+ documentation-update-plan-2025-11-24.md # Дата в имени
+ code-audit-summary-2025-11-24.md # Дата в имени
+
+ data/ # Данные
+ README.md
+
+ api/ # API
+ README.md
+ auth-service-openapi.yaml
+
+ system/ # Система
+ status.md
+
+ news/ # Новости
+ index.md
+ 2025-11-erni-ki-status-page-launch.md
+ archive/
+ 2025.md
+
+ archive/ # Архив
+ README.md
+ audits/ # 13 аудитов
+ incidents/ # 5 инцидентов
+ diagnostics/ # 5 диагностик
+ config-backup/ # 3 бэкапа конфигов
+ howto/ # Устаревшие howto
+ training/ # Устаревшие тренинги
+ legacy-index.md
+ legacy-academy-index.md
+ news-overview.md
+
+ de/ # Немецкие переводы (88.4%)
+ [зеркальная структура]
+
+ en/ # Английские переводы (25.3%)
+ [частичная структура]
 ```
 
 ### 2.2 Навигация MkDocs
 
 **Конфигурация:**
 
-- ✅ Material theme с темной темой
-- ✅ Плагин i18n для мультиязычности
-- ✅ Плагин awesome-pages для гибкой навигации
-- ✅ Плагин blog для новостей
-- ✅ Git revision date (отключен)
-- ✅ Search с поддержкой ru/de/en
-- ✅ Minify HTML
+- Material theme с темной темой
+- Плагин i18n для мультиязычности
+- Плагин awesome-pages для гибкой навигации
+- Плагин blog для новостей
+- Git revision date (отключен)
+- Search с поддержкой ru/de/en
+- Minify HTML
 
 **Проблемы навигации:**
 
-- ⚠️ 16 файлов не включены в nav
-- ⚠️ Дублирование раздела "Glossary" (строки 378 и 394)
+- 16 файлов не включены в nav
+- Дублирование раздела "Glossary" (строки 378 и 394)
 
 ---
 
@@ -320,19 +320,19 @@ reference/documentation-refactoring-plan-v2-2025-11-24.md -> academy/index.md
 **Список:**
 
 ```
-- api/README.md                                    # API обзор
-- budget-analysis.md                               # Анализ бюджета
-- news/2025-11-erni-ki-status-page-launch.md      # Новости
-- operations/ai/litellm-redis-caching.md          # AI операции
-- operations/automation/README.md                  # Обзор автоматизации
-- operations/core/README.md                        # Обзор операций
-- operations/maintenance/README.md                 # Обзор обслуживания
-- operations/monitoring/README.md                  # Обзор мониторинга
-- operations/troubleshooting/README.md             # Обзор troubleshooting
-- reference/emoji-style-guide.md                   # Style guide
-- reference/metadata-standards.md                  # Стандарты метаданных
-- reference/style-guide.md                         # Общий style guide
-- reference/code-audit-summary-2025-11-24.md      # Временный файл
+- api/README.md # API обзор
+- budget-analysis.md # Анализ бюджета
+- news/2025-11-erni-ki-status-page-launch.md # Новости
+- operations/ai/litellm-redis-caching.md # AI операции
+- operations/automation/README.md # Обзор автоматизации
+- operations/core/README.md # Обзор операций
+- operations/maintenance/README.md # Обзор обслуживания
+- operations/monitoring/README.md # Обзор мониторинга
+- operations/troubleshooting/README.md # Обзор troubleshooting
+- reference/emoji-style-guide.md # Style guide
+- reference/metadata-standards.md # Стандарты метаданных
+- reference/style-guide.md # Общий style guide
+- reference/code-audit-summary-2025-11-24.md # Временный файл
 - reference/documentation-refactoring-plan-2025-11-24.md
 - reference/documentation-refactoring-plan-v2-2025-11-24.md
 - reference/documentation-update-plan-2025-11-24.md
@@ -365,7 +365,7 @@ mv docs/reference/*-2025-11-24.md docs/archive/audits/
 
 # Вариант 2: Переименовать без дат (если актуальны)
 mv docs/reference/documentation-refactoring-plan-2025-11-24.md \
-   docs/reference/documentation-refactoring-plan-current.md
+ docs/reference/documentation-refactoring-plan-current.md
 ```
 
 #### 3.2.2 Низкое покрытие EN переводами (25.3%)
@@ -418,248 +418,248 @@ mv docs/reference/documentation-refactoring-plan-2025-11-24.md \
 
 ```
 docs/
-├── index.md                          # 🏠 Главный портал (RU канонический)
-├── overview.md                       # 📋 Обзор платформы
-├── GLOSSARY.md                       # 📚 Глоссарий
-├── VERSION.md                        # 🔖 Версионирование
-│
-├── getting-started/                  # 🚀 Быстрый старт (Priority 1)
-│   ├── index.md                      # NEW: Обзор с навигацией
-│   ├── installation.md
-│   ├── configuration-guide.md
-│   ├── user-guide.md
-│   ├── network/                      # NEW: Группировка сетевых настроек
-│   │   ├── external-access-setup.md
-│   │   ├── local-network-dns-setup.md
-│   │   ├── dnsmasq-setup-instructions.md
-│   │   └── port-forwarding-setup.md
-│   └── troubleshooting.md            # NEW: FAQ для начинающих
-│
-├── academy/                          # 📚 Обучение
-│   ├── index.md
-│   ├── basics/                       # NEW: Группировка основ
-│   │   ├── openwebui-basics.md
-│   │   └── prompting-101.md
-│   ├── tutorials/                    # RENAME: howto -> tutorials
-│   │   ├── index.md
-│   │   ├── jira-integration.md       # MERGE: объединить варианты
-│   │   ├── email-writing.md
-│   │   └── meeting-summaries.md
-│   └── advanced/                     # NEW: Продвинутые темы
-│       └── custom-models.md
-│
-├── architecture/                     # 🏗️ Архитектура
-│   ├── index.md                      # RENAME: README.md -> index.md
-│   ├── overview.md                   # RENAME: architecture.md
-│   ├── services/                     # NEW: Группировка сервисов
-│   │   ├── overview.md
-│   │   ├── inventory.md
-│   │   └── dependencies.md           # NEW
-│   ├── infrastructure/               # NEW
-│   │   ├── nginx-configuration.md
-│   │   └── networking.md             # NEW
-│   └── diagrams/                     # NEW: Диаграммы
-│       ├── architecture-diagram.md
-│       └── deployment-diagram.md
-│
-├── operations/                       # ⚙️ Операции
-│   ├── index.md                      # IMPROVE: Добавить в nav
-│   ├── handbook.md                   # MERGE: Объединить handbooks
-│   ├── runbooks/                     # NEW: Отдельная секция
-│   │   ├── index.md
-│   │   ├── backup-restore.md
-│   │   ├── service-restart.md
-│   │   ├── incident-response.md      # NEW
-│   │   └── disaster-recovery.md      # NEW
-│   ├── monitoring/
-│   │   ├── index.md                  # ADD: В навигацию
-│   │   ├── overview.md               # RENAME: monitoring-guide.md
-│   │   ├── dashboards/               # NEW: Группировка
-│   │   │   ├── grafana-dashboards.md
-│   │   │   └── custom-dashboards.md  # NEW
-│   │   ├── alerts/                   # NEW: Группировка
-│   │   │   ├── prometheus-alerts.md
-│   │   │   ├── alertmanager-config.md
-│   │   │   └── noise-reduction.md
-│   │   ├── queries/                  # NEW
-│   │   │   └── prometheus-queries-reference.md
-│   │   └── specialized/              # NEW
-│   │       ├── rag-monitoring.md
-│   │       ├── searxng-redis.md
-│   │       └── access-logs.md
-│   ├── automation/
-│   │   ├── index.md                  # ADD: В навигацию
-│   │   ├── overview.md               # NEW
-│   │   ├── maintenance.md
-│   │   ├── docker-cleanup.md
-│   │   └── log-rotation.md
-│   ├── maintenance/
-│   │   ├── index.md                  # ADD: В навигацию
-│   │   ├── scheduled/                # NEW: Регулярное
-│   │   │   ├── backups.md
-│   │   │   └── updates.md
-│   │   └── procedures/               # NEW: Процедуры
-│   │       ├── service-restart.md
-│   │       ├── image-upgrade.md
-│   │       └── docling-volume.md
-│   ├── database/
-│   │   ├── index.md                  # IMPROVE
-│   │   ├── postgresql/               # NEW: По типу БД
-│   │   │   ├── monitoring.md
-│   │   │   ├── optimization.md
-│   │   │   └── troubleshooting.md
-│   │   └── redis/                    # NEW
-│   │       ├── monitoring.md
-│   │       ├── operations.md
-│   │       └── troubleshooting.md
-│   ├── ai-services/                  # NEW: AI специфика
-│   │   ├── litellm-caching.md        # MOVE from operations/ai/
-│   │   ├── ollama-management.md      # NEW
-│   │   └── model-deployment.md       # NEW
-│   ├── troubleshooting/
-│   │   ├── index.md                  # ADD: В навигацию
-│   │   ├── common-issues.md
-│   │   ├── diagnostic-methodology.md # MOVE
-│   │   └── logs-analysis.md          # NEW
-│   └── governance/                   # NEW: Управление
-│       ├── github-governance.md      # MOVE from core/
-│       ├── change-management.md
-│       └── status-page.md
-│
-├── security/                         # 🔒 Безопасность
-│   ├── index.md                      # RENAME: README.md
-│   ├── policies/                     # NEW: Политики
-│   │   ├── security-policy.md
-│   │   └── compliance.md             # NEW
-│   ├── authentication/               # NEW: Группировка
-│   │   ├── overview.md
-│   │   ├── jwt-setup.md              # SPLIT from authentication.md
-│   │   └── sso-integration.md        # NEW
-│   ├── infrastructure/               # NEW
-│   │   ├── ssl-tls-setup.md
-│   │   ├── waf-configuration.md      # NEW
-│   │   └── network-security.md       # NEW
-│   ├── monitoring/                   # NEW
-│   │   ├── log-audit.md
-│   │   └── intrusion-detection.md    # NEW
-│   └── best-practices.md
-│
-├── reference/                        # 📖 Справочники
-│   ├── index.md                      # IMPROVE
-│   ├── api/                          # NEW: API документация
-│   │   ├── overview.md
-│   │   ├── rest-api.md
-│   │   ├── auth-service.md
-│   │   └── openapi-spec.md
-│   ├── development/                  # NEW: Разработка
-│   │   ├── getting-started.md
-│   │   ├── contributing.md
-│   │   ├── pre-commit-hooks.md
-│   │   ├── testing.md                # NEW
-│   │   └── ci-cd.md                  # NEW
-│   ├── standards/                    # NEW: Стандарты
-│   │   ├── metadata-standards.md
-│   │   ├── style-guide.md
-│   │   ├── emoji-guide.md
-│   │   ├── language-policy.md
-│   │   └── code-style.md             # NEW
-│   ├── integrations/                 # NEW: Интеграции
-│   │   ├── mcpo-integration.md
-│   │   ├── github-environments.md
-│   │   └── external-services.md      # NEW
-│   ├── versioning/                   # NEW: Версии
-│   │   ├── VERSION.md                # MOVE
-│   │   └── CHANGELOG.md
-│   └── utilities/                    # NEW: Утилиты
-│       └── status-snippet.md
-│
-├── data/                             # 💾 Данные
-│   ├── index.md                      # RENAME: README.md
-│   ├── storage/                      # NEW
-│   │   ├── volumes.md
-│   │   └── backups.md
-│   └── databases/                    # NEW: Связь с operations/database
-│       ├── postgresql.md
-│       └── redis.md
-│
-├── system/                           # 📊 Система
-│   ├── status.md                     # Статус системы
-│   └── health-checks.md              # NEW
-│
-├── news/                             # 📰 Новости
-│   ├── index.md                      # Blog feed
-│   ├── 2025/                         # NEW: По годам
-│   │   ├── 11/                       # NEW: По месяцам
-│   │   │   └── status-page-launch.md
-│   │   └── 01/
-│   │       └── release-x.md
-│   └── archive/                      # Старые новости
-│       └── 2024.md
-│
-├── resources/                        # NEW: Ресурсы
-│   ├── budget-analysis.md            # MOVE from root
-│   ├── presentations/                # NEW
-│   ├── templates/                    # NEW
-│   └── tools/                        # NEW
-│
-├── archive/                          # 🗄️ Архив
-│   ├── index.md                      # IMPROVE: Добавить навигацию
-│   ├── audits/                       # Аудиты
-│   │   ├── index.md                  # NEW: Список всех аудитов
-│   │   ├── 2025/                     # NEW: По годам
-│   │   │   └── 11/
-│   │   │       ├── comprehensive-documentation-audit-24.md
-│   │   │       └── comprehensive-documentation-audit-25.md
-│   │   └── legacy/                   # Старые аудиты
-│   ├── incidents/                    # Инциденты
-│   │   ├── index.md                  # NEW
-│   │   └── 2025/
-│   ├── diagnostics/                  # Диагностика
-│   │   ├── index.md                  # NEW
-│   │   └── 2025/
-│   ├── deprecated/                   # NEW: Устаревшие документы
-│   │   ├── howto/
-│   │   ├── training/
-│   │   └── legacy-pages/
-│   └── migrations/                   # NEW: Миграции
-│       └── documentation-refactoring-plans/
-│           ├── plan-2025-11-24.md    # MOVE
-│           └── plan-v2-2025-11-24.md
-│
-├── de/                               # 🇩🇪 Немецкий (зеркало)
-│   └── [зеркальная структура]
-│
-└── en/                               # 🇬🇧 Английский (зеркало)
-    └── [зеркальная структура]
+ index.md # Главный портал (RU канонический)
+ overview.md # Обзор платформы
+ GLOSSARY.md # Глоссарий
+ VERSION.md # Версионирование
+
+ getting-started/ # Быстрый старт (Priority 1)
+ index.md # NEW: Обзор с навигацией
+ installation.md
+ configuration-guide.md
+ user-guide.md
+ network/ # NEW: Группировка сетевых настроек
+ external-access-setup.md
+ local-network-dns-setup.md
+ dnsmasq-setup-instructions.md
+ port-forwarding-setup.md
+ troubleshooting.md # NEW: FAQ для начинающих
+
+ academy/ # Обучение
+ index.md
+ basics/ # NEW: Группировка основ
+ openwebui-basics.md
+ prompting-101.md
+ tutorials/ # RENAME: howto -> tutorials
+ index.md
+ jira-integration.md # MERGE: объединить варианты
+ email-writing.md
+ meeting-summaries.md
+ advanced/ # NEW: Продвинутые темы
+ custom-models.md
+
+ architecture/ # Архитектура
+ index.md # RENAME: README.md -> index.md
+ overview.md # RENAME: architecture.md
+ services/ # NEW: Группировка сервисов
+ overview.md
+ inventory.md
+ dependencies.md # NEW
+ infrastructure/ # NEW
+ nginx-configuration.md
+ networking.md # NEW
+ diagrams/ # NEW: Диаграммы
+ architecture-diagram.md
+ deployment-diagram.md
+
+ operations/ # Операции
+ index.md # IMPROVE: Добавить в nav
+ handbook.md # MERGE: Объединить handbooks
+ runbooks/ # NEW: Отдельная секция
+ index.md
+ backup-restore.md
+ service-restart.md
+ incident-response.md # NEW
+ disaster-recovery.md # NEW
+ monitoring/
+ index.md # ADD: В навигацию
+ overview.md # RENAME: monitoring-guide.md
+ dashboards/ # NEW: Группировка
+ grafana-dashboards.md
+ custom-dashboards.md # NEW
+ alerts/ # NEW: Группировка
+ prometheus-alerts.md
+ alertmanager-config.md
+ noise-reduction.md
+ queries/ # NEW
+ prometheus-queries-reference.md
+ specialized/ # NEW
+ rag-monitoring.md
+ searxng-redis.md
+ access-logs.md
+ automation/
+ index.md # ADD: В навигацию
+ overview.md # NEW
+ maintenance.md
+ docker-cleanup.md
+ log-rotation.md
+ maintenance/
+ index.md # ADD: В навигацию
+ scheduled/ # NEW: Регулярное
+ backups.md
+ updates.md
+ procedures/ # NEW: Процедуры
+ service-restart.md
+ image-upgrade.md
+ docling-volume.md
+ database/
+ index.md # IMPROVE
+ postgresql/ # NEW: По типу БД
+ monitoring.md
+ optimization.md
+ troubleshooting.md
+ redis/ # NEW
+ monitoring.md
+ operations.md
+ troubleshooting.md
+ ai-services/ # NEW: AI специфика
+ litellm-caching.md # MOVE from operations/ai/
+ ollama-management.md # NEW
+ model-deployment.md # NEW
+ troubleshooting/
+ index.md # ADD: В навигацию
+ common-issues.md
+ diagnostic-methodology.md # MOVE
+ logs-analysis.md # NEW
+ governance/ # NEW: Управление
+ github-governance.md # MOVE from core/
+ change-management.md
+ status-page.md
+
+ security/ # Безопасность
+ index.md # RENAME: README.md
+ policies/ # NEW: Политики
+ security-policy.md
+ compliance.md # NEW
+ authentication/ # NEW: Группировка
+ overview.md
+ jwt-setup.md # SPLIT from authentication.md
+ sso-integration.md # NEW
+ infrastructure/ # NEW
+ ssl-tls-setup.md
+ waf-configuration.md # NEW
+ network-security.md # NEW
+ monitoring/ # NEW
+ log-audit.md
+ intrusion-detection.md # NEW
+ best-practices.md
+
+ reference/ # Справочники
+ index.md # IMPROVE
+ api/ # NEW: API документация
+ overview.md
+ rest-api.md
+ auth-service.md
+ openapi-spec.md
+ development/ # NEW: Разработка
+ getting-started.md
+ contributing.md
+ pre-commit-hooks.md
+ testing.md # NEW
+ ci-cd.md # NEW
+ standards/ # NEW: Стандарты
+ metadata-standards.md
+ style-guide.md
+ emoji-guide.md
+ language-policy.md
+ code-style.md # NEW
+ integrations/ # NEW: Интеграции
+ mcpo-integration.md
+ github-environments.md
+ external-services.md # NEW
+ versioning/ # NEW: Версии
+ VERSION.md # MOVE
+ CHANGELOG.md
+ utilities/ # NEW: Утилиты
+ status-snippet.md
+
+ data/ # Данные
+ index.md # RENAME: README.md
+ storage/ # NEW
+ volumes.md
+ backups.md
+ databases/ # NEW: Связь с operations/database
+ postgresql.md
+ redis.md
+
+ system/ # Система
+ status.md # Статус системы
+ health-checks.md # NEW
+
+ news/ # Новости
+ index.md # Blog feed
+ 2025/ # NEW: По годам
+ 11/ # NEW: По месяцам
+ status-page-launch.md
+ 01/
+ release-x.md
+ archive/ # Старые новости
+ 2024.md
+
+ resources/ # NEW: Ресурсы
+ budget-analysis.md # MOVE from root
+ presentations/ # NEW
+ templates/ # NEW
+ tools/ # NEW
+
+ archive/ # Архив
+ index.md # IMPROVE: Добавить навигацию
+ audits/ # Аудиты
+ index.md # NEW: Список всех аудитов
+ 2025/ # NEW: По годам
+ 11/
+ comprehensive-documentation-audit-24.md
+ comprehensive-documentation-audit-25.md
+ legacy/ # Старые аудиты
+ incidents/ # Инциденты
+ index.md # NEW
+ 2025/
+ diagnostics/ # Диагностика
+ index.md # NEW
+ 2025/
+ deprecated/ # NEW: Устаревшие документы
+ howto/
+ training/
+ legacy-pages/
+ migrations/ # NEW: Миграции
+ documentation-refactoring-plans/
+ plan-2025-11-24.md # MOVE
+ plan-v2-2025-11-24.md
+
+ de/ # Немецкий (зеркало)
+ [зеркальная структура]
+
+ en/ # Английский (зеркало)
+ [зеркальная структура]
 ```
 
 ### 4.2 Ключевые улучшения структуры
 
 **1. Группировка по темам:**
 
-- ✅ Сетевые настройки в `getting-started/network/`
-- ✅ AI сервисы в `operations/ai-services/`
-- ✅ Мониторинг разделен на dashboards/alerts/queries
-- ✅ База данных по типам: postgresql/redis
+- Сетевые настройки в `getting-started/network/`
+- AI сервисы в `operations/ai-services/`
+- Мониторинг разделен на dashboards/alerts/queries
+- База данных по типам: postgresql/redis
 
 **2. Консистентное именование:**
 
-- ✅ README.md → index.md везде
-- ✅ Дескриптивные имена без дат
-- ✅ Группировка по годам/месяцам для временных данных
+- README.md → index.md везде
+- Дескриптивные имена без дат
+- Группировка по годам/месяцам для временных данных
 
 **3. Улучшенная навигация:**
 
-- ✅ Все разделы имеют index.md с обзором
-- ✅ Четкая иерархия (max 4 уровня)
-- ✅ Логическая группировка связанных тем
+- Все разделы имеют index.md с обзором
+- Четкая иерархия (max 4 уровня)
+- Логическая группировка связанных тем
 
 **4. Разделение ответственности:**
 
-- ✅ operations/ - как делать
-- ✅ reference/ - что и почему
-- ✅ archive/ - история и устаревшее
-- ✅ resources/ - дополнительные материалы
+- operations/ - как делать
+- reference/ - что и почему
+- archive/ - история и устаревшее
+- resources/ - дополнительные материалы
 
 ---
 
@@ -684,7 +684,7 @@ git commit -m "chore: remove sitemap.xml from git, add to gitignore"
 # 3. Переместить файлы с датами
 mkdir -p docs/archive/migrations/documentation-refactoring-plans
 mv docs/reference/*-2025-11-24.md \
-   docs/archive/migrations/documentation-refactoring-plans/
+ docs/archive/migrations/documentation-refactoring-plans/
 # Обновить аналогично для de/ и en/
 ```
 
@@ -736,22 +736,22 @@ mv docs/reference/*-2025-11-24.md \
 name: Docs Validation
 on: [pull_request]
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Check internal links
-        run: |
-          npm install -g markdown-link-check
-          find docs -name "*.md" -exec markdown-link-check {} \;
-      - name: Validate metadata
-        run: python scripts/validate-docs-metadata.py
-      - name: Check for sitemap.xml
-        run: |
-          if find docs -name "sitemap.xml" | grep -q .; then
-            echo "ERROR: sitemap.xml files found in docs/"
-            exit 1
-          fi
+ validate:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v3
+ - name: Check internal links
+ run: |
+ npm install -g markdown-link-check
+ find docs -name "*.md" -exec markdown-link-check {} \;
+ - name: Validate metadata
+ run: python scripts/validate-docs-metadata.py
+ - name: Check for sitemap.xml
+ run: |
+ if find docs -name "sitemap.xml" | grep -q .; then
+ echo "ERROR: sitemap.xml files found in docs/"
+ exit 1
+ fi
 ```
 
 2. **Pre-commit hooks для документации:**
@@ -759,13 +759,13 @@ jobs:
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: local
-    hooks:
-      - id: docs-metadata
-        name: Validate docs metadata
-        entry: python scripts/validate-docs-metadata.py
-        language: python
-        files: ^docs/.*\.md$
+ - repo: local
+ hooks:
+ - id: docs-metadata
+ name: Validate docs metadata
+ entry: python scripts/validate-docs-metadata.py
+ language: python
+ files: ^docs/.*\.md$
 ```
 
 3. **Автоматическая генерация сводок:**
@@ -797,22 +797,22 @@ repos:
 
 **Качество:**
 
-- ✅ 0 файлов без обязательных метаданных
-- ✅ 0 битых внутренних ссылок
-- ✅ 0 sitemap.xml в git
-- ✅ Все разделы имеют index.md
+- 0 файлов без обязательных метаданных
+- 0 битых внутренних ссылок
+- 0 sitemap.xml в git
+- Все разделы имеют index.md
 
 **Покрытие:**
 
-- ✅ EN: 60%+ критичных документов
-- ✅ DE: 95%+ всех документов
-- ✅ 95%+ файлов в навигации
+- EN: 60%+ критичных документов
+- DE: 95%+ всех документов
+- 95%+ файлов в навигации
 
 **Структура:**
 
-- ✅ Max 4 уровня вложенности
-- ✅ Консистентное именование
-- ✅ Логическая группировка
+- Max 4 уровня вложенности
+- Консистентное именование
+- Логическая группировка
 
 ---
 
@@ -890,9 +890,9 @@ docker compose up -d
 ### 7.3 Ссылки
 
 **Внутренние ссылки:**
-- ✅ Использовать относительные пути
-- ✅ Включать расширение .md
-- ✅ Учитывать структуру папок для переводов
+- Использовать относительные пути
+- Включать расширение .md
+- Учитывать структуру папок для переводов
 
 ```markdown
 <!-- Правильно -->
@@ -909,8 +909,8 @@ docker compose up -d
 ```markdown
 <!-- В docs/en/overview.md -->
 
-[Security](../security/README.md) <!-- ❌ Неправильно -->
-[Security](security/README.md) <!-- ✅ Правильно -->
+[Security](../security/README.md) <!-- Неправильно -->
+[Security](security/README.md) <!-- Правильно -->
 ```
 
 ### 7.4 Визуальный контент
@@ -927,10 +927,10 @@ docker compose up -d
 ````markdown
 ```mermaid
 graph LR
-    A[User] --> B[Nginx]
-    B --> C[OpenWebUI]
-    C --> D[Ollama]
-    C --> E[PostgreSQL]
+ A[User] --> B[Nginx]
+ B --> C[OpenWebUI]
+ C --> D[Ollama]
+ C --> E[PostgreSQL]
 ```
 ````
 
@@ -947,9 +947,9 @@ graph LR
 **Структура меню:**
 ```
 
-Home ├── Getting Started │ ├── Installation │ ├── Configuration │ └── Network
-Setup ├── User Guide (Academy) ├── Operations │ ├── Monitoring │ ├── Maintenance
-│ └── Troubleshooting ├── Architecture ├── Security └── Reference
+Home Getting Started Installation Configuration Network Setup User Guide
+(Academy) Operations Monitoring Maintenance Troubleshooting Architecture
+Security Reference
 
 ````
 
@@ -972,50 +972,50 @@ REQUIRED_FIELDS = ['language', 'translation_status', 'doc_version']
 DEPRECATED_FIELDS = ['author', 'created', 'version', 'status']
 
 def validate_file(filepath):
-    """Validate single markdown file."""
-    content = filepath.read_text(encoding='utf-8')
+ """Validate single markdown file."""
+ content = filepath.read_text(encoding='utf-8')
 
-    # Extract frontmatter
-    match = re.match(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
-    if not match:
-        return f"Missing frontmatter: {filepath}"
+ # Extract frontmatter
+ match = re.match(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
+ if not match:
+ return f"Missing frontmatter: {filepath}"
 
-    try:
-        metadata = yaml.safe_load(match.group(1))
-    except yaml.YAMLError:
-        return f"Invalid YAML frontmatter: {filepath}"
+ try:
+ metadata = yaml.safe_load(match.group(1))
+ except yaml.YAMLError:
+ return f"Invalid YAML frontmatter: {filepath}"
 
-    # Check required fields
-    missing = [f for f in REQUIRED_FIELDS if f not in metadata]
-    if missing:
-        return f"Missing required fields {missing}: {filepath}"
+ # Check required fields
+ missing = [f for f in REQUIRED_FIELDS if f not in metadata]
+ if missing:
+ return f"Missing required fields {missing}: {filepath}"
 
-    # Check deprecated fields
-    deprecated = [f for f in DEPRECATED_FIELDS if f in metadata]
-    if deprecated:
-        return f"Using deprecated fields {deprecated}: {filepath}"
+ # Check deprecated fields
+ deprecated = [f for f in DEPRECATED_FIELDS if f in metadata]
+ if deprecated:
+ return f"Using deprecated fields {deprecated}: {filepath}"
 
-    return None
+ return None
 
 def main():
-    docs_dir = Path('docs')
-    errors = []
+ docs_dir = Path('docs')
+ errors = []
 
-    for md_file in docs_dir.rglob('*.md'):
-        if 'archive' in str(md_file):
-            continue
-        error = validate_file(md_file)
-        if error:
-            errors.append(error)
+ for md_file in docs_dir.rglob('*.md'):
+ if 'archive' in str(md_file):
+ continue
+ error = validate_file(md_file)
+ if error:
+ errors.append(error)
 
-    if errors:
-        print("\n".join(errors))
-        sys.exit(1)
-    else:
-        print("✅ All documentation files are valid")
+ if errors:
+ print("\n".join(errors))
+ sys.exit(1)
+ else:
+ print(" All documentation files are valid")
 
 if __name__ == '__main__':
-    main()
+ main()
 ````
 
 **scripts/check-broken-links.sh:**
@@ -1026,31 +1026,31 @@ if __name__ == '__main__':
 
 set -e
 
-echo "🔍 Checking for broken internal links..."
+echo " Checking for broken internal links..."
 
 find docs -name "*.md" -type f | while read -r file; do
-    # Extract all markdown links
-    grep -oP '\]\(\K[^)]+' "$file" | while read -r link; do
-        # Skip external links and anchors
-        if [[ $link == http* ]] || [[ $link == \#* ]]; then
-            continue
-        fi
+ # Extract all markdown links
+ grep -oP '\]\(\K[^)]+' "$file" | while read -r link; do
+ # Skip external links and anchors
+ if [[ $link == http* ]] || [[ $link == \#* ]]; then
+ continue
+ fi
 
-        # Remove anchor
-        clean_link="${link%%#*}"
+ # Remove anchor
+ clean_link="${link%%#*}"
 
-        # Resolve relative path
-        dir=$(dirname "$file")
-        target="$dir/$clean_link"
+ # Resolve relative path
+ dir=$(dirname "$file")
+ target="$dir/$clean_link"
 
-        # Check if file exists
-        if [ ! -f "$target" ]; then
-            echo "❌ Broken link in $file: $link"
-        fi
-    done
+ # Check if file exists
+ if [ ! -f "$target" ]; then
+ echo " Broken link in $file: $link"
+ fi
+ done
 done
 
-echo "✅ Link check complete"
+echo " Link check complete"
 ```
 
 ### 8.2 GitHub Actions
@@ -1061,64 +1061,64 @@ echo "✅ Link check complete"
 name: Documentation
 
 on:
-  pull_request:
-    paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
-  push:
-    branches:
-      - main
-      - develop
+ pull_request:
+ paths:
+ - 'docs/**'
+ - 'mkdocs.yml'
+ push:
+ branches:
+ - main
+ - develop
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+ validate:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+ - name: Setup Python
+ uses: actions/setup-python@v4
+ with:
+ python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements-dev.txt
-          pip install pyyaml
+ - name: Install dependencies
+ run: |
+ pip install -r requirements-dev.txt
+ pip install pyyaml
 
-      - name: Validate metadata
-        run: python scripts/validate-docs-metadata.py
+ - name: Validate metadata
+ run: python scripts/validate-docs-metadata.py
 
-      - name: Check for sitemap.xml
-        run: |
-          if find docs -name "sitemap.xml" | grep -q .; then
-            echo "❌ ERROR: sitemap.xml files found in docs/"
-            exit 1
-          fi
+ - name: Check for sitemap.xml
+ run: |
+ if find docs -name "sitemap.xml" | grep -q .; then
+ echo " ERROR: sitemap.xml files found in docs/"
+ exit 1
+ fi
 
-      - name: Check broken links
-        run: bash scripts/check-broken-links.sh
+ - name: Check broken links
+ run: bash scripts/check-broken-links.sh
 
-      - name: Build docs
-        run: mkdocs build --strict
+ - name: Build docs
+ run: mkdocs build --strict
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: validate
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+ deploy:
+ if: github.ref == 'refs/heads/main'
+ needs: validate
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+ - name: Setup Python
+ uses: actions/setup-python@v4
+ with:
+ python-version: '3.11'
 
-      - name: Install MkDocs
-        run: pip install -r requirements-dev.txt
+ - name: Install MkDocs
+ run: pip install -r requirements-dev.txt
 
-      - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force
+ - name: Deploy to GitHub Pages
+ run: mkdocs gh-deploy --force
 ```
 
 ### 8.3 Pre-commit hooks
@@ -1127,19 +1127,19 @@ jobs:
 
 ```yaml
 - repo: local
-  hooks:
-    - id: validate-docs-metadata
-      name: Validate documentation metadata
-      entry: python scripts/validate-docs-metadata.py
-      language: python
-      files: ^docs/.*\.md$
-      pass_filenames: false
+ hooks:
+ - id: validate-docs-metadata
+ name: Validate documentation metadata
+ entry: python scripts/validate-docs-metadata.py
+ language: python
+ files: ^docs/.*\.md$
+ pass_filenames: false
 
-    - id: no-sitemap-xml
-      name: Prevent sitemap.xml commits
-      entry: 'Sitemap files should not be committed'
-      language: fail
-      files: sitemap\.xml$
+ - id: no-sitemap-xml
+ name: Prevent sitemap.xml commits
+ entry: 'Sitemap files should not be committed'
+ language: fail
+ files: sitemap\.xml$
 ```
 
 ---
@@ -1156,41 +1156,41 @@ jobs:
 
 **Сильные стороны:**
 
-- ✅ Профессиональная организация с MkDocs Material
-- ✅ Мультиязычная поддержка (3 языка)
-- ✅ Определены стандарты и guidelines
-- ✅ Хорошее покрытие метаданными (99.2%)
-- ✅ Отсутствие дублирования контента
+- Профессиональная организация с MkDocs Material
+- Мультиязычная поддержка (3 языка)
+- Определены стандарты и guidelines
+- Хорошее покрытие метаданными (99.2%)
+- Отсутствие дублирования контента
 
 **Области для улучшения:**
 
-- 🔴 Технические проблемы (sitemap, ссылки)
-- 🟡 Покрытие переводами (особенно EN)
-- 🟡 Визуальный контент
-- 🟡 Автоматизация проверок
+- Технические проблемы (sitemap, ссылки)
+- [WARNING] Покрытие переводами (особенно EN)
+- [WARNING] Визуальный контент
+- [WARNING] Автоматизация проверок
 
 ### 9.2 Приоритетные действия
 
 **Немедленно (Week 1):**
 
-1. ✅ Удалить sitemap.xml из git
-2. ✅ Добавить frontmatter к 2 файлам
-3. ✅ Переместить файлы с датами в archive
-4. ✅ Исправить критические битые ссылки
+1. Удалить sitemap.xml из git
+2. Добавить frontmatter к 2 файлам
+3. Переместить файлы с датами в archive
+4. Исправить критические битые ссылки
 
 **Краткосрочно (Weeks 2-3):**
 
-1. ✅ Реорганизовать структуру согласно рекомендациям
-2. ✅ Добавить все файлы в навигацию
-3. ✅ Создать index.md для всех разделов
-4. ✅ Настроить автоматическую валидацию
+1. Реорганизовать структуру согласно рекомендациям
+2. Добавить все файлы в навигацию
+3. Создать index.md для всех разделов
+4. Настроить автоматическую валидацию
 
 **Среднесрочно (Weeks 4-6):**
 
-1. ✅ Перевести критичные документы на EN
-2. ✅ Добавить визуальный контент
-3. ✅ Улучшить качество существующих документов
-4. ✅ Создать FAQ и tutorials
+1. Перевести критичные документы на EN
+2. Добавить визуальный контент
+3. Улучшить качество существующих документов
+4. Создать FAQ и tutorials
 
 ### 9.3 Долгосрочная стратегия
 
@@ -1300,24 +1300,28 @@ jobs:
 ### C. Рекомендуемые диаграммы
 
 1. **Architecture Overview** (docs/architecture/diagrams/)
-   - Высокоуровневая архитектура системы
-   - Потоки данных между сервисами
-   - Сетевая топология
+
+- Высокоуровневая архитектура системы
+- Потоки данных между сервисами
+- Сетевая топология
 
 2. **Deployment Diagram** (docs/architecture/diagrams/)
-   - Docker compose структура
-   - Volumes и networks
-   - Зависимости сервисов
+
+- Docker compose структура
+- Volumes и networks
+- Зависимости сервисов
 
 3. **Monitoring Flow** (docs/operations/monitoring/)
-   - Prometheus scraping
-   - Alertmanager flow
-   - Grafana dashboards
+
+- Prometheus scraping
+- Alertmanager flow
+- Grafana dashboards
 
 4. **Backup Strategy** (docs/operations/maintenance/)
-   - Backup flow
-   - Restore process
-   - Retention policy
+
+- Backup flow
+- Restore process
+- Retention policy
 
 ---
 

@@ -397,3 +397,18 @@ repos:
                 status=1
               done
             exit $status
+
+      # Validate no emoji in project files
+      - id: no-emoji-in-files
+        name: "Docs: validate no emoji"
+        entry: python3 scripts/validate-no-emoji.py
+        language: system
+        files: \.(md|txt)$
+        exclude: |
+          (?x)^(
+            node_modules/.*|
+            \.venv/.*|
+            site/.*|
+            data/.*|
+            \.config-backup/.*
+          )$

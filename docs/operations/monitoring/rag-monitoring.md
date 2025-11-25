@@ -9,9 +9,7 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Дата создания**: 2025-10-24  
-**Версия**: 1.0  
-**Автор**: Augment Agent
+**Дата создания**: 2025-10-24 **Версия**: 1.0 **Автор**: Augment Agent
 
 ---
 
@@ -35,12 +33,12 @@ last_updated: '2025-11-24'
 
 **Проверяемые компоненты**:
 
-- ✅ OpenWebUI (статус healthy)
-- ✅ SearXNG (производительность <2s)
-- ✅ PostgreSQL/pgvector (производительность <100ms)
-- ✅ Ollama (наличие embedding модели)
-- ✅ Docling (доступность сервиса)
-- ✅ Nginx (кэширование)
+- OpenWebUI (статус healthy)
+- SearXNG (производительность <2s)
+- PostgreSQL/pgvector (производительность <100ms)
+- Ollama (наличие embedding модели)
+- Docling (доступность сервиса)
+- Nginx (кэширование)
 
 **Использование**:
 
@@ -92,9 +90,9 @@ echo "RAG_WEBHOOK_URL=https://discord.com/api/webhooks/..." >> env/monitoring.en
 
 **Типы статусов**:
 
-- `healthy` - ✅ Зелёный (всё работает)
-- `warning` - ⚠️ Жёлтый (деградация производительности)
-- `error` - ❌ Красный (критическая ошибка)
+- `healthy` - Зелёный (всё работает)
+- `warning` - Жёлтый (деградация производительности)
+- `error` - Красный (критическая ошибка)
 
 ---
 
@@ -330,11 +328,9 @@ docker exec erni-ki-ollama-1 ollama pull nomic-embed-text:latest
 
 ## Контакты
 
-**Администратор системы**: Kostiantyn Konstantinov  
-**Email**: <kostiantyn.konstantinov@erni-gruppe.ch>  
-**Teams**: Доступен для вопросов
+**Администратор системы**: Kostiantyn Konstantinov **Email**:
+<kostiantyn.konstantinov@erni-gruppe.ch> **Teams**: Доступен для вопросов
 
 ---
 
-**Последнее обновление**: 2025-10-24  
-**Версия документа**: 1.0
+**Последнее обновление**: 2025-10-24 **Версия документа**: 1.0

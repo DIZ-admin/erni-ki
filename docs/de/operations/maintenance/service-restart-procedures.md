@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🔄 ERNI-KI Service-Neustartverfahren
+# ERNI-KI Service-Neustartverfahren
 
 [TOC]
 
@@ -14,16 +14,16 @@ last_updated: '2025-11-24'
 
 ---
 
-## 📋 ALLGEMEINE PRINZIPIEN
+## ALLGEMEINE PRINZIPIEN
 
-### ✅ **Vor dem Neustart IMMER:**
+### **Vor dem Neustart IMMER:**
 
 1. **Backup erstellen** der aktuellen Konfigurationen
 2. **Status prüfen** der abhängigen Dienste
 3. **Benutzer benachrichtigen** über geplante Wartungsarbeiten
 4. **Rollback-Plan vorbereiten** für den Fall von Problemen
 
-### ⚠️ **Neustart-Reihenfolge (kritisch wichtig):**
+### **Neustart-Reihenfolge (kritisch wichtig):**
 
 1. **Monitoring Services** (Exporters, Fluent-bit)
 2. **Infrastructure Services** (Redis, PostgreSQL)
@@ -32,7 +32,7 @@ last_updated: '2025-11-24'
 
 ---
 
-## 🚨 NOTFALL-NEUSTART (KRITISCHE PROBLEME)
+## NOTFALL-NEUSTART (KRITISCHE PROBLEME)
 
 ### **Vollständiger Systemneustart**
 
@@ -74,7 +74,7 @@ docker compose logs db --tail=20
 
 ---
 
-## 🔧 GEPLANTER SERVICE-NEUSTART
+## GEPLANTER SERVICE-NEUSTART
 
 ### **1. AUXILIARY SERVICES (niedrige Priorität)**
 
@@ -250,7 +250,7 @@ curl -I https://localhost && echo "HTTPS funktioniert"
 
 ---
 
-## 🔍 PRÜFUNG NACH NEUSTART
+## PRÜFUNG NACH NEUSTART
 
 ### **Automatische Überprüfung aller Dienste**
 
@@ -262,15 +262,15 @@ echo "=== STATUSPRÜFUNG DER DIENSTE ==="
 docker compose ps
 
 echo -e "\n=== PRÜFUNG KRITISCHER ENDPUNKTE ==="
-curl -f http://localhost/health && echo "✅ OpenWebUI verfügbar" || echo "❌ OpenWebUI nicht verfügbar"
-curl -f http://localhost:11434/api/tags && echo "✅ Ollama läuft" || echo "❌ Ollama nicht verfügbar"
-curl -f http://localhost:9090/-/healthy && echo "✅ Prometheus läuft" || echo "❌ Prometheus nicht verfügbar"
+curl -f http://localhost/health && echo " OpenWebUI verfügbar" || echo " OpenWebUI nicht verfügbar"
+curl -f http://localhost:11434/api/tags && echo " Ollama läuft" || echo " Ollama nicht verfügbar"
+curl -f http://localhost:9090/-/healthy && echo " Prometheus läuft" || echo " Prometheus nicht verfügbar"
 
 echo -e "\n=== PRÜFUNG DES EXTERNEN ZUGRIFFS ==="
-curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo "✅ Externer Zugriff funktioniert" || echo "❌ Externer Zugriff nicht verfügbar"
+curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo " Externer Zugriff funktioniert" || echo " Externer Zugriff nicht verfügbar"
 
 echo -e "\n=== GPU-PRÜFUNG ==="
-docker exec erni-ki-ollama-1 nvidia-smi | grep "NVIDIA-SMI" && echo "✅ GPU verfügbar" || echo "❌ GPU nicht verfügbar"
+docker exec erni-ki-ollama-1 nvidia-smi | grep "NVIDIA-SMI" && echo " GPU verfügbar" || echo " GPU nicht verfügbar"
 
 echo -e "\n=== LOG-PRÜFUNG AUF FEHLER ==="
 docker compose logs --tail=100 | grep -i error | tail -5
@@ -278,7 +278,7 @@ docker compose logs --tail=100 | grep -i error | tail -5
 
 ---
 
-## 📞 ESKALATION VON PROBLEMEN
+## ESKALATION VON PROBLEMEN
 
 ### **Level 1: Automatische Wiederherstellung**
 
@@ -300,7 +300,7 @@ docker compose logs --tail=100 | grep -i error | tail -5
 
 ---
 
-## 📚 VERWANDTE DOKUMENTE
+## VERWANDTE DOKUMENTE
 
 - [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
 - [Configuration Change Process](../core/configuration-change-process.md)

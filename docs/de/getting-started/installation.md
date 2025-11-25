@@ -3,19 +3,19 @@ language: de
 translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
-title: '🚀 Detaillierte Installationsanleitung für ERNI-KI'
+title: ' Detaillierte Installationsanleitung für ERNI-KI'
 system_version: '12.1'
 date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
-# 🚀 Detaillierte Installationsanleitung für ERNI-KI
+# Detaillierte Installationsanleitung für ERNI-KI
 
 > **Dokumentversion:** 2.0 **Aktualisierungsdatum:** 2025-07-04
 > **Installationszeit:** 30-60 Minuten [TOC]
 
-## 📋 Systemanforderungen
+## Systemanforderungen
 
 ### Mindestanforderungen
 
@@ -39,7 +39,7 @@ audience: 'administrators'
 - **Minimaler VRAM**: 6GB für 7B-Parameter-Modelle
 - **Empfohlener VRAM**: 12GB+ für 13B+ Parameter-Modelle
 
-## 🔧 System-Vorbereitung
+## System-Vorbereitung
 
 ### 1. System-Update
 
@@ -131,7 +131,7 @@ sudo systemctl restart docker
 docker run --rm --gpus all nvidia/cuda:11.8-base-ubuntu20.04 nvidia-smi
 ```
 
-## 📦 ERNI-KI Installation
+## ERNI-KI Installation
 
 ### 1. Repository klonen
 
@@ -154,7 +154,7 @@ cp compose.yml.example compose.yml
 
 # Alle Umgebungsvariablen kopieren
 for file in env/*.example; do
-  cp "$file" "${file%.example}"
+ cp "$file" "${file%.example}"
 done
 
 # Nginx-Konfigurationen kopieren
@@ -181,7 +181,7 @@ sed -i "s/89f03e7ae86485051232d47071a15241ae727f705589776321b5a52e14a6fe57/$WEBU
 sed -i "s/CHANGE_BEFORE_GOING_LIVE/$SEARXNG_SECRET_KEY/g" env/searxng.env
 sed -i "s/CHANGE_BEFORE_GOING_LIVE/$POSTGRES_PASSWORD/g" env/postgres.env
 
-echo "✅ Geheime Schlüssel erfolgreich generiert!"
+echo " Geheime Schlüssel erfolgreich generiert!"
 EOF
 
 chmod +x scripts/generate-secrets.sh
@@ -255,12 +255,12 @@ sed -i 's/<domain-name>/your-domain.com/g' conf/nginx/conf.d/default.conf
 # Selbstsignierte Zertifikate für Tests erstellen
 sudo mkdir -p /etc/nginx/ssl
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout /etc/nginx/ssl/nginx-selfsigned.key \
-  -out /etc/nginx/ssl/nginx-selfsigned.crt \
-  -subj "/C=DE/ST=Berlin/L=Berlin/O=ERNI-KI/CN=localhost"
+ -keyout /etc/nginx/ssl/nginx-selfsigned.key \
+ -out /etc/nginx/ssl/nginx-selfsigned.crt \
+ -subj "/C=DE/ST=Berlin/L=Berlin/O=ERNI-KI/CN=localhost"
 ```
 
-## 🚀 System starten
+## System starten
 
 ### 1. Erster Start
 
@@ -297,7 +297,7 @@ docker compose exec ollama ollama pull llama3.1:8b
 docker compose exec ollama ollama list
 ```
 
-## ✅ Installation prüfen
+## Installation prüfen
 
 ### 1. Service-Verfügbarkeit prüfen
 
@@ -342,7 +342,7 @@ docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 3. Ollama-Verbindung konfigurieren: `http://ollama:11434`
 4. Chat mit AI-Modell testen
 
-## 🔧 Konfiguration nach Installation
+## Konfiguration nach Installation
 
 ### 1. Autostart einrichten
 
@@ -382,17 +382,17 @@ echo "Datum: $(date)"
 echo ""
 
 # Container-Status prüfen
-echo "📊 Service-Status:"
+echo " Service-Status:"
 docker compose ps --format "table {{.Name}}\t{{.Status}}"
 echo ""
 
 # Ressourcenverbrauch prüfen
-echo "💾 Ressourcenverbrauch:"
+echo " Ressourcenverbrauch:"
 docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 echo ""
 
 # API-Verfügbarkeit prüfen
-echo "🌐 API-Prüfung:"
+echo " API-Prüfung:"
 curl -s -o /dev/null -w "OpenWebUI: %{http_code}\n" http://localhost:8080/
 curl -s -o /dev/null -w "Ollama: %{http_code}\n" http://localhost:11434/
 echo ""
@@ -410,7 +410,7 @@ echo "Login: admin"
 echo "Passwort: siehe env/backrest.env"
 ```
 
-## 🛠️ Fehlerbehebung
+## Fehlerbehebung
 
 ### Startprobleme
 
@@ -449,7 +449,7 @@ docker network inspect erni-ki_default
 sudo systemctl restart docker
 ```
 
-## 📚 Nächste Schritte
+## Nächste Schritte
 
 Nach erfolgreicher Installation wird empfohlen:
 
@@ -464,5 +464,5 @@ Nach erfolgreicher Installation wird empfohlen:
 
 ---
 
-**🎉 Herzlichen Glückwunsch! ERNI-KI ist erfolgreich installiert und
+** Herzlichen Glückwunsch! ERNI-KI ist erfolgreich installiert und
 einsatzbereit!**

@@ -16,26 +16,26 @@ Ollama (GPU) auf System mit Quadro P2200 optimiert.
 
 ```mermaid
 graph TB
-    subgraph "System Resources"
-        CPU[8 Physical Cores<br/>16 Logical Cores]
-        GPU[Quadro P2200<br/>5GB VRAM]
-        RAM[System RAM]
-    end
+ subgraph "System Resources"
+ CPU[8 Physical Cores<br/>16 Logical Cores]
+ GPU[Quadro P2200<br/>5GB VRAM]
+ RAM[System RAM]
+ end
 
-    subgraph "vLLM (CPU-only)"
-        VCPU[CPU Cores 0-6<br/>7 cores for inference]
-        VRAM[4GB KV Cache<br/>6GB Memory Limit]
-    end
+ subgraph "vLLM (CPU-only)"
+ VCPU[CPU Cores 0-6<br/>7 cores for inference]
+ VRAM[4GB KV Cache<br/>6GB Memory Limit]
+ end
 
-    subgraph "Ollama (GPU)"
-        OGPU[Full GPU Access<br/>~4GB VRAM]
-        OCPU[CPU Core 7<br/>Reserved for system]
-    end
+ subgraph "Ollama (GPU)"
+ OGPU[Full GPU Access<br/>~4GB VRAM]
+ OCPU[CPU Core 7<br/>Reserved for system]
+ end
 
-    CPU --> VCPU
-    CPU --> OCPU
-    GPU --> OGPU
-    RAM --> VRAM
+ CPU --> VCPU
+ CPU --> OCPU
+ GPU --> OGPU
+ RAM --> VRAM
 ```
 
 ## CPU-Konfiguration
@@ -80,4 +80,4 @@ VLLM_CPU_KVCACHE_SPACE=4
 
 ---
 
-**Status**: ✅ Produktiv **Letzte Aktualisierung**: 2025-11-02
+**Status**: Produktiv **Letzte Aktualisierung**: 2025-11-02

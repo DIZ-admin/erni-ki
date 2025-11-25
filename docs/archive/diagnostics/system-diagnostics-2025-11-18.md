@@ -16,13 +16,13 @@ doc_version: '2025.11'
 
 ### 1. Общий статус
 
-- ✅ Критичные сервисы (OpenWebUI, LiteLLM, Ollama, Redis, PostgreSQL, Nginx)
+- Критичные сервисы (OpenWebUI, LiteLLM, Ollama, Redis, PostgreSQL, Nginx)
   проходят HTTP/health проверки.
-- ⚠️ `health-monitor` отмечает 24/30 healthy: шесть вспомогательных контейнеров
+- `health-monitor` отмечает 24/30 healthy: шесть вспомогательных контейнеров
   (fluent-bit, nginx-exporter, nvidia-exporter, ollama-exporter,
   postgres-exporter-proxy, redis-exporter) не имеют Docker healthcheck и всегда
   считаются “unhealthy”.
-- ❌ Лог-мониторинг: 17 632 записей уровня ERROR/FATAL/CRITICAL за 30 минут.
+- Лог-мониторинг: 17 632 записей уровня ERROR/FATAL/CRITICAL за 30 минут.
 
 ### 2. Ключевые проблемы
 
@@ -47,23 +47,24 @@ doc_version: '2025.11'
    контролировать рост `./data` и Docker volumes после обновлений моделей. План:
    автоматизировать `prune` или расширить storage alert c 75% WARN / 85% CRIT.
 6. **Security best practices**:
-   - `litellm` опубликован на `0.0.0.0:4000` без TLS/Ingress, только
-     health-check и WebAuth. Рекомендуется ограничить доступ (localhost/nginx)
-     или включить TLS из `exporter-toolkit`.
-   - Watchtower-auto-update включён для Redis, LiteLLM и OpenWebUI. Для
-     прод-стека best practice — автообновлять только по списку и всегда через
-     staged rollout; стоит убедиться, что автообновление отключено на критичных
-     компонентах (Prometheus, Nginx уже защищены).
+
+- `litellm` опубликован на `0.0.0.0:4000` без TLS/Ingress, только health-check и
+  WebAuth. Рекомендуется ограничить доступ (localhost/nginx) или включить TLS из
+  `exporter-toolkit`.
+- Watchtower-auto-update включён для Redis, LiteLLM и OpenWebUI. Для прод-стека
+  best practice — автообновлять только по списку и всегда через staged rollout;
+  стоит убедиться, что автообновление отключено на критичных компонентах
+  (Prometheus, Nginx уже защищены).
 
 ### 3. Соответствие best practices
 
 | Область        | Статус | Пояснения                                                                                                            |
 | -------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
-| Наблюдаемость  | ⚠️     | Экспортёры без healthcheck, шумящие логи, нет подавления известных WARN.                                             |
-| Секреты        | ✅     | Основные сервисы читают секреты из Docker secrets/ENV wrappers.                                                      |
-| Автообновления | ⚠️     | Watchtower включён для Redis/LiteLLM/OpenWebUI → риск незапланированных апгрейдов.                                   |
-| Ресурсы        | ✅     | Критичные сервисы (OpenWebUI, Docling, LiteLLM) заданы mem/cpu limits; экспортеры используют дефолт (приемлемо).     |
-| Сеть/TLS       | ⚠️     | LiteLLM открыт наружу plain HTTP; Cloudflare/Nginx прикрывают OpenWebUI, но сам LiteLLM остаётся доступным на хосте. |
+| Наблюдаемость  |        | Экспортёры без healthcheck, шумящие логи, нет подавления известных WARN.                                             |
+| Секреты        |        | Основные сервисы читают секреты из Docker secrets/ENV wrappers.                                                      |
+| Автообновления |        | Watchtower включён для Redis/LiteLLM/OpenWebUI → риск незапланированных апгрейдов.                                   |
+| Ресурсы        |        | Критичные сервисы (OpenWebUI, Docling, LiteLLM) заданы mem/cpu limits; экспортеры используют дефолт (приемлемо).     |
+| Сеть/TLS       |        | LiteLLM открыт наружу plain HTTP; Cloudflare/Nginx прикрывают OpenWebUI, но сам LiteLLM остаётся доступным на хосте. |
 
 ### 4. Рекомендации
 

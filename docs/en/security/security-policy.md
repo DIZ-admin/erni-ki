@@ -8,7 +8,7 @@ title: 'Security Policy'
 
 # Security Policy for the erni-ki project
 
-## 🔒 Security policy
+## Security policy
 
 ### Supported versions
 
@@ -16,8 +16,8 @@ We ship security updates for the following versions:
 
 | Version | Support |
 | ------- | ------- |
-| 1.x.x   | ✅ Yes  |
-| 0.x.x   | ❌ No   |
+| 1.x.x   | Yes     |
+| 0.x.x   | No      |
 
 ### Reporting vulnerabilities
 
@@ -26,10 +26,11 @@ If you discover a vulnerability in erni-ki, please:
 1. **Do NOT open a public GitHub issue**
 2. Send a report to: <security@erni-ki.local>
 3. Include:
-   - Vulnerability description
-   - Reproduction steps
-   - Potential impact
-   - Proposed fix or mitigation (if any)
+
+- Vulnerability description
+- Reproduction steps
+- Potential impact
+- Proposed fix or mitigation (if any)
 
 ### Response time
 
@@ -40,27 +41,27 @@ If you discover a vulnerability in erni-ki, please:
 
 ### Severity classes
 
-#### 🚨 Critical
+#### Critical
 
 - Remote code execution
 - Authentication bypass
 - Leakage of secrets or credentials
 - Full system compromise
 
-#### ⚠️ High
+#### High
 
 - Privilege escalation
 - SQL/NoSQL injections
 - Cross-site scripting (XSS)
 - Cross-site request forgery (CSRF)
 
-#### 📋 Medium
+#### Medium
 
 - Information disclosure
 - Denial of service (DoS)
 - Weak security settings
 
-#### 📝 Low
+#### Low
 
 - Informational disclosures
 - Minor configuration issues
@@ -151,9 +152,9 @@ tmpfs:
 # Resource limits
 deploy:
   resources:
-    limits:
-      memory: 512M
-      cpus: '0.5'
+  limits:
+  memory: 512M
+  cpus: '0.5'
 ```
 
 ## Security monitoring
@@ -171,18 +172,18 @@ deploy:
 ```yaml
 # Prometheus rules
 - alert: SuspiciousAuthActivity
-  expr: rate(auth_requests_total{status="401"}[1m]) > 10
-  for: 1m
-  labels:
-    severity: critical
-    category: security
+ expr: rate(auth_requests_total{status="401"}[1m]) > 10
+ for: 1m
+ labels:
+ severity: critical
+ category: security
 
 - alert: HighErrorRate
-  expr: rate(nginx_http_requests_total{status=~"4.."}[5m]) > 50
-  for: 2m
-  labels:
-    severity: warning
-    category: security
+ expr: rate(nginx_http_requests_total{status=~"4.."}[5m]) > 50
+ for: 2m
+ labels:
+ severity: warning
+ category: security
 ```
 
 ## Contacts

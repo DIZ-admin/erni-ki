@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🔧 Development Guide — ERNI-KI
+# Development Guide — ERNI-KI
 
 Этот документ описывает настройку окружения разработчика и базовые процессы.
 
@@ -55,8 +55,8 @@ docker compose ps
 Горячая перезагрузка конфигов:
 
 ```bash
-curl -X POST http://localhost:9091/-/reload  # Prometheus
-curl -X POST http://localhost:9093/-/reload  # Alertmanager
+curl -X POST http://localhost:9091/-/reload # Prometheus
+curl -X POST http://localhost:9093/-/reload # Alertmanager
 ```
 
 ### LiteLLM & Context7 контроль
@@ -66,10 +66,10 @@ curl -X POST http://localhost:9093/-/reload  # Alertmanager
 - Для теста используйте `curl -s http://localhost:4000/health/liveliness` и
   `curl -X POST http://localhost:4000/lite/api/v1/context ...`.
 - Скрипты наблюдения:
-  - `scripts/monitor-litellm-memory.sh` — cron/webhook уведомления при росте
-    памяти LiteLLM.
-  - `scripts/infrastructure/monitoring/test-network-performance.sh` —
-    latency-проверки маршрутов nginx ↔ LiteLLM ↔ Ollama/PostgreSQL/Redis.
+- `scripts/monitor-litellm-memory.sh` — cron/webhook уведомления при росте
+  памяти LiteLLM.
+- `scripts/infrastructure/monitoring/test-network-performance.sh` —
+  latency-проверки маршрутов nginx ↔ LiteLLM ↔ Ollama/PostgreSQL/Redis.
 
 ## Конвенции кода
 

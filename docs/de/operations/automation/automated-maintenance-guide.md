@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🤖 Automatisiertes Wartungshandbuch – ERNI-KI
+# Automatisiertes Wartungshandbuch – ERNI-KI
 
 **Version:** 1.0 **Letzte Aktualisierung:** 24.10.2025 **Status:** Production
 Ready
@@ -21,13 +21,13 @@ manuell gestartet werden können.
 
 ### Automationskomponenten
 
-| Komponente            | Zeitplan      | Zweck                  | Status    |
-| :-------------------- | :------------ | :--------------------- | :-------- |
-| **PostgreSQL VACUUM** | Sonntag 03:00 | Datenbank-Optimierung  | ✅ Active |
-| **Docker Cleanup**    | Sonntag 04:00 | Ressourcen-Bereinigung | ✅ Active |
-| **Log Rotation**      | Täglich 03:00 | Log-Verwaltung         | ✅ Active |
-| **System Monitoring** | Stündlich     | Health Checks          | ✅ Active |
-| **Backrest Backups**  | Täglich 01:30 | Datensicherung         | ✅ Active |
+| Komponente            | Zeitplan      | Zweck                  | Status |
+| :-------------------- | :------------ | :--------------------- | :----- |
+| **PostgreSQL VACUUM** | Sonntag 03:00 | Datenbank-Optimierung  | Active |
+| **Docker Cleanup**    | Sonntag 04:00 | Ressourcen-Bereinigung | Active |
+| **Log Rotation**      | Täglich 03:00 | Log-Verwaltung         | Active |
+| **System Monitoring** | Stündlich     | Health Checks          | Active |
+| **Backrest Backups**  | Täglich 01:30 | Datensicherung         | Active |
 
 ## 2. Voraussetzungen
 
@@ -125,11 +125,11 @@ journalctl -u cron --since "1 day ago"
 
 | Metrik                  | Ziel        | Ist   | Status |
 | :---------------------- | :---------- | :---- | :----- |
-| **PostgreSQL VACUUM**   | Wöchentlich | Aktiv | ✅     |
-| **Docker Cleanup**      | Wöchentlich | Aktiv | ✅     |
-| **Log Rotation**        | Automatisch | Aktiv | ✅     |
-| **Disk Usage**          | <60%        | 60%   | ✅     |
-| **Backup Success Rate** | >99%        | 100%  | ✅     |
+| **PostgreSQL VACUUM**   | Wöchentlich | Aktiv |        |
+| **Docker Cleanup**      | Wöchentlich | Aktiv |        |
+| **Log Rotation**        | Automatisch | Aktiv |        |
+| **Disk Usage**          | <60%        | 60%   |        |
+| **Backup Success Rate** | >99%        | 100%  |        |
 
 ## 5. Verwandte Dokumentation
 

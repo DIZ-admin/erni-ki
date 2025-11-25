@@ -12,7 +12,7 @@ last_updated: '2025-11-24'
 **Datum**: 2025-10-27 **Status**: NICHT KRITISCH (kompensiert durch
 Nginx-Caching) **Priorität**: NIEDRIG
 
-> ✅ **Update 2025-11-07:** Valkey/Redis für SearXNG vorübergehend deaktiviert
+> **Update 2025-11-07:** Valkey/Redis für SearXNG vorübergehend deaktiviert
 > (siehe `env/searxng.env`, `conf/searxng/settings.yml`).
 > Geschwindigkeitsbegrenzung (Rate Limiting) und Caching werden nun
 > ausschließlich durch Nginx bereitgestellt, was den Fehler
@@ -42,18 +42,18 @@ ERROR:searx.limiter: The limiter requires Valkey, please consult the documentati
 
 ### Auswirkungen
 
-- ❌ **Redis-Caching in SearXNG**: Funktioniert NICHT
-- ❌ **SearXNG Limiter (Rate Limiting)**: Funktioniert NICHT
-- ✅ **Nginx-Caching**: Funktioniert hervorragend (127x Beschleunigung: 766ms →
+- **Redis-Caching in SearXNG**: Funktioniert NICHT
+- **SearXNG Limiter (Rate Limiting)**: Funktioniert NICHT
+- **Nginx-Caching**: Funktioniert hervorragend (127x Beschleunigung: 766ms →
   6ms)
-- ✅ **Nginx Rate Limiting**: Funktioniert (60 req/s für SearXNG API)
-- ✅ **Gesamtleistung**: Hervorragend (SearXNG Antwortzeit: 840ms < 2s)
+- **Nginx Rate Limiting**: Funktioniert (60 req/s für SearXNG API)
+- **Gesamtleistung**: Hervorragend (SearXNG Antwortzeit: 840ms < 2s)
 
 ---
 
 ## DIAGNOSE
 
-### 1. Redis-Konfiguration ✅
+### 1. Redis-Konfiguration
 
 **Redis ist korrekt konfiguriert**:
 
@@ -69,10 +69,10 @@ requirepass ErniKiRedisSecurePassword2024
 
 ```bash
 $ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
-PONG  # ✅ Redis funktioniert
+PONG # Redis funktioniert
 ```
 
-## 2. SearXNG-Konfiguration ✅
+## 2. SearXNG-Konfiguration
 
 **URL-Format ist korrekt**:
 
@@ -89,7 +89,7 @@ SEARXNG_VALKEY_URL=redis://:ErniKiRedisSecurePassword2024@redis:6379/0
 - Port: `6379`
 - Datenbank: `0`
 
-## 3. Valkey-Modul ✅
+## 3. Valkey-Modul
 
 **Modul installiert**:
 
@@ -98,7 +98,7 @@ $ docker exec erni-ki-searxng-1 /usr/local/searxng/.venv/bin/python3 -c "import 
 # Modul gefunden in /usr/local/searxng/.venv/lib/python3.13/site-packages/valkey
 ```
 
-## 4. Verbindungstest ❌
+## 4. Verbindungstest
 
 **Direkter Test aus dem SearXNG-Container**:
 
@@ -106,7 +106,7 @@ $ docker exec erni-ki-searxng-1 /usr/local/searxng/.venv/bin/python3 -c "import 
 import valkey
 r = valkey.Redis.from_url('redis://:ErniKiRedisSecurePassword2024@redis:6379/0')
 r.ping()
-# ❌ AuthenticationError: invalid username-password pair or user is disabled
+# AuthenticationError: invalid username-password pair or user is disabled
 ```
 
 ---
@@ -118,13 +118,13 @@ r.ping()
 **Detaillierte Tests zeigten**:
 
 ```python
-# ✅ FUNKTIONIERT: Direkte Verbindung
+# FUNKTIONIERT: Direkte Verbindung
 r = valkey.Redis(host='redis', port=6379, password='ErniKiRedisSecurePassword2024', db=0)
-r.ping()  # True
+r.ping() # True
 
-# ❌ FUNKTIONIERT NICHT: Verbindung über from_url()
+# FUNKTIONIERT NICHT: Verbindung über from_url()
 r = valkey.Redis.from_url('redis://:ErniKiRedisSecurePassword2024@redis:6379/0')
-r.ping()  # AuthenticationError: invalid username-password pair or user is disabled
+r.ping() # AuthenticationError: invalid username-password pair or user is disabled
 ```
 
 **Grund**:
@@ -140,8 +140,8 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
 
 **Beweise**:
 
-1. Test direkte Verbindung: ✅ Erfolgreich
-2. Test from_url(): ❌ AuthenticationError
+1. Test direkte Verbindung: Erfolgreich
+2. Test from_url(): AuthenticationError
 3. Verbindungsparameter identisch (host, port, password, db)
 4. Redis funktioniert korrekt (andere Dienste verbinden sich erfolgreich)
 5. Netzwerkverbindung funktioniert (DNS-Auflösung, Port erreichbar)
@@ -150,7 +150,7 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
 
 ## LÖSUNGEN
 
-### Option 1: Redis in SearXNG deaktivieren (EMPFOHLEN) ✅
+### Option 1: Redis in SearXNG deaktivieren (EMPFOHLEN)
 
 **Begründung**:
 
@@ -163,36 +163,36 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
 
 1. Redis-Caching in `env/searxng.env` deaktivieren:
 
-   ```bash
-   SEARXNG_CACHE_RESULTS=false
-   SEARXNG_LIMITER=false
-   # SEARXNG_VALKEY_URL auskommentieren
-   # SEARXNG_VALKEY_URL=redis://:ErniKiRedisSecurePassword2024@redis:6379/0
-   ```
+```bash
+SEARXNG_CACHE_RESULTS=false
+SEARXNG_LIMITER=false
+# SEARXNG_VALKEY_URL auskommentieren
+# SEARXNG_VALKEY_URL=redis://:ErniKiRedisSecurePassword2024@redis:6379/0
+```
 
 2. SearXNG neu starten:
 
-   ```bash
-   docker restart erni-ki-searxng-1
-   ```
+```bash
+docker restart erni-ki-searxng-1
+```
 
 3. Logs auf Fehlerfreiheit prüfen:
 
-   ```bash
-   docker logs --tail 50 erni-ki-searxng-1 | grep -E "ERROR|WARN"
-   ```
+```bash
+docker logs --tail 50 erni-ki-searxng-1 | grep -E "ERROR|WARN"
+```
 
 **Vorteile**:
 
-- ✅ Beseitigt Fehler in den Logs
-- ✅ Vereinfacht die Konfiguration
-- ✅ Keine Leistungseinbußen (Nginx-Caching kompensiert)
-- ✅ Reduziert Abhängigkeiten
+- Beseitigt Fehler in den Logs
+- Vereinfacht die Konfiguration
+- Keine Leistungseinbußen (Nginx-Caching kompensiert)
+- Reduziert Abhängigkeiten
 
 **Nachteile**:
 
-- ⚠️ Kein Rate Limiting auf SearXNG-Ebene (aber auf Nginx-Ebene vorhanden)
-- ⚠️ Kein Caching auf SearXNG-Ebene (aber auf Nginx-Ebene vorhanden)
+- Kein Rate Limiting auf SearXNG-Ebene (aber auf Nginx-Ebene vorhanden)
+- Kein Caching auf SearXNG-Ebene (aber auf Nginx-Ebene vorhanden)
 
 ---
 
@@ -204,7 +204,7 @@ r.ping()  # AuthenticationError: invalid username-password pair or user is disab
 
 ```bash
 # env/searxng.env
-SEARXNG_VALKEY_URL=redis://default:ErniKiRedisSecurePassword2024@redis:6379/0  # pragma: allowlist secret
+SEARXNG_VALKEY_URL=redis://default:ErniKiRedisSecurePassword2024@redis:6379/0 # pragma: allowlist secret
 ```
 
 ## 2.2 Redis ACL konfigurieren
@@ -214,7 +214,7 @@ SEARXNG_VALKEY_URL=redis://default:ErniKiRedisSecurePassword2024@redis:6379/0  #
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL SETUSER searxng on >password ErniKiRedisSecurePassword2024 ~* +@all
 
 # URL aktualisieren
-SEARXNG_VALKEY_URL=redis://searxng:ErniKiRedisSecurePassword2024@redis:6379/0  # pragma: allowlist secret
+SEARXNG_VALKEY_URL=redis://searxng:ErniKiRedisSecurePassword2024@redis:6379/0 # pragma: allowlist secret
 ```
 
 ## 2.3 Valkey-Modul aktualisieren
@@ -232,15 +232,15 @@ docker restart erni-ki-searxng-1
 
 **Vorteile**:
 
-- ✅ Volle SearXNG-Funktionalität
-- ✅ Doppeltes Caching (Nginx + Redis)
-- ✅ Rate Limiting auf zwei Ebenen
+- Volle SearXNG-Funktionalität
+- Doppeltes Caching (Nginx + Redis)
+- Rate Limiting auf zwei Ebenen
 
 **Nachteile**:
 
-- ⚠️ Komplexer in der Einrichtung
-- ⚠️ Erfordert Tests
-- ⚠️ Kann Änderungen am Docker-Image erfordern
+- Komplexer in der Einrichtung
+- Erfordert Tests
+- Kann Änderungen am Docker-Image erfordern
 
 ---
 
@@ -258,16 +258,16 @@ docker restart erni-ki-searxng-1
 
 ## AKTUELLER STATUS
 
-### Leistung ✅
+### Leistung
 
 | Metrik                | Wert     | Ziel  | Status |
 | --------------------- | -------- | ----- | ------ |
-| SearXNG Response Time | 840ms    | <2s   | ✅     |
-| Nginx Cache Speedup   | 127x     | >10x  | ✅     |
-| Nginx Rate Limiting   | 60 req/s | aktiv | ✅     |
-| HTTP Status           | 200 OK   | 200   | ✅     |
+| SearXNG Response Time | 840ms    | <2s   |        |
+| Nginx Cache Speedup   | 127x     | >10x  |        |
+| Nginx Rate Limiting   | 60 req/s | aktiv |        |
+| HTTP Status           | 200 OK   | 200   |        |
 
-### Caching ✅
+### Caching
 
 **Nginx-Caching** (funktioniert hervorragend):
 
@@ -278,20 +278,20 @@ docker restart erni-ki-searxng-1
 
 **Redis-Caching** (funktioniert nicht):
 
-- Status: ❌ Deaktiviert (Verbindungsfehler)
+- Status: Deaktiviert (Verbindungsfehler)
 - Auswirkung: Keine (kompensiert durch Nginx)
 
-### Rate Limiting ✅
+### Rate Limiting
 
 **Nginx Rate Limiting** (funktioniert):
 
 - Zone: `searxng_api` (60 req/s, Burst 30)
-- Status: ✅ Aktiv
+- Status: Aktiv
 - Logs: `/var/log/nginx/rate_limit.log`
 
 **SearXNG Limiter** (funktioniert nicht):
 
-- Status: ❌ Deaktiviert (erfordert Redis)
+- Status: Deaktiviert (erfordert Redis)
 - Auswirkung: Keine (kompensiert durch Nginx)
 
 ---
@@ -302,41 +302,45 @@ docker restart erni-ki-searxng-1
 
 1. **Entscheidung treffen**: Option 1 (Redis deaktivieren) oder Option 2
    (Verbindung reparieren)
-   - **Empfehlung**: Option 1 (einfacher, ohne Leistungsverlust)
+
+- **Empfehlung**: Option 1 (einfacher, ohne Leistungsverlust)
 
 2. **Wenn Option 1 gewählt**:
-   - Redis in `env/searxng.env` deaktivieren
-   - SearXNG neu starten
-   - Logs auf Fehlerfreiheit prüfen
+
+- Redis in `env/searxng.env` deaktivieren
+- SearXNG neu starten
+- Logs auf Fehlerfreiheit prüfen
 
 3. **Wenn Option 2 gewählt**:
-   - Verschiedene URL-Formate ausprobieren
-   - Redis ACL konfigurieren
-   - Valkey-Modul aktualisieren
+
+- Verschiedene URL-Formate ausprobieren
+- Redis ACL konfigurieren
+- Valkey-Modul aktualisieren
 
 ### Langfristig (1-7 Tage)
 
 1. **Leistungsüberwachung**:
-   - SearXNG Antwortzeit überwachen
-   - Nginx Cache-Trefferquote prüfen
-   - Rate Limiting Logs analysieren
+
+- SearXNG Antwortzeit überwachen
+- Nginx Cache-Trefferquote prüfen
+- Rate Limiting Logs analysieren
 
 2. **Optimierung**:
-   - Nginx Cache Purging konfigurieren
-   - Cache TTL optimieren
-   - Alarme für Leistungsabfall einrichten
+
+- Nginx Cache Purging konfigurieren
+- Cache TTL optimieren
+- Alarme für Leistungsabfall einrichten
 
 ---
 
 ## FAZIT
 
-1. ✅ **Problem unkritisch**: Nginx-Caching kompensiert fehlendes Redis
-   vollständig
-2. ✅ **Leistung hervorragend**: 840ms Antwortzeit, 127x Cache-Beschleunigung
-3. ✅ **Rate Limiting funktioniert**: Nginx bietet Schutz vor Überlastung
-4. ⚠️ **Kosmetisches Problem**: Fehler in Logs können durch Deaktivierung von
-   Redis behoben werden
-5. 💡 **Empfehlung**: Redis in SearXNG deaktivieren (Option 1) zur Vereinfachung
+1. **Problem unkritisch**: Nginx-Caching kompensiert fehlendes Redis vollständig
+2. **Leistung hervorragend**: 840ms Antwortzeit, 127x Cache-Beschleunigung
+3. **Rate Limiting funktioniert**: Nginx bietet Schutz vor Überlastung
+4. **Kosmetisches Problem**: Fehler in Logs können durch Deaktivierung von Redis
+   behoben werden
+5. **Empfehlung**: Redis in SearXNG deaktivieren (Option 1) zur Vereinfachung
    der Architektur
 
 ---

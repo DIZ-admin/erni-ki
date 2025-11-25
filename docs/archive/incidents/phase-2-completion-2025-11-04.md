@@ -4,30 +4,30 @@ translation_status: archived
 doc_version: '2025.11'
 ---
 
-# ✅ ФАЗА 2 ЗАВЕРШЕНА: PostgreSQL + Backrest
+# ФАЗА 2 ЗАВЕРШЕНА: PostgreSQL + Backrest
 
 ## Установка pg_stat_statements и проверка Backrest
 
-**Дата:** 2025-11-04 **Статус:** ✅ ЗАВЕРШЕНО **Время выполнения:** 25 минут
+**Дата:** 2025-11-04 **Статус:** ЗАВЕРШЕНО **Время выполнения:** 25 минут
 (вместо запланированных 60 минут)
 
 ---
 
-## 📋 EXECUTIVE SUMMARY
+## EXECUTIVE SUMMARY
 
 ### Результаты Фазы 2
 
-| Задача                             | Статус            | Результат                               |
-| ---------------------------------- | ----------------- | --------------------------------------- |
-| **Фаза 2.1: pg_stat_statements**   | ✅ ЗАВЕРШЕНО      | Успешно установлено и работает          |
-| **Фаза 2.2: Backrest config.json** | ✅ ЛОЖНАЯ ТРЕВОГА | Файл валиден, проблема в правах доступа |
+| Задача                             | Статус         | Результат                               |
+| ---------------------------------- | -------------- | --------------------------------------- |
+| **Фаза 2.1: pg_stat_statements**   | ЗАВЕРШЕНО      | Успешно установлено и работает          |
+| **Фаза 2.2: Backrest config.json** | ЛОЖНАЯ ТРЕВОГА | Файл валиден, проблема в правах доступа |
 
 **Общий результат:** Обе задачи выполнены успешно. PostgreSQL теперь имеет
 мониторинг производительности, Backrest работает корректно.
 
 ---
 
-## 🎯 ФАЗА 2.1: УСТАНОВКА PG_STAT_STATEMENTS
+## ФАЗА 2.1: УСТАНОВКА PG_STAT_STATEMENTS
 
 ### Проблема
 
@@ -98,7 +98,7 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
 ### Результат
 
-✅ **pg_stat_statements успешно установлен и работает!**
+**pg_stat_statements успешно установлен и работает!**
 
 **Проверка:**
 
@@ -141,11 +141,11 @@ LIMIT 5;
 
 ```sql
 SELECT
-    query,
-    calls,
-    mean_exec_time,
-    total_exec_time,
-    rows
+ query,
+ calls,
+ mean_exec_time,
+ total_exec_time,
+ rows
 FROM pg_stat_statements
 ORDER BY mean_exec_time DESC
 LIMIT 10;
@@ -155,10 +155,10 @@ LIMIT 10;
 
 ```sql
 SELECT
-    query,
-    calls,
-    mean_exec_time,
-    total_exec_time
+ query,
+ calls,
+ mean_exec_time,
+ total_exec_time
 FROM pg_stat_statements
 ORDER BY calls DESC
 LIMIT 10;
@@ -172,7 +172,7 @@ SELECT pg_stat_statements_reset();
 
 ---
 
-## 🎯 ФАЗА 2.2: ПРОВЕРКА BACKREST CONFIG.JSON
+## ФАЗА 2.2: ПРОВЕРКА BACKREST CONFIG.JSON
 
 ### Проблема
 
@@ -199,61 +199,61 @@ ls -la conf/backrest/config.json
 
 ```bash
 sudo python3 -m json.tool conf/backrest/config.json > /dev/null 2>&1
-# Результат: JSON VALID ✅
+# Результат: JSON VALID
 ```
 
 **Шаг 3: Проверка содержимого**
 
 ```json
 {
-  "modno": 11,
-  "version": 9,
-  "instance": "ERNI-KI-Official",
-  "repos": [
-    {
-      "id": "erni-ki-local",
-      "uri": "/backup-sources/.config-backup/repositories/erni-ki-local",
-      "guid": "a0e8013664d2bc10138b7da8597094252e61e90fb271c1522008731db4c9feb6", # pragma: allowlist secret
-      "password": "u2tw7tbko2RQT1dW3qlYQG0mBUZsr3YuOPqLibV5qVA=", # pragma: allowlist secret
-      "prunePolicy": {
-        "schedule": {
-          "cron": "0 2 * * *",
-          "clock": "CLOCK_LAST_RUN_TIME"
-        },
-        "maxUnusedPercent": 10
-      },
-      "checkPolicy": {
-        "schedule": {
-          "cron": "0 3 * * 0",
-          "clock": "CLOCK_LAST_RUN_TIME"
-        },
-        "readDataSubsetPercent": 5
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "daily",
-      "repo": "erni-ki-local",
-      "paths": [
-        "/backup-sources/conf/",
-        "/backup-sources/data/openwebui/",
-        "/backup-sources/data/postgres/",
-        "/backup-sources/env"
-      ],
-      "excludes": ["*.tmp", "*.log", "*cache*", "*.lock"],
-      "schedule": {
-        "cron": "1 0 * * *",
-        "clock": "CLOCK_LOCAL"
-      },
-      "retention": {
-        "policyTimeBucketed": {
-          "daily": 7,
-          "weekly": 4
-        }
-      }
-    }
-  ]
+ "modno": 11,
+ "version": 9,
+ "instance": "ERNI-KI-Official",
+ "repos": [
+ {
+ "id": "erni-ki-local",
+ "uri": "/backup-sources/.config-backup/repositories/erni-ki-local",
+ "guid": "a0e8013664d2bc10138b7da8597094252e61e90fb271c1522008731db4c9feb6", # pragma: allowlist secret
+ "password": "u2tw7tbko2RQT1dW3qlYQG0mBUZsr3YuOPqLibV5qVA=", # pragma: allowlist secret
+ "prunePolicy": {
+ "schedule": {
+ "cron": "0 2 * * *",
+ "clock": "CLOCK_LAST_RUN_TIME"
+ },
+ "maxUnusedPercent": 10
+ },
+ "checkPolicy": {
+ "schedule": {
+ "cron": "0 3 * * 0",
+ "clock": "CLOCK_LAST_RUN_TIME"
+ },
+ "readDataSubsetPercent": 5
+ }
+ }
+ ],
+ "plans": [
+ {
+ "id": "daily",
+ "repo": "erni-ki-local",
+ "paths": [
+ "/backup-sources/conf/",
+ "/backup-sources/data/openwebui/",
+ "/backup-sources/data/postgres/",
+ "/backup-sources/env"
+ ],
+ "excludes": ["*.tmp", "*.log", "*cache*", "*.lock"],
+ "schedule": {
+ "cron": "1 0 * * *",
+ "clock": "CLOCK_LOCAL"
+ },
+ "retention": {
+ "policyTimeBucketed": {
+ "daily": 7,
+ "weekly": 4
+ }
+ }
+ }
+ ]
 }
 ```
 
@@ -272,25 +272,25 @@ docker logs erni-ki-backrest-1 --since 1h | tail -5
 ```bash
 sudo ls -la .config-backup/repositories/erni-ki-local/
 # Результат:
-# drwx------ 258 root root 4096 Sep  2 16:09 data
-# drwx------   2 root root 4096 Nov  4 00:00 index
-# drwx------   2 root root 4096 Nov  3 22:01 snapshots
+# drwx------ 258 root root 4096 Sep 2 16:09 data
+# drwx------ 2 root root 4096 Nov 4 00:00 index
+# drwx------ 2 root root 4096 Nov 3 22:01 snapshots
 ```
 
 ### Результат
 
-✅ **ЛОЖНАЯ ТРЕВОГА: config.json полностью валиден!**
+**ЛОЖНАЯ ТРЕВОГА: config.json полностью валиден!**
 
 **Причина ошибки:** Первоначальная проверка без `sudo` не могла прочитать файл
 из-за прав доступа `root:root 600`.
 
 **Статус Backrest:**
 
-- ✅ Контейнер: `healthy`
-- ✅ Конфигурация: валидна
-- ✅ Репозиторий: 258 data директорий, свежие snapshots
-- ✅ Последний snapshot: 2025-11-03 22:01
-- ✅ Garbage collection: работает корректно
+- Контейнер: `healthy`
+- Конфигурация: валидна
+- Репозиторий: 258 data директорий, свежие snapshots
+- Последний snapshot: 2025-11-03 22:01
+- Garbage collection: работает корректно
 
 **Расписание бэкапов:**
 
@@ -305,29 +305,29 @@ sudo ls -la .config-backup/repositories/erni-ki-local/
 
 ---
 
-## 📊 ИТОГОВЫЕ МЕТРИКИ
+## ИТОГОВЫЕ МЕТРИКИ
 
 ### До Фазы 2
 
-| Метрика                  | Значение                        |
-| ------------------------ | ------------------------------- |
-| **pg_stat_statements**   | ❌ Не установлен                |
-| **Backrest config.json** | ❌ "Невалиден" (ложная тревога) |
-| **Мониторинг БД**        | ❌ Отсутствует                  |
-| **Общая оценка**         | 78/100                          |
+| Метрика                  | Значение                     |
+| ------------------------ | ---------------------------- |
+| **pg_stat_statements**   | Не установлен                |
+| **Backrest config.json** | "Невалиден" (ложная тревога) |
+| **Мониторинг БД**        | Отсутствует                  |
+| **Общая оценка**         | 78/100                       |
 
 ### После Фазы 2
 
-| Метрика                  | Значение                     |
-| ------------------------ | ---------------------------- |
-| **pg_stat_statements**   | ✅ Установлен и работает     |
-| **Backrest config.json** | ✅ Валиден                   |
-| **Мониторинг БД**        | ✅ Активен (10,000 запросов) |
-| **Общая оценка**         | **82/100** ⬆️ **+4 балла**   |
+| Метрика                  | Значение                  |
+| ------------------------ | ------------------------- |
+| **pg_stat_statements**   | Установлен и работает     |
+| **Backrest config.json** | Валиден                   |
+| **Мониторинг БД**        | Активен (10,000 запросов) |
+| **Общая оценка**         | **82/100** **+4 балла**   |
 
 ---
 
-## 🎯 СЛЕДУЮЩИЕ ШАГИ
+## СЛЕДУЮЩИЕ ШАГИ
 
 ### Фаза 3: СРЕДНИЙ ПРИОРИТЕТ (1-2 недели)
 
@@ -341,7 +341,7 @@ sudo ls -la .config-backup/repositories/erni-ki-local/
 
 ---
 
-## 💡 РЕКОМЕНДАЦИИ
+## РЕКОМЕНДАЦИИ
 
 ### PostgreSQL Monitoring
 
@@ -350,10 +350,10 @@ sudo ls -la .config-backup/repositories/erni-ki-local/
 ```sql
 -- Медленные запросы (>100ms)
 SELECT
-    query,
-    calls,
-    mean_exec_time,
-    total_exec_time
+ query,
+ calls,
+ mean_exec_time,
+ total_exec_time
 FROM pg_stat_statements
 WHERE mean_exec_time > 100
 ORDER BY mean_exec_time DESC;
@@ -363,14 +363,14 @@ ORDER BY mean_exec_time DESC;
 
 ```yaml
 - alert: SlowPostgreSQLQuery
-  expr: pg_stat_statements_mean_exec_time_seconds > 1
-  for: 5m
-  labels:
-    severity: warning
-  annotations:
-    summary: 'Slow PostgreSQL query detected'
-    description:
-      'Query {{ $labels.query }} has mean execution time {{ $value }}s'
+ expr: pg_stat_statements_mean_exec_time_seconds > 1
+ for: 5m
+ labels:
+ severity: warning
+ annotations:
+ summary: 'Slow PostgreSQL query detected'
+ description:
+ 'Query {{ $labels.query }} has mean execution time {{ $value }}s'
 ```
 
 ### Backrest Monitoring

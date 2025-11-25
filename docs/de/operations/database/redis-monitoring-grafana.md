@@ -7,13 +7,13 @@ last_updated: '2025-11-24'
 
 # Redis Monitoring mit Grafana in ERNI-KI
 
-## 📊 Übersicht
+## Übersicht
 
 Das ERNI-KI-System umfasst nun vollständiges Redis-Monitoring über Grafana mit
 dem Redis Data Source Plugin. Diese Lösung ersetzt den problematischen
 Redis-Exporter und bietet stabiles Monitoring für Redis 7.4.5 Alpine.
 
-## 🚀 Schnellstart
+## Schnellstart
 
 ### Grafana-Zugriff
 
@@ -27,7 +27,7 @@ Redis-Exporter und bietet stabiles Monitoring für Redis 7.4.5 Alpine.
 2. Zum Bereich "Dashboards" navigieren
 3. Dashboard "Redis Monitoring - ERNI-KI" suchen
 
-## 🔧 Technische Konfiguration
+## Technische Konfiguration
 
 ### Redis Data Source
 
@@ -44,7 +44,7 @@ Konfiguration wird automatisch über Grafana Provisioning angewendet:
 - Data Source: `conf/grafana/provisioning/datasources/redis.yml`
 - Dashboard: `conf/grafana/dashboards/infrastructure/redis-monitoring.json`
 
-## 📈 Verfügbare Metriken
+## Verfügbare Metriken
 
 ### Grundmetriken
 
@@ -60,7 +60,7 @@ Konfiguration wird automatisch über Grafana Provisioning angewendet:
 - **Persistence**: Status der Datenspeicherung
 - **Replication**: Replikationsinformationen (falls konfiguriert)
 
-## 🛠️ Monitoring erweitern
+## Monitoring erweitern
 
 ### Neue Panels hinzufügen
 
@@ -68,9 +68,10 @@ Konfiguration wird automatisch über Grafana Provisioning angewendet:
 2. Neues Panel hinzufügen
 3. Redis-ERNI-KI als Datenquelle wählen
 4. Befehl und Felder konfigurieren:
-   - **Command**: info
-   - **Section**: memory/stats/server/clients
-   - **Field**: spezifisches Feld aus Redis INFO
+
+- **Command**: info
+- **Section**: memory/stats/server/clients
+- **Field**: spezifisches Feld aus Redis INFO
 
 ### Redis-Befehlsbeispiele
 
@@ -87,7 +88,7 @@ LASTSAVE
 CONFIG GET maxmemory
 ```
 
-## 🔍 Performance-Monitoring
+## Performance-Monitoring
 
 ### Wichtige zu beobachtende Kennzahlen
 
@@ -104,7 +105,7 @@ CONFIG GET maxmemory
 - Hit Ratio < 90%
 - Response time > 1ms
 
-## 🚨 Fehlerbehebung
+## Fehlerbehebung
 
 ### Verbindungsprobleme
 
@@ -128,7 +129,7 @@ docker-compose exec grafana grafana-cli plugins install redis-datasource
 docker-compose restart grafana
 ```
 
-## 📚 Zusätzliche Ressourcen
+## Zusätzliche Ressourcen
 
 ### Offizielle Dokumentation
 
@@ -146,7 +147,7 @@ docker-compose restart grafana
 Kompatibilitätsproblemen mit Redis 7.4.5 Alpine. Grafana Redis Data Source
 Plugin ist die bevorzugte Lösung.
 
-## 🔄 Updates und Wartung
+## Updates und Wartung
 
 ### Regelmäßige Aufgaben
 
@@ -161,5 +162,5 @@ Grafana ist für automatische Updates über Watchtower mit Label
 
 ---
 
-**Status**: ✅ Aktiv **Letzte Aktualisierung**: 2025-09-19 **Version**: 1.0
+**Status**: Aktiv **Letzte Aktualisierung**: 2025-09-19 **Version**: 1.0
 **Autor**: Alteon Schultz (Tech Lead)

@@ -12,68 +12,68 @@ title: 'Emoji Style Guide'
 
 ### Безопасность и аутентификация
 
-- 🔐 Основной emoji для security
-- 🛡️ Для reliability/защиты
-- 🚨 Для критических проблем безопасности
+- Основной emoji для security
+- Для reliability/защиты
+- Для критических проблем безопасности
 
 ### Мониторинг и метрики
 
-- 📊 Основной emoji для monitoring
-- 📈 Для performance/графиков
-- 📉 Для degradation/проблем
+- Основной emoji для monitoring
+- Для performance/графиков
+- Для degradation/проблем
 
 ### Базы данных
 
-- 🗄️ Общие БД
-- 🐘 PostgreSQL
-- 🔴 Redis
-- 💾 Storage/диски
+- Общие БД
+- PostgreSQL
+- Redis
+- Storage/диски
 
 ### Сетевые сервисы и API
 
-- 🔌 API endpoints
-- 🌐 Network/web
-- 🚪 Gateway/proxy
+- API endpoints
+- Network/web
+- Gateway/proxy
 
 ### Статус-индикаторы
 
-- ✅ Success/Healthy/Complete
-- ⚠️ Warning/Needs attention
-- ❌ Error/Failed
-- 🔥 Critical/High priority
+- Success/Healthy/Complete
+- Warning/Needs attention
+- Error/Failed
+- Critical/High priority
 
 ### Обновления и новости
 
-- 🚀 Updates/новые фичи
-- ✨ Improvements/улучшения
-- 🆕 New components
-- 🔧 Configuration/setup
+- Updates/новые фичи
+- Improvements/улучшения
+- New components
+- Configuration/setup
 
 ### Документация
 
-- 📋 Lists/overviews
-- 📖 Guides/руководства
-- 📝 Notes/примечания
-- 📄 Documents/файлы
+- Lists/overviews
+- Guides/руководства
+- Notes/примечания
+- Documents/файлы
 
 ## Примеры использования
 
-### ПРАВИЛЬНО ✅
+### ПРАВИЛЬНО
 
 ```markdown
-## 🔐 Безопасность системы
+## Безопасность системы
 
-### 📊 Мониторинг Redis
+### Мониторинг Redis
 
-#### 🐘 PostgreSQL конфигурация
+#### PostgreSQL конфигурация
 ```
 
-### НЕПРАВИЛЬНО ❌
+### НЕПРАВИЛЬНО
 
 ```markdown
-## 🔒 Безопасность системы # Используйте 🔐
+## Безопасность системы # Используйте
 
-### 📈 Мониторинг Redis # Используйте 📊
+### Мониторинг Redis # Используйте
 
-#### 🗄️ PostgreSQL конфигурация # Используйте 🐘
+#### PostgreSQL конфигурация # Используйте
 ```

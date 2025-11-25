@@ -18,18 +18,18 @@ Erlaubte Vorlagen:
 
 - **Wichtig**
 
-  > **Wichtig:** Kritische Info, darf nicht übersehen werden.
+> **Wichtig:** Kritische Info, darf nicht übersehen werden.
 
 - **Warnung**
 
-  > ⚠️ **WARNUNG:** Potenzielle Risiken/Probleme.
+> **WARNUNG:** Potenzielle Risiken/Probleme.
 
 - **Tipp**
 
-  > 💡 **Tipp:** Empfehlung oder Best Practice.
+> **Tipp:** Empfehlung oder Best Practice.
 
 - **Info**
-  > ℹ️ **Info:** Zusatzdetails oder Kontext.
+  > ℹ **Info:** Zusatzdetails oder Kontext.
 
 ## 3. Code-Blöcke
 

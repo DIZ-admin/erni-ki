@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🔧 Руководство по диагностике проблем ERNI-KI
+# Руководство по диагностике проблем ERNI-KI
 
 > **Версия:** 1.0 **Дата:** 2025-09-25 **Статус:** Production Ready [TOC]
 
@@ -19,12 +19,12 @@ last_updated: '2025-11-24'
 
 ```mermaid
 flowchart TD
-    Alert[Алерт/Жалоба] --> Triage[Классификация P1/P2/P3]
-    Triage --> Observe[Метрики/Логи]
-    Observe --> Runbook[Runbook или SOP]
-    Runbook --> Fix[Фикс/Роллбек]
-    Fix --> Validate[Проверка health]
-    Validate --> Report[Запись в Archon + пост-мортем]
+ Alert[Алерт/Жалоба] --> Triage[Классификация P1/P2/P3]
+ Triage --> Observe[Метрики/Логи]
+ Observe --> Runbook[Runbook или SOP]
+ Runbook --> Fix[Фикс/Роллбек]
+ Fix --> Validate[Проверка health]
+ Validate --> Report[Запись в Archon + пост-мортем]
 ```
 
 ## 2. Предварительные требования
@@ -39,7 +39,7 @@ flowchart TD
 
 ### 3.1 Критические проблемы (SLA < 15m)
 
-### **❌ Система полностью недоступна**
+### ** Система полностью недоступна**
 
 #### **Симптомы:**
 
@@ -54,13 +54,13 @@ flowchart TD
 docker compose ps
 
 # 2. Проверка системных ресурсов
-df -h  # Проверка места на диске
-free -h  # Проверка памяти
-nvidia-smi  # Проверка GPU
+df -h # Проверка места на диске
+free -h # Проверка памяти
+nvidia-smi # Проверка GPU
 
 # 3. Проверка Docker
-docker system df  # Использование места Docker
-docker system events --since 1h  # События за последний час
+docker system df # Использование места Docker
+docker system events --since 1h # События за последний час
 ```
 
 ## **Решение:**
@@ -80,7 +80,7 @@ docker system prune -a -f
 docker compose up -d
 ```
 
-## **❌ OpenWebUI недоступен (основной интерфейс)**
+## ** OpenWebUI недоступен (основной интерфейс)**
 
 ### **Симптомы:**
 
@@ -120,16 +120,16 @@ curl -f http://localhost/health
 
 ---
 
-## ⚠️ ЧАСТЫЕ ПРОБЛЕМЫ И РЕШЕНИЯ
+## ЧАСТЫЕ ПРОБЛЕМЫ И РЕШЕНИЯ
 
-### **🔴 GPU/AI Сервисы**
+### ** GPU/AI Сервисы**
 
 #### **Проблема: Ollama не использует GPU**
 
 ```bash
 # Диагностика
-nvidia-smi  # Проверка доступности GPU
-docker exec erni-ki-ollama-1 nvidia-smi  # GPU в контейнере
+nvidia-smi # Проверка доступности GPU
+docker exec erni-ki-ollama-1 nvidia-smi # GPU в контейнере
 
 # Решение
 docker compose restart ollama
@@ -150,18 +150,18 @@ sleep 15
 curl -f http://localhost:4000/health
 ```
 
-## **🔴 Сетевые проблемы**
+## ** Сетевые проблемы**
 
 ### **Проблема: Nginx 502 Bad Gateway**
 
 ```bash
 # Диагностика
 docker compose logs nginx --tail=20
-docker exec erni-ki-nginx-1 nginx -t  # Проверка конфигурации
+docker exec erni-ki-nginx-1 nginx -t # Проверка конфигурации
 
 # Проверка upstream сервисов
-curl -f http://openwebui:8080/health  # Из контейнера nginx
-curl -f http://localhost:8080/health  # Прямое подключение
+curl -f http://openwebui:8080/health # Из контейнера nginx
+curl -f http://localhost:8080/health # Прямое подключение
 
 # Решение
 docker compose restart nginx
@@ -178,7 +178,7 @@ docker exec erni-ki-cloudflared-1 nslookup nginx
 docker compose restart cloudflared
 ```
 
-## **🔴 База данных**
+## ** База данных**
 
 ### **Проблема: PostgreSQL connection refused**
 
@@ -209,13 +209,13 @@ sleep 5
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-## **🔴 Мониторинг**
+## ** Мониторинг**
 
 ### **Проблема: Prometheus не собирает метрики**
 
 ```bash
 # Диагностика
-curl -f http://localhost:9090/api/v1/targets  # Проверка targets
+curl -f http://localhost:9090/api/v1/targets # Проверка targets
 docker compose logs prometheus --tail=20
 
 # Решение

@@ -12,68 +12,68 @@ title: 'Emoji Style Guide'
 
 ### Sicherheit und Auth
 
-- 🔐 Haupt-Emoji für Security
-- 🛡️ Reliability/Schutz
-- 🚨 Kritische Sicherheitsprobleme
+- Haupt-Emoji für Security
+- Reliability/Schutz
+- Kritische Sicherheitsprobleme
 
 ### Monitoring & Metriken
 
-- 📊 Monitoring
-- 📈 Performance/Grafiken
-- 📉 Degradation/Probleme
+- Monitoring
+- Performance/Grafiken
+- Degradation/Probleme
 
 ### Datenbanken
 
-- 🗄️ Allgemeine DB
-- 🐘 PostgreSQL
-- 🔴 Redis
-- 💾 Storage/Disks
+- Allgemeine DB
+- PostgreSQL
+- Redis
+- Storage/Disks
 
 ### Netzwerk & API
 
-- 🔌 API Endpoints
-- 🌐 Network/Web
-- 🚪 Gateway/Proxy
+- API Endpoints
+- Network/Web
+- Gateway/Proxy
 
 ### Status
 
-- ✅ Success/Healthy/Complete
-- ⚠️ Warning/Needs attention
-- ❌ Error/Failed
-- 🔥 Critical/High priority
+- Success/Healthy/Complete
+- Warning/Needs attention
+- Error/Failed
+- Critical/High priority
 
 ### Updates & News
 
-- 🚀 Updates/Neue Features
-- ✨ Improvements
-- 🆕 Neue Komponenten
-- 🔧 Konfiguration/Setup
+- Updates/Neue Features
+- Improvements
+- Neue Komponenten
+- Konfiguration/Setup
 
 ### Dokumentation
 
-- 📋 Listen/Overviews
-- 📖 Guides
-- 📝 Notes
-- 📄 Documents
+- Listen/Overviews
+- Guides
+- Notes
+- Documents
 
 ## Beispiele
 
-### RICHTIG ✅
+### RICHTIG
 
 ```markdown
-## 🔐 Systemsicherheit
+## Systemsicherheit
 
-### 📊 Redis Monitoring
+### Redis Monitoring
 
-#### 🐘 PostgreSQL Konfiguration
+#### PostgreSQL Konfiguration
 ```
 
-### FALSCH ❌
+### FALSCH
 
 ```markdown
-## 🔒 Systemsicherheit # Nutze 🔐
+## Systemsicherheit # Nutze
 
-### 📈 Redis Monitoring # Nutze 📊
+### Redis Monitoring # Nutze
 
-#### 🗄️ PostgreSQL Konfiguration # Nutze 🐘
+#### PostgreSQL Konfiguration # Nutze
 ```

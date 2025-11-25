@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 📊 ERNI-KI Monitoring Guide
+# ERNI-KI Monitoring Guide
 
 [TOC] Comprehensive guide for monitoring ERNI-KI system with 8 specialized
 exporters, standardized healthchecks, and production-ready observability stack.
@@ -35,12 +35,12 @@ exporters, standardized healthchecks, and production-ready observability stack.
 
 ## 3. Архитектура и Обновления
 
-### 🗺️ Architecture Snapshot
+### Architecture Snapshot
 
 - Основная схема мониторинга доступна в `docs/architecture/architecture.md`.
 - Инвентаризация сервисов: `docs/architecture/service-inventory.md`.
 
-### 🔄 Обновления ноября 2025
+### Обновления ноября 2025
 
 - **Alertmanager queue watchdog** — контроль очереди уведомлений.
 - **Fluent Bit Phase 0-2** — оптимизированные фильтры и маскирование токенов.
@@ -48,16 +48,18 @@ exporters, standardized healthchecks, and production-ready observability stack.
 - **Correlation IDs** — сквозная трассировка запросов (X-Request-ID).
 - **Мультиканальное уведомление** — Slack + PagerDuty для критических алертов.
 
-## 🚨 Alert Delivery & Runbooks
+## Alert Delivery & Runbooks
 
 ### Архитектура после аудита (N+1 шаги)
 
 - **Prometheus / Alertmanager / Loki** — текущая топология односерверная. План
   работ по HA/remote storage отслеживается задачами:
-  1. `19d577bc` — удалённое хранилище и кластер Alertmanager.
-  2. `e84d2098` — покрытие / synthetic checks.
-  3. `00130fda` — TLS и доставка логов (выполнено в коммите 6185b74).
-- **Инструкции по миграции**: см. новый раздел "🔐 Secure Logging Pipeline" и
+
+1.  `19d577bc` — удалённое хранилище и кластер Alertmanager.
+2.  `e84d2098` — покрытие / synthetic checks.
+3.  `00130fda` — TLS и доставка логов (выполнено в коммите 6185b74).
+
+- **Инструкции по миграции**: см. новый раздел " Secure Logging Pipeline" и
   `docs/monitoring-logging-audit-2025-11-14.md`.
 
 ### Чек-лист готовности (обновлять перед релизами)
@@ -77,7 +79,7 @@ exporters, standardized healthchecks, and production-ready observability stack.
 - **Loki delivery errors**: см. алерт `FluentBitLokiDeliveryErrors` и runbook по
   ссылке в Alertmanager.
 
-## 📐 SLO Dashboards
+## SLO Dashboards
 
 - **System Overview / “Platform SRE Overview”**
   (`conf/grafana/dashboards/system-overview/platform-sre-overview.json`). Этот
@@ -114,9 +116,9 @@ exporters, standardized healthchecks, and production-ready observability stack.
   JSON в `conf/grafana/dashboards/`.
 
 - Секреты для каналов хранятся в Docker secrets:
-  - `./secrets/slack_alert_webhook.txt` — Slack Incoming Webhook URL.
-  - `./secrets/pagerduty_routing_key.txt` — Events API v2 routing key.
-    Скопируйте `.example` файлы и заполните перед деплоем.
+- `./secrets/slack_alert_webhook.txt` — Slack Incoming Webhook URL.
+- `./secrets/pagerduty_routing_key.txt` — Events API v2 routing key. Скопируйте
+  `.example` файлы и заполните перед деплоем.
 - `conf/alertmanager/alertmanager.yml` содержит Slack и PagerDuty конфиги для
   критических и warning алертов. Сервисные маршруты (`gpu`, `ai`, `database`,
   `logging`) помечены `continue: true`, чтобы алерты всегда попадали в
@@ -133,17 +135,19 @@ exporters, standardized healthchecks, and production-ready observability stack.
 ### Alert testing {#alert-testing}
 
 1. Подготовить переменные окружения для теста доставки:
-   - `PROMETHEUS_URL` указывает на Prometheus, который должен принимать метрики
-     тестового алерта.
-   - `ALERTMANAGER_URL` указывает на Alertmanager, куда отправится событие.
+
+- `PROMETHEUS_URL` указывает на Prometheus, который должен принимать метрики
+  тестового алерта.
+- `ALERTMANAGER_URL` указывает на Alertmanager, куда отправится событие.
+
 2. Запустить синтетический алерт из CLI:
 
-   ```bash
-   ./scripts/monitoring/test-alert-delivery.sh critical ops
-   ```
+```bash
+./scripts/monitoring/test-alert-delivery.sh critical ops
+```
 
-   Скрипт публикует тестовое событие `SmokeTestAlert` и проверяет доставку в
-   Slack и PagerDuty.
+Скрипт публикует тестовое событие `SmokeTestAlert` и проверяет доставку в Slack
+и PagerDuty.
 
 3. После успешной проверки закройте алерт вручную в Alertmanager, чтобы не
    оставлять тестовые записи в очереди.
@@ -173,10 +177,10 @@ exporters, standardized healthchecks, and production-ready observability stack.
 
 ```bash
 */5 * * * * PROMETHEUS_URL=http://localhost:9091 \
-  ALERTMANAGER_URL=http://localhost:9093 \
-  ALERTMANAGER_AUTO_SILENCE_TAG="[auto-cleanup]" \
-  ALERTMANAGER_QUEUE_HARD_LIMIT=500 \
-  /home/erni/scripts/monitoring/alertmanager-queue-cleanup.sh
+ ALERTMANAGER_URL=http://localhost:9093 \
+ ALERTMANAGER_AUTO_SILENCE_TAG="[auto-cleanup]" \
+ ALERTMANAGER_QUEUE_HARD_LIMIT=500 \
+ /home/erni/scripts/monitoring/alertmanager-queue-cleanup.sh
 ```
 
 > Timer должен логировать вывод в `.config-backup/logs/alertmanager-queue.log` и
@@ -199,22 +203,24 @@ exporters, standardized healthchecks, and production-ready observability stack.
   (`update-cron-metrics`) каждые 5 минут преобразует их в Prometheus метрики
   `erni_cron_job_*` (через node_exporter textfile collector).
 - **Метрики**:
-  - `erni_cron_job_success{job}` — 1 при последнем успешном выполнении.
-  - `erni_cron_job_age_seconds{job}` — сколько секунд прошло с последнего
-    запуска (используется для SLA).
-  - `erni_cron_job_sla_seconds{job}` — допустимый интервал между запуском.
-  - `erni_cron_job_last_run_timestamp{job}` — UNIX time последнего запуска.
+- `erni_cron_job_success{job}` — 1 при последнем успешном выполнении.
+- `erni_cron_job_age_seconds{job}` — сколько секунд прошло с последнего запуска
+  (используется для SLA).
+- `erni_cron_job_sla_seconds{job}` — допустимый интервал между запуском.
+- `erni_cron_job_last_run_timestamp{job}` — UNIX time последнего запуска.
 - **Алерты**: в `conf/prometheus/alert_rules.yml` добавлены правила
   `CronJobStale` и `CronJobFailures`, отправляющие оповещения при нарушении SLA
   или статусе failure. По умолчанию владельцы — команда Ops.
 - **Добавить новый cron**:
-  1. В cron-скрипте перед exit вызвать
-     `scripts/monitoring/record-cron-status.sh <job> success "комментарий"`. В
-     trap on ERR записывать failure.
-  2. Прописать SLA в `scripts/monitoring/update-cron-metrics.sh` (массив `SLA`).
-  3. Выполнить bootstrap:
-     `./scripts/monitoring/record-cron-status.sh <job> success "bootstrap"`.
-  4. Перезапустить `update-cron-metrics` (или дождаться cron).
+
+1.  В cron-скрипте перед exit вызвать
+    `scripts/monitoring/record-cron-status.sh <job> success "комментарий"`. В
+    trap on ERR записывать failure.
+2.  Прописать SLA в `scripts/monitoring/update-cron-metrics.sh` (массив `SLA`).
+3.  Выполнить bootstrap:
+    `./scripts/monitoring/record-cron-status.sh <job> success "bootstrap"`.
+4.  Перезапустить `update-cron-metrics` (или дождаться cron).
+
 - **Проверка**:
 
 ```bash
@@ -234,7 +240,7 @@ cat data/node-exporter-textfile/cron_watchdogs.prom
   использует SSD-том `erni-ki-fluent-db` с дисковым буфером 15 ГБ для
   переживания длительных сбоев сети.
 
-## 📋 Аудит и соответствие
+## Аудит и соответствие
 
 - Счетчик несоответствий из
   `docs/archive/reports/documentation-audit-2025-10-24.md` больше не включает
@@ -248,28 +254,28 @@ cat data/node-exporter-textfile/cron_watchdogs.prom
   `operations/core/operations-handbook.md`, `automated-maintenance-guide.md`,
   чтобы DevOps видел консистентность и регламенты ответов.
 
-## 📈 Exporters Configuration
+## Exporters Configuration
 
-### 🖥️ Node Exporter (Port 9101)
+### Node Exporter (Port 9101)
 
 **Purpose:** System-level metrics (CPU, memory, disk, network)
 
 ```yaml
 # Configuration in compose.yml
 node-exporter:
-  image: prom/node-exporter:v1.8.2
-  ports:
-    - '9101:9100'
-  healthcheck:
-    test:
-      [
-        'CMD-SHELL',
-        'wget --no-verbose --tries=1 --spider http://localhost:9100/metrics ||
-        exit 1',
-      ]
-    interval: 30s
-    timeout: 10s
-    retries: 3
+ image: prom/node-exporter:v1.8.2
+ ports:
+ - '9101:9100'
+ healthcheck:
+ test:
+ [
+ 'CMD-SHELL',
+ 'wget --no-verbose --tries=1 --spider http://localhost:9100/metrics ||
+ exit 1',
+ ]
+ interval: 30s
+ timeout: 10s
+ retries: 3
 ```
 
 **Key Metrics:**
@@ -285,30 +291,30 @@ node-exporter:
 curl -s http://localhost:9101/metrics | grep node_up
 ```
 
-## 🐘 PostgreSQL Exporter (Port 9188 via IPv4 proxy)
+## PostgreSQL Exporter (Port 9188 via IPv4 proxy)
 
 **Purpose:** Database performance and health metrics
 
-> ℹ️ Доступ к БД осуществляется через Docker secret `postgres_exporter_dsn.txt`
+> ℹ Доступ к БД осуществляется через Docker secret `postgres_exporter_dsn.txt`
 > (монтируется как `/etc/postgres_exporter_dsn.txt` и читается в entrypoint).
 
 ```yaml
 # Configuration in compose.yml
 postgres-exporter:
-  image: prometheuscommunity/postgres-exporter:v0.15.0
-  entrypoint: ['/entrypoint/postgres-exporter.sh']
-  volumes:
-    - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
-    - ./secrets/postgres_exporter_dsn.txt:/etc/postgres_exporter_dsn.txt:ro
-  ports:
-    - '127.0.0.1:9188:9188'
-  healthcheck:
-    test:
-      [
-        'CMD-SHELL',
-        'wget --no-verbose --tries=1 --spider http://localhost:9187/metrics ||
-        exit 1',
-      ]
+ image: prometheuscommunity/postgres-exporter:v0.15.0
+ entrypoint: ['/entrypoint/postgres-exporter.sh']
+ volumes:
+ - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
+ - ./secrets/postgres_exporter_dsn.txt:/etc/postgres_exporter_dsn.txt:ro
+ ports:
+ - '127.0.0.1:9188:9188'
+ healthcheck:
+ test:
+ [
+ 'CMD-SHELL',
+ 'wget --no-verbose --tries=1 --spider http://localhost:9187/metrics ||
+ exit 1',
+ ]
 ```
 
 **Key Metrics:**
@@ -324,7 +330,7 @@ postgres-exporter:
 curl -s http://localhost:9188/metrics | grep pg_up
 ```
 
-## 🔴 Redis Exporter (Port 9121) - 🔧 Fixed 19.09.2025
+## Redis Exporter (Port 9121) - Fixed 19.09.2025
 
 **Purpose:** Redis cache performance and health metrics
 
@@ -345,7 +351,7 @@ redis-exporter:
   healthcheck: {} # monitoring via Prometheus scrape
 ```
 
-**Status:** ✅ Running | HTTP 200 | Auth works via `REDIS_PASSWORD_FILE`
+**Status:** Running | HTTP 200 | Auth works via `REDIS_PASSWORD_FILE`
 
 > `redis_exporter_url` secret теперь содержит JSON вида
 > `{"redis://redis:6379":"<password>"}` — это позволяет `redis_exporter`
@@ -371,7 +377,7 @@ timeout 5 sh -c '</dev/tcp/localhost/9121' && echo "Redis Exporter available"
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-## 🎮 NVIDIA GPU Exporter (Port 9445) - ✅ Improved 19.09.2025
+## NVIDIA GPU Exporter (Port 9445) - Improved 19.09.2025
 
 **Purpose:** GPU utilization and performance metrics
 
@@ -382,14 +388,14 @@ nvidia-exporter:
   ports:
     - '9445:9445'
   healthcheck:
-    test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9445' || exit 1"] # IMPROVED: TCP check
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 15s
+  test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9445' || exit 1"] # IMPROVED: TCP check
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 15s
 ```
 
-**Status:** ✅ Healthy | HTTP 200 | TCP healthcheck (improved from pgrep)
+**Status:** Healthy | HTTP 200 | TCP healthcheck (improved from pgrep)
 
 **Key Metrics:**
 
@@ -404,26 +410,26 @@ nvidia-exporter:
 curl -s http://localhost:9445/metrics | grep nvidia_gpu_utilization
 ```
 
-## 📦 Blackbox Exporter (Port 9115)
+## Blackbox Exporter (Port 9115)
 
 **Purpose:** External service availability monitoring
 
 ```yaml
 # Configuration in compose.yml
 blackbox-exporter:
-  image: prom/blackbox-exporter:v0.25.0
-  ports:
-    - '9115:9115'
-  healthcheck:
-    test:
-      [
-        'CMD-SHELL',
-        'wget --no-verbose --tries=1 --spider http://localhost:9115/metrics ||
-        exit 1',
-      ]
+ image: prom/blackbox-exporter:v0.25.0
+ ports:
+ - '9115:9115'
+ healthcheck:
+ test:
+ [
+ 'CMD-SHELL',
+ 'wget --no-verbose --tries=1 --spider http://localhost:9115/metrics ||
+ exit 1',
+ ]
 ```
 
-**Status:** ✅ Healthy | HTTP 200 | wget healthcheck
+**Status:** Healthy | HTTP 200 | wget healthcheck
 
 **Key Metrics:**
 
@@ -437,7 +443,7 @@ blackbox-exporter:
 curl -s http://localhost:9115/metrics | grep probe_success
 ```
 
-## 🧠 Ollama AI Exporter (Port 9778) - ✅ Standardized 19.09.2025
+## Ollama AI Exporter (Port 9778) - Standardized 19.09.2025
 
 **Purpose:** AI model performance and availability metrics
 
@@ -445,8 +451,8 @@ curl -s http://localhost:9115/metrics | grep probe_success
 # Configuration in compose.yml (STANDARDIZED)
 ollama-exporter:
   build:
-    context: ./monitoring
-    dockerfile: Dockerfile.ollama-exporter
+  context: ./monitoring
+  dockerfile: Dockerfile.ollama-exporter
   ports:
     - '127.0.0.1:9778:9778'
   environment:
@@ -454,8 +460,7 @@ ollama-exporter:
     - EXPORTER_PORT=9778
 ```
 
-**Status:** ✅ Healthy | HTTP 200 | wget healthcheck (standardized from
-127.0.0.1)
+**Status:** Healthy | HTTP 200 | wget healthcheck (standardized from 127.0.0.1)
 
 **Key Metrics:**
 
@@ -470,7 +475,7 @@ ollama-exporter:
 curl -s http://localhost:9778/metrics | grep ollama_models_total
 ```
 
-## 🚪 Nginx Web Exporter (Port 9113) - 🔧 Fixed 19.09.2025
+## Nginx Web Exporter (Port 9113) - Fixed 19.09.2025
 
 **Purpose:** Web server performance and traffic metrics
 
@@ -484,14 +489,14 @@ nginx-exporter:
     - '--nginx.scrape-uri=http://nginx:80/nginx_status'
     - '--web.listen-address=:9113'
   healthcheck:
-    test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9113' || exit 1"] # FIXED: TCP check
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+  test: ['CMD-SHELL', "timeout 5 sh -c '</dev/tcp/localhost/9113' || exit 1"] # FIXED: TCP check
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 10s
 ```
 
-**Status:** 🔧 Running | HTTP 200 | TCP healthcheck (fixed from wget)
+**Status:** Running | HTTP 200 | TCP healthcheck (fixed from wget)
 
 **Key Metrics:**
 
@@ -510,29 +515,29 @@ curl -s http://localhost:9113/metrics | grep nginx_connections_active
 timeout 5 sh -c '</dev/tcp/localhost/9113' && echo "Nginx Exporter available"
 ```
 
-## 📈 RAG SLA Exporter (Port 9808)
+## RAG SLA Exporter (Port 9808)
 
 **Purpose:** RAG (Retrieval-Augmented Generation) performance metrics
 
 ```yaml
 # Configuration in compose.yml
 rag-exporter:
-  build: ./monitoring/rag-exporter
-  ports:
-    - '9808:8000'
-  environment:
-    - RAG_TEST_URL=http://openwebui:8080
-    - RAG_TEST_INTERVAL=30
-  healthcheck:
-    test:
-      [
-        'CMD-SHELL',
-        'python -c "import requests;
-        requests.get(''http://localhost:8000/metrics'')"',
-      ]
+ build: ./monitoring/rag-exporter
+ ports:
+ - '9808:8000'
+ environment:
+ - RAG_TEST_URL=http://openwebui:8080
+ - RAG_TEST_INTERVAL=30
+ healthcheck:
+ test:
+ [
+ 'CMD-SHELL',
+ 'python -c "import requests;
+ requests.get(''http://localhost:8000/metrics'')"',
+ ]
 ```
 
-**Status:** ✅ Healthy | HTTP 200 | Python healthcheck
+**Status:** Healthy | HTTP 200 | Python healthcheck
 
 **Key Metrics:**
 
@@ -546,43 +551,43 @@ rag-exporter:
 curl -s http://localhost:9808/metrics | grep erni_ki_rag_response_latency
 ```
 
-## 🔧 Healthcheck Standardization
+## Healthcheck Standardization
 
 ### Problems and Solutions (September 19, 2025)
 
-| Exporter            | Problem                        | Solution                             | Status          |
-| ------------------- | ------------------------------ | ------------------------------------ | --------------- |
-| **Redis Exporter**  | wget unavailable in container  | TCP check `</dev/tcp/localhost/9121` | 🔧 Fixed        |
-| **Nginx Exporter**  | wget unavailable in container  | TCP check `</dev/tcp/localhost/9113` | 🔧 Fixed        |
-| **NVIDIA Exporter** | pgrep process inefficient      | TCP check `</dev/tcp/localhost/9445` | ✅ Improved     |
-| **Ollama Exporter** | 127.0.0.1 instead of localhost | wget localhost standardized          | ✅ Standardized |
+| Exporter            | Problem                        | Solution                             | Status       |
+| ------------------- | ------------------------------ | ------------------------------------ | ------------ |
+| **Redis Exporter**  | wget unavailable in container  | TCP check `</dev/tcp/localhost/9121` | Fixed        |
+| **Nginx Exporter**  | wget unavailable in container  | TCP check `</dev/tcp/localhost/9113` | Fixed        |
+| **NVIDIA Exporter** | pgrep process inefficient      | TCP check `</dev/tcp/localhost/9445` | Improved     |
+| **Ollama Exporter** | 127.0.0.1 instead of localhost | wget localhost standardized          | Standardized |
 
 ### Standard Healthcheck Methods
 
 ```yaml
 # TCP check (for minimal containers without wget/curl)
 healthcheck:
-  test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 10s
+ test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # HTTP check (for containers with wget)
 healthcheck:
-  test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:PORT/metrics || exit 1"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 10s
+ test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:PORT/metrics || exit 1"]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # Custom check (for specialized containers)
 healthcheck:
-  test: ["CMD-SHELL", "python -c \"import requests; requests.get('http://localhost:PORT/metrics')\""]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 10s
+ test: ["CMD-SHELL", "python -c \"import requests; requests.get('http://localhost:PORT/metrics')\""]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 ```
 
 ## 8. Верификация
@@ -592,7 +597,7 @@ healthcheck:
 ```bash
 # Check all exporters HTTP status
 for port in 9101 9188 9121 9445 9115 9778 9113 9808; do
-  echo "Port $port: $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)"
+ echo "Port $port: $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)"
 done
 
 # Expected output: All ports should return 200
@@ -608,7 +613,7 @@ docker ps --format "table {{.Names}}\t{{.Status}}" | grep exporter
 docker inspect erni-ki-Redis мониторинг через Grafana --format='{{.State.Health.Status}}'
 ```
 
-## 🚨 Troubleshooting Guide
+## Troubleshooting Guide
 
 ### Common Issues and Solutions
 
@@ -624,7 +629,7 @@ docker inspect CONTAINER_NAME --format='{{.State.Health}}'
 # If returns <nil>, healthcheck is not working
 # Fix: Update compose.yml with TCP check
 healthcheck:
-  test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
+ test: ["CMD-SHELL", "timeout 5 sh -c '</dev/tcp/localhost/PORT' || exit 1"]
 ```
 
 ## 2. Redis Exporter Shows redis_up = 0
@@ -673,7 +678,7 @@ curl -s http://localhost:PORT/
 curl -s http://localhost:PORT/metrics
 ```
 
-## 🚨 Prometheus Alerts Configuration
+## Prometheus Alerts Configuration
 
 ### Overview
 
@@ -740,20 +745,20 @@ ERNI-KI uses **20 active alert rules** for proactive monitoring (per
 
 ```yaml
 groups:
-  - name: erni-ki-critical-alerts
-    interval: 30s
-    rules:
-      - alert: DiskSpaceCritical
-        expr:
-          (node_filesystem_avail_bytes{mountpoint="/"} /
-          node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
-        for: 5m
-        labels:
-          severity: critical
-          component: system
-        annotations:
-          summary: 'Critical: Disk space below 15%'
-          description: 'Disk usage is {{ $value }}% on {{ $labels.instance }}'
+ - name: erni-ki-critical-alerts
+ interval: 30s
+ rules:
+ - alert: DiskSpaceCritical
+ expr:
+ (node_filesystem_avail_bytes{mountpoint="/"} /
+ node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
+ for: 5m
+ labels:
+ severity: critical
+ component: system
+ annotations:
+ summary: 'Critical: Disk space below 15%'
+ description: 'Disk usage is {{ $value }}% on {{ $labels.instance }}'
 ```
 
 ### Viewing Active Alerts
@@ -802,10 +807,10 @@ rm /tmp/test-alert.img
 
 ```bash
 curl -s http://localhost:9091/api/v1/query \
-  --data-urlencode 'query=alertmanager_cluster_messages_queued'
+ --data-urlencode 'query=alertmanager_cluster_messages_queued'
 
 curl -s http://localhost:9091/api/v1/query \
-  --data-urlencode 'query=(1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"} / node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100'
+ --data-urlencode 'query=(1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"} / node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100'
 ```
 
 ### Alert Maintenance
@@ -834,28 +839,30 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | .name'
   documentation
 - [Admin Guide](../core/admin-guide.md) - Alert management procedures
 
-## 📈 Performance Optimization
+## Performance Optimization
 
 ### Metrics Collection Optimization
 
 1. **Scrape Intervals:** Adjust based on metric importance
-   - Critical metrics: 15s interval
-   - Standard metrics: 30s interval
-   - Historical metrics: 60s interval
+
+- Critical metrics: 15s interval
+- Standard metrics: 30s interval
+- Historical metrics: 60s interval
 
 2. **Retention Policies:** Configure appropriate data retention
-   - High-resolution: 7 days
-   - Medium-resolution: 30 days
-   - Low-resolution: 1 year
+
+- High-resolution: 7 days
+- Medium-resolution: 30 days
+- Low-resolution: 1 year
 
 3. **Resource Allocation:** Monitor exporter resource usage
 
-   ```bash
-   # Check exporter resource usage
-   docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | grep exporter
-   ```
+```bash
+# Check exporter resource usage
+docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}" | grep exporter
+```
 
-## 🔐 Secure Logging Pipeline (2025-11)
+## Secure Logging Pipeline (2025-11)
 
 ### TLS / mTLS
 
@@ -875,34 +882,35 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | .name'
   `FluentBitLokiDeliveryErrors` срабатывает при росте
   `fluentbit_output_errors_total{output="loki.0"}`.
 - Runbook (сокращённо):
-  1. Проверить `docker compose logs fluent-bit loki` на TLS ошибки.
-  2. Убедиться, что сертификаты не истекли (перезапустить скрипт подготовки).
-  3. Перезапустить Fluent Bit и Loki (`docker compose restart fluent-bit loki`).
+
+1.  Проверить `docker compose logs fluent-bit loki` на TLS ошибки.
+2.  Убедиться, что сертификаты не истекли (перезапустить скрипт подготовки).
+3.  Перезапустить Fluent Bit и Loki (`docker compose restart fluent-bit loki`).
 
 ### Диагностика
 
 ```bash
 # Проверка Forward TLS
 openssl s_client -connect localhost:24224 \
-  -cert conf/fluent-bit/certs/logging-client.crt \
-  -key conf/fluent-bit/certs/logging-client.key \
-  -CAfile conf/fluent-bit/certs/logging-ca.crt -brief
+ -cert conf/fluent-bit/certs/logging-client.crt \
+ -key conf/fluent-bit/certs/logging-client.key \
+ -CAfile conf/fluent-bit/certs/logging-ca.crt -brief
 
 # Проверка Loki readiness (с верификацией сертификата)
 curl -H 'X-Scope-OrgID: erni-ki' \
-     --cacert conf/loki/tls/logging-ca.crt \
-     https://localhost:3100/ready
+ --cacert conf/loki/tls/logging-ca.crt \
+ https://localhost:3100/ready
 ```
 
-## 🎯 Success Criteria
+## Success Criteria
 
 ### System Health Indicators
 
-- ✅ **All 8 exporters return HTTP 200** on /metrics endpoint
-- ✅ **Docker healthcheck status** shows healthy or running
-- ✅ **Prometheus targets** show all exporters as UP
-- ✅ **Grafana dashboards** display current metrics
-- ✅ **AlertManager** receives and processes alerts
+- **All 8 exporters return HTTP 200** on /metrics endpoint
+- **Docker healthcheck status** shows healthy or running
+- **Prometheus targets** show all exporters as UP
+- **Grafana dashboards** display current metrics
+- **AlertManager** receives and processes alerts
 
 ### Performance Targets
 
@@ -915,18 +923,18 @@ curl -H 'X-Scope-OrgID: erni-ki' \
 
 ```mermaid
 flowchart LR
-    Apps[Сервисы ERNI-KI] -->|metrics| Exporters
-    Exporters --> Prom[Prometheus]
-    Prom --> Alerts[Alertmanager]
-    Prom --> Grafana[Grafana Dashboards]
-    Logs[Loki/ELK] --> Grafana
-    Alerts --> Oncall[On-call]
-    Oncall --> Runbooks[Runbooks]
-    Runbooks --> Fix[Rollback/Fix]
-    Fix --> Apps
+ Apps[Сервисы ERNI-KI] -->|metrics| Exporters
+ Exporters --> Prom[Prometheus]
+ Prom --> Alerts[Alertmanager]
+ Prom --> Grafana[Grafana Dashboards]
+ Logs[Loki/ELK] --> Grafana
+ Alerts --> Oncall[On-call]
+ Oncall --> Runbooks[Runbooks]
+ Runbooks --> Fix[Rollback/Fix]
+ Fix --> Apps
 ```
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - [Admin Guide](../core/admin-guide.md) - System administration
 - [Architecture](../../architecture/architecture.md) - System architecture

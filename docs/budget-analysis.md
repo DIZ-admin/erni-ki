@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 📊 Анализ Затратного Бюджета Проекта ERNI-KI
+# Анализ Затратного Бюджета Проекта ERNI-KI
 
 **Дата анализа:** 24 ноября 2025 **Версия проекта:** Production Ready v12.1
 **Технологический стек:** 32 микросервиса, GPU-ускорение, полная обсервабилити
@@ -26,7 +26,7 @@ last_updated: '2025-11-24'
 
 ### Ключевые компоненты системы:
 
-#### 🤖 Application Layer (AI & Core)
+#### Application Layer (AI & Core)
 
 - OpenWebUI (GPU) — веб-интерфейс с CUDA runtime
 - Ollama — LLM inference engine (RTX 5000, 16GB VRAM)
@@ -34,25 +34,25 @@ last_updated: '2025-11-24'
 - SearXNG — поисковый движок для RAG
 - MCP Server — 7 активных инструментов
 
-#### 🔧 Processing Layer
+#### Processing Layer
 
 - Docling — OCR и обработка документов (GPU)
 - Apache Tika — извлечение текста
 - EdgeTTS — синтез речи
 
-#### 💾 Data Layer
+#### Data Layer
 
 - PostgreSQL 17 + pgvector — основная база данных
 - Redis 7 — кэш и очереди
 - Backrest — система резервного копирования
 
-#### 🚪 Gateway & Security
+#### Gateway & Security
 
 - Nginx 1.29.3 — reverse proxy, WAF, SSL/TLS
 - Auth (Go 1.24) — JWT-сервис аутентификации
 - Cloudflared — Cloudflare Tunnel для внешнего доступа
 
-#### 📊 Observability Stack
+#### Observability Stack
 
 - Prometheus v3.0.0 — сбор метрик (27 alert rules)
 - Grafana v11.3.0 — визуализация (18 дашбордов)
@@ -62,7 +62,7 @@ last_updated: '2025-11-24'
 - 8 экспортеров метрик (node, postgres, redis, nvidia, cadvisor, blackbox,
   ollama, nginx)
 
-#### 🛠️ Infrastructure
+#### Infrastructure
 
 - Watchtower — автоматические обновления контейнеров
 - Uptime Kuma — мониторинг доступности сервисов
@@ -168,12 +168,12 @@ last_updated: '2025-11-24'
 
 | Компонент                | Роль                       | Время      | Сложность |
 | ------------------------ | -------------------------- | ---------- | --------- |
-| Ollama интеграция        | ML Engineer                | 1.5 недели | ⭐⭐⭐    |
-| OpenWebUI setup & config | Full-stack Developer       | 2 недели   | ⭐⭐⭐⭐  |
-| LiteLLM gateway          | Backend Developer (Python) | 2 недели   | ⭐⭐⭐⭐  |
-| MCP Server (7 tools)     | Backend Developer (Python) | 1.5 недели | ⭐⭐⭐⭐  |
-| Docling OCR pipeline     | ML Engineer                | 1 неделя   | ⭐⭐⭐    |
-| SearXNG integration      | Backend Developer          | 1 неделя   | ⭐⭐      |
+| Ollama интеграция        | ML Engineer                | 1.5 недели |           |
+| OpenWebUI setup & config | Full-stack Developer       | 2 недели   |           |
+| LiteLLM gateway          | Backend Developer (Python) | 2 недели   |           |
+| MCP Server (7 tools)     | Backend Developer (Python) | 1.5 недели |           |
+| Docling OCR pipeline     | ML Engineer                | 1 неделя   |           |
+| SearXNG integration      | Backend Developer          | 1 неделя   |           |
 
 **Команда:** 1 ML Engineer, 1 Full-stack Developer, 2 Backend Developers
 (Python) **Итого:** 4-6 недель параллельной работы
@@ -182,10 +182,10 @@ last_updated: '2025-11-24'
 
 | Компонент                  | Роль              | Время      | Сложность |
 | -------------------------- | ----------------- | ---------- | --------- |
-| PostgreSQL + pgvector      | Database Engineer | 1.5 недели | ⭐⭐⭐    |
-| Redis setup & optimization | Database Engineer | 1 неделя   | ⭐⭐      |
-| Backrest backup system     | DevOps Engineer   | 1 неделя   | ⭐⭐      |
-| Database migrations        | Backend Developer | 0.5 недели | ⭐⭐      |
+| PostgreSQL + pgvector      | Database Engineer | 1.5 недели |           |
+| Redis setup & optimization | Database Engineer | 1 неделя   |           |
+| Backrest backup system     | DevOps Engineer   | 1 неделя   |           |
+| Database migrations        | Backend Developer | 0.5 недели |           |
 
 **Команда:** 1 Database Engineer, 1 DevOps Engineer, 1 Backend Developer
 **Итого:** 3-4 недели
@@ -194,9 +194,9 @@ last_updated: '2025-11-24'
 
 | Компонент                | Роль              | Время    | Сложность |
 | ------------------------ | ----------------- | -------- | --------- |
-| Apache Tika integration  | Backend Developer | 1 неделя | ⭐⭐      |
-| EdgeTTS service          | Backend Developer | 1 неделя | ⭐⭐      |
-| File processing pipeline | Backend Developer | 1 неделя | ⭐⭐⭐    |
+| Apache Tika integration  | Backend Developer | 1 неделя |           |
+| EdgeTTS service          | Backend Developer | 1 неделя |           |
+| File processing pipeline | Backend Developer | 1 неделя |           |
 
 **Команда:** 1-2 Backend Developers **Итого:** 2-3 недели
 
@@ -204,9 +204,9 @@ last_updated: '2025-11-24'
 
 | Компонент           | Роль                   | Время      | Сложность |
 | ------------------- | ---------------------- | ---------- | --------- |
-| Nginx configuration | DevOps Engineer        | 1.5 недели | ⭐⭐⭐⭐  |
-| Auth service (Go)   | Backend Developer (Go) | 1.5 недели | ⭐⭐⭐    |
-| Cloudflared tunnels | DevOps Engineer        | 1 неделя   | ⭐⭐      |
+| Nginx configuration | DevOps Engineer        | 1.5 недели |           |
+| Auth service (Go)   | Backend Developer (Go) | 1.5 недели |           |
+| Cloudflared tunnels | DevOps Engineer        | 1 неделя   |           |
 
 **Команда:** 1 DevOps Engineer, 1 Go Developer **Итого:** 2-3 недели
 
@@ -214,16 +214,16 @@ last_updated: '2025-11-24'
 
 ### 3.3 Observability & Monitoring (4-5 недель)
 
-| Компонент                | Роль            | Время      | Сложность  |
-| ------------------------ | --------------- | ---------- | ---------- |
-| Prometheus setup         | DevOps Engineer | 1 неделя   | ⭐⭐⭐     |
-| 27 Alert rules           | DevOps + SRE    | 1.5 недели | ⭐⭐⭐⭐   |
-| 18 Grafana Dashboards    | DevOps Engineer | 2 недели   | ⭐⭐⭐⭐⭐ |
-| Loki log aggregation     | DevOps Engineer | 1 неделя   | ⭐⭐⭐     |
-| Fluent Bit configuration | DevOps Engineer | 0.5 недели | ⭐⭐       |
-| Alertmanager setup       | SRE Engineer    | 1 неделя   | ⭐⭐⭐     |
-| 8 Exporters deployment   | DevOps Engineer | 1 неделя   | ⭐⭐⭐     |
-| Uptime Kuma              | DevOps Engineer | 0.5 недели | ⭐⭐       |
+| Компонент                | Роль            | Время      | Сложность |
+| ------------------------ | --------------- | ---------- | --------- |
+| Prometheus setup         | DevOps Engineer | 1 неделя   |           |
+| 27 Alert rules           | DevOps + SRE    | 1.5 недели |           |
+| 18 Grafana Dashboards    | DevOps Engineer | 2 недели   |           |
+| Loki log aggregation     | DevOps Engineer | 1 неделя   |           |
+| Fluent Bit configuration | DevOps Engineer | 0.5 недели |           |
+| Alertmanager setup       | SRE Engineer    | 1 неделя   |           |
+| 8 Exporters deployment   | DevOps Engineer | 1 неделя   |           |
+| Uptime Kuma              | DevOps Engineer | 0.5 недели |           |
 
 **Команда:** 1 Senior DevOps Engineer, 1 SRE Engineer **Итого:** 4-5 недель
 
@@ -578,27 +578,30 @@ Developer **Итого:** 3-4 недели
 ### Для запуска проекта с нуля:
 
 1. **Start with MVP (6 месяцев, 570K CHF)**
-   - Доказать концепцию
-   - Валидировать требования
-   - Быстрый feedback loop
+
+- Доказать концепцию
+- Валидировать требования
+- Быстрый feedback loop
 
 2. **Iterate to Production (дополнительно 4 месяца, +800K CHF)**
-   - Масштабировать на основе real feedback
-   - Добавить enterprise features поэтапно
-   - Минимизировать риски
+
+- Масштабировать на основе real feedback
+- Добавить enterprise features поэтапно
+- Минимизировать риски
 
 3. **Hybrid approach**
-   - Используйте managed services где возможно (DB, monitoring)
-   - Кастомизируйте только критичные компоненты
-   - Cloud-first для dev/staging, on-premise для production
+
+- Используйте managed services где возможно (DB, monitoring)
+- Кастомизируйте только критичные компоненты
+- Cloud-first для dev/staging, on-premise для production
 
 ### Критические success factors:
 
-✅ **Сильная архитектурная экспертиза** — Solution Architect критичен ✅
-**DevOps automation** — CI/CD с первого дня ✅ **Security by design** — не
-afterthought ✅ **Comprehensive documentation** — знания должны быть shared ✅
-**Agile methodology** — iterative delivery, не waterfall ✅ **Stakeholder
-buy-in** — executive support и clear ROI
+**Сильная архитектурная экспертиза** — Solution Architect критичен **DevOps
+automation** — CI/CD с первого дня **Security by design** — не afterthought
+**Comprehensive documentation** — знания должны быть shared **Agile
+methodology** — iterative delivery, не waterfall **Stakeholder buy-in** —
+executive support и clear ROI
 
 ---
 

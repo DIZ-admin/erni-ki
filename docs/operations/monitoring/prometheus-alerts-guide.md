@@ -5,17 +5,15 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🚨 Prometheus Alerts Guide - ERNI-KI
+# Prometheus Alerts Guide - ERNI-KI
 
 [TOC]
 
-**Version:** 1.0  
-**Last Updated:** 2025-10-24  
-**Status:** Production Ready
+**Version:** 1.0 **Last Updated:** 2025-10-24 **Status:** Production Ready
 
 ---
 
-## 📋 Overview
+## Overview
 
 This guide provides comprehensive documentation for all 27 Prometheus alert
 rules active in the ERNI-KI system.
@@ -30,20 +28,18 @@ rules active in the ERNI-KI system.
 
 ### Severity Levels
 
-- 🔴 **Critical** - Immediate action required (system failure, data loss risk)
-- 🟡 **Warning** - Attention needed (performance degradation, approaching
+- **Critical** - Immediate action required (system failure, data loss risk)
+- [WARNING] **Warning** - Attention needed (performance degradation, approaching
   limits)
-- 🔵 **Info** - Informational (non-critical events)
+- **Info** - Informational (non-critical events)
 
 ---
 
-## 🔴 Critical Alerts
+## Critical Alerts
 
 ### 1. DiskSpaceCritical
 
-**Severity:** Critical  
-**Component:** System  
-**Threshold:** Disk usage >85%  
+**Severity:** Critical **Component:** System **Threshold:** Disk usage >85%
 **Duration:** 5 minutes
 
 **Expression:**
@@ -83,9 +79,7 @@ docker system prune -a --volumes -f
 
 ## 2. MemoryCritical
 
-**Severity:** Critical  
-**Component:** System  
-**Threshold:** Available memory <5%  
+**Severity:** Critical **Component:** System **Threshold:** Available memory <5%
 **Duration:** 5 minutes
 
 **Expression:**
@@ -122,10 +116,8 @@ docker compose restart SERVICE_NAME
 
 ## 3. ContainerDown
 
-**Severity:** Critical  
-**Component:** Docker  
-**Threshold:** Container not running  
-**Duration:** 1 minute
+**Severity:** Critical **Component:** Docker **Threshold:** Container not
+running **Duration:** 1 minute
 
 **Expression:**
 
@@ -161,10 +153,8 @@ docker inspect SERVICE_NAME | jq '.[0].State.Health'
 
 ## 4. PostgreSQLDown
 
-**Severity:** Critical  
-**Component:** Database  
-**Threshold:** PostgreSQL unavailable  
-**Duration:** 1 minute
+**Severity:** Critical **Component:** Database **Threshold:** PostgreSQL
+unavailable **Duration:** 1 minute
 
 **Expression:**
 
@@ -200,9 +190,7 @@ docker compose restart db
 
 ## 5. RedisDown
 
-**Severity:** Critical  
-**Component:** Cache  
-**Threshold:** Redis unavailable  
+**Severity:** Critical **Component:** Cache **Threshold:** Redis unavailable
 **Duration:** 1 minute
 
 **Expression:**
@@ -239,10 +227,8 @@ docker compose restart redis
 
 ## 6. OllamaGPUDown
 
-**Severity:** Critical  
-**Component:** AI/GPU  
-**Threshold:** Ollama GPU unavailable  
-**Duration:** 2 minutes
+**Severity:** Critical **Component:** AI/GPU **Threshold:** Ollama GPU
+unavailable **Duration:** 2 minutes
 
 **Expression:**
 
@@ -281,9 +267,7 @@ docker compose restart ollama
 
 ## 7. NginxDown
 
-**Severity:** Critical  
-**Component:** Gateway  
-**Threshold:** Nginx unavailable  
+**Severity:** Critical **Component:** Gateway **Threshold:** Nginx unavailable
 **Duration:** 1 minute
 
 **Expression:**
@@ -318,20 +302,18 @@ docker compose restart nginx
 
 ---
 
-## 🟡 Warning Alerts
+## [WARNING] Warning Alerts
 
 ### 8. DiskSpaceWarning
 
-**Severity:** Warning  
-**Component:** System  
-**Threshold:** Disk usage >75%  
+**Severity:** Warning **Component:** System **Threshold:** Disk usage >75%
 **Duration:** 10 minutes
 
 **Expression:**
 
 ```promql
 (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"} /
-      node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100 > 80
+ node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100 > 80
 ```
 
 **Notes:** EFI-раздел (`/boot/efi`, `vfat`) исключён, чтобы не получать ложных
@@ -343,9 +325,7 @@ docker compose restart nginx
 
 ### 9. MemoryWarning
 
-**Severity:** Warning  
-**Component:** System  
-**Threshold:** Available memory <15%  
+**Severity:** Warning **Component:** System **Threshold:** Available memory <15%
 **Duration:** 10 minutes
 
 **Resolution:** Same as MemoryCritical, but less urgent.
@@ -354,9 +334,7 @@ docker compose restart nginx
 
 ### 10. HighCPUUsage
 
-**Severity:** Warning  
-**Component:** System  
-**Threshold:** CPU usage >80%  
+**Severity:** Warning **Component:** System **Threshold:** CPU usage >80%
 **Duration:** 5 minutes
 
 **Expression:**
@@ -382,22 +360,20 @@ docker stats --no-stream --format "table {{.Container}}\t{{CPUPerc}}"
 
 ## 11. ContainerRestarting
 
-**Severity:** Warning  
-**Component:** Docker  
-**Threshold:** ≥2 restarts per container within 15 minutes  
-**Duration:** 1 minute (debounce)
+**Severity:** Warning **Component:** Docker **Threshold:** ≥2 restarts per
+container within 15 minutes **Duration:** 1 minute (debounce)
 
 **Expression:**
 
 ```promql
 sum by (name) (
-  changes(
-    container_start_time_seconds{
-      job="cadvisor",
-      container_label_com_docker_compose_project="erni-ki",
-      name!~"erni-ki-(cadvisor|node-exporter|alertmanager).*"
-    }[15m]
-  )
+ changes(
+ container_start_time_seconds{
+ job="cadvisor",
+ container_label_com_docker_compose_project="erni-ki",
+ name!~"erni-ki-(cadvisor|node-exporter|alertmanager).*"
+ }[15m]
+ )
 ) >= 2
 ```
 
@@ -425,9 +401,7 @@ docker inspect SERVICE_NAME | jq '.[0].State | {Status, ExitCode, Health}'
 
 ## 12. PostgreSQLHighConnections
 
-**Severity:** Warning  
-**Component:** Database  
-**Threshold:** >80 connections  
+**Severity:** Warning **Component:** Database **Threshold:** >80 connections
 **Duration:** 5 minutes
 
 **Expression:**
@@ -453,9 +427,7 @@ docker compose exec db psql -U postgres -d openwebui -c "SELECT pg_terminate_bac
 
 ## 13. RedisHighMemory
 
-**Severity:** Warning  
-**Component:** Cache  
-**Threshold:** Memory usage >1GB  
+**Severity:** Warning **Component:** Cache **Threshold:** Memory usage >1GB
 **Duration:** 10 minutes
 
 **Expression:**
@@ -481,10 +453,8 @@ docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 FLUSHDB
 
 ## 14. RedisHighFragmentation
 
-**Severity:** Warning  
-**Component:** Cache  
-**Threshold:** `redis_mem_fragmentation_ratio > 5`  
-**Duration:** 10 minutes
+**Severity:** Warning **Component:** Cache **Threshold:**
+`redis_mem_fragmentation_ratio > 5` **Duration:** 10 minutes
 
 **Expression:**
 
@@ -513,9 +483,7 @@ runbook на раздел _docs/security/log-audit.md › Выполненные
 
 ## 15. OllamaHighVRAM
 
-**Severity:** Warning  
-**Component:** AI/GPU  
-**Threshold:** VRAM usage >80%  
+**Severity:** Warning **Component:** AI/GPU **Threshold:** VRAM usage >80%
 **Duration:** 10 minutes
 
 **Expression:**
@@ -541,9 +509,7 @@ docker compose exec ollama ollama rm MODEL_NAME
 
 ## 16. NginxHighErrorRate
 
-**Severity:** Warning  
-**Component:** Gateway  
-**Threshold:** >10 5xx errors/min  
+**Severity:** Warning **Component:** Gateway **Threshold:** >10 5xx errors/min
 **Duration:** 5 minutes
 
 **Expression:**
@@ -567,14 +533,12 @@ curl -I http://localhost:8080
 
 ---
 
-## 📊 Performance Alerts
+## Performance Alerts
 
 ### 17. OpenWebUISlowResponse
 
-**Severity:** Warning  
-**Component:** Application  
-**Threshold:** Response time >5s  
-**Duration:** 5 minutes
+**Severity:** Warning **Component:** Application **Threshold:** Response
+time >5s **Duration:** 5 minutes
 
 **Resolution:**
 
@@ -593,9 +557,7 @@ time curl -X POST http://localhost:11434/api/generate -d '{"model":"llama3.2","p
 
 ## 18. SearXNGSlowSearch
 
-**Severity:** Warning  
-**Component:** Search  
-**Threshold:** Search time >3s  
+**Severity:** Warning **Component:** Search **Threshold:** Search time >3s
 **Duration:** 5 minutes
 
 **Resolution:**
@@ -615,10 +577,8 @@ docker compose logs searxng --tail 50
 
 ## 19. DockerStoragePoolAlmostFull
 
-**Severity:** Warning  
-**Component:** Infrastructure  
-**Threshold:** Docker storage >85%  
-**Duration:** 10 minutes
+**Severity:** Warning **Component:** Infrastructure **Threshold:** Docker
+storage >85% **Duration:** 10 minutes
 
 **Resolution:**
 
@@ -635,7 +595,7 @@ docker system prune -a --volumes -f
 
 ---
 
-## 🔧 Alert Management
+## Alert Management
 
 ### Viewing Alerts
 
@@ -670,14 +630,14 @@ procedures.
 ```bash
 # Silence specific alert for 1 hour
 curl -X POST http://localhost:9093/api/v1/silences \
-  -H "Content-Type: application/json" \
-  -d '{
-    "matchers": [{"name":"alertname","value":"DiskSpaceWarning","isRegex":false}],
-    "startsAt":"'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
-    "endsAt":"'$(date -u -d '+1 hour' +%Y-%m-%dT%H:%M:%S.000Z)'",
-    "createdBy":"admin",
-    "comment":"Maintenance window"
-  }'
+ -H "Content-Type: application/json" \
+ -d '{
+ "matchers": [{"name":"alertname","value":"DiskSpaceWarning","isRegex":false}],
+ "startsAt":"'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+ "endsAt":"'$(date -u -d '+1 hour' +%Y-%m-%dT%H:%M:%S.000Z)'",
+ "createdBy":"admin",
+ "comment":"Maintenance window"
+ }'
 ```
 
 ---
@@ -686,22 +646,22 @@ curl -X POST http://localhost:9093/api/v1/silences \
 
 ```mermaid
 sequenceDiagram
-    participant Exporter
-    participant Prom as Prometheus
-    participant Alert as Alertmanager
-    participant Oncall
-    Exporter->>Prom: /metrics scrape
-    Prom-->>Prom: eval rules
-    Prom->>Alert: send alert
-    Alert->>Oncall: route (Slack/Email)
-    Oncall->>Alert: acknowledge
-    Oncall->>Exporter: fix/runbook
-    Alert-->>Prom: resolved
+ participant Exporter
+ participant Prom as Prometheus
+ participant Alert as Alertmanager
+ participant Oncall
+ Exporter->>Prom: /metrics scrape
+ Prom-->>Prom: eval rules
+ Prom->>Alert: send alert
+ Alert->>Oncall: route (Slack/Email)
+ Oncall->>Alert: acknowledge
+ Oncall->>Exporter: fix/runbook
+ Alert-->>Prom: resolved
 ```
 
 ---
 
-## 📚 Related Documentation
+## Related Documentation
 
 - [Monitoring Guide](monitoring-guide.md) - Complete monitoring documentation
 - [Admin Guide](../core/admin-guide.md) - System administration
@@ -709,5 +669,4 @@ sequenceDiagram
 
 ---
 
-**Last Updated:** 2025-10-24  
-**Next Review:** 2025-11-24
+**Last Updated:** 2025-10-24 **Next Review:** 2025-11-24

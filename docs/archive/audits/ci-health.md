@@ -29,23 +29,23 @@ GitHub Expressions не позволяют обращаться к ключам 
 ## 3. Исправления
 
 - Применили скобочную нотацию для всех job/step IDs с дефисами:
-  - `ci.yml`: `needs['test-go']`, `needs['test-js']`, `needs['docker-build']` в
-    summary job.
-  - `security.yml`: `needs['dependency-scan']`, `needs['secret-scan']`,
-    `needs['container-scan']`, `needs['config-scan']`, а также
-    `steps['grype-scan']`.
-  - `deploy-environments.yml`: валидация секретов, сборка и деплой теперь
-    используют `needs['determine-environment']` при обращении к
-    outputs/conditions.
+- `ci.yml`: `needs['test-go']`, `needs['test-js']`, `needs['docker-build']` в
+  summary job.
+- `security.yml`: `needs['dependency-scan']`, `needs['secret-scan']`,
+  `needs['container-scan']`, `needs['config-scan']`, а также
+  `steps['grype-scan']`.
+- `deploy-environments.yml`: валидация секретов, сборка и деплой теперь
+  используют `needs['determine-environment']` при обращении к
+  outputs/conditions.
 - Провели локальную проверку скриптами (`npm run lint`, `npm run test`,
   `go test ./...`, `npm run test:e2e:mock`) чтобы убедиться, что кодовая база
   здорова перед повторным запуском CI.
 
 ## 4. Проверка и дальнейшие действия
 
-1. Запустить вручную workflows `🔄 Continuous Integration`,
-   `🔒 Advanced Security` и `🚀 Environment Deploy` (через `workflow_dispatch`)
-   и убедиться, что summary job проходит.
+1. Запустить вручную workflows ` Continuous Integration`, ` Advanced Security` и
+   ` Environment Deploy` (через `workflow_dispatch`) и убедиться, что summary
+   job проходит.
 2. Если нужно локально валидировать, можно использовать
    `act pull_request -j lint` / `act workflow_dispatch -j security-report` —
    теперь выражения корректно обрабатываются.
@@ -58,14 +58,14 @@ GitHub Expressions не позволяют обращаться к ключам 
 
 ```mermaid
 flowchart LR
-    dev[Pull Request] --> lint[Lint + Type Check]
-    lint --> unit[Vitest]
-    unit --> build[Docker Build]
-    build --> sec[Security Scan]
-    sec --> deploy[Preview Deploy]
-    deploy --> status[GitHub Checks]
-    status -->|pass| merge[Merge]
-    status -->|fail| triage[Fix & rerun]
+ dev[Pull Request] --> lint[Lint + Type Check]
+ lint --> unit[Vitest]
+ unit --> build[Docker Build]
+ build --> sec[Security Scan]
+ sec --> deploy[Preview Deploy]
+ deploy --> status[GitHub Checks]
+ status -->|pass| merge[Merge]
+ status -->|fail| triage[Fix & rerun]
 ```
 
 > Ответственный: Codex · 2025-11-17

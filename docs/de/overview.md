@@ -3,19 +3,19 @@ language: de
 translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
-title: '📚 ERNI-KI Dokumentation (Deutsch)'
+title: ' ERNI-KI Dokumentation (Deutsch)'
 system_version: '12.1'
 date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
-# 📚 ERNI-KI Dokumentation (Deutsch)
+# ERNI-KI Dokumentation (Deutsch)
 
 > **Willkommen zur deutschen Dokumentation von ERNI-KI** **Version:** 12.1
 > (Wave 3) · **Aktualisiert:** 2025-11-14
 
-## 🎯 Über ERNI-KI
+## Über ERNI-KI
 
 <!-- STATUS_SNIPPET_DE_START -->
 
@@ -40,16 +40,16 @@ Sicherheitssystem. Die Plattform bietet eine benutzerfreundliche Weboberfläche
 für die Arbeit mit lokalen Sprachmodellen, RAG-Suche, Dokumentenverarbeitung und
 Sprachinteraktion.
 
-## 📖 Dokumentations-Übersicht
+## Dokumentations-Übersicht
 
-### 🚀 Erste Schritte
+### Erste Schritte
 
 - **[Installationsanleitung](getting-started/installation.md)** - Detaillierte
   Installationsschritte
 - **[Benutzerhandbuch](getting-started/user-guide.md)** - Anleitung für
   Endbenutzer
 
-### 🏗️ Technische Dokumentation
+### Technische Dokumentation
 
 - **[Systemarchitektur](architecture/architecture.md)** - Technische Architektur
   und Service-Details
@@ -63,14 +63,14 @@ Sprachinteraktion.
 - **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
   (Englisch)
 
-### 💻 Entwicklung
+### Entwicklung
 
 - **[Entwicklerhandbuch](../reference/development.md)** - Entwicklungsumgebung
   einrichten (Englisch)
 
-## 🎯 Zielgruppen
+## Zielgruppen
 
-### 👤 **Endbenutzer**
+### **Endbenutzer**
 
 Wenn Sie ERNI-KI verwenden möchten:
 
@@ -78,7 +78,7 @@ Wenn Sie ERNI-KI verwenden möchten:
 2. Lernen Sie die Grundlagen der AI-Interaktion
 3. Entdecken Sie erweiterte Funktionen wie RAG-Suche und Dokumentenverarbeitung
 
-### 👨‍💼 **Administratoren**
+### ‍ **Administratoren**
 
 Wenn Sie ERNI-KI installieren und verwalten:
 
@@ -88,7 +88,7 @@ Wenn Sie ERNI-KI installieren und verwalten:
    **[Administrator-Handbuch](operations/core/admin-guide.md)** für die tägliche
    Verwaltung
 
-### 👨‍💻 **Entwickler**
+### ‍ **Entwickler**
 
 Wenn Sie ERNI-KI erweitern oder anpassen möchten:
 
@@ -96,9 +96,9 @@ Wenn Sie ERNI-KI erweitern oder anpassen möchten:
 2. Lesen Sie das **[Entwicklerhandbuch](../reference/development.md)**
 3. Nutzen Sie die **[API-Referenz](../reference/api-reference.md)**
 
-## 🚀 Schnellstart-Pfade
+## Schnellstart-Pfade
 
-### 🏃‍♂️ **Schnelle Installation (30 Minuten)**
+### ‍ **Schnelle Installation (30 Minuten)**
 
 ```bash
 # Repository klonen
@@ -118,7 +118,7 @@ docker compose exec ollama ollama pull llama3.2:3b
 
 → **Weiter mit:** [Installationsanleitung](getting-started/installation.md)
 
-## 🎯 **Erste Nutzung (10 Minuten)**
+## **Erste Nutzung (10 Minuten)**
 
 1. Browser öffnen: `https://ki.erni-gruppe.ch` (oder lokal:
    `http://localhost:8080`)
@@ -128,7 +128,7 @@ docker compose exec ollama ollama pull llama3.2:3b
 
 → **Weiter mit:** [Benutzerhandbuch](getting-started/user-guide.md)
 
-### ⚙️ **System-Administration**
+### **System-Administration**
 
 1. Service-Status überwachen: `docker compose ps`
 2. Logs prüfen: `docker compose logs -f`
@@ -137,30 +137,30 @@ docker compose exec ollama ollama pull llama3.2:3b
 
 → **Weiter mit:** [Administrator-Handbuch](operations/core/admin-guide.md)
 
-## 🔧 Hauptfunktionen
+## Hauptfunktionen
 
-### 🤖 **AI-Funktionen**
+### **AI-Funktionen**
 
 - **Lokale Sprachmodelle** - Vollständige Kontrolle über Ihre Daten
 - **RAG-Suche** - Aktuelle Informationen aus dem Internet
 - **Dokumentenverarbeitung** - PDF, DOCX, PPTX Analyse
 - **Sprachinteraktion** - Ein- und Ausgabe über Sprache
 
-### 🔒 **Sicherheit**
+### **Sicherheit**
 
 - **JWT-Authentifizierung** - Sichere Benutzeranmeldung
 - **SSL/TLS-Verschlüsselung** - Vollständige HTTPS-Unterstützung
 - **Cloudflare Zero Trust** - Sichere Tunnel ohne offene Ports
 - **Lokale Datenspeicherung** - Ihre Daten bleiben bei Ihnen
 
-### 🛠️ **DevOps-Features**
+### **DevOps-Features**
 
 - **Docker Compose** - Einfache Containerisierung
 - **Automatische Backups** - Datenschutz durch Backrest
 - **Health Monitoring** - Systemüberwachung
 - **Auto-Updates** - Aktuelle Software-Versionen
 
-## 📊 Systemanforderungen
+## Systemanforderungen
 
 ### Minimum (Testen)
 
@@ -178,24 +178,24 @@ docker compose exec ollama ollama pull llama3.2:3b
 - **Festplatte**: 200GB+ NVMe SSD
 - **Netzwerk**: 100 Mbps+
 
-## 🆘 Hilfe und Support
+## Hilfe und Support
 
-### 📚 **Dokumentation**
+### **Dokumentation**
 
 - Alle Anleitungen sind in dieser Dokumentation verfügbar
 - Schritt-für-Schritt-Anleitungen mit Code-Beispielen
 - Fehlerbehebungs-Guides für häufige Probleme
 
-### 🐛 **Problem-Meldung**
+### **Problem-Meldung**
 
 - **GitHub Issues**:
   [github.com/DIZ-admin/erni-ki/issues](https://github.com/DIZ-admin/erni-ki/issues)
 - **Diskussionen**: GitHub Discussions für Fragen
 - **Community**: Austausch mit anderen Benutzern
 
-### 🔍 **Diagnose-Tools**
+### **Diagnose-Tools**
 
-## 📌 Pflegehinweis
+## Pflegehinweis
 
 - Status-Blöcke (oben auf dieser Seite und in anderen deutschen Dateien) werden
   aus `docs/reference/status.yml` generiert. Bei Änderungen bitte
@@ -217,30 +217,30 @@ docker compose logs service-name
 curl http://localhost:8080/health
 ```
 
-## 🌟 Erweiterte Themen
+## Erweiterte Themen
 
-### 🔧 **Anpassung**
+### **Anpassung**
 
 - Eigene Sprachmodelle hinzufügen
 - Custom Nginx-Konfiguration
 - Erweiterte Sicherheitseinstellungen
 - Performance-Optimierung
 
-### 📈 **Skalierung**
+### **Skalierung**
 
 - Multi-GPU-Konfiguration
 - Load Balancing
 - Hochverfügbarkeits-Setup
 - Monitoring und Alerting
 
-### 🔌 **Integration**
+### **Integration**
 
 - API-Integration in eigene Anwendungen
 - Single Sign-On (SSO) Konfiguration
 - Externe Datenbank-Anbindung
 - Custom MCP-Server
 
-## 📝 Dokumentations-Beiträge
+## Dokumentations-Beiträge
 
 Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 
@@ -251,7 +251,7 @@ Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 
 → **Beitragen:** [Entwicklerhandbuch](../reference/development.md)
 
-## 🏷️ Versionshinweise
+## Versionshinweise
 
 - **v2.0** - Vollständige deutsche Übersetzung
 - **v1.x** - Ursprüngliche englische/russische Dokumentation
@@ -259,15 +259,13 @@ Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 
 ---
 
-## 🎉 Los geht's
+## Los geht's
 
 **Bereit zum Start?** Wählen Sie Ihren Pfad:
 
-- 🚀 **[Schnelle Installation](getting-started/installation.md)** - System in 30
+- **[Schnelle Installation](getting-started/installation.md)** - System in 30
   Minuten aufsetzen
-- 👤 **[Benutzer-Guide](getting-started/user-guide.md)** - Sofort mit AI
-  arbeiten
-- 🏗️ **[Architektur verstehen](architecture/architecture.md)** - Technische
-  Details
+- **[Benutzer-Guide](getting-started/user-guide.md)** - Sofort mit AI arbeiten
+- **[Architektur verstehen](architecture/architecture.md)** - Technische Details
 
-**Viel Erfolg mit ERNI-KI!** 🤖✨
+**Viel Erfolg mit ERNI-KI!**

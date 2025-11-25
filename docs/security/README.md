@@ -15,24 +15,24 @@ for the ERNI-KI platform.
 ### Security Guides
 
 - **[authentication.md](authentication.md)** - Authentication and authorization
-  - JWT token management
-  - User authentication flow
-  - API key management
-  - Rate limiting
+- JWT token management
+- User authentication flow
+- API key management
+- Rate limiting
 
 - **[ssl-tls-setup.md](ssl-tls-setup.md)** - SSL/TLS configuration
-  - Certificate management
-  - Cloudflare integration
-  - Zero Trust setup
+- Certificate management
+- Cloudflare integration
+- Zero Trust setup
 
 ### Security Policies
 
 - **[security-best-practices.md](security-best-practices.md)** - Security
   guidelines
-  - Secure configuration
-  - Network security
-  - Data protection
-  - Access control
+- Secure configuration
+- Network security
+- Data protection
+- Access control
 
 ## Quick Reference
 
@@ -61,7 +61,7 @@ ERNI-KI implements multiple security layers:
 **DO NOT** create public GitHub issues for security vulnerabilities. Contact:
 <security@erni-gruppe.ch>
 
-## 🔗 Связанная документация
+## Связанная документация
 
 - [Architecture](../architecture/README.md)
 - [Operations](../operations/README.md)

@@ -5,12 +5,12 @@ doc_version: '2025.11'
 last_updated: '2025-11-25'
 ---
 
-# 🔌 ERNI-KI API Referenz
+# ERNI-KI API Referenz
 
-> **Dokumentversion:** 5.0 · **Stand:** 2025-11-14 · **API Version:** v1  
-> **Status:** ✅ Core Endpoints, LiteLLM Context7 und RAG verifiziert
+> **Dokumentversion:** 5.0 · **Stand:** 2025-11-14 · **API Version:** v1
+> **Status:** Core Endpoints, LiteLLM Context7 und RAG verifiziert
 
-## 📋 API-Überblick
+## API-Überblick
 
 [TOC]
 
@@ -18,7 +18,7 @@ REST-API für Chats, Modelle, Suche, Backups und User-Management. JWT ist für
 alle Requests Pflicht (`Authorization: Bearer <token>`); Antworten enthalten
 `model`, `estimated_tokens`, `sources[]`.
 
-### 🧠 RAG und Model Context Protocol
+### RAG und Model Context Protocol
 
 - **LiteLLM Context Engineering** (`/lite/api/v1/context`, `/lite/api/v1/think`)
   injiziert History und routet auf Ollama/Docling.
@@ -28,7 +28,7 @@ alle Requests Pflicht (`Authorization: Bearer <token>`); Antworten enthalten
   spricht Docling/SearXNG an und liefert `source_id`, `source_url`, `cursor`,
   `tokens_used`.
 
-### ⚙️ LiteLLM Context7 Gateway
+### LiteLLM Context7 Gateway
 
 LiteLLM v1.80.0.rc.1 als Context Layer (Thinking Tokens, MCP Tools, Ollama).
 
@@ -40,17 +40,17 @@ LiteLLM v1.80.0.rc.1 als Context Layer (Thinking Tokens, MCP Tools, Ollama).
 | Clients          | OpenWebUI, externe Agents, cURL/MCPO                   |
 | Monitoring       | `scripts/monitor-litellm-memory.sh`, Grafana Dashboard |
 
-#### 🔄 Beispiel: Context API
+#### Beispiel: Context API
 
 ```bash
 curl -X POST http://localhost:4000/lite/api/v1/context \
-  -H "Authorization: Bearer $LITELLM_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "input": "Summarize the latest Alertmanager queue state",
-    "enable_thinking": true,
-    "metadata": { "chat_id": "chat-uuid", "source": "api-reference" }
-  }'
+ -H "Authorization: Bearer $LITELLM_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "input": "Summarize the latest Alertmanager queue state",
+ "enable_thinking": true,
+ "metadata": { "chat_id": "chat-uuid", "source": "api-reference" }
+ }'
 ```
 
 Antwort (gekürzt):
@@ -67,12 +67,12 @@ Antwort (gekürzt):
 }
 ```
 
-#### 🧠 Thinking API `/lite/api/v1/think`
+#### Thinking API `/lite/api/v1/think`
 
 Streamt Server-Sent Events mit Phasen `thinking`, `action`, `observation`,
 `final`. Ohne Streaming: JSON mit `reasoning_trace`, `output`, `tokens_used`.
 
-### 🔍 RAG Endpoints (Docling + SearXNG)
+### RAG Endpoints (Docling + SearXNG)
 
 - `GET /api/v1/rag/status` – Health RAG-Pipeline
 - `POST /api/search` – Föderierte Suche (Brave, Bing, Wikipedia)
@@ -83,12 +83,12 @@ Beispiel (Docling Upload):
 
 ```bash
 curl -X POST https://ki.erni-gruppe.ch/api/documents \
-  -H "Authorization: Bearer $TOKEN" \
-  -F "file=@sample.pdf" \
-  -F "metadata={\"category\":\"operations\",\"tags\":[\"redis\",\"alertmanager\"]};type=application/json"
+ -H "Authorization: Bearer $TOKEN" \
+ -F "file=@sample.pdf" \
+ -F "metadata={\"category\":\"operations\",\"tags\":[\"redis\",\"alertmanager\"]};type=application/json"
 ```
 
-### 🚀 API Updates (September 2025)
+### API Updates (September 2025)
 
 - **SearXNG** `/api/searxng/search` gefixt: 404 behoben, RAG-Suche stabil, <2s,
   4 Engines.
