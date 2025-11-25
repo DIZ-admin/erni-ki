@@ -667,17 +667,17 @@ services:
 
   # Uptime Kuma - visual ERNI-KI status
   uptime-kuma:
-    image: louislam/uptime-kuma:1
+    image: louislam/uptime-kuma:2.0.2
     container_name: erni-ki-uptime-kuma
     env_file: env/uptime-kuma.env
     restart: always
     logging: *monitoring-logging
     ports:
-      - "127.0.0.1:3001:3001" # Local port; external access via reverse-proxy
+      - "3001:3001" # Expose to local network (was 127.0.0.1 only)
     volumes:
       - ./data/uptime-kuma:/app/data
     healthcheck:
-      test: ["CMD", "node", "/app/server/ping.js"]
+      test: ["CMD", "node", "/app/extra/healthcheck.js"]
       interval: 30s
       timeout: 10s
       retries: 5
