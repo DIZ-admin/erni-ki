@@ -21,5 +21,5 @@ last_updated: '2025-11-24'
 ## Известные проблемы
 
 - Сравните текущие симптомы с отчетом
-  [`docs/archive/reports/log-analysis-correction-2025-11-04.md`](../../archive/reports/log-analysis-correction-2025-11-04.md)
-  для выявления повторяющихся проблем.
+  `../../archive/reports/log-analysis-correction-2025-11-04.md` для выявления
+  повторяющихся проблем.

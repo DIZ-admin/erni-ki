@@ -15,10 +15,8 @@ last_updated: '2025-11-24'
 
 - Проанализировано: 194 markdown файла
 - Языки: RU (100%), DE (74.4%), EN (19.5%)
-- Создано:
-  [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
-- Создано:
-  [documentation-refactoring-audit-2025-11-24.md](../audits/documentation-refactoring-audit-2025-11-24.md)
+- Создано: `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
+- Создано: `../audits/documentation-refactoring-audit-2025-11-24.md`
 
 ### 2. Комплексный аудит кода
 
@@ -28,13 +26,11 @@ last_updated: '2025-11-24'
 - 32 Docker сервиса
 - 50 environment файлов
 - 29 конфигурационных директорий
-- Создано:
-  [code-audit-2025-11-24.md](../archive/audits/code-audit-2025-11-24.md)
+- Создано: `../archive/audits/code-audit-2025-11-24.md`
 
 ### 3. Актуализация документации
 
-- Создано:
-  [documentation-update-plan-2025-11-24.md](documentation-update-plan-2025-11-24.md)
+- Создано: `documentation-update-plan-2025-11-24.md`
 - Задач: 10 (3 High, 5 Medium, 2 Low priority)
 - Оценка времени: 19-27 часов
 
@@ -109,8 +105,7 @@ last_updated: '2025-11-24'
 
 ## Созданные документы
 
-1. **[code-audit-2025-11-24.md](../archive/audits/code-audit-2025-11-24.md)**
-   (15+ страниц)
+1. **`../archive/audits/code-audit-2025-11-24.md`** (15+ страниц)
 
 - Полный аудит всех 32 сервисов
 - Анализ исходного кода (Go, Python)
@@ -118,8 +113,7 @@ last_updated: '2025-11-24'
 - Выявленные проблемы (10 items)
 - Рекомендации по обновлению
 
-2. **[documentation-update-plan-2025-11-24.md](documentation-update-plan-2025-11-24.md)**
-   (10+ страниц)
+2. **`documentation-update-plan-2025-11-24.md`** (10+ страниц)
 
 - Подробные инструкции для каждой задачи
 - Готовые шаблоны документов
@@ -127,8 +121,7 @@ last_updated: '2025-11-24'
 - Оценка времени
 - Приоритизация (3 спринта)
 
-3. **[code-audit-summary-2025-11-24.md](code-audit-summary-2025-11-24.md)**
-   (этот документ)
+3. **`code-audit-summary-2025-11-24.md`** (этот документ)
 
 - Executive summary для быстрого ознакомления
 
@@ -136,8 +129,8 @@ last_updated: '2025-11-24'
 
 1. **Review документов**:
 
-- [code-audit-2025-11-24.md](../archive/audits/code-audit-2025-11-24.md)
-- [documentation-update-plan-2025-11-24.md](documentation-update-plan-2025-11-24.md)
+- `../archive/audits/code-audit-2025-11-24.md`
+- `documentation-update-plan-2025-11-24.md`
 
 2. **Создать GitHub issues** для каждой из 10 задач
 

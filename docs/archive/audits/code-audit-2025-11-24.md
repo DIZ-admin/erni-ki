@@ -33,8 +33,7 @@ audit_type: code_comprehensive
 
 - **Image**: `pgvector/pgvector:pg17`
 - **Расширения**: pgvector для векторного поиска
-- **Конфигурация**:
-  [conf/postgres-enhanced/postgresql.conf](../../../conf/postgres-enhanced/postgresql.conf)
+- **Конфигурация**: `../../../conf/postgres-enhanced/postgresql.conf`
 - **Custom settings**: pg_stat_statements включен (добавлено 2025-11-04)
 - **Ресурсы**: mem_limit 4GB, cpus 2.0
 - **Watchtower**: Отключено (критическая БД)
@@ -43,7 +42,7 @@ audit_type: code_comprehensive
 #### Redis 7
 
 - **Image**: `redis:7-alpine` (откат с 7.2 из-за несовместимости RDB v12)
-- **Конфигурация**: [conf/redis/redis.conf](../../../conf/redis/redis.conf)
+- **Конфигурация**: `../../../conf/redis/redis.conf`
 - **Features**: Active defragmentation (обновлено 2025-10-02)
 - **Ресурсы**: mem_limit 1GB, cpus 1.0
 - **Watchtower**: Включено
@@ -62,7 +61,7 @@ audit_type: code_comprehensive
 #### Nginx 1.29.3
 
 - **Image**: `nginx:1.29.3` (обновлено 2025-11-04 с 1.28.0)
-- **Конфигурация**: [conf/nginx/nginx.conf](../../../conf/nginx/nginx.conf)
+- **Конфигурация**: `../../../conf/nginx/nginx.conf`
 - **Features**:
 - Correlation ID tracking (X-Request-ID)
 - Rate limiting (9 зон)
@@ -81,8 +80,7 @@ audit_type: code_comprehensive
 - **Image**: `ghcr.io/open-webui/open-webui:v0.6.36`
 - **Update date**: 2025-11-18 (latest stable)
 - **GPU**: NVIDIA runtime, CUDA_VISIBLE_DEVICES настраиваемые
-- **Entrypoint wrapper**:
-  [scripts/entrypoints/openwebui.sh](../../../scripts/entrypoints/openwebui.sh)
+- **Entrypoint wrapper**: `../../../scripts/entrypoints/openwebui.sh`
 - **Ресурсы**: mem_limit 8GB, mem_reservation 4GB, cpus 4.0
 - **OOM protection**: oom_score_adj -600
 - **Dependencies**: auth, db, litellm, ollama, redis
@@ -95,8 +93,7 @@ audit_type: code_comprehensive
 
 - **Image**: `ghcr.io/berriai/litellm:v1.80.0.rc.1`
 - **Update date**: 2025-11-18 (routing fixes + security patches)
-- **Конфигурация**:
-  [conf/litellm/config.yaml](../../../conf/litellm/config.yaml)
+- **Конфигурация**: `../../../conf/litellm/config.yaml`
 - **Features**:
 - Database-managed models (store_model_in_db: true)
 - OpenAI Assistant API passthrough
@@ -107,10 +104,8 @@ audit_type: code_comprehensive
 - Fallback models support
 - **Ресурсы**: mem_limit 12GB (увеличено с 8GB для OOM prevention)
 - **OOM protection**: oom_score_adj -300
-- **Custom providers**:
-  [conf/litellm/custom_providers/](../../../conf/litellm/custom_providers/)
-- **Entrypoint wrapper**:
-  [scripts/entrypoints/litellm.sh](../../../scripts/entrypoints/litellm.sh)
+- **Custom providers**: `../../../conf/litellm/custom_providers/`
+- **Entrypoint wrapper**: `../../../scripts/entrypoints/litellm.sh`
 - **Secrets**: 7 секретов (db_password, api_key, master_key, salt_key,
   ui_password, openai_api_key, publicai_api_key)
 - **Status**: Соответствует документации
@@ -126,9 +121,9 @@ audit_type: code_comprehensive
 - **JWT Library**: github.com/golang-jwt/jwt/v5
 - **Dockerfile**: Multi-stage build с distroless final image
 - **Исходники**:
-- [auth/main.go:183](../../../auth/main.go) - 183 строки
-- [auth/main_test.go:255](../../../auth/main_test.go) - 255 строк (8 тестов)
-- [auth/Dockerfile:65](../../../auth/Dockerfile) - Multi-stage оптимизация
+- `../../../auth/main.go` - 183 строки
+- `../../../auth/main_test.go` - 255 строк (8 тестов)
+- `../../../auth/Dockerfile` - Multi-stage оптимизация
 - **Endpoints**:
 - `GET /` - service status
 - `GET /health` - health check
@@ -151,10 +146,10 @@ audit_type: code_comprehensive
   `searxng/searxng@sha256:aaa855e878bd4f6e61c7c471f03f0c9dd42d223914729382b34b875c57339b98`
 - **Pin date**: 2025-11-12 digest (linux/amd64)
 - **Конфигурации**:
-- [conf/searxng/settings.yml](../../../conf/searxng/settings.yml)
-- [conf/searxng/uwsgi.ini](../../../conf/searxng/uwsgi.ini)
-- [conf/searxng/limiter.toml](../../../conf/searxng/limiter.toml)
-- [conf/searxng/favicons.toml](../../../conf/searxng/favicons.toml)
+- `../../../conf/searxng/settings.yml`
+- `../../../conf/searxng/uwsgi.ini`
+- `../../../conf/searxng/limiter.toml`
+- `../../../conf/searxng/favicons.toml`
 - **Dependencies**: redis
 - **Ресурсы**: mem_limit 1GB, cpus 1.0
 - **Watchtower**: Включено
@@ -163,12 +158,12 @@ audit_type: code_comprehensive
 #### Docling
 
 - **Service**: Document extraction & processing
-- **Config**: [conf/docling/](../../../conf/docling/)
+- **Config**: `../../../conf/docling/`
 - **Shared volume**: `/app/backend/data/docling-shared`
 - **Maintenance scripts**:
-- [scripts/maintenance/download-docling-models.sh](../../../scripts/maintenance/download-docling-models.sh)
-- [scripts/maintenance/enforce-docling-shared-policy.sh](../../../scripts/maintenance/enforce-docling-shared-policy.sh)
-- [scripts/maintenance/docling-shared-cleanup.sh](../../../scripts/maintenance/docling-shared-cleanup.sh)
+- `../../../scripts/maintenance/download-docling-models.sh`
+- `../../../scripts/maintenance/enforce-docling-shared-policy.sh`
+- `../../../scripts/maintenance/docling-shared-cleanup.sh`
 - **Status**: Соответствует документации
 
 #### EdgeTTS
@@ -194,7 +189,7 @@ audit_type: code_comprehensive
 
 - **Image**: `ghcr.io/open-webui/mcpo:git-91e8f94`
 - **Update date**: 2025-11-04 (stable commit вместо latest)
-- **Config**: [conf/mcposerver/](../../../conf/mcposerver/)
+- **Config**: `../../../conf/mcposerver/`
 - **Port**: 127.0.0.1:8000:8000
 - **Dependencies**: db
 - **Watchtower**: Включено
@@ -204,8 +199,7 @@ audit_type: code_comprehensive
 
 #### Prometheus v3.0.0
 
-- **Конфигурация**:
-  [conf/prometheus/prometheus.yml:449](../../../conf/prometheus/prometheus.yml)
+- **Конфигурация**: `../../../conf/prometheus/prometheus.yml`
 - **Методология**: USE (Utilization, Saturation, Errors) + RED (Rate, Errors,
   Duration)
 - **Scrape jobs**: 16+ активных
@@ -232,25 +226,25 @@ audit_type: code_comprehensive
 
 #### Grafana v11.3.0
 
-- **Config**: [conf/grafana/](../../../conf/grafana/)
+- **Config**: `../../../conf/grafana/`
 - **Dashboards**: 5 (по данным README)
 - **Status**: Соответствует документации
 
 #### Loki v3.0.0
 
-- **Config**: [conf/loki/](../../../conf/loki/)
+- **Config**: `../../../conf/loki/`
 - **TLS**: HTTPS с insecure_skip_verify
 - **Status**: Соответствует документации
 
 #### Fluent Bit v3.1.0
 
-- **Config**: [conf/fluent-bit/](../../../conf/fluent-bit/)
+- **Config**: `../../../conf/fluent-bit/`
 - **Prometheus endpoint**: /api/v1/metrics/prometheus на порту 2020
 - **Status**: Соответствует документации
 
 #### Alertmanager v0.27.0
 
-- **Config**: [conf/alertmanager/](../../../conf/alertmanager/)
+- **Config**: `../../../conf/alertmanager/`
 - **Status**: Соответствует документации
 
 #### Uptime Kuma
@@ -271,9 +265,8 @@ audit_type: code_comprehensive
 9. **cadvisor** - Container metrics (порт 8080)
 10. **rag-exporter** - Custom RAG metrics (порт 9808, интервал 60s)
 
-- **Source**: [conf/rag_exporter.py:2301](../../../conf/rag_exporter.py)
-- **Dockerfile**:
-  [conf/Dockerfile.rag-exporter](../../../conf/Dockerfile.rag-exporter)
+- **Source**: `../../../conf/rag_exporter.py`
+- **Dockerfile**: `../../../conf/Dockerfile.rag-exporter`
 
 **Status**: Comprehensive exporter coverage
 
@@ -282,7 +275,7 @@ audit_type: code_comprehensive
 #### Cloudflared 2024.10.0
 
 - **Function**: Cloudflare Tunnel для внешнего доступа
-- **Config**: [conf/cloudflare/config/](../../../conf/cloudflare/config/)
+- **Config**: `../../../conf/cloudflare/config/`
 - **Dependencies**: nginx, openwebui
 - **Watchtower**: Включено
 - **Note**: Версия 2025.11.0 не существует (stable 2024.10.0)
@@ -291,7 +284,7 @@ audit_type: code_comprehensive
 #### Watchtower
 
 - **Function**: Auto-update для Docker контейнеров
-- **Config**: [conf/watchtower/](../../../conf/watchtower/)
+- **Config**: `../../../conf/watchtower/`
 - **Labels strategy**:
 - Отключено: db, ollama, nginx, litellm (критические сервисы)
 - Включено: большинство вспомогательных сервисов
@@ -303,17 +296,15 @@ audit_type: code_comprehensive
 #### Backrest
 
 - **Function**: PostgreSQL backup service
-- **Config**: [conf/backrest/](../../../conf/backrest/)
-- **Restic backend**: Локальный кэш в
-  [cache/backrest/restic/](../../../cache/backrest/restic/)
+- **Config**: `../../../conf/backrest/`
+- **Restic backend**: Локальный кэш в `../../../cache/backrest/restic/`
 - **Status**: Соответствует документации
 
 #### Webhook Receiver
 
 - **Function**: Обработка вебхуков от Alertmanager
-- **Config**: [conf/webhook-receiver/](../../../conf/webhook-receiver/)
-- **Maintenance**:
-  [scripts/maintenance/webhook-logs-rotate.sh](../../../scripts/maintenance/webhook-logs-rotate.sh)
+- **Config**: `../../../conf/webhook-receiver/`
+- **Maintenance**: `../../../scripts/maintenance/webhook-logs-rotate.sh`
 - **Status**: Соответствует документации
 
 ## 2. Исходный код
@@ -322,7 +313,7 @@ audit_type: code_comprehensive
 
 #### Auth Service
 
-- **[auth/main.go:183](../../../auth/main.go)**
+- **`../../../auth/main.go`**
 - Gin HTTP server на порту 9090
 - JWT validation через WEBUI_SECRET_KEY
 - Request ID middleware (UUID)
@@ -330,7 +321,7 @@ audit_type: code_comprehensive
 - Health check CLI mode
 - Timeouts: ReadHeader 5s, Read 10s, Write 10s, Idle 120s
 
-- **[auth/main_test.go:255](../../../auth/main_test.go)**
+- **`../../../auth/main_test.go`**
 - 8 unit tests (100% coverage)
 - Test cases:
 - TestMain (environment setup)
@@ -344,7 +335,7 @@ audit_type: code_comprehensive
 - TestVerifyTokenExpired
 - Test helpers: setupRouter, createValidJWTToken, createExpiredJWTToken
 
-- **[auth/Dockerfile:65](../../../auth/Dockerfile)**
+- **`../../../auth/Dockerfile`**
 - Multi-stage build (builder + distroless)
 - Go 1.24.10 Alpine 3.21
 - Distroless static-debian12:nonroot (final)
@@ -365,7 +356,7 @@ audit_type: code_comprehensive
 
 #### Documentation Scripts (9 файлов в scripts/docs/)
 
-1. **[validate_metadata.py:188](../../../scripts/docs/validate_metadata.py)**
+1. **`../../../scripts/docs/validate_metadata.py`**
 
 - Validates YAML frontmatter in markdown files
 - Required fields: language, translation_status, doc_version
@@ -374,24 +365,24 @@ audit_type: code_comprehensive
 - Target doc_version: 2025.11
 - Outputs: per-file errors, summary statistics
 
-2. **[check_archive_readmes.py](../../../scripts/docs/check_archive_readmes.py)**
+2. **`../../../scripts/docs/check_archive_readmes.py`**
 
 - Проверяет наличие README в архивных директориях
 
-3. **[content_lint.py](../../../scripts/docs/content_lint.py)**
+3. **`../../../scripts/docs/content_lint.py`**
 
 - Проверяет структуру контента
 - Опции: --fix-headings, --add-toc
 
-4. **[translation_report.py](../../../scripts/docs/translation_report.py)**
+4. **`../../../scripts/docs/translation_report.py`**
 
 - Генерирует отчет о статусе переводов
 
-5. **[update_status_snippet.py](../../../scripts/docs/update_status_snippet.py)**
+5. **`../../../scripts/docs/update_status_snippet.py`**
 
 - Обновляет сниппеты статуса системы
 
-6. **[visuals_and_links_check.py](../../../scripts/docs/visuals_and_links_check.py)**
+6. **`../../../scripts/docs/visuals_and_links_check.py`**
 
 - Проверяет ссылки и визуальный контент
 
@@ -399,14 +390,14 @@ audit_type: code_comprehensive
 
 #### Metadata Management (2 файла)
 
-1. **[fix-deprecated-metadata.py:172](../../../scripts/fix-deprecated-metadata.py)**
+1. **`../../../scripts/fix-deprecated-metadata.py`**
 
 - Исправляет deprecated metadata fields
 - Замены: status → system_status, version → system_version
 - Исключения: translation_status, doc_version
 - CLI: --dry-run, --verbose, --path
 
-2. **[add-missing-frontmatter.py:161](../../../scripts/add-missing-frontmatter.py)**
+2. **`../../../scripts/add-missing-frontmatter.py`**
 
 - Добавляет отсутствующий frontmatter
 - Auto-detect language (ru/de/en)
@@ -426,26 +417,20 @@ audit_type: code_comprehensive
 
 #### Monitoring Scripts (3 файла)
 
-1. **[post-websocket-monitor.sh](../../../scripts/post-websocket-monitor.sh)** -
-   WebSocket мониторинг
-2. **[monitor-litellm-memory.sh](../../../scripts/monitor-litellm-memory.sh)** -
-   Мониторинг памяти LiteLLM
-3. **[rag-health-monitor.sh](../../../scripts/rag-health-monitor.sh)** - Health
-   check для RAG
+1. **`../../../scripts/post-websocket-monitor.sh`** - WebSocket мониторинг
+2. **`../../../scripts/monitor-litellm-memory.sh`** - Мониторинг памяти LiteLLM
+3. **`../../../scripts/rag-health-monitor.sh`** - Health check для RAG
 
 #### Utility Scripts (5 файлов)
 
-1. **[prettier-run.sh](../../../scripts/prettier-run.sh)** - Wrapper для
-   Prettier
-2. **[run-playwright-mock.sh](../../../scripts/run-playwright-mock.sh)** - E2E
-   тесты с моками
-3. **[rotate-logs.sh](../../../scripts/rotate-logs.sh)** - Общая ротация логов
-   4-5. **Entrypoint wrappers**:
+1. **`../../../scripts/prettier-run.sh`** - Wrapper для Prettier
+2. **`../../../scripts/run-playwright-mock.sh`** - E2E тесты с моками
+3. **`../../../scripts/rotate-logs.sh`** - Общая ротация логов 4-5. **Entrypoint
+   wrappers**:
 
-- **[entrypoints/litellm.sh:3452](../../../scripts/entrypoints/litellm.sh)** -
-  Secrets injection для LiteLLM
-- **[entrypoints/openwebui.sh:1971](../../../scripts/entrypoints/openwebui.sh)** -
-  Secrets injection для OpenWebUI
+- **`../../../scripts/entrypoints/litellm.sh`** - Secrets injection для LiteLLM
+- **`../../../scripts/entrypoints/openwebui.sh`** - Secrets injection для
+  OpenWebUI
 
 **Status**: Comprehensive automation, production-ready scripts
 
@@ -634,28 +619,27 @@ audit_type: code_comprehensive
 
 - **Воздействие**: Невозможно мониторить производительность auth service
 - **Решение**: Добавить `/metrics` endpoint с Prometheus client
-- **Файлы**: [auth/main.go:183](../../../auth/main.go)
+- **Файлы**: `../../../auth/main.go`
 
 2. **LiteLLM Redis caching отключен**
 
 - **Причина**: Несовместимость (не задокументировано)
 - **Воздействие**: Потенциальное снижение производительности
 - **Решение**: Задокументировать причину, создать issue для исследования
-- **Файлы**: [conf/litellm/config.yaml:100](../../../conf/litellm/config.yaml)
+- **Файлы**: `../../../conf/litellm/config.yaml`
 
 3. **vLLM секрет без сервиса**
 
 - **Проблема**: Секрет `vllm_api_key` объявлен, но vLLM сервис не запущен
 - **Решение**: Либо удалить секрет, либо добавить vLLM сервис, либо
   задокументировать
-- **Файлы**: [compose.yml:230](../../../compose.yml)
+- **Файлы**: `../../../compose.yml`
 
 ### 5.3 Средние (Medium Priority)
 
 4. **Nginx конфигурация на русском языке**
 
-- **Проблема**: Комментарии в
-  [conf/nginx/nginx.conf:217](../../../conf/nginx/nginx.conf) на русском
+- **Проблема**: Комментарии в `../../../conf/nginx/nginx.conf` на русском
 - **Воздействие**: Затрудняет работу международной команды
 - **Решение**: Перевести комментарии на английский или использовать i18n подход
 
@@ -696,7 +680,7 @@ audit_type: code_comprehensive
 10. **Cloudflare IP ranges hardcoded**
 
 - **Проблема**: IP диапазоны Cloudflare захардкожены в
-  [conf/nginx/nginx.conf:147](../../../conf/nginx/nginx.conf)
+  `../../../conf/nginx/nginx.conf`
 - **Решение**: Периодически обновлять или загружать динамически
 
 ## 6. Рекомендации по обновлению документации

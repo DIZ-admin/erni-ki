@@ -8,9 +8,8 @@ last_updated: '2025-11-24'
 # План рефакторинга документации ERNI-KI (2025-11-24)
 
 > **Полный аудит:**
-> [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
-> **Полный аудит:**
-> [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
+> `../archive/audits/comprehensive-documentation-audit-2025-11-24.md` **Полный
+> аудит:** `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
 > [TOC]
 
 ## Краткое резюме аудита
@@ -56,23 +55,16 @@ last_updated: '2025-11-24'
 - 1 ссылка в `operations/monitoring/prometheus-alerts-guide.md`
 
 - [ ] **Добавить TOC в топ-10 документов** (1 час)
-- [architecture/architecture.md](../architecture/architecture.md) (4323 слов)
-- [operations/monitoring/monitoring-guide.md](../operations/monitoring/monitoring-guide.md)
-  (3531 слов)
-- [security/log-audit.md](../security/log-audit.md) (2249 слов)
-- [operations/diagnostics/erni-ki-diagnostic-methodology.md](../operations/diagnostics/erni-ki-diagnostic-methodology.md)
-  (2057 слов)
-- [de/architecture/architecture.md](../de/architecture/architecture.md) (2030
-  слов)
-- [reference/api-reference.md](api-reference.md) (2023 слов)
-- [getting-started/installation.md](../getting-started/installation.md) (1881
-  слов)
-- [operations/maintenance/backup-restore-procedures.md](../operations/maintenance/backup-restore-procedures.md)
-  (1879 слов)
-- [de/operations/maintenance/backup-restore-procedures.md](../de/operations/maintenance/backup-restore-procedures.md)
-  (1839 слов)
-- [architecture/service-inventory.md](../architecture/service-inventory.md)
-  (1742 слов)
+- `../architecture/architecture.md` (4323 слов)
+- `../operations/monitoring/monitoring-guide.md` (3531 слов)
+- `../security/log-audit.md` (2249 слов)
+- `../operations/diagnostics/erni-ki-diagnostic-methodology.md` (2057 слов)
+- `../de/architecture/architecture.md` (2030 слов)
+- `api-reference.md` (2023 слов)
+- `../getting-started/installation.md` (1881 слов)
+- `../operations/maintenance/backup-restore-procedures.md` (1879 слов)
+- `../de/operations/maintenance/backup-restore-procedures.md` (1839 слов)
+- `../architecture/service-inventory.md` (1742 слов)
 
 - [ ] **Создать README для operations/**
 - `operations/automation/README.md`
@@ -458,11 +450,11 @@ jobs:
 
 ## Связанные документы
 
-- [Полный аудит](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
-- [Стандарты метаданных](metadata-standards.md)
-- [Языковая политика](language-policy.md)
-- [Версионирование](../VERSION.md)
-- [Существующий план рефакторинга](documentation-refactoring-plan.md)
+- `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
+- `metadata-standards.md`
+- `language-policy.md`
+- `../VERSION.md`
+- `documentation-refactoring-plan.md`
 
 ---
 

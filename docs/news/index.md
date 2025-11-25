@@ -16,12 +16,12 @@ description: 'ERNI-KI Blog'
 ## Последние релизы
 
 - **2025-11** — Запуск статус‑страницы и обновление документации:
-  [новость](2025-11-erni-ki-status-page-launch.md)
+  `2025-11-erni-ki-status-page-launch.md`
 
 ## Архив
 
-- [Архив 2025 года](archive/2025.md)
+- `archive/2025.md`
 
 ## Академия KI (новостная лента)
 
-- [Новости Академии KI](../academy/news/index.md)
+- `../academy/news/index.md`

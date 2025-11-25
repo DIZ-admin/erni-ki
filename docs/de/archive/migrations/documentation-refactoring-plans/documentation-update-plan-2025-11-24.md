@@ -7,9 +7,8 @@ last_updated: '2025-11-25'
 
 # Aktualisierungsplan Dokumentation ERNI-KI (2025-11-24)
 
-**Basis:**
-[Code-Audit 2025-11-24](../../archive/audits/code-audit-2025-11-24.md)
-**Status:** Ready for implementation
+**Basis:** `../../archive/audits/code-audit-2025-11-24.md` **Status:** Ready for
+implementation
 
 ## Kurzfassung
 

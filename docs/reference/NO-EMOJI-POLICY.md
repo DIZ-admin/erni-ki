@@ -382,8 +382,8 @@ git commit -m "docs: remove emoji (monthly cleanup)"
 
 **См. также:**
 
-- [Style Guide](style-guide.md) - раздел 1 "Emoji - СТРОГО ЗАПРЕЩЕНЫ"
-- [Documentation Maintenance Strategy](documentation-maintenance-strategy.md)
+- `style-guide.md` - раздел 1 "Emoji - СТРОГО ЗАПРЕЩЕНЫ"
+- `documentation-maintenance-strategy.md`
 
 ---
 
@@ -444,11 +444,10 @@ python3 scripts/remove-all-emoji.py --dry-run | grep "Total emoji removed"
 
 ## 10. Связанные документы
 
-- [Style Guide](style-guide.md) - Полное руководство по стилю документации
-- [Documentation Maintenance Strategy](documentation-maintenance-strategy.md) -
-  Стратегия поддержки
-- [Contributing Guide](../../CONTRIBUTING.md) - Руководство для контрибьюторов
-- [Pre-commit Configuration](../../.pre-commit-config.yaml) - Hooks конфигурация
+- `style-guide.md` - Полное руководство по стилю документации
+- `documentation-maintenance-strategy.md` - Стратегия поддержки
+- `../../CONTRIBUTING.md` - Руководство для контрибьюторов
+- `../../.pre-commit-config.yaml` - Hooks конфигурация
 
 ---
 
