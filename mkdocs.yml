@@ -409,7 +409,6 @@ nav:
   - "News (Archive)":
       - Overview: archive/news-overview.md
       - Feed: news/index.md
-      - "Status Page Launch (2025-11)": news/2025-11-erni-ki-status-page-launch.md
   - "HowTo (Archive)":
       - "Create JIRA Description": archive/howto/create-jira-description-with-ai.md
       - "Summarize Meeting (Archive)": archive/howto/summarize-meeting-notes.md
@@ -441,6 +440,8 @@ nav:
           - "Automated Maintenance": operations/automation/automated-maintenance-guide.md
           - "Docker Cleanup": operations/automation/docker-cleanup-guide.md
           - "Docker Log Rotation": operations/automation/docker-log-rotation.md
+      - AI:
+          - "LiteLLM Redis Caching": operations/ai/litellm-redis-caching.md
       - Maintenance:
           - "Overview": operations/maintenance/README.md
           - "Backup Guide": operations/backup-guide.md
@@ -480,6 +481,7 @@ nav:
       - "Pre-commit Hooks": reference/pre-commit-hooks.md
       - "Metadata Standards": reference/metadata-standards.md
       - "Style Guide": reference/style-guide.md
+      - "No Emoji Policy": reference/NO-EMOJI-POLICY.md
       - "Emoji Style Guide": reference/emoji-style-guide.md
       - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
       - "Status Snippet": reference/status-snippet.md
