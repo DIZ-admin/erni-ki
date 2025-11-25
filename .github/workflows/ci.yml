@@ -377,6 +377,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            # Use explicit prefix for SHA tags to avoid empty names
             type=sha,format=short,prefix=sha-
             type=raw,value=latest,enable={{is_default_branch}}
 
