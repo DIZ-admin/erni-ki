@@ -1,11 +1,11 @@
-// Commitlint configuration для проекта erni-ki
-// Валидация Conventional Commits для автоматических релизов
+// Commitlint configuration for the erni-ki project
+// Validates Conventional Commits for automated releases
 
 module.exports = {
-  // Расширяем стандартную конфигурацию
+  // Extend the default configuration
   extends: ['@commitlint/config-conventional'],
 
-  // Настройки парсера
+  // Parser options
   parserPreset: {
     parserOpts: {
       headerPattern: /^(\w*)(?:\((.*)\))?: (.*)$/,
@@ -13,47 +13,47 @@ module.exports = {
     },
   },
 
-  // Правила валидации
+  // Validation rules
   rules: {
-    // Тип коммита
+    // Commit type
     'type-enum': [
       2,
       'always',
       [
-        'feat', // новая функциональность
-        'fix', // исправление бага
-        'docs', // изменения в документации
-        'style', // форматирование, отсутствующие точки с запятой и т.д.
-        'refactor', // рефакторинг кода
-        'perf', // улучшение производительности
-        'test', // добавление тестов
-        'chore', // обновление задач сборки, настроек и т.д.
-        'ci', // изменения в CI/CD
-        'build', // изменения в системе сборки
-        'revert', // откат изменений
-        'security', // исправления безопасности
-        'deps', // обновление зависимостей
-        'config', // изменения конфигурации
-        'docker', // изменения Docker
-        'deploy', // изменения развертывания
+        'feat', // new functionality
+        'fix', // bug fix
+        'docs', // documentation changes
+        'style', // formatting/non-functional style changes
+        'refactor', // code refactor
+        'perf', // performance improvement
+        'test', // adding tests
+        'chore', // build related changes or general chores
+        'ci', // CI/CD adjustments
+        'build', // build system updates
+        'revert', // revert changes
+        'security', // security fixes
+        'deps', // dependency updates
+        'config', // configuration changes
+        'docker', // Docker changes
+        'deploy', // deployment changes
       ],
     ],
 
-    // Область изменений (scope)
+    // Allowed scopes
     'scope-enum': [
       2,
       'always',
       [
-        'auth', // auth сервис
-        'nginx', // nginx конфигурация
-        'docker', // docker файлы
-        'compose', // docker-compose
+        'auth', // authentication service
+        'nginx', // nginx configuration
+        'docker', // docker files
+        'compose', // docker-compose changes
         'ci', // CI/CD pipeline
-        'docs', // документация
-        'config', // конфигурационные файлы
-        'monitoring', // мониторинг
-        'security', // безопасность
-        'ollama', // Ollama сервис
+        'docs', // documentation
+        'config', // configuration files
+        'monitoring', // monitoring stack
+        'security', // security changes
+        'ollama', // Ollama service
         'openwebui', // Open WebUI
         'postgres', // PostgreSQL
         'redis', // Redis
@@ -63,14 +63,14 @@ module.exports = {
         'edgetts', // EdgeTTS
         'mcposerver', // MCP Server
         'watchtower', // Watchtower
-        'deps', // зависимости
-        'tests', // тесты
-        'lint', // линтинг
-        'format', // форматирование
+        'deps', // dependencies
+        'tests', // tests
+        'lint', // linting
+        'format', // formatting
       ],
     ],
 
-    // Обязательные поля
+    // Required fields formatting
     'type-case': [2, 'always', 'lower-case'],
     'type-empty': [2, 'never'],
     'scope-case': [2, 'always', 'lower-case'],
@@ -78,56 +78,56 @@ module.exports = {
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
 
-    // Длина строк
+    // Line length
     'header-max-length': [2, 'always', 100],
     'body-max-line-length': [2, 'always', 100],
     'footer-max-line-length': [2, 'always', 100],
 
-    // Формат
+    // Formatting tweaks
     'body-leading-blank': [1, 'always'],
     'footer-leading-blank': [1, 'always'],
 
-    // Дополнительные правила для breaking changes
+    // Optional overrides for breaking changes messaging
     'body-max-length': [0],
     'footer-max-length': [0],
   },
 
-  // Настройки для игнорирования определенных коммитов
+  // Ignore specific commit patterns
   ignores: [
-    // Игнорируем merge коммиты
+    // Ignore merge commits
     commit => commit.includes('Merge'),
-    // Игнорируем коммиты от Renovate
+    // Ignore Renovate commits
     commit => commit.includes('renovate'),
-    // Игнорируем коммиты от dependabot
+    // Ignore Dependabot commits
     commit => commit.includes('dependabot'),
   ],
 
-  // Настройки для интерактивного режима (используется с git-cz)
+  // Interactive prompt hints (used by git-cz)
   prompt: {
     questions: {
       type: {
-        description: 'Выберите тип изменения:',
+        description: 'Choose the change type:',
       },
       scope: {
-        description: 'Укажите область изменения (опционально):',
+        description: 'Specify the scope (optional):',
       },
       subject: {
-        description: 'Краткое описание изменения:',
+        description: 'Provide a short description:',
       },
       body: {
-        description: 'Подробное описание изменения (опционально):',
+        description: 'Detailed description (optional):',
       },
       isBreaking: {
-        description: 'Есть ли breaking changes?',
+        description: 'Does it contain breaking changes?',
       },
       breaking: {
-        description: 'Описание breaking change:',
+        description: 'Describe the breaking change:',
       },
       isIssueAffected: {
-        description: 'Влияет ли это изменение на открытые issues?',
+        description: 'Does this affect any open issues?',
       },
       issues: {
-        description: 'Добавьте ссылки на issues (например, "fix #123", "re #123"):',
+        description: 'Add issue references (e.g., "fix #123", "re #123"):',
       },
     },
   },

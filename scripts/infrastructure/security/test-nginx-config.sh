@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# Тестирование конфигурации nginx для ERNI-KI
-# Проверяет синтаксис и SSL настройки
+# Nginx configuration test for ERNI-KI
+# Validates syntax and SSL settings
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функции для логирования
+# Logging helpers
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"
 }
@@ -29,199 +29,199 @@ error() {
     echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"
 }
 
-# Проверка синтаксиса конфигурации
+# Check nginx config syntax
 test_nginx_syntax() {
-    log "Проверка синтаксиса конфигурации nginx..."
+    log "Checking nginx configuration syntax..."
 
-    # Проверка через Docker если nginx запущен
+    # Check via Docker if nginx is running
     if docker compose ps nginx 2>/dev/null | grep -q "Up"; then
         if docker compose exec nginx nginx -t 2>/dev/null; then
-            success "Синтаксис конфигурации nginx корректен"
+            success "Nginx configuration syntax is valid"
             return 0
         else
-            error "Ошибка в синтаксисе конфигурации nginx"
+            error "Nginx configuration syntax error"
             docker compose exec nginx nginx -t
             return 1
         fi
     else
-        warning "Nginx не запущен, проверка синтаксиса пропущена"
+        warning "Nginx not running, syntax check skipped"
         return 0
     fi
 }
 
-# Проверка SSL сертификатов
+# Check SSL certificates
 test_ssl_certificates() {
-    log "Проверка SSL сертификатов..."
+    log "Checking SSL certificates..."
 
     local ssl_dir="conf/nginx/ssl"
     local cert_file="$ssl_dir/nginx.crt"
     local key_file="$ssl_dir/nginx.key"
     local fullchain_file="$ssl_dir/nginx-fullchain.crt"
 
-    # Проверка основного сертификата
+    # Check main certificate
     if [ -f "$cert_file" ]; then
         if openssl x509 -in "$cert_file" -noout -text >/dev/null 2>&1; then
-            success "Основной сертификат валиден"
+            success "Primary certificate is valid"
 
-            # Показать информацию о сертификате
+            # Show certificate info
             echo ""
-            log "Информация о сертификате:"
+            log "Certificate info:"
             openssl x509 -in "$cert_file" -noout -subject -issuer -dates
             echo ""
         else
-            error "Основной сертификат поврежден"
+            error "Primary certificate is corrupted"
             return 1
         fi
     else
-        warning "Основной сертификат не найден: $cert_file"
+        warning "Primary certificate not found: $cert_file"
     fi
 
-    # Проверка приватного ключа
+    # Check private key
     if [ -f "$key_file" ]; then
         if openssl rsa -in "$key_file" -check -noout >/dev/null 2>&1; then
-            success "Приватный ключ валиден"
+            success "Private key is valid"
         else
-            error "Приватный ключ поврежден"
+            error "Private key is corrupted"
             return 1
         fi
     else
-        warning "Приватный ключ не найден: $key_file"
+        warning "Private key not found: $key_file"
     fi
 
-    # Проверка fullchain сертификата (для Let's Encrypt)
+    # Check fullchain certificate (for Let's Encrypt)
     if [ -f "$fullchain_file" ]; then
         if openssl x509 -in "$fullchain_file" -noout -text >/dev/null 2>&1; then
-            success "Fullchain сертификат валиден"
+            success "Fullchain certificate is valid"
         else
-            warning "Fullchain сертификат поврежден"
+            warning "Fullchain certificate is corrupted"
         fi
     else
-        log "Fullchain сертификат не найден (будет создан при получении Let's Encrypt)"
+        log "Fullchain certificate not found (created when obtaining Let's Encrypt)"
     fi
 
-    # Проверка соответствия ключа и сертификата
+    # Verify key matches certificate
     if [ -f "$cert_file" ] && [ -f "$key_file" ]; then
         local cert_modulus=$(openssl x509 -noout -modulus -in "$cert_file" 2>/dev/null | openssl md5)
         local key_modulus=$(openssl rsa -noout -modulus -in "$key_file" 2>/dev/null | openssl md5)
 
         if [ "$cert_modulus" = "$key_modulus" ]; then
-            success "Сертификат и ключ соответствуют друг другу"
+            success "Certificate and key match"
         else
-            error "Сертификат и ключ не соответствуют друг другу"
+            error "Certificate and key do not match"
             return 1
         fi
     fi
 }
 
-# Проверка HTTPS доступности
+# Check HTTPS availability
 test_https_access() {
-    log "Проверка HTTPS доступности..."
+    log "Checking HTTPS availability..."
 
     local domain="ki.erni-gruppe.ch"
 
-    # Проверка локального HTTPS
+    # Local HTTPS
     if curl -k -I "https://localhost:443/" --connect-timeout 5 >/dev/null 2>&1; then
-        success "Локальный HTTPS доступен"
+        success "Local HTTPS reachable"
     else
-        warning "Локальный HTTPS недоступен"
+        warning "Local HTTPS unreachable"
     fi
 
-    # Проверка HTTPS через домен
+    # HTTPS via domain
     if curl -k -I "https://$domain/" --connect-timeout 5 >/dev/null 2>&1; then
-        success "HTTPS через домен доступен"
+        success "HTTPS via domain reachable"
 
-        # Показать заголовки ответа
+        # Show response headers
         echo ""
-        log "HTTP заголовки ответа:"
+        log "HTTP response headers:"
         curl -k -I "https://$domain/" --connect-timeout 5 2>/dev/null | head -10
         echo ""
     else
-        warning "HTTPS через домен недоступен"
+        warning "HTTPS via domain unreachable"
     fi
 }
 
-# Проверка SSL конфигурации
+# Check SSL configuration
 test_ssl_configuration() {
-    log "Проверка SSL конфигурации..."
+    log "Checking SSL configuration..."
 
     local domain="ki.erni-gruppe.ch"
 
-    # Проверка SSL соединения
+    # SSL handshake
     if echo | openssl s_client -connect "$domain:443" -servername "$domain" >/dev/null 2>&1; then
-        success "SSL соединение установлено"
+        success "SSL connection established"
 
-        # Показать детали SSL
+        # Show SSL details
         echo ""
-        log "Детали SSL соединения:"
+        log "SSL connection details:"
         echo | openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null | grep -E "(Protocol|Cipher|Verify)"
         echo ""
     else
-        warning "Не удалось установить SSL соединение"
+        warning "Failed to establish SSL connection"
     fi
 }
 
-# Проверка безопасности заголовков
+# Check security headers
 test_security_headers() {
-    log "Проверка заголовков безопасности..."
+    log "Checking security headers..."
 
     local domain="ki.erni-gruppe.ch"
 
     if curl -k -I "https://$domain/" --connect-timeout 5 >/dev/null 2>&1; then
         local headers=$(curl -k -I "https://$domain/" --connect-timeout 5 2>/dev/null)
 
-        # Проверка HSTS
+        # HSTS
         if echo "$headers" | grep -qi "strict-transport-security"; then
-            success "HSTS заголовок присутствует"
+            success "HSTS header present"
         else
-            warning "HSTS заголовок отсутствует"
+            warning "HSTS header missing"
         fi
 
-        # Проверка X-Frame-Options
+        # X-Frame-Options
         if echo "$headers" | grep -qi "x-frame-options"; then
-            success "X-Frame-Options заголовок присутствует"
+            success "X-Frame-Options header present"
         else
-            warning "X-Frame-Options заголовок отсутствует"
+            warning "X-Frame-Options header missing"
         fi
 
-        # Проверка X-Content-Type-Options
+        # X-Content-Type-Options
         if echo "$headers" | grep -qi "x-content-type-options"; then
-            success "X-Content-Type-Options заголовок присутствует"
+            success "X-Content-Type-Options header present"
         else
-            warning "X-Content-Type-Options заголовок отсутствует"
+            warning "X-Content-Type-Options header missing"
         fi
 
-        # Проверка CSP
+        # CSP
         if echo "$headers" | grep -qi "content-security-policy"; then
-            success "Content-Security-Policy заголовок присутствует"
+            success "Content-Security-Policy header present"
         else
-            warning "Content-Security-Policy заголовок отсутствует"
+            warning "Content-Security-Policy header missing"
         fi
     else
-        warning "Не удалось получить заголовки для проверки безопасности"
+        warning "Unable to retrieve headers for security checks"
     fi
 }
 
-# Генерация отчета
+# Report generation
 generate_report() {
     echo ""
-    log "=== ОТЧЕТ О ТЕСТИРОВАНИИ NGINX SSL КОНФИГУРАЦИИ ==="
+    log "=== NGINX SSL CONFIGURATION TEST REPORT ==="
     echo ""
 
-    log "Рекомендации:"
-    echo "1. После получения Let's Encrypt сертификата перезапустите nginx"
-    echo "2. Проверьте SSL рейтинг на https://www.ssllabs.com/ssltest/"
-    echo "3. Убедитесь, что все сервисы доступны через HTTPS"
-    echo "4. Настройте мониторинг срока действия сертификатов"
+    log "Recommendations:"
+    echo "1. After obtaining Let's Encrypt certificate, restart nginx"
+    echo "2. Check SSL rating at https://www.ssllabs.com/ssltest/"
+    echo "3. Ensure all services are reachable via HTTPS"
+    echo "4. Monitor certificate expiration"
     echo ""
 
-    log "Полезные команды:"
-    echo "- Проверка сертификата: openssl x509 -in conf/nginx/ssl/nginx.crt -text -noout"
-    echo "- Перезагрузка nginx: docker compose restart nginx"
-    echo "- Проверка логов: docker compose logs nginx"
-    echo "- Тест SSL: echo | openssl s_client -connect ki.erni-gruppe.ch:443"
+    log "Useful commands:"
+    echo "- Check certificate: openssl x509 -in conf/nginx/ssl/nginx.crt -text -noout"
+    echo "- Reload nginx: docker compose restart nginx"
+    echo "- Check logs: docker compose logs nginx"
+    echo "- SSL test: echo | openssl s_client -connect ki.erni-gruppe.ch:443"
 }
 
-# Основная функция
+# Main
 main() {
     echo -e "${BLUE}"
     echo "=============================================="
@@ -229,9 +229,9 @@ main() {
     echo "=============================================="
     echo -e "${NC}"
 
-    # Проверка, что мы в корне проекта
+    # Ensure we are in project root
     if [ ! -f "compose.yml" ] && [ ! -f "compose.yml.example" ]; then
-        error "Скрипт должен запускаться из корня проекта ERNI-KI"
+        error "Script must be run from ERNI-KI project root"
         exit 1
     fi
 
@@ -242,8 +242,8 @@ main() {
     test_security_headers
     generate_report
 
-    success "Тестирование завершено!"
+    success "Testing completed!"
 }
 
-# Запуск скрипта
+# Script entry
 main "$@"

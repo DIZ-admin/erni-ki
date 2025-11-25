@@ -4,13 +4,13 @@ import fs from 'node:fs';
 
 const BASE = process.env.PW_BASE_URL || 'https://localhost';
 
-// Попытка логина
+// Attempt login
 async function tryLogin(page: any) {
   console.log('🔍 Checking for login form...');
 
   const emailSel = 'input[type="email"], input[name="email"], input#email';
   const passSel = 'input[type="password"], input[name="password"], input#password';
-  const submitSel = 'button:has-text("Sign In"), button:has-text("Войти"), button[type="submit"]';
+  const submitSel = 'button:has-text("Sign In"), button[type="submit"]';
 
   let hasLogin = await page
     .locator(emailSel)
@@ -41,7 +41,7 @@ async function tryLogin(page: any) {
   await page.click(submitSel).catch(() => page.press(passSel, 'Enter'));
 
   const chatInput =
-    'textarea[placeholder*="Message"], textarea[placeholder*="Сообщ"], [role="textbox"], div[contenteditable="true"]';
+    'textarea[placeholder*="Message"], [role="textbox"], div[contenteditable="true"]';
   try {
     await page.waitForSelector(chatInput, { timeout: 10_000 });
     console.log('✅ Login successful - chat input found');
@@ -55,43 +55,45 @@ async function tryLogin(page: any) {
 test('Upload file via icon buttons', async ({ page }) => {
   const path = 'tests/fixtures/sample.md';
 
-  // Создаем тестовый файл (без проверки существования, чтобы избежать race)
-  fs.mkdirSync('tests/fixtures', { recursive: true });
-  fs.writeFileSync(path, '# Test Document\n\nThis is a test markdown file for upload testing.');
+  // Create test file if it doesn't exist
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync('tests/fixtures', { recursive: true });
+    fs.writeFileSync(path, '# Test Document\n\nThis is a test markdown file for upload testing.');
+  }
 
   await page.goto(BASE);
 
-  // Ждем загрузки страницы
+  // Wait for page load
   await page.waitForTimeout(3000);
 
-  // Проверяем, что страница загрузилась
+  // Verify page loaded
   const title = await page.title();
   console.log(`📄 Page title: ${title}`);
 
   const url = page.url();
   console.log(`🌐 Current URL: ${url}`);
 
-  // Пытаемся войти
+  // Try to login
   const loginSuccess = await tryLogin(page).catch(() => false);
   console.log(`🔐 Login success: ${loginSuccess}`);
 
-  // Ждем после логина
+  // Wait after login
   await page.waitForTimeout(2000);
 
-  // Проверяем URL после логина
+  // Check URL after login
   const urlAfterLogin = page.url();
   console.log(`🌐 URL after login: ${urlAfterLogin}`);
 
-  // Закрываем любые модальные окна
+  // Close any modal windows
   const modals = await page.locator('[role="dialog"], .modal').count();
   if (modals > 0) {
     console.log(`🔍 Found ${modals} modal(s), trying to close them...`);
 
-    // Пробуем нажать Escape
+    // Try pressing Escape
     await page.keyboard.press('Escape');
     await page.waitForTimeout(500);
 
-    // Пробуем кликнуть на кнопки закрытия
+    // Try clicking close buttons
     const closeButtons = [
       'button:has-text("×")',
       'button:has-text("Close")',
@@ -118,7 +120,7 @@ test('Upload file via icon buttons', async ({ page }) => {
 
   let uploadSuccess = false;
 
-  // Ищем кнопки с иконками
+  // Look for buttons with icons
   const iconButtons = await page.locator('button:has(svg), button:has([class*="icon"])').all();
   console.log(`🔍 Found ${iconButtons.length} buttons with icons, trying each one...`);
 
@@ -132,11 +134,11 @@ test('Upload file via icon buttons', async ({ page }) => {
     console.log(`Trying icon button ${i + 1}/${iconButtons.length}`);
 
     try {
-      // Кликаем на кнопку с иконкой
+      // Click on icon button
       await button.click();
       await page.waitForTimeout(500);
 
-      // Проверяем, появился ли file input
+      // Check if file input appeared
       const fileInput = await page
         .locator('input[type="file"]')
         .first()
@@ -149,7 +151,7 @@ test('Upload file via icon buttons', async ({ page }) => {
         break;
       }
 
-      // Проверяем, открылся ли file chooser
+      // Check if file chooser opened
       try {
         const fileChooserPromise = page.waitForEvent('filechooser', { timeout: 1000 });
         const fileChooser = await fileChooserPromise;
@@ -160,7 +162,7 @@ test('Upload file via icon buttons', async ({ page }) => {
           break;
         }
       } catch (e) {
-        // File chooser не открылся, продолжаем
+        // File chooser didn't open, continuing
       }
     } catch (e: any) {
       console.log(`❌ Icon button ${i + 1} failed: ${e.message}`);
@@ -171,14 +173,14 @@ test('Upload file via icon buttons', async ({ page }) => {
   if (!uploadSuccess) {
     console.log('❌ No upload method worked, analyzing page structure...');
 
-    // Детальный анализ страницы
+    // Detailed page analysis
     const allButtons = await page.locator('button').count();
     const allInputs = await page.locator('input').count();
     const allLinks = await page.locator('a').count();
 
     console.log(`Page analysis: ${allButtons} buttons, ${allInputs} inputs, ${allLinks} links`);
 
-    // Логируем все кнопки с текстом
+    // Log all buttons with text
     const buttonTexts = await page.locator('button').allTextContents();
     console.log('Button texts:', buttonTexts.slice(0, 20));
 
@@ -192,7 +194,7 @@ test('Upload file via icon buttons', async ({ page }) => {
 
   console.log('✅ File upload successful!');
 
-  // Ждем обработки файла
+  // Wait for file processing
   await page.waitForTimeout(2000);
 
   await page.screenshot({

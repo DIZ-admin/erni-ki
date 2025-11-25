@@ -3,9 +3,9 @@ import fs from 'node:fs';
 
 /**
  * ERNI-KI OpenWebUI RAG E2E via Playwright
- * - Логирование сетевых запросов (Docling, SearXNG, Ollama)
- * - Скриншоты ключевых шагов
- * - Проверка консоли на ошибки
+ * - Network request logging (Docling, SearXNG, Ollama)
+ * - Screenshots of key steps
+ * - Console error checking
  */
 
 const BASE = process.env.PW_BASE_URL || 'https://localhost';
@@ -15,54 +15,54 @@ try {
   require('node:fs').mkdirSync(ART_DIR, { recursive: true });
 } catch {}
 
-// Файлы до 10MB: используем реальные тестовые документы из RAG папки
+// Files up to 10MB: use real test documents from RAG folder
 const fixtures = {
   pdf: 'tests/fixtures/sample.pdf',
   docx: 'tests/fixtures/sample.docx',
   md: 'tests/fixtures/sample.md',
   txt: 'tests/fixtures/sample.txt',
-  // Реальные RAG документы для комплексного тестирования
+  // Real RAG documents for complex testing
   ragPdf1: 'RAG/2023 Q3 INTC.pdf',
   ragPdf2: 'RAG/MB011_Dusche_August_2017.geschützt.pdf',
-  // Дополнительные тестовые документы
+  // Additional test documents
   testMdLarge: 'test-large-document.md',
   testMdMedium: 'test-medium-complex.md',
   testMdSmall: 'test-small-multilang.md',
 };
 
-// Полезные селекторы (обновленные для текущей версии OpenWebUI)
+// Useful selectors (updated for current OpenWebUI version)
 const selectors = {
   fileInput: 'input[type="file"]',
   uploadsTab:
     'button:has-text("Uploads"), button:has-text("Files"), button:has-text("Knowledge"), a:has-text("Uploads")',
   uploadList: '[data-testid="upload-list"], .uploaded-files, .file-list, [class*="upload"]',
   chatInput:
-    'textarea[placeholder*="Message"], textarea[placeholder*="Сообщ"], [role="textbox"], div[contenteditable="true"], textarea',
+    'textarea[placeholder*="Message"], [role="textbox"], div[contenteditable="true"], textarea',
   settingsButton: 'button[aria-label="Settings"], button:has-text("Settings")',
   webSearchToggle: 'label:has-text("Web Search") input[type="checkbox"], input[name="web_search"]',
   sendButton:
     'button[type="submit"], button:has([class*="send"]), button:has(svg), [aria-label*="Send"], [title*="Send"], button:has-text("Send"), .send-button',
   answerBlock: '.message.assistant, [data-testid="assistant-message"], [class*="message"], .prose',
-  // Новые селекторы для загрузки файлов
+  // New selectors for file upload
   attachButton:
     'button[aria-label*="attach"], button[title*="attach"], button:has([class*="paperclip"]), button:has([class*="attach"])',
   uploadButton: 'button[aria-label*="upload"], button[title*="upload"], input[type="file"]',
   plusButton: 'button:has-text("+"), button[aria-label*="add"], button[title*="add"]',
 };
 
-// Попытка логина, если включена форма входа
+// Attempt login if login form is enabled
 async function tryLogin(page: Page) {
   console.log('🔍 Checking for login form...');
 
-  // Расширенные селекторы для OpenWebUI
+  // Extended selectors for OpenWebUI
   const emailSel =
     'input[type="email"], input[name="email"], input#email, input[placeholder*="email" i], input[placeholder*="Email"]';
   const passSel =
     'input[type="password"], input[name="password"], input#password, input[placeholder*="password" i], input[placeholder*="Password"]';
   const submitSel =
-    'button:has-text("Sign In"), button:has-text("Войти"), button[type="submit"], button:has-text("Login"), button:has-text("Continue")';
+    'button:has-text("Sign In"), button[type="submit"], button:has-text("Login"), button:has-text("Continue")';
 
-  // Ждем загрузки страницы
+  // Wait for page load
   await page.waitForTimeout(2000);
 
   let hasLogin = await page
@@ -73,7 +73,7 @@ async function tryLogin(page: Page) {
   console.log(`Login form visible on main page: ${hasLogin}`);
 
   if (!hasLogin) {
-    // Попробуем найти кнопки входа/регистрации
+    // Try to find login/register buttons
     const loginButtons =
       'button:has-text("Sign In"), button:has-text("Login"), a:has-text("Sign In"), a:has-text("Login")';
     const hasLoginButton = await page
@@ -112,7 +112,7 @@ async function tryLogin(page: Page) {
   await page.fill(passSel, PASS);
   await page.click(submitSel).catch(() => page.press(passSel, 'Enter'));
 
-  // Ждем либо появления чата, либо ошибки входа
+  // Wait for either chat or login error
   try {
     await page.waitForSelector(selectors.chatInput, { timeout: 10_000 });
     console.log('✅ Login successful - chat input found');
@@ -123,7 +123,7 @@ async function tryLogin(page: Page) {
   }
 }
 
-// Логирование запросов для SearXNG/Ollama
+// Request logging for SearXNG/Ollama
 function attachNetworkLogging(page: Page) {
   const append = (line: string) => {
     try {
@@ -161,15 +161,15 @@ async function assertNoConsoleErrors(page: Page) {
   };
 }
 
-// Улучшенная функция загрузки файлов
+// Improved file upload function
 async function uploadFile(page: Page, filePath: string): Promise<boolean> {
   console.log(`📁 Attempting to upload file: ${filePath}`);
 
-  // Сначала попробуем закрыть любые открытые модальные окна
+  // First try to close any open modal windows
   await page.keyboard.press('Escape').catch(() => {});
   await page.waitForTimeout(1000);
 
-  // Стратегия 1: Поиск прямого input[type="file"]
+  // Strategy 1: Direct input[type="file"] search
   const fileInput = await page
     .locator('input[type="file"]')
     .first()
@@ -181,30 +181,30 @@ async function uploadFile(page: Page, filePath: string): Promise<boolean> {
     return true;
   }
 
-  // Стратегия 2: Правильная последовательность для OpenWebUI
+  // Strategy 2: Correct sequence for OpenWebUI
   try {
-    // 1. Найти кнопку с иконкой рядом с полем ввода
+    // 1. Find button with icon near input field
     const attachButton = page.locator('button:has(img)').first();
     const isAttachVisible = await attachButton.isVisible().catch(() => false);
 
     if (isAttachVisible) {
       console.log('🔍 Found attachment button, clicking...');
 
-      // 2. Кликнуть на кнопку для открытия меню
+      // 2. Click button to open menu
       await attachButton.click();
 
-      // 3. Ждем появления меню и ищем "Upload Files"
-      await page.waitForTimeout(1000); // Даем время меню появиться
+      // 3. Wait for menu and look for "Upload Files"
+      await page.waitForTimeout(1000); // Give menu time to appear
       const uploadMenuItem = page.getByRole('menuitem', { name: 'Upload Files' });
 
-      // Ждем, пока пункт меню станет видимым
+      // Wait for menu item to become visible
       await uploadMenuItem.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
       const isMenuItemVisible = await uploadMenuItem.isVisible().catch(() => false);
 
       if (isMenuItemVisible) {
         console.log('🔍 Found "Upload Files" menu item, clicking...');
 
-        // 4. Кликнуть на "Upload Files" и обработать file chooser
+        // 4. Click "Upload Files" and handle file chooser
         const [fileChooser] = await Promise.all([
           page.waitForEvent('filechooser', { timeout: 5000 }),
           uploadMenuItem.click(),
@@ -213,12 +213,12 @@ async function uploadFile(page: Page, filePath: string): Promise<boolean> {
         await fileChooser.setFiles(filePath);
         console.log('✅ File uploaded successfully via OpenWebUI menu');
 
-        // Ждем немного для обработки файла
+        // Wait a bit for file processing
         await page.waitForTimeout(2000);
         return true;
       } else {
         console.log('❌ "Upload Files" menu item not visible');
-        // Попробуем найти альтернативные пункты меню
+        // Try to find alternative menu items
         const menuItems = await page.locator('menuitem').allTextContents();
         console.log('Available menu items:', menuItems);
       }
@@ -227,7 +227,7 @@ async function uploadFile(page: Page, filePath: string): Promise<boolean> {
     console.log(`❌ OpenWebUI upload method failed: ${error}`);
   }
 
-  // Стратегия 3: Поиск скрытого input[type="file"] и принудительная загрузка
+  // Strategy 3: Hidden input[type="file"] search and forced upload
   try {
     const hiddenFileInputs = await page.locator('input[type="file"]').all();
     console.log(`Found ${hiddenFileInputs.length} file inputs`);
@@ -250,7 +250,7 @@ async function uploadFile(page: Page, filePath: string): Promise<boolean> {
     console.log(`❌ Hidden input strategy failed: ${error}`);
   }
 
-  // Стратегия 4: Попытка через создание временного input
+  // Strategy 4: Attempt via temporary input creation
   try {
     console.log('🔍 Trying temporary file input creation...');
     const fileChooser = await page.evaluateHandle(() => {
@@ -265,7 +265,7 @@ async function uploadFile(page: Page, filePath: string): Promise<boolean> {
     });
 
     if (fileChooser) {
-      // Этот метод может не работать из-за безопасности браузера
+      // This method might not work due to browser security
       console.log('✅ Temporary input created, but file selection requires user interaction');
     }
   } catch (error) {
@@ -276,15 +276,15 @@ async function uploadFile(page: Page, filePath: string): Promise<boolean> {
   return false;
 }
 
-// Улучшенная функция отправки сообщений
+// Improved message sending function
 async function sendMessage(page: Page, message: string): Promise<boolean> {
   console.log(`💬 Sending message: ${message.substring(0, 50)}...`);
 
-  // Сначала найдем и заполним поле ввода
+  // First find and fill input field
   const inputSelectors = [
     selectors.chatInput,
     'textarea[placeholder*="Message"]',
-    'textarea[placeholder*="Сообщ"]',
+    'textarea[placeholder*="Message"]',
     'textarea',
     '[role="textbox"]',
     'div[contenteditable="true"]',
@@ -315,7 +315,7 @@ async function sendMessage(page: Page, message: string): Promise<boolean> {
     return false;
   }
 
-  // Теперь найдем и нажмем кнопку отправки
+  // Now find and click send button
   const sendSelectors = [
     selectors.sendButton,
     'button[type="submit"]',
@@ -344,7 +344,7 @@ async function sendMessage(page: Page, message: string): Promise<boolean> {
     }
   }
 
-  // Fallback: попробуем Enter
+  // Fallback: try Enter
   try {
     await page.keyboard.press('Enter');
     console.log('✅ Message sent via Enter key');
@@ -355,23 +355,23 @@ async function sendMessage(page: Page, message: string): Promise<boolean> {
   }
 }
 
-// Навигация и базовая доступность
+// Navigation and basic availability
 test('Preparation: services healthy and UI reachable', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
 
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
-  // Некоторые конфигурации возвращают 404 на /, но UI при этом загружается (SPA)
+  // Some configs return 404 on /, but UI loads (SPA)
   await page.screenshot({ path: 'playwright-artifacts/01-home.png' });
   await page.waitForTimeout(500);
-  // Авторизация при необходимости
+  // Login if necessary
   await tryLogin(page).catch(() => {});
 
-  // Пробуем найти поле ввода чата как индикатор готовности UI
+  // Try to find chat input as UI readiness indicator
   console.log('🔍 Looking for chat input after login...');
   let uiReady = false;
 
-  // Попробуем несколько стратегий поиска чата
+  // Try multiple chat search strategies
   const chatSelectors = [
     selectors.chatInput,
     'textarea',
@@ -397,11 +397,11 @@ test('Preparation: services healthy and UI reachable', async ({ page }) => {
     console.log('❌ No chat input found, taking screenshot for debugging');
     await page.screenshot({ path: 'playwright-artifacts/debug-no-chat-input.png', fullPage: true });
 
-    // Попробуем найти любые интерактивные элементы
+    // Try to find any interactive elements
     const anyInput = await page.locator('input, textarea, [contenteditable]').count();
     console.log(`Found ${anyInput} input elements on page`);
 
-    // Логируем заголовок страницы
+    // Log page title
     const title = await page.title();
     console.log(`Page title: ${title}`);
   }
@@ -410,7 +410,7 @@ test('Preparation: services healthy and UI reachable', async ({ page }) => {
   finalize();
 });
 
-// 1) Загрузка и индексация документов
+// 1) Document upload and indexing
 Object.entries(fixtures).forEach(([label, path]) => {
   const size = fs.existsSync(path) ? fs.statSync(path).size : 0;
   const isBinary = label === 'pdf' || label === 'docx';
@@ -422,33 +422,33 @@ Object.entries(fixtures).forEach(([label, path]) => {
     await page.goto(BASE);
     await tryLogin(page).catch(() => {});
 
-    // Используем улучшенную функцию загрузки файлов
+    // Use improved file upload function
     let uploadSuccess = await uploadFile(page, path);
 
     if (!uploadSuccess) {
       console.log('🔄 Trying fallback upload methods...');
-      // Дополнительные попытки загрузки файлов можно добавить здесь
+      // Additional file upload attempts can be added here
     }
 
     if (!uploadSuccess) {
       console.log('❌ No upload method worked, analyzing page structure...');
 
-      // Детальный анализ страницы
+      // Detailed page analysis
       const allButtons = await page.locator('button').count();
       const allInputs = await page.locator('input').count();
       const allLinks = await page.locator('a').count();
 
       console.log(`Page analysis: ${allButtons} buttons, ${allInputs} inputs, ${allLinks} links`);
 
-      // Логируем все кнопки с текстом
+      // Log all buttons with text
       const buttonTexts = await page.locator('button').allTextContents();
-      console.log('Button texts:', buttonTexts.slice(0, 20)); // первые 20
+      console.log('Button texts:', buttonTexts.slice(0, 20)); // first 20
 
-      // Логируем все ссылки с текстом
+      // Log all links with text
       const linkTexts = await page.locator('a').allTextContents();
-      console.log('Link texts:', linkTexts.slice(0, 20)); // первые 20
+      console.log('Link texts:', linkTexts.slice(0, 20)); // first 20
 
-      // Ищем элементы с иконками (могут быть кнопки загрузки)
+      // Look for elements with icons (might be upload buttons)
       const iconButtons = await page.locator('button svg, button [class*="icon"]').count();
       console.log(`Found ${iconButtons} buttons with icons`);
 
@@ -457,7 +457,7 @@ Object.entries(fixtures).forEach(([label, path]) => {
         fullPage: true,
       });
 
-      // Попробуем найти любые элементы, связанные с файлами
+      // Try to find any file-related elements
       const fileRelated = await page
         .locator(
           '[class*="file"], [class*="upload"], [class*="document"], [id*="file"], [id*="upload"]',
@@ -470,7 +470,7 @@ Object.entries(fixtures).forEach(([label, path]) => {
       );
     }
 
-    // Ожидание обработки - ищем индикаторы успешной загрузки
+    // Wait for processing - look for upload success indicators
     console.log('⏳ Waiting for upload processing...');
     const uploadIndicators = [
       selectors.uploadList,
@@ -502,7 +502,7 @@ Object.entries(fixtures).forEach(([label, path]) => {
   });
 });
 
-// 2) RAG-поиск с веб-интеграцией (SearXNG)
+// 2) RAG search with web integration (SearXNG)
 test('RAG web search (<10s)', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
@@ -510,74 +510,74 @@ test('RAG web search (<10s)', async ({ page }) => {
   await page.goto(BASE);
   await tryLogin(page).catch(() => {});
 
-  // Включить web search в настройках (если доступно)
+  // Enable web search in settings (if available)
   await page.click(selectors.settingsButton).catch(() => {});
   await page
     .locator(selectors.webSearchToggle)
     .check({ force: true })
     .catch(() => {});
 
-  // Вопрос для веб-поиска
-  const question = 'Какие новости о AI сегодня?';
+  // Web search question
+  const question = 'What is the news about AI today?';
 
   const start = Date.now();
   const messageSent = await sendMessage(page, question);
   expect(messageSent, 'Message should be sent successfully').toBeTruthy();
 
-  // Ожидаем ответ ассистента до 30с (допускаем прогресс-индикатор)
+  // Wait for assistant response up to 30s (allow progress indicator)
   await page.waitForSelector(`${selectors.answerBlock}, .progress, .spinner`, { timeout: 30_000 });
   const duration = Date.now() - start;
   console.log(`Web search answer time: ${duration}ms`);
   expect(duration).toBeLessThanOrEqual(10_000);
 
-  // Проверить наличие ссылок/источников
+  // Check for links/sources
   const content = await page.locator(selectors.answerBlock).first().innerText();
-  expect(/https?:\/\//.test(content) || /Источник|Source|\[\d+\]/i.test(content)).toBeTruthy();
+  expect(/https?:\/\//.test(content) || /Source|[[]\d+[]]/i.test(content)).toBeTruthy();
 
   await page.screenshot({ path: 'playwright-artifacts/03-web-search.png' });
   finalize();
 });
 
-// 3) RAG-поиск по загруженным документам
+// 3) RAG over uploaded docs
 test('RAG over uploaded docs', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
 
   await page.goto(BASE);
   await tryLogin(page).catch(() => {});
-  const question = 'Изложи кратко содержание загруженного документа и укажи источник.';
+  const question = 'Summarize the uploaded document and cite the source.';
   await page.fill(selectors.chatInput, question);
   await page.click(selectors.sendButton);
 
   await page.waitForSelector(selectors.answerBlock, { timeout: 30_000 });
   const answer = await page.locator(selectors.answerBlock).first().innerText();
-  expect(/Источник|Файл|Документ|\.(pdf|docx|md|txt)/i.test(answer)).toBeTruthy();
+  expect(/Source|File|Document|\.(pdf|docx|md|txt)/i.test(answer)).toBeTruthy();
 
   await page.screenshot({ path: 'playwright-artifacts/04-doc-rag.png' });
   finalize();
 });
 
-// 4) Комбинированный RAG (документы + веб)
+// 4) Combined RAG (docs + web)
 test('Combined RAG (docs + web)', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
 
   await page.goto(BASE);
   const question =
-    'Сопоставь ключевые факты из загруженного документа с последними новостями из веба и добавь ссылки.';
+    'Match key facts from the uploaded document with the latest web news and add links.';
   await page.fill(selectors.chatInput, question);
   await page.click(selectors.sendButton);
 
   await page.waitForSelector(selectors.answerBlock, { timeout: 30_000 });
   const answer = await page.locator(selectors.answerBlock).first().innerText();
   expect(/https?:\/\//.test(answer)).toBeTruthy();
-  expect(/(Источник|Файл|Документ)/i.test(answer)).toBeTruthy();
+  expect(/(Source|File|Document)/i.test(answer)).toBeTruthy();
 
   await page.screenshot({ path: 'playwright-artifacts/05-combined.png' });
   finalize();
 });
 
-// 5) Тестирование RAG с реальными документами Intel Q3 2023
+// 5) RAG testing with real Intel Q3 2023 documents
 test('RAG with Intel Q3 2023 document', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
@@ -593,7 +593,7 @@ test('RAG with Intel Q3 2023 document', async ({ page }) => {
 
   console.log(`📁 Uploading Intel Q3 2023 document: ${ragFile}`);
 
-  // Загрузка документа через file chooser
+  // Upload document via file chooser
   let fileChooser;
   try {
     [fileChooser] = await Promise.all([
@@ -601,7 +601,7 @@ test('RAG with Intel Q3 2023 document', async ({ page }) => {
       page.click('button:has(svg), button:has([class*="icon"])', { timeout: 5_000 }),
     ]);
   } catch (error) {
-    // Fallback: попробуем прямой input
+    // Fallback: try direct input
     const fileInput = await page
       .locator('input[type="file"]')
       .first()
@@ -617,11 +617,11 @@ test('RAG with Intel Q3 2023 document', async ({ page }) => {
   }
   await fileChooser.setFiles(ragFile);
 
-  // Ожидание обработки документа
+  // Wait for document processing
   await page.waitForTimeout(5_000);
 
-  // Специфичный вопрос по Intel Q3 2023
-  const question = 'Какие были ключевые финансовые показатели Intel в Q3 2023? Укажи источник.';
+  // Specific question about Intel Q3 2023
+  const question = 'What were the key financial results for Intel in Q3 2023? Cite the source.';
   await page.fill(selectors.chatInput, question);
 
   const start = Date.now();
@@ -632,15 +632,15 @@ test('RAG with Intel Q3 2023 document', async ({ page }) => {
   console.log(`Intel Q3 RAG response time: ${duration}ms`);
 
   const answer = await page.locator(selectors.answerBlock).first().innerText();
-  expect(/(Intel|INTC|Q3|2023|revenue|выручка|доход)/i.test(answer)).toBeTruthy();
-  expect(/(Источник|Source|\.pdf)/i.test(answer)).toBeTruthy();
-  expect(duration).toBeLessThanOrEqual(5_000); // Цель: <5 секунд
+  expect(/(Intel|INTC|Q3|2023|revenue|income)/i.test(answer)).toBeTruthy();
+  expect(/(Source|File|\.pdf)/i.test(answer)).toBeTruthy();
+  expect(duration).toBeLessThanOrEqual(5_000); // Target: <5 seconds
 
   await page.screenshot({ path: 'playwright-artifacts/06-intel-rag.png' });
   finalize();
 });
 
-// 6) Тестирование многоязычного RAG (немецкий документ)
+// 6) Multilingual RAG testing (German document)
 test('Multilingual RAG (German document)', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
@@ -656,7 +656,7 @@ test('Multilingual RAG (German document)', async ({ page }) => {
 
   console.log(`📁 Uploading German document: ${ragFile}`);
 
-  // Загрузка немецкого документа
+  // Upload German document
   let fileChooser;
   try {
     [fileChooser] = await Promise.all([
@@ -664,7 +664,7 @@ test('Multilingual RAG (German document)', async ({ page }) => {
       page.click('button:has(svg), button:has([class*="icon"])', { timeout: 5_000 }),
     ]);
   } catch (error) {
-    // Fallback: попробуем прямой input
+    // Fallback: try direct input
     const fileInput = await page
       .locator('input[type="file"]')
       .first()
@@ -682,7 +682,7 @@ test('Multilingual RAG (German document)', async ({ page }) => {
 
   await page.waitForTimeout(5_000);
 
-  // Вопрос на немецком языке
+  // Question in German
   const question =
     'Was sind die wichtigsten Informationen in diesem deutschen Dokument? Bitte auf Deutsch antworten.';
   await page.fill(selectors.chatInput, question);
@@ -702,33 +702,33 @@ test('Multilingual RAG (German document)', async ({ page }) => {
   finalize();
 });
 
-// 7) Тестирование интеграций RAG системы
+// 7) RAG system integration testing
 test('RAG integrations health check', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
 
   console.log('🔍 Testing RAG system integrations...');
 
-  // Проверка SearXNG API
+  // Check SearXNG API
   const searxngResponse = await page.request
     .get('http://localhost:8080/api/searxng/search?q=test&format=json')
     .catch(() => null);
   console.log(`SearXNG health: ${searxngResponse?.status() || 'FAILED'}`);
   expect(searxngResponse?.ok()).toBeTruthy();
 
-  // Проверка Ollama API
+  // Check Ollama API
   const ollamaResponse = await page.request
     .get('http://localhost:11434/api/tags')
     .catch(() => null);
   console.log(`Ollama health: ${ollamaResponse?.status() || 'FAILED'}`);
   expect(ollamaResponse?.ok()).toBeTruthy();
 
-  // Проверка PostgreSQL через OpenWebUI
+  // Check PostgreSQL via OpenWebUI
   await page.goto(BASE);
   await tryLogin(page).catch(() => {});
 
-  // Простой тест базы данных через интерфейс
-  const dbTestQuestion = 'Покажи статистику загруженных документов.';
+  // Simple database test via interface
+  const dbTestQuestion = 'Show statistics of uploaded documents.';
   await page.fill(selectors.chatInput, dbTestQuestion);
   await page.click(selectors.sendButton);
 
@@ -736,14 +736,14 @@ test('RAG integrations health check', async ({ page }) => {
   const dbAnswer = await page.locator(selectors.answerBlock).first().innerText();
   console.log('Database integration test completed');
 
-  // Проверяем, что получили ответ от базы данных
+  // Verify we got a response from the database
   expect(dbAnswer.length).toBeGreaterThan(0);
 
   await page.screenshot({ path: 'playwright-artifacts/08-integrations.png' });
   finalize();
 });
 
-// 8) Тестирование производительности RAG
+// 8) RAG performance testing
 test('RAG performance benchmark', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
@@ -752,9 +752,9 @@ test('RAG performance benchmark', async ({ page }) => {
   await tryLogin(page).catch(() => {});
 
   const performanceTests = [
-    { query: 'Краткое резюме загруженных документов', maxTime: 5000 },
-    { query: 'Найди информацию о технологиях в документах', maxTime: 5000 },
-    { query: 'Сравни данные из разных источников', maxTime: 7000 },
+    { query: 'Brief summary of uploaded documents', maxTime: 5000 },
+    { query: 'Find information about technologies in documents', maxTime: 5000 },
+    { query: 'Compare data from different sources', maxTime: 7000 },
   ];
 
   const results: Array<{ query: string; time: number; success: boolean }> = [];
@@ -778,7 +778,7 @@ test('RAG performance benchmark', async ({ page }) => {
 
       expect(duration).toBeLessThanOrEqual(test.maxTime);
 
-      // Очистка для следующего теста
+      // Cleanup for next test
       await page.waitForTimeout(2000);
     } catch (error) {
       results.push({ query: test.query, time: -1, success: false });
@@ -787,7 +787,7 @@ test('RAG performance benchmark', async ({ page }) => {
     }
   }
 
-  // Логирование результатов
+  // Result logging
   console.log('📊 Performance Results:');
   results.forEach(result => {
     console.log(`  ${result.query}: ${result.time}ms ${result.success ? '✅' : '❌'}`);
@@ -797,7 +797,7 @@ test('RAG performance benchmark', async ({ page }) => {
   finalize();
 });
 
-// 9) Проверка конфигурации RAG параметров
+// 9) Check RAG configuration parameters
 test('RAG configuration validation', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
@@ -807,7 +807,7 @@ test('RAG configuration validation', async ({ page }) => {
 
   console.log('🔧 Validating RAG configuration...');
 
-  // Попытка доступа к настройкам
+  // Attempt to access settings
   const settingsSelectors = [
     'button:has-text("Settings")',
     'button[aria-label="Settings"]',
@@ -834,7 +834,7 @@ test('RAG configuration validation', async ({ page }) => {
   if (settingsFound) {
     await page.waitForTimeout(2000);
 
-    // Проверка RAG настроек
+    // Check RAG settings
     const ragSettings = ['Web Search', 'RAG', 'Documents', 'Knowledge', 'Embedding'];
 
     for (const setting of ragSettings) {
@@ -851,8 +851,8 @@ test('RAG configuration validation', async ({ page }) => {
     console.log('⚠️ Settings not accessible, skipping configuration validation');
   }
 
-  // Тест векторного поиска
-  const vectorTestQuery = 'Найди документы, связанные с технологиями и инновациями';
+  // Vector search test
+  const vectorTestQuery = 'Find documents related to technologies and innovations';
   await page.fill(selectors.chatInput, vectorTestQuery);
 
   const start = Date.now();
@@ -862,7 +862,7 @@ test('RAG configuration validation', async ({ page }) => {
   const duration = Date.now() - start;
 
   const answer = await page.locator(selectors.answerBlock).first().innerText();
-  const hasVectorResults = /(найден|found|документ|document|источник|source)/i.test(answer);
+  const hasVectorResults = /(found|document|source)/i.test(answer);
 
   console.log(`Vector search test: ${duration}ms, results found: ${hasVectorResults}`);
   expect(hasVectorResults).toBeTruthy();
@@ -872,7 +872,7 @@ test('RAG configuration validation', async ({ page }) => {
   finalize();
 });
 
-// 10) Финальный комплексный тест RAG системы
+// 10) Final complex RAG system test
 test('Comprehensive RAG system test', async ({ page }) => {
   attachNetworkLogging(page);
   const finalize = await assertNoConsoleErrors(page);
@@ -882,32 +882,32 @@ test('Comprehensive RAG system test', async ({ page }) => {
 
   console.log('🎯 Running comprehensive RAG system test...');
 
-  // Комплексный вопрос, требующий использования всех компонентов RAG
-  const comprehensiveQuery = `
-    Проанализируй все загруженные документы и найди:
-    1. Ключевые технические данные
-    2. Финансовые показатели (если есть)
-    3. Сравни с актуальной информацией из веба
-    4. Предоставь источники для каждого утверждения
-    Ответ должен быть структурированным с ссылками на источники.
+  // Complex question requiring use of all RAG components
+  const complexQuery = `
+    Analyze all uploaded documents and find:
+    1. Key technical data
+    2. Financial indicators (if any)
+    3. Compare with current information from the web
+    4. Provide sources for each statement
+    The answer should be structured with links to sources.
   `;
 
-  await page.fill(selectors.chatInput, comprehensiveQuery);
+  await page.fill(selectors.chatInput, complexQuery);
 
   const start = Date.now();
   await page.click(selectors.sendButton);
 
-  // Ожидаем развернутый ответ
+  // Expect detailed answer
   await page.waitForSelector(selectors.answerBlock, { timeout: 30_000 });
   const duration = Date.now() - start;
 
   const answer = await page.locator(selectors.answerBlock).first().innerText();
 
-  // Проверяем качество ответа
-  const hasStructure = /[1-4]\.|\*|\-/.test(answer); // Структурированный ответ
-  const hasSources = /(источник|source|\.pdf|https?:\/\/)/i.test(answer);
-  const hasAnalysis = /(анализ|сравн|данные|показател)/i.test(answer);
-  const hasWebInfo = /(актуальн|новост|веб|web|search)/i.test(answer);
+  // Check answer quality
+  const hasStructure = /[1-4]\.|\*|\-/.test(answer); // Structured answer
+  const hasSources = /(source|\.pdf|https?:\/\/)/i.test(answer);
+  const hasAnalysis = /(analysis|compare|data|indicator)/i.test(answer);
+  const hasWebInfo = /(actual|news|web|search)/i.test(answer);
 
   console.log('Comprehensive test results:');
   console.log(`  Duration: ${duration}ms`);
@@ -916,14 +916,14 @@ test('Comprehensive RAG system test', async ({ page }) => {
   console.log(`  Has analysis: ${hasAnalysis}`);
   console.log(`  Has web info: ${hasWebInfo}`);
 
-  expect(duration).toBeLessThanOrEqual(10_000); // Расширенный лимит для комплексного запроса
+  expect(duration).toBeLessThanOrEqual(10_000); // Extended limit for complex query
   expect(hasStructure).toBeTruthy();
   expect(hasSources).toBeTruthy();
   expect(hasAnalysis).toBeTruthy();
 
   await page.screenshot({ path: 'playwright-artifacts/12-comprehensive.png' });
 
-  // Финальная проверка системных ресурсов
+  // Final system resource check
   console.log('📊 Final system check completed');
 
   finalize();

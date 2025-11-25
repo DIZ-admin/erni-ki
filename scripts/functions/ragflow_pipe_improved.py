@@ -4,12 +4,14 @@ author: Per Morten Sandstad (refined by ChatGPT)
 version: 1.5.2 (Context via invisible zero-width marker; OWUI 0.6.25)
 """
 
-from pydantic import BaseModel, Field
-import requests
-import uuid
+import contextlib
 import re
-from urllib.parse import urljoin, quote
-from typing import Optional, Any, Dict, List
+import uuid
+from typing import Any
+from urllib.parse import urlencode, urljoin
+
+import requests
+from pydantic import BaseModel, Field
 
 
 # ============================== PIPE =========================================
@@ -72,7 +74,10 @@ class Pipe:
         # --- Rendering (OWUI 0.6.25 friendly) ---
         RAGFLOW_RENDER_MODE: str = Field(
             default="auto",
-            description="auto | html | markdown. 'auto' -> safe Markdown; 'html' -> <details>; 'markdown' -> pure Markdown.",
+            description=(
+                "auto | html | markdown. 'auto' -> safe Markdown; "
+                "'html' -> <details>; 'markdown' -> pure Markdown."
+            ),
         )
         RAGFLOW_CHUNK_MAX_LEN: int = Field(
             default=2000,
@@ -84,8 +89,8 @@ class Pipe:
         )
 
         # --- Commands ---
-        RESET_COMMANDS: List[str] = Field(
-            default=["/reset", "reset", "reset context", "новый чат", "сброс", "/new"],
+        RESET_COMMANDS: list[str] = Field(
+            default=["/reset", "reset", "reset context", "/new"],
             description="User messages that trigger context reset.",
         )
 
@@ -125,28 +130,24 @@ class Pipe:
         base = self.valves.RAGFLOW_API_BASE_URL.rstrip("/")
         return re.split(r"/api\b", base)[0].rstrip("/")
 
-    def _doc_view_url(self, doc_id: Optional[str]) -> str:
+    def _doc_view_url(self, doc_id: str | None) -> str:
         if not doc_id:
             return ""
-        path = (self.valves.RAGFLOW_DOC_VIEW_PATH or "/document/{doc_id}").format(
-            doc_id=doc_id
-        )
+        path = (self.valves.RAGFLOW_DOC_VIEW_PATH or "/document/{doc_id}").format(doc_id=doc_id)
         root = self._root_base() + "/"
         return urljoin(root, path.lstrip("/"))
 
-    def _append_page_anchor(self, url: str, page: Optional[int]) -> str:
+    def _append_page_anchor(self, url: str, page: int | None) -> str:
         if not url or not self.valves.RAGFLOW_ADD_PAGE_ANCHOR:
             return url
         if page is not None:
-            try:
+            with contextlib.suppress(TypeError, ValueError):
                 p = int(page)
                 if p > 0:
                     return f"{url}#page={p}"
-            except Exception:
-                pass
         return url
 
-    def _deep_find_first_id(self, obj: Any) -> Optional[str]:
+    def _deep_find_first_id(self, obj: Any) -> str | None:
         KEYS = ("doc_id", "document_id", "id")
         stack = [obj]
         seen = set()
@@ -167,7 +168,7 @@ class Pipe:
                 stack.extend(cur)
         return None
 
-    def _clean_answer(self, text: Optional[str]) -> str:
+    def _clean_answer(self, text: str | None) -> str:
         if not text:
             return ""
         text = re.sub(r"##\d{1,2}\$\$", "", text)  # remove '##12$$'
@@ -208,7 +209,7 @@ class Pipe:
         out.append(self._ZW_END)
         return "".join(out)
 
-    def _zw_decode_from_text(self, text: str) -> Optional[Dict[str, str]]:
+    def _zw_decode_from_text(self, text: str) -> dict[str, str] | None:
         # Find sentinel boundaries
         s = text.find(self._ZW_START)
         if s == -1:
@@ -224,9 +225,7 @@ class Pipe:
                 # Ignore non-encoded chars (robustness)
                 continue
             val = self._ZW_REV[ch]
-            bits.append(
-                (val >> 1) & 1
-            )  # not needed; we will reconstruct by pairs below
+            bits.append((val >> 1) & 1)  # not needed; we will reconstruct by pairs below
         # Re-decode by reading chars in groups of 4 zero-widths = 8 bits = 1 byte
         # Simpler: iterate again and assemble bytes directly
         byte_vals = []
@@ -247,7 +246,7 @@ class Pipe:
             pass
         try:
             decoded = bytes(byte_vals).decode("utf-8", errors="strict")
-        except Exception:
+        except UnicodeDecodeError:
             return None
         if "|" not in decoded:
             return None
@@ -259,21 +258,27 @@ class Pipe:
     # -------------------------------------------------------------------------
     # Comment-based marker (optional/legacy)
     # -------------------------------------------------------------------------
-    def _extract_comment_marker(self, content: str) -> Optional[Dict[str, str]]:
+    def _extract_comment_marker(self, content: str) -> dict[str, str] | None:
         key = self.valves.CONTEXT_MARKER_KEY
         tkey = self.valves.CONTEXT_MARKER_TURNS_KEY
-        pattern = rf"<!--\s*{re.escape(key)}\s*:\s*([a-zA-Z0-9\-]+)\s*;\s*{re.escape(tkey)}\s*:\s*(\d+)\s*-->"
+        pattern = (
+            rf"<!--\s*{re.escape(key)}\s*:\s*([a-zA-Z0-9\-]+)\s*;"
+            rf"\s*{re.escape(tkey)}\s*:\s*(\d+)\s*-->"
+        )
         m = re.search(pattern, content)
         if m:
             return {"sid": m.group(1), "turns": m.group(2)}
         # Fallback: visible footer form (debug)
-        pattern2 = rf"{re.escape(key)}\s*=\s*([a-zA-Z0-9\-]+)\s*;\s*{re.escape(tkey)}\s*=\s*(\d+)"
+        pattern2 = (
+            rf"{re.escape(key)}\s*=\s*([a-zA-Z0-9\-]+)"
+            rf"\s*;\s*{re.escape(tkey)}\s*=\s*(\d+)"
+        )
         m2 = re.search(pattern2, content)
         if m2:
             return {"sid": m2.group(1), "turns": m2.group(2)}
         return None
 
-    def _extract_marker(self, messages: List[Dict]) -> Dict[str, str]:
+    def _extract_marker(self, messages: list[dict]) -> dict[str, str]:
         """
         Try zero-width marker first, then comment marker.
         Scan last ~10 assistant/system messages.
@@ -319,7 +324,8 @@ class Pipe:
     # RAGFlow API calls
     # -------------------------------------------------------------------------
     def get_chat_assistant_id(self) -> str:
-        url = f"{self._api_base()}/chats?page=1&page_size=50&name={quote(self.valves.RAGFLOW_CHAT_ASSISTANT)}"
+        query = urlencode({"page": 1, "page_size": 50, "name": self.valves.RAGFLOW_CHAT_ASSISTANT})
+        url = f"{self._api_base()}/chats?{query}"
         r = requests.get(url, headers=self._headers(), timeout=15)
         if r.status_code == 200:
             data = r.json() or {}
@@ -344,9 +350,7 @@ class Pipe:
                 return sid
         raise RuntimeError(f"Failed to create session. HTTP {r.status_code}: {r.text}")
 
-    def chat_session(
-        self, chat_assistant_id: str, chat_id: str, chat_message: str
-    ) -> dict:
+    def chat_session(self, chat_assistant_id: str, chat_id: str, chat_message: str) -> dict:
         url = f"{self._api_base()}/chats/{chat_assistant_id}/completions"
         payload = {"question": chat_message, "stream": False, "session_id": chat_id}
         r = requests.post(url, json=payload, headers=self._headers(), timeout=60)
@@ -354,30 +358,24 @@ class Pipe:
             return r.json() or {}
         raise RuntimeError(f"Failed to get completion. HTTP {r.status_code}: {r.text}")
 
-    def delete_chat_session(
-        self, chat_assistant_id: str, session_id: Optional[str]
-    ) -> None:
+    def delete_chat_session(self, chat_assistant_id: str, session_id: str | None) -> None:
         if not session_id:
             return
         url = f"{self._api_base()}/chats/{chat_assistant_id}/sessions"
         payload = {"ids": [session_id]}
-        try:
+        with contextlib.suppress(Exception):
             requests.delete(url, json=payload, headers=self._headers(), timeout=15)
-        except Exception:
-            pass
 
     # -------------------------------------------------------------------------
     # Pretty formatting (OWUI 0.6.25 friendly)
     # -------------------------------------------------------------------------
-    def _render_docs_list(self, doc_aggs: List[Dict]) -> str:
+    def _render_docs_list(self, doc_aggs: list[dict]) -> str:
         if not doc_aggs:
             return ""
         lines = []
         for d in doc_aggs:
             doc_name = d.get("doc_name") or d.get("document_name") or "Document"
-            doc_id = (
-                d.get("doc_id") or d.get("document_id") or self._deep_find_first_id(d)
-            )
+            doc_id = d.get("doc_id") or d.get("document_id") or self._deep_find_first_id(d)
             href = self._doc_view_url(doc_id) if doc_id else ""
             icon = "📄"
             if href:
@@ -386,21 +384,19 @@ class Pipe:
                 lines.append(f"- {icon} {doc_name}")
         return "**Sources**\n" + "\n".join(lines)
 
-    def _chunk_title_bits(self, c: Dict):
+    def _chunk_title_bits(self, c: dict):
         doc_name = c.get("document_name") or c.get("doc_name") or "Document"
         doc_id = c.get("document_id") or c.get("doc_id") or self._deep_find_first_id(c)
         page = c.get("page_no") or c.get("page") or c.get("page_number")
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             page = int(page) if page is not None else None
-        except Exception:
-            page = None
         link = self._doc_view_url(doc_id) if doc_id else ""
         link = self._append_page_anchor(link, page)
         page_suffix = f" (p.{page})" if page else ""
         return doc_name, link, page_suffix
 
     # HTML accordions (<details>) — requires HTML render enabled in OpenWebUI
-    def _format_chunks_html(self, chunks: List[Dict]) -> str:
+    def _format_chunks_html(self, chunks: list[dict]) -> str:
         if not chunks:
             return ""
         items = []
@@ -409,13 +405,11 @@ class Pipe:
             title_plain = f"[#{i}] {doc_name}{page_suffix}"
             content = self._truncate((c.get("content") or "").strip())
             quoted = f"> {content}" if content else "> —"
-            items.append(
-                f"<details>\n<summary>{title_plain}</summary>\n\n{quoted}\n\n</details>"
-            )
+            items.append(f"<details>\n<summary>{title_plain}</summary>\n\n{quoted}\n\n</details>")
         return "\n\n**Context snippets**\n\n" + "\n\n".join(items)
 
     # Markdown “pseudo-accordions” (safe)
-    def _format_chunks_markdown(self, chunks: List[Dict]) -> str:
+    def _format_chunks_markdown(self, chunks: list[dict]) -> str:
         if not chunks:
             return ""
         items = []
@@ -457,12 +451,10 @@ class Pipe:
         except Exception:
             return ""
 
-    def _extract_key_facts(self, answer: str) -> List[List[str]]:
+    def _extract_key_facts(self, answer: str) -> list[list[str]]:
         facts = []
         for line in answer.splitlines():
-            m = re.match(
-                r"\s*([A-ZÄÖÜa-zäöüßA-Za-z][^:]{1,60})\s*:\s*(.{1,120})$", line.strip()
-            )
+            m = re.match(r"\s*([A-ZÄÖÜa-zäöüßA-Za-z][^:]{1,60})\s*:\s*(.{1,120})$", line.strip())
             if m:
                 k, v = m.group(1).strip(), m.group(2).strip()
                 if len(k) >= 3 and len(v) >= 1:
@@ -471,7 +463,7 @@ class Pipe:
                 break
         return facts
 
-    def _render_key_facts_table(self, facts: List[List[str]]) -> str:
+    def _render_key_facts_table(self, facts: list[list[str]]) -> str:
         if not facts:
             return ""
         rows = ["| Key | Value |", "|---|---|"]
@@ -495,15 +487,13 @@ class Pipe:
     # -------------------------------------------------------------------------
     # Reset handling
     # -------------------------------------------------------------------------
-    def _handle_reset(self, chat_assistant_id: str, messages: List[Dict]) -> str:
+    def _handle_reset(self, chat_assistant_id: str, messages: list[dict]) -> str:
         # If we can read an existing marker, try to delete remote session
         mk = self._extract_marker(messages)
         sid = mk.get("sid")
         if sid:
-            try:
+            with contextlib.suppress(Exception):
                 self.delete_chat_session(chat_assistant_id, sid)
-            except Exception:
-                pass
         return "🔁 Chat context has been reset."
 
     # -------------------------------------------------------------------------

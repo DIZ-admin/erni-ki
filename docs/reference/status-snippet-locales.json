@@ -1,0 +1,35 @@
+{
+  "ru": {
+    "header": "Статус системы",
+    "containers": "Контейнеры",
+    "grafana": "Графана",
+    "alerts": "Алерты",
+    "aiGpu": "AI/GPU",
+    "context": "Context & RAG",
+    "monitoring": "Мониторинг",
+    "automation": "Автоматизация",
+    "note": "Примечание"
+  },
+  "de": {
+    "header": "Systemstatus",
+    "containers": "Container",
+    "grafana": "Grafana",
+    "alerts": "Warnungen",
+    "aiGpu": "AI/GPU",
+    "context": "Context & RAG",
+    "monitoring": "Monitoring",
+    "automation": "Automatisierung",
+    "note": "Hinweis"
+  },
+  "en": {
+    "header": "System Status",
+    "containers": "Containers",
+    "grafana": "Grafana",
+    "alerts": "Alerts",
+    "aiGpu": "AI/GPU",
+    "context": "Context & RAG",
+    "monitoring": "Monitoring",
+    "automation": "Automation",
+    "note": "Note"
+  }
+}

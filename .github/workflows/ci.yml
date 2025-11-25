@@ -1,5 +1,5 @@
-# CI Pipeline для проекта erni-ki
-# Lint → Test → Security Scan → Docker Build
+# CI Pipeline for erni-ki project
+# Lint -> Test -> Security Scan -> Docker Build
 
 name: 🔄 Continuous Integration
 
@@ -10,25 +10,25 @@ on:
     branches: [main, develop]
   workflow_dispatch:
 
-# Разрешения для GitHub token
+# Permissions for GitHub token
 permissions:
   contents: read
   security-events: write
   actions: read
-  packages: write
+  packages: read
 
-# Переменные окружения
+# Environment variables
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
-# Отмена предыдущих запусков при новом push
+# Cancel previous runs on new push
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # Проверка качества кода
+  # Code Quality Check
   lint:
     name: 🔍 Code Quality
     runs-on: ubuntu-latest
@@ -40,20 +40,35 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements-dev.txt
+
+      - name: 📦 Install Python tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.18.0"
+          node-version: "22.14.0"
           cache: npm
 
       - name: 📦 Install dependencies
         run: npm ci --prefer-offline
 
-      - name: 🧹 Run ESLint
+      - name: 🧹 Run lint (JS + Python)
         run: npm run lint
 
       - name: 🎨 Check Prettier formatting
         run: npm run format:check
+
+      - name: 🖼️ Validate docs visuals/links
+        run: python3 scripts/docs/visuals_and_links_check.py
 
       - name: 🔒 Run npm security audit (production dependencies)
         run: npm audit --omit=dev --audit-level=moderate || true
@@ -62,7 +77,7 @@ jobs:
       - name: 📝 Check EditorConfig
         uses: editorconfig-checker/action-editorconfig-checker@v2
 
-  # Тестирование Go сервиса
+  # Go Service Testing
   test-go:
     name: 🧪 Test Go Service
     runs-on: ubuntu-latest
@@ -112,7 +127,7 @@ jobs:
             auth/coverage.html
           retention-days: 30
 
-  # JS/TS юнит и E2E тесты
+  # JS/TS Unit and E2E Tests
   test-js:
     name: 🧪 Test JS/TS Stack
     runs-on: ubuntu-latest
@@ -126,7 +141,7 @@ jobs:
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.18.0"
+          node-version: "22.14.0"
           cache: npm
 
       - name: 📦 Install dependencies
@@ -175,7 +190,7 @@ jobs:
           # go-version input is not supported in v6; it uses the Go version from setup-go
           args: --timeout=5m
 
-  # Сканирование безопасности
+  # Security Scanning
   security:
     name: 🔒 Security Scan
     runs-on: ubuntu-latest
@@ -186,7 +201,7 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      # Сканирование Go кода
+      # Go Code Scanning
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
@@ -208,9 +223,9 @@ jobs:
         with:
           sarif_file: gosec-results.sarif
 
-      # Сканирование зависимостей
+      # Dependency Scanning
       - name: 🔍 Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: "fs"
           scan-ref: "."
@@ -224,12 +239,11 @@ jobs:
         with:
           sarif_file: "trivy-results.sarif"
 
-  # Проверка ссылок в документации
+  # Documentation Link Check
   link-check:
     name: 🔗 Check Documentation Links
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -266,12 +280,74 @@ jobs:
           echo "## 🔗 Link Check Results" >> $GITHUB_STEP_SUMMARY
           cat lychee/out.md >> $GITHUB_STEP_SUMMARY || echo "No broken links found! ✅" >> $GITHUB_STEP_SUMMARY
 
-  # Сборка Docker образов
+  metadata-validation:
+    name: 📋 Validate Docs Metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📦 Install dependencies
+        run: pip install pyyaml
+
+      - name: ✅ Validate metadata
+        run: python scripts/docs/validate_metadata.py
+
+  docs-build:
+    name: 📚 Docs Build & Link Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 🧩 Validate docs metadata
+        run: python scripts/docs/validate_metadata.py
+
+      - name: 🏗️ Build MkDocs site
+        run: mkdocs build --site-dir site
+
+      - name: 🔗 Offline link check (lychee)
+        run: |
+          if command -v lychee >/dev/null 2>&1; then
+            lychee --offline --no-progress --max-redirects 5 "site/**/*.html" || true
+          else
+            echo "lychee not installed; skipping offline link check."
+          fi
+
+  # Docker Image Build
   docker-build:
     name: 🐳 Docker Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [test-go, security]
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
 
     steps:
       - name: 📥 Checkout code
@@ -287,17 +363,37 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🔡 Normalize repository to lowercase
+        id: repo-lc
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=${repo_lc}" >> "$GITHUB_OUTPUT"
+
       - name: 📋 Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth
+          images: ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            # Для тега по SHA всегда используем безопасный префикс, чтобы избежать пустого имени
+            # Use explicit prefix for SHA tags to avoid empty names
             type=sha,format=short,prefix=sha-
             type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: 🏷️ Compute sanitized tag for scans
+        id: trivy-tag
+        run: |
+          ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          safe_ref=$(echo "${ref,,}" | tr '/:@' '-')
+          echo "tag=${safe_ref}" >> "$GITHUB_OUTPUT"
+
+      - name: ✅ Validate Docker tags are lowercase
+        run: |
+          {
+            echo "${{ steps.meta.outputs.tags }}"
+            echo "${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}"
+          } | bash scripts/utilities/check-docker-tags.sh
 
       - name: 🏗️ Build and push Docker image
         uses: docker/build-push-action@v5
@@ -306,7 +402,10 @@ jobs:
           file: ./auth/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:codex
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -314,13 +413,16 @@ jobs:
             SKIP_TESTS=true
 
       - name: 🧾 Set image ref for Trivy
-        run: echo "TRIVY_IMAGE_REF=${REGISTRY}/${GITHUB_REPOSITORY,,}/auth:${GITHUB_REF_NAME#refs/heads/}" >> "${GITHUB_ENV}"
+        id: trivy-image
+        run: |
+          ref="${REGISTRY}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ steps.trivy-tag.outputs.tag }}"
+          echo "trivy_image_ref=${ref}" >> "$GITHUB_OUTPUT"
 
       - name: 🔍 Run Trivy on Docker image
         uses: aquasecurity/trivy-action@0.33.1
         continue-on-error: true
         with:
-          image-ref: ${{ env.TRIVY_IMAGE_REF }}
+          image-ref: ${{ steps.trivy-image.outputs.trivy_image_ref }}
           format: "sarif"
           output: "docker-trivy-results.sarif"
 
@@ -330,7 +432,7 @@ jobs:
         with:
           sarif_file: "docker-trivy-results.sarif"
 
-  # Уведомления о результатах
+  # Result Notifications
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest

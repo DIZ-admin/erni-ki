@@ -1,25 +1,25 @@
 #!/bin/bash
 
 # ERNI-KI Admin Models Display Test Script
-# Тестирует отображение моделей в административной панели OpenWebUI
+# Tests model visibility in the OpenWebUI admin panel
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Конфигурация
+# Configuration
 ADMIN_URL="https://192.168.62.140/admin/settings/models"
 LOCAL_URL="http://localhost:8080"
 
 echo -e "${BLUE}🔍 ERNI-KI Admin Models Display Test${NC}"
 echo "=================================================="
 
-# Функция для проверки API endpoint
+# Check a single API endpoint
 test_api_endpoint() {
     local endpoint=$1
     local description=$2
@@ -41,42 +41,42 @@ test_api_endpoint() {
     fi
 }
 
-# Основные тесты
+# Core tests
 echo -e "\n${BLUE}📊 API Endpoints Tests${NC}"
 echo "----------------------"
 
 total_tests=0
 passed_tests=0
 
-# Тест главной страницы
+# Main page test
 ((total_tests++))
 if test_api_endpoint "/" "Main page"; then
     ((passed_tests++))
 fi
 
-# Тест health endpoint
+# Health endpoint test
 ((total_tests++))
 if test_api_endpoint "/health" "Health check"; then
     ((passed_tests++))
 fi
 
-# Тест Ollama config
+# Ollama config test
 ((total_tests++))
 if test_api_endpoint "/ollama/config" "Ollama config"; then
     if [ $? -eq 1 ]; then ((passed_tests++)); fi  # 403 is expected without auth
 fi
 
-# Тест models API
+# Models API test
 ((total_tests++))
 if test_api_endpoint "/api/models" "Models API"; then
     if [ $? -eq 1 ]; then ((passed_tests++)); fi  # 403 is expected without auth
 fi
 
-# Проверка провайдеров
+# Provider checks
 echo -e "\n${BLUE}🔗 Provider Integration Tests${NC}"
 echo "------------------------------"
 
-# Тест Ollama через контейнер
+# Ollama check via container
 ((total_tests++))
 echo -n "Testing Ollama integration... "
 if docker exec erni-ki-openwebui-1 curl -s --max-time 5 "http://ollama:11434/api/tags" | grep -q "models"; then
@@ -86,7 +86,7 @@ else
     echo -e "${RED}❌ Failed${NC}"
 fi
 
-# Тест LiteLLM через контейнер
+# LiteLLM check via container
 ((total_tests++))
 echo -n "Testing LiteLLM integration... "
 if docker exec erni-ki-openwebui-1 curl -s --max-time 5 -H "Authorization: Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb" "http://litellm:4000/v1/models" | grep -q "data"; then
@@ -96,11 +96,11 @@ else
     echo -e "${RED}❌ Failed${NC}"
 fi
 
-# Проверка базы данных
+# Database checks
 echo -e "\n${BLUE}💾 Database Tests${NC}"
 echo "------------------"
 
-# Тест моделей в БД
+# Models in DB test
 ((total_tests++))
 echo -n "Testing models in database... "
 model_count=$(docker exec erni-ki-openwebui-1 python -c "
@@ -122,7 +122,7 @@ else
     echo -e "${RED}❌ No models found${NC}"
 fi
 
-# Тест конфигурации в БД
+# Config in DB test
 ((total_tests++))
 echo -n "Testing config in database... "
 config_check=$(docker exec erni-ki-openwebui-1 python -c "
@@ -150,7 +150,7 @@ else
     echo -e "${RED}❌ Config issues: $config_check${NC}"
 fi
 
-# Проверка доступности административной панели
+# Admin panel availability
 echo -e "\n${BLUE}🔒 Admin Panel Access${NC}"
 echo "---------------------"
 
@@ -168,7 +168,7 @@ else
     echo -e "${RED}❌ Failed (HTTP $admin_status)${NC}"
 fi
 
-# Итоговый отчет
+# Summary
 echo -e "\n${BLUE}📋 Test Summary${NC}"
 echo "==============="
 echo "Total tests: $total_tests"
@@ -180,19 +180,19 @@ echo "Success rate: $success_rate%"
 
 echo -e "\n${BLUE}📝 Instructions for Admin Panel${NC}"
 echo "================================="
-echo "1. Откройте браузер и перейдите по адресу:"
+echo "1. Open a browser and go to:"
 echo "   ${ADMIN_URL}"
 echo ""
-echo "2. Войдите в систему как администратор:"
+echo "2. Sign in as administrator:"
 echo "   Email: diz-admin@proton.me"
-echo "   Password: [ваш пароль]"
+echo "   Password: [your password]"
 echo ""
-echo "3. В разделе Admin > Settings > Models должны отображаться:"
-echo "   - 5 моделей Ollama (qwen2.5:0.5b, phi4-mini-reasoning:3.8b, и др.)"
-echo "   - 3 модели LiteLLM (local-phi4-mini, local-deepseek-r1, local-gemma3n)"
+echo "3. In Admin > Settings > Models you should see:"
+echo "   - 5 Ollama models (qwen2.5:0.5b, phi4-mini-reasoning:3.8b, etc.)"
+echo "   - 3 LiteLLM models (local-phi4-mini, local-deepseek-r1, local-gemma3n)"
 echo ""
-echo "4. Если модели не отображаются, проверьте:"
-echo "   - Connections в разделе Admin > Settings > Connections"
+echo "4. If models are missing, check:"
+echo "   - Connections in Admin > Settings > Connections"
 echo "   - Ollama connection: http://ollama:11434"
 echo "   - OpenAI connection: http://litellm:4000/v1"
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 
-# Запуск lint-staged для проверки изменений перед коммитом
+# Проверка языковых правил перед lint-staged и коммитом
+npm run lint:language
 npx lint-staged

@@ -6,8 +6,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# PROJECT_DIR нужно указывать на корень репозитория, иначе docker compose
-# выполняется из каталога scripts и не находит compose.yml.
+# PROJECT_DIR must point to repo root; otherwise docker compose won't find compose.yml.
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$PROJECT_DIR"
 
@@ -145,7 +144,7 @@ if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
 
   if (( used < MIN_USED_MEMORY_BYTES )); then
     if should_log_low_memory; then
-      log "Used memory ${used}B меньше MIN_USED_MEMORY_BYTES=${MIN_USED_MEMORY_BYTES}B; пропускаю проверку как ложноположительную (порог можно изменить через REDIS_FRAGMENTATION_MIN_USED_BYTES)."
+      log "Used memory ${used}B is below MIN_USED_MEMORY_BYTES=${MIN_USED_MEMORY_BYTES}B; skipping as likely false positive (adjust via REDIS_FRAGMENTATION_MIN_USED_BYTES)."
       record_low_memory_notice
     fi
     reset_state

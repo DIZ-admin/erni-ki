@@ -1,13 +1,23 @@
-# 📊 КОМПЛЕКСНЫЙ АУДИТ ПРОЕКТА ERNI-KI - ЧАСТЬ 2
+---
+language: ru
+translation_status: archived
+doc_version: '2025.11'
+---
+
+# КОМПЛЕКСНЫЙ АУДИТ ПРОЕКТА ERNI-KI - ЧАСТЬ 2
 
 **Дата:** 17 октября 2025 **Версия:** 1.0 **Продолжение:**
 [Часть 1](comprehensive-project-audit-2025-10-17.md)
 
 ---
 
-## 🔧 КОМАНДЫ ДЛЯ ПРОВЕРКИ
+## КОМАНДЫ ДЛЯ ПРОВЕРКИ
 
 ### Проверка статуса системы
+
+{% raw %}
+
+{% raw %}
 
 ```bash
 # Общий статус всех контейнеров
@@ -29,6 +39,10 @@ df -h | grep nvme0n1p2
 nvidia-smi --query-gpu=name,utilization.gpu,memory.used,memory.total,temperature.gpu --format=csv,noheader
 ```
 
+{% endraw %}
+
+{% endraw %}
+
 ### Проверка критических интеграций
 
 ```bash
@@ -40,7 +54,7 @@ curl -s http://localhost:11434/api/tags | jq -r '.models[0].name'
 
 # LiteLLM health (требует API key)
 curl -s -H "Authorization: Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb" \
-  http://localhost:4000/health
+ http://localhost:4000/health
 
 # PostgreSQL connectivity
 docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "SELECT 1;"
@@ -57,7 +71,7 @@ docker exec erni-ki-searxng-1 wget -q -O- http://localhost:8080/healthz
 ```bash
 # PostgreSQL cache hit ratio (должно быть >95%)
 docker exec erni-ki-db-1 psql -U postgres -d openwebui -c \
-  "SELECT blks_hit::float/(blks_hit + blks_read) as cache_hit_ratio FROM pg_stat_database WHERE datname='openwebui';"
+ "SELECT blks_hit::float/(blks_hit + blks_read) as cache_hit_ratio FROM pg_stat_database WHERE datname='openwebui';"
 
 # Redis cache hit rate (должно быть >60%)
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 INFO stats | grep -E "keyspace_hits|keyspace_misses"
@@ -67,11 +81,11 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 --latency
 
 # PostgreSQL database size
 docker exec erni-ki-db-1 psql -U postgres -d openwebui -c \
-  "SELECT pg_database_size('openwebui')/1024/1024 as size_mb;"
+ "SELECT pg_database_size('openwebui')/1024/1024 as size_mb;"
 
 # PostgreSQL slow queries (>100ms)
 docker exec erni-ki-db-1 psql -U postgres -d openwebui -c \
-  "SELECT query, calls, mean_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;"
+ "SELECT query, calls, mean_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;"
 ```
 
 ### Проверка логов на ошибки
@@ -111,7 +125,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL LIST
 
 ---
 
-## 🛠️ ДЕТАЛЬНЫЕ РЕКОМЕНДАЦИИ ПО ИСПРАВЛЕНИЮ
+## ДЕТАЛЬНЫЕ РЕКОМЕНДАЦИИ ПО ИСПРАВЛЕНИЮ
 
 ### 1. Исправление OpenWebUI Redis Authentication
 
@@ -145,10 +159,10 @@ docker restart erni-ki-openwebui-1
 ```bash
 # Создать пользователя openwebui в Redis
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 \
-  ACL SETUSER openwebui on >OpenWebUIPass2024 ~* +@all
+ ACL SETUSER openwebui on >OpenWebUIPass2024 ~* +@all
 
 # Обновить env/openwebui.env
-REDIS_URL=redis://openwebui:OpenWebUIPass2024@redis:6379/0  # pragma: allowlist secret
+REDIS_URL=redis://openwebui:OpenWebUIPass2024@redis:6379/0 # pragma: allowlist secret
 
 # Сохранить ACL
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL SAVE
@@ -195,8 +209,8 @@ docker exec erni-ki-openwebui-1 curl -s http://mcposerver:8000/health
 # В compose.yml для openwebui добавить зависимость
 openwebui:
   depends_on:
-    mcposerver:
-      condition: service_healthy
+  mcposerver:
+  condition: service_healthy
 ```
 
 **Вариант 2: Перезапустить контейнеры**
@@ -309,63 +323,65 @@ Exporter, NVIDIA Exporter, Ollama Exporter)
 ```yaml
 # Fluent Bit
 fluent-bit:
-  healthcheck:
-    test: ['CMD-SHELL', 'curl -f http://localhost:2020/api/v1/health || exit 1']
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+ healthcheck:
+ test: ['CMD-SHELL', 'curl -f http://localhost:2020/api/v1/health || exit 1']
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # Redis Exporter
 redis-exporter:
-  healthcheck:
-    test:
-      [
-        'CMD-SHELL',
-        'wget --quiet --tries=1 --spider http://localhost:9121/metrics || exit 1',
-      ]
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+ healthcheck:
+ test:
+ [
+ 'CMD-SHELL',
+ 'wget --quiet --tries=1 --spider http://localhost:9121/metrics || exit 1',
+ ]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # Nginx Exporter
 nginx-exporter:
-  healthcheck:
-    test:
-      [
-        'CMD-SHELL',
-        'wget --quiet --tries=1 --spider http://localhost:9113/metrics || exit 1',
-      ]
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+ healthcheck:
+ test:
+ [
+ 'CMD-SHELL',
+ 'wget --quiet --tries=1 --spider http://localhost:9113/metrics || exit 1',
+ ]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # NVIDIA Exporter
 nvidia-exporter:
-  healthcheck:
-    test:
-      [
-        'CMD-SHELL',
-        'wget --quiet --tries=1 --spider http://localhost:9445/metrics || exit 1',
-      ]
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+ healthcheck:
+ test:
+ [
+ 'CMD-SHELL',
+ 'wget --quiet --tries=1 --spider http://localhost:9445/metrics || exit 1',
+ ]
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 
 # Ollama Exporter
 ollama-exporter:
-  healthcheck:
-    test: ['CMD-SHELL', 'curl -f http://localhost:9778/metrics || exit 1']
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 10s
+ healthcheck:
+ test: ['CMD-SHELL', 'curl -f http://localhost:9778/metrics || exit 1']
+ interval: 30s
+ timeout: 10s
+ retries: 3
+ start_period: 10s
 ```
 
 **Применить изменения:**
+
+{% raw %}
 
 ```bash
 # Пересоздать контейнеры с новыми health checks
@@ -378,6 +394,8 @@ sleep 30
 docker ps --filter "name=exporter" --format "table {{.Names}}\t{{.Status}}"
 docker ps --filter "name=fluent-bit" --format "table {{.Names}}\t{{.Status}}"
 ```
+
+{% endraw %}
 
 ---
 
@@ -432,7 +450,7 @@ EOF
 
 # Создать key.pem
 cat > conf/ssl/key.pem << 'EOF'
------BEGIN PRIVATE KEY-----  # pragma: allowlist secret
+-----BEGIN PRIVATE KEY----- # pragma: allowlist secret
 [Вставить Private Key]
 -----END PRIVATE KEY-----
 EOF
@@ -460,64 +478,73 @@ curl -k https://localhost/health
 
 ---
 
-## 📊 BEST PRACTICES АНАЛИЗ
+## BEST PRACTICES АНАЛИЗ
 
-### ✅ Соблюдаются
+### Соблюдаются
 
 1. **Docker Compose структура:**
-   - ✅ Использование named volumes для критических данных
-   - ✅ Health checks для большинства сервисов
-   - ✅ Resource limits для критических сервисов
-   - ✅ Depends_on с condition: service_healthy
-   - ✅ Restart policies (unless-stopped)
+
+- Использование named volumes для критических данных
+- Health checks для большинства сервисов
+- Resource limits для критических сервисов
+- Depends_on с condition: service_healthy
+- Restart policies (unless-stopped)
 
 2. **Логирование:**
-   - ✅ 4-уровневая стратегия логирования
-   - ✅ Централизованное логирование через Fluent Bit
-   - ✅ Структурированные логи (JSON format)
-   - ✅ Log rotation настроен
+
+- 4-уровневая стратегия логирования
+- Централизованное логирование через Fluent Bit
+- Структурированные логи (JSON format)
+- Log rotation настроен
 
 3. **Мониторинг:**
-   - ✅ Полный Prometheus + Grafana стек
-   - ✅ Множественные exporters для метрик
-   - ✅ Loki для централизованных логов
-   - ✅ Alertmanager для уведомлений
+
+- Полный Prometheus + Grafana стек
+- Множественные exporters для метрик
+- Loki для централизованных логов
+- Alertmanager для уведомлений
 
 4. **Backup:**
-   - ✅ Backrest для автоматических бэкапов
-   - ✅ Retention policy (7 дней daily, 4 недели weekly)
-   - ✅ Backup критических данных (PostgreSQL, OpenWebUI, Ollama)
+
+- Backrest для автоматических бэкапов
+- Retention policy (7 дней daily, 4 недели weekly)
+- Backup критических данных (PostgreSQL, OpenWebUI, Ollama)
 
 5. **Автоматизация:**
-   - ✅ Watchtower для автообновлений
-   - ✅ Selective auto-updates (критические сервисы исключены)
-   - ✅ Webhook notifications
 
-### ⚠️ Требуют улучшения
+- Watchtower для автообновлений
+- Selective auto-updates (критические сервисы исключены)
+- Webhook notifications
+
+### Требуют улучшения
 
 1. **Безопасность:**
-   - ⚠️ Пароли в env файлах (рекомендуется Docker Secrets)
-   - ⚠️ SSL сертификаты отсутствуют локально
-   - ⚠️ Нет автоматического обновления SSL сертификатов
+
+- Пароли в env файлах (рекомендуется Docker Secrets)
+- SSL сертификаты отсутствуют локально
+- Нет автоматического обновления SSL сертификатов
 
 2. **CI/CD:**
-   - ⚠️ Нет автоматизированного тестирования
-   - ⚠️ Нет автоматического деплоя
-   - ⚠️ Нет pre-commit hooks для валидации
+
+- Нет автоматизированного тестирования
+- Нет автоматического деплоя
+- Нет pre-commit hooks для валидации
 
 3. **High Availability:**
-   - ⚠️ PostgreSQL single instance (нет репликации)
-   - ⚠️ Redis single instance (нет Sentinel)
-   - ⚠️ Single point of failure для критических сервисов
+
+- PostgreSQL single instance (нет репликации)
+- Redis single instance (нет Sentinel)
+- Single point of failure для критических сервисов
 
 4. **Мониторинг:**
-   - ⚠️ 5 exporters без health checks
-   - ⚠️ Нет автоматических алертов для Redis cache hit rate
-   - ⚠️ Нет дашборда для MCP Server метрик
+
+- 5 exporters без health checks
+- Нет автоматических алертов для Redis cache hit rate
+- Нет дашборда для MCP Server метрик
 
 ---
 
-## 🎯 ПРИОРИТИЗАЦИЯ ЗАДАЧ
+## ПРИОРИТИЗАЦИЯ ЗАДАЧ
 
 ### Неделя 1 (Критические исправления)
 
@@ -575,7 +602,7 @@ curl -k https://localhost/health
 
 ---
 
-## 📞 КОНТАКТЫ И ПОДДЕРЖКА
+## КОНТАКТЫ И ПОДДЕРЖКА
 
 **Документация:**
 
@@ -583,16 +610,16 @@ curl -k https://localhost/health
 - Архитектура:
   [docs/architecture/architecture.md](../../architecture/architecture.md)
 - Руководство администратора:
-  [docs/operations/admin-guide.md](../../operations/admin-guide.md)
+  [docs/operations/core/admin-guide.md](../../operations/core/admin-guide.md)
 
 **Runbooks:**
 
 - Troubleshooting:
-  [docs/operations/runbooks/troubleshooting-guide.md](../../operations/runbooks/troubleshooting-guide.md)
+  [docs/operations/troubleshooting/troubleshooting-guide.md](../../operations/troubleshooting/troubleshooting-guide.md)
 - Backup/Restore:
-  [docs/operations/runbooks/backup-restore-procedures.md](../../operations/runbooks/backup-restore-procedures.md)
+  [docs/operations/maintenance/backup-restore-procedures.md](../../operations/maintenance/backup-restore-procedures.md)
 - Service Restart:
-  [docs/operations/runbooks/service-restart-procedures.md](../../operations/runbooks/service-restart-procedures.md)
+  [docs/operations/maintenance/service-restart-procedures.md](../../operations/maintenance/service-restart-procedures.md)
 
 **Отчёты:**
 
@@ -603,4 +630,4 @@ curl -k https://localhost/health
 ---
 
 **Следующий аудит:** 17 января 2026 (через 3 месяца) **Ответственный:** DevOps
-Team **Статус:** ✅ СИСТЕМА ГОТОВА К ПРОДАКШЕНУ
+Team **Статус:** СИСТЕМА ГОТОВА К ПРОДАКШЕНУ

@@ -1,0 +1,32 @@
+name: Update Status Snippets
+
+on:
+  push:
+    paths:
+      - docs/reference/status.yml
+      - docs/VERSION.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  update-snippets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Update status snippets
+        run: python scripts/docs/update_status_snippet.py
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-update status snippets"

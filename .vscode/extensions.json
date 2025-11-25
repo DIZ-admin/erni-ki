@@ -9,6 +9,9 @@
     // Форматирование и линтинг
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
+    "charliermarsh.ruff",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
     "editorconfig.editorconfig",
 
     // Docker и контейнеры

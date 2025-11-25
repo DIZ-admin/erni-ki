@@ -1,24 +1,24 @@
 #!/bin/bash
 
 # 📊 ERNI-KI Monitoring Setup Script
-# Настройка системы мониторинга и логирования
-# Создано: Альтэон Шульц, Tech Lead
+# Monitoring and logging setup
+# Author: Alteon Schulz, Tech Lead
 
 set -euo pipefail
 
-# === КОНФИГУРАЦИЯ ===
+# === CONFIGURATION ===
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 CRON_FILE="/tmp/erni-ki-monitoring-cron"
 
-# === ЦВЕТА ДЛЯ ВЫВОДА ===
+# === COLORS ===
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# === ФУНКЦИИ ===
+# === FUNCTIONS ===
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -35,64 +35,64 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# === СОЗДАНИЕ ДИРЕКТОРИЙ ===
+# === DIRECTORY SETUP ===
 setup_directories() {
-    log_info "Создание директорий для мониторинга..."
+    log_info "Creating monitoring directories..."
 
     mkdir -p "$PROJECT_DIR/.config-backup/monitoring"
     mkdir -p "$PROJECT_DIR/.config-backup/logs"
     mkdir -p "$PROJECT_DIR/scripts"
 
-    log_success "Директории созданы"
+    log_success "Directories created"
 }
 
-# === НАСТРОЙКА CRON ЗАДАЧ ===
+# === CRON JOBS ===
 setup_cron() {
-    log_info "Настройка cron задач для автоматического мониторинга..."
+    log_info "Configuring cron jobs for automated monitoring..."
 
-    # Создание cron файла
+    # Create cron file
     cat > "$CRON_FILE" << EOF
 # ERNI-KI System Monitoring
-# Автоматический мониторинг состояния системы
+# Automated system monitoring
 
-# Проверка каждый час
+# Hourly check
 0 * * * * cd $PROJECT_DIR && ./scripts/health-monitor.sh >> .config-backup/monitoring/cron.log 2>&1
 
-# Ежедневная очистка старых логов (старше 7 дней)
+# Daily cleanup of old logs (older than 7 days)
 0 2 * * * find $PROJECT_DIR/.config-backup/monitoring -name "health-report-*.md" -mtime +7 -delete
 
-# Еженедельный полный отчет (воскресенье в 3:00)
+# Weekly full report (Sunday 03:00)
 0 3 * * 0 cd $PROJECT_DIR && ./scripts/health-monitor.sh > .config-backup/monitoring/weekly-report-\$(date +\%Y\%m\%d).md 2>&1
 EOF
 
-    # Установка cron задач
+    # Install cron jobs
     if crontab -l > /dev/null 2>&1; then
-        # Добавление к существующему crontab
+        # Append to existing crontab
         (crontab -l; cat "$CRON_FILE") | crontab -
     else
-        # Создание нового crontab
+        # Create new crontab
         crontab "$CRON_FILE"
     fi
 
     rm -f "$CRON_FILE"
 
-    log_success "Cron задачи настроены:"
-    log_info "  - Ежечасная проверка системы"
-    log_info "  - Ежедневная очистка логов"
-    log_info "  - Еженедельный полный отчет"
+    log_success "Cron jobs configured:"
+    log_info "  - Hourly system check"
+    log_info "  - Daily log cleanup"
+    log_info "  - Weekly full report"
 }
 
-# === НАСТРОЙКА УРОВНЕЙ ЛОГИРОВАНИЯ ===
+# === LOGGING LEVELS ===
 setup_logging_levels() {
-    log_info "Настройка оптимальных уровней логирования..."
+    log_info "Configuring optimal logging levels..."
 
     cd "$PROJECT_DIR"
 
-    # Создание резервной копии конфигураций
+    # Create configuration backup
     local backup_dir=".config-backup/logging-backup-$(date +%Y%m%d-%H%M%S)"
     mkdir -p "$backup_dir"
 
-    # Резервное копирование важных конфигураций
+    # Backup key configs
     if [[ -f "env/openwebui.env" ]]; then
         cp "env/openwebui.env" "$backup_dir/"
     fi
@@ -101,52 +101,49 @@ setup_logging_levels() {
         cp "env/ollama.env" "$backup_dir/"
     fi
 
-    log_success "Резервные копии созданы в $backup_dir"
+    log_success "Backups created in $backup_dir"
 
-    # Настройка логирования для OpenWebUI (уменьшение шума)
+    # OpenWebUI logging (reduce noise)
     if grep -q "LOG_LEVEL" env/openwebui.env; then
-        log_info "LOG_LEVEL уже настроен в OpenWebUI"
+        log_info "LOG_LEVEL already set in OpenWebUI"
     else
         echo "" >> env/openwebui.env
-        echo "# === НАСТРОЙКИ ЛОГИРОВАНИЯ ===" >> env/openwebui.env
-        echo "# Уровень логирования (INFO для продакшена, DEBUG для отладки)" >> env/openwebui.env
+        echo "# === LOGGING SETTINGS ===" >> env/openwebui.env
+        echo "# Logging level (INFO for prod, DEBUG for troubleshooting)" >> env/openwebui.env
         echo "LOG_LEVEL=INFO" >> env/openwebui.env
-        log_success "Добавлен LOG_LEVEL=INFO в OpenWebUI"
+        log_success "Added LOG_LEVEL=INFO to OpenWebUI"
     fi
 
-    # Настройка логирования для Ollama
+    # Ollama logging
     if grep -q "OLLAMA_LOG_LEVEL" env/ollama.env; then
-        log_info "OLLAMA_LOG_LEVEL уже настроен"
+        log_info "OLLAMA_LOG_LEVEL already set"
     else
         echo "" >> env/ollama.env
-        echo "# === НАСТРОЙКИ ЛОГИРОВАНИЯ ===" >> env/ollama.env
-        echo "# Уровень логирования Ollama (INFO для продакшена)" >> env/ollama.env
+        echo "# === LOGGING SETTINGS ===" >> env/ollama.env
+        echo "# Ollama log level (INFO for production)" >> env/ollama.env
         echo "OLLAMA_LOG_LEVEL=INFO" >> env/ollama.env
-        log_success "Добавлен OLLAMA_LOG_LEVEL=INFO в Ollama"
+        log_success "Added OLLAMA_LOG_LEVEL=INFO to Ollama"
     fi
 }
 
-# === СОЗДАНИЕ АЛЕРТОВ ===
+# === ALERTS SETUP ===
 setup_alerts() {
-    log_info "Создание системы алертов..."
+    log_info "Creating alert system..."
 
-    # Создание скрипта для критических алертов
+    # Create critical alert script
     cat > "$PROJECT_DIR/scripts/critical-alert.sh" << 'EOF'
 #!/bin/bash
-# Скрипт для отправки критических алертов
+# Critical alert sender
 
 ALERT_TYPE="$1"
 MESSAGE="$2"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
-# Логирование алерта
+# Log alert
 echo "[$TIMESTAMP] CRITICAL ALERT: $ALERT_TYPE - $MESSAGE" >> .config-backup/monitoring/critical-alerts.log
 
-# Здесь можно добавить отправку уведомлений:
-# - Email
-# - Slack/Discord webhook
-# - Telegram bot
-# - SMS
+# Add notification transport here if needed:
+# - Email / Slack / Discord webhook / Telegram / SMS
 
 echo "CRITICAL ALERT: $ALERT_TYPE"
 echo "Message: $MESSAGE"
@@ -155,38 +152,38 @@ EOF
 
     chmod +x "$PROJECT_DIR/scripts/critical-alert.sh"
 
-    log_success "Система алертов создана"
+    log_success "Alert script created"
 }
 
-# === ТЕСТИРОВАНИЕ МОНИТОРИНГА ===
+# === MONITORING TEST ===
 test_monitoring() {
-    log_info "Тестирование системы мониторинга..."
+    log_info "Testing monitoring system..."
 
     cd "$PROJECT_DIR"
 
-    # Запуск тестовой проверки
+    # Run test check
     if ./scripts/health-monitor.sh; then
-        log_success "Тест мониторинга прошел успешно"
+        log_success "Monitoring test passed"
     else
-        log_warning "Тест мониторинга выявил проблемы (это нормально для первого запуска)"
+        log_warning "Monitoring test reported issues (expected on first run)"
     fi
 
-    # Проверка создания отчета
+    # Verify report creation
     local latest_report
     latest_report=$(find .config-backup/monitoring -name "health-report-*.md" -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2- || echo "")
 
     if [[ -n "$latest_report" && -f "$latest_report" ]]; then
-        log_success "Отчет создан: $latest_report"
-        log_info "Размер отчета: $(wc -l < "$latest_report") строк"
+        log_success "Report created: $latest_report"
+        log_info "Report size: $(wc -l < "$latest_report") lines"
     else
-        log_error "Отчет не создан"
+        log_error "Report not created"
         return 1
     fi
 }
 
-# === ГЛАВНАЯ ФУНКЦИЯ ===
+# === MAIN ===
 main() {
-    log_info "🔧 Настройка системы мониторинга ERNI-KI"
+    log_info "🔧 Setting up ERNI-KI monitoring"
     echo ""
 
     setup_directories
@@ -196,29 +193,29 @@ main() {
     test_monitoring
 
     echo ""
-    log_success "🎉 НАСТРОЙКА МОНИТОРИНГА ЗАВЕРШЕНА!"
+    log_success "🎉 Monitoring setup completed!"
     echo ""
-    log_info "📋 Что настроено:"
-    log_info "  ✅ Автоматические проверки каждый час"
-    log_info "  ✅ Еженедельные отчеты"
-    log_info "  ✅ Автоматическая очистка логов"
-    log_info "  ✅ Система алертов"
-    log_info "  ✅ Оптимизированные уровни логирования"
+    log_info "📋 Configured:"
+    log_info "  ✅ Hourly checks"
+    log_info "  ✅ Weekly reports"
+    log_info "  ✅ Automatic log cleanup"
+    log_info "  ✅ Alerting script"
+    log_info "  ✅ Optimized logging levels"
     echo ""
-    log_info "📁 Файлы мониторинга:"
-    log_info "  - Отчеты: .config-backup/monitoring/"
-    log_info "  - Скрипты: scripts/"
-    log_info "  - Алерты: .config-backup/monitoring/critical-alerts.log"
+    log_info "📁 Monitoring files:"
+    log_info "  - Reports: .config-backup/monitoring/"
+    log_info "  - Scripts: scripts/"
+    log_info "  - Alerts: .config-backup/monitoring/critical-alerts.log"
     echo ""
-    log_info "🔧 Управление:"
-    log_info "  - Ручная проверка: ./scripts/health-monitor.sh"
-    log_info "  - Просмотр cron: crontab -l | grep erni-ki"
-    log_info "  - Логи cron: .config-backup/monitoring/cron.log"
+    log_info "🔧 Operations:"
+    log_info "  - Manual check: ./scripts/health-monitor.sh"
+    log_info "  - View cron: crontab -l | grep erni-ki"
+    log_info "  - Cron logs: .config-backup/monitoring/cron.log"
     echo ""
-    log_success "Система готова к автоматическому мониторингу!"
+    log_success "System ready for automated monitoring!"
 }
 
-# === ЗАПУСК ===
+# === ENTRYPOINT ===
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main "$@"
 fi

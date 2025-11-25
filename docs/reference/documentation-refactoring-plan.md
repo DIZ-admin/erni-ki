@@ -1,27 +1,34 @@
-# 📘 ERNI-KI Professional Documentation & Refactoring Plan (ноябрь 2025)
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+---
+
+# ERNI-KI Professional Documentation & Refactoring Plan (ноябрь 2025)
 
 > **Цель:** унифицировать производственную документацию ERNI-KI, устранить
 > дубли, закрыть устаревшие разделы и обеспечить понятную структуру для DevOps,
-> ML и SRE команд.
+> ML и SRE команд. [TOC]
 
 ## 1. Текущее состояние (аудит 82 Markdown-файлов)
 
-| Область              | Покрытие                                                                                                          | Актуальность |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------ |
-| **Сводки**           | `README.md`, `docs/ru/index.md`, `docs/overview.md` описывают одно и то же состояние (30/30 контейнеров и т. д.). | 07–11.2025   |
-| **Архитектура**      | `docs/architecture/*.md`, `service-inventory.md`, `services-overview.md`, `nginx-configuration.md`.               | 07.11.2025   |
-| **Операции**         | `docs/operations/*` + runbook директория (`backup`, `docling`, `service restart`, `troubleshooting`).             | 10–11.2025   |
-| **Наблюдаемость**    | `monitoring-guide.md`, `prometheus-alerts-guide.md`, `grafana-dashboards-guide.md`, `log-audit-2025-11-14.md`.    | 14.11.2025   |
-| **Data & Storage**   | `docs/data/*.md` (6 файлов без перекрёстных ссылок в README).                                                     | 09–10.2025   |
-| **Security**         | `docs/security/security-policy.md`, `log-audit.md`, точечные отчёты.                                              | 09–11.2025   |
-| **Reference/API**    | `docs/reference/api-reference.md` (обновлена 2025-09-19), `mcpo-integration-guide.md`, `development.md`.          | 09–10.2025   |
-| **Архив / отчёты**   | 15+ отчётов в `docs/archive/reports/` (аудиты, диагностика, remediation).                                         | 10–11.2025   |
-| **Локализации (DE)** | 11 файлов в `docs/locales/de` (перевод основных гайдов, без runbooks).                                            | 09.2025      |
+| Область              | Покрытие                                                                                                       | Актуальность |
+| -------------------- | -------------------------------------------------------------------------------------------------------------- | ------------ |
+| **Сводки**           | `README.md`, `docs/index.md`, `docs/overview.md` описывают одно и то же состояние (30/30 контейнеров и т. д.). | 07–11.2025   |
+| **Архитектура**      | `docs/architecture/*.md`, `service-inventory.md`, `services-overview.md`, `nginx-configuration.md`.            | 07.11.2025   |
+| **Операции**         | `docs/operations/*` + runbook директория (`backup`, `docling`, `service restart`, `troubleshooting`).          | 10–11.2025   |
+| **Наблюдаемость**    | `monitoring-guide.md`, `prometheus-alerts-guide.md`, `grafana-dashboards-guide.md`, `log-audit-2025-11-14.md`. | 14.11.2025   |
+| **Data & Storage**   | `docs/operations/database/*.md` (мониторинг/оптимизации Postgres, Redis, vLLM).                                | 09–10.2025   |
+| **Security**         | `docs/security/security-policy.md`, `log-audit.md`, точечные отчёты.                                           | 09–11.2025   |
+| **Reference/API**    | `docs/reference/api-reference.md` (обновлена 2025-09-19), `mcpo-integration-guide.md`, `development.md`.       | 09–10.2025   |
+| **Архив / отчёты**   | 15+ отчётов в `docs/archive/reports/` (аудиты, диагностика, remediation).                                      | 10–11.2025   |
+| **Локализации (DE)** | 11 файлов в `docs/locales/de` (перевод основных гайдов, без runbooks).                                         | 09.2025      |
 
 **Наблюдения:**
 
 - Метрики и статусы дублируются минимум в 4 файлах (`README.md`,
-  `docs/ru/index.md`, `docs/overview.md`, `docs/architecture/architecture.md`),
+  `docs/index.md`, `docs/overview.md`, `docs/architecture/architecture.md`),
   обновляются вручную и расходятся по датам.
 - Runbook-и и отчёты (например, `docs/log-audit-2025-11-14.md`) не имеют единой
   кармы в MkDocs, что затрудняет поиск инцидентов.
@@ -34,23 +41,23 @@
 
 ## 2. Целевая структура профессиональной документации
 
-| Уровень                     | Документ / раздел                                          | Содержание                                                                              |
-| --------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **Executive**               | `docs/overview.md` (single source of truth)                | SLA, 30/30 здоровье, последние апдейты, ссылка на отчёты.                               |
-| **Architecture**            | `architecture/architecture.md`, `service-inventory.md`     | L3 диаграммы, зависимости, профили Compose, конфигурации ingress/security.              |
-| **Operations**              | `operations/operations-handbook.md`, `monitoring-guide.md` | Роли, on-call, алерты, процедуры реагирования.                                          |
-| **Runbooks**                | `operations/runbooks/*`                                    | Шаблон: _Purpose → Preconditions → Steps → Validation_, связь со скриптами `scripts/*`. |
-| **Data & Storage**          | `docs/data/*.md`                                           | Постгрес/Redis планы, pgvector, retention, логика watchdog.                             |
-| **Security**                | `security/security-policy.md`, `log-audit.md`              | Политики, аудит логов, WAF и Zero Trust.                                                |
-| **API & Integrations**      | `reference/api-reference.md`, `mcpo-integration-guide.md`  | JWT, LiteLLM, MCP, Context7, RAG endpoints, примерные payloads.                         |
-| **Reports & Audits**        | `archive/reports/*.md`                                     | Исторические документы (Phase reports, audits, diagnostics) + конспекты в operations.   |
-| **Locales / Consumer Docs** | `locales/de/*`, пользовательские инструкции                | Переведённые руководства (install, user guide, admin).                                  |
+| Уровень                     | Документ / раздел                                               | Содержание                                                                              |
+| --------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Executive**               | `docs/overview.md` (single source of truth)                     | SLA, 30/30 здоровье, последние апдейты, ссылка на отчёты.                               |
+| **Architecture**            | `architecture/architecture.md`, `service-inventory.md`          | L3 диаграммы, зависимости, профили Compose, конфигурации ingress/security.              |
+| **Operations**              | `operations/core/operations-handbook.md`, `monitoring-guide.md` | Роли, on-call, алерты, процедуры реагирования.                                          |
+| **Runbooks**                | `operations/*`                                                  | Шаблон: _Purpose → Preconditions → Steps → Validation_, связь со скриптами `scripts/*`. |
+| **Data & Storage**          | `operations/database/*.md`                                      | Постгрес/Redis планы, pgvector, retention, логика watchdog.                             |
+| **Security**                | `security/security-policy.md`, `log-audit.md`                   | Политики, аудит логов, WAF и Zero Trust.                                                |
+| **API & Integrations**      | `reference/api-reference.md`, `mcpo-integration-guide.md`       | JWT, LiteLLM, MCP, Context7, RAG endpoints, примерные payloads.                         |
+| **Reports & Audits**        | `archive/reports/*.md`                                          | Исторические документы (Phase reports, audits, diagnostics) + конспекты в operations.   |
+| **Locales / Consumer Docs** | `locales/de/*`, пользовательские инструкции                     | Переведённые руководства (install, user guide, admin).                                  |
 
 ## 3. Гэп-анализ и приоритеты
 
 1. **Статусные сводки:** выровнять даты и формулировки между `README.md`,
-   `docs/ru/index.md` и `docs/overview.md`, заведя единый YAML блок (вставка
-   через `include-markdown`).
+   `docs/index.md` и `docs/overview.md`, заведя единый YAML блок (вставка через
+   `include-markdown`).
 2. **API & интеграции:** обновить `docs/reference/api-reference.md` и
    `mcpo-integration-guide.md` на ноябрь 2025 (новые модели, Context7, RAG
    workflow). Сейчас последняя дата — 2025-09-19.
@@ -63,7 +70,7 @@
 5. **Localization debt:** немецкие документы не включают monitoring/playbooks и
    не обновлены под v12.1.
 6. **Data & Storage discoverability:** добавить перекрёстные ссылки в README и
-   operations handbook, чтобы инженеры знают о `docs/data/*.md`.
+   operations handbook, чтобы инженеры знают о `operations/database/*.md`.
 7. **MkDocs навигация:** привести порядок `nav` к целевой структуре (сейчас Data
    & Storage идёт после Operations, но операции с базами не ссылаются на
    runbook’и).
@@ -80,7 +87,7 @@
 
 ### Волна 2 — Операционные документы и API (3–4 дня)
 
-- Обновить `operations/operations-handbook.md`, `monitoring-guide.md` и
+- Обновить `operations/core/operations-handbook.md`, `monitoring-guide.md` и
   `automated-maintenance-guide.md`, добавив ссылки на новые cron/alert скрипты
   (`scripts/monitoring/*`).
 - Перенести ключевые finding’и из `docs/log-audit-2025-11-14.md` в
@@ -95,8 +102,8 @@
 - Упростить `docs/archive/` (разложить по папкам `incidents`, `audits`,
   `diagnostics`), обновить `mkdocs.yml`.
 - Освежить `locales/de/*` + добавить missing разделы (monitoring/playbooks).
-- Добавить ссылки на `docs/data/*.md` в README и operations handbook + проверить
-  актуальность pgvector/Redis настроек.
+- Добавить ссылки на `operations/database/*.md` в README и operations handbook +
+  проверить актуальность pgvector/Redis настроек.
 
 ## 5. Предлагаемые deliverables
 
@@ -105,8 +112,8 @@
 - `docs/archive/` реструктурирован на `audits/`, `diagnostics/`, `incidents/` с
   README-навигаторами и обновлённым `mkdocs.yml`.
 - `docs/locales/de/` — добавлены status-блок, Monitoring/Runbooks обзоры.
-- README/index/operations-handbook теперь содержат ссылки на `docs/data/*.md` и
-  архивные отчёты.
+- README/index/operations-handbook теперь содержат ссылки на
+  `operations/database/*.md` и архивные отчёты.
 - Обновлённые operations guides и runbooks с привязкой к `scripts/*`.
 - Новый раздел «Documentation Health & Refactoring Plan» (этот документ) и
   Archon запись.
@@ -115,16 +122,16 @@
 
 ## 6. Wave 3 (архивы/locales/data)
 
-- ✅ `docs/archive/` реструктурирован на `audits/`, `diagnostics/`, `incidents/`
-  - README-навигаторы; `mkdocs.yml` обновлён.
-- ✅ Operations Handbook/Monitoring Guide теперь указывают на архив и
+- `docs/archive/` реструктурирован на `audits/`, `diagnostics/`, `incidents/`
+- README-навигаторы; `mkdocs.yml` обновлён.
+- Operations Handbook/Monitoring Guide теперь указывают на архив и
   `docs/archive/config-backup/*.md` (cron/monitorинг).
-- ✅ `docs/locales/de/index.md` использует статус-блок из `status.yml`,
-  добавлены Monitoring/Runbooks обзоры (`locales/de/monitoring.md`,
+- `docs/locales/de/index.md` использует статус-блок из `status.yml`, добавлены
+  Monitoring/Runbooks обзоры (`locales/de/monitoring.md`,
   `locales/de/runbooks.md`).
-- ✅ README, `docs/ru/index.md` и Operations Handbook содержат явные ссылки на
-  `docs/data/*.md`.
-- 🔁 Продолжается расширение локализаций (de) и перевод runbook’ов; при каждом
+- README, `docs/index.md` и Operations Handbook содержат явные ссылки на
+  `operations/database/*.md`.
+- Продолжается расширение локализаций (de) и перевод runbook’ов; при каждом
   добавлении используйте общий статус-блок и README-навигаторы.
 
 ## 7. Следующие шаги
@@ -136,6 +143,15 @@
    полностью и добавить больше health-check сценариев.
 3. Добавить релизный чек-лист, подтверждающий актуальность
    `docs/reference/status.yml`, `docs/archive/*/README.md` и
-   `docs/data/README.md` перед каждой поставкой.
+   `docs/operations/database/*.md` перед каждой поставкой.
 4. Поддерживать Archon документ (эта страница) при каждом релизе, фиксируя
    прогресс по задачам Wave 3+ и локализационным обновлениям.
+
+## 8. Wave 4 — Visual content & automation
+
+- Добавлены визуализации (Mermaid) в 20 ключевых документов (overview,
+  operations, monitoring, reference) — см. `docs/visuals_targets.json`.
+- Включена проверка `visuals_and_links_check` в pre-commit/CI для контроля
+  диаграмм, базового TOC и валидности относительных ссылок.
+- Добавить реальные UI скриншоты в `docs/images/` (guides: install, academy) и
+  подключить оптимизацию изображений в CI.

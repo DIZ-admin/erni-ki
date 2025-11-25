@@ -1,101 +1,65 @@
 #!/bin/bash
 
 # ERNI-KI Self-Signed Certificate Renewal Script
-# Обновление самоподписанного SSL сертификата для ki.erni-gruppe.ch
+# Generates a new self-signed certificate for ki.erni-gruppe.ch
 
 set -euo pipefail
 
-# Цвета для вывода
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Функции для логирования
-log() {
-    echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"
-}
+log()      { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"; }
+success()  { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"; }
+warning()  { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"; }
+error_out(){ echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"; exit 1; }
 
-success() {
-    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"
-}
-
-warning() {
-    echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"
-}
-
-error() {
-    echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"
-    exit 1
-}
-
-# Конфигурация
 DOMAIN="ki.erni-gruppe.ch"
 SSL_DIR="$(pwd)/conf/nginx/ssl"
 BACKUP_DIR="$(pwd)/.config-backup/ssl-renewal-$(date +%Y%m%d-%H%M%S)"
-CERT_VALIDITY_DAYS=730  # 2 года
+CERT_VALIDITY_DAYS=730
 KEY_SIZE=4096
 
-# Проверка окружения
 check_environment() {
-    log "Проверка окружения..."
+    log "Validating environment..."
 
-    # Проверка, что мы в корне проекта
-    if [ ! -f "compose.yml" ] && [ ! -f "compose.yml.example" ]; then
-        error "Скрипт должен запускаться из корня проекта ERNI-KI"
+    if [[ ! -f "compose.yml" && ! -f "compose.yml.example" ]]; then
+        error_out "Run this script from the ERNI-KI repository root"
     fi
 
-    # Проверка директории SSL
-    if [ ! -d "$SSL_DIR" ]; then
-        error "Директория SSL не найдена: $SSL_DIR"
-    fi
+    [[ -d "$SSL_DIR" ]] || error_out "SSL directory not found: $SSL_DIR"
+    command -v openssl >/dev/null 2>&1 || error_out "OpenSSL not installed"
 
-    # Проверка наличия openssl
-    if ! command -v openssl >/dev/null 2>&1; then
-        error "OpenSSL не найден. Установите openssl"
-    fi
-
-    success "Окружение проверено"
+    success "Environment looks good"
 }
 
-# Создание резервной копии
 create_backup() {
-    log "Создание резервной копии текущих сертификатов..."
-
+    log "Backing up existing certificates..."
     mkdir -p "$BACKUP_DIR"
 
-    if [ -f "$SSL_DIR/nginx.crt" ]; then
-        cp "$SSL_DIR/nginx.crt" "$BACKUP_DIR/"
-        cp "$SSL_DIR/nginx.key" "$BACKUP_DIR/"
+    if [[ -f "$SSL_DIR/nginx.crt" ]]; then
+        cp "$SSL_DIR/nginx.crt" "$SSL_DIR/nginx.key" "$BACKUP_DIR/"
+        [[ -f "$SSL_DIR/nginx-fullchain.crt" ]] && cp "$SSL_DIR/nginx-fullchain.crt" "$BACKUP_DIR/"
+        [[ -f "$SSL_DIR/nginx-ca.crt" ]] && cp "$SSL_DIR/nginx-ca.crt" "$BACKUP_DIR/"
 
-        # Копирование дополнительных файлов если есть
-        [ -f "$SSL_DIR/nginx-fullchain.crt" ] && cp "$SSL_DIR/nginx-fullchain.crt" "$BACKUP_DIR/"
-        [ -f "$SSL_DIR/nginx-ca.crt" ] && cp "$SSL_DIR/nginx-ca.crt" "$BACKUP_DIR/"
-
-        log "Резервная копия создана в: $BACKUP_DIR"
-
-        # Показать информацию о старом сертификате
-        echo ""
-        log "Информация о текущем сертификате:"
+        log "Backup stored in: $BACKUP_DIR"
+        log "Current certificate details:"
         openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates
-        echo ""
     else
-        warning "Текущие сертификаты не найдены"
+        warning "No existing certificates found"
     fi
 }
 
-# Генерация нового сертификата
 generate_certificate() {
-    log "Генерация нового самоподписанного сертификата..."
+    log "Generating new self-signed certificate..."
 
-    # Создание временной директории
-    TEMP_DIR="/tmp/ssl-gen-$$"
-    mkdir -p "$TEMP_DIR"
+    local temp_dir="/tmp/ssl-gen-$$"
+    mkdir -p "$temp_dir"
 
-    # Создание конфигурационного файла для расширений
-    cat > "$TEMP_DIR/cert.conf" << EOF
+    cat > "$temp_dir/cert.conf" << EOF
 [req]
 default_bits = $KEY_SIZE
 prompt = no
@@ -123,135 +87,94 @@ IP.1 = 127.0.0.1
 IP.2 = 192.168.62.140
 EOF
 
-    # Генерация приватного ключа
-    log "Генерация приватного ключа ($KEY_SIZE бит)..."
-    openssl genrsa -out "$TEMP_DIR/nginx.key" $KEY_SIZE
+    log "Generating ${KEY_SIZE}-bit private key..."
+    openssl genrsa -out "$temp_dir/nginx.key" $KEY_SIZE
 
-    # Генерация сертификата
-    log "Генерация сертификата (действителен $CERT_VALIDITY_DAYS дней)..."
-    openssl req -new -x509 -key "$TEMP_DIR/nginx.key" \
-        -out "$TEMP_DIR/nginx.crt" \
+    log "Generating certificate (valid for $CERT_VALIDITY_DAYS days)..."
+    openssl req -new -x509 -key "$temp_dir/nginx.key" \
+        -out "$temp_dir/nginx.crt" \
         -days $CERT_VALIDITY_DAYS \
-        -config "$TEMP_DIR/cert.conf" \
+        -config "$temp_dir/cert.conf" \
         -extensions v3_req
 
-    # Проверка сгенерированного сертификата
-    if openssl x509 -in "$TEMP_DIR/nginx.crt" -noout -text >/dev/null 2>&1; then
-        success "Сертификат успешно сгенерирован"
-    else
-        error "Ошибка генерации сертификата"
-    fi
+    openssl x509 -in "$temp_dir/nginx.crt" -noout -text >/dev/null 2>&1 \
+        || error_out "Generated certificate is invalid"
 
-    # Установка сертификатов
-    log "Установка новых сертификатов..."
-    cp "$TEMP_DIR/nginx.crt" "$SSL_DIR/"
-    cp "$TEMP_DIR/nginx.key" "$SSL_DIR/"
+    log "Installing new certificates..."
+    cp "$temp_dir/nginx.crt" "$SSL_DIR/"
+    cp "$temp_dir/nginx.key" "$SSL_DIR/"
+    cp "$temp_dir/nginx.crt" "$SSL_DIR/nginx-fullchain.crt"
+    cp "$temp_dir/nginx.crt" "$SSL_DIR/nginx-ca.crt"
 
-    # Создание fullchain (для совместимости)
-    cp "$SSL_DIR/nginx.crt" "$SSL_DIR/nginx-fullchain.crt"
-    cp "$SSL_DIR/nginx.crt" "$SSL_DIR/nginx-ca.crt"
-
-    # Установка правильных прав доступа
     chmod 644 "$SSL_DIR/nginx.crt" "$SSL_DIR/nginx-fullchain.crt" "$SSL_DIR/nginx-ca.crt"
     chmod 600 "$SSL_DIR/nginx.key"
 
-    # Очистка временной директории
-    rm -rf "$TEMP_DIR"
-
-    success "Новые сертификаты установлены"
+    rm -rf "$temp_dir"
+    success "Self-signed certificate installed"
 }
 
-# Проверка нового сертификата
 verify_certificate() {
-    log "Проверка нового сертификата..."
+    log "Verifying new certificate..."
 
     if openssl x509 -in "$SSL_DIR/nginx.crt" -noout -text >/dev/null 2>&1; then
-        success "Новый сертификат валиден"
-
-        # Показать информацию о новом сертификате
-        echo ""
-        log "Информация о новом сертификате:"
+        success "Certificate validation succeeded"
+        log "New certificate details:"
         openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates
-        echo ""
-
-        # Проверка SAN (Subject Alternative Names)
         log "Subject Alternative Names:"
-        openssl x509 -in "$SSL_DIR/nginx.crt" -noout -text | grep -A 3 "Subject Alternative Name" || echo "SAN не найдены"
-        echo ""
+        openssl x509 -in "$SSL_DIR/nginx.crt" -noout -text | grep -A 3 "Subject Alternative Name" || echo "No SAN entries"
     else
-        error "Новый сертификат невалиден"
+        error_out "New certificate is invalid"
     fi
 }
 
-# Перезагрузка nginx
 reload_nginx() {
-    log "Перезагрузка nginx..."
+    log "Reloading nginx..."
 
-    # Проверка конфигурации nginx
-    if docker compose exec nginx nginx -t 2>/dev/null; then
-        # Перезагрузка nginx
-        if docker compose exec nginx nginx -s reload 2>/dev/null; then
-            success "Nginx успешно перезагружен"
+    if docker compose exec nginx nginx -t >/dev/null 2>&1; then
+        if docker compose exec nginx nginx -s reload >/dev/null 2>&1; then
+            success "nginx reloaded"
         else
-            warning "Ошибка перезагрузки nginx, пробуем restart контейнера"
-            if docker compose restart nginx; then
-                success "Nginx контейнер перезапущен"
-            else
-                error "Ошибка перезапуска nginx контейнера"
-            fi
+            warning "nginx reload failed, restarting container"
+            docker compose restart nginx >/dev/null 2>&1 || error_out "Unable to restart nginx"
         fi
     else
-        error "Ошибка в конфигурации nginx"
+        error_out "nginx configuration check failed"
     fi
 }
 
-# Тестирование HTTPS
 test_https() {
-    log "Тестирование HTTPS доступности..."
-
-    # Ожидание запуска nginx
+    log "Testing HTTPS endpoints..."
     sleep 5
 
-    # Тест локального доступа
     if curl -k -I "https://localhost:443/" --connect-timeout 10 >/dev/null 2>&1; then
-        success "Локальный HTTPS доступен"
+        success "Local HTTPS reachable"
     else
-        warning "Локальный HTTPS недоступен"
+        warning "Local HTTPS unavailable"
     fi
 
-    # Тест доступа через домен
     if curl -k -I "https://$DOMAIN/" --connect-timeout 10 >/dev/null 2>&1; then
-        success "HTTPS через домен доступен"
-
-        # Показать заголовки ответа
-        echo ""
-        log "HTTP заголовки ответа:"
+        success "HTTPS reachable via domain"
+        log "Response headers:"
         curl -k -I "https://$DOMAIN/" --connect-timeout 10 2>/dev/null | head -5
-        echo ""
     else
-        warning "HTTPS через домен недоступен"
+        warning "HTTPS unavailable via $DOMAIN"
     fi
 }
 
-# Обновление мониторинга
 update_monitoring() {
-    log "Обновление конфигурации мониторинга..."
+    log "Updating monitoring metadata..."
 
-    # Обновление конфигурации мониторинга
-    if [ -f "conf/ssl/monitoring.conf" ]; then
-        # Добавление записи о обновлении
-        echo "# Сертификат обновлен: $(date)" >> conf/ssl/monitoring.conf
-        log "Конфигурация мониторинга обновлена"
+    if [[ -f "conf/ssl/monitoring.conf" ]]; then
+        echo "# Certificate renewed: $(date)" >> conf/ssl/monitoring.conf
+        log "Monitoring configuration updated"
     fi
 
-    # Запуск проверки мониторинга
-    if [ -x "scripts/ssl/monitor-certificates.sh" ]; then
-        log "Запуск проверки мониторинга..."
-        ./scripts/ssl/monitor-certificates.sh check || warning "Ошибка проверки мониторинга"
+    if [[ -x "scripts/ssl/monitor-certificates.sh" ]]; then
+        log "Triggering ssl monitoring check..."
+        ./scripts/ssl/monitor-certificates.sh check || warning "Monitoring check reported an issue"
     fi
 }
 
-# Генерация отчета
 generate_report() {
     local report_file="logs/ssl-renewal-report-$(date +%Y%m%d-%H%M%S).txt"
     mkdir -p "$(dirname "$report_file")"
@@ -260,41 +183,37 @@ generate_report() {
         echo "ERNI-KI SSL Certificate Renewal Report"
         echo "Generated: $(date)"
         echo "========================================"
-        echo ""
+        echo
 
         echo "Certificate Information:"
-        openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates 2>/dev/null || echo "Error reading certificate"
-        echo ""
+        openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates 2>/dev/null || echo "Unable to read certificate"
+        echo
 
         echo "Backup Location:"
         echo "$BACKUP_DIR"
-        echo ""
+        echo
 
-        echo "HTTPS Test Results:"
+        echo "HTTPS Test:"
         if curl -k -I "https://$DOMAIN/" --connect-timeout 5 >/dev/null 2>&1; then
             echo "✓ HTTPS accessible"
         else
             echo "✗ HTTPS not accessible"
         fi
-        echo ""
+        echo
 
-        echo "Next Renewal Date:"
+        echo "Next Renewal Reminder:"
         echo "$(date -d "+$((CERT_VALIDITY_DAYS - 30)) days" '+%Y-%m-%d') (30 days before expiration)"
-
     } > "$report_file"
 
-    log "Отчет сохранен: $report_file"
+    log "Report saved to $report_file"
 }
 
-# Основная функция
 main() {
-    echo -e "${CYAN}"
-    echo "=============================================="
+    echo -e "${CYAN}=============================================="
     echo "  ERNI-KI Self-Signed Certificate Renewal"
     echo "  Domain: $DOMAIN"
     echo "  Validity: $CERT_VALIDITY_DAYS days"
-    echo "=============================================="
-    echo -e "${NC}"
+    echo "==============================================${NC}"
 
     check_environment
     create_backup
@@ -305,16 +224,12 @@ main() {
     update_monitoring
     generate_report
 
-    echo ""
-    success "🎉 SSL сертификат успешно обновлен!"
-    echo ""
-    log "Следующие шаги:"
-    echo "1. Проверьте HTTPS доступ: https://$DOMAIN"
-    echo "2. Добавьте исключение в браузере для самоподписанного сертификата"
-    echo "3. Следующее обновление рекомендуется через $((CERT_VALIDITY_DAYS - 30)) дней"
-    echo ""
-    log "Резервная копия старых сертификатов: $BACKUP_DIR"
+    success "Self-signed certificate renewed successfully!"
+    log "Next steps:"
+    echo "1. Validate HTTPS: https://$DOMAIN"
+    echo "2. Accept the self-signed certificate in browsers if prompted"
+    echo "3. Plan the next renewal ~$((CERT_VALIDITY_DAYS - 30)) days from now"
+    log "Backup directory: $BACKUP_DIR"
 }
 
-# Запуск скрипта
 main "$@"

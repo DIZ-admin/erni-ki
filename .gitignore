@@ -96,6 +96,7 @@ vendor/
 go.work*
 auth/main
 auth/erni-ki-auth
+auth/auth
 auth/dist/
 auth/build/
 
@@ -165,6 +166,9 @@ conf/**/*.yml
 !conf/**/*.example
 !conf/**/*.template
 !conf/**/*.sample
+!conf/nginx/nginx.conf
+!conf/nginx/conf.d/default.conf
+!conf/nginx/includes/cloudflare-ips.conf
 
 # Временные конфигурационные файлы
 *.conf.new
@@ -199,6 +203,7 @@ test-*.md
 playwright-artifacts/
 playwright-report/
 tests/fixtures/
+docs/**/sitemap.xml
 
 # ===================================================================
 # ПРОЧЕЕ

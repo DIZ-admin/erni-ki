@@ -2,7 +2,7 @@
   "name": "erni-ki",
   "version": "1.0.0",
   "type": "module",
-  "description": "AI платформа на базе Open WebUI с полной контейнеризацией",
+  "description": "AI platform based on Open WebUI with full containerization",
   "keywords": [
     "ai",
     "llm",
@@ -36,8 +36,8 @@
     }
   ],
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=22.14.0",
+    "npm": ">=10.8.2"
   },
   "scripts": {
     "dev": "vitest",
@@ -49,11 +49,18 @@
     "e2e:report": "playwright show-report",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
-    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
-    "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+    "lint": "npm run lint:js && npm run lint:py",
+    "lint:js": "eslint . --ext .js,.ts,.jsx,.tsx",
+    "lint:js:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+    "lint:py": "bash -c 'if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python3 -m ruff check .; else python3 -m ruff check . || echo \"Warning: Ruff not found. Install with: pip install ruff\"; fi'",
+    "lint:py:fix": "bash -c 'if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python3 -m ruff check . --fix; else python3 -m ruff check . --fix || echo \"Warning: Ruff not found. Install with: pip install ruff\"; fi'",
+    "lint:fix": "npm run lint:js:fix && npm run lint:py:fix",
     "format": "./scripts/prettier-run.sh write",
     "format:check": "./scripts/prettier-run.sh check",
+    "format:py": "bash -c 'if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python3 -m ruff format .; else python3 -m ruff format . || echo \"Warning: Ruff not found. Install with: pip install ruff\"; fi'",
     "type-check": "tsc --noEmit",
+    "lint:language": "node scripts/language-check.cjs",
+    "lint:language:all": "node scripts/language-check.cjs --all",
     "build": "tsc",
     "clean": "rm -rf dist coverage node_modules/.cache",
     "docker:build": "docker build -t erni-ki-auth:dev ./auth",
@@ -61,6 +68,9 @@
     "docker:stop": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "security:scan": "npm audit --audit-level=high && docker run --rm -v $(pwd)/auth:/src -w /src securecodewarrior/docker-gosec ./...",
+    "docs:lint": "python3 scripts/docs/content_lint.py --fix-headings --add-toc",
+    "docs:translations": "python3 scripts/docs/translation_report.py",
+    "docs:report": "python3 scripts/docs/content_lint.py",
     "prepare": "husky install",
     "commit": "git-cz",
     "release": "semantic-release",
@@ -92,6 +102,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.6.2",
+    "rollup": "^4.52.5",
     "semantic-release": "^21.1.2",
     "typescript": "^5.7.2",
     "vitest": "^4.0.6"
@@ -101,8 +112,13 @@
       "eslint --fix",
       "prettier --write"
     ],
+    "*.py": [
+      "ruff check --fix",
+      "ruff format"
+    ],
     "*.{json,yaml,yml,md}": [
-      "prettier --write"
+      "prettier --write --log-level=warn",
+      "npm run lint:language -- --all"
     ],
     "*.go": [
       "gofmt -w",
@@ -140,8 +156,11 @@
     "js-yaml": "4.1.1",
     "tmp": "0.2.5"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.52.5"
+  },
   "volta": {
-    "node": "20.18.0",
+    "node": "22.14.0",
     "npm": "10.8.2"
   }
 }

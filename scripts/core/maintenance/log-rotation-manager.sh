@@ -1,17 +1,17 @@
 #!/bin/bash
-# Скрипт управления ротацией логов ERNI-KI
-# Автоматическая архивация и очистка логов с сохранением в .config-backup/logs/
+# ERNI-KI log rotation management script
+# Automatic log archiving and cleanup with storage in .config-backup/logs/
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Конфигурация
+# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 BACKUP_DIR="$PROJECT_ROOT/.config-backup/logs"
@@ -21,7 +21,7 @@ RETENTION_DAYS=7
 ARCHIVE_RETENTION_WEEKS=4
 MAX_LOG_SIZE="100M"
 
-# Функции логирования
+# Logging functions
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
@@ -38,9 +38,9 @@ error() {
     echo -e "${RED}❌ $1${NC}"
 }
 
-# Создание структуры директорий для архивации
+# Create directory structure for archiving
 create_backup_structure() {
-    log "Создание структуры директорий для архивации логов..."
+    log "Creating directory structure for log archiving..."
 
     local dirs=(
         "$BACKUP_DIR"
@@ -56,119 +56,119 @@ create_backup_structure() {
     for dir in "${dirs[@]}"; do
         if [[ ! -d "$dir" ]]; then
             mkdir -p "$dir"
-            success "Создана директория: $dir"
+            success "Created directory: $dir"
         fi
     done
 }
 
-# Ротация логов Docker контейнеров
+# Rotate Docker container logs
 rotate_docker_logs() {
-    log "Ротация логов Docker контейнеров..."
+    log "Rotating Docker container logs..."
 
     local date_suffix=$(date +%Y%m%d_%H%M%S)
     local services=("auth" "db" "redis" "ollama" "nginx" "openwebui" "searxng" "edgetts" "tika" "mcposerver" "cloudflared" "watchtower" "backrest")
 
     for service in "${services[@]}"; do
-        log "Обработка логов сервиса: $service"
+        log "Processing logs for service: $service"
 
-        # Получение ID контейнера
+        # Get container ID
         local container_id=$(docker-compose ps -q "$service" 2>/dev/null || echo "")
 
         if [[ -n "$container_id" ]]; then
-            # Экспорт логов контейнера
+            # Export container logs
             local log_file="$BACKUP_DIR/services/${service}_${date_suffix}.log"
 
             if docker logs "$container_id" --since="24h" > "$log_file" 2>&1; then
-                # Сжатие лога
+                # Compress log
                 gzip "$log_file"
-                success "Архивирован лог сервиса $service: ${log_file}.gz"
+                success "Archived log for service $service: ${log_file}.gz"
 
-                # Очистка старых логов контейнера (оставляем последние 100MB)
+                # Clean old container logs (keep last 100MB)
                 docker logs "$container_id" --tail=1000 > /tmp/temp_log_$service 2>&1 || true
 
             else
-                warning "Не удалось экспортировать логи сервиса $service"
+                warning "Failed to export logs for service $service"
             fi
         else
-            warning "Контейнер $service не найден или не запущен"
+            warning "Container $service not found or not running"
         fi
     done
 }
 
-# Ротация логов Nginx
+# Rotate Nginx logs
 rotate_nginx_logs() {
-    log "Ротация логов Nginx..."
+    log "Rotating Nginx logs..."
 
     local date_suffix=$(date +%Y%m%d_%H%M%S)
 
-    # Архивация access.log
+    # Archive access.log
     if [[ -f "$NGINX_LOGS_DIR/access.log" ]]; then
         local access_backup="$BACKUP_DIR/nginx/access_${date_suffix}.log"
         cp "$NGINX_LOGS_DIR/access.log" "$access_backup"
         gzip "$access_backup"
 
-        # Очистка текущего лога
+        # Clear current log
         > "$NGINX_LOGS_DIR/access.log"
-        success "Архивирован Nginx access.log"
+        success "Archived Nginx access.log"
     fi
 
-    # Архивация error.log
+    # Archive error.log
     if [[ -f "$NGINX_LOGS_DIR/error.log" ]]; then
         local error_backup="$BACKUP_DIR/nginx/error_${date_suffix}.log"
         cp "$NGINX_LOGS_DIR/error.log" "$error_backup"
         gzip "$error_backup"
 
-        # Очистка текущего лога
+        # Clear current log
         > "$NGINX_LOGS_DIR/error.log"
-        success "Архивирован Nginx error.log"
+        success "Archived Nginx error.log"
     fi
 
-    # Перезагрузка Nginx для применения изменений
+    # Reload Nginx to apply changes
     if docker-compose exec nginx nginx -s reload 2>/dev/null; then
-        success "Nginx перезагружен для применения ротации логов"
+        success "Nginx reloaded to apply log rotation"
     else
-        warning "Не удалось перезагрузить Nginx"
+        warning "Failed to reload Nginx"
     fi
 }
 
-# Архивация критических логов
+# Archive critical logs
 archive_critical_logs() {
-    log "Архивация критических логов..."
+    log "Archiving critical logs..."
 
     local date_suffix=$(date +%Y%m%d_%H%M%S)
     local critical_log="$BACKUP_DIR/critical/critical_errors_${date_suffix}.log"
 
-    # Поиск критических ошибок в логах всех сервисов
+    # Search for critical errors in all service logs
     {
-        echo "=== КРИТИЧЕСКИЕ ОШИБКИ ERNI-KI ==="
-        echo "Дата архивации: $(date)"
-        echo "Период: последние 24 часа"
+        echo "=== ERNI-KI CRITICAL ERRORS ==="
+        echo "Archive Date: $(date)"
+        echo "Period: last 24 hours"
         echo ""
 
-        # Поиск в логах Docker
+        # Search in Docker logs
         docker-compose logs --since=24h 2>/dev/null | grep -i -E "(error|fatal|critical|exception|panic|segfault)" | head -1000
 
         echo ""
-        echo "=== NGINX ОШИБКИ ==="
+        echo "=== NGINX ERRORS ==="
         if [[ -f "$NGINX_LOGS_DIR/error.log" ]]; then
             tail -1000 "$NGINX_LOGS_DIR/error.log" | grep -i -E "(error|crit|alert|emerg)"
         fi
 
     } > "$critical_log"
 
-    # Сжатие критических логов
+    # Compress critical logs
     gzip "$critical_log"
-    success "Архивированы критические логи: ${critical_log}.gz"
+    success "Archived critical logs: ${critical_log}.gz"
 }
 
-# Создание ежедневного архива
+# Create daily archive
 create_daily_archive() {
-    log "Создание ежедневного архива логов..."
+    log "Creating daily log archive..."
 
     local date_suffix=$(date +%Y%m%d)
     local daily_archive="$BACKUP_DIR/daily/erni-ki-logs-${date_suffix}.tar.gz"
 
-    # Создание архива всех логов за день
+    # Create archive of all logs for the day
     tar -czf "$daily_archive" \
         -C "$BACKUP_DIR" \
         --exclude="daily" \
@@ -177,72 +177,72 @@ create_daily_archive() {
 
     if [[ -f "$daily_archive" ]]; then
         local archive_size=$(du -h "$daily_archive" | cut -f1)
-        success "Создан ежедневный архив: $daily_archive ($archive_size)"
+        success "Created daily archive: $daily_archive ($archive_size)"
     else
-        error "Не удалось создать ежедневный архив"
+        error "Failed to create daily archive"
     fi
 }
 
-# Создание еженедельного архива
+# Create weekly archive
 create_weekly_archive() {
-    log "Создание еженедельного архива логов..."
+    log "Creating weekly log archive..."
 
-    # Проверяем, что сегодня воскресенье (день недели 0)
+    # Check if today is Sunday (day of week 0)
     if [[ $(date +%w) -eq 0 ]]; then
         local week_suffix=$(date +%Y_week_%U)
         local weekly_archive="$BACKUP_DIR/weekly/erni-ki-logs-${week_suffix}.tar.gz"
 
-        # Создание архива всех ежедневных архивов за неделю
+        # Create archive of all daily archives for the week
         tar -czf "$weekly_archive" \
             -C "$BACKUP_DIR/daily" \
             . 2>/dev/null || true
 
         if [[ -f "$weekly_archive" ]]; then
             local archive_size=$(du -h "$weekly_archive" | cut -f1)
-            success "Создан еженедельный архив: $weekly_archive ($archive_size)"
+            success "Created weekly archive: $weekly_archive ($archive_size)"
         else
-            warning "Не удалось создать еженедельный архив"
+            warning "Failed to create weekly archive"
         fi
     else
-        log "Еженедельный архив создается только по воскресеньям"
+        log "Weekly archive is created only on Sundays"
     fi
 }
 
-# Очистка старых архивов
+# Clean up old archives
 cleanup_old_archives() {
-    log "Очистка старых архивов..."
+    log "Cleaning up old archives..."
 
-    # Удаление ежедневных архивов старше RETENTION_DAYS дней
+    # Delete daily archives older than RETENTION_DAYS days
     find "$BACKUP_DIR/daily" -name "*.tar.gz" -mtime +$RETENTION_DAYS -delete 2>/dev/null || true
 
-    # Удаление еженедельных архивов старше ARCHIVE_RETENTION_WEEKS недель
+    # Delete weekly archives older than ARCHIVE_RETENTION_WEEKS weeks
     local weeks_in_days=$((ARCHIVE_RETENTION_WEEKS * 7))
     find "$BACKUP_DIR/weekly" -name "*.tar.gz" -mtime +$weeks_in_days -delete 2>/dev/null || true
 
-    # Удаление старых логов сервисов
+    # Delete old service logs
     find "$BACKUP_DIR/services" -name "*.log.gz" -mtime +$RETENTION_DAYS -delete 2>/dev/null || true
     find "$BACKUP_DIR/nginx" -name "*.log.gz" -mtime +$RETENTION_DAYS -delete 2>/dev/null || true
     find "$BACKUP_DIR/critical" -name "*.log.gz" -mtime +$RETENTION_DAYS -delete 2>/dev/null || true
 
-    success "Очистка старых архивов завершена"
+    success "Old archives cleanup completed"
 }
 
-# Мониторинг размера логов
+# Monitor log sizes
 monitor_log_sizes() {
-    log "Мониторинг размера логов..."
+    log "Monitoring log sizes..."
 
-    # Проверка размера директории логов
+    # Check log directory size
     local total_size=$(du -sh "$BACKUP_DIR" 2>/dev/null | cut -f1 || echo "0")
-    log "Общий размер архивов логов: $total_size"
+    log "Total log archive size: $total_size"
 
-    # Проверка размера логов Docker
+    # Check Docker logs size
     local docker_logs_size=$(du -sh /var/lib/docker/containers 2>/dev/null | cut -f1 || echo "0")
-    log "Размер логов Docker: $docker_logs_size"
+    log "Docker logs size: $docker_logs_size"
 
-    # Предупреждение о больших логах
+    # Warning about large logs
     local large_logs=$(find /var/lib/docker/containers -name "*.log" -size +$MAX_LOG_SIZE 2>/dev/null || true)
     if [[ -n "$large_logs" ]]; then
-        warning "Обнаружены большие лог-файлы Docker:"
+        warning "Large Docker log files found:"
         echo "$large_logs" | while read -r log_file; do
             local size=$(du -h "$log_file" | cut -f1)
             warning "  $log_file ($size)"
@@ -250,56 +250,56 @@ monitor_log_sizes() {
     fi
 }
 
-# Генерация отчета о ротации
+# Generate rotation report
 generate_rotation_report() {
-    log "Генерация отчета о ротации логов..."
+    log "Generating log rotation report..."
 
     local report_file="$BACKUP_DIR/rotation_report_$(date +%Y%m%d_%H%M%S).txt"
 
     {
-        echo "=== ОТЧЕТ О РОТАЦИИ ЛОГОВ ERNI-KI ==="
-        echo "Дата: $(date)"
-        echo "Хост: $(hostname)"
+        echo "=== ERNI-KI LOG ROTATION REPORT ==="
+        echo "Date: $(date)"
+        echo "Host: $(hostname)"
         echo ""
 
-        echo "=== СТАТИСТИКА АРХИВОВ ==="
-        echo "Общий размер архивов: $(du -sh "$BACKUP_DIR" 2>/dev/null | cut -f1 || echo "0")"
-        echo "Количество ежедневных архивов: $(find "$BACKUP_DIR/daily" -name "*.tar.gz" 2>/dev/null | wc -l)"
-        echo "Количество еженедельных архивов: $(find "$BACKUP_DIR/weekly" -name "*.tar.gz" 2>/dev/null | wc -l)"
+        echo "=== ARCHIVE STATISTICS ==="
+        echo "Total archive size: $(du -sh "$BACKUP_DIR" 2>/dev/null | cut -f1 || echo "0")"
+        echo "Daily archives count: $(find "$BACKUP_DIR/daily" -name "*.tar.gz" 2>/dev/null | wc -l)"
+        echo "Weekly archives count: $(find "$BACKUP_DIR/weekly" -name "*.tar.gz" 2>/dev/null | wc -l)"
         echo ""
 
-        echo "=== ПОСЛЕДНИЕ АРХИВЫ ==="
-        echo "Ежедневные архивы:"
-        ls -lah "$BACKUP_DIR/daily" 2>/dev/null | tail -5 || echo "Нет архивов"
+        echo "=== LATEST ARCHIVES ==="
+        echo "Daily archives:"
+        ls -lah "$BACKUP_DIR/daily" 2>/dev/null | tail -5 || echo "No archives"
         echo ""
-        echo "Еженедельные архивы:"
-        ls -lah "$BACKUP_DIR/weekly" 2>/dev/null | tail -3 || echo "Нет архивов"
+        echo "Weekly archives:"
+        ls -lah "$BACKUP_DIR/weekly" 2>/dev/null | tail -3 || echo "No archives"
         echo ""
 
-        echo "=== СТАТУС СЕРВИСОВ ==="
-        docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Health}}" 2>/dev/null || echo "Docker Compose недоступен"
+        echo "=== SERVICE STATUS ==="
+        docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Health}}" 2>/dev/null || echo "Docker Compose not available"
 
     } > "$report_file"
 
-    success "Отчет сохранен: $report_file"
+    success "Report saved: $report_file"
 }
 
-# Основная функция
+# Main function
 main() {
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║                    ERNI-KI Log Rotation                     ║"
-    echo "║                  Управление ротацией логов                  ║"
+    echo "║                  Log Rotation Management                    ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 
-    # Проверка прав доступа
+    # Check access permissions
     if [[ $EUID -ne 0 ]] && [[ ! -w "$NGINX_LOGS_DIR" ]]; then
-        warning "Для полной ротации логов требуются права root"
-        warning "Некоторые операции могут быть недоступны"
+        warning "Root privileges required for full log rotation"
+        warning "Some operations may be unavailable"
     fi
 
-    # Выполнение ротации
+    # Execute rotation
     create_backup_structure
     echo ""
 
@@ -309,7 +309,7 @@ main() {
     if [[ -w "$NGINX_LOGS_DIR" ]]; then
         rotate_nginx_logs
     else
-        warning "Нет доступа к логам Nginx, пропускаем ротацию"
+        warning "No access to Nginx logs, skipping rotation"
     fi
     echo ""
 
@@ -331,31 +331,31 @@ main() {
     generate_rotation_report
     echo ""
 
-    success "Ротация логов завершена успешно!"
+    success "Log rotation completed successfully!"
 }
 
-# Обработка аргументов командной строки
+# Command line argument handling
 case "${1:-}" in
     --daily)
-        log "Запуск ежедневной ротации логов"
+        log "Starting daily log rotation"
         main
         ;;
     --weekly)
-        log "Запуск еженедельной ротации логов"
+        log "Starting weekly log rotation"
         create_backup_structure
         create_weekly_archive
         cleanup_old_archives
         ;;
     --cleanup)
-        log "Запуск очистки старых архивов"
+        log "Starting old archives cleanup"
         cleanup_old_archives
         ;;
     --report)
-        log "Генерация отчета о логах"
+        log "Generating log report"
         generate_rotation_report
         ;;
     --monitor)
-        log "Мониторинг размера логов"
+        log "Monitoring log sizes"
         monitor_log_sizes
         ;;
     *)

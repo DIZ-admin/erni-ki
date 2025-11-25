@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Комплексная проверка системы мониторинга ERNI-KI
-# Автор: Альтэон Шульц (ERNI-KI Tech Lead)
+# Comprehensive ERNI-KI monitoring system check
+# Author: Alteon Schultz (ERNI-KI Tech Lead)
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -14,7 +14,7 @@ PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 LOKI_TENANT_HEADER="X-Scope-OrgID: erni-ki"
 
-# Функции логирования
+# Logging helper
 log() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -35,9 +35,9 @@ header() {
     echo -e "${PURPLE}[HEADER]${NC} $1"
 }
 
-# Проверка основных компонентов мониторинга
+# Core monitoring components check
 check_monitoring_services() {
-    header "Проверка компонентов мониторинга..."
+    header "Checking monitoring components..."
 
     local services=(
         "prometheus:9091:Prometheus"
@@ -73,143 +73,143 @@ check_monitoring_services() {
     done
 
     echo "------------------------------------------------------------------------"
-    echo "Работающих сервисов мониторинга: $healthy_count/$total_count"
+    echo "Healthy monitoring services: $healthy_count/$total_count"
 
     if [ $healthy_count -eq $total_count ]; then
-        success "Все компоненты мониторинга работают!"
+        success "All monitoring components are healthy!"
         return 0
     else
-        warning "Некоторые компоненты мониторинга требуют внимания"
+        warning "Some monitoring components need attention"
         return 1
     fi
 }
 
-# Проверка метрик
+# Metrics validation
 check_metrics() {
-    header "Проверка сбора метрик..."
+    header "Validating metric collection..."
 
     echo ""
-    echo "=== ОСНОВНЫЕ МЕТРИКИ ==="
+    echo "=== KEY METRICS ==="
 
-    # Проверка доступности Prometheus
+    # Prometheus availability
     if ! curl -s http://localhost:9091/api/v1/status/config >/dev/null; then
-        error "Prometheus недоступен"
+        error "Prometheus unavailable"
         return 1
     fi
 
-    # Системные метрики
-    log "Системные метрики (Node Exporter)..."
+    # System metrics
+    log "System metrics (Node Exporter)..."
     local node_metrics=$(curl -s "http://localhost:9091/api/v1/query?query=up{job=\"node-exporter\"}" | jq -r '.data.result | length')
     if [ "$node_metrics" -gt 0 ]; then
-        success "Node Exporter метрики: $node_metrics targets"
+        success "Node Exporter metrics targets: $node_metrics"
     else
-        error "Node Exporter метрики недоступны"
+        error "Node Exporter metrics unavailable"
     fi
 
-    # GPU метрики
-    log "GPU метрики (NVIDIA Exporter)..."
+    # GPU metrics
+    log "GPU metrics (NVIDIA exporter)..."
     local gpu_metrics=$(curl -s http://localhost:9445/metrics | grep -c "nvidia_gpu" || echo "0")
     if [ "$gpu_metrics" -gt 0 ]; then
-        success "GPU метрики: $gpu_metrics показателей"
+        success "GPU metrics: $gpu_metrics samples"
 
-        # Показать текущую загрузку GPU
+        # Display current GPU load
         local gpu_usage=$(curl -s http://localhost:9445/metrics | grep "nvidia_gpu_duty_cycle" | awk '{print $2}' | head -1)
         if [ -n "$gpu_usage" ]; then
-            echo "  └─ Текущая загрузка GPU: ${gpu_usage}%"
+            echo "  └─ Current GPU load: ${gpu_usage}%"
         fi
     else
-        warning "GPU метрики недоступны"
+        warning "GPU metrics unavailable"
     fi
 
-    # Контейнерные метрики
-    log "Контейнерные метрики (cAdvisor)..."
+    # Container metrics
+    log "Container metrics (cAdvisor)..."
     local container_metrics=$(curl -s "http://localhost:9091/api/v1/query?query=container_last_seen" | jq -r '.data.result | length')
     if [ "$container_metrics" -gt 0 ]; then
-        success "Контейнерные метрики: $container_metrics контейнеров"
+        success "Container metrics available: $container_metrics containers"
     else
-        warning "Контейнерные метрики недоступны"
+        warning "Container metrics unavailable"
     fi
 
-    # База данных метрики
-    log "PostgreSQL метрики..."
+    # Database metrics
+    log "PostgreSQL metrics..."
     local db_metrics=$(curl -s "http://localhost:9091/api/v1/query?query=pg_up" | jq -r '.data.result | length')
     if [ "$db_metrics" -gt 0 ]; then
-        success "PostgreSQL метрики доступны"
+        success "PostgreSQL metrics accessible"
     else
-        warning "PostgreSQL метрики недоступны"
+        warning "PostgreSQL metrics unavailable"
     fi
 }
 
-# Проверка дашбордов Grafana
+# Grafana dashboard checks
 check_grafana_dashboards() {
-    header "Проверка дашбордов Grafana..."
+    header "Validating Grafana dashboards..."
 
-    # Проверка доступности Grafana API
+    # Grafana API availability
     if ! curl -s http://localhost:3000/api/health >/dev/null; then
-        error "Grafana недоступна"
+        error "Grafana unavailable"
         return 1
     fi
 
-    success "Grafana доступна на http://localhost:3000"
+    success "Grafana reachable at http://localhost:3000"
 
-    # Проверка источников данных
-    log "Проверка источников данных..."
+    # Datasources
+    log "Checking datasources..."
     echo "  ├─ Prometheus: http://localhost:9091"
     echo "  ├─ Alertmanager: http://localhost:9093"
-    echo "  └─ Loki: http://localhost:3100 (требуется заголовок X-Scope-OrgID)"
+    echo "  └─ Loki: http://localhost:3100 (requires header X-Scope-OrgID)"
 
     if curl -s -H "$LOKI_TENANT_HEADER" http://localhost:3100/ready >/dev/null; then
-        success "Loki доступен (endpoint /ready)"
+        success "Loki ready (endpoint /ready)"
     else
-        warning "Loki (/ready) недоступен"
+        warning "Loki (/ready) unavailable"
     fi
 
-    # Информация о дашбордах
-    log "Предустановленные дашборды:"
+    # Dashboard info
+    log "Preconfigured dashboards:"
     echo "  ├─ ERNI-KI System Overview"
     echo "  ├─ Infrastructure Monitoring"
     echo "  ├─ AI Services Monitoring"
     echo "  └─ Critical Alerts Dashboard"
 }
 
-# Проверка алертов
+# Alerting checks
 check_alerts() {
-    header "Проверка системы алертов..."
+    header "Validating alerting stack..."
 
-    # Проверка Alertmanager
+    # Alertmanager status
     if ! curl -s http://localhost:9093/api/v1/status >/dev/null; then
-        error "Alertmanager недоступен"
+        error "Alertmanager unavailable"
         return 1
     fi
 
-    success "Alertmanager работает на http://localhost:9093"
+    success "Alertmanager running at http://localhost:9093"
 
-    # Активные алерты
-    log "Проверка активных алертов..."
+    # Active alerts
+    log "Checking active alerts..."
     local active_alerts=$(curl -s http://localhost:9093/api/v1/alerts | jq -r '.data[] | select(.state == "active") | .labels.alertname' | wc -l)
 
     if [ "$active_alerts" -eq 0 ]; then
-        success "Активных алертов нет"
+        success "No active alerts"
     else
-        warning "Активных алертов: $active_alerts"
+        warning "Active alerts: $active_alerts"
         curl -s http://localhost:9093/api/v1/alerts | jq -r '.data[] | select(.state == "active") | "  ├─ \(.labels.alertname): \(.labels.severity)"'
     fi
 
     # Webhook receiver
-    log "Проверка webhook receiver..."
+    log "Checking webhook receiver..."
     if curl -s http://localhost:9095/health >/dev/null; then
-        success "Webhook receiver работает на http://localhost:9095"
+        success "Webhook receiver running at http://localhost:9095"
     else
-        error "Webhook receiver недоступен"
+        error "Webhook receiver unavailable"
     fi
 }
 
-# Проверка производительности
+# Performance snapshot
 check_performance() {
-    header "Проверка производительности системы..."
+    header "System performance snapshot..."
 
     echo ""
-    echo "=== ТЕКУЩИЕ ПОКАЗАТЕЛИ ==="
+    echo "=== CURRENT METRICS ==="
 
     # CPU
     local cpu_usage=$(curl -s "http://localhost:9091/api/v1/query?query=100-(avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m]))*100)" | jq -r '.data.result[0].value[1]' 2>/dev/null || echo "N/A")
@@ -223,29 +223,29 @@ check_performance() {
     local disk_usage=$(df -h / | tail -1 | awk '{print $5}')
     echo "Disk Usage: $disk_usage"
 
-    # Контейнеры
+    # Containers
     local containers=$(docker ps | wc -l)
     echo "Running Containers: $((containers-1))"
 
-    # GPU (если доступно)
+    # GPU (if available)
     local gpu_temp=$(curl -s http://localhost:9445/metrics | grep "nvidia_gpu_temperature_celsius" | awk '{print $2}' | head -1 2>/dev/null || echo "N/A")
     if [ "$gpu_temp" != "N/A" ]; then
         echo "GPU Temperature: ${gpu_temp}°C"
     fi
 }
 
-# Основная функция
+# Main entrypoint
 main() {
     echo "=================================================="
-    echo "🔍 СТАТУС СИСТЕМЫ МОНИТОРИНГА ERNI-KI"
+    echo "🔍 ERNI-KI MONITORING SYSTEM STATUS"
     echo "=================================================="
-    echo "Дата: $(date '+%Y-%m-%d %H:%M:%S')"
-    echo "Хост: $(hostname)"
+    echo "Date: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "Host: $(hostname)"
     echo ""
 
     local all_good=true
 
-    # Выполнение проверок
+    # Execute checks
     if ! check_monitoring_services; then
         all_good=false
     fi
@@ -265,26 +265,26 @@ main() {
 
     echo "=================================================="
     if [ "$all_good" = true ]; then
-        success "🎉 СИСТЕМА МОНИТОРИНГА ПОЛНОСТЬЮ ФУНКЦИОНАЛЬНА!"
+        success "🎉 MONITORING STACK FULLY OPERATIONAL!"
         echo ""
-        echo "📊 Доступные интерфейсы:"
+        echo "📊 Interfaces:"
         echo "• Grafana: http://localhost:3000"
         echo "• Prometheus: http://localhost:9091"
         echo "• Alertmanager: http://localhost:9093"
-        echo "• Loki: http://localhost:3100 (используйте заголовок X-Scope-OrgID: erni-ki)"
+        echo "• Loki: http://localhost:3100 (header X-Scope-OrgID: erni-ki)"
         echo ""
         echo "🔧 Exporters:"
         echo "• Node Exporter: http://localhost:9101/metrics"
         echo "• GPU Exporter: http://localhost:9445/metrics"
         echo "• cAdvisor: http://localhost:8081"
     else
-        warning "⚠️ СИСТЕМА МОНИТОРИНГА ТРЕБУЕТ ВНИМАНИЯ"
+        warning "⚠️ MONITORING STACK NEEDS ATTENTION"
         echo ""
-        echo "Проверьте логи проблемных сервисов:"
-        echo "docker-compose -f monitoring/docker-compose.monitoring.yml logs [service-name]"
+        echo "Check logs for failing services:"
+        echo "docker-compose -f monitoring/docker-compose.monitoring.yml logs <service>"
     fi
     echo "=================================================="
 }
 
-# Запуск
+# Run
 main "$@"

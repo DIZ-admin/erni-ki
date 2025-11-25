@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# Настройка автоматического мониторинга SSL сертификатов для ERNI-KI
-# Создает systemd timer или cron job для регулярной проверки
+# Setup automatic SSL certificate monitoring for ERNI-KI
+# Creates systemd timer or cron job for regular checks
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Функции для логирования
+# Functions for logging
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"
 }
@@ -30,34 +30,34 @@ error() {
     exit 1
 }
 
-# Конфигурация
+# Configuration
 PROJECT_DIR="$(pwd)"
 MONITOR_SCRIPT="$PROJECT_DIR/scripts/infrastructure/security/monitor-certificates.sh"
 SERVICE_NAME="erni-ki-ssl-monitor"
 TIMER_NAME="erni-ki-ssl-monitor"
 
-# Проверка прав доступа
+# Check access permissions
 check_permissions() {
-    log "Проверка прав доступа..."
+    log "Checking access permissions..."
 
     if [ "$EUID" -eq 0 ]; then
-        log "Запуск от root, будет создан системный timer"
+        log "Starting as root, creating system timer"
         SYSTEMD_DIR="/etc/systemd/system"
     else
-        log "Запуск от пользователя, будет создан пользовательский timer"
+        log "Starting as user, creating user timer"
         SYSTEMD_DIR="$HOME/.config/systemd/user"
         mkdir -p "$SYSTEMD_DIR"
     fi
 }
 
-# Создание systemd service
+# Creating systemd service
 create_systemd_service() {
-    log "Создание systemd service..."
+    log "Creating systemd service..."
 
     local service_file="$SYSTEMD_DIR/$SERVICE_NAME.service"
 
     if [ "$EUID" -eq 0 ]; then
-        # Системный service с зависимостью от Docker
+        # System service with Docker dependency
         cat > "$service_file" << EOF
 [Unit]
 Description=ERNI-KI SSL Certificate Monitor
@@ -80,7 +80,7 @@ TimeoutSec=300
 WantedBy=multi-user.target
 EOF
     else
-        # Пользовательский service без зависимости от Docker
+        # User service without Docker dependency
         cat > "$service_file" << EOF
 [Unit]
 Description=ERNI-KI SSL Certificate Monitor
@@ -101,12 +101,12 @@ WantedBy=default.target
 EOF
     fi
 
-    success "Systemd service создан: $service_file"
+    success "Systemd service created: $service_file"
 }
 
-# Создание systemd timer
+# Creating systemd timer
 create_systemd_timer() {
-    log "Создание systemd timer..."
+    log "Creating systemd timer..."
 
     local timer_file="$SYSTEMD_DIR/$TIMER_NAME.timer"
 
@@ -116,187 +116,187 @@ Description=ERNI-KI SSL Certificate Monitor Timer
 Requires=$SERVICE_NAME.service
 
 [Timer]
-# Запуск каждый день в 02:00
+# Starting daily at 02:00
 OnCalendar=daily
-# Запуск через 5 минут после загрузки системы
+# Starting 5 minutes after system boot
 OnBootSec=5min
-# Случайная задержка до 30 минут для распределения нагрузки
+# Random delay up to 30 minutes for load distribution
 RandomizedDelaySec=30min
-# Постоянный timer
+# Persistent timer
 Persistent=true
 
 [Install]
 WantedBy=timers.target
 EOF
 
-    success "Systemd timer создан: $timer_file"
+    success "Systemd timer created: $timer_file"
 }
 
-# Настройка systemd мониторинга
+# Setup systemd monitoring
 setup_systemd_monitoring() {
-    log "Настройка systemd мониторинга..."
+    log "Setting up systemd monitoring..."
 
     check_permissions
     create_systemd_service
     create_systemd_timer
 
-    # Перезагрузка systemd
+    # Reload systemd
     if [ "$EUID" -eq 0 ]; then
         systemctl daemon-reload
         systemctl enable "$TIMER_NAME.timer"
         systemctl start "$TIMER_NAME.timer"
 
-        log "Проверка статуса timer:"
+        log "Checking timer status:"
         systemctl status "$TIMER_NAME.timer" --no-pager || true
     else
         systemctl --user daemon-reload
         systemctl --user enable "$TIMER_NAME.timer"
         systemctl --user start "$TIMER_NAME.timer"
 
-        log "Проверка статуса timer:"
+        log "Checking timer status:"
         systemctl --user status "$TIMER_NAME.timer" --no-pager || true
     fi
 
-    success "Systemd мониторинг настроен"
+    success "Systemd monitoring configured"
 }
 
-# Создание cron job (альтернатива)
+# Creating cron job (alternative)
 setup_cron_monitoring() {
-    log "Настройка cron мониторинга..."
+    log "Setting up cron monitoring..."
 
-    # Проверка существующих cron jobs
+    # Check existing cron jobs
     if crontab -l 2>/dev/null | grep -q "monitor-certificates.sh"; then
-        warning "Cron job уже существует"
+        warning "Cron job already exists"
         return 0
     fi
 
-    # Создание нового cron job
+    # Creating new cron job
     local cron_entry="0 2 * * * cd $PROJECT_DIR && $MONITOR_SCRIPT check >/dev/null 2>&1"
 
-    # Добавление к существующему crontab
+    # Adding to existing crontab
     (crontab -l 2>/dev/null; echo "$cron_entry") | crontab -
 
-    success "Cron job создан: $cron_entry"
+    success "Cron job created: $cron_entry"
 
-    # Показать текущий crontab
-    log "Текущие cron jobs:"
-    crontab -l | grep -E "(monitor-certificates|acme)" || echo "Нет связанных cron jobs"
+    # Show current crontab
+    log "Current cron jobs:"
+    crontab -l | grep -E "(monitor-certificates|acme)" || echo "No related cron jobs found"
 }
 
-# Создание скрипта для ручного запуска
+# Creating script for manual execution
 create_manual_script() {
-    log "Создание скрипта для ручного запуска..."
+    log "Creating script for manual execution..."
 
     local manual_script="$PROJECT_DIR/scripts/ssl/check-ssl-now.sh"
 
     cat > "$manual_script" << 'EOF'
 #!/bin/bash
-# Ручная проверка SSL сертификатов ERNI-KI
+# Manual SSL certificate check for ERNI-KI
 
 cd "$(dirname "$0")/../.."
 ./scripts/infrastructure/security/monitor-certificates.sh check
 EOF
 
     chmod +x "$manual_script"
-    success "Скрипт для ручного запуска создан: $manual_script"
+    success "Script for manual execution created: $manual_script"
 }
 
-# Создание конфигурационного файла
+# Creating configuration file
 create_config_file() {
-    log "Создание конфигурационного файла..."
+    log "Creating configuration file..."
 
     local config_file="$PROJECT_DIR/conf/ssl/monitoring.conf"
     mkdir -p "$(dirname "$config_file")"
 
     cat > "$config_file" << EOF
 # ERNI-KI SSL Monitoring Configuration
-# Конфигурация мониторинга SSL сертификатов
+# SSL certificate monitoring configuration
 
-# Домен для мониторинга
+# Domain for monitoring
 DOMAIN=ki.erni-gruppe.ch
 
-# Пороги предупреждений (дни)
+# Warning thresholds (days)
 DAYS_WARNING=30
 DAYS_CRITICAL=7
 
-# Webhook URL для уведомлений (опционально)
+# Webhook URL for notifications (optional)
 # SSL_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
 
-# Email для уведомлений (опционально)
+# Email for notifications (optional)
 # SSL_NOTIFICATION_EMAIL=admin@erni-ki.local
 
-# Логирование
+# Logging
 LOG_LEVEL=INFO
 LOG_RETENTION_DAYS=30
 
-# Автоматическое обновление
+# Automatic renewal
 AUTO_RENEW_ENABLED=true
 AUTO_RENEW_DAYS_BEFORE=7
 
-# Cloudflare API (для автоматического обновления)
+# Cloudflare API (for automatic renewal)
 # CF_Token=your_cloudflare_api_token_here
 # CF_Email=your_cloudflare_email@example.com
 # CF_Key=your_cloudflare_global_api_key_here
 EOF
 
-    success "Конфигурационный файл создан: $config_file"
+    success "Configuration file created: $config_file"
 }
 
-# Тестирование мониторинга
+# Testing monitoring
 test_monitoring() {
-    log "Тестирование мониторинга..."
+    log "Testing monitoring..."
 
     if [ -x "$MONITOR_SCRIPT" ]; then
-        log "Запуск тестовой проверки..."
+        log "Starting test check..."
         "$MONITOR_SCRIPT" check
-        success "Тестовая проверка завершена"
+        success "Test check completed"
     else
-        error "Скрипт мониторинга не найден или не исполняемый: $MONITOR_SCRIPT"
+        error "Monitoring script not found or not executable: $MONITOR_SCRIPT"
     fi
 }
 
-# Показать инструкции по использованию
+# Show usage instructions
 show_usage_instructions() {
     echo ""
-    log "=== ИНСТРУКЦИИ ПО ИСПОЛЬЗОВАНИЮ ==="
+    log "=== USAGE INSTRUCTIONS ==="
     echo ""
 
-    log "Команды для управления мониторингом:"
-    echo "• Ручная проверка: ./scripts/infrastructure/security/monitor-certificates.sh check"
-    echo "• Принудительное обновление: ./scripts/infrastructure/security/monitor-certificates.sh renew"
-    echo "• Генерация отчета: ./scripts/infrastructure/security/monitor-certificates.sh report"
-    echo "• Тест HTTPS: ./scripts/infrastructure/security/monitor-certificates.sh test"
+    log "Commands for managing monitoring:"
+    echo "• Manual check: ./scripts/infrastructure/security/monitor-certificates.sh check"
+    echo "• Forced renewal: ./scripts/infrastructure/security/monitor-certificates.sh renew"
+    echo "• Generate report: ./scripts/infrastructure/security/monitor-certificates.sh report"
+    echo "• Test HTTPS: ./scripts/infrastructure/security/monitor-certificates.sh test"
     echo ""
 
     if command -v systemctl >/dev/null 2>&1; then
-        log "Команды systemd:"
+        log "Systemd commands:"
         if [ "$EUID" -eq 0 ]; then
-            echo "• Статус timer: systemctl status $TIMER_NAME.timer"
-            echo "• Остановка timer: systemctl stop $TIMER_NAME.timer"
-            echo "• Запуск timer: systemctl start $TIMER_NAME.timer"
-            echo "• Логи: journalctl -u $SERVICE_NAME.service"
+            echo "• Timer status: systemctl status $TIMER_NAME.timer"
+            echo "• Stop timer: systemctl stop $TIMER_NAME.timer"
+            echo "• Start timer: systemctl start $TIMER_NAME.timer"
+            echo "• Logs: journalctl -u $SERVICE_NAME.service"
         else
-            echo "• Статус timer: systemctl --user status $TIMER_NAME.timer"
-            echo "• Остановка timer: systemctl --user stop $TIMER_NAME.timer"
-            echo "• Запуск timer: systemctl --user start $TIMER_NAME.timer"
-            echo "• Логи: journalctl --user -u $SERVICE_NAME.service"
+            echo "• Timer status: systemctl --user status $TIMER_NAME.timer"
+            echo "• Stop timer: systemctl --user stop $TIMER_NAME.timer"
+            echo "• Start timer: systemctl --user start $TIMER_NAME.timer"
+            echo "• Logs: journalctl --user -u $SERVICE_NAME.service"
         fi
     fi
     echo ""
 
-    log "Файлы конфигурации:"
-    echo "• Конфигурация мониторинга: conf/ssl/monitoring.conf"
-    echo "• Логи мониторинга: logs/ssl-monitor.log"
-    echo "• Отчеты: logs/ssl-report-*.txt"
+    log "Configuration files:"
+    echo "• Monitoring configuration: conf/ssl/monitoring.conf"
+    echo "• Monitoring logs: logs/ssl-monitor.log"
+    echo "• Reports: logs/ssl-report-*.txt"
     echo ""
 
-    log "Настройка уведомлений:"
-    echo "• Отредактируйте conf/ssl/monitoring.conf"
-    echo "• Добавьте SSL_WEBHOOK_URL для Slack/Discord уведомлений"
-    echo "• Настройте CF_Token для автоматического обновления"
+    log "Setup notifications:"
+    echo "• Edit conf/ssl/monitoring.conf"
+    echo "• Add SSL_WEBHOOK_URL for Slack/Discord notifications"
+    echo "• Configure CF_Token for automatic renewal"
 }
 
-# Основная функция
+# Main function
 main() {
     local method="${1:-systemd}"
 
@@ -307,14 +307,14 @@ main() {
     echo "=============================================="
     echo -e "${NC}"
 
-    # Проверка, что мы в корне проекта
+    # Ensure script runs from project root
     if [ ! -f "compose.yml" ] && [ ! -f "compose.yml.example" ]; then
-        error "Скрипт должен запускаться из корня проекта ERNI-KI"
+        error "Run this script from the ERNI-KI repository root"
     fi
 
-    # Проверка существования скрипта мониторинга
+    # Ensure monitoring script exists
     if [ ! -f "$MONITOR_SCRIPT" ]; then
-        error "Скрипт мониторинга не найден: $MONITOR_SCRIPT"
+        error "Monitoring script not found: $MONITOR_SCRIPT"
     fi
 
     case "$method" in
@@ -322,7 +322,7 @@ main() {
             if command -v systemctl >/dev/null 2>&1; then
                 setup_systemd_monitoring
             else
-                warning "systemd не найден, переключение на cron"
+                warning "systemd not available, falling back to cron"
                 setup_cron_monitoring
             fi
             ;;
@@ -330,13 +330,13 @@ main() {
             setup_cron_monitoring
             ;;
         "manual")
-            log "Настройка только ручного мониторинга"
+            log "Manual-only monitoring selected"
             ;;
         *)
-            echo "Использование: $0 [systemd|cron|manual]"
-            echo "  systemd - Использовать systemd timer (рекомендуется)"
-            echo "  cron    - Использовать cron job"
-            echo "  manual  - Только ручной запуск"
+            echo "Usage: $0 [systemd|cron|manual]"
+            echo "  systemd - Use systemd timer (recommended)"
+            echo "  cron    - Use cron job"
+            echo "  manual  - Manual execution only"
             exit 1
             ;;
     esac
@@ -346,8 +346,8 @@ main() {
     test_monitoring
     show_usage_instructions
 
-    success "Настройка SSL мониторинга завершена!"
+    success "SSL monitoring setup finished!"
 }
 
-# Запуск скрипта
+# Starting script
 main "$@"

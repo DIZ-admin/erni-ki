@@ -1,9 +1,27 @@
-# ERNI-KI News
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-24'
+title: 'Blog'
+date: 2025-11-22
+description: 'ERNI-KI Blog'
+---
 
-Stay up to date with platform releases and AI usage updates. Each post includes
-what changed, how it impacts users, and where to get help.
+# Новости ERNI-KI
 
-- [2025-11 — ERNI-KI status page launch](2025-11-erni-ki-status-page-launch.md)
+Добро пожаловать в раздел новостей. Здесь публикуем релизы, статусные обновления
+и важные анонсы по платформе ERNI-KI.
 
-> Tip: Use the search bar to quickly find announcements by keyword (e.g., "Open
-> WebUI", "maintenance", "release").
+## Последние релизы
+
+- **2025-11** — Запуск статус‑страницы и обновление документации:
+  `2025-11-erni-ki-status-page-launch.md`
+
+## Архив
+
+- `archive/2025.md`
+
+## Академия KI (новостная лента)
+
+- `../academy/news/index.md`

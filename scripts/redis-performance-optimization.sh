@@ -1,19 +1,19 @@
 #!/bin/bash
-# Redis Performance Optimization для ERNI-KI
-# Оптимизация производительности и мониторинга
+# Redis Performance Optimization for ERNI-KI
+# Performance and monitoring tuning
 
 set -euo pipefail
 
-# Цвета для вывода
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}=== Redis Performance Optimization для ERNI-KI ===${NC}"
+echo -e "${GREEN}=== Redis Performance Optimization for ERNI-KI ===${NC}"
 
-# Функция логирования
+# Logging helpers
 log() {
     echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
 }
@@ -30,22 +30,22 @@ info() {
     echo -e "${BLUE}[INFO] $1${NC}"
 }
 
-# Проверка, что мы в правильной директории
+# Ensure we are in repo root
 if [[ ! -f "compose.yml" ]]; then
-    error "compose.yml не найден. Запустите скрипт из корневой директории ERNI-KI"
+    error "compose.yml not found. Run from ERNI-KI repo root."
     exit 1
 fi
 
-# Создание резервной копии
-log "Создание резервной копии конфигурации..."
+# Backup
+log "Creating configuration backup..."
 mkdir -p .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)
 cp compose.yml .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)/
 cp -r env/ .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)/ 2>/dev/null || true
 
-# 1. Оптимизация настроек Redis Main
-log "Оптимизация настроек Redis Main..."
+# 1. Optimize Redis Main settings
+log "Optimizing Redis Main settings..."
 
-# Добавляем дополнительные параметры производительности
+# Add performance parameters if missing
 if ! grep -q "tcp-keepalive" compose.yml; then
     sed -i '/redis:/,/command: >/{
         /--maxmemory 512mb/a\
@@ -56,22 +56,22 @@ if ! grep -q "tcp-keepalive" compose.yml; then
     }' compose.yml
 fi
 
-# 2. Создание конфигурационного файла Redis
-log "Создание оптимизированного redis.conf..."
+# 2. Create redis.conf
+log "Creating optimized redis.conf..."
 mkdir -p conf/redis
 
 cat > conf/redis/redis.conf << 'EOF'
-# Redis Configuration для ERNI-KI Production
-# Оптимизированная конфигурация для кэширования и сессий
+# Redis Configuration for ERNI-KI Production
+# Optimized for caching and sessions
 
-# === СЕТЕВЫЕ НАСТРОЙКИ ===
+# === NETWORK ===
 bind 0.0.0.0
 port 6379
 tcp-backlog 511
 timeout 0
 tcp-keepalive 300
 
-# === ОБЩИЕ НАСТРОЙКИ ===
+# === GENERAL ===
 daemonize no
 supervised no
 pidfile /var/run/redis_6379.pid
@@ -79,24 +79,24 @@ loglevel notice
 logfile ""
 databases 16
 
-# === СНАПШОТЫ (отключены для производительности) ===
+# === SNAPSHOTS (disabled for performance) ===
 save ""
 
-# === РЕПЛИКАЦИЯ ===
-# Настройки мастера (по умолчанию)
+# === REPLICATION ===
+# Master defaults
 
-# === БЕЗОПАСНОСТЬ ===
+# === SECURITY ===
 requirepass ErniKiRedisSecurePassword2024
-# Отключаем опасные команды
+# Disable dangerous commands
 rename-command FLUSHDB ""
 rename-command FLUSHALL ""
 rename-command DEBUG ""
 rename-command CONFIG "CONFIG_b835c3f8a5d9e7f2a1b4c6d8e9f0a2b3"
 
-# === ЛИМИТЫ КЛИЕНТОВ ===
+# === CLIENT LIMITS ===
 maxclients 10000
 
-# === УПРАВЛЕНИЕ ПАМЯТЬЮ ===
+# === MEMORY MANAGEMENT ===
 maxmemory 512mb
 maxmemory-policy allkeys-lru
 maxmemory-samples 5
@@ -114,14 +114,14 @@ aof-use-rdb-preamble yes
 # === LUA SCRIPTING ===
 lua-time-limit 5000
 
-# === МЕДЛЕННЫЕ ЛОГИ ===
+# === SLOW LOGS ===
 slowlog-log-slower-than 10000
 slowlog-max-len 128
 
-# === УВЕДОМЛЕНИЯ О СОБЫТИЯХ KEYSPACE ===
+# === KEYSPACE EVENT NOTIFICATIONS ===
 notify-keyspace-events ""
 
-# === ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ ===
+# === EXTRA SETTINGS ===
 hash-max-ziplist-entries 512
 hash-max-ziplist-value 64
 list-max-ziplist-size -2
@@ -142,16 +142,16 @@ aof-rewrite-incremental-fsync yes
 rdb-save-incremental-fsync yes
 EOF
 
-# 3. Обновление compose.yml для использования конфигурационного файла
-log "Обновление compose.yml для использования redis.conf..."
+# 3. Update compose.yml to use redis.conf
+log "Updating compose.yml to use redis.conf..."
 if ! grep -q "conf/redis/redis.conf" compose.yml; then
-    # Добавляем volume для конфигурации
+    # Add volume for config
     sed -i '/redis:/,/volumes:/{
         /- \.\/data\/redis:\/data/a\
       - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
     }' compose.yml
 
-    # Обновляем команду для использования конфигурационного файла
+    # Update command to use config
     sed -i '/redis:/,/command: >/{
         /command: >/,/--databases 16/{
             s/redis-server.*/redis-server \/usr\/local\/etc\/redis\/redis.conf/
@@ -159,15 +159,15 @@ if ! grep -q "conf/redis/redis.conf" compose.yml; then
     }' compose.yml
 fi
 
-# 4. Создание скрипта мониторинга производительности
-log "Создание скрипта мониторинга производительности..."
+# 4. Create performance monitoring script
+log "Creating performance monitoring script..."
 cat > scripts/redis-monitor.sh << 'EOF'
 #!/bin/bash
-# Redis Performance Monitor для ERNI-KI
+# Redis Performance Monitor for ERNI-KI
 
 set -euo pipefail
 
-# Цвета
+# Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
@@ -175,10 +175,10 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}=== Redis Performance Monitor ===${NC}"
-echo "Время: $(date)"
+echo "Time: $(date)"
 echo
 
-# Функция получения метрик
+# Metric helper
 get_redis_metric() {
     local container=$1
     local password=$2
@@ -191,116 +191,118 @@ get_redis_metric() {
     fi
 }
 
-# Мониторинг Redis Main
+# Monitor Redis Main
 echo -e "${GREEN}=== Redis Main (erni-ki-redis-1) ===${NC}"
 if docker ps --filter "name=erni-ki-redis-1" --format "{{.Status}}" | grep -q "healthy"; then
-    echo "Статус: ✅ Здоров"
+    echo "Status: ✅ Healthy"
 
-    # Основные метрики
+    # Key metrics
     connected_clients=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "connected_clients")
     used_memory_human=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "used_memory_human")
     total_commands_processed=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "total_commands_processed")
     keyspace_hits=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "keyspace_hits")
     keyspace_misses=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "keyspace_misses")
 
-    echo "Подключенные клиенты: $connected_clients"
-    echo "Использование памяти: $used_memory_human"
-    echo "Обработанные команды: $total_commands_processed"
-    echo "Попадания в кэш: $keyspace_hits"
-    echo "Промахи кэша: $keyspace_misses"
+    echo "Connected clients: $connected_clients"
+    echo "Memory usage: $used_memory_human"
+    echo "Total commands processed: $total_commands_processed"
+    echo "Cache hits: $keyspace_hits"
+    echo "Cache misses: $keyspace_misses"
 
-    # Расчет hit ratio
+    # Hit ratio
     if [[ $keyspace_hits -gt 0 || $keyspace_misses -gt 0 ]]; then
         hit_ratio=$(echo "scale=2; $keyspace_hits * 100 / ($keyspace_hits + $keyspace_misses)" | bc -l 2>/dev/null || echo "0")
         echo "Hit Ratio: ${hit_ratio}%"
     fi
 
-    # Количество ключей
+    # Keys count
     dbsize=$(docker exec erni-ki-redis-1 redis-cli -a 'ErniKiRedisSecurePassword2024' dbsize 2>/dev/null)
-    echo "Количество ключей: $dbsize"
+    echo "Keys count: $dbsize"
 
 else
-    echo "Статус: ❌ Нездоров"
+    echo "Status: ❌ Unhealthy"
 fi
 
 echo
 
-# Мониторинг Redis LiteLLM
+# Monitor Redis LiteLLM
 echo -e "${GREEN}=== Redis LiteLLM (erni-ki-redis-litellm-1) ===${NC}"
 if docker ps --filter "name=erni-ki-redis-litellm-1" --format "{{.Status}}" | grep -q "healthy"; then
-    echo "Статус: ✅ Здоров"
+    echo "Status: ✅ Healthy"
 
-    # Пробуем без пароля, потом с паролем
+    # Try without password, then with password
+    # pragma: allowlist secret (test credentials for diagnostics only)
     if connected_clients=$(get_redis_metric "erni-ki-redis-litellm-1" "" "connected_clients" 2>/dev/null); then
-        password_status="Без пароля"
-    elif connected_clients=$(get_redis_metric "erni-ki-redis-litellm-1" "ErniKiRedisLiteLLMPassword2024" "connected_clients" 2>/dev/null); then
-        password_status="С паролем"
+        password_status="No password"
+    elif connected_clients=$(get_redis_metric "erni-ki-redis-litellm-1" "<redis-litellm-password>" "connected_clients" 2>/dev/null); then # pragma: allowlist secret
+        password_status="With password"
     else
-        echo "❌ Не удается подключиться"
+        echo "❌ Unable to connect"
         connected_clients="N/A"
-        password_status="Неизвестно"
+        password_status="Unknown"
     fi
 
-    echo "Аутентификация: $password_status"
-    echo "Подключенные клиенты: $connected_clients"
+    echo "Authentication: $password_status"
+    echo "Connected clients: $connected_clients"
 
     if [[ "$connected_clients" != "N/A" ]]; then
-        if [[ "$password_status" == "С паролем" ]]; then
-            used_memory_human=$(get_redis_metric "erni-ki-redis-litellm-1" "ErniKiRedisLiteLLMPassword2024" "used_memory_human")
-            dbsize=$(docker exec erni-ki-redis-litellm-1 redis-cli -a 'ErniKiRedisLiteLLMPassword2024' dbsize 2>/dev/null)
+        if [[ "$password_status" == "With password" ]]; then
+            # pragma: allowlist secret (placeholder password, non-prod)
+            used_memory_human=$(get_redis_metric "erni-ki-redis-litellm-1" "<redis-litellm-password>" "used_memory_human") # pragma: allowlist secret
+            dbsize=$(docker exec erni-ki-redis-litellm-1 redis-cli -a '<redis-litellm-password>' dbsize 2>/dev/null) # pragma: allowlist secret
         else
             used_memory_human=$(get_redis_metric "erni-ki-redis-litellm-1" "" "used_memory_human")
             dbsize=$(docker exec erni-ki-redis-litellm-1 redis-cli dbsize 2>/dev/null)
         fi
-        echo "Использование памяти: $used_memory_human"
-        echo "Количество ключей: $dbsize"
+        echo "Memory usage: $used_memory_human"
+        echo "Keys count: $dbsize"
     fi
 else
-    echo "Статус: ❌ Нездоров"
+    echo "Status: ❌ Unhealthy"
 fi
 
 echo
 
-# Системные ресурсы
-echo -e "${GREEN}=== Системные ресурсы ===${NC}"
+# System resources
+echo -e "${GREEN}=== System resources ===${NC}"
 docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}" | grep redis
 
 echo
-echo -e "${BLUE}Мониторинг завершен: $(date)${NC}"
+echo -e "${BLUE}Monitoring finished: $(date)${NC}"
 EOF
 
 chmod +x scripts/redis-monitor.sh
 
-# 5. Создание cron задачи для мониторинга
-log "Создание задачи мониторинга..."
+# 5. Create cron job for monitoring
+log "Creating monitoring cron job..."
 cat > scripts/setup-redis-monitoring.sh << 'EOF'
 #!/bin/bash
-# Настройка автоматического мониторинга Redis
+# Configure automatic Redis monitoring
 
-# Создание директории для логов мониторинга
+# Create directory for monitoring logs
 mkdir -p logs/redis-monitoring
 
-# Добавление cron задачи (каждые 5 минут)
+# Add cron job (every 5 minutes)
 (crontab -l 2>/dev/null; echo "*/5 * * * * cd $(pwd) && ./scripts/redis-monitor.sh >> logs/redis-monitoring/redis-monitor-$(date +\%Y\%m\%d).log 2>&1") | crontab -
 
-echo "✅ Мониторинг Redis настроен (каждые 5 минут)"
-echo "📊 Логи: logs/redis-monitoring/"
-echo "🔍 Ручной запуск: ./scripts/redis-monitor.sh"
+echo "✅ Redis monitoring configured (every 5 minutes)"
+echo "📊 Logs: logs/redis-monitoring/"
+echo "🔍 Manual run: ./scripts/redis-monitor.sh"
 EOF
 
 chmod +x scripts/setup-redis-monitoring.sh
 
-log "Оптимизация производительности завершена!"
+log "Performance optimization completed!"
 
-echo -e "${GREEN}=== Резюме оптимизации ===${NC}"
-echo "✅ Создан оптимизированный redis.conf"
-echo "✅ Обновлена конфигурация compose.yml"
-echo "✅ Добавлены параметры производительности"
-echo "✅ Создан скрипт мониторинга"
-echo "✅ Настроена автоматизация мониторинга"
+echo -e "${GREEN}=== Optimization summary ===${NC}"
+echo "✅ Optimized redis.conf created"
+echo "✅ compose.yml updated"
+echo "✅ Performance parameters added"
+echo "✅ Monitoring script created"
+echo "✅ Monitoring automation configured"
 
-echo -e "${YELLOW}Следующие шаги:${NC}"
-echo "1. Перезапустите Redis: docker compose restart redis"
-echo "2. Проверьте конфигурацию: docker exec erni-ki-redis-1 redis-cli -a 'ErniKiRedisSecurePassword2024' config get '*'"
-echo "3. Запустите мониторинг: ./scripts/redis-monitor.sh"
-echo "4. Настройте автоматический мониторинг: ./scripts/setup-redis-monitoring.sh"
+echo -e "${YELLOW}Next steps:${NC}"
+echo "1. Restart Redis: docker compose restart redis"
+echo "2. Verify config: docker exec erni-ki-redis-1 redis-cli -a 'ErniKiRedisSecurePassword2024' config get '*'"
+echo "3. Run monitor: ./scripts/redis-monitor.sh"
+echo "4. Enable cron: ./scripts/setup-redis-monitoring.sh"

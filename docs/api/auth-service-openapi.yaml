@@ -1,0 +1,239 @@
+openapi: 3.0.3
+info:
+  title: ERNI-KI Auth Service API
+  description: |
+    Authentication service for ERNI-KI platform providing JWT token validation.
+
+    This service validates JWT tokens stored in HTTP cookies and provides health check endpoints.
+  version: 1.0.0
+  contact:
+    name: ERNI-KI Team
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:9090
+    description: Local development server
+  - url: http://auth-service:9090
+    description: Docker internal network
+
+tags:
+  - name: info
+    description: Service information endpoints
+  - name: health
+    description: Health check endpoints
+  - name: auth
+    description: Authentication and authorization endpoints
+
+paths:
+  /:
+    get:
+      tags:
+        - info
+      summary: Get service information
+      description: Returns basic information about the auth service including version and status
+      operationId: getServiceInfo
+      responses:
+        "200":
+          description: Service information retrieved successfully
+          headers:
+            X-Request-ID:
+              description: Unique request identifier
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceInfo"
+              example:
+                message: auth-service is running
+                version: 1.0.0
+                status: healthy
+                request_id: 550e8400-e29b-41d4-a716-446655440000
+
+  /health:
+    get:
+      tags:
+        - health
+      summary: Health check endpoint
+      description: Returns the health status of the auth service
+      operationId: healthCheck
+      responses:
+        "200":
+          description: Service is healthy
+          headers:
+            X-Request-ID:
+              description: Unique request identifier
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: healthy
+                service: auth-service
+                request_id: 550e8400-e29b-41d4-a716-446655440000
+
+  /validate:
+    get:
+      tags:
+        - auth
+      summary: Validate JWT token
+      description: |
+        Validates a JWT token stored in the 'token' HTTP cookie.
+
+        The token is verified using the WEBUI_SECRET_KEY environment variable.
+        Returns 200 if the token is valid, 401 if missing or invalid.
+      operationId: validateToken
+      parameters:
+        - name: token
+          in: cookie
+          description: JWT authentication token
+          required: true
+          schema:
+            type: string
+            format: jwt
+          example: demo.jwt.token.example # pragma: allowlist secret
+      responses:
+        "200":
+          description: Token is valid, user is authorized
+          headers:
+            X-Request-ID:
+              description: Unique request identifier
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizedResponse"
+              example:
+                message: authorized
+                request_id: 550e8400-e29b-41d4-a716-446655440000
+        "401":
+          description: Token is missing or invalid
+          headers:
+            X-Request-ID:
+              description: Unique request identifier
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedResponse"
+              examples:
+                missing:
+                  summary: Token missing
+                  value:
+                    message: unauthorized
+                    error: token missing
+                    request_id: 550e8400-e29b-41d4-a716-446655440000
+                invalid:
+                  summary: Invalid token
+                  value:
+                    message: unauthorized
+                    error: invalid token
+                    request_id: 550e8400-e29b-41d4-a716-446655440000
+
+components:
+  schemas:
+    ServiceInfo:
+      type: object
+      required:
+        - message
+        - version
+        - status
+      properties:
+        message:
+          type: string
+          description: Service status message
+          example: auth-service is running
+        version:
+          type: string
+          description: Service version
+          example: 1.0.0
+        status:
+          type: string
+          description: Service health status
+          enum:
+            - healthy
+          example: healthy
+        request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - service
+      properties:
+        status:
+          type: string
+          description: Health status
+          enum:
+            - healthy
+          example: healthy
+        service:
+          type: string
+          description: Service name
+          example: auth-service
+        request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+
+    AuthorizedResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Authorization status message
+          example: authorized
+        request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+
+    UnauthorizedResponse:
+      type: object
+      required:
+        - message
+        - error
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: unauthorized
+        error:
+          type: string
+          description: Error details
+          enum:
+            - token missing
+            - invalid token
+          example: token missing
+        request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier
+          example: 550e8400-e29b-41d4-a716-446655440000
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+      description: JWT token stored in HTTP cookie
+
+security:
+  - cookieAuth: []

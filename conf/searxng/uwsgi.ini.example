@@ -31,18 +31,18 @@ chdir = /usr/local/searxng/searx/
 # automatically set processes name to something meaningful
 auto-procname = true
 
-# Логирование (включено для мониторинга, но ограничено)
+# Logging (enabled for monitoring but limited)
 disable-logging = false
 log-5xx = true
 log-4xx = true
 log-slow = 1000
 log-date = true
 
-# Размер буфера запроса (увеличен для лучшей производительности)
+# Request buffer size (increased for better performance)
 buffer-size = 16384
 post-buffering = 8192
 
-# HTTP настройки для улучшенной производительности
+# HTTP settings for better performance
 http-keepalive = true
 http-auto-chunked = true
 add-header = Connection: keep-alive
@@ -51,31 +51,31 @@ add-header = Connection: keep-alive
 die-on-term = true
 hook-master-start = unix_signal:15 gracefully_kill_them_all
 
-# Статические файлы с улучшенным кэшированием
+# Static files with improved caching
 static-map = /static=/usr/local/searxng/searx/static
 static-expires = /* 86400
 static-gzip-all = true
 static-gzip-ext = .js .css .html .txt .xml .json
 offload-threads = 8
 
-# Мониторинг и метрики
+# Monitoring and metrics
 stats = 127.0.0.1:9191
 stats-http = true
 memory-report = true
 
-# Оптимизация производительности
+# Performance optimization
 cheaper = 2
 cheaper-initial = 2
 cheaper-step = 1
 cheaper-algo = busyness
 cheaper-overload = 30
 
-# Лимиты и таймауты
+# Limits and timeouts
 harakiri = 30
 harakiri-verbose = true
 max-requests = 1000
 max-requests-delta = 100
 reload-on-rss = 512
 
-# Кэширование (если доступно)
+# Caching (if available)
 cache2 = name=searxngcache,items=2000,blocks=2000,blocksize=4096,bitmap=1

@@ -1,10 +1,10 @@
 #!/bin/bash
-# Система мониторинга здоровья ERNI-KI
-# Комплексный мониторинг всех сервисов с алертами и метриками
+# ERNI-KI health monitoring
+# Comprehensive service health checks with alerts and metrics
 
 set -e
 
-# Цвета для вывода
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -13,7 +13,7 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Конфигурация
+# Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_DIR="$PROJECT_ROOT/.config-backup/logs"
@@ -21,10 +21,10 @@ METRICS_DIR="$PROJECT_ROOT/.config-backup/metrics"
 ALERT_WEBHOOK="${ALERT_WEBHOOK:-}"
 MONITORING_INTERVAL="${MONITORING_INTERVAL:-60}"
 
-# Создание директорий
+# Ensure directories exist
 mkdir -p "$LOG_DIR" "$METRICS_DIR"
 
-# Функции логирования
+# Logging helpers
 log() {
     echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO:${NC} $1" | tee -a "$LOG_DIR/health-monitor.log"
 }
@@ -45,27 +45,27 @@ info() {
     echo -e "${CYAN}[$(date +'%Y-%m-%d %H:%M:%S')] INFO:${NC} $1" | tee -a "$LOG_DIR/health-monitor.log"
 }
 
-# Функция отправки алертов
+# Alert sender
 send_alert() {
     local severity="$1"
     local message="$2"
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-    # Логирование алерта
+    # Log alert locally
     echo "{\"timestamp\":\"$timestamp\",\"severity\":\"$severity\",\"message\":\"$message\",\"service\":\"erni-ki\"}" >> "$LOG_DIR/alerts.json"
 
-    # Отправка webhook (если настроен)
+    # Send webhook if configured
     if [[ -n "$ALERT_WEBHOOK" ]]; then
         curl -s -X POST "$ALERT_WEBHOOK" \
             -H "Content-Type: application/json" \
             -d "{\"timestamp\":\"$timestamp\",\"severity\":\"$severity\",\"message\":\"$message\",\"service\":\"erni-ki\"}" \
-            || warning "Не удалось отправить webhook алерт"
+            || warning "Failed to send webhook alert"
     fi
 }
 
-# Проверка статуса Docker сервисов
+# Check Docker service status
 check_docker_services() {
-    log "Проверка статуса Docker сервисов..."
+    log "Checking Docker service status..."
 
     local services=(
         "auth" "backrest" "cloudflared" "db"
@@ -82,49 +82,49 @@ check_docker_services() {
 
         if [[ "$status" == *"Up"* ]]; then
             if [[ "$health" == "healthy" || "$health" == "" ]]; then
-                success "✅ $service: работает (healthy)"
+                success "✅ $service: running (healthy)"
                 ((healthy_count++))
             else
-                warning "⚠️  $service: работает, но $health"
-                send_alert "warning" "Сервис $service работает, но статус здоровья: $health"
+                warning "⚠️  $service: running, health: $health"
+                send_alert "warning" "Service $service is running but health: $health"
             fi
         else
             error "❌ $service: $status"
-            send_alert "critical" "Сервис $service недоступен: $status"
+            send_alert "critical" "Service $service unavailable: $status"
         fi
     done
 
-    # Сохранение метрик
+    # Save metrics
     local health_percentage=$((healthy_count * 100 / total_count))
     echo "{\"timestamp\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",\"healthy_services\":$healthy_count,\"total_services\":$total_count,\"health_percentage\":$health_percentage}" >> "$METRICS_DIR/service-health.json"
 
-    info "Здоровых сервисов: $healthy_count/$total_count ($health_percentage%)"
+    info "Healthy services: $healthy_count/$total_count ($health_percentage%)"
 
     if [[ $health_percentage -lt 80 ]]; then
-        send_alert "critical" "Критически низкий процент здоровых сервисов: $health_percentage%"
+        send_alert "critical" "Critically low healthy service ratio: $health_percentage%"
     elif [[ $health_percentage -lt 95 ]]; then
-        send_alert "warning" "Низкий процент здоровых сервисов: $health_percentage%"
+        send_alert "warning" "Low healthy service ratio: $health_percentage%"
     fi
 }
 
-# Проверка использования ресурсов
+# Check resource usage
 check_system_resources() {
-    log "Проверка использования системных ресурсов..."
+    log "Checking system resource usage..."
 
-    # CPU использование
+    # CPU usage
     local cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | sed 's/%us,//')
-    cpu_usage=${cpu_usage%.*}  # Убираем десятичную часть
+    cpu_usage=${cpu_usage%.*}  # drop decimals
 
-    # Память
+    # Memory
     local memory_info=$(free | grep Mem)
     local total_mem=$(echo $memory_info | awk '{print $2}')
     local used_mem=$(echo $memory_info | awk '{print $3}')
     local memory_usage=$((used_mem * 100 / total_mem))
 
-    # Диск
+    # Disk
     local disk_usage=$(df / | tail -1 | awk '{print $5}' | sed 's/%//')
 
-    # GPU (если доступен)
+    # GPU (if available)
     local gpu_usage="N/A"
     local gpu_memory="N/A"
     local gpu_temp="N/A"
@@ -135,42 +135,42 @@ check_system_resources() {
         gpu_temp=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits | head -1)
     fi
 
-    # Логирование ресурсов
-    info "CPU: ${cpu_usage}%, Память: ${memory_usage}%, Диск: ${disk_usage}%"
+    # Log resource snapshot
+    info "CPU: ${cpu_usage}%, Memory: ${memory_usage}%, Disk: ${disk_usage}%"
     if [[ "$gpu_usage" != "N/A" ]]; then
-        info "GPU: ${gpu_usage}%, GPU Память: ${gpu_memory}, GPU Температура: ${gpu_temp}°C"
+        info "GPU: ${gpu_usage}%, GPU Memory: ${gpu_memory}, GPU Temperature: ${gpu_temp}°C"
     fi
 
-    # Сохранение метрик
+    # Save metrics
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     echo "{\"timestamp\":\"$timestamp\",\"cpu_usage\":$cpu_usage,\"memory_usage\":$memory_usage,\"disk_usage\":$disk_usage,\"gpu_usage\":\"$gpu_usage\",\"gpu_memory\":\"$gpu_memory\",\"gpu_temperature\":\"$gpu_temp\"}" >> "$METRICS_DIR/system-resources.json"
 
-    # Алерты для ресурсов
+    # Resource alerts
     if [[ $cpu_usage -gt 85 ]]; then
-        send_alert "warning" "Высокое использование CPU: ${cpu_usage}%"
+        send_alert "warning" "High CPU usage: ${cpu_usage}%"
     fi
 
     if [[ $memory_usage -gt 90 ]]; then
-        send_alert "critical" "Критически высокое использование памяти: ${memory_usage}%"
+        send_alert "critical" "Critically high memory usage: ${memory_usage}%"
     elif [[ $memory_usage -gt 80 ]]; then
-        send_alert "warning" "Высокое использование памяти: ${memory_usage}%"
+        send_alert "warning" "High memory usage: ${memory_usage}%"
     fi
 
     if [[ $disk_usage -gt 90 ]]; then
-        send_alert "critical" "Критически мало места на диске: ${disk_usage}%"
+        send_alert "critical" "Critically low disk space: ${disk_usage}%"
     elif [[ $disk_usage -gt 80 ]]; then
-        send_alert "warning" "Мало места на диске: ${disk_usage}%"
+        send_alert "warning" "Low disk space: ${disk_usage}%"
     fi
 
-    # GPU алерты
+    # GPU alerts
     if [[ "$gpu_temp" != "N/A" && $gpu_temp -gt 80 ]]; then
-        send_alert "warning" "Высокая температура GPU: ${gpu_temp}°C"
+        send_alert "warning" "High GPU temperature: ${gpu_temp}°C"
     fi
 }
 
-# Проверка сетевых соединений
+# Check network connectivity
 check_network_connectivity() {
-    log "Проверка сетевых соединений..."
+    log "Checking network connectivity..."
 
     local endpoints=(
         "http://localhost:8080/health:OpenWebUI"
@@ -187,29 +187,29 @@ check_network_connectivity() {
         local service=$(echo "$endpoint_info" | cut -d: -f2)
 
         if curl -s --max-time 10 "$endpoint" > /dev/null 2>&1; then
-            success "✅ $service: доступен"
+            success "✅ $service: reachable"
             ((successful_checks++))
         else
-            error "❌ $service: недоступен ($endpoint)"
-            send_alert "critical" "Сервис $service недоступен по адресу $endpoint"
+            error "❌ $service: unreachable ($endpoint)"
+            send_alert "critical" "Service $service unreachable at $endpoint"
         fi
     done
 
     local connectivity_percentage=$((successful_checks * 100 / total_checks))
-    info "Доступных endpoints: $successful_checks/$total_checks ($connectivity_percentage%)"
+    info "Reachable endpoints: $successful_checks/$total_checks ($connectivity_percentage%)"
 
-    # Сохранение метрик
+    # Save metrics
     echo "{\"timestamp\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",\"successful_checks\":$successful_checks,\"total_checks\":$total_checks,\"connectivity_percentage\":$connectivity_percentage}" >> "$METRICS_DIR/network-connectivity.json"
 }
 
-# Проверка логов на ошибки
+# Check logs for errors
 check_error_logs() {
-    log "Проверка логов на критические ошибки..."
+    log "Scanning logs for critical errors..."
 
     local error_count=0
     local warning_count=0
 
-    # Проверка логов Docker контейнеров за последние 10 минут
+    # Scan Docker container logs for last 10 minutes
     local containers=$(docker-compose ps --services)
 
     for container in $containers; do
@@ -220,34 +220,34 @@ check_error_logs() {
         warning_count=$((warning_count + warnings))
 
         if [[ $errors -gt 0 ]]; then
-            warning "⚠️  $container: $errors ошибок за последние 10 минут"
+            warning "⚠️  $container: $errors errors in the last 10 minutes"
         fi
     done
 
-    info "Найдено ошибок: $error_count, предупреждений: $warning_count"
+    info "Found errors: $error_count, warnings: $warning_count"
 
-    # Сохранение метрик
+    # Save metrics
     echo "{\"timestamp\":\"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",\"error_count\":$error_count,\"warning_count\":$warning_count}" >> "$METRICS_DIR/error-logs.json"
 
     if [[ $error_count -gt 10 ]]; then
-        send_alert "warning" "Высокое количество ошибок в логах: $error_count за последние 10 минут"
+        send_alert "warning" "High error count in logs: $error_count in the last 10 minutes"
     fi
 }
 
-# Генерация отчета о состоянии системы
+# Generate health report
 generate_health_report() {
     local report_file="$LOG_DIR/health-report-$(date +%Y%m%d_%H%M%S).json"
     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-    log "Генерация отчета о состоянии системы..."
+    log "Generating system health report..."
 
-    # Сбор всех метрик
+    # Collect latest metrics
     local latest_service_health=$(tail -1 "$METRICS_DIR/service-health.json" 2>/dev/null || echo "{}")
     local latest_resources=$(tail -1 "$METRICS_DIR/system-resources.json" 2>/dev/null || echo "{}")
     local latest_connectivity=$(tail -1 "$METRICS_DIR/network-connectivity.json" 2>/dev/null || echo "{}")
     local latest_errors=$(tail -1 "$METRICS_DIR/error-logs.json" 2>/dev/null || echo "{}")
 
-    # Создание сводного отчета
+    # Build summary
     cat > "$report_file" << EOF
 {
   "timestamp": "$timestamp",
@@ -263,37 +263,37 @@ generate_health_report() {
 }
 EOF
 
-    success "Отчет сохранен: $report_file"
+    success "Report saved: $report_file"
 }
 
-# Основная функция мониторинга
+# Main monitoring function
 main() {
-    log "🚀 Запуск системы мониторинга ERNI-KI"
+    log "🚀 Starting ERNI-KI health monitoring"
 
-    # Проверка зависимостей
+    # Dependency checks
     if ! command -v docker-compose &> /dev/null; then
-        error "docker-compose не найден"
+        error "docker-compose not found"
         exit 1
     fi
 
     if ! command -v curl &> /dev/null; then
-        error "curl не найден"
+        error "curl not found"
         exit 1
     fi
 
-    # Выполнение проверок
+    # Execute checks
     check_docker_services
     check_system_resources
     check_network_connectivity
     check_error_logs
     generate_health_report
 
-    success "✅ Мониторинг завершен успешно"
+    success "✅ Monitoring completed successfully"
 }
 
-# Запуск в режиме демона (если указан параметр --daemon)
+# Daemon mode support
 if [[ "$1" == "--daemon" ]]; then
-    log "🔄 Запуск в режиме демона (интервал: ${MONITORING_INTERVAL}s)"
+    log "🔄 Running in daemon mode (interval: ${MONITORING_INTERVAL}s)"
 
     while true; do
         main

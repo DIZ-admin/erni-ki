@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # ERNI-KI NGINX Production Monitoring Script
-# Комплексный мониторинг nginx для продакшен среды
+# Comprehensive monitoring for production Nginx
 
 set -euo pipefail
 
-# Цвета для вывода
+# Output colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}📊 ERNI-KI NGINX Production Monitoring${NC}"
 echo "=================================================="
 
-# Функция для проверки endpoint
+# Endpoint check
 test_endpoint() {
     local url=$1
     local description=$2
@@ -41,7 +41,7 @@ test_endpoint() {
     fi
 }
 
-# Проверка статуса контейнера
+# Container status check
 check_container_status() {
     echo -e "\n${CYAN}🐳 Container Status${NC}"
     echo "-------------------"
@@ -60,12 +60,12 @@ check_container_status() {
     fi
 }
 
-# Проверка производительности
+# Performance check
 check_performance() {
     echo -e "\n${CYAN}⚡ Performance Metrics${NC}"
     echo "----------------------"
 
-    # CPU и Memory usage
+    # CPU and memory usage
     local stats=$(docker stats erni-ki-nginx-1 --no-stream --format "{{.CPUPerc}}\t{{.MemUsage}}" 2>/dev/null || echo "N/A\tN/A")
     local cpu=$(echo "$stats" | cut -f1)
     local memory=$(echo "$stats" | cut -f2)
@@ -81,12 +81,12 @@ check_performance() {
     test_endpoint "https://localhost/api/searxng/search?q=test&format=json" "SearXNG API over HTTPS" 10
     test_endpoint "https://localhost/searxng/healthz" "SearXNG health over HTTPS" 5
 
-    # Worker processes (если доступно)
+    # Worker processes (if available)
     local workers=$(docker exec erni-ki-nginx-1 ls -la /proc/ 2>/dev/null | grep -E "^d.*[0-9]+$" | wc -l 2>/dev/null || echo "N/A")
     echo "Active Processes: $workers"
 }
 
-# Проверка SSL/TLS
+# SSL/TLS check
 check_ssl_tls() {
     echo -e "\n${CYAN}🔒 SSL/TLS Status${NC}"
     echo "------------------"
@@ -103,7 +103,7 @@ check_ssl_tls() {
     echo | openssl s_client -connect localhost:443 -servername localhost 2>/dev/null | grep -E "(Protocol|Cipher)" || echo "Unable to retrieve SSL info"
 }
 
-# Проверка security headers
+# Security headers check
 check_security_headers() {
     echo -e "\n${CYAN}🛡️ Security Headers${NC}"
     echo "--------------------"
@@ -111,7 +111,7 @@ check_security_headers() {
     echo "HTTPS Headers:"
     local https_headers=$(curl -s -I -k https://localhost:443/health 2>/dev/null || echo "")
 
-    # Проверка основных security headers
+    # Core security headers
     local headers_to_check=(
         "Strict-Transport-Security"
         "X-Frame-Options"
@@ -130,12 +130,12 @@ check_security_headers() {
     done
 }
 
-# Проверка логов на ошибки
+# Logs check for errors
 check_logs() {
     echo -e "\n${CYAN}📋 Recent Logs Analysis${NC}"
     echo "------------------------"
 
-    # Последние ошибки
+    # Recent errors
     local error_count=$(docker logs erni-ki-nginx-1 --tail=100 2>/dev/null | grep -c -E "(error|Error|ERROR)" 2>/dev/null || echo "0")
     local warn_count=$(docker logs erni-ki-nginx-1 --tail=100 2>/dev/null | grep -c -E "(warn|Warn|WARN)" 2>/dev/null || echo "0")
 
@@ -153,12 +153,12 @@ check_logs() {
     fi
 }
 
-# Проверка конфигурации
+# Configuration check
 check_configuration() {
     echo -e "\n${CYAN}⚙️ Configuration Status${NC}"
     echo "------------------------"
 
-    # Тест конфигурации
+    # Configuration test
     if docker exec erni-ki-nginx-1 nginx -t 2>/dev/null; then
         echo -e "${GREEN}✅ Configuration is valid${NC}"
     else
@@ -166,7 +166,7 @@ check_configuration() {
         docker exec erni-ki-nginx-1 nginx -t 2>&1 | head -5
     fi
 
-    # Версия nginx
+    # Nginx version
     local version=$(docker exec erni-ki-nginx-1 nginx -v 2>&1 | cut -d' ' -f3 2>/dev/null || echo "unknown")
     echo "NGINX Version: $version"
 
@@ -178,12 +178,12 @@ check_configuration() {
     fi
 }
 
-# Проверка upstream connectivity
+# Upstream connectivity
 check_upstream() {
     echo -e "\n${CYAN}🔗 Upstream Connectivity${NC}"
     echo "-------------------------"
 
-    # Проверка OpenWebUI
+    # Check OpenWebUI
     if docker exec erni-ki-nginx-1 curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 http://openwebui:8080/health 2>/dev/null | grep -q "200"; then
         echo -e "${GREEN}✅ OpenWebUI upstream reachable${NC}"
     else
@@ -198,7 +198,7 @@ check_upstream() {
     fi
 }
 
-# Генерация отчета
+# Report generation
 generate_report() {
     echo -e "\n${CYAN}📊 Summary Report${NC}"
     echo "=================="
@@ -206,7 +206,7 @@ generate_report() {
     local total_checks=0
     local passed_checks=0
 
-    # Подсчет результатов (упрощенная версия)
+    # Count results (simplified)
     echo "System Status:"
 
     # Container status
@@ -255,15 +255,15 @@ generate_report() {
     echo "- Update security headers as needed"
 }
 
-# Основная функция
+# Main function
 main() {
-    # Проверка, что мы в правильной директории
+    # Ensure we are in project root
     if [ ! -f "compose.production.yml" ]; then
         echo -e "${RED}Error: Script must be run from ERNI-KI project root directory${NC}"
         exit 1
     fi
 
-    # Выполнение всех проверок
+    # Run all checks
     check_container_status
     check_performance
     check_ssl_tls
@@ -276,5 +276,5 @@ main() {
     echo -e "\n${BLUE}Monitoring completed at $(date)${NC}"
 }
 
-# Запуск основной функции
+# Script entry
 main "$@"
