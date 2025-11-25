@@ -10,10 +10,10 @@ last_updated: '2025-11-25'
 > **Audits:**
 >
 > - [Erster Audit](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
-> - [Refactoring-Fokus](../archive/audits/documentation-refactoring-audit-2025-11-24.md)  
+> - [Refactoring-Fokus](../archive/audits/documentation-refactoring-audit-2025-11-24.md)
 >   [TOC]
 
-## 🎯 Hauptprobleme
+## Hauptprobleme
 
 ### Kritisch
 
@@ -29,11 +29,11 @@ last_updated: '2025-11-25'
 
 ### Positiv
 
-✅ Alle Docs <90 Tage alt, saubere Metadaten, kein veralteter Inhalt.
+Alle Docs <90 Tage alt, saubere Metadaten, kein veralteter Inhalt.
 
 ---
 
-## 📋 Phasen
+## Phasen
 
 ### Phase 1: Kritische Fixes (3 Tage) — Status: offen
 
@@ -42,14 +42,14 @@ last_updated: '2025-11-25'
 - EN Academy (7) – Redirects in mkdocs.yml, Stubs entfernen
 - DE Academy (6) – analog
 - Operations (4) erweitern:
-  - de/operations/backup-guide.md
-  - de/operations/troubleshooting.md
-  - de/operations/database/database-production-optimizations.md
-  - operations/database/database-production-optimizations.md
+- de/operations/backup-guide.md
+- de/operations/troubleshooting.md
+- de/operations/database/database-production-optimizations.md
+- operations/database/database-production-optimizations.md
 - Weitere (3) erweitern:
-  - en/academy/openwebui-basics.md
-  - en/academy/prompting-101.md
-  - de/academy/openwebui-basics.md
+- en/academy/openwebui-basics.md
+- en/academy/prompting-101.md
+- de/academy/openwebui-basics.md
 
 **Tag 2: Duplikate + Deprecated**
 

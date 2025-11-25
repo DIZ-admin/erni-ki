@@ -7,30 +7,29 @@ last_updated: '2025-11-25'
 
 # Refactoring-Plan für die ERNI-KI-Dokumentation (2025-11-24)
 
-> **Vollständiger Audit:**  
+> **Vollständiger Audit:**
 > [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
 
 [TOC]
 
 ## Kurzfassung des Audits
 
-**Bewertung:** 7.5/10  
-**Stats:** 194 Dateien (161 aktiv + 33 Archiv). Übersetzungen: DE ≈41% (36/88
-RU), EN ≈6% (5/88 RU). 37 deprecated Metadaten, 6 kaputte Links, 61 Dateien ohne
-TOC.
+**Bewertung:** 7.5/10 **Stats:** 194 Dateien (161 aktiv + 33 Archiv).
+Übersetzungen: DE ≈41% (36/88 RU), EN ≈6% (5/88 RU). 37 deprecated Metadaten, 6
+kaputte Links, 61 Dateien ohne TOC.
 
 **Kritisch:**
 
-1. 🔴 EN-Coverage 19.5%
-2. 🔴 37 Dateien mit deprecated Feldern
-3. 🔴 61 lange Docs ohne TOC
-4. 🔴 0 Bilder in den Docs
+1. EN-Coverage 19.5%
+2. 37 Dateien mit deprecated Feldern
+3. 61 lange Docs ohne TOC
+4. 0 Bilder in den Docs
 
 ---
 
 ## Phasen
 
-### 📅 Phase 1: Quick Fixes (1 Tag) — Status: 🔴 offen
+### Phase 1: Quick Fixes (1 Tag) — Status: offen
 
 - Deprecated Metadaten korrigieren (2h) — `status`→`system_status`,
   `version`→`system_version`; Script
@@ -48,7 +47,7 @@ TOC.
 **Ergebnis:** 0 deprecated Felder, 0 kaputte Links, TOC in Top-10, alle
 operations-Unterordner mit README.
 
-### 📅 Phase 2: Content-Qualität (1 Woche) — Status: ⏳ geplant
+### Phase 2: Content-Qualität (1 Woche) — Status: ⏳ geplant
 
 - Heading-Struktur reparieren (3h), Fokus reference/architecture/security
 - Kurze Dateien (<100 Wörter) erweitern oder entfernen (4h)

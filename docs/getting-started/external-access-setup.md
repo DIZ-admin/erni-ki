@@ -9,9 +9,7 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Дата**: 2025-10-27  
-**Статус**: ТРЕБУЕТСЯ ДЕЙСТВИЕ  
-**Приоритет**: ВЫСОКИЙ
+**Дата**: 2025-10-27 **Статус**: ТРЕБУЕТСЯ ДЕЙСТВИЕ **Приоритет**: ВЫСОКИЙ
 
 ---
 
@@ -19,12 +17,12 @@ last_updated: '2025-11-24'
 
 **Текущее состояние**:
 
-- ✅ Локальный доступ работает: `https://192.168.62.153/` и
+- Локальный доступ работает: `https://192.168.62.153/` и
   `https://ki.erni-gruppe.ch/` (через /etc/hosts)
-- ✅ SSL сертификат валиден: Let's Encrypt E5, CN=ki.erni-gruppe.ch
-- ✅ Порты 80/443 открыты на сервере
-- ✅ Cloudflare Tunnel работает: `https://webui.diz.zone/` доступен извне
-- ❌ Домен `ki.erni-gruppe.ch` НЕ доступен извне
+- SSL сертификат валиден: Let's Encrypt E5, CN=ki.erni-gruppe.ch
+- Порты 80/443 открыты на сервере
+- Cloudflare Tunnel работает: `https://webui.diz.zone/` доступен извне
+- Домен `ki.erni-gruppe.ch` НЕ доступен извне
 
 **Корневая причина**:
 
@@ -49,25 +47,24 @@ last_updated: '2025-11-24'
 
 ### Cloudflare Tunnel
 
-**Статус**: ✅ Работает (Up 3 hours, healthy)
+**Статус**: Работает (Up 3 hours, healthy)
 
 **Настроенные домены**:
 
-- `webui.diz.zone` → <http://openwebui:8080> ✅
-- `search.diz.zone` → <http://searxng:8080> ✅
-- `diz.zone` → <http://nginx:8080> ✅
-- `lite.diz.zone` → <http://nginx:8080> ✅
+- `webui.diz.zone` → <http://openwebui:8080>
+- `search.diz.zone` → <http://searxng:8080>
+- `diz.zone` → <http://nginx:8080>
+- `lite.diz.zone` → <http://nginx:8080>
 
 **Отсутствует**:
 
-- ❌ `ki.erni-gruppe.ch` НЕ настроен в Cloudflare Tunnel
+- `ki.erni-gruppe.ch` НЕ настроен в Cloudflare Tunnel
 
 ### Роутер LANCOM
 
-**Модель**: LANCOM (корпоративный роутер)  
-**IP**: 192.168.62.1  
-**Веб-интерфейс**: <https://192.168.62.1/> (WEBconfig)  
-**Доступ**: Требуются учетные данные администратора
+**Модель**: LANCOM (корпоративный роутер) **IP**: 192.168.62.1
+**Веб-интерфейс**: <https://192.168.62.1/> (WEBconfig) **Доступ**: Требуются
+учетные данные администратора
 
 **Port Forwarding**: НЕ ПРОВЕРЕН (требуется доступ к роутеру)
 
@@ -75,22 +72,22 @@ last_updated: '2025-11-24'
 
 ## РЕШЕНИЯ
 
-### ВАРИАНТ 1: Cloudflare Tunnel (РЕКОМЕНДУЕТСЯ) ✅
+### ВАРИАНТ 1: Cloudflare Tunnel (РЕКОМЕНДУЕТСЯ)
 
 **Преимущества**:
 
-- ✅ НЕ требует port forwarding на роутере
-- ✅ НЕ требует изменений firewall
-- ✅ Встроенная защита от DDoS
-- ✅ Автоматический SSL от Cloudflare
-- ✅ Работает из любой сети (включая мобильные)
-- ✅ Централизованное управление доступом
-- ✅ Логирование и аналитика трафика
+- НЕ требует port forwarding на роутере
+- НЕ требует изменений firewall
+- Встроенная защита от DDoS
+- Автоматический SSL от Cloudflare
+- Работает из любой сети (включая мобильные)
+- Централизованное управление доступом
+- Логирование и аналитика трафика
 
 **Недостатки**:
 
-- ⚠️ Требует настройки DNS в Cloudflare
-- ⚠️ Трафик проходит через Cloudflare (может быть проблемой для конфиденциальных
+- Требует настройки DNS в Cloudflare
+- Трафик проходит через Cloudflare (может быть проблемой для конфиденциальных
   данных)
 
 **Действия**:
@@ -104,10 +101,12 @@ last_updated: '2025-11-24'
 3. Найти tunnel ID: `02a58963-3f79-4fc0-82ff-f79503366f86`
 4. Нажать "Configure" → "Public Hostname" → "Add a public hostname"
 5. Заполнить форму:
-   - **Subdomain**: `ki`
-   - **Domain**: `erni-gruppe.ch`
-   - **Service Type**: `HTTP`
-   - **URL**: `nginx:8080`
+
+- **Subdomain**: `ki`
+- **Domain**: `erni-gruppe.ch`
+- **Service Type**: `HTTP`
+- **URL**: `nginx:8080`
+
 6. Сохранить изменения
 
 **Вариант B: Через конфигурационный файл**
@@ -116,28 +115,29 @@ last_updated: '2025-11-24'
 
 ```yaml
 ingress:
-  - hostname: ki.erni-gruppe.ch
-    service: http://nginx:8080
-  - hostname: webui.diz.zone
-    service: http://openwebui:8080
-  - hostname: search.diz.zone
-    service: http://searxng:8080
-  - hostname: diz.zone
-    service: http://nginx:8080
-  - hostname: lite.diz.zone
-    service: http://nginx:8080
-  - service: http_status:404
+ - hostname: ki.erni-gruppe.ch
+ service: http://nginx:8080
+ - hostname: webui.diz.zone
+ service: http://openwebui:8080
+ - hostname: search.diz.zone
+ service: http://searxng:8080
+ - hostname: diz.zone
+ service: http://nginx:8080
+ - hostname: lite.diz.zone
+ service: http://nginx:8080
+ - service: http_status:404
 ```
 
 #### 1.2 Настроить DNS в Cloudflare
 
 1. Перейти в Cloudflare Dashboard → DNS → Records
 2. Добавить CNAME запись:
-   - **Type**: CNAME
-   - **Name**: `ki`
-   - **Target**: `02a58963-3f79-4fc0-82ff-f79503366f86.cfargotunnel.com`
-   - **Proxy status**: Proxied (оранжевое облако)
-   - **TTL**: Auto
+
+- **Type**: CNAME
+- **Name**: `ki`
+- **Target**: `02a58963-3f79-4fc0-82ff-f79503366f86.cfargotunnel.com`
+- **Proxy status**: Proxied (оранжевое облако)
+- **TTL**: Auto
 
 #### 1.3 Проверка
 
@@ -167,17 +167,17 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 
 **Преимущества**:
 
-- ✅ Прямое подключение (без посредников)
-- ✅ Меньшая задержка
-- ✅ Полный контроль над трафиком
+- Прямое подключение (без посредников)
+- Меньшая задержка
+- Полный контроль над трафиком
 
 **Недостатки**:
 
-- ❌ Требует доступа к роутеру LANCOM
-- ❌ Требует настройки публичного DNS
-- ❌ Требует согласования с IT отделом
-- ❌ Нет защиты от DDoS
-- ❌ Сложнее в настройке
+- Требует доступа к роутеру LANCOM
+- Требует настройки публичного DNS
+- Требует согласования с IT отделом
+- Нет защиты от DDoS
+- Сложнее в настройке
 
 **Действия**:
 
@@ -209,20 +209,22 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 
 1. Войти в панель управления регистратора
 2. Добавить A запись:
-   - **Name**: `ki`
-   - **Type**: A
-   - **Value**: `185.242.201.210`
-   - **TTL**: 3600
+
+- **Name**: `ki`
+- **Type**: A
+- **Value**: `185.242.201.210`
+- **TTL**: 3600
 
 **Вариант B: Через Cloudflare (без Tunnel)**
 
 1. Добавить домен `erni-gruppe.ch` в Cloudflare
 2. Обновить NS записи у регистратора
 3. Добавить A запись в Cloudflare:
-   - **Name**: `ki`
-   - **Type**: A
-   - **Value**: `185.242.201.210`
-   - **Proxy status**: DNS only (серое облако)
+
+- **Name**: `ki`
+- **Type**: A
+- **Value**: `185.242.201.210`
+- **Proxy status**: DNS only (серое облако)
 
 #### 2.4 Проверка
 
@@ -249,15 +251,15 @@ nc -zv 185.242.201.210 443
 
 **Преимущества**:
 
-- ✅ Защита от DDoS от Cloudflare
-- ✅ SSL от Cloudflare
-- ✅ Кэширование статики
-- ✅ Аналитика трафика
+- Защита от DDoS от Cloudflare
+- SSL от Cloudflare
+- Кэширование статики
+- Аналитика трафика
 
 **Недостатки**:
 
-- ⚠️ Требует настройки и port forwarding, и Cloudflare
-- ⚠️ Более сложная конфигурация
+- Требует настройки и port forwarding, и Cloudflare
+- Более сложная конфигурация
 
 **Действия**: Комбинация Вариант 1 (шаг 1.2) + Вариант 2 (шаги 2.1-2.2)
 
@@ -269,15 +271,14 @@ nc -zv 185.242.201.210 443
 
 **Обоснование**:
 
-1. ✅ Cloudflare Tunnel уже настроен и работает для других доменов
-2. ✅ НЕ требует согласования с IT отделом (нет изменений в сетевой
-   инфраструктуре)
-3. ✅ Встроенная безопасность и защита от DDoS
-4. ✅ Простота настройки (5-10 минут)
-5. ✅ Централизованное управление всеми доменами ERNI-KI
+1. Cloudflare Tunnel уже настроен и работает для других доменов
+2. НЕ требует согласования с IT отделом (нет изменений в сетевой инфраструктуре)
+3. Встроенная безопасность и защита от DDoS
+4. Простота настройки (5-10 минут)
+5. Централизованное управление всеми доменами ERNI-KI
 
-**Время реализации**: 10-15 минут  
-**Требуемые права**: Доступ к Cloudflare Dashboard
+**Время реализации**: 10-15 минут **Требуемые права**: Доступ к Cloudflare
+Dashboard
 
 ---
 
@@ -295,20 +296,20 @@ External IP: 185.242.201.210
 Internal IP: 192.168.62.153
 
 Rule 1:
-  Name: ERNI-KI-HTTP
-  External Port: 80
-  Internal IP: 192.168.62.153
-  Internal Port: 80
-  Protocol: TCP
-  Enabled: Yes
+ Name: ERNI-KI-HTTP
+ External Port: 80
+ Internal IP: 192.168.62.153
+ Internal Port: 80
+ Protocol: TCP
+ Enabled: Yes
 
 Rule 2:
-  Name: ERNI-KI-HTTPS
-  External Port: 443
-  Internal IP: 192.168.62.153
-  Internal Port: 443
-  Protocol: TCP
-  Enabled: Yes
+ Name: ERNI-KI-HTTPS
+ External Port: 443
+ Internal IP: 192.168.62.153
+ Internal Port: 443
+ Protocol: TCP
+ Enabled: Yes
 ```
 
 **Firewall Rules** (если требуется):
@@ -323,15 +324,15 @@ Rule 2:
 
 ## ТЕКУЩИЙ СТАТУС
 
-| Компонент             | Статус         | Комментарий               |
-| --------------------- | -------------- | ------------------------- |
-| Локальный доступ      | ✅ Работает    | <https://192.168.62.153/> |
-| SSL сертификат        | ✅ Валиден     | Let's Encrypt E5          |
-| Nginx                 | ✅ Работает    | Порты 80/443 открыты      |
-| Cloudflare Tunnel     | ✅ Работает    | webui.diz.zone доступен   |
-| DNS ki.erni-gruppe.ch | ❌ Не настроен | Только /etc/hosts         |
-| Port Forwarding       | ❓ Неизвестно  | Требуется проверка        |
-| Внешний доступ        | ❌ Не работает | Требуется настройка       |
+| Компонент             | Статус      | Комментарий               |
+| --------------------- | ----------- | ------------------------- |
+| Локальный доступ      | Работает    | <https://192.168.62.153/> |
+| SSL сертификат        | Валиден     | Let's Encrypt E5          |
+| Nginx                 | Работает    | Порты 80/443 открыты      |
+| Cloudflare Tunnel     | Работает    | webui.diz.zone доступен   |
+| DNS ki.erni-gruppe.ch | Не настроен | Только /etc/hosts         |
+| Port Forwarding       | Неизвестно  | Требуется проверка        |
+| Внешний доступ        | Не работает | Требуется настройка       |
 
 ---
 
@@ -339,7 +340,9 @@ Rule 2:
 
 1. **Выбрать вариант решения** (рекомендуется Вариант 1)
 2. **Получить доступ к Cloudflare Dashboard** (для Варианта 1)
-   - ИЛИ -
+
+- ИЛИ -
+
 3. **Связаться с IT отделом** (для Варианта 2)
 4. **Применить настройки** согласно выбранному варианту
 5. **Протестировать доступ** с внешнего компьютера
@@ -347,6 +350,4 @@ Rule 2:
 
 ---
 
-**Автор**: Augment Agent  
-**Дата**: 2025-10-27  
-**Версия**: 1.0
+**Автор**: Augment Agent **Дата**: 2025-10-27 **Версия**: 1.0

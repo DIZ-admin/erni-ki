@@ -18,9 +18,9 @@ last_updated: '2025-11-24'
 
 **Приоритеты**:
 
-- 🔴 High Priority: 3 задачи
-- 🟡 Medium Priority: 5 задач
-- 🟢 Low Priority: 2 задачи
+- High Priority: 3 задачи
+- [WARNING] Medium Priority: 5 задач
+- [OK] Low Priority: 2 задачи
 
 **Оценка времени**: 12-16 часов работы
 
@@ -28,7 +28,7 @@ last_updated: '2025-11-24'
 
 ### Task 1.1: Auth Service - Добавить API документацию
 
-**Приоритет**: 🔴 High **Время**: 2-3 часа **Файл**: Создать
+**Приоритет**: High **Время**: 2-3 часа **Файл**: Создать
 `docs/ru/reference/api/auth-service.md`
 
 **Содержание документа**:
@@ -96,9 +96,9 @@ Health check endpoint.
 
 ```json
 {
-  "message": "unauthorized",
-  "error": "token missing" | "invalid token",
-  "request_id": "uuid-string"
+ "message": "unauthorized",
+ "error": "token missing" | "invalid token",
+ "request_id": "uuid-string"
 }
 ```
 
@@ -106,22 +106,22 @@ Health check endpoint.
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant Nginx
-    participant Auth
-    participant OpenWebUI
+ participant Client
+ participant Nginx
+ participant Auth
+ participant OpenWebUI
 
-    Client->>Nginx: Request with JWT cookie
-    Nginx->>Auth: GET /validate + Cookie
-    Auth->>Auth: Verify JWT (HMAC-SHA256)
-    alt Token Valid
-        Auth->>Nginx: 200 OK
-        Nginx->>OpenWebUI: Forward request
-        OpenWebUI->>Client: Response
-    else Token Invalid
-        Auth->>Nginx: 401 Unauthorized
-        Nginx->>Client: 401 Redirect to login
-    end
+ Client->>Nginx: Request with JWT cookie
+ Nginx->>Auth: GET /validate + Cookie
+ Auth->>Auth: Verify JWT (HMAC-SHA256)
+ alt Token Valid
+ Auth->>Nginx: 200 OK
+ Nginx->>OpenWebUI: Forward request
+ OpenWebUI->>Client: Response
+ else Token Invalid
+ Auth->>Nginx: 401 Unauthorized
+ Nginx->>Client: 401 Redirect to login
+ end
 ```
 
 ## Configuration
@@ -140,7 +140,7 @@ sequenceDiagram
 ## Monitoring
 
 **Health Check**: CLI mode `./main --health-check` **Logs**: Structured JSON
-format с correlation IDs **Metrics**: ⚠️ Prometheus endpoint не реализован (см.
+format с correlation IDs **Metrics**: Prometheus endpoint не реализован (см.
 [issue #XXX])
 
 ## Performance
@@ -165,7 +165,7 @@ format с correlation IDs **Metrics**: ⚠️ Prometheus endpoint не реал�
 
 ### Task 1.2: LiteLLM Redis Caching - Документировать отключение
 
-**Приоритет**: 🔴 High
+**Приоритет**: High
 **Время**: 1 час
 **Файл**: Обновить `docs/ru/operations/configuration/litellm.md`
 
@@ -174,7 +174,7 @@ format с correlation IDs **Metrics**: ⚠️ Prometheus endpoint не реал�
 ```markdown
 ## Redis Caching (Временно отключено)
 
-**Статус**: ⚠️ Disabled (2025-11-24)
+**Статус**: Disabled (2025-11-24)
 **Причина**: Несовместимость с текущей версией LiteLLM v1.80.0.rc.1
 
 ### Конфигурация
@@ -183,15 +183,15 @@ format с correlation IDs **Metrics**: ⚠️ Prometheus endpoint не реал�
 
 ```yaml
 router_settings:
-  # redis_host: "redis"
-  # redis_port: 6379
-  # redis_password: "ErniKiRedisSecurePassword2024"  # pragma: allowlist secret
-  # redis_db: 1
+ # redis_host: "redis"
+ # redis_port: 6379
+ # redis_password: "ErniKiRedisSecurePassword2024" # pragma: allowlist secret
+ # redis_db: 1
 ````
 
 ### Влияние на производительность
 
-- ⚠️ Кэширование запросов к моделям отключено
+- Кэширование запросов к моделям отключено
 - Каждый запрос проходит через полный цикл обработки
 - Увеличенная нагрузка на Ollama и OpenAI провайдеров
 
@@ -215,7 +215,7 @@ Redis используется SearXNG для кэширования поиск�
 
 ### Task 1.3: vLLM Secret Status - Документировать
 
-**Приоритет**: 🔴 High
+**Приоритет**: High
 **Время**: 1 час
 **Файл**: Создать `docs/ru/reference/architecture/vllm-status.md`
 
@@ -224,7 +224,7 @@ Redis используется SearXNG для кэширования поиск�
 ```markdown
 # vLLM Integration Status
 
-**Статус**: 🔴 Disabled (Planning)
+**Статус**: Disabled (Planning)
 **Дата отключения**: 2025-XX-XX
 **Причина**: Не документирована
 
@@ -234,8 +234,8 @@ vLLM сервис **не активен** в production окружении, но
 
 ```yaml
 litellm:
-  secrets:
-    - vllm_api_key  # ← Неиспользуемый секрет
+ secrets:
+ - vllm_api_key # ← Неиспользуемый секрет
 ````
 
 ## Планы интеграции
@@ -275,9 +275,9 @@ litellm:
 # vLLM Model Configuration (add via LiteLLM Admin UI):
 # - model_name: "vllm/llama-3.1-8b-instruct"
 # - litellm_params:
-#     model: "meta-llama/Llama-3.1-8B-Instruct"
-#     api_base: "http://vllm:8000/v1"
-#     api_key: "erni-ki-vllm-secure-key-2024"  # pragma: allowlist secret
+# model: "meta-llama/Llama-3.1-8B-Instruct"
+# api_base: "http://vllm:8000/v1"
+# api_key: "erni-ki-vllm-secure-key-2024" # pragma: allowlist secret
 ```
 
 ## Решение
@@ -296,7 +296,7 @@ litellm:
 
 ### Task 2.1: Nginx Configuration - Перевести комментарии
 
-**Приоритет**: 🟡 Medium
+**Приоритет**: [WARNING] Medium
 **Время**: 2 часа
 **Файл**: [conf/nginx/nginx.conf](../../conf/nginx/nginx.conf)
 
@@ -325,8 +325,8 @@ error_log /var/log/nginx/error.log info;
 
 ### Task 2.2: Monitoring Stack - Указать версии явно
 
-**Приоритет**: 🟡 Medium **Время**: 1 час **Файл**: `compose.yml` или создать
-`compose.monitoring.yml`
+**Приоритет**: [WARNING] Medium **Время**: 1 час **Файл**: `compose.yml` или
+создать `compose.monitoring.yml`
 
 **Проблема**: Prometheus, Grafana, Loki, Alertmanager без explicit версий.
 
@@ -358,7 +358,8 @@ fluent-bit:
 
 ### Task 2.3: Python Scripts - Добавить type hints
 
-**Приоритет**: 🟡 Medium **Время**: 3-4 часа **Файлы**: 29 Python скриптов
+**Приоритет**: [WARNING] Medium **Время**: 3-4 часа **Файлы**: 29 Python
+скриптов
 
 **Проблема**: Отсутствуют аннотации типов в большинстве скриптов.
 
@@ -369,24 +370,24 @@ fluent-bit:
 ```python
 # Before:
 def fix_frontmatter(content, filepath, verbose=False):
-    changes = []
-    # ...
-    return content, changes
+ changes = []
+ # ...
+ return content, changes
 
 # After:
 def fix_frontmatter(
-    content: str,
-    filepath: str,
-    verbose: bool = False
+ content: str,
+ filepath: str,
+ verbose: bool = False
 ) -> tuple[str, list[str]]:
-    changes: list[str] = []
-    # ...
-    return content, changes
+ changes: list[str] = []
+ # ...
+ return content, changes
 ```
 
 **Приоритет файлов**:
 
-1. `scripts/docs/validate_metadata.py` ✅ (уже есть type hints)
+1. `scripts/docs/validate_metadata.py` (уже есть type hints)
 2. `scripts/fix-deprecated-metadata.py` (частично)
 3. `scripts/add-missing-frontmatter.py` (частично)
 4. Остальные scripts/docs/\*.py
@@ -394,8 +395,8 @@ def fix_frontmatter(
 
 ### Task 2.4: Python Scripts - Добавить unit tests
 
-**Приоритет**: 🟡 Medium **Время**: 4-6 часов **Файлы**: Критические Python
-скрипты
+**Приоритет**: [WARNING] Medium **Время**: 4-6 часов **Файлы**: Критические
+Python скрипты
 
 **Проблема**: 29 скриптов без автоматических тестов.
 
@@ -412,14 +413,14 @@ def fix_frontmatter(
 
 ```
 tests/
-  unit/
-    test_validate_metadata.py
-    test_fix_deprecated_metadata.py
-    test_add_missing_frontmatter.py
-  fixtures/
-    sample.md
-    sample_with_frontmatter.md
-    sample_deprecated.md
+ unit/
+ test_validate_metadata.py
+ test_fix_deprecated_metadata.py
+ test_add_missing_frontmatter.py
+ fixtures/
+ sample.md
+ sample_with_frontmatter.md
+ sample_deprecated.md
 ```
 
 **Пример теста**:
@@ -431,9 +432,9 @@ from pathlib import Path
 from scripts.docs.validate_metadata import validate_file
 
 def test_validate_file_with_frontmatter(tmp_path):
-    # Arrange
-    doc = tmp_path / "test.md"
-    doc.write_text("""---
+ # Arrange
+ doc = tmp_path / "test.md"
+ doc.write_text("""---
 language: ru
 translation_status: complete
 doc_version: '2025.11'
@@ -442,18 +443,18 @@ doc_version: '2025.11'
 # Test
 """)
 
-    # Act
-    errors, metadata, info = validate_file(doc)
+ # Act
+ errors, metadata, info = validate_file(doc)
 
-    # Assert
-    assert len(errors) == 0
-    assert metadata["language"] == "ru"
-    assert info["doc_version_ok"] is True
+ # Assert
+ assert len(errors) == 0
+ assert metadata["language"] == "ru"
+ assert info["doc_version_ok"] is True
 ```
 
 ### Task 2.5: Architecture Documentation - Обновить диаграммы
 
-**Приоритет**: 🟡 Medium **Время**: 2 часа **Файл**:
+**Приоритет**: [WARNING] Medium **Время**: 2 часа **Файл**:
 `docs/ru/reference/architecture/overview.md`
 
 **Добавить**:
@@ -470,43 +471,43 @@ doc_version: '2025.11'
 
 ```mermaid
 graph TB
-    subgraph "Tier 1: Critical"
-        DB[PostgreSQL 17<br/>4GB RAM]
-        OLLAMA[Ollama 0.12.11<br/>24GB RAM<br/>OOM: -900]
-        NGINX[Nginx 1.29.3<br/>512MB]
-        WEBUI[OpenWebUI v0.6.36<br/>8GB RAM<br/>OOM: -600]
-    end
+ subgraph "Tier 1: Critical"
+ DB[PostgreSQL 17<br/>4GB RAM]
+ OLLAMA[Ollama 0.12.11<br/>24GB RAM<br/>OOM: -900]
+ NGINX[Nginx 1.29.3<br/>512MB]
+ WEBUI[OpenWebUI v0.6.36<br/>8GB RAM<br/>OOM: -600]
+ end
 
-    subgraph "Tier 2: Important"
-        LITELLM[LiteLLM v1.80<br/>12GB RAM<br/>OOM: -300]
-        REDIS[Redis 7]
-        AUTH[Auth Go 1.0.0]
-        SEARXNG[SearXNG]
-        CLOUDFLARED[Cloudflared]
-    end
+ subgraph "Tier 2: Important"
+ LITELLM[LiteLLM v1.80<br/>12GB RAM<br/>OOM: -300]
+ REDIS[Redis 7]
+ AUTH[Auth Go 1.0.0]
+ SEARXNG[SearXNG]
+ CLOUDFLARED[Cloudflared]
+ end
 
-    subgraph "Tier 3: Auxiliary"
-        DOCLING[Docling]
-        TIKA[Tika]
-        EDGETTS[EdgeTTS]
-        MCPO[MCPO Server]
-    end
+ subgraph "Tier 3: Auxiliary"
+ DOCLING[Docling]
+ TIKA[Tika]
+ EDGETTS[EdgeTTS]
+ MCPO[MCPO Server]
+ end
 
-    subgraph "Tier 4: Monitoring"
-        PROM[Prometheus 3.0.0]
-        GRAFANA[Grafana 11.3.0]
-        LOKI[Loki 3.0.0]
-        ALERTMGR[Alertmanager]
-    end
+ subgraph "Tier 4: Monitoring"
+ PROM[Prometheus 3.0.0]
+ GRAFANA[Grafana 11.3.0]
+ LOKI[Loki 3.0.0]
+ ALERTMGR[Alertmanager]
+ end
 
-    WEBUI -->|JWT| AUTH
-    WEBUI -->|SQL| DB
-    WEBUI -->|Cache| REDIS
-    WEBUI -->|LLM| LITELLM
-    LITELLM -->|Inference| OLLAMA
-    SEARXNG -->|Cache| REDIS
-    NGINX -->|Proxy| WEBUI
-    CLOUDFLARED -->|Tunnel| NGINX
+ WEBUI -->|JWT| AUTH
+ WEBUI -->|SQL| DB
+ WEBUI -->|Cache| REDIS
+ WEBUI -->|LLM| LITELLM
+ LITELLM -->|Inference| OLLAMA
+ SEARXNG -->|Cache| REDIS
+ NGINX -->|Proxy| WEBUI
+ CLOUDFLARED -->|Tunnel| NGINX
 ```
 ````
 
@@ -516,7 +517,7 @@ graph TB
 
 ### Task 3.1: Mixed Language Comments - Стандартизация
 
-**Приоритет**: 🟢 Low
+**Приоритет**: [OK] Low
 **Время**: 1 час
 **Файл**: `compose.yml`
 
@@ -530,21 +531,21 @@ graph TB
 # Before:
 # Nginx reverse proxy (optimized network configuration)
 nginx:
-  # Открываем порты
-  ports:
-    - "80:80"
+ # Открываем порты
+ ports:
+ - "80:80"
 
 # After:
 # Nginx reverse proxy (optimized network configuration)
 nginx:
-  # Expose ports for HTTP/HTTPS traffic
-  ports:
-    - "80:80"
+ # Expose ports for HTTP/HTTPS traffic
+ ports:
+ - "80:80"
 ````
 
 ### Task 3.2: Cloudflare IP Ranges - Автоматизация
 
-**Приоритет**: 🟢 Low **Время**: 2 часа **Файл**:
+**Приоритет**: [OK] Low **Время**: 2 часа **Файл**:
 `conf/nginx/nginx.conf:139-147`
 
 **Проблема**: Hardcoded Cloudflare IP ranges могут устареть.
@@ -587,18 +588,18 @@ include /etc/nginx/includes/cloudflare-ips.conf;
 
 ### Таблица задач
 
-| ID  | Task                         | Priority  | Time | Status |
-| --- | ---------------------------- | --------- | ---- | ------ |
-| 1.1 | Auth Service API docs        | 🔴 High   | 2-3h | Todo   |
-| 1.2 | LiteLLM Redis caching docs   | 🔴 High   | 1h   | Todo   |
-| 1.3 | vLLM status documentation    | 🔴 High   | 1h   | Todo   |
-| 2.1 | Nginx comments translation   | 🟡 Medium | 2h   | Todo   |
-| 2.2 | Monitoring versions explicit | 🟡 Medium | 1h   | Todo   |
-| 2.3 | Python type hints            | 🟡 Medium | 3-4h | Todo   |
-| 2.4 | Python unit tests            | 🟡 Medium | 4-6h | Todo   |
-| 2.5 | Architecture diagrams        | 🟡 Medium | 2h   | Todo   |
-| 3.1 | Standardize comments         | 🟢 Low    | 1h   | Todo   |
-| 3.2 | Cloudflare IPs automation    | 🟢 Low    | 2h   | Todo   |
+| ID  | Task                         | Priority         | Time | Status |
+| --- | ---------------------------- | ---------------- | ---- | ------ |
+| 1.1 | Auth Service API docs        | High             | 2-3h | Todo   |
+| 1.2 | LiteLLM Redis caching docs   | High             | 1h   | Todo   |
+| 1.3 | vLLM status documentation    | High             | 1h   | Todo   |
+| 2.1 | Nginx comments translation   | [WARNING] Medium | 2h   | Todo   |
+| 2.2 | Monitoring versions explicit | [WARNING] Medium | 1h   | Todo   |
+| 2.3 | Python type hints            | [WARNING] Medium | 3-4h | Todo   |
+| 2.4 | Python unit tests            | [WARNING] Medium | 4-6h | Todo   |
+| 2.5 | Architecture diagrams        | [WARNING] Medium | 2h   | Todo   |
+| 3.1 | Standardize comments         | [OK] Low         | 1h   | Todo   |
+| 3.2 | Cloudflare IPs automation    | [OK] Low         | 2h   | Todo   |
 
 **Total time estimate**: 19-27 hours
 
@@ -627,13 +628,13 @@ include /etc/nginx/includes/cloudflare-ips.conf;
 
 После выполнения всех задач:
 
-- ✅ Documentation coverage: 100%
-- ✅ Code-documentation alignment: 100%
-- ✅ API documentation: Complete
-- ✅ Python type hints: >80% coverage
-- ✅ Python tests: Critical scripts covered
-- ✅ Architecture diagrams: Up-to-date
-- ✅ Language consistency: English
+- Documentation coverage: 100%
+- Code-documentation alignment: 100%
+- API documentation: Complete
+- Python type hints: >80% coverage
+- Python tests: Critical scripts covered
+- Architecture diagrams: Up-to-date
+- Language consistency: English
 
 ---
 

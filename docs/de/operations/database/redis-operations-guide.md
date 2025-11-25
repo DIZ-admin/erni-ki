@@ -11,7 +11,7 @@ last_updated: '2025-11-24'
 
 ---
 
-## 🎯 Überblick
+## Überblick
 
 Redis wird als Hochleistungs-Cache für OpenWebUI und SearXNG genutzt. Das System
 ist vollständig überwacht, hat automatisierte Backups und ist auf stabile
@@ -19,7 +19,7 @@ Performance optimiert.
 
 ---
 
-## 🔧 Grundbefehle
+## Grundbefehle
 
 ### Status prüfen
 
@@ -62,7 +62,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ---
 
-## 📊 Monitoring & Alerts
+## Monitoring & Alerts
 
 ### Kernmetriken
 
@@ -87,7 +87,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ---
 
-## 🔄 Backups
+## Backups
 
 ### Automatisch
 
@@ -112,7 +112,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ---
 
-## ⚡ Performance
+## Performance
 
 ### Aktuelle Settings
 
@@ -131,7 +131,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" memory 
 
 ---
 
-## 🚨 Störungsbehebung
+## Störungsbehebung
 
 ### Redis down
 
@@ -159,7 +159,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 
 ---
 
-## 📋 Regelmäßige Wartung
+## Regelmäßige Wartung
 
 ### Täglich
 

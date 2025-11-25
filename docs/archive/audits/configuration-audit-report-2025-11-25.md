@@ -1,3 +1,13 @@
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-25'
+audit_type: 'configuration'
+audit_scope: 'all-config-files'
+auditor: 'Claude Code'
+---
+
 # Комплексный отчет по конфигурационным файлам проекта ERNI-KI
 
 **Дата:** 2025-11-25 **Аудитор:** Senior Full-Stack Engineer **Scope:** Полная
@@ -5,7 +15,7 @@
 
 ---
 
-## 📋 Executive Summary
+## Executive Summary
 
 Проведена комплексная инспекция всех конфигурационных файлов проекта ERNI-KI.
 Проанализировано **40+ конфигурационных файлов** включая Docker, CI/CD, linter,
@@ -13,23 +23,21 @@ formatter, security, testing, и documentation конфигурации.
 
 ### Ключевые находки:
 
-- ✅ **Высокий уровень зрелости конфигураций** - современные инструменты и
-  практики
-- ⚠️ **Некоторые конфигурации игнорируются в git** - потенциальная проблема для
+- **Высокий уровень зрелости конфигураций** - современные инструменты и практики
+- **Некоторые конфигурации игнорируются в git** - потенциальная проблема для
   команды
-- ✅ **Комплексная система безопасности** - multiple security scanners
-  configured
-- ✅ **Отличная документация** - multi-language support с MkDocs
+- **Комплексная система безопасности** - multiple security scanners configured
+- **Отличная документация** - multi-language support с MkDocs
 
 ---
 
-## 🏗️ 1. Инфраструктурные конфигурации
+## 1. Инфраструктурные конфигурации
 
 ### 1.1 Docker & Compose
 
 #### `compose.yml` (1274 строки, 44KB)
 
-**Статус:** ✅ Excellent
+**Статус:** Excellent
 
 **Особенности:**
 
@@ -44,32 +52,32 @@ formatter, security, testing, и documentation конфигурации.
 
 ```
 Critical Tier (Tier 1):
-├── OpenWebUI (main interface)
-├── Ollama (LLM server)
-├── PostgreSQL (pgvector)
-└──Nginx (reverse proxy)
+ OpenWebUI (main interface)
+ Ollama (LLM server)
+ PostgreSQL (pgvector)
+Nginx (reverse proxy)
 
 Important Tier (Tier 2):
-├── SearXNG (search)
-├── Redis (cache)
-├── Backrest (backup)
-├── Auth (JWT service)
-└── Cloudflared (tunnel)
+ SearXNG (search)
+ Redis (cache)
+ Backrest (backup)
+ Auth (JWT service)
+ Cloudflared (tunnel)
 
 Auxiliary Tier (Tier 3):
-├── Docling (OCR/ingestion)
-├── EdgeTTS (speech)
-├── Tika (file processing)
-└── MCPO Server
+ Docling (OCR/ingestion)
+ EdgeTTS (speech)
+ Tika (file processing)
+ MCPO Server
 
 Monitoring Tier (Tier 4):
-├── Prometheus
-├── Grafana
-├── Alertmanager
-├── Loki
-├── Node Exporter
-├── cAdvisor
-└── Uptime Kuma
+ Prometheus
+ Grafana
+ Alertmanager
+ Loki
+ Node Exporter
+ cAdvisor
+ Uptime Kuma
 ```
 
 **Logging Configuration:**
@@ -94,10 +102,10 @@ LiteLLM: 12GB RAM, 1 CPU core, -300 OOM score
 
 **Критические находки:**
 
-- ⚠️ **Watchtower auto-updates** включены для большинства сервисов кроме
-  критичных (DB, Ollama, Nginx)
-- ✅ Используются **pinned versions/digests** для production сервисов
-- ⚠️ Некоторые образы используют `latest` tag (Redis: `redis:7-alpine`)
+- **Watchtower auto-updates** включены для большинства сервисов кроме критичных
+  (DB, Ollama, Nginx)
+- Используются **pinned versions/digests** для production сервисов
+- Некоторые образы используют `latest` tag (Redis: `redis:7-alpine`)
 
 #### `Dockerfiles` (4 файла найдено)
 
@@ -108,26 +116,28 @@ LiteLLM: 12GB RAM, 1 CPU core, -300 OOM score
 3. `conf/webhook-receiver/Dockerfile` - Webhook receiver
 4. `ops/ollama-exporter/Dockerfile` - Ollama metrics exporter
 
-**Оценка:** ✅ Multi-stage builds использованы где применимо
+**Оценка:** Multi-stage builds использованы где применимо
 
 ### 1.2 Nginx Configuration
 
 #### `conf/nginx/nginx.conf` (209 строк)
 
-**Статус:** ✅ Production-ready
+**Статус:** Production-ready
 
 **Особенности:**
 
 - **Correlation ID tracking** с X-Request-ID header
 - **Rate limiting** настроен для разных зон:
-  ```
-  general: 50 req/s
-  api: 30 req/s
-  static: 100 req/s
-  auth: 5 req/s
-  searxng_api: 60 req/s
-  litellm_api: 10 req/s
-  ```
+
+```
+general: 50 req/s
+api: 30 req/s
+static: 100 req/s
+auth: 5 req/s
+searxng_api: 60 req/s
+litellm_api: 10 req/s
+```
+
 - **Gzip compression** с оптимизацией
 - **Proxy caching** для static assets и SearXNG
 - **Real IP configuration** для Cloudflare
@@ -139,7 +149,7 @@ LiteLLM: 12GB RAM, 1 CPU core, -300 OOM score
 ```nginx
 worker_processes auto;
 worker_rlimit_nofile 262144;
-worker_connections 16384;  # Up from 8192
+worker_connections 16384; # Up from 8192
 use epoll; # Linux optimization
 multi_accept on;
 ```
@@ -156,9 +166,9 @@ multi_accept on;
 
 **Находки:**
 
-- ✅ Excellent production configuration
-- ⚠️ DNS resolver использует Docker internal (`127.0.0.11`) - зависимость от
-  Docker DNS
+- Excellent production configuration
+- DNS resolver использует Docker internal (`127.0.0.11`) - зависимость от Docker
+  DNS
 
 ### 1.3 Environment Variables & Secrets
 
@@ -185,13 +195,13 @@ multi_accept on;
 
 **Оценка:**
 
-- ✅ Хорошая изоляция секретов
-- ✅ `.example` файлы для всех конфигураций
-- ⚠️ `secrets/README.md` содержит подробную документацию (7.3KB)
+- Хорошая изоляция секретов
+- `.example` файлы для всех конфигураций
+- `secrets/README.md` содержит подробную документацию (7.3KB)
 
 ---
 
-## ⚙️ 2. CI/CD Конфигурации
+## 2. CI/CD Конфигурации
 
 ### 2.1 GitHub Actions
 
@@ -215,11 +225,11 @@ Jobs:
 
 **Особенности:**
 
-- ✅ **Parallel execution** с dependency chains
-- ✅ **Artifact upload** для coverage reports
-- ✅ **SARIF upload** для security findings
-- ✅ **Docker multi-arch builds** (amd64, arm64)
-- ✅ **Codecov integration**
+- **Parallel execution** с dependency chains
+- **Artifact upload** для coverage reports
+- **SARIF upload** для security findings
+- **Docker multi-arch builds** (amd64, arm64)
+- **Codecov integration**
 
 **2. `security.yml` (349 строк) - Security analysis**
 
@@ -236,10 +246,10 @@ Jobs:
 
 **Особенности:**
 
-- ✅ **Multiple security scanners** для redundancy
-- ✅ **SARIF integration** с GitHub Security tab
-- ✅ **Daily cron schedule** (02:00 UTC)
-- ✅ **Environment-specific secret validation**
+- **Multiple security scanners** для redundancy
+- **SARIF integration** с GitHub Security tab
+- **Daily cron schedule** (02:00 UTC)
+- **Environment-specific secret validation**
 
 **3. `deploy-environments.yml` (13KB) - Multi-environment deployment**
 
@@ -251,10 +261,10 @@ Jobs:
 
 **Критические находки:**
 
-- ✅ Comprehensive CI/CD pipeline
-- ✅ Security-first approach
-- ⚠️ **Node version inconsistency**: ci.yml uses 20.18.0 and 22.14.0 in
-  different jobs -⚠️ **Go version**: GOTOOLCHAIN override может вызвать проблемы
+- Comprehensive CI/CD pipeline
+- Security-first approach
+- **Node version inconsistency**: ci.yml uses 20.18.0 and 22.14.0 in different
+  jobs - **Go version**: GOTOOLCHAIN override может вызвать проблемы
 
 ### 2.2 Dependabot
 
@@ -267,7 +277,7 @@ Update schedules:
   - gomod (auth/): Weekly
 ```
 
-**Оценка:** ✅ Good configuration, limited PR count (5 for npm)
+**Оценка:** Good configuration, limited PR count (5 for npm)
 
 ### 2.3 Branch Protection
 
@@ -295,11 +305,11 @@ Settings:
   - No deletions
 ```
 
-**Оценка:** ✅ Очень строгие правила - enterprise-grade
+**Оценка:** Очень строгие правила - enterprise-grade
 
 ---
 
-## 🐍 3. Backend Конфигурации
+## 3. Backend Конфигурации
 
 ### 3.1 Go Service (auth/)
 
@@ -318,7 +328,7 @@ Dependencies:
 + 35 indirect dependencies
 ```
 
-**Оценка:** ✅ Современный Go 1.24, актуальные зависимости
+**Оценка:** Современный Go 1.24, актуальные зависимости
 
 #### `.golangci.yml` (182 строки, 4.3KB)
 
@@ -343,11 +353,11 @@ Disabled linters:
 
 **Особенности:**
 
-- ✅ **40+ enabled linters** - очень строгая проверка
-- ✅ **gosec** для security
-- ⚠️ `godox` disabled - работа со структурой задач через GitHub Issues
+- **40+ enabled linters** - очень строгая проверка
+- **gosec** для security
+- `godox` disabled - работа со структурой задач через GitHub Issues
 
-**Оценка:** ✅ Enterprise-grade linting configuration
+**Оценка:** Enterprise-grade linting configuration
 
 ### 3.2 Python Configuration
 
@@ -358,21 +368,21 @@ line-length = 100
 target-version = "py311"
 
 select = [
-  "E",   # pycodestyle
-  "F",   # pyflakes
-  "W",   # warnings
-  "I",   # isort
-  "UP",  # pyupgrade (Python 3.11+)
-  "B",   # bugbear
-  "SIM", # simplifications
-  "S",   # security (bandit)
-  "C4",  # comprehensions
+ "E", # pycodestyle
+ "F", # pyflakes
+ "W", # warnings
+ "I", # isort
+ "UP", # pyupgrade (Python 3.11+)
+ "B", # bugbear
+ "SIM", # simplifications
+ "S", # security (bandit)
+ "C4", # comprehensions
 ]
 
-ignore = ["S101", "S311"]  # allow asserts, pseudo-random
+ignore = ["S101", "S311"] # allow asserts, pseudo-random
 ```
 
-**Оценка:** ✅ Современный, быстрый альтернатива Flake8 + Black + isort
+**Оценка:** Современный, быстрый альтернатива Flake8 + Black + isort
 
 #### `requirements-dev.txt` (351 bytes)
 
@@ -382,7 +392,7 @@ mkdocs-material>=9.5.51
 ...
 ```
 
-**Оценка:** ✅ Minimal dev dependencies, основная разработка в Go/TS
+**Оценка:** Minimal dev dependencies, основная разработка в Go/TS
 
 ### 3.3 Database Configurations
 
@@ -397,11 +407,11 @@ mkdocs-material>=9.5.51
 - Config: `conf/redis/redis.conf`
 - Features: Active defragmentation, persistence (RDB)
 
-**Оценка:** ✅ Production-optimized configurations (некоторые файлы .gitignored)
+**Оценка:** Production-optimized configurations (некоторые файлы .gitignored)
 
 ---
 
-## 🎨 4. Frontend/TypeScript Конфигурации
+## 4. Frontend/TypeScript Конфигурации
 
 ### 4.1 TypeScript
 
@@ -432,7 +442,7 @@ mkdocs-material>=9.5.51
 }
 ```
 
-**Оценка:** ✅ Максимально строгая TypeScript конфигурация
+**Оценка:** Максимально строгая TypeScript конфигурация
 
 ### 4.2 ESLint
 
@@ -460,7 +470,7 @@ TypeScript rules:
 - consistent-type-definitions: interface
 ```
 
-**Оценка:** ✅ Современный Flat Confignpm 9.x/ESLint 9.x), security-focused
+**Оценка:** Современный Flat Confignpm 9.x/ESLint 9.x), security-focused
 
 ### 4.3 Prettier
 
@@ -482,7 +492,7 @@ TypeScript rules:
 }
 ```
 
-**Оценка:** ✅ Стандартная, разумная конфигурация
+**Оценка:** Стандартная, разумная конфигурация
 
 ### 4.4 EditorConfig
 
@@ -498,22 +508,22 @@ indent_style = space
 indent_size = 2
 
 [*.go]
-indent_style = tab  # Go convention
+indent_style = tab # Go convention
 indent_size = 4
 
 [*.md]
-trim_trailing_whitespace = false  # Markdown line breaks
+trim_trailing_whitespace = false # Markdown line breaks
 
 [conf/fluent-bit/*.conf]
 indent_size = 4
-trim_trailing_whitespace = false  # Preserve structure
+trim_trailing_whitespace = false # Preserve structure
 ```
 
-**Оценка:** ✅ Хорошо продуманная конфигурация для всех типов файлов
+**Оценка:** Хорошо продуманная конфигурация для всех типов файлов
 
 ---
 
-## 🧪 5. Testing Конфигурации
+## 5. Testing Конфигурации
 
 ### 5.1 Vitest
 
@@ -524,10 +534,10 @@ Test configuration:
 - Provider: v8 coverage
 - Reporters: text, json, html, lcov
 - Thresholds: 90% coverage target
-  - branches: 90%
-  - functions: 90%
-  - lines: 90%
-  - statements: 90%
+ - branches: 90%
+ - functions: 90%
+ - lines: 90%
+ - statements: 90%
 
 Execution:
 - Pool: threads (multi-threading)
@@ -539,7 +549,7 @@ Test files:
 - tests/integration/**/*.{test,spec}.{ts,js}
 ```
 
-**Оценка:** ✅ Aggressive coverage targets, modern testing setup
+**Оценка:** Aggressive coverage targets, modern testing setup
 
 ### 5.2 Playwright
 
@@ -564,11 +574,11 @@ Artifacts:
 Projects: chromium only (Desktop Chrome)
 ```
 
-**Оценка:** ✅ Well-configured for both mock and real E2E testing
+**Оценка:** Well-configured for both mock and real E2E testing
 
 ---
 
-## 🔒 6. Security Конфигурации
+## 6. Security Конфигурации
 
 ### 6.1 Secret Scanning
 
@@ -579,21 +589,21 @@ title = "ERNI-KI gitleaks config"
 
 [allowlist]
 paths = [
-  ".secrets.baseline",
-  "compose.yml.example",
-  "examples/",
-  "docs/reports/",
-  "conf/searxng/settings.yml",
-  ...
+ ".secrets.baseline",
+ "compose.yml.example",
+ "examples/",
+ "docs/reports/",
+ "conf/searxng/settings.yml",
+ ...
 ]
 
 regexes = [
-  "REDACTED",
-  "hashed_secret"
+ "REDACTED",
+ "hashed_secret"
 ]
 ```
 
-**Оценка:** ✅ Правильная настройка с allowlist для false positives
+**Оценка:** Правильная настройка с allowlist для false positives
 
 ### 6.2 Security Scanners
 
@@ -606,7 +616,7 @@ skip-check:
   - CKV_DOCKER_3 # Non-root user in progress
 ```
 
-**Оценка:** ⚠️ Некоторых проверки отключены, нужно отслеживать прогресс
+**Оценка:** Некоторых проверки отключены, нужно отслеживать прогресс
 
 #### `.snyk` (63 строки)
 
@@ -615,13 +625,13 @@ version: v1.25.0
 
 language-settings:
   javascript:
-    includeDevDependencies: false # Exclude dev deps from prod scanning
+  includeDevDependencies: false # Exclude dev deps from prod scanning
 
   docker:
-    excludeBaseImageVulns: false # Scan all vulnerabilities
+  excludeBaseImageVulns: false # Scan all vulnerabilities
 ```
 
-**Оценка:** ✅ Production-focused configuration
+**Оценка:** Production-focused configuration
 
 ### 6.3 Pre-commit Hooks
 
@@ -660,7 +670,7 @@ Local hooks:
   - forbid-numbered-copies (Finder duplicates)
 ```
 
-**Оценка:** ✅ Comprehensive, enterprise-grade pre-commit setup
+**Оценка:** Comprehensive, enterprise-grade pre-commit setup
 
 ### 6.4 Commit Validation
 
@@ -687,17 +697,17 @@ Rules:
 - type and scope: lowercase
 ```
 
-**Оценка:** ✅ Strict conventional commits для automated releases
+**Оценка:** Strict conventional commits для automated releases
 
 ---
 
-## 📚 7. Documentation Конфигурации
+## 7. Documentation Конфигурации
 
 ### 7.1 MkDocs
 
 #### `mkdocs.yml` (541 строка, 23KB)
 
-**Статус:** ✅ Enterprise-grade documentation
+**Статус:** Enterprise-grade documentation
 
 **Особенности:**
 
@@ -706,15 +716,16 @@ Rules:
 - **Navigation**: tabs, sections, expand, path, indexes
 - **Search**: suggest, highlight, share (3 languages)
 - **Plugins** (10):
-  ```
-  - search (multi-language)
-  - awesome-pages
-  - blog (with categories)
-  - include-markdown
-  - i18n (folder structure)
-  - minify
-  - git-revision-date-localized
-  ```
+
+```
+- search (multi-language)
+- awesome-pages
+- blog (with categories)
+- include-markdown
+- i18n (folder structure)
+- minify
+- git-revision-date-localized
+```
 
 **Markdown Extensions (20+):**
 
@@ -737,30 +748,30 @@ Rules:
 - Academy KI (5+ pages)
 - System Status
 - Operations (30+ pages)
-  ├── Core (6 pages)
-  ├── Monitoring (7 pages)
-  ├── Automation (3 pages)
-  ├── Maintenance (6 pages)
-  ├── Troubleshooting
-  ├── Database (7 pages)
-  └── Diagnostics
+ Core (6 pages)
+ Monitoring (7 pages)
+ Automation (3 pages)
+ Maintenance (6 pages)
+ Troubleshooting
+ Database (7 pages)
+ Diagnostics
 - Data & Storage
 - Security (5 pages)
 - Reference (10+ pages)
 - Reports & Archive (30+ pages)
 ```
 
-**Оценка:** ✅ Потрясающая документация, 250+ страниц
+**Оценка:** Потрясающая документация, 250+ страниц
 
 ---
 
-## 🔧 8. Specialized Service Configurations
+## 8. Specialized Service Configurations
 
 ### 8.1 LiteLLM
 
 #### `conf/litellm/config.yaml` (247 строк, 8.9KB)
 
-**Статус:** ✅ Comprehensive LLM proxy configuration
+**Статус:** Comprehensive LLM proxy configuration
 
 **Особенности:**
 
@@ -800,10 +811,10 @@ log_level: 'DEBUG'
 ```yaml
 cache: true
 cache_params:
-  type: 'local' # In-memory (Redis has bug in v1.80.0.rc.1)
-  ttl: 1800 # 30 minutes
-  supported_call_types:
-    [acompletion, atext_completion, aembedding, atranscription]
+ type: 'local' # In-memory (Redis has bug in v1.80.0.rc.1)
+ ttl: 1800 # 30 minutes
+ supported_call_types:
+ [acompletion, atext_completion, aembedding, atranscription]
 ```
 
 **OpenAI Passthrough:**
@@ -849,12 +860,12 @@ connection_pool:
 
 **Критические находки:**
 
-- ✅ Детальная конфигурация для production LLM proxy
-- ⚠️ **Redis caching disabled** из-за bug в LiteLLM v1.80.0.rc.1
-- ✅ Fallback на local (in-memory) caching
-- ⚠️ **hardcoded socket_timeout: 5.0** в Redis config - known issue
+- Детальная конфигурация для production LLM proxy
+- **Redis caching disabled** из-за bug в LiteLLM v1.80.0.rc.1
+- Fallback на local (in-memory) caching
+- **hardcoded socket_timeout: 5.0** в Redis config - known issue
 
-**Оценка:** ✅ Very comprehensive, production-ready configuration
+**Оценка:** Very comprehensive, production-ready configuration
 
 ### 8.2 Prometheus/Grafana
 
@@ -870,118 +881,131 @@ connection_pool:
 - Dashboards: `conf/grafana/dashboards/`
 - Password: Docker secret
 
-**Оценка:** ⚠️ Многие конфигурации gitignored - потенциальная проблема для
-команды
+**Оценка:** Многие конфигурации gitignored - потенциальная проблема для команды
 
 ---
 
-## ⚠️ Критические находки и рекомендации
+## Критические находки и рекомендации
 
-### 🔴 Critical Issues
+### Critical Issues
 
 1. **Gitignored Production Configs**
-   - `conf/prometheus/prometheus.yml` и другие конфигурации игнорируются
-   - **Риск:** Потеря конфигураций при переносе или восстановлении
-   - **Рекомендация:** Создать `.example` файлы или использовать templates
+
+- `conf/prometheus/prometheus.yml` и другие конфигурации игнорируются
+- **Риск:** Потеря конфигураций при переносе или восстановлении
+- **Рекомендация:** Создать `.example` файлы или использовать templates
 
 2. **Redis Caching Bug**
-   - LiteLLM v1.80.0.rc.1 имеет hardcoded `socket_timeout: 5.0`
-   - **Impact:** Redis caching отключен, используется fallback на local cache
-   - **Рекомендация:** Отслеживать upstream fix и обновить LiteLLM
+
+- LiteLLM v1.80.0.rc.1 имеет hardcoded `socket_timeout: 5.0`
+- **Impact:** Redis caching отключен, используется fallback на local cache
+- **Рекомендация:** Отслеживать upstream fix и обновить LiteLLM
 
 3. **Node.js Version Inconsistency**
-   - CI workflows используют разные версии Node (20.18.0 vs 22.14.0)
-   - **Риск:** Потенциальные проблемы совместимости
-   - **Рекомендация:** Унифицировать на одну версию (22.14.0 из package.json)
 
-### ⚠️ Warnings
+- CI workflows используют разные версии Node (20.18.0 vs 22.14.0)
+- **Риск:** Потенциальные проблемы совместимости
+- **Рекомендация:** Унифицировать на одну версию (22.14.0 из package.json)
+
+### Warnings
 
 4. **Docker Image Versioning**
-   - Некоторые образы используют `latest` tag (redis:7-alpine)
-   - **Риск:** Непредсказуемые обновления
-   - **Рекомендация:** Pin точные версии для всех production сервисов
+
+- Некоторые образы используют `latest` tag (redis:7-alpine)
+- **Риск:** Непредсказуемые обновления
+- **Рекомендация:** Pin точные версии для всех production сервисов
 
 5. **Disabled Security Checks**
-   - Checkov: CKV_DOCKER_3 (non-root user) disabled
-   - **Риск:** Контейнеры работают от root
-   - **Рекомендация:** Создать task для перехода на non-root users
+
+- Checkov: CKV_DOCKER_3 (non-root user) disabled
+- **Риск:** Контейнеры работают от root
+- **Рекомендация:** Создать task для перехода на non-root users
 
 6. **Go Toolchain Override**
-   - `GOTOOLCHAIN: go1.24.10` может конфликтовать с go.mod
-   - **Риск:** Несоответствие версий Go
-   - **Рекомендация:** Синхронизировать с go.mod toolchain
 
-### ✅ Best Practices
+- `GOTOOLCHAIN: go1.24.10` может конфликтовать с go.mod
+- **Риск:** Несоответствие версий Go
+- **Рекомендация:** Синхронизировать с go.mod toolchain
+
+### Best Practices
 
 7. **Excellent Practices Found:**
-   - ✅ Comprehensive security scanning (5+ tools)
-   - ✅ Multi-tier logging strategy
-   - ✅ Docker secrets для чувствительных данных
-   - ✅ Pre-commit hooks (20+ проверок)
-   - ✅ Conventional commits с automated releases
-   - ✅ Multi-language documentation
-   - ✅ 90% coverage targets для тестов
-   - ✅ Branch protection с signed commits
-   - ✅ GPU resource management
+
+- Comprehensive security scanning (5+ tools)
+- Multi-tier logging strategy
+- Docker secrets для чувствительных данных
+- Pre-commit hooks (20+ проверок)
+- Conventional commits с automated releases
+- Multi-language documentation
+- 90% coverage targets для тестов
+- Branch protection с signed commits
+- GPU resource management
 
 ---
 
-## 📊 Матрица зрелости конфигураций
+## Матрица зрелости конфигураций
 
-| Область            | Оценка      | Комментарий                                              |
-| ------------------ | ----------- | -------------------------------------------------------- |
-| **Docker/Compose** | ⭐⭐⭐⭐⭐  | Excellent: 30+ сервисов, 4-tier logging, GPU support     |
-| **CI/CD**          | ⭐⭐⭐⭐½   | Very Good: Comprehensive pipelines, minor version issues |
-| **Security**       | ⭐⭐⭐⭐⭐  | Excellent: Multiple scanners, pre-commit hooks           |
-| **Linting**        | ⭐⭐⭐⭐⭐  | Excellent: Go (40+ linters), TS, Python (Ruff)           |
-| **Testing**        | ⭐⭐⭐⭐ ⭐ | Excellent: Vitest, Playwright, 90% coverage              |
-| **Documentation**  | ⭐⭐⭐⭐⭐  | Excellent: MkDocs, 250+ pages, 3 languages               |
-| **Monitoring**     | ⭐⭐⭐⭐    | Very Good: Prometheus/Grafana, some configs gitignored   |
-| **Secrets**        | ⭐⭐⭐⭐⭐  | Excellent: Docker secrets, env templates                 |
+| Область            | Оценка | Комментарий                                              |
+| ------------------ | ------ | -------------------------------------------------------- |
+| **Docker/Compose** |        | Excellent: 30+ сервисов, 4-tier logging, GPU support     |
+| **CI/CD**          | ½      | Very Good: Comprehensive pipelines, minor version issues |
+| **Security**       |        | Excellent: Multiple scanners, pre-commit hooks           |
+| **Linting**        |        | Excellent: Go (40+ linters), TS, Python (Ruff)           |
+| **Testing**        |        | Excellent: Vitest, Playwright, 90% coverage              |
+| **Documentation**  |        | Excellent: MkDocs, 250+ pages, 3 languages               |
+| **Monitoring**     |        | Very Good: Prometheus/Grafana, some configs gitignored   |
+| **Secrets**        |        | Excellent: Docker secrets, env templates                 |
 
-**Overall Score: 4.8/5 ⭐**
+**Overall Score: 4.8/5 **
 
 ---
 
-## 📝 Приоритетные рекомендации
+## Приоритетные рекомендации
 
 ### P0 - Критичные (выполнить немедленно)
 
 1. **Документировать gitignored конфигурации**
-   - Создать `.example` файлы для всех gitignored configs
-   - Добавить README с инструкциями по восстановлению
+
+- Создать `.example` файлы для всех gitignored configs
+- Добавить README с инструкциями по восстановлению
 
 2. **Унифицировать Node.js версии**
-   - Изменить все CI workflows на Node 22.14.0
-   - Обновить pre-commit hooks
+
+- Изменить все CI workflows на Node 22.14.0
+- Обновить pre-commit hooks
 
 ### P1 - Высокий приоритет (выполнить в течение месяца)
 
 3. **Docker Image Pinning**
-   - Заменить `latest` tags на точные версии
-   - Обновить Watchtower конфигурацию
+
+- Заменить `latest` tags на точные версии
+- Обновить Watchtower конфигурацию
 
 4. **Security Improvements**
-   - Создать plan для перехода контейнеров на non-root users
-   - Включить CKV_DOCKER_3 после завершения
+
+- Создать plan для перехода контейнеров на non-root users
+- Включить CKV_DOCKER_3 после завершения
 
 5. **Redis Caching Fix**
-   - Отслеживать LiteLLM upstream fix
-   - Обновить при доступности исправления
+
+- Отслеживать LiteLLM upstream fix
+- Обновить при доступности исправления
 
 ### P2 - Средний приоритет (выполнить в течение квартала)
 
 6. **Go Toolchain Alignment**
-   - Синхронизировать GOTOOLCHAIN с go.mod
-   - Обновить CI workflows
+
+- Синхронизировать GOTOOLCHAIN с go.mod
+- Обновить CI workflows
 
 7. **Documentation Improvements**
-   - Добавить architecture diagrams в конфигурации
-   - Создать troubleshooting guides для распространенных проблем
+
+- Добавить architecture diagrams в конфигурации
+- Создать troubleshooting guides для распространенных проблем
 
 ---
 
-## 📈 Метрики проекта
+## Метрики проекта
 
 ### Общая статистика
 
@@ -1040,7 +1064,7 @@ Security Scanners:
 
 ---
 
-## 🎯 Заключение
+## Заключение
 
 Проект **ERNI-KI** демонстрирует **очень высокий уровень зрелости** конфигураций
 и лучших практик. Конфигурационные файлы демонстрируют enterprise-grade подход к
@@ -1062,7 +1086,7 @@ Security Scanners:
 2. Недели 2-4: P1 задачи (Docker pinning, security improvements)
 3. Квартал: P2 задачи (toolchain, documentation)
 
-**Final Rating: ⭐⭐⭐⭐⭐ (4.8/5)**
+**Final Rating: (4.8/5)**
 
 ---
 

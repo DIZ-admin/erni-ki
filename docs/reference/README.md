@@ -15,18 +15,18 @@ advanced users.
 ### Development
 
 - **[development.md](development.md)** - Development environment setup
-  - Local development workflow
-  - Code contribution guidelines
-  - Testing procedures
-  - Build processes
+- Local development workflow
+- Code contribution guidelines
+- Testing procedures
+- Build processes
 
 ### API Documentation
 
 - **[api-reference.md](api-reference.md)** - API endpoint documentation
-  - OpenWebUI API
-  - LiteLLM API
-  - Custom endpoints
-  - Authentication flows
+- OpenWebUI API
+- LiteLLM API
+- Custom endpoints
+- Authentication flows
 
 ### Integration Guides
 
@@ -53,7 +53,7 @@ advanced users.
 - MCP Integration: See [mcpo-integration-guide.md](mcpo-integration-guide.md)
 - CI/CD Setup: See [github-environments-setup.md](github-environments-setup.md)
 
-## 🔗 Связанная документация
+## Связанная документация
 
 - [Architecture](../architecture/README.md)
 - [Operations](../operations/README.md)

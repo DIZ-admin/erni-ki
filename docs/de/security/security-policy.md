@@ -7,24 +7,25 @@ last_updated: '2025-11-24'
 
 # Sicherheitsrichtlinie (ERNI-KI)
 
-## 🔒 Sicherheitsrichtlinie
+## Sicherheitsrichtlinie
 
 ### Unterstützte Versionen
 
 | Version | Support |
 | ------- | ------- |
-| 1.x.x   | ✅ Ja   |
-| 0.x.x   | ❌ Nein |
+| 1.x.x   | Ja      |
+| 0.x.x   | Nein    |
 
 ### Schwachstellen melden
 
 1. **Kein** öffentliches GitHub-Issue erstellen.
 2. Bericht an <security@erni-ki.local> senden.
 3. Bitte folgende Angaben ergänzen:
-   - Beschreibung der Schwachstelle
-   - Schritte zur Reproduktion
-   - Potenzieller Impact
-   - Vorschlag zur Behebung (optional)
+
+- Beschreibung der Schwachstelle
+- Schritte zur Reproduktion
+- Potenzieller Impact
+- Vorschlag zur Behebung (optional)
 
 ### Reaktionszeiten
 
@@ -35,27 +36,27 @@ last_updated: '2025-11-24'
 
 ### Einstufung
 
-#### 🚨 Kritisch
+#### Kritisch
 
 - Remote Code Execution
 - Authentifizierungs-Bypass
 - Abfluss sensibler Daten
 - Vollständiger Systemkompromiss
 
-#### ⚠️ Hoch
+#### Hoch
 
 - Privilegienausweitung
 - SQL/NoSQL-Injektionen
 - XSS
 - CSRF
 
-#### 📋 Mittel
+#### Mittel
 
 - Informationsabfluss
 - DoS
 - Schwache Sicherheitseinstellungen
 
-#### 📝 Niedrig
+#### Niedrig
 
 - Kleine Informationslecks
 - Konfigurationsprobleme
@@ -146,9 +147,9 @@ tmpfs:
 # Ressourcenlimit
 deploy:
   resources:
-    limits:
-      memory: 512M
-      cpus: '0.5'
+  limits:
+  memory: 512M
+  cpus: '0.5'
 ```
 
 ## Sicherheitsmonitoring
@@ -166,18 +167,18 @@ deploy:
 ```yaml
 # Prometheus-Regeln
 - alert: SuspiciousAuthActivity
-  expr: rate(auth_requests_total{status="401"}[1m]) > 10
-  for: 1m
-  labels:
-    severity: critical
-    category: security
+ expr: rate(auth_requests_total{status="401"}[1m]) > 10
+ for: 1m
+ labels:
+ severity: critical
+ category: security
 
 - alert: HighErrorRate
-  expr: rate(nginx_http_requests_total{status=~"4.."}[5m]) > 50
-  for: 2m
-  labels:
-    severity: warning
-    category: security
+ expr: rate(nginx_http_requests_total{status=~"4.."}[5m]) > 50
+ for: 2m
+ labels:
+ severity: warning
+ category: security
 ```
 
 ## Kontakte

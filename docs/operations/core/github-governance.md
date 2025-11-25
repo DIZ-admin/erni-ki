@@ -13,24 +13,24 @@ _Обновлено: 2025-11-17_
 
 ```mermaid
 flowchart TD
-  Dev[Feature branch] --> PR[Pull Request]
-  PR --> Checks[CI: lint/test/security]
-  Checks --> Review[Code Review >=1]
-  Review --> Merge[Merge to develop]
-  Merge --> Main[Release via main]
+ Dev[Feature branch] --> PR[Pull Request]
+ PR --> Checks[CI: lint/test/security]
+ Checks --> Review[Code Review >=1]
+ Review --> Merge[Merge to develop]
+ Merge --> Main[Release via main]
 ```
 
 ## 1. Структура веток
 
-- 🔁 **Основная ветка:** `main`
-- 🛠️ **Рабочая ветка:** `develop` (ранее `dev`). Требуется переименовать
-  удалённую ветку и перенастроить branch protection через GitHub UI/CLI:
+- **Основная ветка:** `main`
+- **Рабочая ветка:** `develop` (ранее `dev`). Требуется переименовать удалённую
+  ветку и перенастроить branch protection через GitHub UI/CLI:
 
-  ```bash
-  git push origin develop:develop
-  git push origin :dev
-  gh api repos/:owner/:repo/branches/develop/protection -X PUT --input protect-develop.json
-  ```
+```bash
+git push origin develop:develop
+git push origin :dev
+gh api repos/:owner/:repo/branches/develop/protection -X PUT --input protect-develop.json
+```
 
 ## 2. Branch protection (рекомендуемые настройки)
 

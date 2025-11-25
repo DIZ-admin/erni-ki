@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# ⚙️ Процесс изменения конфигураций ERNI-KI
+# Процесс изменения конфигураций ERNI-KI
 
 [TOC]
 
@@ -14,9 +14,9 @@ last_updated: '2025-11-24'
 
 ---
 
-## 📋 ОБЩИЕ ПРИНЦИПЫ
+## ОБЩИЕ ПРИНЦИПЫ
 
-### ✅ **Обязательные требования для ВСЕХ изменений:**
+### **Обязательные требования для ВСЕХ изменений:**
 
 1. **Backup ПЕРЕД изменением** - всегда создавать резервную копию
 2. **Тестирование** - проверять изменения в безопасной среде
@@ -24,16 +24,16 @@ last_updated: '2025-11-24'
 4. **Rollback план** - готовить план отката на случай проблем
 5. **Мониторинг** - отслеживать систему после изменений
 
-### ⚠️ **Классификация изменений:**
+### **Классификация изменений:**
 
-- **🔴 КРИТИЧЕСКИЕ** - влияют на доступность системы (требуют maintenance
-  window)
-- **🟡 ВАЖНЫЕ** - влияют на производительность (требуют уведомления)
-- **🟢 МИНОРНЫЕ** - не влияют на пользователей (можно выполнять в рабочее время)
+- ** КРИТИЧЕСКИЕ** - влияют на доступность системы (требуют maintenance window)
+- **[WARNING] ВАЖНЫЕ** - влияют на производительность (требуют уведомления)
+- **[OK] МИНОРНЫЕ** - не влияют на пользователей (можно выполнять в рабочее
+  время)
 
 ---
 
-## 🔄 СТАНДАРТНЫЙ ПРОЦЕСС ИЗМЕНЕНИЙ
+## СТАНДАРТНЫЙ ПРОЦЕСС ИЗМЕНЕНИЙ
 
 ### **ЭТАП 1: ПЛАНИРОВАНИЕ**
 
@@ -114,11 +114,11 @@ set -e
 
 BACKUP_DIR="$1"
 if [ -z "$BACKUP_DIR" ]; then
-    echo "Usage: $0 <backup_directory>"
-    exit 1
+ echo "Usage: $0 <backup_directory>"
+ exit 1
 fi
 
-echo "🔄 Начинаем rollback из $BACKUP_DIR"
+echo " Начинаем rollback из $BACKUP_DIR"
 
 # Остановить сервисы
 docker compose down
@@ -131,7 +131,7 @@ cp "$BACKUP_DIR/compose.yml" ./
 # Запустить сервисы
 docker compose up -d
 
-echo "✅ Rollback завершен"
+echo " Rollback завершен"
 EOF
 
 chmod +x rollback.sh
@@ -143,7 +143,7 @@ chmod +x rollback.sh
 
 ```bash
 # 1. Уведомить пользователей
-echo "🚨 MAINTENANCE WINDOW: $(date) - Плановое обслуживание системы"
+echo " MAINTENANCE WINDOW: $(date) - Плановое обслуживание системы"
 
 # 2. Создать maintenance страницу (опционально)
 docker run -d --name maintenance -p 80:80 nginx:alpine
@@ -166,7 +166,7 @@ docker stop maintenance && docker rm maintenance
 
 ```bash
 # 1. Уведомить о возможных кратковременных перебоях
-echo "ℹ️ Выполняются плановые изменения конфигурации"
+echo "ℹ Выполняются плановые изменения конфигурации"
 
 # 2. Выполнить изменения с минимальным простоем
 [выполнить конкретные изменения]
@@ -194,11 +194,11 @@ docker compose up -d --no-recreate
 docker compose ps
 
 # Проверка основных endpoints
-curl -f http://localhost/health && echo "✅ OpenWebUI работает" || echo "❌ OpenWebUI недоступен"
-curl -f http://localhost:11434/api/tags && echo "✅ Ollama работает" || echo "❌ Ollama недоступен"
+curl -f http://localhost/health && echo " OpenWebUI работает" || echo " OpenWebUI недоступен"
+curl -f http://localhost:11434/api/tags && echo " Ollama работает" || echo " Ollama недоступен"
 
 # Проверка внешнего доступа
-curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo "✅ Внешний доступ работает" || echo "❌ Внешний доступ недоступен"
+curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo " Внешний доступ работает" || echo " Внешний доступ недоступен"
 
 # Проверка логов на ошибки
 docker compose logs --since 5m | grep -i error | tail -10
@@ -210,13 +210,13 @@ docker compose logs --since 5m | grep -i error | tail -10
 # Функциональное тестирование
 # 1. Тест авторизации
 curl -X POST http://localhost/api/v1/auths/signin \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"test"}'  # pragma: allowlist secret
+ -H "Content-Type: application/json" \
+ -d '{"email":"test@example.com","password":"test"}' # pragma: allowlist secret
 
 # 2. Тест AI функций
 curl -X POST http://localhost:11434/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{"model":"llama2","prompt":"Hello","stream":false}'
+ -H "Content-Type: application/json" \
+ -d '{"model":"llama2","prompt":"Hello","stream":false}'
 
 # 3. Тест поиска (SearXNG)
 curl -f "http://localhost:8080/search?q=test&format=json"
@@ -232,10 +232,10 @@ curl -f http://localhost:9090/api/v1/query?query=up
 ```bash
 # Мониторинг каждые 5 минут
 for i in {1..6}; do
-    echo "=== Проверка #$i ($(date)) ==="
-    docker compose ps | grep -v "Up"  # Показать проблемные сервисы
-    docker compose logs --since 5m | grep -i error | wc -l  # Количество ошибок
-    sleep 300
+ echo "=== Проверка #$i ($(date)) ==="
+ docker compose ps | grep -v "Up" # Показать проблемные сервисы
+ docker compose logs --since 5m | grep -i error | wc -l # Количество ошибок
+ sleep 300
 done
 ```
 
@@ -248,19 +248,19 @@ cat > monitor-changes.sh << 'EOF'
 LOG_FILE="change-monitoring-$(date +%Y%m%d).log"
 
 while true; do
-    echo "$(date): Checking system health" >> $LOG_FILE
+ echo "$(date): Checking system health" >> $LOG_FILE
 
-    # Проверка доступности
-    curl -f http://localhost/health >> $LOG_FILE 2>&1 || echo "$(date): OpenWebUI DOWN" >> $LOG_FILE
+ # Проверка доступности
+ curl -f http://localhost/health >> $LOG_FILE 2>&1 || echo "$(date): OpenWebUI DOWN" >> $LOG_FILE
 
-    # Проверка ошибок
-    ERROR_COUNT=$(docker compose logs --since 1h | grep -i error | wc -l)
-    echo "$(date): Errors in last hour: $ERROR_COUNT" >> $LOG_FILE
+ # Проверка ошибок
+ ERROR_COUNT=$(docker compose logs --since 1h | grep -i error | wc -l)
+ echo "$(date): Errors in last hour: $ERROR_COUNT" >> $LOG_FILE
 
-    # Проверка ресурсов
-    echo "$(date): Memory usage: $(free -h | grep Mem | awk '{print $3}')" >> $LOG_FILE
+ # Проверка ресурсов
+ echo "$(date): Memory usage: $(free -h | grep Mem | awk '{print $3}')" >> $LOG_FILE
 
-    sleep 3600  # Проверка каждый час
+ sleep 3600 # Проверка каждый час
 done
 EOF
 
@@ -270,9 +270,9 @@ nohup ./monitor-changes.sh &
 
 ---
 
-## 📝 ТИПОВЫЕ ИЗМЕНЕНИЯ
+## ТИПОВЫЕ ИЗМЕНЕНИЯ
 
-### **🔧 Изменение переменных окружения**
+### ** Изменение переменных окружения**
 
 ```bash
 # 1. Backup
@@ -288,7 +288,7 @@ docker compose up -d service --no-recreate
 docker compose logs service --tail=20
 ```
 
-## **🔧 Обновление Docker образа**
+## ** Обновление Docker образа**
 
 ```bash
 # 1. Backup текущей конфигурации
@@ -306,7 +306,7 @@ docker compose ps service
 docker compose logs service --tail=20
 ```
 
-## **🔧 Изменение конфигурации Nginx**
+## ** Изменение конфигурации Nginx**
 
 ```bash
 # 1. Backup
@@ -325,7 +325,7 @@ docker exec erni-ki-nginx-1 nginx -s reload
 curl -I http://localhost
 ```
 
-## **🔧 Изменение конфигурации Prometheus**
+## ** Изменение конфигурации Prometheus**
 
 ```bash
 # 1. Backup
@@ -346,7 +346,7 @@ curl -f http://localhost:9090/api/v1/targets
 
 ---
 
-## 🚨 ЭКСТРЕННЫЕ ПРОЦЕДУРЫ
+## ЭКСТРЕННЫЕ ПРОЦЕДУРЫ
 
 ### **Немедленный rollback**
 
@@ -370,7 +370,7 @@ docker compose up -d service
 
 ---
 
-## 📊 ОТЧЕТНОСТЬ
+## ОТЧЕТНОСТЬ
 
 ### **Post-Change Report Template**
 
@@ -406,7 +406,7 @@ docker compose up -d service
 
 ---
 
-## 📚 СВЯЗАННЫЕ ДОКУМЕНТЫ
+## СВЯЗАННЫЕ ДОКУМЕНТЫ
 
 - [Service Restart Procedures](../maintenance/service-restart-procedures.md)
 - [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)

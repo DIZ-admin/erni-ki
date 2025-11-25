@@ -9,13 +9,13 @@ last_updated: '2025-11-24'
 
 Документация о конфигурации кеширования для LiteLLM в системе ERNI-KI.
 
-## 📊 Текущий статус
+## Текущий статус
 
-**Версия LiteLLM:** v1.80.0.rc.1 **Redis Caching:** ❌ ОТКЛЮЧЕН **Текущий тип
-кеширования:** ✅ Local (in-memory) **Причина отключения Redis:** Баг в LiteLLM
+**Версия LiteLLM:** v1.80.0.rc.1 **Redis Caching:** ОТКЛЮЧЕН **Текущий тип
+кеширования:** Local (in-memory) **Причина отключения Redis:** Баг в LiteLLM
 v1.80.0.rc.1
 
-## 🐛 Известные проблемы
+## Известные проблемы
 
 ### Bug в LiteLLM v1.80.0.rc.1
 
@@ -32,7 +32,7 @@ LiteLLM v1.80.0.rc.1 содержит баг с жестко закодиров�
 **Workaround:** Использование локального (in-memory) кеширования вместо Redis до
 исправления бага в следующих версиях LiteLLM.
 
-## ⚙️ Текущая конфигурация
+## Текущая конфигурация
 
 ### Local Caching (Активно)
 
@@ -40,21 +40,21 @@ LiteLLM v1.80.0.rc.1 содержит баг с жестко закодиров�
 
 ```yaml
 litellm_settings:
-  cache: true # Enable caching
-  cache_params:
-    type: 'local' # Use in-memory caching
-    ttl: 1800 # Cache TTL in seconds (30 minutes)
-    supported_call_types:
-      ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
+ cache: true # Enable caching
+ cache_params:
+ type: 'local' # Use in-memory caching
+ ttl: 1800 # Cache TTL in seconds (30 minutes)
+ supported_call_types:
+ ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
 ```
 
 **Характеристики:**
 
-- ✅ Быстрое кеширование в памяти процесса
-- ✅ Нет сетевых задержек
-- ⚠️ Кеш не разделяется между экземплярами
-- ⚠️ Кеш очищается при перезапуске сервиса
-- ✅ TTL: 30 минут
+- Быстрое кеширование в памяти процесса
+- Нет сетевых задержек
+- Кеш не разделяется между экземплярами
+- Кеш очищается при перезапуске сервиса
+- TTL: 30 минут
 
 ### Redis Caching (Отключен)
 
@@ -71,12 +71,12 @@ router_settings:
 
 **Преимущества Redis (когда баг будет исправлен):**
 
-- ✅ Разделяемый кеш между всеми экземплярами LiteLLM
-- ✅ Персистентный кеш (переживает перезапуск)
-- ✅ Масштабируемость
-- ✅ Centralized cache управление
+- Разделяемый кеш между всеми экземплярами LiteLLM
+- Персистентный кеш (переживает перезапуск)
+- Масштабируемость
+- Centralized cache управление
 
-## 🔄 Как переключиться на Redis caching
+## Как переключиться на Redis caching
 
 > [!WARNING] Не включайте Redis caching до обновления LiteLLM на версию с
 > исправленным багом!
@@ -89,7 +89,7 @@ docker exec erni-ki-litellm-1 pip show litellm | grep Version
 
 # Обновите до версии с исправлением (когда будет доступна)
 # Обновите image в compose.yml:
-# image: ghcr.io/berriai/litellm:v1.81.0  # или новее
+# image: ghcr.io/berriai/litellm:v1.81.0 # или новее
 ```
 
 ### Шаг 2: Обновите конфигурацию
@@ -111,22 +111,22 @@ router_settings:
 
 ```yaml
 litellm_settings:
-  cache: true
-  cache_params:
-    type: 'redis' # Было: "local"
-    host: 'redis'
-    port: 6379
-    password: 'ErniKiRedisSecurePassword2024' # pragma: allowlist secret
-    db: 1
-    ttl: 1800
-    supported_call_types:
-      ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
-    # Timeout settings (когда баг будет исправлен)
-    socket_connect_timeout: 10
-    socket_timeout: 30 # Увеличенный timeout
-    connection_pool_timeout: 5
-    retry_on_timeout: true
-    health_check_interval: 30
+ cache: true
+ cache_params:
+ type: 'redis' # Было: "local"
+ host: 'redis'
+ port: 6379
+ password: 'ErniKiRedisSecurePassword2024' # pragma: allowlist secret
+ db: 1
+ ttl: 1800
+ supported_call_types:
+ ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
+ # Timeout settings (когда баг будет исправлен)
+ socket_connect_timeout: 10
+ socket_timeout: 30 # Увеличенный timeout
+ connection_pool_timeout: 5
+ retry_on_timeout: true
+ health_check_interval: 30
 ```
 
 ### Шаг 3: Перезапустите LiteLLM
@@ -148,7 +148,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 CLIENT LI
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 -n 1 KEYS "*"
 ```
 
-## 🔙 Как вернуться на Local caching
+## Как вернуться на Local caching
 
 Если Redis caching вызывает проблемы, вернитесь к локальному кешированию:
 
@@ -158,12 +158,12 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 -n 1 KEYS
 
 ```yaml
 litellm_settings:
-  cache: true
-  cache_params:
-    type: 'local' # Было: "redis"
-    ttl: 1800
-    supported_call_types:
-      ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
+ cache: true
+ cache_params:
+ type: 'local' # Было: "redis"
+ ttl: 1800
+ supported_call_types:
+ ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
 ```
 
 Закомментируйте Redis настройки в router_settings:
@@ -183,7 +183,7 @@ router_settings:
 docker compose restart litellm
 ```
 
-## 📈 Производительность
+## Производительность
 
 ### Local Cache
 
@@ -225,7 +225,7 @@ docker compose restart litellm
 - Production с high traffic
 - Workloads с высоким hit rate
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Проблема: LiteLLM не кеширует запросы
 
@@ -233,9 +233,10 @@ docker compose restart litellm
 
 1. Проверьте что `cache: true` в `litellm_settings`
 2. Проверьте логи на ошибки кеширования:
-   ```bash
-   docker logs erni-ki-litellm-1 | grep -i cache
-   ```
+
+```bash
+docker logs erni-ki-litellm-1 | grep -i cache
+```
 
 ### Проблема: Redis timeout ошибки
 
@@ -244,9 +245,10 @@ docker compose restart litellm
 1. Убедитесь что используете LiteLLM версии без бага
 2. Увеличьте `socket_timeout` в cache_params
 3. Проверьте сетевую латентность до Redis:
-   ```bash
-   docker exec erni-ki-litellm-1 ping redis
-   ```
+
+```bash
+docker exec erni-ki-litellm-1 ping redis
+```
 
 ### Проблема: Кеш не очищается
 
@@ -264,13 +266,13 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 -n 1 FLUS
 docker compose restart litellm
 ```
 
-## 📚 Связанные документы
+## Связанные документы
 
 - [LiteLLM Configuration](../../../conf/litellm/config.yaml)
 - [Redis Operations Guide](../database/redis-operations-guide.md)
 - [LiteLLM Official Docs](https://docs.litellm.ai/docs/caching)
 
-## 🔄 История изменений
+## История изменений
 
 | Дата       | Версия LiteLLM | Статус Redis       | Причина              |
 | ---------- | -------------- | ------------------ | -------------------- |

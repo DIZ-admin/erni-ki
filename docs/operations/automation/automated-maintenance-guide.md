@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🤖 Automated Maintenance Guide - ERNI-KI
+# Automated Maintenance Guide - ERNI-KI
 
 **Version:** 1.0 **Last Updated:** 2025-10-24 **Status:** Production Ready
 
@@ -20,13 +20,13 @@ ERNI-KI реализует комплексное автоматизирован
 
 ### Компоненты автоматизации
 
-| Компонент             | Расписание       | Назначение              | Статус    |
-| :-------------------- | :--------------- | :---------------------- | :-------- |
-| **PostgreSQL VACUUM** | Воскресенье 3:00 | Оптимизация базы данных | ✅ Active |
-| **Docker Cleanup**    | Воскресенье 4:00 | Очистка ресурсов        | ✅ Active |
-| **Log Rotation**      | Ежедневно 3:00   | Управление логами       | ✅ Active |
-| **System Monitoring** | Ежечасно         | Проверки здоровья       | ✅ Active |
-| **Backrest Backups**  | Ежедневно 1:30   | Защита данных           | ✅ Active |
+| Компонент             | Расписание       | Назначение              | Статус |
+| :-------------------- | :--------------- | :---------------------- | :----- |
+| **PostgreSQL VACUUM** | Воскресенье 3:00 | Оптимизация базы данных | Active |
+| **Docker Cleanup**    | Воскресенье 4:00 | Очистка ресурсов        | Active |
+| **Log Rotation**      | Ежедневно 3:00   | Управление логами       | Active |
+| **System Monitoring** | Ежечасно         | Проверки здоровья       | Active |
+| **Backrest Backups**  | Ежедневно 1:30   | Защита данных           | Active |
 
 ## 2. Предварительные требования
 
@@ -126,25 +126,25 @@ journalctl -u cron --since "1 day ago"
 
 | Метрика                 | Цель          | Текущее | Статус |
 | :---------------------- | :------------ | :------ | :----- |
-| **PostgreSQL VACUUM**   | Еженедельно   | Активно | ✅     |
-| **Docker Cleanup**      | Еженедельно   | Активно | ✅     |
-| **Log Rotation**        | Автоматически | Активно | ✅     |
-| **Disk Usage**          | <60%          | 60%     | ✅     |
-| **Backup Success Rate** | >99%          | 100%    | ✅     |
+| **PostgreSQL VACUUM**   | Еженедельно   | Активно |        |
+| **Docker Cleanup**      | Еженедельно   | Активно |        |
+| **Log Rotation**        | Автоматически | Активно |        |
+| **Disk Usage**          | <60%          | 60%     |        |
+| **Backup Success Rate** | >99%          | 100%    |        |
 
 ## Визуализация: автоподдержание
 
 ```mermaid
 flowchart TD
-    Cron[CRON schedule] --> Checks[Health checks]
-    Cron --> Cleanup[Docker cleanup]
-    Cron --> Backups[Backups verify]
-    Cron --> Logs[Log rotation]
-    Checks --> Alerts[Alertmanager]
-    Backups --> Reports[Status report]
-    Cleanup --> Reports
-    Logs --> Reports
-    Reports --> Ops[Ops channel]
+ Cron[CRON schedule] --> Checks[Health checks]
+ Cron --> Cleanup[Docker cleanup]
+ Cron --> Backups[Backups verify]
+ Cron --> Logs[Log rotation]
+ Checks --> Alerts[Alertmanager]
+ Backups --> Reports[Status report]
+ Cleanup --> Reports
+ Logs --> Reports
+ Reports --> Ops[Ops channel]
 ```
 
 ## 5. Связанная документация

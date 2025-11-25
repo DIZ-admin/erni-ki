@@ -5,27 +5,25 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 💾 Процедуры резервного копирования и восстановления ERNI-KI
+# Процедуры резервного копирования и восстановления ERNI-KI
 
-**Версия:** 1.0  
-**Дата создания:** 2025-09-25  
-**Последнее обновление:** 2025-09-25  
-**Ответственный:** Tech Lead
+**Версия:** 1.0 **Дата создания:** 2025-09-25 **Последнее обновление:**
+2025-09-25 **Ответственный:** Tech Lead
 
 ---
 
 [TOC]
 
-## 📋 ОБЩИЕ ПРИНЦИПЫ
+## ОБЩИЕ ПРИНЦИПЫ
 
-### ✅ **Стратегия резервного копирования:**
+### **Стратегия резервного копирования:**
 
 - **Ежедневные backup'ы** критических данных (7 дней хранения)
 - **Еженедельные backup'ы** полной системы (4 недели хранения)
 - **Перед изменениями** - обязательные snapshot'ы
 - **Тестирование восстановления** - ежемесячно
 
-### 📂 **Что включается в backup:**
+### **Что включается в backup:**
 
 - **Конфигурации:** `env/`, `conf/`, `compose.yml`
 - **База данных:** PostgreSQL (OpenWebUI данные)
@@ -35,7 +33,7 @@ last_updated: '2025-11-24'
 
 ---
 
-## 🔄 АВТОМАТИЧЕСКОЕ РЕЗЕРВНОЕ КОПИРОВАНИЕ (BACKREST)
+## АВТОМАТИЧЕСКОЕ РЕЗЕРВНОЕ КОПИРОВАНИЕ (BACKREST)
 
 ### **Текущая конфигурация Backrest**
 
@@ -67,7 +65,7 @@ du -sh .config-backup/
 # Создать скрипт проверки backup'ов
 cat > check-backups.sh << 'EOF'
 # !/bin/bash
-WEBHOOK_URL="YOUR_WEBHOOK_URL"  # Настроить webhook для уведомлений
+WEBHOOK_URL="YOUR_WEBHOOK_URL" # Настроить webhook для уведомлений
 
 # Проверка последнего backup'а
 LAST_BACKUP=$(curl -s http://localhost:9898/api/v1/repos | jq -r '.[0].lastBackup')
@@ -76,11 +74,11 @@ BACKUP_TIME=$(date -d "$LAST_BACKUP" +%s)
 HOURS_DIFF=$(( (CURRENT_TIME - BACKUP_TIME) / 3600 ))
 
 if [ $HOURS_DIFF -gt 25 ]; then
-    echo "⚠️ ВНИМАНИЕ: Последний backup был $HOURS_DIFF часов назад!"
-    # Отправить уведомление
-    curl -X POST "$WEBHOOK_URL" -d "Backup ERNI-KI устарел: $HOURS_DIFF часов"
+ echo " ВНИМАНИЕ: Последний backup был $HOURS_DIFF часов назад!"
+ # Отправить уведомление
+ curl -X POST "$WEBHOOK_URL" -d "Backup ERNI-KI устарел: $HOURS_DIFF часов"
 else
-    echo "✅ Backup актуален (последний: $HOURS_DIFF часов назад)"
+ echo " Backup актуален (последний: $HOURS_DIFF часов назад)"
 fi
 EOF
 
@@ -92,7 +90,7 @@ echo "0 9 * * * /path/to/check-backups.sh" | crontab -
 
 ---
 
-## 📦 РУЧНОЕ РЕЗЕРВНОЕ КОПИРОВАНИЕ
+## РУЧНОЕ РЕЗЕРВНОЕ КОПИРОВАНИЕ
 
 ### **Полный backup системы**
 
@@ -103,7 +101,7 @@ echo "0 9 * * * /path/to/check-backups.sh" | crontab -
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR=".config-backup/full-backup-$BACKUP_DATE"
 
-echo "🔄 Создание полного backup'а в $BACKUP_DIR"
+echo " Создание полного backup'а в $BACKUP_DIR"
 
 # 1. Создать директорию
 mkdir -p "$BACKUP_DIR"
@@ -112,9 +110,9 @@ mkdir -p "$BACKUP_DIR"
 read -p "Остановить сервисы для консистентного backup'а? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Остановка сервисов..."
-    docker compose stop openwebui litellm
-    SERVICES_STOPPED=true
+ echo "Остановка сервисов..."
+ docker compose stop openwebui litellm
+ SERVICES_STOPPED=true
 fi
 
 # 3. Backup конфигураций
@@ -159,21 +157,21 @@ EOF
 
 # 9. Запустить сервисы обратно
 if [ "$SERVICES_STOPPED" = true ]; then
-    echo "Запуск сервисов..."
-    docker compose up -d
+ echo "Запуск сервисов..."
+ docker compose up -d
 fi
 
 # 10. Создать архив (опционально)
 read -p "Создать tar.gz архив? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Создание архива..."
-    tar -czf "$BACKUP_DIR.tar.gz" -C .config-backup "full-backup-$BACKUP_DATE"
-    echo "Архив создан: $BACKUP_DIR.tar.gz"
+ echo "Создание архива..."
+ tar -czf "$BACKUP_DIR.tar.gz" -C .config-backup "full-backup-$BACKUP_DATE"
+ echo "Архив создан: $BACKUP_DIR.tar.gz"
 fi
 
-echo "✅ Полный backup завершен: $BACKUP_DIR"
-echo "📄 Манифест: $BACKUP_DIR/backup-manifest.txt"
+echo " Полный backup завершен: $BACKUP_DIR"
+echo " Манифест: $BACKUP_DIR/backup-manifest.txt"
 ```
 
 ## **Быстрый backup конфигураций**
@@ -185,7 +183,7 @@ echo "📄 Манифест: $BACKUP_DIR/backup-manifest.txt"
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR=".config-backup/config-backup-$BACKUP_DATE"
 
-echo "🔄 Создание backup'а конфигураций в $BACKUP_DIR"
+echo " Создание backup'а конфигураций в $BACKUP_DIR"
 
 mkdir -p "$BACKUP_DIR"
 sudo cp -r env/ "$BACKUP_DIR/"
@@ -196,7 +194,7 @@ cp compose.yml "$BACKUP_DIR/"
 docker compose ps > "$BACKUP_DIR/services-status.txt"
 docker compose config > "$BACKUP_DIR/compose-resolved.yml"
 
-echo "✅ Backup конфигураций завершен: $BACKUP_DIR"
+echo " Backup конфигураций завершен: $BACKUP_DIR"
 ```
 
 ## **Backup только базы данных**
@@ -208,7 +206,7 @@ echo "✅ Backup конфигураций завершен: $BACKUP_DIR"
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR=".config-backup/db-backup-$BACKUP_DATE"
 
-echo "🔄 Создание backup'а базы данных в $BACKUP_DIR"
+echo " Создание backup'а базы данных в $BACKUP_DIR"
 
 mkdir -p "$BACKUP_DIR"
 
@@ -225,12 +223,12 @@ docker exec erni-ki-db-1 pg_dumpall -U postgres > "$BACKUP_DIR/all-databases.sql
 docker exec erni-ki-db-1 psql -U postgres -c "\l" > "$BACKUP_DIR/database-info.txt"
 docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "\dt" > "$BACKUP_DIR/tables-info.txt"
 
-echo "✅ Backup базы данных завершен: $BACKUP_DIR"
+echo " Backup базы данных завершен: $BACKUP_DIR"
 ```
 
 ---
 
-## 🔄 ПРОЦЕДУРЫ ВОССТАНОВЛЕНИЯ
+## ПРОЦЕДУРЫ ВОССТАНОВЛЕНИЯ
 
 ### **Полное восстановление системы**
 
@@ -240,23 +238,23 @@ echo "✅ Backup базы данных завершен: $BACKUP_DIR"
 
 BACKUP_DIR="$1"
 if [ -z "$BACKUP_DIR" ]; then
-    echo "Usage: $0 <backup_directory>"
-    echo "Доступные backup'ы:"
-    ls -la .config-backup/ | grep full-backup
-    exit 1
+ echo "Usage: $0 <backup_directory>"
+ echo "Доступные backup'ы:"
+ ls -la .config-backup/ | grep full-backup
+ exit 1
 fi
 
 if [ ! -d "$BACKUP_DIR" ]; then
-    echo "❌ Backup директория не найдена: $BACKUP_DIR"
-    exit 1
+ echo " Backup директория не найдена: $BACKUP_DIR"
+ exit 1
 fi
 
-echo "🔄 Начинаем полное восстановление из $BACKUP_DIR"
-echo "⚠️  ВНИМАНИЕ: Это перезапишет все текущие данные!"
+echo " Начинаем полное восстановление из $BACKUP_DIR"
+echo " ВНИМАНИЕ: Это перезапишет все текущие данные!"
 read -p "Продолжить? (yes/no): " -r
 if [[ ! $REPLY =~ ^yes$ ]]; then
-    echo "Восстановление отменено"
-    exit 1
+ echo "Восстановление отменено"
+ exit 1
 fi
 
 # 1. Остановить все сервисы
@@ -287,34 +285,34 @@ docker compose up -d db redis
 echo "Ожидание готовности базы данных..."
 sleep 30
 until docker exec erni-ki-db-1 pg_isready -U postgres; do
-    echo "Ожидание PostgreSQL..."
-    sleep 5
+ echo "Ожидание PostgreSQL..."
+ sleep 5
 done
 
 # 7. Восстановить базу данных
 if [ -f "$BACKUP_DIR/database.dump" ]; then
-    echo "Восстановление базы данных из binary dump..."
-    docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
-    docker exec erni-ki-db-1 createdb -U postgres openwebui
-    docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_DIR/database.dump"
+ echo "Восстановление базы данных из binary dump..."
+ docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
+ docker exec erni-ki-db-1 createdb -U postgres openwebui
+ docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_DIR/database.dump"
 elif [ -f "$BACKUP_DIR/database-full.sql" ]; then
-    echo "Восстановление базы данных из SQL dump..."
-    docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_DIR/database-full.sql"
+ echo "Восстановление базы данных из SQL dump..."
+ docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_DIR/database-full.sql"
 else
-    echo "⚠️ Backup базы данных не найден"
+ echo " Backup базы данных не найден"
 fi
 
 # 8. Восстановить пользовательские данные
 if [ -d "$BACKUP_DIR/openwebui" ]; then
-    echo "Восстановление пользовательских данных OpenWebUI..."
-    sudo rm -rf data/openwebui/
-    sudo cp -r "$BACKUP_DIR/openwebui/" data/
+ echo "Восстановление пользовательских данных OpenWebUI..."
+ sudo rm -rf data/openwebui/
+ sudo cp -r "$BACKUP_DIR/openwebui/" data/
 fi
 
 if [ -d "$BACKUP_DIR/ollama" ]; then
-    echo "Восстановление моделей Ollama..."
-    sudo rm -rf data/ollama/
-    sudo cp -r "$BACKUP_DIR/ollama/" data/
+ echo "Восстановление моделей Ollama..."
+ sudo rm -rf data/ollama/
+ sudo cp -r "$BACKUP_DIR/ollama/" data/
 fi
 
 # 9. Запустить все сервисы
@@ -329,12 +327,12 @@ echo "=== СТАТУС СЕРВИСОВ ==="
 docker compose ps
 
 echo -e "\n=== ПРОВЕРКА ДОСТУПНОСТИ ==="
-curl -f http://localhost/health && echo "✅ OpenWebUI доступен" || echo "❌ OpenWebUI недоступен"
-curl -f http://localhost:11434/api/tags && echo "✅ Ollama работает" || echo "❌ Ollama недоступен"
+curl -f http://localhost/health && echo " OpenWebUI доступен" || echo " OpenWebUI недоступен"
+curl -f http://localhost:11434/api/tags && echo " Ollama работает" || echo " Ollama недоступен"
 
-echo -e "\n✅ Восстановление завершено!"
-echo "📄 Backup текущего состояния (до восстановления): $CURRENT_BACKUP"
-echo "📄 Манифест восстановленного backup'а: $BACKUP_DIR/backup-manifest.txt"
+echo -e "\n Восстановление завершено!"
+echo " Backup текущего состояния (до восстановления): $CURRENT_BACKUP"
+echo " Манифест восстановленного backup'а: $BACKUP_DIR/backup-manifest.txt"
 ```
 
 ## **Восстановление только конфигураций**
@@ -345,11 +343,11 @@ echo "📄 Манифест восстановленного backup'а: $BACKUP_
 
 BACKUP_DIR="$1"
 if [ -z "$BACKUP_DIR" ]; then
-    echo "Usage: $0 <backup_directory>"
-    exit 1
+ echo "Usage: $0 <backup_directory>"
+ exit 1
 fi
 
-echo "🔄 Восстановление конфигураций из $BACKUP_DIR"
+echo " Восстановление конфигураций из $BACKUP_DIR"
 
 # Создать backup текущих конфигураций
 CURRENT_BACKUP=".config-backup/pre-config-restore-$(date +%Y%m%d-%H%M%S)"
@@ -364,8 +362,8 @@ cp "$BACKUP_DIR/compose.yml" ./
 # Применить изменения
 docker compose up -d --no-recreate
 
-echo "✅ Конфигурации восстановлены"
-echo "📄 Backup предыдущих конфигураций: $CURRENT_BACKUP"
+echo " Конфигурации восстановлены"
+echo " Backup предыдущих конфигураций: $CURRENT_BACKUP"
 ```
 
 ## **Восстановление только базы данных**
@@ -376,17 +374,17 @@ echo "📄 Backup предыдущих конфигураций: $CURRENT_BACKUP
 
 BACKUP_FILE="$1"
 if [ -z "$BACKUP_FILE" ]; then
-    echo "Usage: $0 <backup_file>"
-    echo "Поддерживаемые форматы: .dump, .sql"
-    exit 1
+ echo "Usage: $0 <backup_file>"
+ echo "Поддерживаемые форматы: .dump, .sql"
+ exit 1
 fi
 
-echo "🔄 Восстановление базы данных из $BACKUP_FILE"
-echo "⚠️  ВНИМАНИЕ: Это перезапишет текущую базу данных!"
+echo " Восстановление базы данных из $BACKUP_FILE"
+echo " ВНИМАНИЕ: Это перезапишет текущую базу данных!"
 read -p "Продолжить? (yes/no): " -r
 if [[ ! $REPLY =~ ^yes$ ]]; then
-    echo "Восстановление отменено"
-    exit 1
+ echo "Восстановление отменено"
+ exit 1
 fi
 
 # Создать backup текущей базы
@@ -396,29 +394,29 @@ docker exec erni-ki-db-1 pg_dump -U postgres -Fc openwebui > "$CURRENT_DB_BACKUP
 
 # Восстановить базу данных
 if [[ "$BACKUP_FILE" == *.dump ]]; then
-    echo "Восстановление из binary dump..."
-    docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
-    docker exec erni-ki-db-1 createdb -U postgres openwebui
-    docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_FILE"
+ echo "Восстановление из binary dump..."
+ docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
+ docker exec erni-ki-db-1 createdb -U postgres openwebui
+ docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_FILE"
 elif [[ "$BACKUP_FILE" == *.sql ]]; then
-    echo "Восстановление из SQL dump..."
-    docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_FILE"
+ echo "Восстановление из SQL dump..."
+ docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_FILE"
 else
-    echo "❌ Неподдерживаемый формат файла"
-    exit 1
+ echo " Неподдерживаемый формат файла"
+ exit 1
 fi
 
 # Перезапустить сервисы, использующие базу данных
 echo "Перезапуск сервисов..."
 docker compose restart openwebui litellm
 
-echo "✅ База данных восстановлена"
-echo "📄 Backup предыдущей базы: $CURRENT_DB_BACKUP"
+echo " База данных восстановлена"
+echo " Backup предыдущей базы: $CURRENT_DB_BACKUP"
 ```
 
 ---
 
-## 🧪 ТЕСТИРОВАНИЕ BACKUP'ОВ
+## ТЕСТИРОВАНИЕ BACKUP'ОВ
 
 ### **Ежемесячная проверка восстановления**
 
@@ -426,7 +424,7 @@ echo "📄 Backup предыдущей базы: $CURRENT_DB_BACKUP"
 # !/bin/bash
 # Скрипт тестирования процедуры восстановления
 
-echo "🧪 Тестирование процедуры восстановления"
+echo " Тестирование процедуры восстановления"
 
 # 1. Найти последний backup
 LATEST_BACKUP=$(ls -t .config-backup/full-backup-* | head -1)
@@ -457,13 +455,13 @@ cat > restore-test-report.txt << EOF
 Рекомендации: [рекомендации по улучшению]
 EOF
 
-echo "✅ Тестирование завершено"
-echo "📄 Отчет: $TEST_DIR/restore-test-report.txt"
+echo " Тестирование завершено"
+echo " Отчет: $TEST_DIR/restore-test-report.txt"
 ```
 
 ---
 
-## 📊 МОНИТОРИНГ BACKUP'ОВ
+## МОНИТОРИНГ BACKUP'ОВ
 
 ### **Дашборд статуса backup'ов**
 
@@ -471,58 +469,58 @@ echo "📄 Отчет: $TEST_DIR/restore-test-report.txt"
 # !/bin/bash
 # Создать дашборд статуса backup'ов
 
-echo "📊 СТАТУС РЕЗЕРВНОГО КОПИРОВАНИЯ ERNI-KI"
+echo " СТАТУС РЕЗЕРВНОГО КОПИРОВАНИЯ ERNI-KI"
 echo "========================================"
 echo "Дата: $(date)"
 echo
 
 # Статус Backrest
-echo "🔄 АВТОМАТИЧЕСКИЕ BACKUP'Ы (Backrest):"
+echo " АВТОМАТИЧЕСКИЕ BACKUP'Ы (Backrest):"
 if curl -f http://localhost:9898/api/v1/status >/dev/null 2>&1; then
-    echo "✅ Backrest сервис работает"
-    LAST_BACKUP=$(curl -s http://localhost:9898/api/v1/repos | jq -r '.[0].lastBackup' 2>/dev/null)
-    if [ "$LAST_BACKUP" != "null" ] && [ -n "$LAST_BACKUP" ]; then
-        echo "📅 Последний backup: $LAST_BACKUP"
-    else
-        echo "⚠️ Информация о последнем backup недоступна"
-    fi
+ echo " Backrest сервис работает"
+ LAST_BACKUP=$(curl -s http://localhost:9898/api/v1/repos | jq -r '.[0].lastBackup' 2>/dev/null)
+ if [ "$LAST_BACKUP" != "null" ] && [ -n "$LAST_BACKUP" ]; then
+ echo " Последний backup: $LAST_BACKUP"
+ else
+ echo " Информация о последнем backup недоступна"
+ fi
 else
-    echo "❌ Backrest сервис недоступен"
+ echo " Backrest сервис недоступен"
 fi
 
 # Ручные backup'ы
-echo -e "\n💾 РУЧНЫЕ BACKUP'Ы:"
+echo -e "\n РУЧНЫЕ BACKUP'Ы:"
 BACKUP_COUNT=$(ls -1 .config-backup/full-backup-* 2>/dev/null | wc -l)
-echo "📦 Количество полных backup'ов: $BACKUP_COUNT"
+echo " Количество полных backup'ов: $BACKUP_COUNT"
 
 if [ $BACKUP_COUNT -gt 0 ]; then
-    LATEST_MANUAL=$(ls -t .config-backup/full-backup-* | head -1)
-    LATEST_DATE=$(basename "$LATEST_MANUAL" | sed 's/full-backup-//')
-    echo "📅 Последний ручной backup: $LATEST_DATE"
+ LATEST_MANUAL=$(ls -t .config-backup/full-backup-* | head -1)
+ LATEST_DATE=$(basename "$LATEST_MANUAL" | sed 's/full-backup-//')
+ echo " Последний ручной backup: $LATEST_DATE"
 fi
 
 # Размер backup'ов
-echo -e "\n💽 ИСПОЛЬЗОВАНИЕ МЕСТА:"
+echo -e "\n ИСПОЛЬЗОВАНИЕ МЕСТА:"
 BACKUP_SIZE=$(du -sh .config-backup/ 2>/dev/null | cut -f1)
-echo "📊 Общий размер backup'ов: $BACKUP_SIZE"
+echo " Общий размер backup'ов: $BACKUP_SIZE"
 
 # Рекомендации
-echo -e "\n💡 РЕКОМЕНДАЦИИ:"
+echo -e "\n РЕКОМЕНДАЦИИ:"
 if [ $BACKUP_COUNT -lt 3 ]; then
-    echo "⚠️ Рекомендуется создать больше backup'ов"
+ echo " Рекомендуется создать больше backup'ов"
 fi
 
 DAYS_SINCE_BACKUP=$(find .config-backup/ -name "full-backup-*" -mtime -7 | wc -l)
 if [ $DAYS_SINCE_BACKUP -eq 0 ]; then
-    echo "⚠️ Не было backup'ов за последние 7 дней"
+ echo " Не было backup'ов за последние 7 дней"
 fi
 
-echo -e "\n✅ Проверка завершена"
+echo -e "\n Проверка завершена"
 ```
 
 ---
 
-## 📚 СВЯЗАННЫЕ ДОКУМЕНТЫ
+## СВЯЗАННЫЕ ДОКУМЕНТЫ
 
 - [Service Restart Procedures](service-restart-procedures.md)
 - [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)

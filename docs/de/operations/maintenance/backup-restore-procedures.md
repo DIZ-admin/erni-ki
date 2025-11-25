@@ -5,27 +5,25 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 💾 Sicherungs- und Wiederherstellungsprozeduren für ERNI-KI
+# Sicherungs- und Wiederherstellungsprozeduren für ERNI-KI
 
-**Version:** 1.0  
-**Erstellt:** 25.09.2025  
-**Letzte Aktualisierung:** 25.09.2025  
+**Version:** 1.0 **Erstellt:** 25.09.2025 **Letzte Aktualisierung:** 25.09.2025
 **Verantwortlich:** Tech Lead
 
 ---
 
 [TOC]
 
-## 📋 GRUNDPRINZIPIEN
+## GRUNDPRINZIPIEN
 
-### ✅ **Backup-Strategie**
+### **Backup-Strategie**
 
 - **Tägliche Backups** kritischer Daten (Aufbewahrung 7 Tage)
 - **Wöchentliche Voll-Backups** (Aufbewahrung 4 Wochen)
 - **Vor jeder Änderung** – zwingende Snapshots
 - **Recovery-Tests** – monatlich
 
-### 📂 **Was in Backups enthalten ist**
+### **Was in Backups enthalten ist**
 
 - **Konfigurationen:** `env/`, `conf/`, `compose.yml`
 - **Datenbank:** PostgreSQL (OpenWebUI-Daten)
@@ -35,7 +33,7 @@ last_updated: '2025-11-24'
 
 ---
 
-## 🔄 AUTOMATISCHE BACKUPS (BACKREST)
+## AUTOMATISCHE BACKUPS (BACKREST)
 
 ### **Aktuelle Backrest-Konfiguration**
 
@@ -67,7 +65,7 @@ du -sh .config-backup/
 # Skript zur Backup-Prüfung anlegen
 cat > check-backups.sh << 'EOF'
 # !/bin/bash
-WEBHOOK_URL="YOUR_WEBHOOK_URL"  # Webhook für Benachrichtigungen setzen
+WEBHOOK_URL="YOUR_WEBHOOK_URL" # Webhook für Benachrichtigungen setzen
 
 # Letztes Backup prüfen
 LAST_BACKUP=$(curl -s http://localhost:9898/api/v1/repos | jq -r '.[0].lastBackup')
@@ -76,11 +74,11 @@ BACKUP_TIME=$(date -d "$LAST_BACKUP" +%s)
 HOURS_DIFF=$(( (CURRENT_TIME - BACKUP_TIME) / 3600 ))
 
 if [ $HOURS_DIFF -gt 25 ]; then
-    echo "⚠️ ACHTUNG: Letztes Backup liegt $HOURS_DIFF Stunden zurück!"
-    # Benachrichtigung senden
-    curl -X POST "$WEBHOOK_URL" -d "Backup ERNI-KI veraltet: $HOURS_DIFF Stunden"
+ echo " ACHTUNG: Letztes Backup liegt $HOURS_DIFF Stunden zurück!"
+ # Benachrichtigung senden
+ curl -X POST "$WEBHOOK_URL" -d "Backup ERNI-KI veraltet: $HOURS_DIFF Stunden"
 else
-    echo "✅ Backup ist aktuell (zuletzt vor $HOURS_DIFF Stunden)"
+ echo " Backup ist aktuell (zuletzt vor $HOURS_DIFF Stunden)"
 fi
 EOF
 
@@ -92,7 +90,7 @@ echo "0 9 * * * /path/to/check-backups.sh" | crontab -
 
 ---
 
-## 📦 MANUELLE BACKUPS
+## MANUELLE BACKUPS
 
 ### **Vollständiges System-Backup**
 
@@ -103,7 +101,7 @@ echo "0 9 * * * /path/to/check-backups.sh" | crontab -
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR=".config-backup/full-backup-$BACKUP_DATE"
 
-echo "🔄 Erstelle Voll-Backup in $BACKUP_DIR"
+echo " Erstelle Voll-Backup in $BACKUP_DIR"
 
 # 1. Verzeichnis erstellen
 mkdir -p "$BACKUP_DIR"
@@ -112,9 +110,9 @@ mkdir -p "$BACKUP_DIR"
 read -p "Services für konsistentes Backup stoppen? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Stoppe Services..."
-    docker compose stop openwebui litellm
-    SERVICES_STOPPED=true
+ echo "Stoppe Services..."
+ docker compose stop openwebui litellm
+ SERVICES_STOPPED=true
 fi
 
 # 3. Konfigurationen sichern
@@ -159,21 +157,21 @@ EOF
 
 # 9. Services erneut starten
 if [ "$SERVICES_STOPPED" = true ]; then
-    echo "Starte Services..."
-    docker compose up -d
+ echo "Starte Services..."
+ docker compose up -d
 fi
 
 # 10. Archiv optional erstellen
 read -p "tar.gz-Archiv erstellen? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Erstelle Archiv..."
-    tar -czf "$BACKUP_DIR.tar.gz" -C .config-backup "full-backup-$BACKUP_DATE"
-    echo "Archiv erstellt: $BACKUP_DIR.tar.gz"
+ echo "Erstelle Archiv..."
+ tar -czf "$BACKUP_DIR.tar.gz" -C .config-backup "full-backup-$BACKUP_DATE"
+ echo "Archiv erstellt: $BACKUP_DIR.tar.gz"
 fi
 
-echo "✅ Voll-Backup abgeschlossen: $BACKUP_DIR"
-echo "📄 Manifest: $BACKUP_DIR/backup-manifest.txt"
+echo " Voll-Backup abgeschlossen: $BACKUP_DIR"
+echo " Manifest: $BACKUP_DIR/backup-manifest.txt"
 ```
 
 ## **Schnelles Konfig-Backup**
@@ -185,7 +183,7 @@ echo "📄 Manifest: $BACKUP_DIR/backup-manifest.txt"
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR=".config-backup/config-backup-$BACKUP_DATE"
 
-echo "🔄 Erstelle Konfig-Backup in $BACKUP_DIR"
+echo " Erstelle Konfig-Backup in $BACKUP_DIR"
 
 mkdir -p "$BACKUP_DIR"
 sudo cp -r env/ "$BACKUP_DIR/"
@@ -196,7 +194,7 @@ cp compose.yml "$BACKUP_DIR/"
 docker compose ps > "$BACKUP_DIR/services-status.txt"
 docker compose config > "$BACKUP_DIR/compose-resolved.yml"
 
-echo "✅ Konfig-Backup abgeschlossen: $BACKUP_DIR"
+echo " Konfig-Backup abgeschlossen: $BACKUP_DIR"
 ```
 
 ## **Nur die Datenbank sichern**
@@ -208,7 +206,7 @@ echo "✅ Konfig-Backup abgeschlossen: $BACKUP_DIR"
 BACKUP_DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_DIR=".config-backup/db-backup-$BACKUP_DATE"
 
-echo "🔄 Erstelle DB-Backup in $BACKUP_DIR"
+echo " Erstelle DB-Backup in $BACKUP_DIR"
 
 mkdir -p "$BACKUP_DIR"
 
@@ -225,12 +223,12 @@ docker exec erni-ki-db-1 pg_dumpall -U postgres > "$BACKUP_DIR/all-databases.sql
 docker exec erni-ki-db-1 psql -U postgres -c "\\l" > "$BACKUP_DIR/database-info.txt"
 docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "\\dt" > "$BACKUP_DIR/tables-info.txt"
 
-echo "✅ DB-Backup abgeschlossen: $BACKUP_DIR"
+echo " DB-Backup abgeschlossen: $BACKUP_DIR"
 ```
 
 ---
 
-## 🔄 WIEDERHERSTELLUNGS-PROZEDUREN
+## WIEDERHERSTELLUNGS-PROZEDUREN
 
 ### **Vollständige Systemwiederherstellung**
 
@@ -240,23 +238,23 @@ echo "✅ DB-Backup abgeschlossen: $BACKUP_DIR"
 
 BACKUP_DIR="$1"
 if [ -z "$BACKUP_DIR" ]; then
-    echo "Usage: $0 <backup_directory>"
-    echo "Verfügbare Backups:"
-    ls -la .config-backup/ | grep full-backup
-    exit 1
+ echo "Usage: $0 <backup_directory>"
+ echo "Verfügbare Backups:"
+ ls -la .config-backup/ | grep full-backup
+ exit 1
 fi
 
 if [ ! -d "$BACKUP_DIR" ]; then
-    echo "❌ Backup-Verzeichnis nicht gefunden: $BACKUP_DIR"
-    exit 1
+ echo " Backup-Verzeichnis nicht gefunden: $BACKUP_DIR"
+ exit 1
 fi
 
-echo "🔄 Starte vollständige Wiederherstellung aus $BACKUP_DIR"
-echo "⚠️  WARNUNG: Überschreibt alle aktuellen Daten!"
+echo " Starte vollständige Wiederherstellung aus $BACKUP_DIR"
+echo " WARNUNG: Überschreibt alle aktuellen Daten!"
 read -p "Fortsetzen? (yes/no): " -r
 if [[ ! $REPLY =~ ^yes$ ]]; then
-    echo "Wiederherstellung abgebrochen"
-    exit 1
+ echo "Wiederherstellung abgebrochen"
+ exit 1
 fi
 
 # 1. Alle Services stoppen
@@ -287,34 +285,34 @@ docker compose up -d db redis
 echo "Warte auf PostgreSQL..."
 sleep 30
 until docker exec erni-ki-db-1 pg_isready -U postgres; do
-    echo "PostgreSQL wird vorbereitet..."
-    sleep 5
+ echo "PostgreSQL wird vorbereitet..."
+ sleep 5
 done
 
 # 7. Datenbank wiederherstellen
 if [ -f "$BACKUP_DIR/database.dump" ]; then
-    echo "Stelle Datenbank aus Binary Dump wieder her..."
-    docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
-    docker exec erni-ki-db-1 createdb -U postgres openwebui
-    docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_DIR/database.dump"
+ echo "Stelle Datenbank aus Binary Dump wieder her..."
+ docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
+ docker exec erni-ki-db-1 createdb -U postgres openwebui
+ docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_DIR/database.dump"
 elif [ -f "$BACKUP_DIR/database-full.sql" ]; then
-    echo "Stelle Datenbank aus SQL Dump wieder her..."
-    docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_DIR/database-full.sql"
+ echo "Stelle Datenbank aus SQL Dump wieder her..."
+ docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_DIR/database-full.sql"
 else
-    echo "⚠️ Kein Datenbank-Backup gefunden"
+ echo " Kein Datenbank-Backup gefunden"
 fi
 
 # 8. Nutzerdaten wiederherstellen
 if [ -d "$BACKUP_DIR/openwebui" ]; then
-    echo "Stelle OpenWebUI-Daten wieder her..."
-    sudo rm -rf data/openwebui/
-    sudo cp -r "$BACKUP_DIR/openwebui/" data/
+ echo "Stelle OpenWebUI-Daten wieder her..."
+ sudo rm -rf data/openwebui/
+ sudo cp -r "$BACKUP_DIR/openwebui/" data/
 fi
 
 if [ -d "$BACKUP_DIR/ollama" ]; then
-    echo "Stelle Ollama-Modelle wieder her..."
-    sudo rm -rf data/ollama/
-    sudo cp -r "$BACKUP_DIR/ollama/" data/
+ echo "Stelle Ollama-Modelle wieder her..."
+ sudo rm -rf data/ollama/
+ sudo cp -r "$BACKUP_DIR/ollama/" data/
 fi
 
 # 9. Alle Services starten
@@ -329,12 +327,12 @@ echo "=== SERVICE-STATUS ==="
 docker compose ps
 
 echo -e "\n=== VERFÜGBARKEIT ==="
-curl -f http://localhost/health && echo "✅ OpenWebUI erreichbar" || echo "❌ OpenWebUI nicht erreichbar"
-curl -f http://localhost:11434/api/tags && echo "✅ Ollama läuft" || echo "❌ Ollama nicht erreichbar"
+curl -f http://localhost/health && echo " OpenWebUI erreichbar" || echo " OpenWebUI nicht erreichbar"
+curl -f http://localhost:11434/api/tags && echo " Ollama läuft" || echo " Ollama nicht erreichbar"
 
-echo -e "\n✅ Wiederherstellung abgeschlossen!"
-echo "📄 Backup des vorherigen Zustands: $CURRENT_BACKUP"
-echo "📄 Manifest des wiederhergestellten Backups: $BACKUP_DIR/backup-manifest.txt"
+echo -e "\n Wiederherstellung abgeschlossen!"
+echo " Backup des vorherigen Zustands: $CURRENT_BACKUP"
+echo " Manifest des wiederhergestellten Backups: $BACKUP_DIR/backup-manifest.txt"
 ```
 
 ## **Nur Konfigurationen wiederherstellen**
@@ -345,11 +343,11 @@ echo "📄 Manifest des wiederhergestellten Backups: $BACKUP_DIR/backup-manifest
 
 BACKUP_DIR="$1"
 if [ -z "$BACKUP_DIR" ]; then
-    echo "Usage: $0 <backup_directory>"
-    exit 1
+ echo "Usage: $0 <backup_directory>"
+ exit 1
 fi
 
-echo "🔄 Stelle Konfigurationen wieder her aus $BACKUP_DIR"
+echo " Stelle Konfigurationen wieder her aus $BACKUP_DIR"
 
 # Aktuelle Konfigurationen sichern
 CURRENT_BACKUP=".config-backup/pre-config-restore-$(date +%Y%m%d-%H%M%S)"
@@ -364,8 +362,8 @@ cp "$BACKUP_DIR/compose.yml" ./
 # Änderungen anwenden
 docker compose up -d --no-recreate
 
-echo "✅ Konfigurationen wiederhergestellt"
-echo "📄 Backup der vorherigen Konfigurationen: $CURRENT_BACKUP"
+echo " Konfigurationen wiederhergestellt"
+echo " Backup der vorherigen Konfigurationen: $CURRENT_BACKUP"
 ```
 
 ## **Nur die Datenbank wiederherstellen**
@@ -376,17 +374,17 @@ echo "📄 Backup der vorherigen Konfigurationen: $CURRENT_BACKUP"
 
 BACKUP_FILE="$1"
 if [ -z "$BACKUP_FILE" ]; then
-    echo "Usage: $0 <backup_file>"
-    echo "Unterstützte Formate: .dump, .sql"
-    exit 1
+ echo "Usage: $0 <backup_file>"
+ echo "Unterstützte Formate: .dump, .sql"
+ exit 1
 fi
 
-echo "🔄 Stelle Datenbank wieder her aus $BACKUP_FILE"
-echo "⚠️  WARNUNG: Überschreibt die aktuelle Datenbank!"
+echo " Stelle Datenbank wieder her aus $BACKUP_FILE"
+echo " WARNUNG: Überschreibt die aktuelle Datenbank!"
 read -p "Fortsetzen? (yes/no): " -r
 if [[ ! $REPLY =~ ^yes$ ]]; then
-    echo "Wiederherstellung abgebrochen"
-    exit 1
+ echo "Wiederherstellung abgebrochen"
+ exit 1
 fi
 
 # Aktuelle DB sichern
@@ -396,29 +394,29 @@ docker exec erni-ki-db-1 pg_dump -U postgres -Fc openwebui > "$CURRENT_DB_BACKUP
 
 # Datenbank wiederherstellen
 if [[ "$BACKUP_FILE" == *.dump ]]; then
-    echo "Wiederherstellung aus Binary Dump..."
-    docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
-    docker exec erni-ki-db-1 createdb -U postgres openwebui
-    docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_FILE"
+ echo "Wiederherstellung aus Binary Dump..."
+ docker exec erni-ki-db-1 dropdb -U postgres openwebui --if-exists
+ docker exec erni-ki-db-1 createdb -U postgres openwebui
+ docker exec -i erni-ki-db-1 pg_restore -U postgres -d openwebui < "$BACKUP_FILE"
 elif [[ "$BACKUP_FILE" == *.sql ]]; then
-    echo "Wiederherstellung aus SQL Dump..."
-    docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_FILE"
+ echo "Wiederherstellung aus SQL Dump..."
+ docker exec -i erni-ki-db-1 psql -U postgres < "$BACKUP_FILE"
 else
-    echo "❌ Nicht unterstütztes Dateiformat"
-    exit 1
+ echo " Nicht unterstütztes Dateiformat"
+ exit 1
 fi
 
 # Services mit DB neu starten
 echo "Starte Services neu..."
 docker compose restart openwebui litellm
 
-echo "✅ Datenbank wiederhergestellt"
-echo "📄 Backup der vorherigen DB: $CURRENT_DB_BACKUP"
+echo " Datenbank wiederhergestellt"
+echo " Backup der vorherigen DB: $CURRENT_DB_BACKUP"
 ```
 
 ---
 
-## 🧪 BACKUP-TESTS
+## BACKUP-TESTS
 
 ### **Monatlicher Restore-Test**
 
@@ -426,7 +424,7 @@ echo "📄 Backup der vorherigen DB: $CURRENT_DB_BACKUP"
 # !/bin/bash
 # Skript zum Testen der Wiederherstellungsprozedur
 
-echo "🧪 Teste Wiederherstellung"
+echo " Teste Wiederherstellung"
 
 # 1. Letztes Backup finden
 LATEST_BACKUP=$(ls -t .config-backup/full-backup-* | head -1)
@@ -457,13 +455,13 @@ Probleme: [Probleme beschreiben]
 Empfehlungen: [Verbesserungen]
 EOF
 
-echo "✅ Test abgeschlossen"
-echo "📄 Bericht: $TEST_DIR/restore-test-report.txt"
+echo " Test abgeschlossen"
+echo " Bericht: $TEST_DIR/restore-test-report.txt"
 ```
 
 ---
 
-## 📊 BACKUP-MONITORING
+## BACKUP-MONITORING
 
 ### **Backup-Status-Dashboard**
 
@@ -471,58 +469,58 @@ echo "📄 Bericht: $TEST_DIR/restore-test-report.txt"
 # !/bin/bash
 # Backup-Status-Dashboard erzeugen
 
-echo "📊 BACKUP-STATUS ERNI-KI"
+echo " BACKUP-STATUS ERNI-KI"
 echo "========================"
 echo "Datum: $(date)"
 echo
 
 # Backrest-Status
-echo "🔄 AUTOMATISCHE BACKUPS (Backrest):"
+echo " AUTOMATISCHE BACKUPS (Backrest):"
 if curl -f http://localhost:9898/api/v1/status >/dev/null 2>&1; then
-    echo "✅ Backrest-Service läuft"
-    LAST_BACKUP=$(curl -s http://localhost:9898/api/v1/repos | jq -r '.[0].lastBackup' 2>/dev/null)
-    if [ "$LAST_BACKUP" != "null" ] && [ -n "$LAST_BACKUP" ]; then
-        echo "📅 Letztes Backup: $LAST_BACKUP"
-    else
-        echo "⚠️ Keine Infos zum letzten Backup"
-    fi
+ echo " Backrest-Service läuft"
+ LAST_BACKUP=$(curl -s http://localhost:9898/api/v1/repos | jq -r '.[0].lastBackup' 2>/dev/null)
+ if [ "$LAST_BACKUP" != "null" ] && [ -n "$LAST_BACKUP" ]; then
+ echo " Letztes Backup: $LAST_BACKUP"
+ else
+ echo " Keine Infos zum letzten Backup"
+ fi
 else
-    echo "❌ Backrest-Service nicht erreichbar"
+ echo " Backrest-Service nicht erreichbar"
 fi
 
 # Manuelle Backups
-echo -e "\n💾 MANUELLE BACKUPS:"
+echo -e "\n MANUELLE BACKUPS:"
 BACKUP_COUNT=$(ls -1 .config-backup/full-backup-* 2>/dev/null | wc -l)
-echo "📦 Anzahl Voll-Backups: $BACKUP_COUNT"
+echo " Anzahl Voll-Backups: $BACKUP_COUNT"
 
 if [ $BACKUP_COUNT -gt 0 ]; then
-    LATEST_MANUAL=$(ls -t .config-backup/full-backup-* | head -1)
-    LATEST_DATE=$(basename "$LATEST_MANUAL" | sed 's/full-backup-//')
-    echo "📅 Letztes manuelles Backup: $LATEST_DATE"
+ LATEST_MANUAL=$(ls -t .config-backup/full-backup-* | head -1)
+ LATEST_DATE=$(basename "$LATEST_MANUAL" | sed 's/full-backup-//')
+ echo " Letztes manuelles Backup: $LATEST_DATE"
 fi
 
 # Speicherverbrauch
-echo -e "\n💽 SPEICHERNUTZUNG:"
+echo -e "\n SPEICHERNUTZUNG:"
 BACKUP_SIZE=$(du -sh .config-backup/ 2>/dev/null | cut -f1)
-echo "📊 Gesamte Backup-Größe: $BACKUP_SIZE"
+echo " Gesamte Backup-Größe: $BACKUP_SIZE"
 
 # Empfehlungen
-echo -e "\n💡 EMPFEHLUNGEN:"
+echo -e "\n EMPFEHLUNGEN:"
 if [ $BACKUP_COUNT -lt 3 ]; then
-    echo "⚠️ Mehr Backups empfohlen"
+ echo " Mehr Backups empfohlen"
 fi
 
 DAYS_SINCE_BACKUP=$(find .config-backup/ -name "full-backup-*" -mtime -7 | wc -l)
 if [ $DAYS_SINCE_BACKUP -eq 0 ]; then
-    echo "⚠️ Keine Backups in den letzten 7 Tagen"
+ echo " Keine Backups in den letzten 7 Tagen"
 fi
 
-echo -e "\n✅ Prüfung abgeschlossen"
+echo -e "\n Prüfung abgeschlossen"
 ```
 
 ---
 
-## 📚 VERWANDTE DOKUMENTE
+## VERWANDTE DOKUMENTE
 
 - [Service Restart Procedures](../../../operations/maintenance/service-restart-procedures.md)
 - [Troubleshooting Guide](../../operations/troubleshooting/troubleshooting-guide.md)

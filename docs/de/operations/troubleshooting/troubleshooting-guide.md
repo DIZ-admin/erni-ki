@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🔧 Leitfaden zur Problemdiagnose ERNI-KI
+# Leitfaden zur Problemdiagnose ERNI-KI
 
 > **Version:** 1.0 **Datum:** 25.09.2025 **Status:** Production Ready [TOC]
 
@@ -27,7 +27,7 @@ Für wirksame Diagnose benötigt man:
 
 ### 3.1 Kritische Probleme (SLA < 15 Min)
 
-### **❌ Gesamtsystem nicht erreichbar**
+### ** Gesamtsystem nicht erreichbar**
 
 #### **Symptome:**
 
@@ -42,13 +42,13 @@ Für wirksame Diagnose benötigt man:
 docker compose ps
 
 # 2. Systemressourcen
-df -h        # Plattenplatz
-free -h      # RAM
-nvidia-smi   # GPU
+df -h # Plattenplatz
+free -h # RAM
+nvidia-smi # GPU
 
 # 3. Docker
-docker system df                 # Docker-Platzverbrauch
-docker system events --since 1h  # Events letzte Stunde
+docker system df # Docker-Platzverbrauch
+docker system events --since 1h # Events letzte Stunde
 ```
 
 ## **Lösung:**
@@ -68,7 +68,7 @@ docker system prune -a -f
 docker compose up -d
 ```
 
-## **❌ OpenWebUI nicht erreichbar (Haupt-UI)**
+## ** OpenWebUI nicht erreichbar (Haupt-UI)**
 
 ### **Symptome:**
 
@@ -108,16 +108,16 @@ curl -f http://localhost/health
 
 ---
 
-## ⚠️ Häufige Probleme und Lösungen
+## Häufige Probleme und Lösungen
 
-### **🔴 GPU/AI Services**
+### ** GPU/AI Services**
 
 #### **Problem: Ollama nutzt GPU nicht**
 
 ```bash
 # Diagnose
-nvidia-smi                                # GPU-Verfügbarkeit
-docker exec erni-ki-ollama-1 nvidia-smi   # GPU im Container
+nvidia-smi # GPU-Verfügbarkeit
+docker exec erni-ki-ollama-1 nvidia-smi # GPU im Container
 
 # Lösung
 docker compose restart ollama
@@ -138,18 +138,18 @@ sleep 15
 curl -f http://localhost:4000/health
 ```
 
-## **🔴 Netzwerk**
+## ** Netzwerk**
 
 ### **Problem: Nginx 502 Bad Gateway**
 
 ```bash
 # Diagnose
 docker compose logs nginx --tail=20
-docker exec erni-ki-nginx-1 nginx -t  # Konfiguration prüfen
+docker exec erni-ki-nginx-1 nginx -t # Konfiguration prüfen
 
 # Upstream-Checks
-curl -f http://openwebui:8080/health  # aus dem nginx-Container
-curl -f http://localhost:8080/health  # direkt
+curl -f http://openwebui:8080/health # aus dem nginx-Container
+curl -f http://localhost:8080/health # direkt
 
 # Lösung
 docker compose restart nginx
@@ -166,7 +166,7 @@ docker exec erni-ki-cloudflared-1 nslookup nginx
 docker compose restart cloudflared
 ```
 
-## **🔴 Datenbank**
+## ** Datenbank**
 
 ### **Problem: PostgreSQL connection refused**
 
@@ -197,7 +197,7 @@ sleep 5
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-## **🔴 Monitoring**
+## ** Monitoring**
 
 ### **Problem: Prometheus sammelt keine Metriken**
 

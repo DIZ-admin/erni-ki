@@ -33,12 +33,12 @@ Das Hauptskript zur Überprüfung des Zustands des RAG-Systems.
 
 **Überprüfte Komponenten**:
 
-- ✅ OpenWebUI (Status healthy)
-- ✅ SearXNG (Leistung <2s)
-- ✅ PostgreSQL/pgvector (Leistung <100ms)
-- ✅ Ollama (Verfügbarkeit des Embedding-Modells)
-- ✅ Docling (Verfügbarkeit des Dienstes)
-- ✅ Nginx (Caching)
+- OpenWebUI (Status healthy)
+- SearXNG (Leistung <2s)
+- PostgreSQL/pgvector (Leistung <100ms)
+- Ollama (Verfügbarkeit des Embedding-Modells)
+- Docling (Verfügbarkeit des Dienstes)
+- Nginx (Caching)
 
 **Verwendung**:
 
@@ -91,9 +91,9 @@ echo "RAG_WEBHOOK_URL=https://discord.com/api/webhooks/..." >> env/monitoring.en
 
 **Status-Typen**:
 
-- `healthy` - ✅ Grün (alles funktioniert)
-- `warning` - ⚠️ Gelb (Leistungsabfall)
-- `error` - ❌ Rot (kritischer Fehler)
+- `healthy` - Grün (alles funktioniert)
+- `warning` - Gelb (Leistungsabfall)
+- `error` - Rot (kritischer Fehler)
 
 ---
 

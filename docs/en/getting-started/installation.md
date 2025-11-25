@@ -9,18 +9,18 @@ date: '2025-11-22'
 system_status: 'Production Ready'
 ---
 
-# 📦 Installation Guide - ERNI-KI
+# Installation Guide - ERNI-KI
 
-> **Version:** 12.1 · **Updated:** 2025-11-22 · **Status:** Production Ready  
+> **Version:** 12.1 · **Updated:** 2025-11-22 · **Status:** Production Ready
 > Monitoring stack: 5 provisioned Grafana dashboards, up-to-date Prometheus
 > [TOC]
 
-## 📋 Overview
+## Overview
 
 Step-by-step installation and configuration of ERNI-KI — a production-ready AI
 platform (29 microservices, enterprise-grade DB performance).
 
-## 📋 System requirements
+## System requirements
 
 ### Minimum
 
@@ -39,10 +39,10 @@ platform (29 microservices, enterprise-grade DB performance).
 - **Storage:** 500GB+ NVMe SSD
 - **Network:** 1Gbps+ (model downloads)
 - **Monitoring:** Prometheus + Grafana + 8 exporters (optimized 2025-09-19)
-  - ~2GB RAM for full monitoring
-  - Ports: 9101, 9187, 9121, 9445, 9115, 9778, 9113, 9808
+- ~2GB RAM for full monitoring
+- Ports: 9101, 9187, 9121, 9445, 9115, 9778, 9113, 9808
 
-## 🔧 Prerequisites
+## Prerequisites
 
 ### 1) Install Docker
 
@@ -73,7 +73,7 @@ sudo apt install -y nvidia-container-toolkit
 sudo systemctl restart docker
 ```
 
-## 🆕 New components (v7.0)
+## New components (v7.0)
 
 ### LiteLLM Context Engineering
 
@@ -94,7 +94,7 @@ sudo systemctl restart docker
 - Prometheus queries with safe fallbacks
 - Dashboard load time <3s; request success >85%
 
-## 🚀 Quick install
+## Quick install
 
 ### 1) Clone repo
 
@@ -120,7 +120,7 @@ cd erni-ki
 ./scripts/maintenance/check-web-interfaces.sh
 ```
 
-## 🔧 Manual install
+## Manual install
 
 ### 1) Configure environment variables
 
@@ -160,7 +160,7 @@ docker compose up -d
 docker compose ps
 ```
 
-## 🎯 GPU setup for Ollama
+## GPU setup for Ollama
 
 ### 1) Check GPU
 
@@ -173,7 +173,7 @@ docker run --rm --gpus all nvidia/cuda:11.8-base-ubuntu20.04 nvidia-smi
 
 ```bash
 ./scripts/setup/gpu-setup.sh
-nano env/ollama.env  # set OLLAMA_GPU_ENABLED=true
+nano env/ollama.env # set OLLAMA_GPU_ENABLED=true
 ```
 
 ### 3) Verify GPU in Ollama
@@ -183,7 +183,7 @@ nano env/ollama.env  # set OLLAMA_GPU_ENABLED=true
 ./scripts/performance/gpu-monitor.sh
 ```
 
-## 📊 Monitoring setup (Updated 2025-09-19)
+## Monitoring setup (Updated 2025-09-19)
 
 ### Deploy monitoring
 
@@ -191,9 +191,9 @@ nano env/ollama.env  # set OLLAMA_GPU_ENABLED=true
 ./scripts/setup/deploy-monitoring-system.sh
 ./scripts/performance/monitoring-system-status.sh
 for port in 9101 9187 9121 9445 9115 9778 9113 9808; do
-  echo "Port $port: $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)"
+ echo "Port $port: $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)"
 done
-curl -s http://localhost:9095/health  # webhook receiver
+curl -s http://localhost:9095/health # webhook receiver
 ```
 
 ### Monitoring UIs
@@ -211,8 +211,8 @@ curl -s http://localhost:9095/health  # webhook receiver
 ```bash
 docker ps --format "table {{.Names}}\t{{.Status}}" | grep exporter
 for port in 9101 9187 9121 9445 9115 9778 9113 9808; do
-  status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)
-  echo "Port $port: $status"
+ status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/metrics)
+ echo "Port $port: $status"
 done
 curl -s http://localhost:9101/metrics | grep node_up
 curl -s http://localhost:9187/metrics | grep pg_up
@@ -224,7 +224,7 @@ curl -s http://localhost:9113/metrics | grep nginx_connections_active
 curl -s http://localhost:9808/metrics | grep erni_ki_rag_response
 ```
 
-## 🚀 Production DB optimizations
+## Production DB optimizations
 
 ```bash
 # PostgreSQL tuning
@@ -242,8 +242,8 @@ docker exec erni-ki-db-1 psql -U postgres -d openwebui -c "ALTER SYSTEM SET log_
 ## RAG monitoring
 
 - `rag-exporter` (port 9808) metrics:
-  - `erni_ki_rag_response_latency_seconds` (histogram)
-  - `erni_ki_rag_sources_count` (sources per response)
+- `erni_ki_rag_response_latency_seconds` (histogram)
+- `erni_ki_rag_sources_count` (sources per response)
 - Set `RAG_TEST_URL` in `compose.yml` for real endpoint checks.
 - Grafana OpenWebUI dashboard includes p95 < 2s and Sources Count panels.
 
@@ -254,7 +254,7 @@ curl -X POST http://localhost:9091/-/reload
 curl -X POST http://localhost:9093/-/reload
 ```
 
-## 💾 Backup setup
+## Backup setup
 
 ```bash
 ./scripts/setup/setup-backrest-integration.sh
@@ -262,14 +262,14 @@ curl -X POST http://localhost:9093/-/reload
 ./scripts/setup/setup-cron-rotation.sh
 ```
 
-## 🔒 Security hardening
+## Security hardening
 
 ```bash
 ./scripts/security/security-hardening.sh
 ./scripts/security/security-monitor.sh
 ```
 
-## 🌐 Access
+## Access
 
 - **OpenWebUI:** <https://your-domain/>
 - **Grafana:** <https://your-domain/grafana> (incl. Loki via Explore)
@@ -281,17 +281,17 @@ curl -X POST http://localhost:9093/-/reload
 3. Configure models in Ollama
 4. Verify integrations
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ```bash
 docker compose logs -f
 docker compose restart service-name
 ./scripts/troubleshooting/automated-recovery.sh
-./scripts/troubleshooting/test-healthcheck.sh   # GPU checks
+./scripts/troubleshooting/test-healthcheck.sh # GPU checks
 nvidia-smi
 ```
 
-## 📞 Support
+## Support
 
 - Docs:
   [Troubleshooting Guide](../../operations/troubleshooting/troubleshooting-guide.md)

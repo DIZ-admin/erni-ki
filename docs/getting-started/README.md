@@ -15,26 +15,26 @@ the ERNI-KI platform.
 ### Installation
 
 - **[installation.md](installation.md)** - Complete installation guide
-  - System requirements
-  - Docker Compose setup
-  - Initial configuration
-  - First model deployment
+- System requirements
+- Docker Compose setup
+- Initial configuration
+- First model deployment
 
 ### Configuration
 
 - **[configuration-guide.md](configuration-guide.md)** - Service configuration
-  - Environment variables
-  - Service-specific settings
-  - GPU configuration
-  - Network setup
+- Environment variables
+- Service-specific settings
+- GPU configuration
+- Network setup
 
 ### User Guide
 
 - **[user-guide.md](user-guide.md)** - End-user documentation
-  - Web interface overview
-  - Chat features
-  - Model management
-  - RAG search usage
+- Web interface overview
+- Chat features
+- Model management
+- RAG search usage
 
 ### Network Setup
 
@@ -60,7 +60,7 @@ the ERNI-KI platform.
 - 50GB storage minimum (200GB+ recommended)
 - NVIDIA GPU optional (RTX 4060+ recommended)
 
-## 🔗 Связанная документация
+## Связанная документация
 
 - [Architecture Overview](../architecture/README.md)
 - [Operations Guide](../operations/README.md)

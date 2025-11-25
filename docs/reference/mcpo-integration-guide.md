@@ -6,13 +6,12 @@ last_updated: '2025-11-24'
 title: 'Руководство по интеграции MCP в ERNI-KI'
 ---
 
-# 🔧 Руководство по интеграции MCP в ERNI-KI
+# Руководство по интеграции MCP в ERNI-KI
 
-> **Версия документа:** 9.1 **Дата обновления:** 2025-11-21 **Статус:** ✅
-> Healthy (порт 8000 на 127.0.0.1, интеграция с LiteLLM/Context7 подтверждена)
-> [TOC]
+> **Версия документа:** 9.1 **Дата обновления:** 2025-11-21 **Статус:** Healthy
+> (порт 8000 на 127.0.0.1, интеграция с LiteLLM/Context7 подтверждена) [TOC]
 
-## 📋 Обзор MCP (Model Context Protocol)
+## Обзор MCP (Model Context Protocol)
 
 MCP Server в ERNI-KI предоставляет стандартизированный интерфейс для интеграции
 AI-инструментов с OpenWebUI v0.6.36 через Model Context Protocol. Система
@@ -28,28 +27,28 @@ AI-инструментов с OpenWebUI v0.6.36 через Model Context Protoc
 - **Desktop Commander** — терминал/редактор с ограниченными каталогами
   (`/app/data/mcpo-desktop`, `/app/conf`) и включённым блок-листом команд
 
-**Текущий статус:** ✅ Healthy, порт 8000 (локальный bind)
+**Текущий статус:** Healthy, порт 8000 (локальный bind)
 
-## 🏗️ Архитектура системы
+## Архитектура системы
 
 ```mermaid
 graph TB
-    A[OpenWebUI] --> B[Nginx Proxy]
-    B --> C[MCPO Server :8000]
-    C --> D[Time MCP Server]
-    C --> E[Context7 Docs MCP Server]
-    C --> F[PostgreSQL MCP Server]
-    C --> G[Filesystem MCP Server]
-    C --> H[Memory MCP Server]
-    C --> I[SearXNG MCP Server]
-    C --> J[Desktop Commander MCP Server]
+ A[OpenWebUI] --> B[Nginx Proxy]
+ B --> C[MCPO Server :8000]
+ C --> D[Time MCP Server]
+ C --> E[Context7 Docs MCP Server]
+ C --> F[PostgreSQL MCP Server]
+ C --> G[Filesystem MCP Server]
+ C --> H[Memory MCP Server]
+ C --> I[SearXNG MCP Server]
+ C --> J[Desktop Commander MCP Server]
 
-    E --> I[PostgreSQL Database]
-    H --> J[SearXNG Service]
-    F --> K[File System]
+ E --> I[PostgreSQL Database]
+ H --> J[SearXNG Service]
+ F --> K[File System]
 ```
 
-### 🤝 Связь с LiteLLM Context7
+### Связь с LiteLLM Context7
 
 - LiteLLM gateway (порт 4000) запрашивает MCP инструменты через nginx
   (`/api/mcp/*`), добавляя Thinking Tokens и контекст перед отправкой в Ollama.
@@ -62,9 +61,9 @@ graph TB
   убеждайтесь, что Context responses включают блоки `sources[]` и
   `reasoning_trace`.
 
-## 🚀 Текущий статус интеграции
+## Текущий статус интеграции
 
-### ✅ Что работает
+### Что работает
 
 1. **MCPO Server** - здоров и доступен на порту 8000 (127.0.0.1 биндинг)
 2. **Swagger UI** - http://localhost:8000/docs
@@ -75,14 +74,14 @@ graph TB
    PostgreSQL, Desktop Commander
 6. **Nginx proxy** - корректно проксирует запросы к MCP серверам
 
-### 📊 Производительность
+### Производительность
 
 - **Время отклика API**: < 50ms для большинства операций
 - **Time Server**: ~11ms для получения текущего времени
 - **PostgreSQL Server**: ~22ms для простых запросов
 - **Доступность**: 99.9% (все health checks проходят)
 
-## 🔧 Доступные MCP инструменты
+## Доступные MCP инструменты
 
 ### 1. Time Server (`/time`)
 
@@ -95,8 +94,8 @@ graph TB
 
 ```bash
 curl -X POST "http://localhost:8000/time/get_current_time" \
-  -H "Content-Type: application/json" \
-  -d '{"timezone": "Europe/Berlin"}'
+ -H "Content-Type: application/json" \
+ -d '{"timezone": "Europe/Berlin"}'
 ```
 
 **Ответ:**
@@ -119,8 +118,8 @@ curl -X POST "http://localhost:8000/time/get_current_time" \
 
 ```bash
 curl -X POST "http://localhost:8000/postgres/query" \
-  -H "Content-Type: application/json" \
-  -d '{"sql": "SELECT version();"}'
+ -H "Content-Type: application/json" \
+ -d '{"sql": "SELECT version();"}'
 ```
 
 ### 3. Memory Server (`/memory`)
@@ -165,7 +164,7 @@ _Каталоги:_ `/app/data/mcpo-desktop`, `/app/conf` (см.
 
 _Примечание:_ команда блок-листа встроена в сервер; телеметрия отключена.
 
-## 🌐 Интеграция с OpenWebUI
+## Интеграция с OpenWebUI
 
 ### Конфигурация TOOL_SERVER_CONNECTIONS
 
@@ -174,10 +173,10 @@ _Примечание:_ команда блок-листа встроена в �
 
 ```bash
 TOOL_SERVER_CONNECTIONS='[
-  {"name": "Time Server", "url": "http://mcposerver:8000/time", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
-  {"name": "Context7", "url": "http://mcposerver:8000/context7", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
-  {"name": "PostgreSQL", "url": "http://mcposerver:8000/postgres", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
-  {"name": "Desktop Commander", "url": "http://mcposerver:8000/desktop-commander", "enabled": true, "path": "/", "auth_type": "none", "config": {}}
+ {"name": "Time Server", "url": "http://mcposerver:8000/time", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
+ {"name": "Context7", "url": "http://mcposerver:8000/context7", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
+ {"name": "PostgreSQL", "url": "http://mcposerver:8000/postgres", "enabled": true, "path": "/", "auth_type": "none", "config": {}},
+ {"name": "Desktop Commander", "url": "http://mcposerver:8000/desktop-commander", "enabled": true, "path": "/", "auth_type": "none", "config": {}}
 ]'
 ```
 
@@ -189,22 +188,22 @@ Nginx может проксировать `/api/mcp/*` при необходим
 ```nginx
 # MCP (Model Context Protocol) API endpoints
 location ~ ^/api/mcp/(.*)$ {
-    limit_req zone=api burst=50 nodelay;
+ limit_req zone=api burst=50 nodelay;
 
-    proxy_pass http://mcpoUpstream/$1$is_args$args;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+ proxy_pass http://mcpoUpstream/$1$is_args$args;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+ proxy_set_header X-Forwarded-Proto $scheme;
 
-    # Таймауты для MCP запросов
-    proxy_connect_timeout 10s;
-    proxy_send_timeout 30s;
-    proxy_read_timeout 60s;
+ # Таймауты для MCP запросов
+ proxy_connect_timeout 10s;
+ proxy_send_timeout 30s;
+ proxy_read_timeout 60s;
 }
 ```
 
-## 🔍 Диагностика и мониторинг
+## Диагностика и мониторинг
 
 ### Проверка статуса MCPO сервера
 
@@ -216,7 +215,7 @@ docker-compose ps mcposerver
 docker-compose logs --tail=20 mcposerver
 
 # Проверка health check
-curl -s "http://localhost:8000/docs" | grep -q "swagger" && echo "✅ OK" || echo "❌ Failed"
+curl -s "http://localhost:8000/docs" | grep -q "swagger" && echo " OK" || echo " Failed"
 ```
 
 ## Тестирование MCP инструментов
@@ -224,16 +223,16 @@ curl -s "http://localhost:8000/docs" | grep -q "swagger" && echo "✅ OK" || ech
 ```bash
 # Тест Time Server
 curl -X POST "http://localhost:8000/time/get_current_time" \
-  -H "Content-Type: application/json" \
-  -d '{"timezone": "Europe/Berlin"}'
+ -H "Content-Type: application/json" \
+ -d '{"timezone": "Europe/Berlin"}'
 
 # Тест PostgreSQL Server
 curl -X POST "http://localhost:8000/postgres/query" \
-  -H "Content-Type: application/json" \
-  -d '{"sql": "SELECT version();"}'
+ -H "Content-Type: application/json" \
+ -d '{"sql": "SELECT version();"}'
 
 # Тест через Nginx proxy
-curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo "✅ Proxy OK"
+curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo " Proxy OK"
 ```
 
 ## Автоматическая диагностика
@@ -244,7 +243,7 @@ curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo "�
 ./scripts/mcp/test-mcp-integration.sh
 ```
 
-## 🎯 Использование в OpenWebUI
+## Использование в OpenWebUI
 
 ### 1. Доступ к инструментам
 
@@ -280,7 +279,7 @@ AI: Использует PostgreSQL Server для выполнения запр�
 AI: Использует Filesystem Server для поиска файлов с расширением .conf
 ```
 
-## 🔧 Настройка и конфигурация
+## Настройка и конфигурация
 
 ### Конфигурация MCP серверов
 
@@ -309,27 +308,28 @@ AI: Использует Filesystem Server для поиска файлов с �
 
 Файл `env/mcposerver.env` содержит настройки для MCPO сервера.
 
-## 🚨 Устранение неполадок
+## Устранение неполадок
 
 ### Частые проблемы
 
 1. **MCPO сервер не отвечает**
 
-   ```bash
-   docker-compose restart mcposerver
-   docker-compose logs mcposerver
-   ```
+```bash
+docker-compose restart mcposerver
+docker-compose logs mcposerver
+```
 
 2. **MCP инструменты не доступны в OpenWebUI**
-   - Проверьте TOOL_SERVER_CONNECTIONS в env/openwebui.env
-   - Убедитесь, что nginx proxy работает
-   - Перезапустите OpenWebUI: `docker-compose restart openwebui`
+
+- Проверьте TOOL_SERVER_CONNECTIONS в env/openwebui.env
+- Убедитесь, что nginx proxy работает
+- Перезапустите OpenWebUI: `docker-compose restart openwebui`
 
 3. **Ошибки в логах MCPO**
 
-   ```bash
-   docker-compose logs --tail=50 mcposerver | grep -i error
-   ```
+```bash
+docker-compose logs --tail=50 mcposerver | grep -i error
+```
 
 ### Восстановление работоспособности
 
@@ -341,7 +341,7 @@ docker-compose restart mcposerver nginx openwebui
 ./scripts/mcp/test-mcp-integration.sh
 ```
 
-## 📈 Мониторинг производительности
+## Мониторинг производительности
 
 ### Ключевые метрики
 
@@ -359,7 +359,7 @@ docker-compose restart mcposerver nginx openwebui
 - IP адресе клиента
 - Используемом endpoint
 
-## 🔮 Планы развития
+## Планы развития
 
 1. **Добавление новых MCP серверов** для расширения функциональности
 2. **Интеграция с внешними API** через MCP протокол

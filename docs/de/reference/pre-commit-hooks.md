@@ -34,40 +34,40 @@ pre-commit install --hook-type commit-msg
 
 ## Eingestellte Checks
 
-### 🔍 Basis-Dateiprüfungen
+### Basis-Dateiprüfungen
 
 - Trailing whitespace, End-of-file newline, große Dateien (>500KB), merge/case
   conflicts
 
-### 📝 Formate
+### Formate
 
 - YAML/JSON/TOML Syntax
 
-### 🎨 Formatierung
+### Formatierung
 
 - Prettier für MD/YAML/JSON/JS/TS
 
-### 🔧 Code
+### Code
 
 - ESLint (JS/TS)
 
-### 🔐 Security
+### Security
 
 - Detect Secrets (API Keys, Passwörter, Tokens)
 
-### 📋 Commits
+### Commits
 
 - Commitlint (Conventional Commits)
 
-### 🐹 Go
+### Go
 
 - gofmt, goimports
 
-### 🐳 Docker
+### Docker
 
 - Docker Compose Validation
 
-### 🧹 Cleanup & Docs
+### Cleanup & Docs
 
 - Temporäre Dateien (`.tmp`, `*~`, `*.bak`, `.DS_Store`)
 - Status Snippets aktuell

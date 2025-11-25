@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 📊 ERNI-KI Project Budget Analysis
+# ERNI-KI Project Budget Analysis
 
 **Analysis Date:** November 24, 2025 **Project Version:** Production Ready v12.1
 **Technology Stack:** 32 microservices, GPU acceleration, full observability
@@ -25,7 +25,7 @@ last_updated: '2025-11-24'
 
 ### Key System Components:
 
-#### 🤖 Application Layer (AI & Core)
+#### Application Layer (AI & Core)
 
 - OpenWebUI (GPU) — Web interface with CUDA runtime
 - Ollama — LLM inference engine (RTX 5000, 16GB VRAM)
@@ -33,25 +33,25 @@ last_updated: '2025-11-24'
 - SearXNG — Search engine for RAG
 - MCP Server — 7 active tools
 
-#### 🔧 Processing Layer
+#### Processing Layer
 
 - Docling — OCR and document processing (GPU)
 - Apache Tika — Text extraction
 - EdgeTTS — Speech synthesis
 
-#### 💾 Data Layer
+#### Data Layer
 
 - PostgreSQL 17 + pgvector — Main database
 - Redis 7 — Cache and queues
 - Backrest — Backup system
 
-#### 🚪 Gateway & Security
+#### Gateway & Security
 
 - Nginx 1.29.3 — Reverse proxy, WAF, SSL/TLS
 - Auth (Go 1.24) — JWT authentication service
 - Cloudflared — Cloudflare Tunnel for external access
 
-#### 📊 Observability Stack
+#### Observability Stack
 
 - Prometheus v3.0.0 — Metrics collection (27 alert rules)
 - Grafana v11.3.0 — Visualization (18 dashboards)
@@ -61,7 +61,7 @@ last_updated: '2025-11-24'
 - 8 metric exporters (node, postgres, redis, nvidia, cadvisor, blackbox, ollama,
   nginx)
 
-#### 🛠️ Infrastructure
+#### Infrastructure
 
 - Watchtower — Automatic container updates
 - Uptime Kuma — Service availability monitoring
@@ -167,12 +167,12 @@ last_updated: '2025-11-24'
 
 | Component                | Role                       | Time      | Complexity |
 | ------------------------ | -------------------------- | --------- | ---------- |
-| Ollama integration       | ML Engineer                | 1.5 weeks | ⭐⭐⭐     |
-| OpenWebUI setup & config | Full-stack Developer       | 2 weeks   | ⭐⭐⭐⭐   |
-| LiteLLM gateway          | Backend Developer (Python) | 2 weeks   | ⭐⭐⭐⭐   |
-| MCP Server (7 tools)     | Backend Developer (Python) | 1.5 weeks | ⭐⭐⭐⭐   |
-| Docling OCR pipeline     | ML Engineer                | 1 week    | ⭐⭐⭐     |
-| SearXNG integration      | Backend Developer          | 1 week    | ⭐⭐       |
+| Ollama integration       | ML Engineer                | 1.5 weeks |            |
+| OpenWebUI setup & config | Full-stack Developer       | 2 weeks   |            |
+| LiteLLM gateway          | Backend Developer (Python) | 2 weeks   |            |
+| MCP Server (7 tools)     | Backend Developer (Python) | 1.5 weeks |            |
+| Docling OCR pipeline     | ML Engineer                | 1 week    |            |
+| SearXNG integration      | Backend Developer          | 1 week    |            |
 
 **Team:** 1 ML Engineer, 1 Full-stack Developer, 2 Backend Developers (Python)
 **Total:** 4-6 weeks parallel work
@@ -181,10 +181,10 @@ last_updated: '2025-11-24'
 
 | Component                  | Role              | Time      | Complexity |
 | -------------------------- | ----------------- | --------- | ---------- |
-| PostgreSQL + pgvector      | Database Engineer | 1.5 weeks | ⭐⭐⭐     |
-| Redis setup & optimization | Database Engineer | 1 week    | ⭐⭐       |
-| Backrest backup system     | DevOps Engineer   | 1 week    | ⭐⭐       |
-| Database migrations        | Backend Developer | 0.5 weeks | ⭐⭐       |
+| PostgreSQL + pgvector      | Database Engineer | 1.5 weeks |            |
+| Redis setup & optimization | Database Engineer | 1 week    |            |
+| Backrest backup system     | DevOps Engineer   | 1 week    |            |
+| Database migrations        | Backend Developer | 0.5 weeks |            |
 
 **Team:** 1 Database Engineer, 1 DevOps Engineer, 1 Backend Developer **Total:**
 3-4 weeks
@@ -193,9 +193,9 @@ last_updated: '2025-11-24'
 
 | Component                | Role              | Time   | Complexity |
 | ------------------------ | ----------------- | ------ | ---------- |
-| Apache Tika integration  | Backend Developer | 1 week | ⭐⭐       |
-| EdgeTTS service          | Backend Developer | 1 week | ⭐⭐       |
-| File processing pipeline | Backend Developer | 1 week | ⭐⭐⭐     |
+| Apache Tika integration  | Backend Developer | 1 week |            |
+| EdgeTTS service          | Backend Developer | 1 week |            |
+| File processing pipeline | Backend Developer | 1 week |            |
 
 **Team:** 1-2 Backend Developers **Total:** 2-3 weeks
 
@@ -203,9 +203,9 @@ last_updated: '2025-11-24'
 
 | Component           | Role                   | Time      | Complexity |
 | ------------------- | ---------------------- | --------- | ---------- |
-| Nginx configuration | DevOps Engineer        | 1.5 weeks | ⭐⭐⭐⭐   |
-| Auth service (Go)   | Backend Developer (Go) | 1.5 weeks | ⭐⭐⭐     |
-| Cloudflared tunnels | DevOps Engineer        | 1 week    | ⭐⭐       |
+| Nginx configuration | DevOps Engineer        | 1.5 weeks |            |
+| Auth service (Go)   | Backend Developer (Go) | 1.5 weeks |            |
+| Cloudflared tunnels | DevOps Engineer        | 1 week    |            |
 
 **Team:** 1 DevOps Engineer, 1 Go Developer **Total:** 2-3 weeks
 
@@ -215,14 +215,14 @@ last_updated: '2025-11-24'
 
 | Component                | Role            | Time      | Complexity |
 | ------------------------ | --------------- | --------- | ---------- |
-| Prometheus setup         | DevOps Engineer | 1 week    | ⭐⭐⭐     |
-| 27 Alert rules           | DevOps + SRE    | 1.5 weeks | ⭐⭐⭐⭐   |
-| 18 Grafana Dashboards    | DevOps Engineer | 2 weeks   | ⭐⭐⭐⭐⭐ |
-| Loki log aggregation     | DevOps Engineer | 1 week    | ⭐⭐⭐     |
-| Fluent Bit configuration | DevOps Engineer | 0.5 weeks | ⭐⭐       |
-| Alertmanager setup       | SRE Engineer    | 1 week    | ⭐⭐⭐     |
-| 8 Exporters deployment   | DevOps Engineer | 1 week    | ⭐⭐⭐     |
-| Uptime Kuma              | DevOps Engineer | 0.5 weeks | ⭐⭐       |
+| Prometheus setup         | DevOps Engineer | 1 week    |            |
+| 27 Alert rules           | DevOps + SRE    | 1.5 weeks |            |
+| 18 Grafana Dashboards    | DevOps Engineer | 2 weeks   |            |
+| Loki log aggregation     | DevOps Engineer | 1 week    |            |
+| Fluent Bit configuration | DevOps Engineer | 0.5 weeks |            |
+| Alertmanager setup       | SRE Engineer    | 1 week    |            |
+| 8 Exporters deployment   | DevOps Engineer | 1 week    |            |
+| Uptime Kuma              | DevOps Engineer | 0.5 weeks |            |
 
 **Team:** 1 Senior DevOps Engineer, 1 SRE Engineer **Total:** 4-5 weeks
 
@@ -577,27 +577,30 @@ functionality, enterprise security, comprehensive documentation, 32 services
 ### For starting the project from scratch:
 
 1. **Start with MVP (6 months, 570K CHF)**
-   - Prove concept
-   - Validate requirements
-   - Fast feedback loop
+
+- Prove concept
+- Validate requirements
+- Fast feedback loop
 
 2. **Iterate to Production (additional 4 months, +800K CHF)**
-   - Scale based on real feedback
-   - Add enterprise features incrementally
-   - Minimize risks
+
+- Scale based on real feedback
+- Add enterprise features incrementally
+- Minimize risks
 
 3. **Hybrid approach**
-   - Use managed services where possible (DB, monitoring)
-   - Customize only critical components
-   - Cloud-first for dev/staging, on-premise for production
+
+- Use managed services where possible (DB, monitoring)
+- Customize only critical components
+- Cloud-first for dev/staging, on-premise for production
 
 ### Critical success factors:
 
-✅ **Strong architectural expertise** — Solution Architect is critical ✅
-**DevOps automation** — CI/CD from day 1 ✅ **Security by design** — not an
-afterthought ✅ **Comprehensive documentation** — knowledge must be shared ✅
-**Agile methodology** — iterative delivery, not waterfall ✅ **Stakeholder
-buy-in** — executive support and clear ROI
+**Strong architectural expertise** — Solution Architect is critical **DevOps
+automation** — CI/CD from day 1 **Security by design** — not an afterthought
+**Comprehensive documentation** — knowledge must be shared **Agile methodology**
+— iterative delivery, not waterfall **Stakeholder buy-in** — executive support
+and clear ROI
 
 ---
 

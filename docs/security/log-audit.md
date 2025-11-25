@@ -150,7 +150,7 @@ last_updated: '2025-11-24'
   окружении (`.config-backup/monitoring/cron.log` фиксирует
   `python: command not found`). В итоге чек контейнеров всегда `FAIL`, cron лог
   переполнен.
-- Там же `⚠️ Nginx proxy` (ответ не содержит `ok`) и
+- Там же ` Nginx proxy` (ответ не содержит `ok`) и
   `Логи — 17 210 критических записей` (простая grep по `compose logs` реагирует
   на текст Alertmanager, а не реальные ошибки).
 - `./.config-backup/logging-monitor.sh` и `./.config-backup/logging-alerts.sh`
@@ -344,39 +344,39 @@ last_updated: '2025-11-24'
   `swiss-ai/apertus-70b-instruct`.
 - Были прогнаны smoke‑тесты (13.11.2025 08:31 UTC):
 
-  ```bash
-  # /v1/models вновь возвращает 3 модели
-  curl -s -H 'Authorization: Bearer sk-7b7…38bb' http://localhost:4000/models
+```bash
+# /v1/models вновь возвращает 3 модели
+curl -s -H 'Authorization: Bearer sk-7b7…38bb' http://localhost:4000/models
 
-  # обычный completion
-  curl -s -H 'Authorization: Bearer sk-7b7…38bb' \
-    -H 'Content-Type: application/json' \
-    -d '{"model":"publicai-apertus-70b","messages":[{"role":"user","content":"привет"}]}' \
-    http://localhost:4000/v1/chat/completions
+# обычный completion
+curl -s -H 'Authorization: Bearer sk-7b7…38bb' \
+-H 'Content-Type: application/json' \
+-d '{"model":"publicai-apertus-70b","messages":[{"role":"user","content":"привет"}]}' \
+http://localhost:4000/v1/chat/completions
 
-  # streaming completion
-  curl -sN -H 'Authorization: Bearer sk-7b7…38bb' \
-    -H 'Content-Type: application/json' \
-    -d '{"model":"publicai-apertus-70b","stream":true,"messages":[{"role":"user","content":"привет"}]}' \
-    http://localhost:4000/v1/chat/completions | head
+# streaming completion
+curl -sN -H 'Authorization: Bearer sk-7b7…38bb' \
+-H 'Content-Type: application/json' \
+-d '{"model":"publicai-apertus-70b","stream":true,"messages":[{"role":"user","content":"привет"}]}' \
+http://localhost:4000/v1/chat/completions | head
 
-  # OpenWebUI → LiteLLM
-  docker compose exec openwebui curl -s -H 'Authorization: Bearer sk-7b7…38bb' \
-    -H 'Content-Type: application/json' \
-    -d '{"model":"publicai-apertus-70b","messages":[{"role":"user","content":"ping"}]}' \
-    http://litellm:4000/v1/chat/completions
-  ```
+# OpenWebUI → LiteLLM
+docker compose exec openwebui curl -s -H 'Authorization: Bearer sk-7b7…38bb' \
+-H 'Content-Type: application/json' \
+-d '{"model":"publicai-apertus-70b","messages":[{"role":"user","content":"ping"}]}' \
+http://litellm:4000/v1/chat/completions
+```
 
-  Все запросы завершились HTTP 200 и валидным JSON/SSE ответом («Привет! Как я
-  могу помочь вам сегодня?»), что подтверждает восстановление цепочки LiteLLM ↔
-  PublicAI ↔ OpenWebUI.
+Все запросы завершились HTTP 200 и валидным JSON/SSE ответом («Привет! Как я
+могу помочь вам сегодня?»), что подтверждает восстановление цепочки LiteLLM ↔
+PublicAI ↔ OpenWebUI.
 
 - Ключ хранится в Docker Secret `publicai_api_key` (см.
   `secrets/publicai_api_key.txt`
-  - README). Entry-point `scripts/entrypoints/litellm.sh` экспортирует его в
-    `PUBLICAI_API_KEY`, а сама модель в БД ссылается на
-    `os.environ/PUBLICAI_API_KEY`, поэтому ротация теперь сводится к обновлению
-    файла секрета без SQL.
+- README). Entry-point `scripts/entrypoints/litellm.sh` экспортирует его в
+  `PUBLICAI_API_KEY`, а сама модель в БД ссылается на
+  `os.environ/PUBLICAI_API_KEY`, поэтому ротация теперь сводится к обновлению
+  файла секрета без SQL.
 - Кастомный провайдер публикует Prometheus-метрики (`litellm_publicai_*`) на
   `litellm:9109`, Prometheus job `litellm-publicai` собирает их, а новые алерты
   `LiteLLMPublicAIHighErrorRate` и `LiteLLMPublicAIRepeated404` предупреждают о

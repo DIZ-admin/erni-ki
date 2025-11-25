@@ -11,15 +11,15 @@ _Aktualisiert: 2025-11-17_
 
 ## 1. Branch-Struktur
 
-- 🔁 **Haupt-Branch:** `main`
-- 🛠️ **Arbeits-Branch:** `develop` (früher `dev`). Remote-Branch umbenennen und
+- **Haupt-Branch:** `main`
+- **Arbeits-Branch:** `develop` (früher `dev`). Remote-Branch umbenennen und
   Branch Protection via GitHub UI/CLI neu konfigurieren:
 
-  ```bash
-  git push origin develop:develop
-  git push origin :dev
-  gh api repos/:owner/:repo/branches/develop/protection -X PUT --input protect-develop.json
-  ```
+```bash
+git push origin develop:develop
+git push origin :dev
+gh api repos/:owner/:repo/branches/develop/protection -X PUT --input protect-develop.json
+```
 
 ## 2. Branch Protection (empfohlene Einstellungen)
 

@@ -5,19 +5,19 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🔍 Prometheus Queries Reference - ERNI-KI
+# Prometheus Queries Reference - ERNI-KI
 
 > **Version:** 1.0 **Datum:** 2025-11-04 **Status:** Production Ready
 > **Optimierung:** 100% Abdeckung
 
-## 🎯 Übersicht
+## Übersicht
 
 Dieses Dokument enthält die **korrigierten und optimierten Prometheus-Abfragen**
 für das ERNI-KI Monitoring-System. Alle Abfragen wurden getestet und enthalten
 Fallback-Werte (`vector(...)`), um sicherzustellen, dass in Grafana immer Daten
 angezeigt werden, auch wenn Exporter ausfallen oder Metriken fehlen.
 
-### 📊 Optimierungs-Statistiken
+### Optimierungs-Statistiken
 
 - **Korrigierte Abfragen:** 8 kritische Abfragen
 - **Hinzugefügte Fallbacks:** 100%
@@ -26,7 +26,7 @@ angezeigt werden, auch wenn Exporter ausfallen oder Metriken fehlen.
 
 ---
 
-## 🛠️ Korrigierte Abfragen (Production Ready)
+## Korrigierte Abfragen (Production Ready)
 
 ### 1. RAG Pipeline Success Rate
 
@@ -102,7 +102,7 @@ Keyspace Hits/Misses oder Fallback auf 95%.
 
 ---
 
-## 📚 Best Practices für Abfragen
+## Best Practices für Abfragen
 
 1. **Immer Fallbacks verwenden:** `or vector(DEFAULT_VALUE)` verhindert "No
    data" Panels.
@@ -115,7 +115,7 @@ Keyspace Hits/Misses oder Fallback auf 95%.
 
 ---
 
-## 🔗 Nützliche Links
+## Nützliche Links
 
 - [Prometheus Querying Basics](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 - [Grafana Dashboard Guide](grafana-dashboards-guide.md)

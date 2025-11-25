@@ -5,12 +5,12 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🔧 MCP-Integrationsleitfaden für ERNI-KI
+# MCP-Integrationsleitfaden für ERNI-KI
 
-> **Dokumentversion:** 9.0 **Stand:** 2025-11-14 **Status:** ✅ Healthy (Port
-> 8000, LiteLLM/Context7-Integration geprüft) [TOC]
+> **Dokumentversion:** 9.0 **Stand:** 2025-11-14 **Status:** Healthy (Port 8000,
+> LiteLLM/Context7-Integration geprüft) [TOC]
 
-## 📋 MCP-Überblick
+## MCP-Überblick
 
 Der MCP-Server in ERNI-KI stellt eine standardisierte Schnittstelle bereit, um
 AI-Werkzeuge über das Model Context Protocol mit OpenWebUI v0.6.36 zu verbinden.
@@ -21,26 +21,26 @@ Aktiv sind derzeit vier MCP-Werkzeuge:
 - **Filesystem Server** – Dateioperationen im freigegebenen Workspace
 - **Memory Server** – Steuerung des Knowledge Graph / Memories
 
-**Status:** ✅ Healthy, Laufzeit 2h, Port 8000.
+**Status:** Healthy, Laufzeit 2h, Port 8000.
 
-## 🏗️ Architektur
+## Architektur
 
 ```mermaid
 graph TB
-    A[OpenWebUI] --> B[Nginx Proxy]
-    B --> C[MCPO Server :8000]
-    C --> D[Time MCP Server]
-    C --> E[PostgreSQL MCP Server]
-    C --> F[Filesystem MCP Server]
-    C --> G[Memory MCP Server]
-    C --> H[SearXNG MCP Server]
+ A[OpenWebUI] --> B[Nginx Proxy]
+ B --> C[MCPO Server :8000]
+ C --> D[Time MCP Server]
+ C --> E[PostgreSQL MCP Server]
+ C --> F[Filesystem MCP Server]
+ C --> G[Memory MCP Server]
+ C --> H[SearXNG MCP Server]
 
-    E --> I[PostgreSQL Database]
-    H --> J[SearXNG Service]
-    F --> K[File System]
+ E --> I[PostgreSQL Database]
+ H --> J[SearXNG Service]
+ F --> K[File System]
 ```
 
-### 🤝 Verbindung zu LiteLLM / Context7
+### Verbindung zu LiteLLM / Context7
 
 - Der LiteLLM-Gateway (Port 4000) ruft MCP-Tools über nginx (`/api/mcp/*`) auf,
   reichert sie mit Thinking Tokens an und leitet sie an Ollama weiter.
@@ -53,9 +53,9 @@ graph TB
   sicherstellen, dass Context-Antworten `sources[]` und `reasoning_trace`
   enthalten.
 
-## 🚀 Aktueller Integrationsstatus
+## Aktueller Integrationsstatus
 
-### ✅ Läuft stabil
+### Läuft stabil
 
 1. **MCPO Server** – Port 8000 erreichbar
 2. **Swagger UI** – <http://localhost:8000/docs>
@@ -64,14 +64,14 @@ graph TB
 5. **Nginx Proxy** – routet korrekt zu den MCP-Servern
 6. **OpenWebUI Konfiguration** – `TOOL_SERVER_CONNECTIONS` gesetzt
 
-### 📊 Performance
+### Performance
 
 - **API-Latenz:** <50 ms bei Standardoperationen
 - **Time Server:** ~11 ms für `get_current_time`
 - **PostgreSQL Server:** ~22 ms für einfache SELECTs
 - **Verfügbarkeit:** 99,9 % (alle Health-Checks grün)
 
-## 🔧 Verfügbare MCP-Tools
+## Verfügbare MCP-Tools
 
 ### 1. Time Server (`/time`)
 
@@ -84,8 +84,8 @@ graph TB
 
 ```bash
 curl -X POST "http://localhost:8000/time/get_current_time" \
-  -H "Content-Type: application/json" \
-  -d '{"timezone": "Europe/Berlin"}'
+ -H "Content-Type: application/json" \
+ -d '{"timezone": "Europe/Berlin"}'
 ```
 
 **Antwort**
@@ -104,8 +104,8 @@ curl -X POST "http://localhost:8000/time/get_current_time" \
 
 ```bash
 curl -X POST "http://localhost:8000/postgres/query" \
-  -H "Content-Type: application/json" \
-  -d '{"sql": "SELECT version();"}'
+ -H "Content-Type: application/json" \
+ -d '{"sql": "SELECT version();"}'
 ```
 
 ### 3. Memory Server (`/memory`)
@@ -122,7 +122,7 @@ curl -X POST "http://localhost:8000/postgres/query" \
 
 - Weiterleitung an SearXNG-Suche (nur intern freigeschaltet)
 
-## ⚙️ Konfiguration
+## Konfiguration
 
 ### `.env` (MCPO Server)
 
@@ -150,14 +150,14 @@ LITELLM_MCP_SERVER_URL=http://mcp-server:8000
 LITELLM_MCP_API_KEY=${MCP_API_KEY}
 ```
 
-## 🧪 Validierung
+## Validierung
 
 1. `docker compose logs mcp-server -f`
 2. `curl http://localhost:8000/health`
 3. `curl http://localhost:8080/api/mcp/time/docs`
 4. OpenWebUI → Tools → `time.get_current_time`
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 | Problem                     | Ursache                   | Lösung                                        |
 | --------------------------- | ------------------------- | --------------------------------------------- |
@@ -172,7 +172,7 @@ LITELLM_MCP_API_KEY=${MCP_API_KEY}
 - `scripts/diagnostics/quick-mcpo-check.sh` – End-to-End-Test (siehe
   `scripts/core/diagnostics`)
 
-## 🔐 Sicherheit
+## Sicherheit
 
 - Secrets ausschließlich über `.env` oder CI-Secrets injizieren
 - Keine Tokens im Repo ablegen; Beispielvariablen in `.example`-Dateien
@@ -180,30 +180,30 @@ LITELLM_MCP_API_KEY=${MCP_API_KEY}
 - Watchtower in Monitor-Modus belassen, damit MCP-Container nicht unkontrolliert
   aktualisiert wird
 
-## 📚 Verwandte Dokumente
+## Verwandte Dokumente
 
 - `docs/reference/github-environments-setup.md`
 - `docs/operations/monitoring/monitoring-guide.md`
 - `docs/operations/monitoring/rag-monitoring.md`
 - `scripts/core/diagnostics/quick-mcpo-check.sh`
 
-## 🧾 Tests & Automatisierung
+## Tests & Automatisierung
 
 ### Manuelle Tests der Endpunkte
 
 ```bash
 # Time Server testen
 curl -X POST "http://localhost:8000/time/get_current_time" \
-  -H "Content-Type: application/json" \
-  -d '{"timezone": "Europe/Berlin"}'
+ -H "Content-Type: application/json" \
+ -d '{"timezone": "Europe/Berlin"}'
 
 # PostgreSQL Server testen
 curl -X POST "http://localhost:8000/postgres/query" \
-  -H "Content-Type: application/json" \
-  -d '{"sql": "SELECT version();"}'
+ -H "Content-Type: application/json" \
+ -d '{"sql": "SELECT version();"}'
 
 # Zugriff über Nginx-Proxy verifizieren
-curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo "✅ Proxy OK"
+curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo " Proxy OK"
 ```
 
 ## Automatische Diagnostik
@@ -215,7 +215,7 @@ curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo "�
 Der Skript führt Health-Checks, Latenzmessungen und Proxy-Validation im Paket
 aus.
 
-## 💬 Nutzung in OpenWebUI
+## Nutzung in OpenWebUI
 
 ### 1. Tool-Aufrufe
 
@@ -245,32 +245,32 @@ User: Liste alle *.conf Dateien in conf/
 AI: Nutzt Filesystem-Server für eine rekursive Suche
 ```
 
-## 🧩 Detaillierte Konfiguration
+## Detaillierte Konfiguration
 
 `conf/mcposerver/config.json`
 
 ```json
 {
-  "mcpServers": {
-    "time": {
-      "command": "uvx",
-      "args": ["mcp-server-time", "--local-timezone=Europe/Berlin"]
-    },
-      "postgres": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "@modelcontextprotocol/server-postgres",
-          "postgresql://postgres:postgres@db/openwebui" # pragma: allowlist secret
-        ]
-      }
-    }
+ "mcpServers": {
+ "time": {
+ "command": "uvx",
+ "args": ["mcp-server-time", "--local-timezone=Europe/Berlin"]
+ },
+ "postgres": {
+ "command": "npx",
+ "args": [
+ "-y",
+ "@modelcontextprotocol/server-postgres",
+ "postgresql://postgres:postgres@db/openwebui" # pragma: allowlist secret
+ ]
+ }
+ }
 }
 ```
 
 `env/mcposerver.env` enthält Host/Port/DSN und Tokens für den Dienst.
 
-## ♻️ Wiederherstellung
+## Wiederherstellung
 
 ```bash
 # Komponenten neu starten
@@ -283,7 +283,7 @@ docker compose logs --tail=50 mcposerver
 ./scripts/mcp/test-mcp-integration.sh
 ```
 
-## 📈 Monitoring
+## Monitoring
 
 - **Antwortzeit**: <2 s für alle Endpunkte
 - **Verfügbarkeit**: 99,9 %
@@ -292,7 +292,7 @@ docker compose logs --tail=50 mcposerver
 
 Alle Requests enthalten Logging zu Statuscode, Dauer, Client-IP und Endpoint.
 
-## 🔮 Roadmap
+## Roadmap
 
 1. Weitere MCP-Server zur Tool-Erweiterung
 2. Externe APIs via MCP anbinden

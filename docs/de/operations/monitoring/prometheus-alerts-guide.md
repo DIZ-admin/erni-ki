@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# 🚨 Prometheus Alerts Guide - ERNI-KI
+# Prometheus Alerts Guide - ERNI-KI
 
 [TOC]
 
@@ -14,7 +14,7 @@ Ready
 
 ---
 
-## 📋 Übersicht
+## Übersicht
 
 Dieser Leitfaden bietet eine umfassende Dokumentation für alle 27 aktiven
 Prometheus-Alert-Regeln im ERNI-KI-System.
@@ -29,15 +29,15 @@ Prometheus-Alert-Regeln im ERNI-KI-System.
 
 ### Schweregrade
 
-- 🔴 **Critical** - Sofortiges Handeln erforderlich (Systemausfall, Risiko von
+- **Critical** - Sofortiges Handeln erforderlich (Systemausfall, Risiko von
   Datenverlust)
-- 🟡 **Warning** - Aufmerksamkeit erforderlich (Leistungsabfall, Annäherung an
-  Grenzwerte)
-- 🔵 **Info** - Informativ (nicht-kritische Ereignisse)
+- [WARNING] **Warning** - Aufmerksamkeit erforderlich (Leistungsabfall,
+  Annäherung an Grenzwerte)
+- **Info** - Informativ (nicht-kritische Ereignisse)
 
 ---
 
-## 🔴 Kritische Alerts (Critical)
+## Kritische Alerts (Critical)
 
 ### 1. DiskSpaceCritical
 
@@ -310,7 +310,7 @@ docker compose restart nginx
 
 ---
 
-## 🟡 Warnungen (Warning)
+## [WARNING] Warnungen (Warning)
 
 ### 8. DiskSpaceWarning
 
@@ -321,7 +321,7 @@ Festplattennutzung >75% **Dauer:** 10 Minuten
 
 ```promql
 (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"} /
-      node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100 > 80
+ node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100 > 80
 ```
 
 **Hinweise:** EFI-Partition (`/boot/efi`, `vfat`) ist ausgeschlossen, um
@@ -375,13 +375,13 @@ pro Container innerhalb von 15 Minuten **Dauer:** 1 Minute (Debounce)
 
 ```promql
 sum by (name) (
-  changes(
-    container_start_time_seconds{
-      job="cadvisor",
-      container_label_com_docker_compose_project="erni-ki",
-      name!~"erni-ki-(cadvisor|node-exporter|alertmanager).*"
-    }[15m]
-  )
+ changes(
+ container_start_time_seconds{
+ job="cadvisor",
+ container_label_com_docker_compose_project="erni-ki",
+ name!~"erni-ki-(cadvisor|node-exporter|alertmanager).*"
+ }[15m]
+ )
 ) >= 2
 ```
 
@@ -543,7 +543,7 @@ curl -I http://localhost:8080
 
 ---
 
-## 📊 Performance Alerts
+## Performance Alerts
 
 ### 17. OpenWebUISlowResponse
 
@@ -605,7 +605,7 @@ docker system prune -a --volumes -f
 
 ---
 
-## 🔧 Alert Management
+## Alert Management
 
 ### Alerts anzeigen
 
@@ -639,19 +639,19 @@ Siehe [Monitoring Guide](monitoring-guide.md) für Testverfahren.
 ```bash
 # Spezifischen Alert für 1 Stunde stummschalten
 curl -X POST http://localhost:9093/api/v1/silences \
-  -H "Content-Type: application/json" \
-  -d '{
-    "matchers": [{"name":"alertname","value":"DiskSpaceWarning","isRegex":false}],
-    "startsAt":"'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
-    "endsAt":"'$(date -u -d '+1 hour' +%Y-%m-%dT%H:%M:%S.000Z)'",
-    "createdBy":"admin",
-    "comment":"Wartungsfenster"
-  }'
+ -H "Content-Type: application/json" \
+ -d '{
+ "matchers": [{"name":"alertname","value":"DiskSpaceWarning","isRegex":false}],
+ "startsAt":"'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'",
+ "endsAt":"'$(date -u -d '+1 hour' +%Y-%m-%dT%H:%M:%S.000Z)'",
+ "createdBy":"admin",
+ "comment":"Wartungsfenster"
+ }'
 ```
 
 ---
 
-## 📚 Verwandte Dokumentation
+## Verwandte Dokumentation
 
 - [Monitoring Guide](monitoring-guide.md) - Vollständige
   Monitoring-Dokumentation

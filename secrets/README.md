@@ -1,30 +1,30 @@
-# 🔐 Docker Secrets для ERNI-KI
+# Docker Secrets для ERNI-KI
 
 Эта директория содержит чувствительные данные (пароли, API ключи) для Docker
 Compose secrets.
 
-## 📋 Структура
+## Структура
 
 ```
 secrets/
-├── postgres_password.txt           # Пароль PostgreSQL
-├── litellm_db_password.txt        # Пароль БД для LiteLLM
-├── litellm_api_key.txt            # API ключ LiteLLM
-├── publicai_api_key.txt           # PublicAI ключ для внешних моделей LiteLLM
-├── context7_api_key.txt           # API ключ Context7
-├── watchtower_api_token.txt       # Токен доступа к HTTP API Watchtower
-├── grafana_admin_password.txt     # Пароль администратора Grafana
-├── postgres_exporter_dsn.txt      # DSN для postgres-exporter
-├── redis_exporter_url.txt         # JSON-карта host→пароль для redis-exporter
-├── openwebui_secret_key.txt       # FastAPI SECRET_KEY для OpenWebUI
-├── litellm_master_key.txt         # MASTER KEY LiteLLM
-├── litellm_salt_key.txt           # SALT KEY LiteLLM
-├── litellm_ui_password.txt        # Пароль UI LiteLLM
-├── *.example                      # Примеры файлов
-└── README.md                      # Этот файл
+ postgres_password.txt # Пароль PostgreSQL
+ litellm_db_password.txt # Пароль БД для LiteLLM
+ litellm_api_key.txt # API ключ LiteLLM
+ publicai_api_key.txt # PublicAI ключ для внешних моделей LiteLLM
+ context7_api_key.txt # API ключ Context7
+ watchtower_api_token.txt # Токен доступа к HTTP API Watchtower
+ grafana_admin_password.txt # Пароль администратора Grafana
+ postgres_exporter_dsn.txt # DSN для postgres-exporter
+ redis_exporter_url.txt # JSON-карта host→пароль для redis-exporter
+ openwebui_secret_key.txt # FastAPI SECRET_KEY для OpenWebUI
+ litellm_master_key.txt # MASTER KEY LiteLLM
+ litellm_salt_key.txt # SALT KEY LiteLLM
+ litellm_ui_password.txt # Пароль UI LiteLLM
+ *.example # Примеры файлов
+ README.md # Этот файл
 ```
 
-## 🚀 Быстрый старт
+## Быстрый старт
 
 ### 1. Создание секретов из примеров
 
@@ -93,14 +93,14 @@ openssl rand -base64 48 | tr -d '=+/ ' | cut -c1-32 > secrets/litellm_ui_passwor
 chmod 600 secrets/*.txt
 ```
 
-## 🔒 Безопасность
+## Безопасность
 
 ### Важно!
 
-- ✅ Файлы `*.txt` **НЕ** должны быть в git (добавлены в `.gitignore`)
-- ✅ Права доступа должны быть `600` (только владелец может читать/писать)
-- ✅ Файлы `*.example` **ДОЛЖНЫ** быть в git (для документации)
-- ⚠️ **НИКОГДА** не коммитьте реальные секреты в git!
+- Файлы `*.txt` **НЕ** должны быть в git (добавлены в `.gitignore`)
+- Права доступа должны быть `600` (только владелец может читать/писать)
+- Файлы `*.example` **ДОЛЖНЫ** быть в git (для документации)
+- **НИКОГДА** не коммитьте реальные секреты в git!
 
 ### Проверка безопасности
 
@@ -118,23 +118,23 @@ git status secrets/
 # Должно показать только *.example файлы
 ```
 
-## 📖 Использование в Docker Compose
+## Использование в Docker Compose
 
 Секреты автоматически монтируются в контейнеры через `compose.yml`:
 
 ```yaml
 secrets:
-  postgres_password:
-    file: ./secrets/postgres_password.txt
-  litellm_api_key:
-    file: ./secrets/litellm_api_key.txt
+ postgres_password:
+ file: ./secrets/postgres_password.txt
+ litellm_api_key:
+ file: ./secrets/litellm_api_key.txt
 
 services:
-  db:
-    secrets:
-      - postgres_password
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+ db:
+ secrets:
+ - postgres_password
+ environment:
+ POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
 ```
 
 Внутри контейнера секреты доступны в `/run/secrets/`:
@@ -144,7 +144,7 @@ services:
 cat /run/secrets/postgres_password
 ```
 
-## 🔄 Ротация секретов
+## Ротация секретов
 
 При смене паролей/ключей:
 
@@ -156,7 +156,7 @@ docker compose down
 docker compose up -d
 ```
 
-## 📝 Генерация безопасных паролей
+## Генерация безопасных паролей
 
 ```bash
 # Генерация случайного пароля (32 символа)
@@ -169,7 +169,7 @@ openssl rand -base64 32 | tr -d "=+/" | cut -c1-32
 uuidgen
 ```
 
-## ⚠️ Troubleshooting
+## Troubleshooting
 
 ### Проблема: Сервис не может прочитать секрет
 
@@ -194,7 +194,7 @@ docker compose config | grep -A 5 secrets
 ls -l secrets/*.txt
 ```
 
-## 📚 Дополнительная информация
+## Дополнительная информация
 
 - [Docker Secrets Documentation](https://docs.docker.com/engine/swarm/secrets/)
 - [Best Practices for Secrets Management](https://docs.docker.com/compose/use-secrets/)

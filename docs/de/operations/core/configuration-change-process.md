@@ -5,7 +5,7 @@ doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# ⚙️ Konfigurationsänderungsprozess ERNI-KI
+# Konfigurationsänderungsprozess ERNI-KI
 
 [TOC]
 
@@ -14,9 +14,9 @@ last_updated: '2025-11-24'
 
 ---
 
-## 📋 ALLGEMEINE PRINZIPIEN
+## ALLGEMEINE PRINZIPIEN
 
-### ✅ **Obligatorische Anforderungen für ALLE Änderungen:**
+### **Obligatorische Anforderungen für ALLE Änderungen:**
 
 1. **Backup VOR Änderung** - immer Sicherungskopie erstellen
 2. **Testen** - Änderungen in sicherer Umgebung prüfen
@@ -24,16 +24,16 @@ last_updated: '2025-11-24'
 4. **Rollback-Plan** - Rücknahmeplan für Problemfälle vorbereiten
 5. **Monitoring** - System nach Änderungen überwachen
 
-### ⚠️ **Änderungsklassifikation:**
+### **Änderungsklassifikation:**
 
-- **🔴 KRITISCH** - betreffen Systemverfügbarkeit (requires Maintenance Window)
-- **🟡 WICHTIG** - betreffen Performance (requires Benachrichtigung)
-- **🟢 MINOR** - keine Auswirkungen auf Benutzer (kann während Arbeitszeit
+- ** KRITISCH** - betreffen Systemverfügbarkeit (requires Maintenance Window)
+- **[WARNING] WICHTIG** - betreffen Performance (requires Benachrichtigung)
+- **[OK] MINOR** - keine Auswirkungen auf Benutzer (kann während Arbeitszeit
   erfolgen)
 
 ---
 
-## 🔄 STANDARDÄNDERUNGSPROZESS
+## STANDARDÄNDERUNGSPROZESS
 
 ### **PHASE 1: PLANUNG**
 
@@ -114,11 +114,11 @@ set -e
 
 BACKUP_DIR="$1"
 if [ -z "$BACKUP_DIR" ]; then
-    echo "Usage: $0 <backup_directory>"
-    exit 1
+ echo "Usage: $0 <backup_directory>"
+ exit 1
 fi
 
-echo "🔄 Starte Rollback aus $BACKUP_DIR"
+echo " Starte Rollback aus $BACKUP_DIR"
 
 # Services stoppen
 docker compose down
@@ -131,7 +131,7 @@ cp "$BACKUP_DIR/compose.yml" ./
 # Services starten
 docker compose up -d
 
-echo "✅ Rollback abgeschlossen"
+echo " Rollback abgeschlossen"
 EOF
 
 chmod +x rollback.sh
@@ -143,7 +143,7 @@ chmod +x rollback.sh
 
 ```bash
 # 1. Benutzer benachrichtigen
-echo "🚨 MAINTENANCE WINDOW: $(date) - Geplante Systemwartung"
+echo " MAINTENANCE WINDOW: $(date) - Geplante Systemwartung"
 
 # 2. Maintenance-Seite erstellen (optional)
 docker run -d --name maintenance -p 80:80 nginx:alpine
@@ -166,7 +166,7 @@ docker stop maintenance && docker rm maintenance
 
 ```bash
 # 1. Über mögliche kurze Unterbrechungen benachrichtigen
-echo "ℹ️ Geplante Konfigurationsänderungen werden durchgeführt"
+echo "ℹ Geplante Konfigurationsänderungen werden durchgeführt"
 
 # 2. Änderungen mit minimaler Ausfallzeit ausführen
 [konkrete Änderungen ausführen]
@@ -194,11 +194,11 @@ docker compose up -d --no-recreate
 docker compose ps
 
 # Haupt-Endpoints prüfen
-curl -f http://localhost/health && echo "✅ OpenWebUI läuft" || echo "❌ OpenWebUI nicht erreichbar"
-curl -f http://localhost:11434/api/tags && echo "✅ Ollama läuft" || echo "❌ Ollama nicht erreichbar"
+curl -f http://localhost/health && echo " OpenWebUI läuft" || echo " OpenWebUI nicht erreichbar"
+curl -f http://localhost:11434/api/tags && echo " Ollama läuft" || echo " Ollama nicht erreichbar"
 
 # Externen Zugriff prüfen
-curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo "✅ Externer Zugriff funktioniert" || echo "❌ Externer Zugriff nicht verfügbar"
+curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo " Externer Zugriff funktioniert" || echo " Externer Zugriff nicht verfügbar"
 
 # Logs auf Fehler prüfen
 docker compose logs --since 5m | grep -i error | tail -10
@@ -210,13 +210,13 @@ docker compose logs --since 5m | grep -i error | tail -10
 # Funktionstests
 # 1. Authentifizierungstest
 curl -X POST http://localhost/api/v1/auths/signin \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"test"}'  # pragma: allowlist secret
+ -H "Content-Type: application/json" \
+ -d '{"email":"test@example.com","password":"test"}' # pragma: allowlist secret
 
 # 2. AI-Funktionstest
 curl -X POST http://localhost:11434/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{"model":"llama2","prompt":"Hello","stream":false}'
+ -H "Content-Type: application/json" \
+ -d '{"model":"llama2","prompt":"Hello","stream":false}'
 
 # 3. Suchtest (SearXNG)
 curl -f "http://localhost:8080/search?q=test&format=json"
