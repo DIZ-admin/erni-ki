@@ -32,9 +32,11 @@ function runScript(cwd: string, args: string[] = []) {
 }
 
 describe('language-check.cjs', () => {
+  const cyrString = String.fromCharCode(0x0442, 0x0435, 0x0441, 0x0442); // cyrillic sample
+
   it('fails when Cyrillic appears in staged code', () => {
     const cwd = initRepo();
-    writeFile(cwd, 'src/app.js', 'console.log("\\u0442\\u0435\\u0441\\u0442");\n');
+    writeFile(cwd, 'src/app.js', `console.log("${cyrString}");\n`);
     stageAll(cwd);
 
     const result = runScript(cwd);
@@ -45,7 +47,7 @@ describe('language-check.cjs', () => {
 
   it('respects baseline entries from config', () => {
     const cwd = initRepo();
-    writeFile(cwd, 'src/app.js', 'console.log("\\u0442\\u0435\\u0441\\u0442");\n');
+    writeFile(cwd, 'src/app.js', `console.log("${cyrString}");\n`);
     writeFile(
       cwd,
       'language-policy.config.json',
