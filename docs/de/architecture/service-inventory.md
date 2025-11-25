@@ -10,7 +10,7 @@ title: 'Service-Inventar ERNI-KI'
 
 Aggregierte Infos aus `compose.yml` und `env/*.env`: Zweck, Ports,
 Abhängigkeiten, Security-Anforderungen. Für Image-Updates siehe
-[checklist](../operations/image-upgrade-checklist.md).
+[checklist](../operations/maintenance/image-upgrade-checklist.md).
 
 ## Basis-Infrastruktur und Storage
 

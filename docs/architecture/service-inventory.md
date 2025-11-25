@@ -11,7 +11,7 @@ title: 'Справочник сервисов ERNI-KI'
 Документ агрегирует сведения из `compose.yml` и `env/*.env` о каждом сервисе,
 чтобы инженеры могли быстро понять назначение контейнеров, точки входа,
 зависимости и требования к безопасности. Для обновлений образов используйте
-[checklist](../operations/image-upgrade-checklist.md).
+[checklist](../operations/maintenance/image-upgrade-checklist.md).
 
 ## Базовая инфраструктура и хранение
 

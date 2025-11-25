@@ -203,6 +203,7 @@ test-*.md
 playwright-artifacts/
 playwright-report/
 tests/fixtures/
+docs/**/sitemap.xml
 
 # ===================================================================
 # ПРОЧЕЕ
