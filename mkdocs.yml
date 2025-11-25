@@ -79,6 +79,7 @@ plugins:
       post_dir: news
       categories: true
       blog_toc: true
+      archive: false
   - include-markdown
   - i18n:
       docs_structure: folder
@@ -409,6 +410,7 @@ nav:
   - "News (Archive)":
       - Overview: archive/news-overview.md
       - Feed: news/index.md
+      - "News Archive 2025": archive/news/2025.md
   - "HowTo (Archive)":
       - "Create JIRA Description": archive/howto/create-jira-description-with-ai.md
       - "Summarize Meeting (Archive)": archive/howto/summarize-meeting-notes.md
@@ -427,6 +429,7 @@ nav:
           - "GitHub Governance": operations/core/github-governance.md
           - "Configuration Changes": operations/core/configuration-change-process.md
       - Monitoring:
+          - "Overview": operations/monitoring/README.md
           - "Monitoring Guide": operations/monitoring/monitoring-guide.md
           - "Grafana Dashboards": operations/monitoring/grafana-dashboards-guide.md
           - "Prometheus Alerts Guide": operations/monitoring/prometheus-alerts-guide.md
@@ -484,6 +487,8 @@ nav:
       - "No Emoji Policy": reference/NO-EMOJI-POLICY.md
       - "Emoji Style Guide": reference/emoji-style-guide.md
       - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
+      - "Documentation Maintenance": reference/documentation-maintenance-strategy.md
+      - "Non-root Containers Plan": reference/non-root-containers-plan.md
       - "Status Snippet": reference/status-snippet.md
       - "Language Policy": reference/language-policy.md
       - VERSION: VERSION.md
@@ -504,6 +509,11 @@ nav:
           - "comprehensive-audit (2025-10-14)": archive/audits/comprehensive-audit-2025-10-14.md
           - "comprehensive-project-audit (2025-10-17)": archive/audits/comprehensive-project-audit-2025-10-17.md
           - "comprehensive-project-audit part 2 (2025-10-17)": archive/audits/comprehensive-project-audit-2025-10-17-part2.md
+          - "code-audit (2025-11-24)": archive/audits/code-audit-2025-11-24.md
+          - "documentation-refactoring (2025-11-24)": archive/audits/documentation-refactoring-audit-2025-11-24.md
+          - "comprehensive-documentation (2025-11-24)": archive/audits/comprehensive-documentation-audit-2025-11-24.md
+          - "comprehensive-documentation (2025-11-25)": archive/audits/comprehensive-documentation-audit-2025-11-25.md
+          - "configuration-audit-report (2025-11-25)": archive/audits/configuration-audit-report-2025-11-25.md
           - "legacy index": archive/legacy-index.md
           - "legacy academy index": archive/legacy-academy-index.md
           - "CI Health": archive/audits/ci-health.md

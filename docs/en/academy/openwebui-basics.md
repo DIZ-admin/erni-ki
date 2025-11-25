@@ -46,7 +46,7 @@ English-speaking operator can work without switching locales.
 ## Further reading
 
 - [System status](../../system/status.md) – check incidents before escalating.
-- [Prompting 101](../prompting-101.md) – high-level guidance for writing
-  effective prompts.
+- [Prompting 101](prompting-101.md) – high-level guidance for writing effective
+  prompts.
 - [HowTo guides](howto/index.md) – ready-made flows for customer emails, meeting
   summaries, and ticket creation.

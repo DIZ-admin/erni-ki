@@ -15,10 +15,8 @@ last_updated: '2025-11-25'
 
 - Analysiert: 194 Markdown-Dateien
 - Sprachen: RU (100%), DE (74,4%), EN (19,5%)
-- Berichte:
-  [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
-  und
-  [documentation-refactoring-audit-2025-11-24.md](../archive/audits/documentation-refactoring-audit-2025-11-24.md)
+- Berichte: `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
+  und `../archive/audits/documentation-refactoring-audit-2025-11-24.md`
 
 ### 2. Audit des Codes
 
@@ -28,13 +26,11 @@ last_updated: '2025-11-25'
 - 32 Docker-Services
 - 50 Environment-Dateien
 - 29 Konfigurationsverzeichnisse
-- Bericht:
-  [code-audit-2025-11-24.md](../archive/audits/code-audit-2025-11-24.md)
+- Bericht: `../archive/audits/code-audit-2025-11-24.md`
 
 ### 3. Dokumentations-Updates
 
-- Plan:
-  [documentation-update-plan-2025-11-24.md](documentation-update-plan-2025-11-24.md)
+- Plan: `documentation-update-plan-2025-11-24.md`
 - 10 Tasks (3 High, 5 Medium, 2 Low)
 - Aufwand: 19–27 Stunden
 
@@ -107,8 +103,8 @@ kritisch.
 
 ## Erstellt
 
-- [code-audit-2025-11-24.md](../archive/audits/code-audit-2025-11-24.md)
-- [documentation-update-plan-2025-11-24.md](documentation-update-plan-2025-11-24.md)
+- `../archive/audits/code-audit-2025-11-24.md`
+- `documentation-update-plan-2025-11-24.md`
 - Diese Zusammenfassung
 
 ## Nächste Schritte

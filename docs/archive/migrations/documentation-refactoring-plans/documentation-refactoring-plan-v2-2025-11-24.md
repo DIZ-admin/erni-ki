@@ -9,9 +9,9 @@ last_updated: '2025-11-24'
 
 > **Полные аудиты:**
 >
-> - [Первый аудит](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
+> - `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
 
-- [Повторный аудит с фокусом на рефакторинг](../audits/documentation-refactoring-audit-2025-11-24.md)
+- `../audits/documentation-refactoring-audit-2025-11-24.md`
   > [TOC]
 
 ## Ключевые проблемы
@@ -133,28 +133,28 @@ rm de/academy/news/2025-01-release-x.md
 
 ### Для пользователей
 
-- [Academy KI](academy/index.md) - обучение и практика
-- [Начало работы](getting-started/README.md) - установка и настройка
-- [HowTo](academy/howto/index.md) - практические руководства
-- [Новости](news/index.md) - обновления платформы
+- `academy/index.md` - обучение и практика
+- `getting-started/README.md` - установка и настройка
+- `academy/howto/index.md` - практические руководства
+- `news/index.md` - обновления платформы
 
 ### Для администраторов
 
-- [Операции](operations/README.md) - администрирование
-- [Мониторинг](operations/monitoring/README.md) - мониторинг системы
-- [База данных](operations/database/README.md) - PostgreSQL и Redis
-- [Безопасность](security/README.md) - политики безопасности
+- `operations/README.md` - администрирование
+- `operations/monitoring/README.md` - мониторинг системы
+- `operations/database/README.md` - PostgreSQL и Redis
+- `security/README.md` - политики безопасности
 
 ### Для разработчиков
 
-- [Архитектура](architecture/README.md) - архитектура системы
-- [API Reference](reference/api-reference.md) - API документация
-- [Разработка](reference/development.md) - инструкции для разработчиков
+- `architecture/README.md` - архитектура системы
+- `reference/api-reference.md` - API документация
+- `reference/development.md` - инструкции для разработчиков
 
 ### Справка
 
-- [Глоссарий](GLOSSARY.md) - термины и определения
-- [Статус системы](system/status.md) - текущий статус
+- `GLOSSARY.md` - термины и определения
+- `system/status.md` - текущий статус
 ```
 
 **docs/de/index.md и docs/en/index.md:**
@@ -186,18 +186,18 @@ rm de/academy/news/2025-01-release-x.md
 
 ### В этом разделе
 
-- [Document 1](relative/path.md)
-- [Document 2](relative/path.md)
+- `relative/path.md`
+- `relative/path.md`
 
 ### Смежные темы
 
-- [Related Topic 1](../path/doc.md)
-- [Related Topic 2](../path/doc.md)
+- `../path/doc.md`
+- `../path/doc.md`
 
 ### Предыдущий/Следующий
 
-- [Предыдущий: Title](prev.md)
-- [Следующий: Title](next.md)
+- `prev.md`
+- `next.md`
 ```
 
 #### Задача 2.3: Обновить academy/howto/index.md (1 час)
@@ -209,13 +209,13 @@ rm de/academy/news/2025-01-release-x.md
 
 ## Работа с документами
 
-- [Создать JIRA ticket](create-jira-ticket.md) - ручное создание
-- [Создать JIRA ticket с AI](create-jira-ticket-with-ai.md) - с помощью AI
-- [Написать email клиенту](write-customer-email.md) - шаблоны и примеры
+- `create-jira-ticket.md` - ручное создание
+- `create-jira-ticket-with-ai.md` - с помощью AI
+- `write-customer-email.md` - шаблоны и примеры
 
 ## Работа с встречами
 
-- [Суммаризировать заметки встречи](summarize-meeting-notes.md) - быстрое резюме
+- `summarize-meeting-notes.md` - быстрое резюме
 ```
 
 **Метрика:** Снизить orphaned документы с 101 до <30
@@ -484,12 +484,12 @@ gh pr create --title "docs: Phase 1 Day 1 - Remove stub documents"
 
 ## Связанные документы
 
-- [Первый комплексный аудит](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
-- [Повторный аудит с фокусом на рефакторинг](../archive/audits/documentation-refactoring-audit-2025-11-24.md)
-- [Оригинальный план рефакторинга](documentation-refactoring-plan-2025-11-24.md)
-- [Стандарты метаданных](metadata-standards.md)
-- [Языковая политика](language-policy.md)
-- [VERSION](../VERSION.md)
+- `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
+- `../archive/audits/documentation-refactoring-audit-2025-11-24.md`
+- `documentation-refactoring-plan-2025-11-24.md`
+- `metadata-standards.md`
+- `language-policy.md`
+- `../VERSION.md`
 
 ---
 

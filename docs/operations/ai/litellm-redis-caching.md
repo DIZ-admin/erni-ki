@@ -268,8 +268,8 @@ docker compose restart litellm
 
 ## Связанные документы
 
-- [LiteLLM Configuration](../../../conf/litellm/config.yaml)
-- [Redis Operations Guide](../database/redis-operations-guide.md)
+- `../../../conf/litellm/config.yaml`
+- `../database/redis-operations-guide.md`
 - [LiteLLM Official Docs](https://docs.litellm.ai/docs/caching)
 
 ## История изменений

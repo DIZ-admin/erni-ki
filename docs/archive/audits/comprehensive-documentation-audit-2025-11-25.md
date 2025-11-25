@@ -867,8 +867,8 @@ last_updated: '2025-11-25'
 
 ## Содержание
 
-- [Раздел 1](#раздел-1)
-- [Раздел 2](#раздел-2)
+- `#раздел-1`
+- `#раздел-2`
 
 ## Раздел 1
 
@@ -882,7 +882,7 @@ docker compose up -d
 
 ## Связанные документы
 
-- [Другой документ](../path/to/doc.md)
+- `../path/to/doc.md`
 - [Внешний ресурс](https://example.com)
 
 ````
@@ -896,12 +896,12 @@ docker compose up -d
 
 ```markdown
 <!-- Правильно -->
-[Документ](../operations/monitoring-guide.md)
-[Раздел](../operations/monitoring-guide.md#prometheus)
+`../operations/monitoring-guide.md`
+`../operations/monitoring-guide.md#prometheus`
 
 <!-- Неправильно -->
-[Документ](/operations/monitoring-guide.md)
-[Документ](operations/monitoring-guide)
+`/operations/monitoring-guide.md`
+`operations/monitoring-guide`
 ````
 
 **Ссылки из переводов:**
@@ -909,8 +909,8 @@ docker compose up -d
 ```markdown
 <!-- В docs/en/overview.md -->
 
-[Security](../security/README.md) <!-- Неправильно -->
-[Security](security/README.md) <!-- Правильно -->
+`../security/README.md` <!-- Неправильно --> `security/README.md`
+<!-- Правильно -->
 ```
 
 ### 7.4 Визуальный контент

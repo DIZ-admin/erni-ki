@@ -9,9 +9,8 @@ last_updated: '2025-11-25'
 
 > **Audits:**
 >
-> - [Erster Audit](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
-> - [Refactoring-Fokus](../archive/audits/documentation-refactoring-audit-2025-11-24.md)
->   [TOC]
+> - `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
+> - `../archive/audits/documentation-refactoring-audit-2025-11-24.md` [TOC]
 
 ## Hauptprobleme
 

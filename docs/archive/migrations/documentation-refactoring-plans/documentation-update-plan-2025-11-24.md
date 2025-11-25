@@ -8,8 +8,8 @@ last_updated: '2025-11-24'
 # План актуализации документации ERNI-KI
 
 **Дата создания**: 2025-11-24 **Основание**:
-[Комплексный аудит кода 2025-11-24](../../archive/audits/code-audit-2025-11-24.md)
-**Статус**: Ready for implementation
+`../../archive/audits/code-audit-2025-11-24.md` **Статус**: Ready for
+implementation
 
 ## Краткое резюме
 
@@ -41,7 +41,7 @@ last_updated: '2025-11-24'
 JWT authentication service для проверки токенов OpenWebUI.
 
 **Base URL**: `http://auth:9090` **Version**: 1.0.0 **Source**:
-[auth/main.go](../../../../auth/main.go)
+`../../../../auth/main.go`
 
 ## Endpoints
 
@@ -179,7 +179,7 @@ format с correlation IDs **Metrics**: Prometheus endpoint не реализов
 
 ### Конфигурация
 
-В [conf/litellm/config.yaml](../../../../conf/litellm/config.yaml) закомментированы следующие параметры:
+В `../../../../conf/litellm/config.yaml` закомментированы следующие параметры:
 
 ```yaml
 router_settings:
@@ -267,8 +267,7 @@ litellm:
 Если vLLM не планируется:
 
 1. Удалить `vllm_api_key` из secrets в compose.yml
-2. Удалить конфигурацию vLLM из
-   [conf/litellm/config.yaml](../../../../conf/litellm/config.yaml):
+2. Удалить конфигурацию vLLM из `../../../../conf/litellm/config.yaml`:
 
 ```yaml
 # Удалить эти комментарии:
@@ -298,7 +297,7 @@ litellm:
 
 **Приоритет**: [WARNING] Medium
 **Время**: 2 часа
-**Файл**: [conf/nginx/nginx.conf](../../conf/nginx/nginx.conf)
+**Файл**: `../../conf/nginx/nginx.conf`
 
 **Проблема**: Комментарии на русском языке затрудняют работу международной команды.
 
