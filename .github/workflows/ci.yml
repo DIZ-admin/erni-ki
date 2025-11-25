@@ -94,9 +94,8 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23.12"
+          go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
-          check-latest: true
 
       - name: 📦 Download dependencies
         run: go mod download
@@ -419,7 +418,7 @@ jobs:
           echo "trivy_image_ref=${ref}" >> "$GITHUB_OUTPUT"
 
       - name: 🔍 Run Trivy on Docker image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.33.1
         continue-on-error: true
         with:
           image-ref: ${{ steps.trivy-image.outputs.trivy_image_ref }}
