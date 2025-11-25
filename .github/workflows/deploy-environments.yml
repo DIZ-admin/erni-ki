@@ -157,16 +157,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🔡 Normalize repository to lowercase
+        id: repo-lc
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=${repo_lc}" >> "$GITHUB_OUTPUT"
+
       - name: 📋 Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
             type=raw,value=sha-${{ github.sha }}
             type=raw,value=${{ needs['determine-environment'].outputs.environment }}-latest
+
+      - name: ✅ Validate Docker tags are lowercase
+        run: |
+          echo "${{ steps.meta.outputs.tags }}" | bash scripts/utilities/check-docker-tags.sh
 
       - name: 🏗️ Build and push Docker image
         uses: docker/build-push-action@v5
@@ -245,7 +255,7 @@ jobs:
       - name: 🎯 Deploy to ${{ needs['determine-environment'].outputs.environment }}
         run: |
           echo "🚀 Deploying to ${{ needs['determine-environment'].outputs.environment }} environment"
-          echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs['determine-environment'].outputs.environment }}-latest"
+          echo "📦 Image: ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}:${{ needs['determine-environment'].outputs.environment }}-latest"
           echo "🔧 Configuration: .deploy-config/environment.env"
 
           # Note: Actual deploy logic is implemented via external tools

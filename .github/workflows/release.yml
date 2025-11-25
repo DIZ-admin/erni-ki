@@ -154,6 +154,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🔡 Normalize repository to lowercase
+        id: repo-lc
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=${repo_lc}" >> "$GITHUB_OUTPUT"
+
+      - name: ✅ Validate Docker tags are lowercase
+        run: |
+          {
+            echo "${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ needs.version.outputs.version }}"
+            echo "${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:latest"
+          } | bash scripts/utilities/check-docker-tags.sh
+
       # Build and push Docker images with release tags
       - name: 🏗️ Build and push release images
         uses: docker/build-push-action@v5
@@ -163,8 +176,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:${{ needs.version.outputs.version }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:latest
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ needs.version.outputs.version }}
+            ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:latest
           labels: |
             org.opencontainers.image.title=erni-ki-auth
             org.opencontainers.image.description=JWT Authentication service for erni-ki
@@ -218,8 +231,8 @@ jobs:
             ${{ steps.changelog.outputs.changelog }}
 
             ### 🐳 Docker Images
-            - `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:${{ needs.version.outputs.version }}`
-            - `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:latest`
+            - `${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ needs.version.outputs.version }}`
+            - `${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:latest`
 
             ### 📊 Metrics
             - Build time: ${{ github.run_number }}
@@ -227,7 +240,7 @@ jobs:
             - Branch: ${{ github.ref_name }}
 
             ### 🔗 Links
-            - [Docker Image](${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth)
+            - [Docker Image](${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth)
             - [Commit](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
           draft: false
           prerelease: false
@@ -240,11 +253,17 @@ jobs:
     if: always() && needs.version.outputs.version != ''
 
     steps:
+      - name: 🔡 Normalize repository to lowercase
+        id: repo-lc
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=${repo_lc}" >> "$GITHUB_OUTPUT"
+
       - name: 📊 Create release summary
         run: |
           echo "## 🚀 Release Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Version**: ${{ needs.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Tag**: ${{ needs.version.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: ${{ needs.release.result == 'success' && '✅ Success' || '❌ Failed' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Docker Image**: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/auth:${{ needs.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Docker Image**: \`${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}/auth:${{ needs.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
