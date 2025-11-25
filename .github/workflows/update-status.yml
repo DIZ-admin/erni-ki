@@ -7,6 +7,10 @@ on:
       - docs/VERSION.yaml
   workflow_dispatch:
 
+permissions:
+  contents: write
+  actions: read
+
 jobs:
   update-snippets:
     runs-on: ubuntu-latest
