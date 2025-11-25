@@ -1,3 +1,11 @@
+---
+language: ru
+translation_status: complete
+doc_version: '2025.11'
+last_updated: '2025-11-25'
+title: 'Status Snippet (RU)'
+---
+
 > **Статус системы (2025-11-23) — Production Ready v12.1**
 >
 > - Контейнеры: 34/34 services healthy
