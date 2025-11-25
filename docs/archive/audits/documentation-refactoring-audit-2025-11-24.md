@@ -101,7 +101,7 @@ deprecated полей метаданных - это нормально и не �
 
 **Найдено:** 3 файла
 
-1. **reference/documentation-refactoring-plan-2025-11-24.md**
+1. **archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md**
    - Ссылается на:
      `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
    - Статус: ✅ Корректно (аудиты должны храниться в archive)
@@ -685,6 +685,6 @@ EN (английский):   16 файлов (18.2% покрытие)
 **Связанные документы:**
 
 - [Первый аудит](comprehensive-documentation-audit-2025-11-24.md)
-- [План рефакторинга](../../reference/documentation-refactoring-plan-2025-11-24.md)
+- [План рефакторинга](../migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md)
 - [Стандарты метаданных](../../reference/metadata-standards.md)
 - [VERSION](../../VERSION.md)

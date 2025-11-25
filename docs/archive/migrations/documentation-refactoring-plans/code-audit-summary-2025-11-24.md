@@ -18,7 +18,7 @@ last_updated: '2025-11-24'
 - Создано:
   [comprehensive-documentation-audit-2025-11-24.md](../archive/audits/comprehensive-documentation-audit-2025-11-24.md)
 - Создано:
-  [documentation-refactoring-audit-2025-11-24.md](../archive/audits/documentation-refactoring-audit-2025-11-24.md)
+  [documentation-refactoring-audit-2025-11-24.md](../audits/documentation-refactoring-audit-2025-11-24.md)
 
 ### 2. Комплексный аудит кода ✅
 
