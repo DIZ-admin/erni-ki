@@ -391,7 +391,6 @@ nav:
       - "Services": architecture/services-overview.md
       - "Inventory": architecture/service-inventory.md
       - "Nginx configuration": architecture/nginx-configuration.md
-  - Glossary: GLOSSARY.md
   - "Academy KI":
       - Overview: academy/index.md
       - "Open WebUI Basics": academy/openwebui-basics.md
