@@ -94,8 +94,9 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: auth/go.mod
+          go-version: "1.23.12"
           cache-dependency-path: auth/go.sum
+          check-latest: true
 
       - name: 📦 Download dependencies
         run: go mod download
@@ -141,7 +142,7 @@ jobs:
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.18.0"
+          node-version: "22.14.0"
           cache: npm
 
       - name: 📦 Install dependencies
