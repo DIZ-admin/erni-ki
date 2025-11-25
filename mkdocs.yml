@@ -508,10 +508,10 @@ nav:
           - "CI Health": archive/audits/ci-health.md
           - "Monitoring Audit": archive/audits/monitoring-audit.md
           - "Documentation Audit": archive/audits/documentation-audit.md
-          - "Documentation Update Plan (2025-11-24)": reference/documentation-update-plan-2025-11-24.md
-          - "Documentation Refactoring Plan (2025-11-24)": reference/documentation-refactoring-plan-2025-11-24.md
-          - "Documentation Refactoring Plan v2 (2025-11-24)": reference/documentation-refactoring-plan-v2-2025-11-24.md
-          - "Code Audit Summary (2025-11-24)": reference/code-audit-summary-2025-11-24.md
+          - "Documentation Update Plan (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-update-plan-2025-11-24.md
+          - "Documentation Refactoring Plan (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md
+          - "Documentation Refactoring Plan v2 (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-v2-2025-11-24.md
+          - "Code Audit Summary (2025-11-24)": archive/migrations/documentation-refactoring-plans/code-audit-summary-2025-11-24.md
       - "Budget Analysis": budget-analysis.md
       - Diagnostics:
           - "Full server diagnostics (2025-11-04)": archive/diagnostics/full-server-diagnostics-2025-11-04.md
