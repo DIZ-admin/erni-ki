@@ -1,19 +1,46 @@
 ---
 language: de
-translation_status: pending
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-27'
 ---
 
 # ERNI Academy KI
 
-Deutschsprachiger Einstieg in die Academy KI. Die russische Version bleibt die
-Referenz; diese Seite bietet aktuelle Links für Nutzer.
+Willkommen im zentralen Lern- und Supportportal für ERNI KI. Hier finden Sie
+Anleitungen zur Arbeit mit Open WebUI, Prompt-Beispiele und Produktneuigkeiten
+auf Deutsch.
 
-- Start: [Academy KI](academy/index.md) – Open WebUI Basics, Prompting 101,
-  HowTo, News.
-- Schnellstart: [Open WebUI basics](../academy/openwebui-basics.md) und
-  [Prompting 101](../academy/prompting-101.md).
-- Praxisbeispiele: [HowTo-Sammlung](academy/howto/index.md).
-- Immer zuerst den **[Systemstatus](system/status.md)** prüfen, bevor Support
-  kontaktiert wird.
+- Für den Schnellstart gehen Sie zu [Academy KI](academy/index.md).
+- Folgen Sie Updates im [Newsfeed](academy/news/index.md).
+- Wenn etwas nicht funktioniert, prüfen Sie zuerst den
+  **[Systemstatus](system/status.md)**.
+
+## Aktueller Plattformstatus
+
+<!-- STATUS_SNIPPET_START -->
+
+> **Systemstatus (2025-11-27) — Production Ready v12.1**
+>
+> - Container: 34/34 services healthy
+> - Grafana: 5/5 Grafana Dashboards (provisioned)
+> - Alerts: 20 Prometheus alert rules aktiv
+> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
+> - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
+> - Monitoring: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
+>   v3.1.0, Alertmanager v0.27.0
+> - Automatisierung: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00,
+>   Backrest 01:30, Watchtower selective updates
+> - Qualität: Dokumentation 9.8/10, System 3.6/5 (high maturity)
+> - Sicherheit: Secrets geschützt, Permissions korrigiert, Audit abgeschlossen
+
+<!-- STATUS_SNIPPET_END -->
+
+## Portal-Aufbau
+
+1. **Russisch ist die kanonische Sprache.** Alle Materialien werden zuerst hier
+   veröffentlicht und dienen als Quelle für Übersetzungen.
+2. **Sprachumschalter** ermöglicht den Wechsel zu deutschen und englischen
+   Versionen der Seiten, wenn diese verfügbar sind.
+3. **Einheitliche Struktur**: Academy KI → Grundlagen, Prompting, HowTo,
+   Neuigkeiten, sowie Systembereich mit Zugriff auf Service-Status.
