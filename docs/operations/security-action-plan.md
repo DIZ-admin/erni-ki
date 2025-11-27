@@ -3,8 +3,6 @@ language: ru
 translation_status: original
 doc_version: '2025.11'
 last_updated: '2025-11-27'
-category: operations
-priority: critical
 ---
 
 # Security Action Plan - ERNI-KI
