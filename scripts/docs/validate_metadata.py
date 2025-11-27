@@ -29,6 +29,10 @@ ALLOWED_FIELDS = [
     "version",
     "status",
     "released",
+    # Audit/report specific fields
+    "audit_type",
+    "audit_scope",
+    "auditor",
 ]
 DEPRECATED_FIELDS = [
     "author",
