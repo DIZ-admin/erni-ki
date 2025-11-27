@@ -407,7 +407,7 @@ EN (английский): 16 файлов (18.2% покрытие)
 
 Критичные:
 
-- getting-started/README.md
+- getting-started/index.md
 - getting-started/dnsmasq-setup-instructions.md
 - getting-started/external-access-setup.md
 - getting-started/local-network-dns-setup.md
@@ -419,7 +419,7 @@ EN (английский): 16 файлов (18.2% покрытие)
 
 Критичные (пользовательские):
 
-- getting-started/README.md
+- getting-started/index.md
 - getting-started/configuration-guide.md
 - getting-started/dnsmasq-setup-instructions.md
 - getting-started/external-access-setup.md

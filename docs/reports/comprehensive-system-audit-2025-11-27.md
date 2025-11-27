@@ -642,7 +642,7 @@ production использованию **после устранения крит
   документации
 - [Action Plan](../operations/security-action-plan.md) - пошаговый план
   устранения
-- [Security Checklist](../security/security-checklist.md) - контрольный список
+- [Security Policy](../security/security-policy.md) - контрольный список
 - [Maintenance Strategy](../reference/documentation-maintenance-strategy.md)
 
 ---

@@ -29,12 +29,12 @@ Operational guides, runbooks, and procedures for ERNI-KI.
 
 - **Automation:**
   [Automated maintenance](automation/automated-maintenance-guide.md)
-- **Database:** [Operations overview](database/README.md)
+- **Database:** [Operations overview](database/index.md)
 - **Monitoring:** [Monitoring guide](monitoring/monitoring-guide.md)
 
 ### Diagnostics
 
-- **[diagnostics/README.md](diagnostics/README.md)** — reports and methodology
+- **[diagnostics/index.md](diagnostics/index.md)** — reports and methodology
 
 ## Quick Start
 
@@ -51,8 +51,8 @@ Operational guides, runbooks, and procedures for ERNI-KI.
 
 ## Related
 
-- [Architecture Overview](../architecture/README.md)
-- [Getting Started](../getting-started/README.md)
+- [Architecture Overview](../architecture/index.md)
+- [Getting Started](../getting-started/index.md)
 - [Security Guide](../security/README.md)
 
 ## Version

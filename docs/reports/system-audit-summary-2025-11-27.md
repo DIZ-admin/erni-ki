@@ -151,4 +151,4 @@ user: '0' # root UID
 
 - [Полный отчет аудита](comprehensive-system-audit-2025-11-27.md)
 - [Security Action Plan](../operations/security-action-plan.md)
-- [Security Checklist](../security/security-checklist.md)
+- [Security Policy](../security/security-policy.md)
