@@ -2,7 +2,7 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-27'
 title: 'ERNI-KI — Профессиональная сводка проекта'
 ---
 
@@ -10,7 +10,7 @@ title: 'ERNI-KI — Профессиональная сводка проекта
 
 <!-- STATUS_SNIPPET_START -->
 
-> **Статус системы (2025-11-23) — Production Ready v12.1**
+> **Статус системы (2025-11-27) — Production Ready v12.1**
 >
 > - Контейнеры: 34/34 services healthy
 > - Графана: 5/5 Grafana dashboards (provisioned)
@@ -21,7 +21,9 @@ title: 'ERNI-KI — Профессиональная сводка проекта
 >   v3.1.0, Alertmanager v0.27.0
 > - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
 >   01:30, Watchtower selective updates
-> - Примечание: Versions and dashboard/alert counts synced with compose.yml
+> - Качество: Документация 9.8/10, Система 3.6/5 (high maturity)
+> - Безопасность: Secrets защищены, permissions исправлены, аудит завершен
+> - Последний аудит: 2025-11-27 (документация + система + безопасность)
 
 <!-- STATUS_SNIPPET_END -->
 
