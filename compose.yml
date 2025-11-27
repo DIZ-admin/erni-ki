@@ -258,13 +258,16 @@ services:
       openwebui:
         condition: service_healthy
     env_file: env/cloudflared.env
+    environment:
+      # Explicit origin cert path (place cert.pem alongside config.yml/credentials-file)
+      TUNNEL_ORIGIN_CERT: /home/nonroot/.cloudflared/cert.pem
     healthcheck:
       test: ["CMD", "cloudflared", "version"]
       interval: 60s
       timeout: 15s
       retries: 3
       start_period: 30s
-    image: cloudflare/cloudflared:2024.10.0 # Stable version (2025.11.0 does not exist)
+    image: cloudflare/cloudflared:2025.11.1 # Updated: 2025-11-27 to 2025.11.1
     logging: *important-logging
     restart: unless-stopped
     volumes:
