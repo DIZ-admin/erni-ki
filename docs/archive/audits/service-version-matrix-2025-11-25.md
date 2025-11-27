@@ -1,72 +1,81 @@
+---
+language: ru
+translation_status: original
+doc_version: '2025.11'
+last_updated: '2025-11-25'
+category: archive
+audit_type: service-version-matrix
+---
+
 # ERNI-KI Service Version Matrix
 
 Quick reference table for all service versions - complete as of November 25,
 2025
 
-## 🔴 Critical Services - Immediate Updates Recommended
+## Critical Services - Immediate Updates Recommended
 
-| Service         | Current      | Latest         | Gap       | Priority  | Notes                                          |
-| --------------- | ------------ | -------------- | --------- | --------- | ---------------------------------------------- |
-| **LiteLLM**     | v1.80.0.rc.1 | v1.80.5-stable | RC→Stable | 🔴 HIGH   | Move from RC to stable, test API compatibility |
-| **Open WebUI**  | v0.6.36      | v0.6.39        | 3 patches | 🔴 HIGH   | Latest fixes, very low risk                    |
-| **Ollama**      | 0.12.11      | 0.13.0         | 1 minor   | 🔴 HIGH   | Vulkan, GPU improvements - test thoroughly     |
-| **Cloudflared** | 2024.10.0    | 2025.11.1      | ~1 year   | 🟡 MEDIUM | Security fixes, test tunnel config             |
-| **Prometheus**  | v3.0.0       | v3.7.3         | 7 minors  | 🟡 MEDIUM | Test alert rules (or use v3.5.0 LTS)           |
+| Service         | Current      | Latest         | Gap       | Priority         | Notes                                          |
+| --------------- | ------------ | -------------- | --------- | ---------------- | ---------------------------------------------- |
+| **LiteLLM**     | v1.80.0.rc.1 | v1.80.5-stable | RC→Stable | HIGH             | Move from RC to stable, test API compatibility |
+| **Open WebUI**  | v0.6.36      | v0.6.39        | 3 patches | HIGH             | Latest fixes, very low risk                    |
+| **Ollama**      | 0.12.11      | 0.13.0         | 1 minor   | HIGH             | Vulkan, GPU improvements - test thoroughly     |
+| **Cloudflared** | 2024.10.0    | 2025.11.1      | ~1 year   | [WARNING] MEDIUM | Security fixes, test tunnel config             |
+| **Prometheus**  | v3.0.0       | v3.7.3         | 7 minors  | [WARNING] MEDIUM | Test alert rules (or use v3.5.0 LTS)           |
 
-## 🟡 Monitoring Stack - Standard Updates
+## [WARNING] Monitoring Stack - Standard Updates
 
-| Service               | Current | Latest         | Gap        | Priority  | Notes                                     |
-| --------------------- | ------- | -------------- | ---------- | --------- | ----------------------------------------- |
-| **Loki**              | 3.0.0   | 3.6.1          | 6 minors   | 🟡 MEDIUM | Bloom filters, OpenTelemetry support      |
-| **Grafana**           | 11.3.0  | 11.6.8         | 3 minors   | 🟡 MEDIUM | Update to 11.6.8, then evaluate 12.x      |
-| **Alertmanager**      | v0.27.0 | v0.29.0        | 2 minors   | 🟢 LOW    | Alert routing improvements                |
-| **Node Exporter**     | v1.8.2  | v1.10.2        | 2 minors   | 🟢 LOW    | Enhanced metrics                          |
-| **Postgres Exporter** | v0.15.0 | v0.18.1        | 3 minors   | 🟢 LOW    | Better PG metrics                         |
-| **Redis Exporter**    | v1.62.0 | v1.80.1        | 18 minors! | 🟡 MEDIUM | Large gap - test thoroughly               |
-| **Blackbox Exporter** | v0.25.0 | v0.27.0        | 2 minors   | 🟢 LOW    | JSON body matching                        |
-| **Nginx Exporter**    | 1.1.0   | 1.5.1          | 4 minors   | 🟡 MEDIUM | Significant improvements                  |
-| **cAdvisor**          | v0.52.1 | v0.53.0        | 1 minor    | 🟢 LOW    | Container monitoring updates              |
-| **Fluent Bit**        | 3.1.0   | 4.2.0 (v4.1.1) | MAJOR      | 🟡 MEDIUM | Major update 3→4, security fixes in 4.1.1 |
-| **Uptime Kuma**       | 2.0.2   | 2.0.2 ✅       | CURRENT    | ⚪ N/A    | Already latest                            |
+| Service               | Current | Latest         | Gap        | Priority         | Notes                                     |
+| --------------------- | ------- | -------------- | ---------- | ---------------- | ----------------------------------------- |
+| **Loki**              | 3.0.0   | 3.6.1          | 6 minors   | [WARNING] MEDIUM | Bloom filters, OpenTelemetry support      |
+| **Grafana**           | 11.3.0  | 11.6.8         | 3 minors   | [WARNING] MEDIUM | Update to 11.6.8, then evaluate 12.x      |
+| **Alertmanager**      | v0.27.0 | v0.29.0        | 2 minors   | [OK] LOW         | Alert routing improvements                |
+| **Node Exporter**     | v1.8.2  | v1.10.2        | 2 minors   | [OK] LOW         | Enhanced metrics                          |
+| **Postgres Exporter** | v0.15.0 | v0.18.1        | 3 minors   | [OK] LOW         | Better PG metrics                         |
+| **Redis Exporter**    | v1.62.0 | v1.80.1        | 18 minors! | [WARNING] MEDIUM | Large gap - test thoroughly               |
+| **Blackbox Exporter** | v0.25.0 | v0.27.0        | 2 minors   | [OK] LOW         | JSON body matching                        |
+| **Nginx Exporter**    | 1.1.0   | 1.5.1          | 4 minors   | [WARNING] MEDIUM | Significant improvements                  |
+| **cAdvisor**          | v0.52.1 | v0.53.0        | 1 minor    | [OK] LOW         | Container monitoring updates              |
+| **Fluent Bit**        | 3.1.0   | 4.2.0 (v4.1.1) | MAJOR      | [WARNING] MEDIUM | Major update 3→4, security fixes in 4.1.1 |
+| **Uptime Kuma**       | 2.0.2   | 2.0.2          | CURRENT    | N/A              | Already latest                            |
 
-## 🟢 Infrastructure Services
+## [OK] Infrastructure Services
 
-| Service        | Current                   | Latest            | Gap         | Priority  | Notes                                 |
-| -------------- | ------------------------- | ----------------- | ----------- | --------- | ------------------------------------- |
-| **PostgreSQL** | pg17                      | pg17 ✅           | CURRENT     | ⚪ N/A    | Latest major                          |
-| **pgvector**   | 0.8.0 (assumed)           | 0.8.1             | 1 patch     | 🟢 LOW    | Minor extension update                |
-| **Redis**      | 7.0.15-alpine             | 8.4.0 (or 7.4.0)  | MAJOR/minor | 🔴 HOLD   | Major=risky; 7.4.0=safer incremental  |
-| **Nginx**      | 1.29.3                    | 1.29.3 ✅         | CURRENT     | ⚪ N/A    | Latest mainline (stable=1.28.0 older) |
-| **Tika**       | sha256:3fafa...           | 3.2.3             | Unknown     | 🟡 MEDIUM | Switch digest→version tag             |
-| **SearXNG**    | sha256:aaa855... (Nov 12) | Rolling (Nov 25+) | 2 weeks     | 🟢 LOW    | Update digest monthly                 |
+| Service        | Current                   | Latest            | Gap         | Priority         | Notes                                 |
+| -------------- | ------------------------- | ----------------- | ----------- | ---------------- | ------------------------------------- |
+| **PostgreSQL** | pg17                      | pg17              | CURRENT     | N/A              | Latest major                          |
+| **pgvector**   | 0.8.0 (assumed)           | 0.8.1             | 1 patch     | [OK] LOW         | Minor extension update                |
+| **Redis**      | 7.0.15-alpine             | 8.4.0 (or 7.4.0)  | MAJOR/minor | HOLD             | Major=risky; 7.4.0=safer incremental  |
+| **Nginx**      | 1.29.3                    | 1.29.3            | CURRENT     | N/A              | Latest mainline (stable=1.28.0 older) |
+| **Tika**       | sha256:3fafa...           | 3.2.3             | Unknown     | [WARNING] MEDIUM | Switch digest→version tag             |
+| **SearXNG**    | sha256:aaa855... (Nov 12) | Rolling (Nov 25+) | 2 weeks     | [OK] LOW         | Update digest monthly                 |
 
-## 🔵 Support Services
+## Support Services
 
-| Service                 | Current          | Latest               | Gap            | Priority    | Notes                                 |
-| ----------------------- | ---------------- | -------------------- | -------------- | ----------- | ------------------------------------- |
-| **Watchtower**          | 1.7.1            | 1.7.1 ✅             | CURRENT        | ⚪ N/A      | Already latest                        |
-| **Backrest**            | v1.9.2           | v1.10.0              | 1 minor        | 🟢 LOW      | Backup improvements                   |
-| **EdgeTTS**             | Digest           | v2.0.0/:latest       | Unknown        | 🟢 LOW      | Switch to version tag or :latest      |
-| **MCPO Server**         | git-91e8f94      | v0.0.18              | Commit→Version | 🟡 MEDIUM   | OAuth 2.0, check if commit is recent  |
-| **Docling**             | :main            | :main (rolling)      | N/A            | ⚪ CONSIDER | Consider pinning for stability        |
-| **NVIDIA GPU Exporter** | 0.1 (mindprince) | **DCGM 4.4.2-4.7.0** | MIGRATION      | 🔴 HIGH     | **Replace** with NVIDIA DCGM Exporter |
+| Service                 | Current          | Latest               | Gap            | Priority         | Notes                                 |
+| ----------------------- | ---------------- | -------------------- | -------------- | ---------------- | ------------------------------------- |
+| **Watchtower**          | 1.7.1            | 1.7.1                | CURRENT        | N/A              | Already latest                        |
+| **Backrest**            | v1.9.2           | v1.10.0              | 1 minor        | [OK] LOW         | Backup improvements                   |
+| **EdgeTTS**             | Digest           | v2.0.0/:latest       | Unknown        | [OK] LOW         | Switch to version tag or :latest      |
+| **MCPO Server**         | git-91e8f94      | v0.0.18              | Commit→Version | [WARNING] MEDIUM | OAuth 2.0, check if commit is recent  |
+| **Docling**             | :main            | :main (rolling)      | N/A            | CONSIDER         | Consider pinning for stability        |
+| **NVIDIA GPU Exporter** | 0.1 (mindprince) | **DCGM 4.4.2-4.7.0** | MIGRATION      | HIGH             | **Replace** with NVIDIA DCGM Exporter |
 
-## 📦 Development Dependencies
+## Development Dependencies
 
-| Component             | Current | Latest      | Gap       | Priority  | Notes                                |
-| --------------------- | ------- | ----------- | --------- | --------- | ------------------------------------ |
-| **Node.js**           | 22.14.0 | 22.11.0 LTS | AHEAD?    | 🟡 VERIFY | Current > LTS - verify typo          |
-| **npm**               | 10.8.2  | 11.6.3      | MAJOR     | 🟡 MEDIUM | Major version update available       |
-| **Go**                | 1.24.0  | 1.24.10 ✅  | CURRENT   | ⚪ N/A    | Toolchain current (1.25.4 available) |
-| **Flask**             | 3.0.3   | 3.1.2       | 2 patches | 🟢 LOW    | Bug fix release                      |
-| **prometheus-client** | 0.20.0  | 0.23.1      | 3 minors  | 🟢 LOW    | Metrics improvements                 |
-| **Werkzeug**          | 3.0.4   | Check       | Unknown   | 🟢 LOW    | Run pip list --outdated              |
-| **requests**          | 2.32.3  | Check       | Unknown   | 🟢 LOW    | Run pip list --outdated              |
+| Component             | Current | Latest      | Gap       | Priority         | Notes                                |
+| --------------------- | ------- | ----------- | --------- | ---------------- | ------------------------------------ |
+| **Node.js**           | 22.14.0 | 22.11.0 LTS | AHEAD?    | [WARNING] VERIFY | Current > LTS - verify typo          |
+| **npm**               | 10.8.2  | 11.6.3      | MAJOR     | [WARNING] MEDIUM | Major version update available       |
+| **Go**                | 1.24.0  | 1.24.10     | CURRENT   | N/A              | Toolchain current (1.25.4 available) |
+| **Flask**             | 3.0.3   | 3.1.2       | 2 patches | [OK] LOW         | Bug fix release                      |
+| **prometheus-client** | 0.20.0  | 0.23.1      | 3 minors  | [OK] LOW         | Metrics improvements                 |
+| **Werkzeug**          | 3.0.4   | Check       | Unknown   | [OK] LOW         | Run pip list --outdated              |
+| **requests**          | 2.32.3  | Check       | Unknown   | [OK] LOW         | Run pip list --outdated              |
 
 ## Summary Statistics
 
 - **Total Services**: 30
-- **Services fully researched**: 30 (100% complete ✅)
+- **Services fully researched**: 30 (100% complete )
 - **Services with updates available**: 26
 - **Already on latest**: 5 (Watchtower, Uptime Kuma, Nginx mainline, PostgreSQL,
   Go toolchain)
@@ -79,11 +88,11 @@ Quick reference table for all service versions - complete as of November 25,
 
 ## Priority Legend
 
-- 🔴 **HIGH**: Critical functionality/security, immediate action recommended
-- 🟡 **MEDIUM**: Important improvements, schedule for next sprint
-- 🟢 **LOW**: Minor improvements, update when convenient
-- ⚪ **N/A**: Already current or requires specific evaluation
-- 🔴 **HOLD**: Requires careful planning (e.g., Redis major version)
+- **HIGH**: Critical functionality/security, immediate action recommended
+- [WARNING] **MEDIUM**: Important improvements, schedule for next sprint
+- [OK] **LOW**: Minor improvements, update when convenient
+- **N/A**: Already current or requires specific evaluation
+- **HOLD**: Requires careful planning (e.g., Redis major version)
 
 ## Update Phases
 
@@ -128,10 +137,11 @@ Quick reference table for all service versions - complete as of November 25,
 ### Phase 6 (Next Quarter) - Service Migrations
 
 24. **NVIDIA GPU Exporter** → **DCGM Exporter 4.4.2-4.7.0** (HIGH PRIORITY)
-    - Research DCGM deployment (Docker/Helm)
-    - Plan migration from mindprince to DCGM
-    - Update Prometheus scrape configs
-    - Test GPU metrics collection
+
+- Research DCGM deployment (Docker/Helm)
+- Plan migration from mindprince to DCGM
+- Update Prometheus scrape configs
+- Test GPU metrics collection
 
 ### Future Evaluation
 

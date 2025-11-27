@@ -1,3 +1,12 @@
+---
+language: ru
+translation_status: original
+doc_version: '2025.11'
+last_updated: '2025-11-25'
+category: archive
+audit_type: service-version
+---
+
 # Service Version Audit Report
 
 **Date**: November 25, 2025 **Auditor**: Automated System Audit **Scope**: All
@@ -31,7 +40,7 @@ including 6 critical priority updates and 1 recommended service migration.
 
 ## Detailed Findings
 
-### 🔴 Critical Services - Immediate Action Required
+### Critical Services - Immediate Action Required
 
 #### 1. LiteLLM Context Engineering Gateway
 
@@ -81,7 +90,7 @@ including 6 critical priority updates and 1 recommended service migration.
 - **Details**: LTS preferred for stability; latest for newest features
 - **Testing Required**: Alert rules, query syntax
 
-#### 6. NVIDIA GPU Exporter ⚠️
+#### 6. NVIDIA GPU Exporter
 
 - **Current**: mindprince/nvidia_gpu_prometheus_exporter:0.1
 - **Latest Alternative**: NVIDIA DCGM Exporter 4.4.2-4.7.0
@@ -94,7 +103,7 @@ including 6 critical priority updates and 1 recommended service migration.
 
 ---
 
-### 🟡 Monitoring Stack - Standard Updates
+### [WARNING] Monitoring Stack - Standard Updates
 
 | Service           | Current | Latest    | Gap           | Priority |
 | ----------------- | ------- | --------- | ------------- | -------- |
@@ -108,7 +117,7 @@ including 6 critical priority updates and 1 recommended service migration.
 | Nginx Exporter    | 1.1.0   | 1.5.1     | 4 minors      | Medium   |
 | cAdvisor          | v0.52.1 | v0.53.0   | 1 minor       | Low      |
 | Fluent Bit        | 3.1.0   | **4.2.0** | MAJOR         | Medium   |
-| Uptime Kuma       | 2.0.2   | 2.0.2 ✅  | Current       | N/A      |
+| Uptime Kuma       | 2.0.2   | 2.0.2     | Current       | N/A      |
 
 **Notable Items**:
 
@@ -119,14 +128,14 @@ including 6 critical priority updates and 1 recommended service migration.
 
 ---
 
-### 🟢 Infrastructure Services
+### [OK] Infrastructure Services
 
 | Service     | Current         | Latest        | Status          | Notes                                             |
 | ----------- | --------------- | ------------- | --------------- | ------------------------------------------------- |
-| PostgreSQL  | pg17            | pg17          | ✅ Current      | Latest major version                              |
+| PostgreSQL  | pg17            | pg17          | Current         | Latest major version                              |
 | pgvector    | 0.8.0 (est.)    | 0.8.1         | Patch available | Minor extension update                            |
 | Redis       | 7.0.15-alpine   | 8.4.0 / 7.4.0 | Major/Minor     | Pinned intentionally (RDB format incompatibility) |
-| Nginx       | 1.29.3          | 1.29.3        | ✅ Current      | Latest mainline (stable=1.28.0 older)             |
+| Nginx       | 1.29.3          | 1.29.3        | Current         | Latest mainline (stable=1.28.0 older)             |
 | Apache Tika | Digest          | 3.2.3         | Version switch  | Replace digest with semantic version              |
 | SearXNG     | Digest (Nov 12) | Rolling       | Update digest   | Rolling release, update monthly                   |
 
@@ -135,11 +144,11 @@ with 8.x. Alternative: incremental update to 7.4.0.
 
 ---
 
-### 🔵 Support Services
+### Support Services
 
 | Service     | Current     | Latest           | Recommendation                                 |
 | ----------- | ----------- | ---------------- | ---------------------------------------------- |
-| Watchtower  | 1.7.1       | 1.7.1 ✅         | No action - current                            |
+| Watchtower  | 1.7.1       | 1.7.1            | No action - current                            |
 | Backrest    | v1.9.2      | v1.10.0          | Update - backup improvements                   |
 | EdgeTTS     | Digest      | v2.0.0 / :latest | Switch to version tag                          |
 | MCPO Server | git-91e8f94 | v0.0.18          | Evaluate versioned release (OAuth 2.0 support) |
@@ -147,7 +156,7 @@ with 8.x. Alternative: incremental update to 7.4.0.
 
 ---
 
-### 📦 Development Dependencies
+### Development Dependencies
 
 | Component         | Current                    | Latest           | Gap           | Action                                       |
 | ----------------- | -------------------------- | ---------------- | ------------- | -------------------------------------------- |
@@ -166,21 +175,23 @@ LTS (22.11.0). Requires verification.
 
 ### Phase 1: Low-Risk Updates (This Week)
 
-**Priority**: 🔴 IMMEDIATE
+**Priority**: IMMEDIATE
 
 1. **LiteLLM**: v1.80.0.rc.1 → v1.80.5-stable
-   - File: `compose.yml` line 151
-   - Risk: Very Low
-   - Testing: API compatibility check
+
+- File: `compose.yml` line 151
+- Risk: Very Low
+- Testing: API compatibility check
 
 2. **Open WebUI**: v0.6.36 → v0.6.39
-   - File: `compose.yml` line 470
-   - Risk: Very Low
-   - Testing: Web interface validation
+
+- File: `compose.yml` line 470
+- Risk: Very Low
+- Testing: Web interface validation
 
 ### Phase 2: Infrastructure Updates (Next Sprint)
 
-**Priority**: 🟡 MEDIUM
+**Priority**: [WARNING] MEDIUM
 
 3. **Cloudflared**: 2024.10.0 → 2025.11.1
 4. **Apache Tika**: Digest → 3.2.3 (semantic version)
@@ -190,7 +201,7 @@ LTS (22.11.0). Requires verification.
 
 ### Phase 3: Monitoring Exporters (Next Sprint)
 
-**Priority**: 🟢 LOW-MEDIUM
+**Priority**: [OK] LOW-MEDIUM
 
 8. Alertmanager v0.27.0 → v0.29.0
 9. Node Exporter v1.8.2 → v1.10.2
@@ -202,17 +213,19 @@ LTS (22.11.0). Requires verification.
 
 ### Phase 4: Major Updates (This Month)
 
-**Priority**: 🟡 MEDIUM - Requires Testing
+**Priority**: [WARNING] MEDIUM - Requires Testing
 
 15. **Fluent Bit**: 3.1.0 → 4.2.0
-    - Major version update 3→4
-    - Security fixes in v4.1.1 (Nov 24, 2025)
-    - Review migration guide for breaking changes
-    - Test log pipelines thoroughly
+
+- Major version update 3→4
+- Security fixes in v4.1.1 (Nov 24, 2025)
+- Review migration guide for breaking changes
+- Test log pipelines thoroughly
 
 16. **Ollama**: 0.12.11 → 0.13.0
-    - Test GPU acceleration extensively
-    - Verify model loading and performance
+
+- Test GPU acceleration extensively
+- Verify model loading and performance
 
 17. **Backrest**: v1.9.2 → v1.10.0
 
@@ -227,17 +240,19 @@ LTS (22.11.0). Requires verification.
 
 ### Phase 6: Service Migration (Next Quarter)
 
-**Priority**: 🔴 HIGH
+**Priority**: HIGH
 
 24. **NVIDIA GPU Exporter Migration**
-    - Current: mindprince 0.1 (unmaintained)
-    - Target: NVIDIA DCGM Exporter 4.4.2-4.7.0
-    - Steps:
-      1. Research DCGM deployment (Docker/Helm)
-      2. Plan migration from mindprince to DCGM
-      3. Update Prometheus scrape configurations
-      4. Test GPU metrics collection
-      5. Validate dashboard compatibility
+
+- Current: mindprince 0.1 (unmaintained)
+- Target: NVIDIA DCGM Exporter 4.4.2-4.7.0
+- Steps:
+
+1.  Research DCGM deployment (Docker/Helm)
+2.  Plan migration from mindprince to DCGM
+3.  Update Prometheus scrape configurations
+4.  Test GPU metrics collection
+5.  Validate dashboard compatibility
 
 ---
 
@@ -246,17 +261,20 @@ LTS (22.11.0). Requires verification.
 ### High-Risk Changes
 
 1. **Fluent Bit 3→4**: Major version upgrade with potential breaking changes
-   - Mitigation: Review migration guide, test log pipelines in staging
-   - Timeline: Allocate 2-3 days for testing
+
+- Mitigation: Review migration guide, test log pipelines in staging
+- Timeline: Allocate 2-3 days for testing
 
 2. **NVIDIA GPU Exporter Migration**: Service replacement
-   - Mitigation: Parallel deployment, gradual transition
-   - Timeline: 1-2 weeks planning + implementation
+
+- Mitigation: Parallel deployment, gradual transition
+- Timeline: 1-2 weeks planning + implementation
 
 3. **Redis 7→8**: Major version with data format incompatibility
-   - Current Status: Intentionally pinned
-   - Recommendation: Consider incremental update to 7.4.0 first
-   - Alternative: Plan data migration strategy for 8.4.0
+
+- Current Status: Intentionally pinned
+- Recommendation: Consider incremental update to 7.4.0 first
+- Alternative: Plan data migration strategy for 8.4.0
 
 ### Medium-Risk Changes
 
@@ -283,30 +301,32 @@ All patch and minor version updates for exporters and monitoring tools.
 
 1. **Health Checks**
 
-   ```bash
-   docker compose ps
-   docker compose logs [service_name]
-   ```
+```bash
+docker compose ps
+docker compose logs [service_name]
+```
 
 2. **Service Connectivity**
 
-   ```bash
-   curl http://localhost:4000/health/liveliness  # LiteLLM
-   curl http://localhost:8080/health             # Open WebUI
-   curl http://localhost:9091/-/healthy          # Prometheus
-   curl http://localhost:3000/api/health         # Grafana
-   ```
+```bash
+curl http://localhost:4000/health/liveliness # LiteLLM
+curl http://localhost:8080/health # Open WebUI
+curl http://localhost:9091/-/healthy # Prometheus
+curl http://localhost:3000/api/health # Grafana
+```
 
 3. **Functional Testing**
-   - Open WebUI: Access interface, test AI model interactions
-   - LiteLLM: Verify API endpoints, test model routing
-   - Prometheus: Check targets, verify metrics collection
-   - Grafana: Validate dashboards render correctly
+
+- Open WebUI: Access interface, test AI model interactions
+- LiteLLM: Verify API endpoints, test model routing
+- Prometheus: Check targets, verify metrics collection
+- Grafana: Validate dashboards render correctly
 
 4. **Performance Baseline**
-   - Compare response times before/after
-   - Monitor GPU utilization (Ollama)
-   - Check memory usage patterns
+
+- Compare response times before/after
+- Monitor GPU utilization (Ollama)
+- Check memory usage patterns
 
 ---
 
@@ -321,31 +341,36 @@ All patch and minor version updates for exporters and monitoring tools.
 ### Strategic Initiatives
 
 1. **Establish Version Monitoring**
-   - Implement Renovate or Dependabot for automated PR creation
-   - Configure Watchtower notifications for new image availability
-   - Create dashboard tracking version lag
+
+- Implement Renovate or Dependabot for automated PR creation
+- Configure Watchtower notifications for new image availability
+- Create dashboard tracking version lag
 
 2. **Standardize Image Tagging**
-   - Migrate digest-based images to semantic versions (Tika, SearXNG, EdgeTTS)
-   - Avoid `:latest` and `:main` tags in production
-   - Document pinning strategy
+
+- Migrate digest-based images to semantic versions (Tika, SearXNG, EdgeTTS)
+- Avoid `:latest` and `:main` tags in production
+- Document pinning strategy
 
 3. **NVIDIA GPU Monitoring Modernization**
-   - Priority migration to DCGM Exporter
-   - Official NVIDIA support ensures long-term reliability
-   - Enhanced metrics for ML workloads
+
+- Priority migration to DCGM Exporter
+- Official NVIDIA support ensures long-term reliability
+- Enhanced metrics for ML workloads
 
 ### Long-Term Considerations
 
 1. **Redis Upgrade Path**
-   - Evaluate 7.4.0 as incremental step
-   - Plan 8.x migration with data compatibility testing
-   - Timeline: Q1 2026
+
+- Evaluate 7.4.0 as incremental step
+- Plan 8.x migration with data compatibility testing
+- Timeline: Q1 2026
 
 2. **Major Version Tracking**
-   - Grafana 12.x evaluation after 11.6.8 stabilization
-   - Go 1.25.x assessment for auth service
-   - npm 11.x testing for build pipeline
+
+- Grafana 12.x evaluation after 11.6.8 stabilization
+- Go 1.25.x assessment for auth service
+- npm 11.x testing for build pipeline
 
 ---
 
