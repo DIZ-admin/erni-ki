@@ -64,8 +64,8 @@ Incidents:** Check
 
 ## Связанная документация
 
-- [Architecture Overview](../architecture/README.md)
-- [Getting Started](../getting-started/README.md)
+- [Architecture Overview](../architecture/index.md)
+- [Getting Started](../getting-started/index.md)
 - [Security Guide](../security/README.md)
 
 ## Version

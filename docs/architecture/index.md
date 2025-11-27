@@ -38,7 +38,7 @@ system architecture.
 ## Quick Links
 
 - [System Overview](../overview.md)
-- [Operations Guide](../operations/README.md)
+- [Operations Guide](../operations/index.md)
 - [Installation Guide](../getting-started/installation.md)
 
 ## Version
