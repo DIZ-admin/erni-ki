@@ -78,16 +78,16 @@ title: 'No Emoji Policy'
 **Статистика:**
 
 ```
-Всего файлов просканировано:    343 markdown файла
-Файлов с эмоджи:                134
-Эмоджи удалено:                 5543
+Всего файлов просканировано: 343 markdown файла
+Файлов с эмоджи: 134
+Эмоджи удалено: 5543
 
 Top файлов по количеству эмоджи:
-  959 - docs/archive/audits/comprehensive-documentation-audit-2025-11-25.md
-  193 - docs/archive/audits/best-practices-audit-2025-10-20.md
-  166 - docs/archive/diagnostics/full-server-diagnostics-2025-11-04.md
-  163 - docs/archive/audits/comprehensive-project-audit-2025-10-17.md
-  153 - docs/architecture/architecture.md
+ 959 - docs/archive/audits/comprehensive-documentation-audit-2025-11-25.md
+ 193 - docs/archive/audits/best-practices-audit-2025-10-20.md
+ 166 - docs/archive/diagnostics/full-server-diagnostics-2025-11-04.md
+ 163 - docs/archive/audits/comprehensive-project-audit-2025-10-17.md
+ 153 - docs/architecture/architecture.md
 ```
 
 **Затронутые категории:**
@@ -117,8 +117,8 @@ Top файлов по количеству эмоджи:
 ```markdown
 <!-- Вместо emoji -->
 
-[OK] вместо ✅ [ERROR] вместо ❌ [WARNING] вместо ⚠️ [CRITICAL] вместо 🔴 [INFO]
-вместо ℹ️ [TIP] вместо 💡
+[OK] вместо [ERROR] вместо [WARNING] вместо [CRITICAL] вместо [INFO] вместо ℹ
+[TIP] вместо
 ```
 
 **Примеры:**
@@ -126,7 +126,7 @@ Top файлов по количеству эмоджи:
 ```markdown
 <!-- Плохо -->
 
-✅ Сервис работает 🔴 Критическая ошибка 💡 Совет: используйте кэширование
+Сервис работает Критическая ошибка Совет: используйте кэширование
 
 <!-- Хорошо -->
 
@@ -167,11 +167,11 @@ Top файлов по количеству эмоджи:
 ````markdown
 ```mermaid
 graph LR
-    A[User] --> B[Nginx]
-    B --> C[OpenWebUI]
-    C --> D[Ollama]
-    style C fill:#90EE90
-    style D fill:#FFB6C1
+ A[User] --> B[Nginx]
+ B --> C[OpenWebUI]
+ C --> D[Ollama]
+ style C fill:#90EE90
+ style D fill:#FFB6C1
 ```
 ````
 
@@ -209,13 +209,13 @@ python3 scripts/remove-all-emoji.py
 
 ```yaml
 - repo: local
-  hooks:
-    - id: no-emoji-in-docs
-      name: 'Docs: validate no emoji'
-      entry: python3 scripts/validate-no-emoji.py
-      language: python
-      files: ^docs/.*\.md$
-      pass_filenames: true
+ hooks:
+ - id: no-emoji-in-docs
+ name: 'Docs: validate no emoji'
+ entry: python3 scripts/validate-no-emoji.py
+ language: python
+ files: ^docs/.*\.md$
+ pass_filenames: true
 ```
 
 **Создайте скрипт валидации:**
@@ -229,36 +229,36 @@ import sys
 from pathlib import Path
 
 EMOJI_PATTERN = re.compile(
-    "["
-    "\U0001F600-\U0001F64F"
-    "\U0001F300-\U0001F5FF"
-    "\U0001F680-\U0001F6FF"
-    "\U0001F1E0-\U0001F1FF"
-    "\U00002702-\U000027B0"
-    "\U000024C2-\U0001F251"
-    "\U0001F900-\U0001F9FF"
-    "\U0001F018-\U0001F270"
-    "]+",
-    flags=re.UNICODE
+ "["
+ "\U0001F600-\U0001F64F"
+ "\U0001F300-\U0001F5FF"
+ "\U0001F680-\U0001F6FF"
+ "\U0001F1E0-\U0001F1FF"
+ "\U00002702-\U000027B0"
+ "\U000024C2-\U0001F251"
+ "\U0001F900-\U0001F9FF"
+ "\U0001F018-\U0001F270"
+ "]+",
+ flags=re.UNICODE
 )
 
-TEXT_EMOJI = ['⭐', '✅', '❌', '⚠️', '🔴', '🟡', '🟢', 'ℹ️', '💡', '🚨']
+TEXT_EMOJI = ['', '', '', '', '', '[WARNING]', '[OK]', 'ℹ', '', '']
 
 files_with_emoji = []
 for file_path in sys.argv[1:]:
-    try:
-        content = Path(file_path).read_text()
-        if EMOJI_PATTERN.search(content) or any(e in content for e in TEXT_EMOJI):
-            files_with_emoji.append(file_path)
-    except:
-        pass
+ try:
+ content = Path(file_path).read_text()
+ if EMOJI_PATTERN.search(content) or any(e in content for e in TEXT_EMOJI):
+ files_with_emoji.append(file_path)
+ except:
+ pass
 
 if files_with_emoji:
-    print("ERROR: Emoji found in files:")
-    for f in files_with_emoji:
-        print(f"  - {f}")
-    print("\nRemove emoji using: python3 scripts/remove-all-emoji.py")
-    sys.exit(1)
+ print("ERROR: Emoji found in files:")
+ for f in files_with_emoji:
+ print(f" - {f}")
+ print("\nRemove emoji using: python3 scripts/remove-all-emoji.py")
+ sys.exit(1)
 
 print("[OK] No emoji found")
 EOF
@@ -275,21 +275,21 @@ chmod +x scripts/validate-no-emoji.py
 name: Documentation Validation
 
 on:
-  pull_request:
-    paths:
-      - '**/*.md'
-      - 'scripts/validate-no-emoji.py'
+ pull_request:
+ paths:
+ - '**/*.md'
+ - 'scripts/validate-no-emoji.py'
 
 jobs:
-  validate-no-emoji:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ validate-no-emoji:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Validate no emoji
-        run: |
-          find . -name "*.md" -type f ! -path "*/node_modules/*" ! -path "*/.venv/*" \
-            -exec python3 scripts/validate-no-emoji.py {} +
+ - name: Validate no emoji
+ run: |
+ find . -name "*.md" -type f ! -path "*/node_modules/*" ! -path "*/.venv/*" \
+ -exec python3 scripts/validate-no-emoji.py {} +
 ```
 
 ---
@@ -300,11 +300,11 @@ jobs:
 
 **Политика строгая и не допускает исключений:**
 
-- ❌ Нет исключений для README
-- ❌ Нет исключений для CHANGELOG
-- ❌ Нет исключений для "дружелюбности"
-- ❌ Нет исключений для "визуальной привлекательности"
-- ❌ Нет исключений для маркетинговых материалов
+- Нет исключений для README
+- Нет исключений для CHANGELOG
+- Нет исключений для "дружелюбности"
+- Нет исключений для "визуальной привлекательности"
+- Нет исключений для маркетинговых материалов
 
 ### 5.2 Внешние файлы
 
