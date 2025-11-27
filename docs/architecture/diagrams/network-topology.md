@@ -11,41 +11,41 @@ last_updated: '2025-11-27'
 
 ```mermaid
 graph TB
-    subgraph "Внешняя сеть"
+    subgraph External["Внешняя сеть"]
         Internet["Интернет"]
-        ExternalUser["Внешний<br/>пользователь"]
+        ExternalUser["Внешний | пользователь"]
     end
 
-    subgraph "Локальная сеть (192.168.62.0/24)"
-        LocalUser["Локальный<br/>пользователь"]
-        Router["LANCOM Router<br/>192.168.62.1"]
-        Server["ERNI-KI Server<br/>192.168.62.153"]
+    subgraph Local["Локальная сеть (192.168.62.0/24)"]
+        LocalUser["Локальный | пользователь"]
+        Router["LANCOM Router | 192.168.62.1"]
+        Server["ERNI-KI Server | 192.168.62.153"]
     end
 
-    subgraph "Публичные порты (Server)"
-        Port80["80/tcp<br/>HTTP"]
-        Port443["443/tcp<br/>HTTPS"]
-        Port8080["8080/tcp<br/>HTTP Alt"]
-        Port3001["3001/tcp<br/>Uptime Kuma"]
+    subgraph Public["Публичные порты (Server)"]
+        Port80["80/tcp | HTTP"]
+        Port443["443/tcp | HTTPS"]
+        Port8080["8080/tcp | HTTP Alt"]
+        Port3001["3001/tcp | Uptime Kuma"]
     end
 
-    subgraph "Localhost-only порты"
-        Port4000["127.0.0.1:4000<br/>LiteLLM API"]
-        Port11434["127.0.0.1:11434<br/>Ollama"]
-        Port9091["127.0.0.1:9091<br/>Prometheus"]
-        Port3000["127.0.0.1:3000<br/>Grafana"]
-        Port3100["127.0.0.1:3100<br/>Loki"]
-        Port9093["127.0.0.1:9093<br/>Alertmanager"]
-        Port9092["127.0.0.1:9092<br/>Auth"]
-        Port9898["127.0.0.1:9898<br/>Backrest"]
-        Port5050["127.0.0.1:5050<br/>EdgeTTS"]
-        Port9998["127.0.0.1:9998<br/>Tika"]
-        Port8000["127.0.0.1:8000<br/>MCP"]
-        Port8091["127.0.0.1:8091<br/>Watchtower API"]
+    subgraph Localhost["Localhost-only порты"]
+        Port4000["127.0.0.1:4000 | LiteLLM API"]
+        Port11434["127.0.0.1:11434 | Ollama"]
+        Port9091["127.0.0.1:9091 | Prometheus"]
+        Port3000["127.0.0.1:3000 | Grafana"]
+        Port3100["127.0.0.1:3100 | Loki"]
+        Port9093["127.0.0.1:9093 | Alertmanager"]
+        Port9092["127.0.0.1:9092 | Auth"]
+        Port9898["127.0.0.1:9898 | Backrest"]
+        Port5050["127.0.0.1:5050 | EdgeTTS"]
+        Port9998["127.0.0.1:9998 | Tika"]
+        Port8000["127.0.0.1:8000 | MCP"]
+        Port8091["127.0.0.1:8091 | Watchtower API"]
     end
 
-    subgraph "Docker Bridge Network"
-        DockerBridge["docker0<br/>172.17.0.0/16"]
+    subgraph Docker["Docker Bridge Network"]
+        DockerBridge["docker0 | 172.17.0.0/16"]
     end
 
     Internet --> ExternalUser

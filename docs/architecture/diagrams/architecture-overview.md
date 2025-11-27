@@ -11,41 +11,41 @@ last_updated: '2025-11-27'
 
 ```mermaid
 graph TB
-    subgraph "Пользовательский уровень"
+    subgraph User_Level["Пользовательский уровень"]
         User["Пользователь"]
         Browser["Браузер"]
     end
 
-    subgraph "Уровень доступа"
+    subgraph Access_Level["Уровень доступа"]
         CF["Cloudflare Tunnel"]
         Nginx["Nginx Reverse Proxy"]
         Auth["JWT Auth Service"]
     end
 
-    subgraph "Уровень приложений"
-        OpenWebUI["Open WebUI<br/>(GPU)"]
+    subgraph App_Level["Уровень приложений"]
+        OpenWebUI["Open WebUI#40;GPU#41;"]
         LiteLLM["LiteLLM Gateway"]
         SearXNG["SearXNG Search"]
     end
 
-    subgraph "AI/ML уровень"
-        Ollama["Ollama<br/>(GPU)"]
-        Docling["Docling OCR<br/>(GPU)"]
+    subgraph AI_Level["AI/ML уровень"]
+        Ollama["Ollama#40;GPU#41;"]
+        Docling["Docling OCR#40;GPU#41;"]
         EdgeTTS["EdgeTTS"]
     end
 
-    subgraph "Уровень данных"
-        PostgreSQL["PostgreSQL<br/>(pgvector)"]
+    subgraph Data_Level["Уровень данных"]
+        PostgreSQL["PostgreSQL#40;pgvector#41;"]
         Redis["Redis Cache"]
     end
 
-    subgraph "Вспомогательные сервисы"
+    subgraph Aux_Services["Вспомогательные сервисы"]
         Tika["Apache Tika"]
         MCP["MCP Server"]
         Backrest["Backrest Backup"]
     end
 
-    subgraph "Мониторинг"
+    subgraph Monitoring["Мониторинг"]
         Prometheus["Prometheus"]
         Grafana["Grafana"]
         Loki["Loki"]
