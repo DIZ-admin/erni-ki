@@ -11,43 +11,43 @@ last_updated: '2025-11-27'
 
 ```mermaid
 graph TB
-    subgraph "Критические сервисы (Tier 1)"
-        OpenWebUI["openwebui<br/>v0.6.36<br/>GPU: RTX 5000<br/>8GB RAM"]
-        Ollama["ollama<br/>v0.12.11<br/>GPU: RTX 5000<br/>24GB RAM"]
-        PostgreSQL["db (PostgreSQL)<br/>pgvector/pg17<br/>4GB RAM"]
-        Nginx["nginx<br/>v1.29.3<br/>512MB RAM"]
+    subgraph Tier1["Критические сервисы (Tier 1)"]
+        OpenWebUI["openwebui | v0.6.36 | GPU: RTX 5000 | 8GB RAM"]
+        Ollama["ollama | v0.12.11 | GPU: RTX 5000 | 24GB RAM"]
+        PostgreSQL["db (PostgreSQL) | pgvector/pg17 | 4GB RAM"]
+        Nginx["nginx | v1.29.3 | 512MB RAM"]
     end
 
-    subgraph "Важные сервисы (Tier 2)"
-        LiteLLM["litellm<br/>v1.80.0.rc.1<br/>12GB RAM"]
-        Redis["redis<br/>v7.0.15<br/>1GB RAM"]
-        SearXNG["searxng<br/>latest<br/>1GB RAM"]
-        Auth["auth<br/>custom build"]
-        Cloudflared["cloudflared<br/>2025.11.1"]
-        Backrest["backrest<br/>v1.9.2"]
+    subgraph Tier2["Важные сервисы (Tier 2)"]
+        LiteLLM["litellm | v1.80.0.rc.1 | 12GB RAM"]
+        Redis["redis | v7.0.15 | 1GB RAM"]
+        SearXNG["searxng | latest | 1GB RAM"]
+        Auth["auth | custom build"]
+        Cloudflared["cloudflared | 2025.11.1"]
+        Backrest["backrest | v1.9.2"]
     end
 
-    subgraph "Вспомогательные сервисы (Tier 3)"
-        Docling["docling<br/>GPU: RTX 5000<br/>12GB RAM"]
-        EdgeTTS["edgetts<br/>latest"]
-        Tika["tika<br/>latest"]
-        MCP["mcposerver<br/>git-91e8f94"]
+    subgraph Tier3["Вспомогательные сервисы (Tier 3)"]
+        Docling["docling | GPU: RTX 5000 | 12GB RAM"]
+        EdgeTTS["edgetts | latest"]
+        Tika["tika | latest"]
+        MCP["mcposerver | git-91e8f94"]
     end
 
-    subgraph "Мониторинг (Tier 4)"
-        Prometheus["prometheus<br/>v3.0.0"]
-        Grafana["grafana<br/>v11.3.0"]
-        Loki["loki<br/>v3.0.0"]
-        Alertmanager["alertmanager<br/>v0.27.0"]
-        UptimeKuma["uptime-kuma<br/>v2.0.2"]
-        NodeExporter["node-exporter<br/>v1.8.2"]
-        PostgresExporter["postgres-exporter<br/>v0.16.0"]
-        RedisExporter["redis-exporter<br/>v1.67.0"]
+    subgraph Tier4["Мониторинг (Tier 4)"]
+        Prometheus["prometheus | v3.0.0"]
+        Grafana["grafana | v11.3.0"]
+        Loki["loki | v3.0.0"]
+        Alertmanager["alertmanager | v0.27.0"]
+        UptimeKuma["uptime-kuma | v2.0.2"]
+        NodeExporter["node-exporter | v1.8.2"]
+        PostgresExporter["postgres-exporter | v0.16.0"]
+        RedisExporter["redis-exporter | v1.67.0"]
     end
 
-    subgraph "Инфраструктура"
-        Watchtower["watchtower<br/>v1.7.1"]
-        FluentBit["fluent-bit<br/>v3.2.2"]
+    subgraph Infra["Инфраструктура"]
+        Watchtower["watchtower | v1.7.1"]
+        FluentBit["fluent-bit | v3.2.2"]
     end
 
     OpenWebUI --> PostgreSQL
