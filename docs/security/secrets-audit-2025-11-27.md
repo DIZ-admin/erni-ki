@@ -280,8 +280,8 @@ generate_secret "litellm_master_key" 48
 
 - [Security Action Plan](../operations/security-action-plan.md)
 - [Comprehensive System Audit](../reports/comprehensive-system-audit-2025-11-27.md)
-- [.gitignore](.gitignore)
-- [detect-secrets baseline](.secrets.baseline)
+- `.gitignore`
+- `detect-secrets baseline` (.secrets.baseline)
 
 ---
 

@@ -1270,7 +1270,7 @@ jobs:
 2. en/overview.md -> security/README.md
 3. reference/documentation-update-plan-2025-11-24.md -> ../../archive/audits/code-audit-2025-11-24.md
 4. reference/documentation-refactoring-plan-v2-2025-11-24.md -> academy/index.md
-5. reference/documentation-refactoring-plan-v2-2025-11-24.md -> getting-started/README.md
+5. reference/documentation-refactoring-plan-v2-2025-11-24.md -> getting-started/index.md
 ... (полный список в отдельном файле)
 ```
 
