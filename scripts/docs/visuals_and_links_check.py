@@ -43,7 +43,10 @@ def check_links(path: Path, text: str) -> list[str]:
             continue
         candidate = (path.parent / target).resolve()
         if not candidate.exists():
-            rel = candidate.relative_to(ROOT, walk_up=True)
+            try:
+                rel = candidate.relative_to(ROOT)
+            except ValueError:
+                rel = candidate
             issues.append(f"missing link target: {rel}")
     return issues
 
