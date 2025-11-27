@@ -378,7 +378,7 @@ nav:
   - "Platform Overview": overview.md
   - Glossary: GLOSSARY.md
   - "Quick Start":
-      - "Overview": getting-started/README.md
+      - "Overview": getting-started/index.md
       - "Installation": getting-started/installation.md
       - "Configuration": getting-started/configuration-guide.md
       - "Users": getting-started/user-guide.md
@@ -387,7 +387,7 @@ nav:
       - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
       - "Port Forwarding": getting-started/port-forwarding-setup.md
   - Architecture:
-      - "Overview (README)": architecture/README.md
+      - "Overview (README)": architecture/index.md
       - Overview: architecture/architecture.md
       - "Services": architecture/services-overview.md
       - "Inventory": architecture/service-inventory.md
@@ -419,9 +419,9 @@ nav:
       - "Open WebUI Basics": archive/training/openwebui-basics.md
       - "Prompting 101": archive/training/prompting-101.md
   - Operations:
-      - "Overview": operations/README.md
+      - "Overview": operations/index.md
       - Core:
-          - "Overview": operations/core/README.md
+          - "Overview": operations/core/index.md
           - "Operations Handbook": operations/core/operations-handbook.md
           - "Runbooks Summary": operations/core/runbooks-summary.md
           - "Admin Guide": operations/core/admin-guide.md
@@ -439,24 +439,24 @@ nav:
           - "Alertmanager Noise Reduction": operations/monitoring/alertmanager-noise-reduction.md
           - "Access Log Sync": operations/monitoring/access-log-sync-and-fluentbit.md
       - Automation:
-          - "Overview": operations/automation/README.md
+          - "Overview": operations/automation/index.md
           - "Automated Maintenance": operations/automation/automated-maintenance-guide.md
           - "Docker Cleanup": operations/automation/docker-cleanup-guide.md
           - "Docker Log Rotation": operations/automation/docker-log-rotation.md
       - AI:
           - "LiteLLM Redis Caching": operations/ai/litellm-redis-caching.md
       - Maintenance:
-          - "Overview": operations/maintenance/README.md
+          - "Overview": operations/maintenance/index.md
           - "Backup Guide": operations/backup-guide.md
           - "Image Upgrade Checklist": operations/maintenance/image-upgrade-checklist.md
           - "Service Restart": operations/maintenance/service-restart-procedures.md
           - "Backup & Restore": operations/maintenance/backup-restore-procedures.md
           - "Docling Shared Volume": operations/maintenance/docling-shared-volume.md
       - Troubleshooting:
-          - "Overview": operations/troubleshooting/README.md
+          - "Overview": operations/troubleshooting/index.md
           - "Troubleshooting Guide": operations/troubleshooting/troubleshooting-guide.md
       - Database:
-          - "Overview": operations/database/README.md
+          - "Overview": operations/database/index.md
           - "Monitoring Plan": operations/database/database-monitoring-plan.md
           - "Optimizations": operations/database/database-production-optimizations.md
           - "Troubleshooting": operations/database/database-troubleshooting.md
@@ -464,9 +464,9 @@ nav:
           - "Redis Operations": operations/database/redis-operations-guide.md
           - "VLLM Optimization": operations/database/vllm-resource-optimization.md
       - Diagnostics:
-          - "Diagnostics Overview": operations/diagnostics/README.md
+          - "Diagnostics Overview": operations/diagnostics/index.md
       - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
-  - "Data & Storage": data/README.md
+  - "Data & Storage": data/index.md
   - Security:
       - "Overview": security/README.md
       - "Security Policy": security/security-policy.md
@@ -476,7 +476,7 @@ nav:
       - "Log Audit": security/log-audit.md
   - Reference:
       - "Overview": reference/README.md
-      - "API Overview": api/README.md
+      - "API Overview": api/index.md
       - "API Reference": reference/api-reference.md
       - Development: reference/development.md
       - "GitHub Environments": reference/github-environments-setup.md
@@ -497,7 +497,7 @@ nav:
   - "Reports & Archive":
       - "Archive Overview": archive/README.md
       - "Archive READMEs":
-          - archive/audits/README.md
+          - archive/audits/index.md
           - archive/diagnostics/README.md
           - archive/incidents/README.md
           - archive/diagnostics/system-diagnostics-2025-11-18.md

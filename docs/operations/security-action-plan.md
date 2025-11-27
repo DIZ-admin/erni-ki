@@ -716,7 +716,7 @@ slos:
 ## Ссылки
 
 - [Comprehensive System Audit](../reports/comprehensive-system-audit-2025-11-27.md)
-- [Security Checklist](../security/security-checklist.md)
+- [Security Policy](../security/security-policy.md)
 - [Runbooks](core/runbooks-summary.md)
 
 ---

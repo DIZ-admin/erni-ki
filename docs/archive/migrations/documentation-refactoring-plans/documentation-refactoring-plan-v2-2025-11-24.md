@@ -134,7 +134,7 @@ rm de/academy/news/2025-01-release-x.md
 ### Для пользователей
 
 - `academy/index.md` - обучение и практика
-- `getting-started/README.md` - установка и настройка
+- `getting-started/index.md` - установка и настройка
 - `academy/howto/index.md` - практические руководства
 - `news/index.md` - обновления платформы
 
@@ -305,7 +305,7 @@ operations/troubleshooting/
 
 #### Неделя 1: Getting Started (7 файлов, ~8 часов)
 
-- [ ] getting-started/README.md
+- [ ] getting-started/index.md
 - [ ] getting-started/configuration-guide.md
 - [ ] getting-started/dnsmasq-setup-instructions.md
 - [ ] getting-started/external-access-setup.md
@@ -384,7 +384,7 @@ operations/troubleshooting/
 
 **Приоритет:**
 
-- [ ] getting-started/README.md
+- [ ] getting-started/index.md
 - [ ] getting-started/dnsmasq-setup-instructions.md
 - [ ] getting-started/external-access-setup.md
 - [ ] getting-started/local-network-dns-setup.md
