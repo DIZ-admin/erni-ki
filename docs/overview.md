@@ -127,7 +127,7 @@ flowchart LR
   [`service-restart-procedures.md`](operations/maintenance/service-restart-procedures.md),
   [`troubleshooting-guide.md`](operations/troubleshooting/troubleshooting-guide.md).
 - **Diagnostics**: методология и чеклисты —
-  [`diagnostics/`](operations/diagnostics/README.md).
+  [`diagnostics/`](operations/diagnostics/index.md).
 
 Процесс реагирования:
 `docker compose ps → docker compose logs → curl /metrics → Grafana dashboards`,
@@ -169,11 +169,11 @@ flowchart LR
   [`monitoring-guide.md`](operations/monitoring/monitoring-guide.md),
   [`automated-maintenance-guide.md`](operations/automation/automated-maintenance-guide.md)
 - **Runbooks и troubleshooting:**
-  [`Troubleshooting`](operations/troubleshooting/README.md)
+  [`Troubleshooting`](operations/troubleshooting/index.md)
 - **Безопасность:**
   [`security/security-policy.md`](security/security-policy.md),
   [`log-audit.md`](security/log-audit.md)
-- **Data & Storage:** [`data/README.md`](data/README.md)
+- **Data & Storage:** [`data/index.md`](data/index.md)
 - **API и интеграции:** [`api-reference.md`](reference/api-reference.md),
   [`mcpo-integration-guide.md`](reference/mcpo-integration-guide.md)
 
