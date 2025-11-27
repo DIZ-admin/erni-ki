@@ -11,7 +11,7 @@ last_updated: '2025-11-27'
 
 ```mermaid
 flowchart TB
-    subgraph "Пользовательский запрос"
+    subgraph UserRequest["Пользовательский запрос"]
         User["Пользователь"] --> Browser["Браузер"]
         Browser --> |"HTTPS"| CF["Cloudflare Tunnel"]
         CF --> |"HTTP"| Nginx["Nginx"]
@@ -20,14 +20,14 @@ flowchart TB
         Nginx --> |"HTTP"| OpenWebUI["Open WebUI"]
     end
 
-    subgraph "Обработка LLM запроса"
+    subgraph LLMProcessing["Обработка LLM запроса"]
         OpenWebUI --> |"Prompt + Context"| LiteLLM["LiteLLM Gateway"]
         LiteLLM --> |"Model Request"| Ollama["Ollama"]
         Ollama --> |"LLM Response"| LiteLLM
         LiteLLM --> |"Response"| OpenWebUI
     end
 
-    subgraph "Поиск и RAG"
+    subgraph SearchRAG["Поиск и RAG"]
         OpenWebUI --> |"Search Query"| SearXNG["SearXNG"]
         SearXNG --> |"Cache Check"| Redis["Redis"]
         Redis --> |"Cached Results"| SearXNG
@@ -35,11 +35,11 @@ flowchart TB
         Internet --> |"Results"| SearXNG
         SearXNG --> |"Results"| OpenWebUI
 
-        OpenWebUI --> |"Vector Query"| PostgreSQL["PostgreSQL<br/>(pgvector)"]
+        OpenWebUI --> |"Vector Query"| PostgreSQL["PostgreSQL | (pgvector)"]
         PostgreSQL --> |"Similar Docs"| OpenWebUI
     end
 
-    subgraph "Обработка документов"
+    subgraph DocProcessing["Обработка документов"]
         OpenWebUI --> |"Upload File"| Tika["Apache Tika"]
         Tika --> |"Extracted Text"| OpenWebUI
 
@@ -51,18 +51,18 @@ flowchart TB
         OpenWebUI --> |"Store Embeddings"| PostgreSQL
     end
 
-    subgraph "Синтез речи"
+    subgraph TTS["Синтез речи"]
         OpenWebUI --> |"Text"| EdgeTTS["EdgeTTS"]
         EdgeTTS --> |"Audio Stream"| OpenWebUI
     end
 
-    subgraph "Персистентность"
+    subgraph Persistence["Персистентность"]
         OpenWebUI --> |"Save Chat"| PostgreSQL
         OpenWebUI --> |"Cache Data"| Redis
         LiteLLM --> |"Log Requests"| PostgreSQL
     end
 
-    subgraph "Мониторинг"
+    subgraph Monitoring["Мониторинг"]
         OpenWebUI --> |"Metrics"| Prometheus["Prometheus"]
         LiteLLM --> |"Metrics"| Prometheus
         Ollama --> |"Metrics"| Prometheus
@@ -78,7 +78,7 @@ flowchart TB
         Loki --> |"Query"| Grafana
     end
 
-    subgraph "Резервное копирование"
+    subgraph Backup["Резервное копирование"]
         Backrest["Backrest"] --> |"Backup"| PostgreSQL
         Backrest --> |"Backup"| Redis
         Backrest --> |"Backup Files"| Storage["Local Storage"]
