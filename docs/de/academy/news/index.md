@@ -1,12 +1,13 @@
 ---
 language: de
-translation_status: pending
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-27'
 ---
 
-# Academy KI News
+# Academy KI Neuigkeiten
 
-Übersetzungen der Release-Notizen folgen.
+Feed mit Änderungen der ERNI KI-Plattform. Verfolgen Sie Updates, um zu wissen,
+welche Funktionen hinzugefügt wurden und was Teams tun müssen.
 
 - [Januar 2025 — Release X](2025-01-release-x.md)
