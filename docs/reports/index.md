@@ -12,6 +12,13 @@ ERNI-KI.
 
 ## Последние отчеты
 
+### Системные аудиты
+
+- [Comprehensive System Audit 2025-11-27](comprehensive-system-audit-2025-11-27.md) -
+  комплексный аудит архитектуры, кода, безопасности и инфраструктуры
+- [Security Action Plan](../operations/security-action-plan.md) - план
+  устранения критических уязвимостей
+
 ### Аудиты документации
 
 - [Comprehensive Documentation Audit 2025-11-27](comprehensive-documentation-audit-2025-11-27.md) -
