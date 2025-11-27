@@ -1,75 +1,57 @@
 ================================================================================
 COMPREHENSIVE DOCUMENTATION AUDIT
-Date: 2025-11-27 09:17:49
+Date: 2025-11-27 11:17:58
 ================================================================================
 
 ## OVERALL STATISTICS
 
-Total markdown files: 246
-Files with frontmatter: 246 (100.0%)
+Total markdown files: 282
+Files with frontmatter: 282 (100.0%)
 Files without frontmatter: 0 (0.0%)
 Files with metadata issues: 0
 
 ## LANGUAGE DISTRIBUTION
 
-  RU  : 140 files ( 56.9%)
-  DE  :  82 files ( 33.3%)
-  EN  :  24 files (  9.8%)
+  RU  : 155 files ( 55.0%)
+  DE  :  97 files ( 34.4%)
+  EN  :  30 files ( 10.6%)
 
 ## CATEGORY DISTRIBUTION
 
-  de                            :  82 files
-  archive                       :  45 files
+  de                            :  97 files
+  archive                       :  54 files
   operations                    :  39 files
-  en                            :  24 files
+  en                            :  28 files
   reference                     :  16 files
+  architecture                  :  10 files
   academy                       :  10 files
   getting-started               :   8 files
   security                      :   6 files
-  architecture                  :   5 files
+  reports                       :   3 files
+  system                        :   2 files
   news                          :   2 files
-  reports                       :   1 files
-  system                        :   1 files
   data                          :   1 files
   api                           :   1 files
 
 ## FILES WITH DATES IN NAME (outside archive/)
 
-Found 1 files:
+Found 2 files:
   - docs/reports/comprehensive-master-audit-2025-11-27.md
+  - docs/reports/comprehensive-documentation-audit-2025-11-27.md
 
 ## DIRECTORIES WITHOUT index.md OR README.md
 
-Found 20 directories:
-  - archive/config-backup/
-  - archive/howto/
-  - archive/migrations/documentation-refactoring-plans/
-  - archive/news/
-  - archive/training/
+Found 4 directories:
   - de/archive/migrations/documentation-refactoring-plans/
-  - de/getting-started/
-  - de/operations/automation/
-  - de/operations/core/
-  - de/operations/maintenance/
-  - de/system/
   - en/archive/migrations/documentation-refactoring-plans/
-  - en/getting-started/
-  - en/operations/core/
-  - en/reference/
-  ... and 5 more
-
-## FILES WITH EMOJI (Policy Violation)
-
-[WARNING] Found 2 files with emoji:
-  - docs/reports/comprehensive-master-audit-2025-11-27.md
-  - docs/reference/NO-EMOJI-POLICY.md
+  - en/security/
+  - operations/ai/
 
 ## OVERALL ASSESSMENT
 
   - Files with dates: -0.1 points
-  - Emoji policy violations: -0.2 points
-  - Missing index files: -0.5 points
+  - Missing index files: -0.1 points
 
-FINAL SCORE: 9.2/10.0
+FINAL SCORE: 9.8/10.0
 
 ================================================================================
