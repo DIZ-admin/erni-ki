@@ -62,8 +62,8 @@ the ERNI-KI platform.
 
 ## Связанная документация
 
-- [Architecture Overview](../architecture/README.md)
-- [Operations Guide](../operations/README.md)
+- [Architecture Overview](../architecture/index.md)
+- [Operations Guide](../operations/index.md)
 - [System Overview](../overview.md)
 
 ## Version
