@@ -55,9 +55,9 @@ advanced users.
 
 ## Связанная документация
 
-- [Architecture](../architecture/README.md)
-- [Operations](../operations/README.md)
-- [Getting Started](../getting-started/README.md)
+- [Architecture](../architecture/index.md)
+- [Operations](../operations/index.md)
+- [Getting Started](../getting-started/index.md)
 
 ## Version
 

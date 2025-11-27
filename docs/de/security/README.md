@@ -70,7 +70,7 @@ ERNI-KI setzt auf mehrere Schutzschichten:
 
 - [Architecture](../architecture/README.md)
 - [Operations](../operations/README.md)
-- [Getting Started](../getting-started/README.md)
+- [Getting Started](../getting-started/index.md)
 
 ## Version
 

@@ -28,7 +28,7 @@ ERNI-KI.
 
 ### Архивные аудиты
 
-Предыдущие аудиты перенесены в [../archive/audits/](../archive/audits/README.md)
+Предыдущие аудиты перенесены в [../archive/audits/](../archive/audits/index.md)
 
 ## Частота аудитов
 

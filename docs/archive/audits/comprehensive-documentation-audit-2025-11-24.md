@@ -308,7 +308,7 @@ EN (английский): 16 файлов (19.5% покрытие)
 ```
 1. de/security/README.md → ../architecture/README.md
 2. de/security/README.md → ../operations/README.md
-3. de/security/README.md → ../getting-started/README.md
+3. de/security/README.md → ../getting-started/index.md
 4. de/getting-started/installation.md → ../operations/core/admin-guide.md#monitoring
 5. de/getting-started/installation.md → ../operations/core/admin-guide.md#backup
 6. operations/monitoring/prometheus-alerts-guide.md → monitoring-guide.md#alert-testing

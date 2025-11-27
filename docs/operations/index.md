@@ -39,12 +39,12 @@ managing the ERNI-KI platform.
 
 - **Automation:**
   [Automated maintenance](automation/automated-maintenance-guide.md)
-- **Database:** [Operations overview](database/README.md)
+- **Database:** [Operations overview](database/index.md)
 - **Monitoring:** [Monitoring guide](monitoring/monitoring-guide.md)
 
 ### Diagnostics
 
-- **[diagnostics/README.md](diagnostics/README.md)** - Diagnostic reports and
+- **[diagnostics/index.md](diagnostics/index.md)** - Diagnostic reports and
   methodologies
 
 ## Quick Start

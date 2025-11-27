@@ -31,12 +31,12 @@ Runbooks, Anleitungen und Prozesse zur Verwaltung der ERNI-KI Plattform.
 
 - **Automation:**
   [Automated maintenance](automation/automated-maintenance-guide.md)
-- **Database:** [Operations overview](database/README.md)
+- **Database:** [Operations overview](database/index.md)
 - **Monitoring:** [Monitoring guide](monitoring/monitoring-guide.md)
 
 ### Diagnostics
 
-- **[diagnostics/README.md](diagnostics/README.md)** – Reports & Methodik
+- **[diagnostics/index.md](diagnostics/index.md)** – Reports & Methodik
 
 ## Quick Start
 
@@ -54,8 +54,8 @@ Runbooks, Anleitungen und Prozesse zur Verwaltung der ERNI-KI Plattform.
 
 ## Verwandte Doku
 
-- [Architecture Overview](../architecture/README.md)
-- [Getting Started](../getting-started/README.md)
+- [Architecture Overview](../architecture/index.md)
+- [Getting Started](../getting-started/index.md)
 - [Security Guide](../security/README.md)
 
 ## Version
