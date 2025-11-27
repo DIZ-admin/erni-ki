@@ -1,28 +1,22 @@
 ---
 language: de
-translation_status: pending
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
-title: ' ERNI-KI Dokumentation (Deutsch)'
+last_updated: '2025-11-27'
+title: 'ERNI-KI — Professionelle Projektzusammenfassung'
 system_version: '12.1'
-date: '2025-11-22'
 system_status: 'Production Ready'
 audience: 'administrators'
 ---
 
-# ERNI-KI Dokumentation (Deutsch)
+# ERNI-KI — Professionelle Projektzusammenfassung
 
-> **Willkommen zur deutschen Dokumentation von ERNI-KI** **Version:** 12.1
-> (Wave 3) · **Aktualisiert:** 2025-11-14
+<!-- STATUS_SNIPPET_START -->
 
-## Über ERNI-KI
-
-<!-- STATUS_SNIPPET_DE_START -->
-
-> **Systemstatus (2025-11-14) — Production Ready v12.1**
+> **Systemstatus (2025-11-27) — Production Ready v12.1**
 >
-> - Container: 30/30 контейнеров healthy
-> - Grafana: 5/5 Grafana Dashboards
+> - Container: 34/34 services healthy
+> - Grafana: 5/5 Grafana Dashboards (provisioned)
 > - Alerts: 20 Prometheus alert rules aktiv
 > - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
 > - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
@@ -30,9 +24,13 @@ audience: 'administrators'
 >   v3.1.0, Alertmanager v0.27.0
 > - Automatisierung: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00,
 >   Backrest 01:30, Watchtower selective updates
-> - Hinweis: Наблюдаемость и AI стек актуализированы в ноябре 2025
+> - Qualität: Dokumentation 9.8/10, System 3.6/5 (high maturity)
+> - Sicherheit: Secrets geschützt, Permissions korrigiert, Audit abgeschlossen
+> - Letztes Audit: 2025-11-27 (Dokumentation + System + Sicherheit)
 
-<!-- STATUS_SNIPPET_DE_END -->
+<!-- STATUS_SNIPPET_END -->
+
+## Über ERNI-KI
 
 ERNI-KI ist eine moderne, produktionsreife AI-Plattform basierend auf Open WebUI
 mit vollständiger Containerisierung, GPU-Beschleunigung und umfassendem
