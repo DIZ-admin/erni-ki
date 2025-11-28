@@ -434,7 +434,7 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
-    image: ollama/ollama:0.12.11 # Updated to 0.12.11 (2025-11-18) - upstream security fixes and GPU stability
+    image: ollama/ollama:0.13.0 # Updated to 0.13.0 (GPU/Vulkan improvements)
     logging: *critical-logging
     ports:
       - "127.0.0.1:11434:11434"
@@ -669,7 +669,7 @@ services:
       prometheus:
         condition: service_healthy
     # Updated: 2025-10-02 from 10.2.0 to 11.6.6 (latest stable 11.x version)
-    image: grafana/grafana:11.6.8 # Updated from 11.3.0
+    image: grafana/grafana:12.3.0 # Updated from 11.6.8 (12.x evaluation)
     container_name: erni-ki-grafana
     user: "0"
     environment:
