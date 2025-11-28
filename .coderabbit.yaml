@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+reviews:
+  review_status: true
+  auto_review:
+    enabled: true
+  branches:
+    include:
+      - main
+      - develop
+  triggers:
+    - opened
+    - reopened
+    - ready_for_review
+    - synchronize
+  ignore_drafts: true
+  path_filters:
+    - "!docs/**"
+    - "!scripts/archon/**"
