@@ -27,6 +27,14 @@ last_updated: '2025-11-28'
 
 ### OpenWebUI Update
 
+### Ollama Update
+
+- **Ollama**: 0.12.11 → **0.13.0** (GPU/Vulkan improvements)
+- **Проверки**:
+  - `docker compose exec -T ollama ollama list` → список моделей загружен
+  - `docker compose exec -T ollama nvidia-smi` → GPU виден (Quadro RTX 5000, 16GB), без процессов
+  - Контейнер healthy
+
 #### **OpenWebUI v0.6.36 → v0.6.40**
 
 - **Дата обновления**: 2025-11-28
@@ -40,7 +48,7 @@ last_updated: '2025-11-28'
 ### Monitoring & Infra Updates
 
 - **Prometheus**: v3.0.0 → **v3.7.3** (pull + restart; `/ -/healthy` = 200)
-- **Grafana**: 11.3.0 → **11.6.8** (health `/api/health` ok)
+- **Grafana**: 11.3.0 → **12.3.0** (health `/api/health` ok)
 - **Loki**: 3.0.0 → **3.6.2** (ready: `curl -ksf -H 'X-Scope-OrgID: erni-ki' https://localhost:3100/ready`)
 - **Tika**: pinned to **apache/tika:3.2.3.0-full** (health 200)
 - **Cloudflared**: already on 2025.11.1 (no change)
@@ -58,7 +66,7 @@ last_updated: '2025-11-28'
 - `docker compose pull cloudflared prometheus grafana loki tika`
 - `docker compose up -d cloudflared prometheus grafana loki tika`
 - Prometheus `/ -/healthy` → 200
-- Grafana `/api/health` → version 11.6.8
+- Grafana `/api/health` → version 12.3.0
 - Loki ready endpoint (with `X-Scope-OrgID: erni-ki`) → `ready`
 - Tika `/tika` → 200
 
