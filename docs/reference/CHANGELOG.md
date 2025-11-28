@@ -44,6 +44,11 @@ last_updated: '2025-11-28'
 - **Loki**: 3.0.0 → **3.6.2** (ready: `curl -ksf -H 'X-Scope-OrgID: erni-ki' https://localhost:3100/ready`)
 - **Tika**: pinned to **apache/tika:3.2.3.0-full** (health 200)
 - **Cloudflared**: already on 2025.11.1 (no change)
+- **Exporters & logging (Phase3.1)**:
+  - Alertmanager **v0.29.0**, Node Exporter **v1.10.2**, Postgres Exporter **v0.18.1**
+  - Redis Exporter **v1.80.1**, Blackbox Exporter **v0.27.0**, Nginx Exporter **v1.5.1**
+  - cAdvisor stays **v0.52.1** (v0.53.0 not available in registry)
+  - Fluent Bit **4.2.0** (major upgrade 3→4)
 
 #### Post-update checks
 
