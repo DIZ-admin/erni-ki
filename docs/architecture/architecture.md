@@ -21,12 +21,12 @@ system_status: 'Production Ready'
 
 ERNI-KI представляет собой современную микросервисную AI платформу, построенную
 на принципах контейнеризации, безопасности и масштабируемости. Система включает
-**32 сервисов**: OpenWebUI v0.6.36, Ollama 0.12.11 (GPU), LiteLLM v1.80.0.rc.1
-(Context Engineering), SearXNG, Docling, Tika, EdgeTTS, MCP Server, Watchtower
-(monitor-only) и полный стек наблюдаемости (Prometheus v3.0.0, Grafana v11.3.0,
-Alertmanager v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0, 8 экспортёров + RAG
-(Retrieval-Augmented Generation) Exporter). Внешний доступ осуществляется через
-Cloudflare туннели (5 доменов).
+**32 сервисов**: OpenWebUI v0.6.40, Ollama 0.13.0 (GPU), LiteLLM
+v1.80.0-stable.1 (Context Engineering), SearXNG, Docling, Tika, EdgeTTS, MCP
+Server, Watchtower (monitor-only) и полный стек наблюдаемости (Prometheus
+v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0, 8
+экспортёров + RAG (Retrieval-Augmented Generation) Exporter). Внешний доступ
+осуществляется через Cloudflare туннели (5 доменов).
 
 ### Последние обновления (v12.1 - ноябрь 2025)
 
@@ -83,7 +83,7 @@ Cloudflare туннели (5 доменов).
 
 - **Система полностью стабилизирована**:
 - 32/32 сервисов в compose.yml (ожидаемый healthy стэк)
-- OpenWebUI v0.6.36 с GPU ускорением (обновлено 2025-11-18)
+- OpenWebUI v0.6.40 с GPU ускорением (обновлено 2025-11-28)
 - Ollama 0.12.11 с оптимизированным VRAM (4GB limit)
 - LiteLLM v1.80.0.rc.1 с увеличенной памятью (12GB)
 - Watchtower 1.7.1 с селективными автообновлениями
@@ -139,7 +139,7 @@ Cloudflare туннели (5 доменов).
 
 **AI & ML Services:**
 
-- **OpenWebUI v0.6.36**: Основной AI интерфейс с CUDA поддержкой, GPU runtime
+- **OpenWebUI v0.6.40**: Основной AI интерфейс с CUDA поддержкой, GPU runtime
   (обновлено 2025-11-04)
 - **Ollama 0.12.11**: Локальный LLM сервер с GPU ускорением (4GB VRAM limit)
 - **LiteLLM v1.80.0.rc.1**: Context Engineering Gateway (12GB memory limit)
@@ -256,7 +256,7 @@ graph TB
 
  %% AI & ML Services
  subgraph " AI & ML Services"
- WEBUI[OpenWebUI v0.6.36<br/>:8080 GPU<br/> Healthy]
+ WEBUI[OpenWebUI v0.6.40<br/>:8080 GPU<br/> Healthy]
  OLLAMA[Ollama 0.12.11<br/>:11434 GPU<br/>4GB VRAM limit<br/> Healthy]
  LITELLM[LiteLLM v1.80.0.rc.1<br/>:4000<br/>12GB memory<br/> Healthy]
  MCP[MCP Server<br/>:8000<br/>7 инструментов<br/> Healthy]

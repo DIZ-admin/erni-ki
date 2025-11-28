@@ -16,7 +16,7 @@ title: 'Детальная таблица активных сервисов ERNI
 | Сервис     | Статус/Порты              | Конфигурация                    | Примечания                                               |
 | ---------- | ------------------------- | ------------------------------- | -------------------------------------------------------- |
 | ollama     | Healthy · `11434:11434`   | `env/ollama.env`                | Критичный; Ollama 0.12.11; GPU 4GB; автообновление выкл. |
-| openwebui  | Healthy · `8080` internal | `conf/openwebui/*.json`, env    | Критичный; v0.6.36; GPU (NVIDIA runtime); MCP интеграция |
+| openwebui  | Healthy · `8080` internal | `conf/openwebui/*.json`, env    | Критичный; v0.6.40; GPU (NVIDIA runtime); MCP интеграция |
 | litellm    | Healthy · `4000:4000`     | `conf/litellm/config.yaml`, env | LiteLLM v1.80.0.rc.1; Thinking tokens; Memory limit 12G  |
 | searxng    | Healthy · `8080` internal | `conf/searxng/*.yml`, env       | RAG поиск; 6+ источников; Redis кэширование              |
 | mcposerver | Healthy · `8000:8000`     | `conf/mcposerver/config.json`   | MCP Server; инструменты Time/Postgres/Filesystem/Memory  |
