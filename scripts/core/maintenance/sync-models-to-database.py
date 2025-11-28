@@ -14,14 +14,34 @@ import psycopg2
 import requests
 
 
+def read_secret(secret_name: str) -> str | None:
+    secret_paths = [
+        f"/run/secrets/{secret_name}",
+        os.path.join(os.path.dirname(__file__), "..", "..", "..", "secrets", f"{secret_name}.txt"),
+    ]
+    for path in secret_paths:
+        if os.path.isfile(path):
+            with open(path, encoding="utf-8") as f:
+                return f.read().strip()
+    return None
+
+
 def get_database_connection():
     """Get PostgreSQL connection"""
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        db_user = os.environ.get("OPENWEBUI_DB_USER", "openwebui_user")
+        db_name = os.environ.get("OPENWEBUI_DB_NAME", "openwebui")
+        db_host = os.environ.get("OPENWEBUI_DB_HOST", "db")
+        db_port = os.environ.get("OPENWEBUI_DB_PORT", "5432")
+        password = read_secret("postgres_password")
+        if not password:
+            print("❌ DATABASE_URL is not set and postgres_password secret is missing")
+            return None
+        database_url = f"postgresql://{db_user}:{password}@{db_host}:{db_port}/{db_name}"
+
     try:
-        database_url = os.environ.get(
-            "DATABASE_URL", "postgresql://openwebui_user:OW_secure_pass_2025!@db:5432/openwebui"
-        )
-        conn = psycopg2.connect(database_url)
-        return conn
+        return psycopg2.connect(database_url)
     except Exception as e:
         print(f"❌ Database connection error: {e}")
         return None
@@ -57,12 +77,13 @@ def get_ollama_models():
 
 def get_litellm_models():
     """Fetch models from LiteLLM"""
+    api_key = os.environ.get("LITELLM_API_KEY") or read_secret("litellm_api_key")
+    if not api_key:
+        print("❌ LITELLM_API_KEY not set (env or secret)")
+        return []
+
     try:
-        headers = {
-            "Authorization": (
-                "Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb"
-            )
-        }
+        headers = {"Authorization": f"Bearer {api_key}"}
         response = requests.get("http://litellm:4000/v1/models", headers=headers, timeout=10)
         if response.status_code == 200:
             data = response.json()

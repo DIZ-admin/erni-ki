@@ -1,0 +1,69 @@
+================================================================================
+COMPREHENSIVE DOCUMENTATION AUDIT
+Date: 2025-11-28 07:57:37
+================================================================================
+
+## OVERALL STATISTICS
+
+Total markdown files: 286
+Files with frontmatter: 286 (100.0%)
+Files without frontmatter: 0 (0.0%)
+Files with metadata issues: 0
+
+## LANGUAGE DISTRIBUTION
+
+  RU  : 161 files ( 56.3%)
+  DE  :  97 files ( 33.9%)
+  EN  :  28 files (  9.8%)
+
+## CATEGORY DISTRIBUTION
+
+  de                            :  97 files
+  archive                       :  54 files
+  operations                    :  40 files
+  en                            :  28 files
+  reference                     :  16 files
+  architecture                  :  10 files
+  academy                       :  10 files
+  getting-started               :   8 files
+  security                      :   7 files
+  reports                       :   5 files
+  system                        :   2 files
+  news                          :   2 files
+  data                          :   1 files
+  api                           :   1 files
+
+## FILES WITH DATES IN NAME (outside archive/)
+
+Found 5 files:
+  - docs/reports/comprehensive-master-audit-2025-11-27.md
+  - docs/reports/comprehensive-documentation-audit-2025-11-27.md
+  - docs/reports/system-audit-summary-2025-11-27.md
+  - docs/reports/comprehensive-system-audit-2025-11-27.md
+  - docs/security/secrets-audit-2025-11-27.md
+
+## DIRECTORIES WITHOUT index.md OR README.md
+
+Found 4 directories:
+  - de/archive/migrations/documentation-refactoring-plans/
+  - en/archive/migrations/documentation-refactoring-plans/
+  - en/security/
+  - operations/ai/
+
+## FILES WITH EMOJI (Policy Violation)
+
+[WARNING] Found 4 files with emoji:
+  - docs/reports/system-audit-summary-2025-11-27.md
+  - docs/reports/comprehensive-system-audit-2025-11-27.md
+  - docs/security/secrets-audit-2025-11-27.md
+  - docs/operations/security-action-plan.md
+
+## OVERALL ASSESSMENT
+
+  - Files with dates: -0.2 points
+  - Emoji policy violations: -0.4 points
+  - Missing index files: -0.1 points
+
+FINAL SCORE: 9.2/10.0
+
+================================================================================
