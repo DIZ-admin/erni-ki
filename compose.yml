@@ -361,7 +361,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
-    image: ghcr.io/open-webui/mcpo:git-91e8f94 # Updated: 2025-11-04 from latest to git-91e8f94 (stable commit)
+    image: ghcr.io/open-webui/mcpo:git-91e8f94 # v0.0.19 tag not available in registry; keep stable commit
     logging: *auxiliary-logging
     ports:
       - "127.0.0.1:8000:8000"
@@ -394,7 +394,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: searxng/searxng@sha256:aaa855e878bd4f6e61c7c471f03f0c9dd42d223914729382b34b875c57339b98 # pinned 2025-11-12 digest (linux/amd64)
+    image: searxng/searxng:latest # refreshed tag (digest 2025-11-28)
     logging: *important-logging
     restart: unless-stopped
     volumes:
@@ -590,8 +590,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    # Updated: 2025-10-02 from v1.4.0 to v1.9.2 (stable version with fixes)
-    image: garethgeorge/backrest:v1.9.2
+    # Updated: 2025-10-02 from v1.4.0 to v1.10.1 (latest stable with fixes)
+    image: garethgeorge/backrest:v1.10.1
     logging: *important-logging
     ports:
       - "127.0.0.1:9898:9898"
