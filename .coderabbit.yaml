@@ -64,23 +64,5 @@ reviews:
     - "!coverage/**"
     - "!*.md"
 
-  branches:
-    include:
-      - main
-      - develop
-      - "feature/**"
-      - "fix/**"
-      - "hotfix/**"
-    exclude:
-      - "dependabot/**"
-
-  triggers:
-    - opened
-    - reopened
-    - ready_for_review
-    - synchronize
-
-  ignore_drafts: true
-
 chat:
   auto_reply: true
