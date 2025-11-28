@@ -2,45 +2,46 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-28'
 ---
 
-# Architecture Documentation
+# Архитектурная документация
 
-This directory contains comprehensive technical documentation of the ERNI-KI
-system architecture.
+Этот каталог содержит исчерпывающую техническую документацию по архитектуре
+системы ERNI-KI.
 
-## Contents
+## Содержание
 
-- **[architecture.md](architecture.md)** - Complete system architecture overview
+- **[architecture.md](architecture.md)** - Полный обзор архитектуры системы
   (v12.1)
-  - System components and their interactions
-  - Network architecture and port mappings
-  - Service inventory and dependencies
-  - Mermaid diagrams for visual reference
+  - Компоненты системы и их взаимодействие
+  - Сетевая архитектура и маппинг портов
+  - Инвентаризация сервисов и зависимости
+  - Диаграммы Mermaid для визуализации
 
-- **[services-overview.md](services-overview.md)** - Detailed service catalog
-  - AI/ML services (Ollama, LiteLLM, Context7)
-  - Data services (PostgreSQL, Redis)
-  - Infrastructure services (Nginx, Cloudflare)
-  - Monitoring stack (Prometheus, Grafana, Loki)
+- **[services-overview.md](services-overview.md)** - Детальный каталог сервисов
+  - AI/ML сервисы (Ollama, LiteLLM, Context7)
+  - Сервисы данных (PostgreSQL, Redis)
+  - Инфраструктурные сервисы (Nginx, Cloudflare)
+  - Стек мониторинга (Prometheus, Grafana, Loki)
 
-- **[service-inventory.md](service-inventory.md)** - Machine-readable service
-  catalog
+- **[service-inventory.md](service-inventory.md)** - Машиночитаемый каталог
+  сервисов
 
-- **[nginx-configuration.md](nginx-configuration.md)** - Nginx reverse proxy
-  setup
-  - SSL/TLS configuration
-  - Rate limiting
-  - WebSocket proxying
-  - Security headers
+- **[nginx-configuration.md](nginx-configuration.md)** - Настройка Nginx reverse
+  proxy
+  - Конфигурация SSL/TLS
+  - Ограничение скорости (Rate limiting)
+  - Проксирование WebSocket
+  - Заголовки безопасности
 
-## Quick Links
+## Быстрые ссылки
 
-- [System Overview](../overview.md)
-- [Operations Guide](../operations/index.md)
-- [Installation Guide](../getting-started/installation.md)
+- [Обзор системы](../overview.md)
+- [Руководство по эксплуатации](../operations/index.md)
+- [Руководство по установке](../getting-started/installation.md)
 
-## Version
+## Версия
 
-Current architecture version: **12.1** (Wave 3) Last updated: **2025-11-22**
+Текущая версия архитектуры: **12.1** (Wave 3) Последнее обновление:
+**2025-11-22**
