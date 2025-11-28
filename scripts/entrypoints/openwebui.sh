@@ -62,10 +62,27 @@ configure_openai_keys() {
   export AUDIO_STT_OPENAI_API_KEY="${AUDIO_STT_OPENAI_API_KEY:-$api_key}"
 }
 
+configure_redis_url() {
+  local host="${REDIS_HOST:-redis}"
+  local port="${REDIS_PORT:-6379}"
+  local db="${REDIS_DB:-0}"
+  local password
+
+  if password="$(read_secret "redis_password")"; then
+    export REDIS_PASSWORD="${REDIS_PASSWORD:-$password}"
+    export REDIS_URL="${REDIS_URL:-redis://:${password}@${host}:${port}/${db}}"
+    return
+  fi
+
+  # Fallback: no secret provided, keep existing REDIS_URL (may fail if requirepass is enabled)
+  export REDIS_URL="${REDIS_URL:-redis://${host}:${port}/${db}}"
+}
+
 main() {
   configure_postgres_urls
   configure_webui_secret
   configure_openai_keys
+  configure_redis_url
 
   if [[ $# -gt 0 ]]; then
     exec "$@"

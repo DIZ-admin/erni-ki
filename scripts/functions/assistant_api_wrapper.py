@@ -14,13 +14,16 @@ class AssistantAPIWrapper:
     def __init__(
         self,
         litellm_base_url: str = "http://localhost:4000",
-        api_key: str = "sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb",
+        api_key: str | None = None,
         assistant_id: str = "asst_C8dUl6EKuR41O9sddVVuhTGn",
     ):
         self.base_url = litellm_base_url
-        self.api_key = api_key
+        self.api_key = api_key or os.environ.get("LITELLM_API_KEY", "")
         self.assistant_id = assistant_id
-        self.headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
 
     def create_thread(self) -> str | None:
         """Create a new thread for the Assistant"""

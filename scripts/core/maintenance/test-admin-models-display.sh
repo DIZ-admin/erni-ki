@@ -16,6 +16,26 @@ NC='\033[0m' # No Color
 ADMIN_URL="https://192.168.62.140/admin/settings/models"
 LOCAL_URL="http://localhost:8080"
 
+read_secret() {
+    local secret_name="$1"
+    local secret_file="/run/secrets/${secret_name}"
+    if [[ -f "${secret_file}" ]]; then
+        tr -d '\r' <"${secret_file}" | tr -d '\n'
+        return 0
+    fi
+    if [[ -f "secrets/${secret_name}.txt" ]]; then
+        tr -d '\r' <"secrets/${secret_name}.txt" | tr -d '\n'
+        return 0
+    fi
+    return 1
+}
+
+if [[ -z "${LITELLM_API_KEY:-}" ]]; then
+    if LITELLM_API_KEY="$(read_secret "litellm_api_key")"; then
+        export LITELLM_API_KEY
+    fi
+fi
+
 echo -e "${BLUE}🔍 ERNI-KI Admin Models Display Test${NC}"
 echo "=================================================="
 
@@ -89,7 +109,7 @@ fi
 # LiteLLM check via container
 ((total_tests++))
 echo -n "Testing LiteLLM integration... "
-if docker exec erni-ki-openwebui-1 curl -s --max-time 5 -H "Authorization: Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb" "http://litellm:4000/v1/models" | grep -q "data"; then
+if docker exec -e LITELLM_API_KEY="${LITELLM_API_KEY:-}" erni-ki-openwebui-1 curl -s --max-time 5 -H "Authorization: Bearer ${LITELLM_API_KEY}" "http://litellm:4000/v1/models" | grep -q "data"; then
     echo -e "${GREEN}✅ OK${NC}"
     ((passed_tests++))
 else
