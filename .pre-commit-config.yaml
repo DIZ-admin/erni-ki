@@ -412,3 +412,10 @@ repos:
             data/.*|
             \.config-backup/.*
           )$
+
+      # Check secret file permissions (security)
+      - id: check-secret-permissions
+        name: "Security: check secret file permissions"
+        entry: scripts/security/check-secret-permissions.sh
+        language: script
+        pass_filenames: false

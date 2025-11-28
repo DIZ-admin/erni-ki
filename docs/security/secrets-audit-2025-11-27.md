@@ -219,14 +219,14 @@ generate_secret "litellm_master_key" 48
 
 ## Compliance Status
 
-| Требование         | Статус           | Комментарий             |
-| ------------------ | ---------------- | ----------------------- |
-| Secrets не в Git   | ✅ COMPLIANT     | .gitignore настроен     |
-| File permissions   | ⚠️ PARTIAL       | Требуется chmod 600     |
-| Encryption at rest | ❌ NON-COMPLIANT | Plaintext на диске      |
-| Rotation policy    | ❌ NON-COMPLIANT | Нет автоматизации       |
-| Access audit       | ⚠️ PARTIAL       | Нет логирования доступа |
-| Secret scanning    | ✅ COMPLIANT     | detect-secrets активен  |
+| Требование         | Статус           | Комментарий                       |
+| ------------------ | ---------------- | --------------------------------- |
+| Secrets не в Git   | ✅ COMPLIANT     | .gitignore настроен               |
+| File permissions   | ✅ COMPLIANT     | chmod 600 + pre-commit hook       |
+| Encryption at rest | ❌ NON-COMPLIANT | Plaintext на диске                |
+| Rotation policy    | ❌ NON-COMPLIANT | Нет автоматизации                 |
+| Access audit       | ⚠️ PARTIAL       | Нет логирования доступа           |
+| Secret scanning    | ✅ COMPLIANT     | detect-secrets + permissions hook |
 
 ---
 
@@ -263,11 +263,13 @@ generate_secret "litellm_master_key" 48
 - [x] Audit Git history для секретов
 - [x] Verify .gitignore configuration
 - [x] Check file permissions
+- [x] Fix file permissions (chmod 600)
+- [x] Create secrets generation script
+- [x] Create permissions check script
+- [x] Add pre-commit hook for permissions
 
 ### To Do ⚠️
 
-- [ ] Fix file permissions (chmod 600)
-- [ ] Create secrets generation script
 - [ ] Implement SOPS encryption
 - [ ] Setup automated rotation
 - [ ] Document secrets lifecycle
