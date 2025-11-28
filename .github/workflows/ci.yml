@@ -210,7 +210,7 @@ jobs:
       - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
         env:
           GOTOOLCHAIN: go1.23.12
-          GOSEC_VERSION: v2.15.0
+          GOSEC_VERSION: v2.22.10
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
           gosec -fmt sarif -out gosec-results.sarif -severity high -confidence high ./auth/...
