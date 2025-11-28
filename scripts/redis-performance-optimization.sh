@@ -30,6 +30,30 @@ info() {
     echo -e "${BLUE}[INFO] $1${NC}"
 }
 
+read_secret() {
+    local secret_name="$1"
+    local secret_file="/run/secrets/${secret_name}"
+    if [[ -f "${secret_file}" ]]; then
+        tr -d '\r' <"${secret_file}" | tr -d '\n'
+        return 0
+    fi
+    if [[ -f "secrets/${secret_name}.txt" ]]; then
+        tr -d '\r' <"secrets/${secret_name}.txt" | tr -d '\n'
+        return 0
+    fi
+    return 1
+}
+
+REDIS_PASSWORD="${REDIS_PASSWORD:-}"
+if [[ -z "${REDIS_PASSWORD}" ]]; then
+    if REDIS_PASSWORD="$(read_secret "redis_password")"; then
+        :
+    else
+        error "redis_password secret not found; export REDIS_PASSWORD or create secrets/redis_password.txt"
+        exit 1
+    fi
+fi
+
 # Ensure we are in repo root
 if [[ ! -f "compose.yml" ]]; then
     error "compose.yml not found. Run from ERNI-KI repo root."
@@ -86,7 +110,7 @@ save ""
 # Master defaults
 
 # === SECURITY ===
-requirepass ErniKiRedisSecurePassword2024
+requirepass __LOAD_FROM_SECRET__
 # Disable dangerous commands
 rename-command FLUSHDB ""
 rename-command FLUSHALL ""
@@ -167,6 +191,31 @@ cat > scripts/redis-monitor.sh << 'EOF'
 
 set -euo pipefail
 
+# Secret loader
+read_secret() {
+    local secret_name="$1"
+    local secret_file="/run/secrets/${secret_name}"
+    if [[ -f "${secret_file}" ]]; then
+        tr -d '\r' <"${secret_file}" | tr -d '\n'
+        return 0
+    fi
+    if [[ -f "secrets/${secret_name}.txt" ]]; then
+        tr -d '\r' <"secrets/${secret_name}.txt" | tr -d '\n'
+        return 0
+    fi
+    return 1
+}
+
+REDIS_PASSWORD="${REDIS_PASSWORD:-}"
+if [[ -z "${REDIS_PASSWORD}" ]]; then
+    if REDIS_PASSWORD="$(read_secret "redis_password")"; then
+        :
+    else
+        echo "❌ redis_password secret not found; export REDIS_PASSWORD" >&2
+        exit 1
+    fi
+fi
+
 # Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -197,11 +246,11 @@ if docker ps --filter "name=erni-ki-redis-1" --format "{{.Status}}" | grep -q "h
     echo "Status: ✅ Healthy"
 
     # Key metrics
-    connected_clients=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "connected_clients")
-    used_memory_human=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "used_memory_human")
-    total_commands_processed=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "total_commands_processed")
-    keyspace_hits=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "keyspace_hits")
-    keyspace_misses=$(get_redis_metric "erni-ki-redis-1" "ErniKiRedisSecurePassword2024" "keyspace_misses")
+    connected_clients=$(get_redis_metric "erni-ki-redis-1" "${REDIS_PASSWORD}" "connected_clients")
+    used_memory_human=$(get_redis_metric "erni-ki-redis-1" "${REDIS_PASSWORD}" "used_memory_human")
+    total_commands_processed=$(get_redis_metric "erni-ki-redis-1" "${REDIS_PASSWORD}" "total_commands_processed")
+    keyspace_hits=$(get_redis_metric "erni-ki-redis-1" "${REDIS_PASSWORD}" "keyspace_hits")
+    keyspace_misses=$(get_redis_metric "erni-ki-redis-1" "${REDIS_PASSWORD}" "keyspace_misses")
 
     echo "Connected clients: $connected_clients"
     echo "Memory usage: $used_memory_human"
@@ -216,7 +265,7 @@ if docker ps --filter "name=erni-ki-redis-1" --format "{{.Status}}" | grep -q "h
     fi
 
     # Keys count
-    dbsize=$(docker exec erni-ki-redis-1 redis-cli -a 'ErniKiRedisSecurePassword2024' dbsize 2>/dev/null)
+    dbsize=$(docker exec erni-ki-redis-1 redis-cli -a "${REDIS_PASSWORD}" dbsize 2>/dev/null)
     echo "Keys count: $dbsize"
 
 else
@@ -303,6 +352,6 @@ echo "✅ Monitoring automation configured"
 
 echo -e "${YELLOW}Next steps:${NC}"
 echo "1. Restart Redis: docker compose restart redis"
-echo "2. Verify config: docker exec erni-ki-redis-1 redis-cli -a 'ErniKiRedisSecurePassword2024' config get '*'"
+echo "2. Verify config: docker exec erni-ki-redis-1 redis-cli -a \"\$REDIS_PASSWORD\" config get '*'"
 echo "3. Run monitor: ./scripts/redis-monitor.sh"
 echo "4. Enable cron: ./scripts/setup-redis-monitoring.sh"
