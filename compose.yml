@@ -331,7 +331,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: apache/tika@sha256:3fafa194474c5f3a8cff25a0eefd07e7c0513b7f552074ad455e1af58a06bbea # pinned 2025-11 digest (linux/amd64)
+    image: apache/tika:3.2.3.0-full # updated tag (was digest)
     logging: *auxiliary-logging
     ports:
       - "127.0.0.1:9998:9998"
@@ -620,7 +620,7 @@ services:
 
   # Prometheus - metrics collection
   prometheus:
-    image: prom/prometheus:v3.0.0 # Stable version (v3.8.0 does not exist)
+    image: prom/prometheus:v3.7.3 # Updated from v3.0.0
     container_name: erni-ki-prometheus
     # Fixed 2025-11-07: explicit link to postgres-exporter for DNS resolution
     links:
@@ -669,7 +669,7 @@ services:
       prometheus:
         condition: service_healthy
     # Updated: 2025-10-02 from 10.2.0 to 11.6.6 (latest stable 11.x version)
-    image: grafana/grafana:11.3.0 # Stable version (11.7.0 does not exist)
+    image: grafana/grafana:11.6.8 # Updated from 11.3.0
     container_name: erni-ki-grafana
     user: "0"
     environment:
@@ -738,7 +738,7 @@ services:
 
   # Loki - modern logging system (Elasticsearch replacement)
   loki:
-    image: grafana/loki:3.0.0 # Stable version (3.6.0 does not exist)
+    image: grafana/loki:3.6.2 # Updated from 3.0.0
     container_name: erni-ki-loki
     logging: *monitoring-logging
     restart: unless-stopped
