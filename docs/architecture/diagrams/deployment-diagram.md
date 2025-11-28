@@ -12,7 +12,7 @@ last_updated: '2025-11-27'
 ```mermaid
 graph TB
     subgraph Tier1["Критические сервисы (Tier 1)"]
-        OpenWebUI["openwebui | v0.6.36 | GPU: RTX 5000 | 8GB RAM"]
+        OpenWebUI["openwebui | v0.6.40 | GPU: RTX 5000 | 8GB RAM"]
         Ollama["ollama | v0.12.11 | GPU: RTX 5000 | 24GB RAM"]
         PostgreSQL["db (PostgreSQL) | pgvector/pg17 | 4GB RAM"]
         Nginx["nginx | v1.29.3 | 512MB RAM"]
