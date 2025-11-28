@@ -9,6 +9,7 @@ requirements: requests, openai
 """
 
 import json
+import os
 import time
 from collections.abc import Generator
 
@@ -22,11 +23,12 @@ class Pipe:
             default="http://litellm:4000", description="Base URL for LiteLLM service"
         )
         LITELLM_API_KEY: str = Field(
-            default="sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb",
-            description="API key for LiteLLM service",
+            default_factory=lambda: os.getenv("LITELLM_API_KEY", ""),
+            description="API key for LiteLLM service (from env LITELLM_API_KEY)",
         )
         OPENAI_API_KEY: str = Field(
-            default="", description="OpenAI API key for direct Assistant API calls"
+            default_factory=lambda: os.getenv("OPENAI_API_KEY", ""),
+            description="OpenAI API key for direct Assistant API calls",
         )
         ASSISTANT_ID: str = Field(
             default="asst_C8dUl6EKuR41O9sddVVuhTGn", description="OpenAI Assistant ID to use"
