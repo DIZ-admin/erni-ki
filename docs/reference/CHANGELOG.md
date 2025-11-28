@@ -70,6 +70,12 @@ last_updated: '2025-11-28'
 - Loki ready endpoint (with `X-Scope-OrgID: erni-ki`) → `ready`
 - Tika `/tika` → 200
 
+### Dependency Updates
+
+- **Flask**: 3.0.3 → **3.1.2** (webhook-receiver), **Werkzeug** aligned to **3.1.2**
+- **prometheus-client**: 0.20.0 → **0.23.1** (ops/ollama-exporter)
+- **Node.js**: v20.19.5 (current LTS), **npm**: 11.6.3
+
 ---
 
 ## [5.2.0] - 2025-11-18
