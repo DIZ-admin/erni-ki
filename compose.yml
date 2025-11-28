@@ -806,8 +806,12 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     secrets:
-      - slack_alert_webhook
-      - pagerduty_routing_key
+      - source: slack_alert_webhook
+        target: slack_alert_webhook
+        mode: 0444
+      - source: pagerduty_routing_key
+        target: pagerduty_routing_key
+        mode: 0444
     # Using standard Docker bridge network
 
   # Node Exporter - system metrics
