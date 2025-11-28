@@ -767,7 +767,7 @@ services:
 
   # Alertmanager - alert management
   alertmanager:
-    image: prom/alertmanager:v0.27.0 # Stable version (v0.29.0 does not exist)
+    image: prom/alertmanager:v0.29.0 # updated from v0.27.0
     container_name: erni-ki-alertmanager
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
@@ -812,7 +812,7 @@ services:
 
   # Node Exporter - system metrics
   node-exporter:
-    image: prom/node-exporter:v1.8.2 # Stable version (v1.10.0 does not exist)
+    image: prom/node-exporter:v1.10.2 # updated from v1.8.2
     container_name: erni-ki-node-exporter
     command:
       - "--path.procfs=/host/proc"
@@ -864,7 +864,7 @@ services:
       db:
         condition: service_healthy
     # Rollback to prometheuscommunity image 2025-11-07: wrouesnel lacks wget/curl for healthcheck
-    image: prometheuscommunity/postgres-exporter:v0.15.0
+    image: prometheuscommunity/postgres-exporter:v0.18.1
     container_name: erni-ki-postgres-exporter
     user: "0"
     environment:
@@ -961,7 +961,7 @@ services:
 
   # Blackbox Exporter - availability monitoring
   blackbox-exporter:
-    image: prom/blackbox-exporter:v0.25.0 # Stable version (v0.28.0 does not exist)
+    image: prom/blackbox-exporter:v0.27.0 # updated from v0.25.0
     container_name: erni-ki-blackbox-exporter
     volumes:
       - ./conf/blackbox-exporter/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
@@ -994,7 +994,7 @@ services:
       redis:
         condition: service_healthy
     # Updated: 2025-10-02 from v1.55.0 to v1.62.0 (stable version without v1.77.0 issues)
-    image: oliver006/redis_exporter:v1.62.0 # Rollback to stable version (v1.63.0 does not exist)
+    image: oliver006/redis_exporter:v1.80.1 # updated from v1.62.0
     container_name: erni-ki-redis-exporter
     # Fixed: 2025-11-07 using full URL with password (format redis://:password@host:port)
     environment:
@@ -1063,7 +1063,7 @@ services:
       nginx:
         condition: service_healthy
     # Updated: 2025-10-02 from 1.1.0 to 1.4.2 (latest stable version)
-    image: nginx/nginx-prometheus-exporter:1.1.0 # Stable version (1.5.0 does not exist)
+    image: nginx/nginx-prometheus-exporter:1.5.1 # updated from 1.1.0
     container_name: erni-ki-nginx-exporter
     command:
       - "--nginx.scrape-uri=http://nginx:80/nginx_status" # Fixed port from 8080 to 80
@@ -1088,7 +1088,7 @@ services:
   # cAdvisor - container monitoring
   cadvisor:
     # Updated: 2025-10-02 from v0.47.2 to v0.52.1 (latest available version)
-    image: gcr.io/cadvisor/cadvisor:v0.52.1
+    image: gcr.io/cadvisor/cadvisor:v0.52.1 # keep stable tag (v0.53.0 not available)
     container_name: erni-ki-cadvisor
     command:
       - "--housekeeping_interval=10s"
@@ -1146,7 +1146,7 @@ services:
     # Health check for Fluent Bit → Loki integration monitoring
     # Health check disabled: minimal image lacks wget/curl/nc
     # Service monitored via Prometheus scrape success and Loki logs
-    image: fluent/fluent-bit:3.1.0 # Stable version (3.3.0 does not exist)
+    image: fluent/fluent-bit:4.2.0 # major update 3.x -> 4.2.0
     container_name: erni-ki-fluent-bit
     logging: *monitoring-logging
     restart: unless-stopped
