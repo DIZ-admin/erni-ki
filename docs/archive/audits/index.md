@@ -2,7 +2,7 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-27'
+last_updated: '2025-11-28'
 ---
 
 # Архив аудитов
@@ -20,6 +20,12 @@ last_updated: '2025-11-27'
 - [Комплексный аудит проекта (2025-10-17)](comprehensive-project-audit-2025-10-17.md)
 - [Аудит кода (2025-11-24)](code-audit-2025-11-24.md)
 - [Аудит конфигурации (2025-11-25)](configuration-audit-report-2025-11-25.md)
+
+### Матрицы версий сервисов
+
+- [Матрица версий сервисов (2025-11-28)](service-version-matrix-2025-11-28.md)
+  ✅ **Актуально**
+- [Матрица версий сервисов (2025-11-25)](service-version-matrix-2025-11-25.md)
 
 ## Назначение
 
