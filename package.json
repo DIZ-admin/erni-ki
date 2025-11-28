@@ -1,6 +1,6 @@
 {
   "name": "erni-ki",
-  "version": "1.0.0",
+  "version": "0.6.3",
   "type": "module",
   "description": "AI platform based on Open WebUI with full containerization",
   "keywords": [
