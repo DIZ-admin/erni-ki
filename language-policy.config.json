@@ -1,3 +1,3 @@
 {
-  "baseline": ["mkdocs.yml"]
+  "baseline": ["mkdocs.yml", ".coderabbit.yaml"]
 }
