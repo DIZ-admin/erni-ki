@@ -37,6 +37,23 @@ last_updated: '2025-11-28'
   - `curl http://localhost:8080/health`
   - UI smoke: логин, чат, RAG поиск, загрузка файла
 
+### Monitoring & Infra Updates
+
+- **Prometheus**: v3.0.0 → **v3.7.3** (pull + restart; `/ -/healthy` = 200)
+- **Grafana**: 11.3.0 → **11.6.8** (health `/api/health` ok)
+- **Loki**: 3.0.0 → **3.6.2** (ready: `curl -ksf -H 'X-Scope-OrgID: erni-ki' https://localhost:3100/ready`)
+- **Tika**: pinned to **apache/tika:3.2.3.0-full** (health 200)
+- **Cloudflared**: already on 2025.11.1 (no change)
+
+#### Post-update checks
+
+- `docker compose pull cloudflared prometheus grafana loki tika`
+- `docker compose up -d cloudflared prometheus grafana loki tika`
+- Prometheus `/ -/healthy` → 200
+- Grafana `/api/health` → version 11.6.8
+- Loki ready endpoint (with `X-Scope-OrgID: erni-ki`) → `ready`
+- Tika `/tika` → 200
+
 ---
 
 ## [5.2.0] - 2025-11-18
