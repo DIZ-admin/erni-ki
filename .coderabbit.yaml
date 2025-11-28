@@ -1,8 +1,9 @@
-# CodeRabbit configuration
-# Enable automatic reviews for primary branches and standard PR events.
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
 reviews:
-  review_status: true # keep status checks visible
-  auto_review: true # enable auto reviews
+  review_status: true
+  auto_review:
+    enabled: true
   branches:
     include:
       - main
@@ -14,6 +15,5 @@ reviews:
     - synchronize
   ignore_drafts: true
   path_filters:
-    exclude:
-      - "docs/**" # skip pure docs-only changes
-      - "scripts/archon/**" # skip helper scripts unless touched with code
+    - "!docs/**"
+    - "!scripts/archon/**"
