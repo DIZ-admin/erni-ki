@@ -1,19 +1,86 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 
+language: ru
+early_access: true
+enable_free_tier: true
+
 reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: "## Обзор изменений"
+  auto_title_placeholder: "### CodeRabbit Review"
+  poem: false
   review_status: true
+  collapse_walkthrough: false
+  sequence_diagrams: true
+  changed_files_summary: true
+  labeling_instructions: []
+
   auto_review:
     enabled: true
+    auto_incremental_review: true
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT REVIEW"
+      - "wip"
+
+  path_instructions:
+    - path: "**/*.go"
+      instructions: |
+        - Проверяй на соответствие идиомам Go
+        - Убедись в обработке ошибок
+        - Проверь отсутствие утечек горутин
+        - Валидируй использование context
+    - path: "**/*.py"
+      instructions: |
+        - Проверяй соответствие PEP 8
+        - Убедись в наличии type hints
+        - Проверь обработку исключений
+    - path: "**/*.sh"
+      instructions: |
+        - Проверь использование set -euo pipefail
+        - Убедись в правильном экранировании переменных
+        - Проверь обработку ошибок
+    - path: ".github/workflows/**"
+      instructions: |
+        - Проверь безопасность secrets
+        - Убедись в наличии timeout
+        - Валидируй permissions
+    - path: "compose.yml"
+      instructions: |
+        - Проверь версии образов (pinning)
+        - Убедись в наличии health checks
+        - Проверь resource limits
+        - Валидируй использование secrets
+
+  path_filters:
+    - "!**/*.lock"
+    - "!**/*.sum"
+    - "!**/package-lock.json"
+    - "!docs/locales/**"
+    - "!scripts/archon/**"
+    - "!site/**"
+    - "!coverage/**"
+    - "!*.md"
+
   branches:
     include:
       - main
       - develop
+      - "feature/**"
+      - "fix/**"
+      - "hotfix/**"
+    exclude:
+      - "dependabot/**"
+
   triggers:
     - opened
     - reopened
     - ready_for_review
     - synchronize
+
   ignore_drafts: true
-  path_filters:
-    - "!docs/**"
-    - "!scripts/archon/**"
+
+chat:
+  auto_reply: true
