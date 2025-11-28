@@ -158,7 +158,7 @@ services:
   litellm:
     # Using latest LiteLLM version with thinking tokens support
     # Updated: 2025-11-18 to v1.80.0.rc.1 (routing fixes + security patches)
-    image: ghcr.io/berriai/litellm:v1.80.0.rc.1
+    image: ghcr.io/berriai/litellm:v1.80.0-stable.1
     container_name: erni-ki-litellm
 
     # Dependencies - start after critical services
