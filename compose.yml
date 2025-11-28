@@ -499,7 +499,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: ghcr.io/open-webui/open-webui:v0.6.36 # Updated: 2025-11-18 to v0.6.36 (latest stable version)
+    image: ghcr.io/open-webui/open-webui:v0.6.40 # Updated: 2025-11-28 to v0.6.40 (latest stable patch)
     runtime: nvidia
     mem_limit: 8g
     mem_reservation: 4g

@@ -2,12 +2,42 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-28'
 ---
 
 # CHANGELOG - ERNI-KI Documentation
 
 [TOC]
+
+## [5.3.0] - 2025-11-28
+
+### LiteLLM Update
+
+#### **LiteLLM v1.80.0.rc.1 → v1.80.0-stable.1**
+
+- **Дата обновления**: 2025-11-28
+- **Статус**: Успешно обновлено
+- **Downtime**: 0 минут (rolling restart)
+- **Проверки**:
+  - `curl http://127.0.0.1:4000/health` (с Authorization) → 200
+  - `curl http://127.0.0.1:4000/health/readiness` → 200
+  - `curl http://127.0.0.1:4000/v1/models` (с Authorization) → 200
+  - Chat completion через `/v1/chat/completions` → 200
+- **Примечание**: предупреждения о недостающих DB views для UI остаются (без регрессий)
+
+### OpenWebUI Update
+
+#### **OpenWebUI v0.6.36 → v0.6.40**
+
+- **Дата обновления**: 2025-11-28
+- **Статус**: Успешно обновлено (подготовка к выкладке)
+- **Downtime**: 0 минут (rolling restart планируется)
+- **Совместимость**: LiteLLM, Docling, Tika, SearXNG интеграции ожидаются без изменений
+- **Проверки (запланировано)**:
+  - `curl http://localhost:8080/health`
+  - UI smoke: логин, чат, RAG поиск, загрузка файла
+
+---
 
 ## [5.2.0] - 2025-11-18
 
@@ -79,15 +109,15 @@ last_updated: '2025-11-24'
 
 - **Проблема**: nginx:8080 недоступен из Docker сети (i/o timeout)
 - **Решение**: Обновлена конфигурация в Cloudflare Dashboard
- - `diz.zone`: `http://nginx:8080` → `http://openwebui:8080` 
- - `lite.diz.zone`: `http://nginx:8080` → `http://litellm:4000` 
- - `search.diz.zone`: `http://searxng:8080` (без изменений) 
+    - `diz.zone`: `http://nginx:8080` → `http://openwebui:8080`
+    - `lite.diz.zone`: `http://nginx:8080` → `http://litellm:4000`
+    - `search.diz.zone`: `http://searxng:8080` (без изменений)
 - **Результат**: Все 5 доменов доступны через HTTPS
- - diz.zone - HTTP 200 (OpenWebUI)
- - webui.diz.zone - HTTP 200 (OpenWebUI)
- - ki.erni-gruppe.ch - HTTP 200 (OpenWebUI)
- - search.diz.zone - HTTP 200 (SearXNG)
- - lite.diz.zone - HTTP 401 (LiteLLM требует аутентификацию)
+    - diz.zone - HTTP 200 (OpenWebUI)
+    - webui.diz.zone - HTTP 200 (OpenWebUI)
+    - ki.erni-gruppe.ch - HTTP 200 (OpenWebUI)
+    - search.diz.zone - HTTP 200 (SearXNG)
+    - lite.diz.zone - HTTP 401 (LiteLLM требует аутентификацию)
 
 #### **Системный статус после обновления**
 
@@ -164,21 +194,21 @@ last_updated: '2025-11-24'
 #### **Troubleshooting Guide Updates**
 
 - **Webhook Receiver**: Новый раздел диагностики
- - Проверка статуса и логов
- - Тестирование endpoints
- - Процедуры восстановления
+  - Проверка статуса и логов
+  - Тестирование endpoints
+  - Процедуры восстановления
 - **GPU Monitoring**: Расширенная диагностика
- - NVIDIA GPU Exporter проверки
- - GPU метрики валидация
- - Контейнер GPU тестирование
+  - NVIDIA GPU Exporter проверки
+  - GPU метрики валидация
+  - Контейнер GPU тестирование
 
 #### **Installation Guide Updates**
 
 - **Мониторинг**: Обновлены URL интерфейсов
- - Grafana: <http://localhost:3000>
- - Prometheus: <http://localhost:9091>
- - AlertManager: <http://localhost:9093>
- - Webhook Receiver: <http://localhost:9095/health>
+  - Grafana: <http://localhost:3000>
+  - Prometheus: <http://localhost:9091>
+  - AlertManager: <http://localhost:9093>
+  - Webhook Receiver: <http://localhost:9095/health>
 - **GPU Setup**: Добавлены инструкции по проверке GPU мониторинга
 
 ### **Многоязычная документация**
