@@ -902,7 +902,7 @@ groups:
   - name: cron-watchdog.rules
     rules:
       - alert: CronJobStale
-        expr: erni_cron_job_age_seconds > on(job) erni_cron_job_sla_seconds
+        expr: erni_cron_job_age_seconds > on(job) group_left max by (job) (erni_cron_job_sla_seconds)
         for: 10m
         labels:
           severity: warning
