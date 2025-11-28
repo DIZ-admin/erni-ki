@@ -209,7 +209,7 @@ jobs:
 
       - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
         env:
-          GOTOOLCHAIN: go1.23.12
+          GOTOOLCHAIN: go1.24.4
           GOSEC_VERSION: v2.22.10
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
