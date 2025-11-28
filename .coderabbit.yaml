@@ -1,0 +1,19 @@
+# CodeRabbit configuration
+# Enable automatic reviews for primary branches and standard PR events.
+reviews:
+  review_status: true # keep status checks visible
+  auto_review: true # enable auto reviews
+  branches:
+    include:
+      - main
+      - develop
+  triggers:
+    - opened
+    - reopened
+    - ready_for_review
+    - synchronize
+  ignore_drafts: true
+  path_filters:
+    exclude:
+      - "docs/**" # skip pure docs-only changes
+      - "scripts/archon/**" # skip helper scripts unless touched with code
