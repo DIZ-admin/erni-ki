@@ -14,12 +14,7 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 
 # Colors for output
 
-CYAN='\033[0;36m'
 
-# Logging functions
-
-    exit 1
-}
 
 # Configuration
 DOMAIN="ki.erni-gruppe.ch"

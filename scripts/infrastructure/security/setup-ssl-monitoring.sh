@@ -14,8 +14,7 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 
 # Functions for logging
 
-    exit 1
-}
+
 
 # Configuration
 PROJECT_DIR="$(pwd)"
