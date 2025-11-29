@@ -172,7 +172,7 @@ func verifyToken(tokenString string) (bool, error) {
 		requiredAlgorithm = "HS256"
 	)
 
-	if len(strings.TrimSpace(tokenString)) == 0 {
+	if strings.TrimSpace(tokenString) == "" {
 		return false, fmt.Errorf("token missing")
 	}
 
