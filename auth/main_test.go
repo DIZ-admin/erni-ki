@@ -328,7 +328,7 @@ func createExpiredJWTToken(t *testing.T) string {
 	return tokenString
 }
 
-// Test health check endpoint
+// Test health check endpoint.
 func TestHealthCheckEndpoint(t *testing.T) {
 	router := gin.New()
 	router.GET("/health", func(c *gin.Context) {
@@ -348,7 +348,7 @@ func TestHealthCheckEndpoint(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "healthy")
 }
 
-// Test requestIDMiddleware generates UUID
+// Test requestIDMiddleware generates UUID.
 func TestRequestIDMiddlewareGeneratesUUID(t *testing.T) {
 	router := gin.New()
 	router.Use(requestIDMiddleware())
@@ -370,7 +370,7 @@ func TestRequestIDMiddlewareGeneratesUUID(t *testing.T) {
 	assert.NotEmpty(t, w.Header().Get("X-Request-ID"))
 }
 
-// Test requestIDMiddleware preserves existing request ID
+// Test requestIDMiddleware preserves existing request ID.
 func TestRequestIDMiddlewarePreservesExisting(t *testing.T) {
 	router := gin.New()
 	router.Use(requestIDMiddleware())
@@ -391,7 +391,7 @@ func TestRequestIDMiddlewarePreservesExisting(t *testing.T) {
 	assert.Equal(t, existingID, w.Header().Get("X-Request-ID"))
 }
 
-// Test respondJSON includes request_id
+// Test respondJSON includes request_id.
 func TestRespondJSONIncludesRequestID(t *testing.T) {
 	router := gin.New()
 	router.Use(requestIDMiddleware())
@@ -409,7 +409,7 @@ func TestRespondJSONIncludesRequestID(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "request_id")
 }
 
-// Test verifyToken with empty string
+// Test verifyToken with empty string.
 func TestVerifyTokenEmptyString(t *testing.T) {
 	valid, err := verifyToken("")
 
@@ -418,7 +418,7 @@ func TestVerifyTokenEmptyString(t *testing.T) {
 	assert.Contains(t, err.Error(), "token missing")
 }
 
-// Test verifyToken with whitespace only
+// Test verifyToken with whitespace only.
 func TestVerifyTokenWhitespaceOnly(t *testing.T) {
 	valid, err := verifyToken("   ")
 
@@ -427,7 +427,7 @@ func TestVerifyTokenWhitespaceOnly(t *testing.T) {
 	assert.Contains(t, err.Error(), "token missing")
 }
 
-// Test verifyToken with token missing subject claim
+// Test verifyToken with token missing subject claim.
 func TestVerifyTokenMissingSubject(t *testing.T) {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret)
@@ -447,7 +447,7 @@ func TestVerifyTokenMissingSubject(t *testing.T) {
 	assert.Contains(t, err.Error(), "sub claim")
 }
 
-// Test verifyToken with future issued-at time
+// Test verifyToken with future issued-at time.
 func TestVerifyTokenFutureIssuedAt(t *testing.T) {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret)
@@ -467,7 +467,7 @@ func TestVerifyTokenFutureIssuedAt(t *testing.T) {
 	assert.Contains(t, err.Error(), "iat claim")
 }
 
-// Test root endpoint returns version
+// Test root endpoint returns version.
 func TestRootEndpointReturnsVersion(t *testing.T) {
 	router := gin.New()
 	router.GET("/", func(c *gin.Context) {
@@ -489,7 +489,7 @@ func TestRootEndpointReturnsVersion(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "healthy")
 }
 
-// Test concurrent token verification
+// Test concurrent token verification.
 func TestVerifyTokenConcurrent(t *testing.T) {
 	token := createValidJWTToken(t)
 
