@@ -483,7 +483,7 @@ nvidia-smi
 ## Support
 
 - **Documentation:**
-  [docs/operations/troubleshooting/troubleshooting-guide.md](../operations/troubleshooting/troubleshooting-guide.md)
+  [docs/operations/troubleshooting/troubleshooting-guide.md](../../de/operations/troubleshooting/troubleshooting-guide.md)
 - **Issues:** [GitHub Issues](https://github.com/DIZ-admin/erni-ki/issues)
 - **Discussions:**
   [GitHub Discussions](https://github.com/DIZ-admin/erni-ki/discussions)

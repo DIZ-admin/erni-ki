@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -22,12 +23,14 @@ func TestMain(m *testing.M) {
 
 	// Set test environment variables
 	os.Setenv("WEBUI_SECRET_KEY", "test-secret-key-for-testing")
+	os.Unsetenv("WEBUI_JWT_ISSUER")
 
 	// Run tests
 	code := m.Run()
 
 	// Clean up environment variables
 	os.Unsetenv("WEBUI_SECRET_KEY")
+	os.Unsetenv("WEBUI_JWT_ISSUER")
 
 	os.Exit(code)
 }
@@ -178,6 +181,78 @@ func TestVerifyTokenExpired(t *testing.T) {
 	assert.False(t, valid)
 }
 
+func TestVerifyTokenRejectsLongToken(t *testing.T) {
+	token := strings.Repeat("a", 5000) // longer than MaxTokenLength
+
+	valid, err := verifyToken(token)
+
+	assert.Error(t, err)
+	assert.False(t, valid)
+	assert.Contains(t, err.Error(), "token too long")
+}
+
+func TestVerifyTokenRejectsWrongAlgorithm(t *testing.T) {
+	secret := os.Getenv("WEBUI_SECRET_KEY")
+	require.NotEmpty(t, secret)
+
+	// Token signed with HS384 should be rejected (expect HS256)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS384, jwt.RegisteredClaims{
+		Subject:   "test-user",
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+	})
+	tokenString, err := token.SignedString([]byte(secret))
+	require.NoError(t, err)
+
+	valid, err := verifyToken(tokenString)
+
+	assert.Error(t, err)
+	assert.False(t, valid)
+}
+
+func TestVerifyTokenMissingClaims(t *testing.T) {
+	secret := os.Getenv("WEBUI_SECRET_KEY")
+	require.NotEmpty(t, secret)
+
+	// Missing exp
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Subject:  "test-user",
+		IssuedAt: jwt.NewNumericDate(time.Now()),
+	})
+	tokenString, err := token.SignedString([]byte(secret))
+	require.NoError(t, err)
+
+	valid, err := verifyToken(tokenString)
+
+	assert.Error(t, err)
+	assert.False(t, valid)
+	assert.Contains(t, err.Error(), "exp")
+}
+
+func TestVerifyTokenIssuerValidation(t *testing.T) {
+	secret := os.Getenv("WEBUI_SECRET_KEY")
+	require.NotEmpty(t, secret)
+
+	// Expect a specific issuer
+	os.Setenv("WEBUI_JWT_ISSUER", "erni-ki-auth")
+	defer os.Unsetenv("WEBUI_JWT_ISSUER")
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Subject:   "test-user",
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+		Issuer:    "wrong-issuer",
+	})
+	tokenString, err := token.SignedString([]byte(secret))
+	require.NoError(t, err)
+
+	valid, err := verifyToken(tokenString)
+
+	assert.Error(t, err)
+	assert.False(t, valid)
+	assert.Contains(t, err.Error(), "issuer")
+}
+
 // Helper functions
 
 // setupRouter creates a test router.
@@ -224,10 +299,10 @@ func createValidJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY must be set for tests")
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": "test-user",
-		"iat": time.Now().Unix(),
-		"exp": time.Now().Add(time.Hour).Unix(),
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Subject:   "test-user",
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))
@@ -241,10 +316,10 @@ func createExpiredJWTToken(t *testing.T) string {
 	secret := os.Getenv("WEBUI_SECRET_KEY")
 	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY must be set for tests")
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": "test-user",
-		"iat": time.Now().Add(-2 * time.Hour).Unix(),
-		"exp": time.Now().Add(-time.Hour).Unix(), // Expired one hour ago
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Subject:   "test-user",
+		IssuedAt:  jwt.NewNumericDate(time.Now().Add(-2 * time.Hour)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(-time.Hour)), // Expired one hour ago
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))

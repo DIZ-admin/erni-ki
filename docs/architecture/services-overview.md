@@ -8,8 +8,8 @@ title: 'Детальная таблица активных сервисов ERNI
 
 # Детальная таблица активных сервисов ERNI-KI
 
-**Статус:** Production Ready v12.1 · Все 30 сервисов работают (30/30 Healthy) ·
-27 Prometheus alerts · Автоматизированное обслуживание
+**Статус:** Production Ready v0.61.3 · Все 30 сервисов работают (30/30 Healthy)
+· 27 Prometheus alerts · Автоматизированное обслуживание
 
 ## Application Layer (AI & Core)
 

@@ -14,7 +14,7 @@ Automatisierte Wartungs- und Betriebsprozesse für ERNI-KI.
 - [Übersicht](README.md)
 - [Automatisierte Wartung](automated-maintenance-guide.md)
 - [Docker Cleanup](docker-cleanup-guide.md)
-- [Docker Log Rotation](docker-log-rotation.md)
+- [Docker Log Rotation](../../../operations/automation/docker-log-rotation.md)
 
 ## Hinweis
 

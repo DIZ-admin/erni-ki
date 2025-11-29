@@ -10,7 +10,7 @@ auditor: Claude (Sonnet 4.5)
 
 # Комплексный аудит системы ERNI-KI
 
-**Дата аудита:** 2025-11-27 **Версия проекта:** v12.1 (Production Ready)
+**Дата аудита:** 2025-11-27 **Версия проекта:** v0.61.3 (Production Ready)
 **Анализируемая ветка:** develop **Охват:** 34 Docker сервиса, 16 Python
 скриптов, 110 Shell скриптов, Go auth service, TypeScript тесты
 

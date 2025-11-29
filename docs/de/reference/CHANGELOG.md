@@ -15,10 +15,10 @@ last_updated: '2025-11-24'
 
 #### **OpenWebUI v0.6.34 → v0.6.36**
 
-- **Aktualisierungsdatum**: 2025-11-18 
-- **Version**: v0.6.34 → v0.6.36 
-- **Status**: Erfolgreich aktualisiert 
-- **Downtime**: 0 Minuten (Rolling Update) 
+- **Aktualisierungsdatum**: 2025-11-18
+- **Version**: v0.6.34 → v0.6.36
+- **Status**: Erfolgreich aktualisiert
+- **Downtime**: 0 Minuten (Rolling Update)
 - **Kompatibilität**: LiteLLM, Docling, RAG und MCP-Integrationen bleiben erhalten
 
 #### **Veraltete Patches entfernt**
@@ -61,10 +61,10 @@ last_updated: '2025-11-24'
 
 #### **OpenWebUI v0.6.32 → v0.6.34**
 
-- **Aktualisierungsdatum**: 2025-11-04 
-- **Version**: v0.6.32 → v0.6.34 
-- **Status**: Erfolgreich aktualisiert 
-- **Downtime**: ~5 Minuten (Container-Neustart) 
+- **Aktualisierungsdatum**: 2025-11-04
+- **Version**: v0.6.32 → v0.6.34
+- **Status**: Erfolgreich aktualisiert
+- **Downtime**: ~5 Minuten (Container-Neustart)
 - **Kompatibilität**: Alle Integrationen bleiben erhalten
 
 #### **Beibehaltener Integrationen**
@@ -78,15 +78,15 @@ last_updated: '2025-11-24'
 #### **Cloudflare Tunnels – Routing-Fix**
 
 - **Problem**: nginx:8080 in Docker-Netz nicht erreichbar (i/o timeout)
-- **Lösung**: Konfiguration im Cloudflare-Dashboard angepasst 
- - `diz.zone`: `http://nginx:8080` → `http://openwebui:8080` 
- - `lite.diz.zone`: `http://nginx:8080` → `http://litellm:4000` 
- - `search.diz.zone`: `http://searxng:8080` (unverändert) 
-- **Ergebnis**: Alle 5 Domains via HTTPS erreichbar 
- - diz.zone – HTTP 200 (OpenWebUI) 
- - webui.diz.zone – HTTP 200 (OpenWebUI) 
- - ki.erni-gruppe.ch – HTTP 200 (OpenWebUI) 
- - search.diz.zone – HTTP 200 (SearXNG) 
+- **Lösung**: Konfiguration im Cloudflare-Dashboard angepasst
+ - `diz.zone`: `http://nginx:8080` → `http://openwebui:8080`
+ - `lite.diz.zone`: `http://nginx:8080` → `http://litellm:4000`
+ - `search.diz.zone`: `http://searxng:8080` (unverändert)
+- **Ergebnis**: Alle 5 Domains via HTTPS erreichbar
+ - diz.zone – HTTP 200 (OpenWebUI)
+ - webui.diz.zone – HTTP 200 (OpenWebUI)
+ - ki.erni-gruppe.ch – HTTP 200 (OpenWebUI)
+ - search.diz.zone – HTTP 200 (SearXNG)
  - lite.diz.zone – HTTP 401 (LiteLLM erfordert Auth)
 
 #### **Systemstatus nach Update**
@@ -106,23 +106,23 @@ last_updated: '2025-11-24'
 
 #### **Gefundene Probleme**
 
-1. **PostgreSQL Exporter** ([WARNING] Mittel) 
- - Fehler: `column "checkpoints_timed" does not exist` 
- - Auswirkung: Einige PostgreSQL-Metriken fehlen 
+1. **PostgreSQL Exporter** ([WARNING] Mittel)
+ - Fehler: `column "checkpoints_timed" does not exist`
+ - Auswirkung: Einige PostgreSQL-Metriken fehlen
  - Status: Nicht kritisch, erfordert Config-Update
 
-2. **Nginx Docker Network** ([WARNING] Mittel) 
- - Problem: nginx:8080 aus Docker-Netz nicht erreichbar 
- - Workaround: Direkte Anbindung über Cloudflare Dashboard 
+2. **Nginx Docker Network** ([WARNING] Mittel)
+ - Problem: nginx:8080 aus Docker-Netz nicht erreichbar
+ - Workaround: Direkte Anbindung über Cloudflare Dashboard
  - Status: Weitere Analyse nötig
 
 #### **Erfolgskriterien erfüllt**
 
-- OpenWebUI auf v0.6.34 aktualisiert 
-- Alle Domains via HTTPS (HTTP 200) erreichbar 
-- Alle Integrationen funktionsfähig 
-- GPU-Beschleunigung aktiv 
-- Keine kritischen cloudflared-Fehler 
+- OpenWebUI auf v0.6.34 aktualisiert
+- Alle Domains via HTTPS (HTTP 200) erreichbar
+- Alle Integrationen funktionsfähig
+- GPU-Beschleunigung aktiv
+- Keine kritischen cloudflared-Fehler
 - Doku aktualisiert
 
 ---
@@ -133,128 +133,128 @@ last_updated: '2025-11-24'
 
 #### **Architekturdokumentation aktualisiert**
 
-- **Dokuversion**: 4.0 → 5.0 
-- **Services**: 24 → 25 (webhook-receiver hinzugefügt) 
-- **Mermaid-Diagramme**: Alle aktualisiert 
+- **Dokuversion**: 4.0 → 5.0
+- **Services**: 24 → 25 (webhook-receiver hinzugefügt)
+- **Mermaid-Diagramme**: Alle aktualisiert
 - **Ports/Endpoints**: Vollständig aktualisiert
 
 #### **Webhook Receiver Integration**
 
-- **Neuer Service**: webhook-receiver zur Architektur hinzugefügt 
-- **Ports**: 9095 (extern), 9093 (intern) 
-- **Funktionen**: Alertmanager-Alerts empfangen, loggen, JSON formatieren 
+- **Neuer Service**: webhook-receiver zur Architektur hinzugefügt
+- **Ports**: 9095 (extern), 9093 (intern)
+- **Funktionen**: Alertmanager-Alerts empfangen, loggen, JSON formatieren
 - **Diagramme**: In allen Architekturschemata ergänzt
 
 #### **GPU-Monitoring erweitert**
 
-- **NVIDIA GPU Exporter**: Port 9445 dokumentiert 
-- **Metriken**: Temperatur, Auslastung, GPU-Speicher 
-- **Dashboards**: GPU-Dashboard in Grafana beschrieben 
+- **NVIDIA GPU Exporter**: Port 9445 dokumentiert
+- **Metriken**: Temperatur, Auslastung, GPU-Speicher
+- **Dashboards**: GPU-Dashboard in Grafana beschrieben
 - **Alerts**: Kritische GPU-Parameter dokumentiert
 
 #### **Monitoring-System-Doku**
 
-- **Prometheus**: Port 9091 (statt 9090) 
-- **Grafana**: Port 3000 
-- **Alertmanager**: Ports 9093–9094 
+- **Prometheus**: Port 9091 (statt 9090)
+- **Grafana**: Port 3000
+- **Alertmanager**: Ports 9093–9094
 - **Exporter**: Ports aktualisiert
 
 ### **Operations-Dokumentation**
 
 #### **Troubleshooting Guide Updates**
 
-- **Webhook Receiver**: Neuer Diagnostik-Abschnitt 
- - Status- und Log-Checks 
- - Endpoint-Tests 
+- **Webhook Receiver**: Neuer Diagnostik-Abschnitt
+ - Status- und Log-Checks
+ - Endpoint-Tests
  - Wiederherstellungsprozeduren
-- **GPU Monitoring**: Erweiterte Diagnostik 
- - NVIDIA GPU Exporter Checks 
- - GPU-Metrik-Validierung 
+- **GPU Monitoring**: Erweiterte Diagnostik
+ - NVIDIA GPU Exporter Checks
+ - GPU-Metrik-Validierung
  - Container-GPU-Tests
 
 #### **Installation Guide Updates**
 
-- **Monitoring**: UI-URLs aktualisiert 
- - Grafana: <http://localhost:3000> 
- - Prometheus: <http://localhost:9091> 
- - Alertmanager: <http://localhost:9093> 
- - Webhook Receiver: <http://localhost:9095/health> 
+- **Monitoring**: UI-URLs aktualisiert
+ - Grafana: <http://localhost:3000>
+ - Prometheus: <http://localhost:9091>
+ - Alertmanager: <http://localhost:9093>
+ - Webhook Receiver: <http://localhost:9095/health>
 - **GPU Setup**: Checks für GPU-Monitoring ergänzt
 
 ### **Mehrsprachige Dokumentation**
 
 #### **Deutsche Lokalisierung**
 
-- **Architecture.md**: Mit russischer Version synchronisiert 
-- **Version**: 3.0 → 5.0 
-- **Services**: 16 → 25 
-- **Monitoring Layer**: Vollständig ergänzt 
+- **Architecture.md**: Mit russischer Version synchronisiert
+- **Version**: 3.0 → 5.0
+- **Services**: 16 → 25
+- **Monitoring Layer**: Vollständig ergänzt
 - **Webhook Receiver**: In DE-Diagramm aufgenommen
 
 ### **Geänderte Dateien**
 
 #### **Aktualisierte Dateien**
 
-- `docs/architecture/architecture.md` – Hauptarchitektur-Doku 
-- `docs/operations/troubleshooting.md` – Troubleshooting Guide 
-- `docs/getting-started/installation.md` – Installationsanleitung 
-- `docs/locales/de/architecture.md` – Deutsche Architektur 
+- `docs/architecture/architecture.md` – Hauptarchitektur-Doku
+- `docs/operations/troubleshooting.md` – Troubleshooting Guide
+- `docs/getting-started/installation.md` – Installationsanleitung
+- `docs/locales/de/architecture.md` – Deutsche Architektur
 - `README.md` – Projektstartseite
 
 #### **Backups**
 
-- `.config-backup/docs/20250725_145457/` – Vollbackup der vorherigen Version 
+- `.config-backup/docs/20250725_145457/` – Vollbackup der vorherigen Version
 - Enthält alle Doku-Dateien und README.md
 
 ### **Erfolgskriterien erreicht**
 
 #### **Architektur-Doku**
 
-- [x] Darstellung aller 25+ Services 
-- [x] Aktuelle Mermaid-Diagramme inkl. webhook-receiver 
-- [x] Ports und Endpoints aktualisiert 
+- [x] Darstellung aller 25+ Services
+- [x] Aktuelle Mermaid-Diagramme inkl. webhook-receiver
+- [x] Ports und Endpoints aktualisiert
 - [x] Integration mit Cloudflare Tunnels
 
 #### **Operations-Doku**
 
-- [x] Anleitungen für webhook-receiver 
-- [x] GPU-Monitoring-Prozeduren 
-- [x] Troubleshooting Guide erweitert 
+- [x] Anleitungen für webhook-receiver
+- [x] GPU-Monitoring-Prozeduren
+- [x] Troubleshooting Guide erweitert
 - [x] Installation Guide aktualisiert
 
 #### **Mehrsprachige Unterstützung**
 
-- [x] Deutsche Lokalisierung synchronisiert 
-- [x] Konsistente Terminologie 
+- [x] Deutsche Lokalisierung synchronisiert
+- [x] Konsistente Terminologie
 - [x] Versionsangaben aktualisiert
 
 #### **Backups & Versionierung**
 
-- [x] Backup der Vorversion erstellt 
-- [x] Versionssprung 4.0 → 5.0 dokumentiert 
-- [x] Dieser Changelog enthält alle Schritte 
+- [x] Backup der Vorversion erstellt
+- [x] Versionssprung 4.0 → 5.0 dokumentiert
+- [x] Dieser Changelog enthält alle Schritte
 - [x] `last_updated`-Werte aktualisiert
 
 ### **Verknüpfte Änderungen**
 
 #### **Docker Compose**
 
-- webhook-receiver zu `compose.production.yml` hinzugefügt 
-- Port 9095:9093 gemappt 
+- webhook-receiver zu `compose.production.yml` hinzugefügt
+- Port 9095:9093 gemappt
 - Healthchecks aktiviert
 
 #### **Monitoring Stack**
 
-- Prometheus-Konfiguration aktualisiert 
-- Grafana-Dashboards mit GPU-Metriken erweitert 
+- Prometheus-Konfiguration aktualisiert
+- Grafana-Dashboards mit GPU-Metriken erweitert
 - Alertmanager → webhook-receiver angebunden
 
 ### **Änderungs-Statistik**
 
-- **Aktualisierte Dateien**: 5 
-- **Hinzugefügte Zeilen**: ~200 
-- **Neue Abschnitte**: 3 
-- **Aktualisierte Diagramme**: 2 
+- **Aktualisierte Dateien**: 5
+- **Hinzugefügte Zeilen**: ~200
+- **Neue Abschnitte**: 3
+- **Aktualisierte Diagramme**: 2
 - **Synchronisierte Sprachen**: 2 (RU, DE)
 
 ---
@@ -263,9 +263,9 @@ last_updated: '2025-11-24'
 
 ### Änderungen der Vorgängerversion
 
-- LiteLLM-Integration 
-- Docling-Service ergänzt 
-- Context Engineering implementiert 
+- LiteLLM-Integration
+- Docling-Service ergänzt
+- Context Engineering implementiert
 - Netzwerkoptimierung abgeschlossen
 
 ---

@@ -12,7 +12,7 @@ Systemarchitektur.
 
 ## Inhalt
 
-- **[architecture.md](architecture.md)** – Gesamtüberblick v12.1
+- **[architecture.md](architecture.md)** – Gesamtüberblick v0.61.3
   - Komponenten und Abhängigkeiten
   - Netzwerk/Ports
   - Service-Inventar und Mermaid-Diagramme

@@ -28,7 +28,7 @@ v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0, 8
 экспортёров + RAG (Retrieval-Augmented Generation) Exporter). Внешний доступ
 осуществляется через Cloudflare туннели (5 доменов).
 
-### Последние обновления (v12.1 - ноябрь 2025)
+### Последние обновления (v0.61.3 - ноябрь 2025)
 
 #### Исправление Prometheus Exporters (07 ноября 2025)
 
@@ -244,7 +244,7 @@ conf/nginx/
 - **`/api/mcp/`** - Model Context Protocol
 - **WebSocket endpoints** - Real-time коммуникация
 
-## Диаграмма архитектуры системы (v12.1 - обновлено 2025-11-24)
+## Диаграмма архитектуры системы (v0.61.3 - обновлено 2025-11-24)
 
 ```mermaid
 graph TB
@@ -1090,11 +1090,11 @@ environment:
 **Документация:**
 
 - Полный отчет:
-  [../archive/config-backup/update-execution-report-2025-10-02.md](../archive/config-backup/update-execution-report-2025-10-02.md)
+  [../archive/cleanup/archive/config-backup/update-execution-report-2025-10-02.md](../archive/cleanup/archive/config-backup/update-execution-report-2025-10-02.md)
 - Мониторинг:
-  [../archive/config-backup/monitoring-report-2025-10-02.md](../archive/config-backup/monitoring-report-2025-10-02.md)
+  [../archive/cleanup/archive/config-backup/monitoring-report-2025-10-02.md](../archive/cleanup/archive/config-backup/monitoring-report-2025-10-02.md)
 - Анализ обновлений:
-  [../archive/config-backup/update-analysis-2025-10-02.md](../archive/config-backup/update-analysis-2025-10-02.md)
+  [../archive/cleanup/archive/config-backup/update-analysis-2025-10-02.md](../archive/cleanup/archive/config-backup/update-analysis-2025-10-02.md)
 
 ---
 
