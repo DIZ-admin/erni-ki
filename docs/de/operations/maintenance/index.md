@@ -13,15 +13,16 @@ Vorschriften für Backup, Image-Updates und Bereinigung gemeinsamer Speicher.
 
 ## Dokumente
 
-- [Backup & Wiederherstellung](backup-restore-procedures.md) — Vorschrift zur
-  Erstellung von Backups und Wiederherstellung.
-- [Docling Shared Volume](docling-shared-volume.md) — Speicherrichtlinie,
-  Sicherheit und Bereinigung des gemeinsamen Docling-Volumes.
-- [Image-Upgrade-Checkliste](image-upgrade-checklist.md) —
-  Schritt-für-Schritt-Anleitung zur Aktualisierung von Containern und
+- [Backup & Wiederherstellung](../../../operations/maintenance/backup-restore-procedures.md)
+  — Vorschrift zur Erstellung von Backups und Wiederherstellung.
+- [Docling Shared Volume](../../../operations/maintenance/docling-shared-volume.md)
+  — Speicherrichtlinie, Sicherheit und Bereinigung des gemeinsamen
+  Docling-Volumes.
+- [Image-Upgrade-Checkliste](../../../operations/maintenance/image-upgrade-checklist.md)
+  — Schritt-für-Schritt-Anleitung zur Aktualisierung von Containern und
   Überprüfung von Digests.
-- [Service-Neustart](service-restart-procedures.md) — Matrix für den sicheren
-  Neustart kritischer Dienste.
+- [Service-Neustart](../../../operations/maintenance/service-restart-procedures.md)
+  — Matrix für den sicheren Neustart kritischer Dienste.
 
 ## Verwendung
 

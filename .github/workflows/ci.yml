@@ -242,6 +242,24 @@ jobs:
         with:
           sarif_file: "trivy-results.sarif"
 
+  shellcheck:
+    name: 🐚 ShellCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6
+
+      - name: 🛠️ Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: 🔍 Run ShellCheck
+        run: |
+          find . -name "*.sh" -not -path "./node_modules/*" -not -path "./.git/*" \
+            -print0 | xargs -0 shellcheck --severity=warning
+
   # Documentation Link Check
   link-check:
     name: 🔗 Check Documentation Links
