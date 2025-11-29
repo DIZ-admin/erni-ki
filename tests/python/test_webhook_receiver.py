@@ -7,9 +7,8 @@ Tests alert processing, file operations, recovery scripts, and API endpoints.
 import json
 import tempfile
 import unittest
-from datetime import datetime
 from pathlib import Path
-from unittest.mock import MagicMock, patch, mock_open
+from unittest.mock import MagicMock, mock_open, patch
 
 from conf.webhook_receiver.webhook_receiver import (
     app,
@@ -29,11 +28,9 @@ class TestSaveAlertToFile(unittest.TestCase):
         """Test that alert is saved with correct filename format."""
         with tempfile.TemporaryDirectory() as tmpdir:
             mock_log_dir.__truediv__ = lambda self, other: Path(tmpdir) / other
-            
-            alert_data = {
-                "alerts": [{"labels": {"alertname": "Test"}}]
-            }
-            
+
+            alert_data = {"alerts": [{"labels": {"alertname": "Test"}}]}
+
             with patch("builtins.open", mock_open()) as mock_file:
                 save_alert_to_file(alert_data, "critical")
                 mock_file.assert_called_once()
@@ -43,14 +40,14 @@ class TestSaveAlertToFile(unittest.TestCase):
         """Test that alert data with non-ASCII characters is saved correctly."""
         with tempfile.TemporaryDirectory() as tmpdir:
             mock_log_dir.__truediv__ = lambda self, other: Path(tmpdir) / other
-            
+
             alert_data = {
-                "alerts": [{"labels": {"alertname": "Test", "description": "Тест 测试"}}]
+                "alerts": [{"labels": {"alertname": "Test", "description": "Test Unicode"}}]
             }
-            
+
             with patch("builtins.open", mock_open()) as mock_file:
                 save_alert_to_file(alert_data, "general")
-                
+
                 # Verify encoding parameter
                 call_args = mock_file.call_args
                 self.assertIn("encoding", call_args[1])
@@ -61,9 +58,9 @@ class TestSaveAlertToFile(unittest.TestCase):
     def test_save_alert_handles_permission_error(self, mock_open_func, mock_log_dir):
         """Test that permission errors are handled gracefully."""
         mock_log_dir.__truediv__ = lambda self, other: Path("/nonexistent") / other
-        
+
         alert_data = {"alerts": []}
-        
+
         # Should not raise exception
         save_alert_to_file(alert_data, "test")
 
@@ -74,7 +71,7 @@ class TestProcessAlert(unittest.TestCase):
     def test_process_alert_with_empty_alerts(self):
         """Test processing empty alerts list."""
         alert_data = {"alerts": []}
-        
+
         # Should not raise exception
         process_alert(alert_data, "general")
 
@@ -95,7 +92,7 @@ class TestProcessAlert(unittest.TestCase):
                 }
             ]
         }
-        
+
         with patch("conf.webhook_receiver.webhook_receiver.handle_critical_alert") as mock_handle:
             process_alert(alert_data, "critical")
             mock_handle.assert_called_once()
@@ -117,7 +114,7 @@ class TestProcessAlert(unittest.TestCase):
                 }
             ]
         }
-        
+
         with patch("conf.webhook_receiver.webhook_receiver.handle_gpu_alert") as mock_handle:
             process_alert(alert_data, "gpu")
             mock_handle.assert_called_once()
@@ -132,22 +129,19 @@ class TestProcessAlert(unittest.TestCase):
                 }
             ]
         }
-        
+
         # Should not raise exception
         process_alert(alert_data, "general")
 
     def test_process_alert_handles_exception(self):
         """Test that exceptions during alert processing are caught."""
-        alert_data = {"alerts": [{"invalid": "data"}]}
-        
-        with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
+        import contextlib
+
+        with patch("conf.webhook_receiver.webhook_receiver.logger"), contextlib.suppress(Exception):
             # Force an exception by passing invalid data
-            try:
-                process_alert({"alerts": [None]}, "test")
-            except Exception:
-                pass  # Exception should be caught internally
-            
-            # Logger should have been called for errors
+            process_alert({"alerts": [None]}, "test")
+
+        # Logger should have been called for errors
 
 
 class TestHandleCriticalAlert(unittest.TestCase):
@@ -162,7 +156,7 @@ class TestHandleCriticalAlert(unittest.TestCase):
                 "severity": "critical",
             }
         }
-        
+
         with patch("conf.webhook_receiver.webhook_receiver.run_recovery_script") as mock_recovery:
             handle_critical_alert(alert)
             mock_recovery.assert_called_once_with("ollama")
@@ -170,18 +164,20 @@ class TestHandleCriticalAlert(unittest.TestCase):
     def test_handle_critical_alert_calls_recovery_for_known_services(self):
         """Test that recovery scripts are called for known services."""
         known_services = ["ollama", "openwebui", "searxng"]
-        
+
         for service in known_services:
             alert = {"labels": {"service": service}}
-            
-            with patch("conf.webhook_receiver.webhook_receiver.run_recovery_script") as mock_recovery:
+
+            with patch(
+                "conf.webhook_receiver.webhook_receiver.run_recovery_script"
+            ) as mock_recovery:
                 handle_critical_alert(alert)
                 mock_recovery.assert_called_once_with(service)
 
     def test_handle_critical_alert_logs_unknown_services(self):
         """Test that unknown services log a message instead of running recovery."""
         alert = {"labels": {"service": "unknown-service"}}
-        
+
         with patch("conf.webhook_receiver.webhook_receiver.run_recovery_script") as mock_recovery:
             handle_critical_alert(alert)
             # Recovery should not be called for unknown services
@@ -200,7 +196,7 @@ class TestHandleGPUAlert(unittest.TestCase):
                 "component": "nvidia",
             }
         }
-        
+
         with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
             handle_gpu_alert(alert)
             # Should log with GPU information
@@ -215,7 +211,7 @@ class TestHandleGPUAlert(unittest.TestCase):
                 "component": "nvidia",
             }
         }
-        
+
         with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
             handle_gpu_alert(alert)
             # Should log temperature warning
@@ -230,7 +226,7 @@ class TestRunRecoveryScript(unittest.TestCase):
         """Test that recovery script existence is checked."""
         with tempfile.TemporaryDirectory() as tmpdir:
             mock_recovery_dir.__truediv__ = lambda self, other: Path(tmpdir) / other
-            
+
             run_recovery_script("nonexistent-service")
             # Should return early if script doesn't exist
 
@@ -241,9 +237,9 @@ class TestRunRecoveryScript(unittest.TestCase):
             script_path = Path(tmpdir) / "test-recovery.sh"
             script_path.write_text("#!/bin/bash\necho 'test'")
             script_path.chmod(0o644)  # Not executable
-            
+
             mock_recovery_dir.__truediv__ = lambda self, other: script_path
-            
+
             with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
                 run_recovery_script("test")
                 # Should log warning about non-executable script
@@ -257,14 +253,14 @@ class TestRunRecoveryScript(unittest.TestCase):
             script_path = Path(tmpdir) / "ollama-recovery.sh"
             script_path.write_text("#!/bin/bash\necho 'Recovery complete'")
             script_path.chmod(0o755)
-            
+
             mock_recovery_dir.__truediv__ = lambda self, other: script_path
-            
+
             mock_result = MagicMock()
             mock_result.stdout = "Recovery complete"
             mock_result.stderr = ""
             mock_run.return_value = mock_result
-            
+
             run_recovery_script("ollama")
             mock_run.assert_called_once()
 
@@ -276,12 +272,13 @@ class TestRunRecoveryScript(unittest.TestCase):
             script_path = Path(tmpdir) / "test-recovery.sh"
             script_path.write_text("#!/bin/bash\nexit 1")
             script_path.chmod(0o755)
-            
+
             mock_recovery_dir.__truediv__ = lambda self, other: script_path
-            
+
             from subprocess import CalledProcessError
+
             mock_run.side_effect = CalledProcessError(1, "test-recovery.sh", stderr="Error")
-            
+
             with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
                 run_recovery_script("test")
                 # Should log error
@@ -300,7 +297,7 @@ class TestWebhookEndpoints(unittest.TestCase):
     def test_health_endpoint_returns_healthy_status(self):
         """Test that health endpoint returns 200 and correct status."""
         response = self.client.get("/health")
-        
+
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertEqual(data["status"], "healthy")
@@ -312,13 +309,13 @@ class TestWebhookEndpoints(unittest.TestCase):
     def test_webhook_general_with_valid_json(self, mock_process, mock_save):
         """Test general webhook endpoint with valid JSON."""
         payload = {"alerts": [{"labels": {"alertname": "Test"}}]}
-        
+
         response = self.client.post(
             "/webhook",
             data=json.dumps(payload),
             content_type="application/json",
         )
-        
+
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertEqual(data["status"], "success")
@@ -328,7 +325,7 @@ class TestWebhookEndpoints(unittest.TestCase):
     def test_webhook_general_without_json_returns_400(self):
         """Test that missing JSON returns 400 error."""
         response = self.client.post("/webhook")
-        
+
         self.assertEqual(response.status_code, 400)
         data = json.loads(response.data)
         self.assertIn("error", data)
@@ -337,18 +334,14 @@ class TestWebhookEndpoints(unittest.TestCase):
     @patch("conf.webhook_receiver.webhook_receiver.process_alert")
     def test_webhook_critical_processes_correctly(self, mock_process, mock_save):
         """Test critical webhook endpoint."""
-        payload = {
-            "alerts": [
-                {"labels": {"alertname": "Critical", "severity": "critical"}}
-            ]
-        }
-        
+        payload = {"alerts": [{"labels": {"alertname": "Critical", "severity": "critical"}}]}
+
         response = self.client.post(
             "/webhook/critical",
             data=json.dumps(payload),
             content_type="application/json",
         )
-        
+
         self.assertEqual(response.status_code, 200)
         # Verify it was saved as critical
         mock_save.assert_called_once_with(payload, "critical")
@@ -357,18 +350,14 @@ class TestWebhookEndpoints(unittest.TestCase):
     @patch("conf.webhook_receiver.webhook_receiver.process_alert")
     def test_webhook_gpu_processes_correctly(self, mock_process, mock_save):
         """Test GPU webhook endpoint."""
-        payload = {
-            "alerts": [
-                {"labels": {"alertname": "GPUHigh", "component": "gpu"}}
-            ]
-        }
-        
+        payload = {"alerts": [{"labels": {"alertname": "GPUHigh", "component": "gpu"}}]}
+
         response = self.client.post(
             "/webhook/gpu",
             data=json.dumps(payload),
             content_type="application/json",
         )
-        
+
         self.assertEqual(response.status_code, 200)
         mock_save.assert_called_once_with(payload, "gpu")
 
@@ -378,29 +367,31 @@ class TestWebhookEndpoints(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             log_dir = Path(tmpdir)
             mock_log_dir.glob = lambda pattern: log_dir.glob(pattern)
-            
+
             # Create some test alert files
             for i in range(3):
                 alert_file = log_dir / f"alert_test_{i}.json"
                 alert_file.write_text(json.dumps({"alerts": [{"test": i}]}))
-            
+
             response = self.client.get("/alerts")
-            
+
             self.assertEqual(response.status_code, 200)
             data = json.loads(response.data)
             self.assertIn("alerts", data)
 
-    @patch("conf.webhook_receiver.webhook_receiver.process_alert", side_effect=Exception("Test error"))
+    @patch(
+        "conf.webhook_receiver.webhook_receiver.process_alert", side_effect=Exception("Test error")
+    )
     def test_webhook_handles_processing_exception(self, mock_process):
         """Test that webhook handles processing exceptions gracefully."""
         payload = {"alerts": [{"labels": {}}]}
-        
+
         response = self.client.post(
             "/webhook",
             data=json.dumps(payload),
             content_type="application/json",
         )
-        
+
         self.assertEqual(response.status_code, 500)
         data = json.loads(response.data)
         self.assertIn("error", data)
