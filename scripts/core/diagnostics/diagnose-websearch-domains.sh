@@ -12,19 +12,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 
 # Colors for output
 
-# Logging functions
-[INFO]${NC} $1"
-}
-
-[SUCCESS]${NC} $1"
-}
-
-[WARNING]${NC} $1"
-}
-
-[ERROR]${NC} $1"
-}
-
 # Check JSON function
 check_json() {
     local response="$1"

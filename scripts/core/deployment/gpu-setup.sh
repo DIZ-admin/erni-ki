@@ -11,20 +11,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 
 # Color definitions for output
 
-# Logging functions
-[INFO]${NC} $1"
-}
-
-[SUCCESS]${NC} $1"
-}
-
-[WARNING]${NC} $1"
-}
-
-[ERROR]${NC} $1"
-    exit 1
-}
-
 # Check for NVIDIA GPU presence
 check_nvidia_gpu() {
     log_info "Checking for NVIDIA GPU..."
