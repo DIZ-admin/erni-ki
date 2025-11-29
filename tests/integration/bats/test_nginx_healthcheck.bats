@@ -37,6 +37,6 @@ setup() {
 @test "healthcheck validates environment variables" {
     # Test that script handles missing env vars
     run bash -c "unset NGINX_HOST; bash '$SCRIPT_PATH'"
-    # Should either use defaults or fail gracefully
-    [ "$status" -ge 0 ]
+    # Should fail when required env vars are missing
+    [ "$status" -ne 0 ]
 }
