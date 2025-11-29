@@ -28,8 +28,7 @@ warn() {
     echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"
 }
 
-[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"
-}
+
 
 # Create backup
 create_backup() {
