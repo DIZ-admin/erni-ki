@@ -14,14 +14,6 @@ source "${SCRIPT_DIR}/lib/common.sh"
 echo -e "${GREEN}=== Redis Performance Optimization for ERNI-KI ===${NC}"
 
 # Logging helpers
-[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
-}
-
-[WARNING] $1${NC}"
-}
-
-[ERROR] $1${NC}"
-}
 
 info() {
     echo -e "${BLUE}[INFO] $1${NC}"
