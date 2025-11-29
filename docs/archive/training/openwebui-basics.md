@@ -13,7 +13,7 @@ guided start and the ERNI Gruppe tone-of-voice guidelines.
 ## Before you start
 
 - Check the [status page](../../operations/core/status-page.md). If the platform
-  is not **Operational**, wait or follow the incident channel.
+  is not**Operational**, wait or follow the incident channel.
 - Confirm you are using company-approved networks/VPN if required.
 - Keep handy the list of allowed models and data types:
   `<INSERT APPROVED MODELS LIST>` / `<INSERT DATA CLASSIFICATION GUIDE>`.
@@ -31,7 +31,7 @@ guided start and the ERNI Gruppe tone-of-voice guidelines.
 
 ## Choose a model
 
-- Pick the **company-approved** model from the model selector. Default choices
+- Pick the**company-approved**model from the model selector. Default choices
   usually include a general-purpose model and a faster draft model.
 - For tasks with personal data, confirm the model is approved by policy
   (<INSERT INTERNAL POLICY HERE>).

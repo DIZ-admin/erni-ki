@@ -20,7 +20,7 @@ auf Deutsch.
 
 <!-- STATUS_SNIPPET_START -->
 
-> **Systemstatus (2025-11-27) — Production Ready v12.1**
+> **Systemstatus (2025-11-27) — Production Ready v0.61.3**
 >
 > - Container: 34/34 services healthy
 > - Grafana: 5/5 Grafana Dashboards (provisioned)
@@ -38,9 +38,9 @@ auf Deutsch.
 
 ## Portal-Aufbau
 
-1. **Russisch ist die kanonische Sprache.** Alle Materialien werden zuerst hier
-   veröffentlicht und dienen als Quelle für Übersetzungen.
-2. **Sprachumschalter** ermöglicht den Wechsel zu deutschen und englischen
-   Versionen der Seiten, wenn diese verfügbar sind.
-3. **Einheitliche Struktur**: Academy KI → Grundlagen, Prompting, HowTo,
-   Neuigkeiten, sowie Systembereich mit Zugriff auf Service-Status.
+1.**Russisch ist die kanonische Sprache.**Alle Materialien werden zuerst hier
+veröffentlicht und dienen als Quelle für
+Übersetzungen. 2.**Sprachumschalter**ermöglicht den Wechsel zu deutschen und
+englischen Versionen der Seiten, wenn diese verfügbar sind. 3.**Einheitliche
+Struktur**: Academy KI → Grundlagen, Prompting, HowTo, Neuigkeiten, sowie
+Systembereich mit Zugriff auf Service-Status.

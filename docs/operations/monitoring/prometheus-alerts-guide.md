@@ -9,7 +9,7 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Version:** 1.0 **Last Updated:** 2025-10-24 **Status:** Production Ready
+**Version:**1.0**Last Updated:**2025-10-24**Status:**Production Ready
 
 ---
 
@@ -28,10 +28,10 @@ rules active in the ERNI-KI system.
 
 ### Severity Levels
 
-- **Critical** - Immediate action required (system failure, data loss risk)
-- [WARNING] **Warning** - Attention needed (performance degradation, approaching
-  limits)
-- **Info** - Informational (non-critical events)
+-**Critical**- Immediate action required (system failure, data loss risk)
+
+- [WARNING]**Warning**- Attention needed (performance degradation, approaching
+  limits) -**Info**- Informational (non-critical events)
 
 ---
 
@@ -39,8 +39,8 @@ rules active in the ERNI-KI system.
 
 ### 1. DiskSpaceCritical
 
-**Severity:** Critical **Component:** System **Threshold:** Disk usage >85%
-**Duration:** 5 minutes
+**Severity:**Critical**Component:**System**Threshold:**Disk usage >85%
+**Duration:**5 minutes
 
 **Expression:**
 
@@ -48,7 +48,7 @@ rules active in the ERNI-KI system.
 (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
 ```
 
-**Description:** Triggers when root filesystem has less than 15% free space.
+**Description:**Triggers when root filesystem has less than 15% free space.
 
 **Impact:**
 
@@ -73,14 +73,14 @@ docker system prune -a --volumes -f
 /tmp/docker-cleanup.sh
 ```
 
-**Related Automation:** Docker cleanup runs every Sunday at 4:00 AM
+**Related Automation:**Docker cleanup runs every Sunday at 4:00 AM
 
 ---
 
 ## 2. MemoryCritical
 
-**Severity:** Critical **Component:** System **Threshold:** Available memory <5%
-**Duration:** 5 minutes
+**Severity:**Critical**Component:**System**Threshold:**Available memory <5%
+**Duration:**5 minutes
 
 **Expression:**
 
@@ -88,7 +88,7 @@ docker system prune -a --volumes -f
 (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 5
 ```
 
-**Description:** Triggers when system has less than 5% available memory.
+**Description:**Triggers when system has less than 5% available memory.
 
 **Impact:**
 
@@ -116,8 +116,8 @@ docker compose restart SERVICE_NAME
 
 ## 3. ContainerDown
 
-**Severity:** Critical **Component:** Docker **Threshold:** Container not
-running **Duration:** 1 minute
+**Severity:**Critical**Component:**Docker**Threshold:**Container not
+running**Duration:**1 minute
 
 **Expression:**
 
@@ -125,7 +125,7 @@ running **Duration:** 1 minute
 up{job=~".*"} == 0
 ```
 
-**Description:** Triggers when any monitored container is down.
+**Description:**Triggers when any monitored container is down.
 
 **Impact:**
 
@@ -153,8 +153,8 @@ docker inspect SERVICE_NAME | jq '.[0].State.Health'
 
 ## 4. PostgreSQLDown
 
-**Severity:** Critical **Component:** Database **Threshold:** PostgreSQL
-unavailable **Duration:** 1 minute
+**Severity:**Critical**Component:**Database**Threshold:**PostgreSQL
+unavailable**Duration:**1 minute
 
 **Expression:**
 
@@ -162,7 +162,7 @@ unavailable **Duration:** 1 minute
 pg_up == 0
 ```
 
-**Description:** Triggers when PostgreSQL database is unavailable.
+**Description:**Triggers when PostgreSQL database is unavailable.
 
 **Impact:**
 
@@ -190,8 +190,8 @@ docker compose restart db
 
 ## 5. RedisDown
 
-**Severity:** Critical **Component:** Cache **Threshold:** Redis unavailable
-**Duration:** 1 minute
+**Severity:**Critical**Component:**Cache**Threshold:**Redis unavailable
+**Duration:**1 minute
 
 **Expression:**
 
@@ -199,7 +199,7 @@ docker compose restart db
 redis_up == 0
 ```
 
-**Description:** Triggers when Redis cache is unavailable.
+**Description:**Triggers when Redis cache is unavailable.
 
 **Impact:**
 
@@ -227,8 +227,8 @@ docker compose restart redis
 
 ## 6. OllamaGPUDown
 
-**Severity:** Critical **Component:** AI/GPU **Threshold:** Ollama GPU
-unavailable **Duration:** 2 minutes
+**Severity:**Critical**Component:**AI/GPU**Threshold:**Ollama GPU
+unavailable**Duration:**2 minutes
 
 **Expression:**
 
@@ -236,7 +236,7 @@ unavailable **Duration:** 2 minutes
 ollama_up == 0
 ```
 
-**Description:** Triggers when Ollama AI service with GPU is unavailable.
+**Description:**Triggers when Ollama AI service with GPU is unavailable.
 
 **Impact:**
 
@@ -267,8 +267,8 @@ docker compose restart ollama
 
 ## 7. NginxDown
 
-**Severity:** Critical **Component:** Gateway **Threshold:** Nginx unavailable
-**Duration:** 1 minute
+**Severity:**Critical**Component:**Gateway**Threshold:**Nginx unavailable
+**Duration:**1 minute
 
 **Expression:**
 
@@ -276,7 +276,7 @@ docker compose restart ollama
 nginx_up == 0
 ```
 
-**Description:** Triggers when Nginx reverse proxy is unavailable.
+**Description:**Triggers when Nginx reverse proxy is unavailable.
 
 **Impact:**
 
@@ -306,8 +306,8 @@ docker compose restart nginx
 
 ### 8. DiskSpaceWarning
 
-**Severity:** Warning **Component:** System **Threshold:** Disk usage >75%
-**Duration:** 10 minutes
+**Severity:**Warning**Component:**System**Threshold:**Disk usage >75%
+**Duration:**10 minutes
 
 **Expression:**
 
@@ -316,26 +316,26 @@ docker compose restart nginx
  node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100 > 80
 ```
 
-**Notes:** EFI-раздел (`/boot/efi`, `vfat`) исключён, чтобы не получать ложных
+**Notes:**EFI-раздел (`/boot/efi`, `vfat`) исключён, чтобы не получать ложных
 срабатываний из‑за небольшого загрузочного тома.
 
-**Resolution:** Same as DiskSpaceCritical, but less urgent.
+**Resolution:**Same as DiskSpaceCritical, but less urgent.
 
 ---
 
 ### 9. MemoryWarning
 
-**Severity:** Warning **Component:** System **Threshold:** Available memory <15%
-**Duration:** 10 minutes
+**Severity:**Warning**Component:**System**Threshold:**Available memory <15%
+**Duration:**10 minutes
 
-**Resolution:** Same as MemoryCritical, but less urgent.
+**Resolution:**Same as MemoryCritical, but less urgent.
 
 ---
 
 ### 10. HighCPUUsage
 
-**Severity:** Warning **Component:** System **Threshold:** CPU usage >80%
-**Duration:** 5 minutes
+**Severity:**Warning**Component:**System**Threshold:**CPU usage >80%
+**Duration:**5 minutes
 
 **Expression:**
 
@@ -360,8 +360,8 @@ docker stats --no-stream --format "table {{.Container}}\t{{CPUPerc}}"
 
 ## 11. ContainerRestarting
 
-**Severity:** Warning **Component:** Docker **Threshold:** ≥2 restarts per
-container within 15 minutes **Duration:** 1 minute (debounce)
+**Severity:**Warning**Component:**Docker**Threshold:**≥2 restarts per container
+within 15 minutes**Duration:**1 minute (debounce)
 
 **Expression:**
 
@@ -401,8 +401,8 @@ docker inspect SERVICE_NAME | jq '.[0].State | {Status, ExitCode, Health}'
 
 ## 12. PostgreSQLHighConnections
 
-**Severity:** Warning **Component:** Database **Threshold:** >80 connections
-**Duration:** 5 minutes
+**Severity:**Warning**Component:**Database**Threshold:**>80 connections
+**Duration:**5 minutes
 
 **Expression:**
 
@@ -427,8 +427,8 @@ docker compose exec db psql -U postgres -d openwebui -c "SELECT pg_terminate_bac
 
 ## 13. RedisHighMemory
 
-**Severity:** Warning **Component:** Cache **Threshold:** Memory usage >1GB
-**Duration:** 10 minutes
+**Severity:**Warning**Component:**Cache**Threshold:**Memory usage >1GB
+**Duration:**10 minutes
 
 **Expression:**
 
@@ -453,8 +453,8 @@ docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 FLUSHDB
 
 ## 14. RedisHighFragmentation
 
-**Severity:** Warning **Component:** Cache **Threshold:**
-`redis_mem_fragmentation_ratio > 5` **Duration:** 10 minutes
+**Severity:**Warning**Component:**Cache**Threshold:**
+`redis_mem_fragmentation_ratio > 5`**Duration:**10 minutes
 
 **Expression:**
 
@@ -475,7 +475,7 @@ tail -n 50 logs/redis-fragmentation-watchdog.log
 docker compose exec redis redis-cli MEMORY PURGE
 ```
 
-**Notes:** Cron-задача `*/5 * * * * ... redis-fragmentation-watchdog.sh`
+**Notes:**Cron-задача `*/5 * * * * ... redis-fragmentation-watchdog.sh`
 автоматически запускает `MEMORY PURGE`. Alert служит ранним сигналом и указывает
 runbook на раздел _docs/security/log-audit.md › Выполненные remediation_.
 
@@ -483,8 +483,8 @@ runbook на раздел _docs/security/log-audit.md › Выполненные
 
 ## 15. OllamaHighVRAM
 
-**Severity:** Warning **Component:** AI/GPU **Threshold:** VRAM usage >80%
-**Duration:** 10 minutes
+**Severity:**Warning**Component:**AI/GPU**Threshold:**VRAM usage >80%
+**Duration:**10 minutes
 
 **Expression:**
 
@@ -509,8 +509,8 @@ docker compose exec ollama ollama rm MODEL_NAME
 
 ## 16. NginxHighErrorRate
 
-**Severity:** Warning **Component:** Gateway **Threshold:** >10 5xx errors/min
-**Duration:** 5 minutes
+**Severity:**Warning**Component:**Gateway**Threshold:**>10 5xx errors/min
+**Duration:**5 minutes
 
 **Expression:**
 
@@ -537,8 +537,8 @@ curl -I http://localhost:8080
 
 ### 17. OpenWebUISlowResponse
 
-**Severity:** Warning **Component:** Application **Threshold:** Response
-time >5s **Duration:** 5 minutes
+**Severity:**Warning**Component:**Application**Threshold:**Response
+time >5s**Duration:**5 minutes
 
 **Resolution:**
 
@@ -557,8 +557,8 @@ time curl -X POST http://localhost:11434/api/generate -d '{"model":"llama3.2","p
 
 ## 18. SearXNGSlowSearch
 
-**Severity:** Warning **Component:** Search **Threshold:** Search time >3s
-**Duration:** 5 minutes
+**Severity:**Warning**Component:**Search**Threshold:**Search time >3s
+**Duration:**5 minutes
 
 **Resolution:**
 
@@ -577,8 +577,8 @@ docker compose logs searxng --tail 50
 
 ## 19. DockerStoragePoolAlmostFull
 
-**Severity:** Warning **Component:** Infrastructure **Threshold:** Docker
-storage >85% **Duration:** 10 minutes
+**Severity:**Warning**Component:**Infrastructure**Threshold:**Docker
+storage >85%**Duration:**10 minutes
 
 **Resolution:**
 
@@ -669,4 +669,4 @@ sequenceDiagram
 
 ---
 
-**Last Updated:** 2025-10-24 **Next Review:** 2025-11-24
+**Last Updated:**2025-10-24**Next Review:**2025-11-24

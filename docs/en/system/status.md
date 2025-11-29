@@ -12,13 +12,13 @@ last_updated: '2025-11-24'
 This document provides an overview of the system status dashboard and how to
 interpret its indicators.
 
-Status dashboard: **https://status.ki.erni-gruppe.ch** (Uptime Kuma).
+Status dashboard:**https://status.ki.erni-gruppe.ch**(Uptime Kuma).
 
 ## How to use it
 
 1. Open the dashboard before filing incidents or tickets.
-2. If a component is **Partial** or **Major Outage**, check maintenance windows
-   and follow the communication channel listed on the status page.
+2. If a component is**Partial**or**Major Outage**, check maintenance windows and
+   follow the communication channel listed on the status page.
 3. For problems not shown as incidents, collect timestamp, URL, model name, and
    screenshot before escalating (see `docs/operations/core/status-page.md`).
 
@@ -42,13 +42,11 @@ to view raw probe logs when debugging.
 
 ## When to raise an incident
 
-- **Major Outage** tile visible: immediately notify the on-call engineer and
-  create a communication post.
-- **Partial Outage** but affecting your customer: open a Jira Ops issue with
-  impact statement and link to status page entry.
-- **No incident visible** yet reproducible issue: create a draft post in Uptime
-  Kuma and contact the status-page owners listed in
-  `operations/core/status-page.md`.
+-**Major Outage**tile visible: immediately notify the on-call engineer and
+create a communication post. -**Partial Outage**but affecting your customer:
+open a Jira Ops issue with impact statement and link to status page entry. -**No
+incident visible**yet reproducible issue: create a draft post in Uptime Kuma and
+contact the status-page owners listed in `operations/core/status-page.md`.
 
 ## Related documentation
 

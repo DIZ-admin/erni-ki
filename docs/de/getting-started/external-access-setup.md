@@ -9,7 +9,7 @@ last_updated: '2025-11-27'
 
 [TOC]
 
-**Datum**: 27.10.2025 **Status**: HANDLUNG ERFORDERLICH **Priorität**: HOCH
+**Datum**: 27.10.2025**Status**: HANDLUNG ERFORDERLICH**Priorität**: HOCH
 
 ---
 
@@ -63,8 +63,8 @@ last_updated: '2025-11-27'
 
 ### LANCOM Router
 
-**Modell**: LANCOM (Unternehmensrouter) **IP**: 192.168.62.1 **Web-Interface**:
-<https://192.168.62.1/> (WEBconfig) **Zugriff**: Administrator-Zugangsdaten
+**Modell**: LANCOM (Unternehmensrouter)**IP**: 192.168.62.1**Web-Interface**:
+<https://192.168.62.1/> (WEBconfig)**Zugriff**: Administrator-Zugangsdaten
 erforderlich
 
 **Port Forwarding**: NICHT GEPRÜFT (Zugriff auf Router erforderlich)
@@ -102,10 +102,8 @@ erforderlich
 4. "Configure" → "Public Hostname" → "Add a public hostname" klicken
 5. Formular ausfüllen:
 
-- **Subdomain**: `ki`
-- **Domain**: `erni-gruppe.ch`
-- **Service Type**: `HTTP`
-- **URL**: `nginx:8080`
+-**Subdomain**: `ki` -**Domain**: `erni-gruppe.ch` -**Service Type**:
+`HTTP` -**URL**: `nginx:8080`
 
 6. Änderungen speichern
 
@@ -133,11 +131,9 @@ ingress:
 1. Zu Cloudflare Dashboard → DNS → Records gehen
 2. CNAME-Eintrag hinzufügen:
 
-- **Type**: CNAME
-- **Name**: `ki`
-- **Target**: `02a58963-3f79-4fc0-82ff-f79503366f86.cfargotunnel.com`
-- **Proxy status**: Proxied (orange Wolke)
-- **TTL**: Auto
+-**Type**: CNAME -**Name**: `ki` -**Target**:
+`02a58963-3f79-4fc0-82ff-f79503366f86.cfargotunnel.com` -**Proxy status**:
+Proxied (orange Wolke) -**TTL**: Auto
 
 #### 1.3 Überprüfung
 
@@ -210,10 +206,7 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 1. In Control Panel des Registrars einloggen
 2. A-Record hinzufügen:
 
-- **Name**: `ki`
-- **Type**: A
-- **Value**: `185.242.201.210`
-- **TTL**: 3600
+-**Name**: `ki` -**Type**: A -**Value**: `185.242.201.210` -**TTL**: 3600
 
 **Variante B: Über Cloudflare (ohne Tunnel)**
 
@@ -221,10 +214,8 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 2. NS-Einträge beim Registrar aktualisieren
 3. A-Record in Cloudflare hinzufügen:
 
-- **Name**: `ki`
-- **Type**: A
-- **Value**: `185.242.201.210`
-- **Proxy status**: DNS only (graue Wolke)
+-**Name**: `ki` -**Type**: A -**Value**: `185.242.201.210` -**Proxy status**:
+DNS only (graue Wolke)
 
 #### 2.4 Überprüfung
 
@@ -281,14 +272,14 @@ empfohlen**
 4. Einfache Einrichtung (5-10 Minuten)
 5. Zentrale Verwaltung aller ERNI-KI Domains
 
-**Realisierungszeit**: 10-15 Minuten **Erforderliche Rechte**: Zugriff auf
+**Realisierungszeit**: 10-15 Minuten**Erforderliche Rechte**: Zugriff auf
 Cloudflare Dashboard
 
 ---
 
 ## ANWEISUNG FÜR IT-ABTEILUNG
 
-Falls **Option 2 (Port Forwarding)** gewählt wird, stellen Sie der IT-Abteilung
+Falls**Option 2 (Port Forwarding)**gewählt wird, stellen Sie der IT-Abteilung
 folgende Informationen bereit:
 
 ### Erforderliche Einstellungen LANCOM Router (192.168.62.1)
@@ -316,11 +307,11 @@ Rule 2:
  Enabled: Yes
 ```
 
-**Firewall Regeln** (falls erforderlich):
+**Firewall Regeln**(falls erforderlich):
 
 - Eingehende Verbindungen auf Ports 80/443 für IP 192.168.62.153 erlauben
 
-**DNS Einstellungen** (falls von IT verwaltet):
+**DNS Einstellungen**(falls von IT verwaltet):
 
 - A-Record hinzufügen: `ki.erni-gruppe.ch` → `185.242.201.210`
 
@@ -342,16 +333,15 @@ Rule 2:
 
 ## NÄCHSTE SCHRITTE
 
-1. **Lösungsvariante wählen** (Option 1 empfohlen)
-2. **Zugriff auf Cloudflare Dashboard erhalten** (für Option 1)
+1.**Lösungsvariante wählen**(Option 1 empfohlen) 2.**Zugriff auf Cloudflare
+Dashboard erhalten**(für Option 1)
 
 - ODER -
 
-3. **IT-Abteilung kontaktieren** (für Option 2)
-4. **Einstellungen anwenden** gemäß gewählter Variante
-5. **Zugriff testen** von externem Computer
-6. **Dokumentation aktualisieren** mit Ergebnissen
+  3.**IT-Abteilung kontaktieren**(für Option 2) 4.**Einstellungen
+  anwenden**gemäß gewählter Variante 5.**Zugriff testen**von externem
+  Computer 6.**Dokumentation aktualisieren**mit Ergebnissen
 
 ---
 
-**Autor**: Augment Agent **Datum**: 27.10.2025 **Version**: 1.0
+**Autor**: Augment Agent**Datum**: 27.10.2025**Version**: 1.0

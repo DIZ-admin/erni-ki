@@ -7,8 +7,8 @@ last_updated: '2025-11-24'
 
 # Sicherungs- und Wiederherstellungsprozeduren für ERNI-KI
 
-**Version:** 1.0 **Erstellt:** 25.09.2025 **Letzte Aktualisierung:** 25.09.2025
-**Verantwortlich:** Tech Lead
+**Version:**1.0**Erstellt:**25.09.2025**Letzte Aktualisierung:**25.09.2025
+**Verantwortlich:**Tech Lead
 
 ---
 
@@ -18,18 +18,16 @@ last_updated: '2025-11-24'
 
 ### **Backup-Strategie**
 
-- **Tägliche Backups** kritischer Daten (Aufbewahrung 7 Tage)
-- **Wöchentliche Voll-Backups** (Aufbewahrung 4 Wochen)
-- **Vor jeder Änderung** – zwingende Snapshots
-- **Recovery-Tests** – monatlich
+-**Tägliche Backups**kritischer Daten (Aufbewahrung 7 Tage) -**Wöchentliche
+Voll-Backups**(Aufbewahrung 4 Wochen) -**Vor jeder Änderung**– zwingende
+Snapshots -**Recovery-Tests**– monatlich
 
 ### **Was in Backups enthalten ist**
 
-- **Konfigurationen:** `env/`, `conf/`, `compose.yml`
-- **Datenbank:** PostgreSQL (OpenWebUI-Daten)
-- **Nutzerdaten:** OpenWebUI Uploads, Ollama-Modelle
-- **Logs:** Kritische Logs der letzten 7 Tage
-- **Zertifikate:** SSL-Zertifikate und Schlüssel
+-**Konfigurationen:**`env/`, `conf/`, `compose.yml` -**Datenbank:**PostgreSQL
+(OpenWebUI-Daten) -**Nutzerdaten:**OpenWebUI Uploads,
+Ollama-Modelle -**Logs:**Kritische Logs der letzten 7
+Tage -**Zertifikate:**SSL-Zertifikate und Schlüssel
 
 ---
 

@@ -46,15 +46,15 @@ Füge einen E-Mail-Betreff hinzu.
 
 ## Prompt-Beispiele
 
-- **Gut:**
-  - "Du bist ein Account Manager. Aufgabe: Schreibe eine E-Mail an den Kunden
-    mit den Ergebnissen des heutigen Meetings. Kontext: Wir haben vereinbart,
-    bis Freitag einen Testzugang zu gewähren, Verantwortliche ist Anna Ivanova,
-    nächster Schritt ist eine Demo am 25. Format: Begrüßung, 3 Punkte mit
-    Ergebnissen, CTA — Demo bestätigen."
-- **Schlecht:**
-  - "Schreibe eine E-Mail an den Kunden über das Meeting." (kein Kontext, unklar
-    welche Ergebnisse und was zu tun ist)
+-**Gut:**
+
+- "Du bist ein Account Manager. Aufgabe: Schreibe eine E-Mail an den Kunden mit
+  den Ergebnissen des heutigen Meetings. Kontext: Wir haben vereinbart, bis
+  Freitag einen Testzugang zu gewähren, Verantwortliche ist Anna Ivanova,
+  nächster Schritt ist eine Demo am 25. Format: Begrüßung, 3 Punkte mit
+  Ergebnissen, CTA — Demo bestätigen." -**Schlecht:**
+- "Schreibe eine E-Mail an den Kunden über das Meeting." (kein Kontext, unklar
+  welche Ergebnisse und was zu tun ist)
 
 ## Checkliste vor dem Versand
 

@@ -8,13 +8,13 @@ last_updated: '2025-11-24'
 # План рефакторинга документации ERNI-KI (2025-11-24)
 
 > **Полный аудит:**
-> `../archive/audits/comprehensive-documentation-audit-2025-11-24.md` **Полный
-> аудит:** `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
+> `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`**Полный
+> аудит:**`../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
 > [TOC]
 
 ## Краткое резюме аудита
 
-**Оценка:** 7.5/10
+**Оценка:**7.5/10
 
 **Статистика:**
 
@@ -36,25 +36,25 @@ last_updated: '2025-11-24'
 
 ### Фаза 1: Быстрые исправления (1 день)
 
-**Статус:** Ожидает начала
+**Статус:**Ожидает начала
 
 #### Задачи
 
-- [ ] **Исправить deprecated метаданные** (2 часа)
+- [ ]**Исправить deprecated метаданные**(2 часа)
 - 19 файлов: `status` → `system_status`
 - 18 файлов: `version` → `system_version`
 - Скрипт: `python3 scripts/fix-deprecated-metadata.py`
 
-- [ ] **Добавить frontmatter** (15 минут)
+- [ ]**Добавить frontmatter**(15 минут)
 - `reference/status-snippet.md`
 - `de/reference/status-snippet.md`
 
-- [ ] **Исправить битые ссылки** (30 минут)
+- [ ]**Исправить битые ссылки**(30 минут)
 - 3 ссылки в `de/security/README.md`
 - 2 ссылки в `de/getting-started/installation.md`
 - 1 ссылка в `operations/monitoring/prometheus-alerts-guide.md`
 
-- [ ] **Добавить TOC в топ-10 документов** (1 час)
+- [ ]**Добавить TOC в топ-10 документов**(1 час)
 - `../architecture/architecture.md` (4323 слов)
 - `../operations/monitoring/monitoring-guide.md` (3531 слов)
 - `../security/log-audit.md` (2249 слов)
@@ -66,7 +66,7 @@ last_updated: '2025-11-24'
 - `../de/operations/maintenance/backup-restore-procedures.md` (1839 слов)
 - `../architecture/service-inventory.md` (1742 слов)
 
-- [ ] **Создать README для operations/**
+- [ ]**Создать README для operations/**
 - `operations/automation/README.md`
 - `operations/core/README.md`
 - `operations/maintenance/README.md`
@@ -84,37 +84,37 @@ last_updated: '2025-11-24'
 
 ### Фаза 2: Качество контента (1 неделя)
 
-**Статус:** ⏳ Запланировано
+**Статус:**⏳ Запланировано
 
 #### Задачи
 
-- [ ] **Исправить структуру заголовков** (3 часа)
+- [ ]**Исправить структуру заголовков**(3 часа)
 - 59 файлов с проблемами
 - Автоматизировать через pre-commit hook
 - Приоритет: reference/, architecture/, security/
 
-- [ ] **Расширить короткие файлы** (4 часа)
+- [ ]**Расширить короткие файлы**(4 часа)
 - 29 файлов <100 слов
 - Фокус: EN/DE academy файлы
 - Либо добавить контент, либо удалить и настроить redirect
 
-- [ ] **Завершить TODO/FIXME** (2 часа)
+- [ ]**Завершить TODO/FIXME**(2 часа)
 - `security/security-policy.md`
 - `en/security/security-policy.md`
 - `de/security/security-policy.md`
 - `operations/core/configuration-change-process.md`
 
-- [ ] **Добавить TOC в остальные документы** (4 часа)
+- [ ]**Добавить TOC в остальные документы**(4 часа)
 - 51 документ >500 слов без TOC
 - Batch обработка через скрипт
 
-- [ ] **Настроить MkDocs** (4 часа)
+- [ ]**Настроить MkDocs**(4 часа)
 - Сгенерировать полноценный sitemap.xml
 - Включить `git-revision-date-localized`
 - Настроить `mike` для версионирования
 - Настроить или удалить Google Analytics
 
-- [ ] **Создать автоматические проверки** (4 часа)
+- [ ]**Создать автоматические проверки**(4 часа)
 - Pre-commit hooks для валидации
 - GitHub Actions для CI
 - Документация по процессам
@@ -139,13 +139,13 @@ last_updated: '2025-11-24'
 
 ### Фаза 3: Переводы (1-2 месяца)
 
-**Статус:** ⏳ Запланировано
+**Статус:**⏳ Запланировано
 
 #### Приоритет 1: Английские переводы (40 часов)
 
 **Критичные разделы:**
 
-1. **Getting Started** (8 файлов, ~8 часов)
+1.**Getting Started**(8 файлов, ~8 часов)
 
 - [ ] configuration-guide.md
 - [ ] dnsmasq-setup-instructions.md
@@ -155,7 +155,7 @@ last_updated: '2025-11-24'
 - [ ] user-guide.md (уже частично есть)
 - [ ] README.md
 
-2. **Operations Core** (6 файлов, ~8 часов)
+  2.**Operations Core**(6 файлов, ~8 часов)
 
 - [ ] operations-handbook.md
 - [ ] runbooks-summary.md
@@ -164,7 +164,7 @@ last_updated: '2025-11-24'
 - [ ] github-governance.md
 - [ ] configuration-change-process.md
 
-3. **Reference** (11 файлов, ~12 часов)
+  3.**Reference**(11 файлов, ~12 часов)
 
 - [ ] api-reference.md
 - [ ] development.md
@@ -177,14 +177,14 @@ last_updated: '2025-11-24'
 - [ ] CHANGELOG.md
 - [ ] README.md
 
-4. **Architecture** (4 файла, ~6 часов)
+  4.**Architecture**(4 файла, ~6 часов)
 
 - [ ] services-overview.md
 - [ ] nginx-configuration.md
 - [ ] service-inventory.md
 - [ ] README.md
 
-5. **Security** (5 файлов, ~6 часов)
+  5.**Security**(5 файлов, ~6 часов)
 
 - [ ] authentication.md
 - [ ] security-best-practices.md
@@ -196,24 +196,24 @@ last_updated: '2025-11-24'
 
 **Недостающие файлы:**
 
-1. **Getting Started** (4 файла, ~4 часа)
+1.**Getting Started**(4 файла, ~4 часа)
 
 - [ ] dnsmasq-setup-instructions.md
 - [ ] external-access-setup.md
 - [ ] local-network-dns-setup.md
 - [ ] port-forwarding-setup.md
 
-2. **Architecture** (2 файла, ~4 часа)
+  2.**Architecture**(2 файла, ~4 часа)
 
 - [ ] service-inventory.md
 - [ ] README.md
 
-3. **Root** (2 файла, ~2 часа)
+  3.**Root**(2 файла, ~2 часа)
 
 - [ ] GLOSSARY.md
 - [ ] VERSION.md
 
-4. **Reference** (5 файлов, ~4 часа)
+  4.**Reference**(5 файлов, ~4 часа)
 
 - [ ] api-reference.md
 - [ ] language-policy.md
@@ -231,38 +231,38 @@ last_updated: '2025-11-24'
 
 ### Фаза 4: Визуальный контент (постоянно)
 
-**Статус:** ⏳ Запланировано
+**Статус:**⏳ Запланировано
 
 #### Диаграммы (Mermaid)
 
-- [ ] **Архитектура системы**
+- [ ]**Архитектура системы**
 - Общая схема компонентов
 - Схема сервисов
 - Network topology
 
-- [ ] **Мониторинг**
+- [ ]**Мониторинг**
 - Потоки данных мониторинга
 - Alert routing
 - Dashboard структура
 
-- [ ] **Security**
+- [ ]**Security**
 - Authentication flow
 - Access control схема
 - TLS/SSL setup
 
 #### Скриншоты
 
-- [ ] **Academy**
+- [ ]**Academy**
 - OpenWebUI интерфейс
 - Примеры промптов
 - Настройки модели
 
-- [ ] **Getting Started**
+- [ ]**Getting Started**
 - Процесс установки
 - Конфигурация
 - Первый запуск
 
-- [ ] **Operations**
+- [ ]**Operations**
 - Grafana dashboards
 - Prometheus alerts
 - Admin панель
@@ -458,6 +458,6 @@ jobs:
 
 ---
 
-**План создан:** 2025-11-24 **Следующий пересмотр:** 2025-12-24 (через месяц)
-**План создан:** 2025-11-24 **Следующий пересмотр:** 2025-12-24 (через месяц)
-**Статус:** Фаза 1 ожидает начала
+**План создан:**2025-11-24**Следующий пересмотр:**2025-12-24 (через месяц)
+**План создан:**2025-11-24**Следующий пересмотр:**2025-12-24 (через месяц)
+**Статус:**Фаза 1 ожидает начала

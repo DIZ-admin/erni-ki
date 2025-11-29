@@ -87,9 +87,8 @@ doc_version: '2025.11'
 
 ## Usage rules
 
-1. **doc_version** is global and updated on docs release.
-2. **system_version/system_status** apply only where the production stack status
-   is described.
-3. **last_updated** must be set for all active (non-archive) docs.
-4. **date** only for news/blog posts.
-5. Do not add personal fields (`author`, etc.); rely on git history/blame.
+1.**doc_version**is global and updated on docs
+release. 2.**system_version/system_status**apply only where the production stack
+status is described. 3.**last_updated**must be set for all active (non-archive)
+docs. 4.**date**only for news/blog posts. 5. Do not add personal fields
+(`author`, etc.); rely on git history/blame.

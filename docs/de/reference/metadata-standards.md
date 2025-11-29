@@ -89,10 +89,9 @@ doc_version: '2025.11'
 
 ## Anwendungsregeln
 
-1. **doc_version** ist global und wird beim Docs-Release aktualisiert.
-2. **system_version/system_status** nur dort setzen, wo der Zustand des
-   Produktions-Stacks beschrieben wird.
-3. **last_updated** für alle aktiven (nicht archivierten) Dokumente setzen.
-4. **date** nur für News/Blog-Beiträge.
-5. Keine personenbezogenen Felder (`author` usw.) hinzufügen; git history/blame
-   verwenden.
+1.**doc_version**ist global und wird beim Docs-Release
+aktualisiert. 2.**system_version/system_status**nur dort setzen, wo der Zustand
+des Produktions-Stacks beschrieben wird. 3.**last_updated**für alle aktiven
+(nicht archivierten) Dokumente setzen. 4.**date**nur für News/Blog-Beiträge. 5.
+Keine personenbezogenen Felder (`author` usw.) hinzufügen; git history/blame
+verwenden.

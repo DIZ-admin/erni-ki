@@ -10,7 +10,7 @@ last_updated: '2025-11-24'
 English portal for ERNI KI users. Russian pages remain the canonical source;
 this version tracks them and highlights the most important user links.
 
-> **System status (2025-11-23) — Production Ready v12.1**
+> **System status (2025-11-23) — Production Ready v0.61.3**
 >
 > - Services: 32/32 services in compose.yml
 > - Grafana: 5/5 dashboards (provisioned)
@@ -27,5 +27,5 @@ this version tracks them and highlights the most important user links.
 - Quick start: [Open WebUI basics](../academy/openwebui-basics.md) and
   [Prompting 101](../academy/prompting-101.md).
 - Practical scenarios: [HowTo collection](academy/howto/index.md).
-- Uptime first: **[System status](system/status.md)** before you escalate an
+- Uptime first:**[System status](system/status.md)**before you escalate an
   issue.

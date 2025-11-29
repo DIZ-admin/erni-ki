@@ -9,7 +9,7 @@ last_updated: '2025-11-27'
 
 [TOC]
 
-**Datum**: 27.10.2025 **Status**: ABGESCHLOSSEN **Ziel**: Einrichtung eines
+**Datum**: 27.10.2025**Status**: ABGESCHLOSSEN**Ziel**: Einrichtung eines
 lokalen DNS-Servers zur Auflösung von ki.erni-gruppe.ch im Unternehmensnetzwerk
 
 ---
@@ -455,4 +455,4 @@ sudo nmcli connection up <connection-name>
 
 ---
 
-**Autor**: Augment Agent **Datum**: 27.10.2025
+**Autor**: Augment Agent**Datum**: 27.10.2025

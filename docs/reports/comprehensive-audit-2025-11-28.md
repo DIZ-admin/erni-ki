@@ -10,47 +10,47 @@ auditor: Claude (Sonnet 4.5)
 
 # Комплексный аудит ERNI-KI (2025-11-28)
 
-**Дата аудита:** 2025-11-28 **Версия проекта:** v12.1 (Production Ready)
-**Анализируемая ветка:** develop **Охват:** Безопасность, Качество кода,
+**Дата аудита:**2025-11-28**Версия проекта:**v0.61.3 (Production Ready)
+**Анализируемая ветка:**develop**Охват:**Безопасность, Качество кода,
 Инфраструктура, Документация
 
 ---
 
 ## Executive Summary
 
-Проект ERNI-KI демонстрирует **высокий уровень зрелости** и готовность к
-production с общей оценкой **8.1/10**. Платформа имеет отличную observability,
+Проект ERNI-KI демонстрирует**высокий уровень зрелости**и готовность к
+production с общей оценкой**8.1/10**. Платформа имеет отличную observability,
 comprehensive monitoring, и strong security practices. Выявлены критические
 проблемы, требующие устранения перед production deployment.
 
 ### Общая оценка: 8.1/10
 
-| Категория      | Оценка | Статус               | Критичные проблемы |
-| -------------- | ------ | -------------------- | ------------------ |
-| Безопасность   | 7.2/10 | ⚠️ Требует улучшений | 4 критичных        |
-| Качество кода  | 8.5/10 | ✅ Хорошо            | 2 критичных        |
-| Инфраструктура | 7.8/10 | ⚠️ Требует улучшений | 5 критичных        |
-| Документация   | 9.2/10 | ✅ Отлично           | 0 критичных        |
-| **ИТОГО**      | 8.1/10 | ⚠️ Требует улучшений | 11 критичных       |
+| Категория      | Оценка | Статус            | Критичные проблемы |
+| -------------- | ------ | ----------------- | ------------------ |
+| Безопасность   | 7.2/10 | Требует улучшений | 4 критичных        |
+| Качество кода  | 8.5/10 | Хорошо            | 2 критичных        |
+| Инфраструктура | 7.8/10 | Требует улучшений | 5 критичных        |
+| Документация   | 9.2/10 | Отлично           | 0 критичных        |
+| **ИТОГО**      | 8.1/10 | Требует улучшений | 11 критичных       |
 
 ### Статус блокировки production
 
-**BLOCKED** - Требуется устранение 11 критичных проблем (1-3 дня работы)
+**BLOCKED**- Требуется устранение 11 критичных проблем (1-3 дня работы)
 
 ### Изменения с предыдущего аудита (2025-11-27)
 
 **Исправлено:**
 
-- ✅ Secret file permissions (все файлы 600)
-- ✅ Pre-commit hook для проверки permissions
-- ✅ Secrets НЕ в Git (подтверждено - FALSE POSITIVE)
+- Secret file permissions (все файлы 600)
+- Pre-commit hook для проверки permissions
+- Secrets НЕ в Git (подтверждено - FALSE POSITIVE)
 
 **Новые находки:**
 
-- ❌ Redis без аутентификации (CRITICAL)
-- ❌ Hardcoded credentials в скриптах (CRITICAL)
-- ⚠️ Legacy TLS protocols включены (MEDIUM)
-- ⚠️ Отсутствие resource limits на 21/32 сервисах (MEDIUM)
+- Redis без аутентификации (CRITICAL)
+- Hardcoded credentials в скриптах (CRITICAL)
+- Legacy TLS protocols включены (MEDIUM)
+- Отсутствие resource limits на 21/32 сервисах (MEDIUM)
 
 ---
 
@@ -58,24 +58,22 @@ comprehensive monitoring, и strong security practices. Выявлены кри�
 
 ### Сильные стороны
 
-1. ✅ **Docker Secrets** - все credentials через secrets
-2. ✅ **Rate Limiting** - comprehensive Nginx rate limits
-3. ✅ **Localhost Binding** - большинство сервисов на 127.0.0.1
-4. ✅ **Security Headers** - HSTS, CSP, X-Frame-Options
-5. ✅ **Audit Logging** - Fluent Bit + Loki
+1.**Docker Secrets**- все credentials через secrets 2.**Rate Limiting**-
+comprehensive Nginx rate limits 3.**Localhost Binding**- большинство сервисов на
+127.0.0.1 4.**Security Headers**- HSTS, CSP, X-Frame-Options 5.**Audit
+Logging**- Fluent Bit + Loki
 
 ### Критичные проблемы
 
 #### SEC-1: Redis без аутентификации (CVSS 9.0)
 
-**Статус:** ❌ CRITICAL NEW FINDING **Приоритет:** P0 **Сроки:** Немедленно (1
-час)
+**Статус:**CRITICAL NEW FINDING**Приоритет:**P0**Сроки:**Немедленно (1 час)
 
 **Проблема:**
 
 ```conf
 # conf/redis/redis.conf:26-27
-# requirepass ErniKiRedisSecurePassword2024  # COMMENTED OUT!
+# requirepass ErniKiRedisSecurePassword2024 # COMMENTED OUT!
 ```
 
 **Impact:**
@@ -89,15 +87,15 @@ comprehensive monitoring, и strong security practices. Выявлены кри�
 ```yaml
 # compose.yml
 redis:
-  secrets:
-    - redis_password
-  command:
-    [
-      'redis-server',
-      '/usr/local/etc/redis/redis.conf',
-      '--requirepass',
-      '$$(cat /run/secrets/redis_password)',
-    ]
+ secrets:
+ - redis_password
+ command:
+ [
+ 'redis-server',
+ '/usr/local/etc/redis/redis.conf',
+ '--requirepass',
+ '$$(cat /run/secrets/redis_password)',
+ ]
 ```
 
 **Немедленные действия:**
@@ -109,26 +107,28 @@ redis:
 
 #### SEC-2: Hardcoded Credentials в скриптах (CVSS 8.5)
 
-**Статус:** ❌ CRITICAL **Приоритет:** P0 **Сроки:** 1 день
+**Статус:**CRITICAL**Приоритет:**P0**Сроки:**1 день
 
 **Найдено в:**
 
-1. **Shell Scripts:**
-   - `/scripts/redis-performance-optimization.sh:200-306`
-   - `/scripts/test-redis-connections.sh:63,76,84,94-102`
+1.**Shell Scripts:**
 
-   ```bash
-   docker exec erni-ki-redis-1 redis-cli -a 'ErniKiRedisSecurePassword2024' ping
-   ```
+- `/scripts/redis-performance-optimization.sh:200-306`
+- `/scripts/test-redis-connections.sh:63,76,84,94-102`
 
-2. **Python Scripts:**
-   - `/scripts/functions/openai_assistant_function.py:25`
-   - `/scripts/core/maintenance/sync-models-to-database.py:21,63`
+```bash
+docker exec erni-ki-redis-1 redis-cli -a '<redacted-redis-password>' ping
+```
 
-   ```python
-   LITELLM_API_KEY = "sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb"
-   database_url = "postgresql://openwebui_user:OW_secure_pass_2025!@db:5432/openwebui"
-   ```
+2.**Python Scripts:**
+
+- `/scripts/functions/openai_assistant_function.py:25`
+- `/scripts/core/maintenance/sync-models-to-database.py:21,63`
+
+```python
+LITELLM_API_KEY = "<redacted-liteLLM-key>"
+database_url = "postgresql://openwebui_user:<redacted-db-password>@db:5432/openwebui"
+```
 
 **Impact:**
 
@@ -145,13 +145,14 @@ docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
 
 **Ротация обязательна для:**
 
-- `ErniKiRedisSecurePassword2024`
+- `ErniKiRedisSecurePassword2024` (rotated; placeholder only)
 - `sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb`
-- `OW_secure_pass_2025!`
+  (placeholder)
+- `OW_secure_pass_2025!` (placeholder)
 
 #### SEC-3: Uptime Kuma exposed (CVSS 6.5)
 
-**Статус:** ❌ UNCHANGED **Приоритет:** P0 **Сроки:** 5 минут
+**Статус:**UNCHANGED**Приоритет:**P0**Сроки:**5 минут
 
 **Проблема:**
 
@@ -170,7 +171,7 @@ ports:
 
 #### SEC-4: Watchtower as root (CVSS 7.8)
 
-**Статус:** ❌ UNCHANGED **Приоритет:** P0 **Сроки:** 15 минут
+**Статус:**UNCHANGED**Приоритет:**P0**Сроки:**15 минут
 
 **Проблема:**
 
@@ -187,14 +188,13 @@ user: '${DOCKER_GID:-999}:${DOCKER_GID:-999}'
 
 ### Средние проблемы (8 issues)
 
-1. **Legacy TLS Protocols** (CVSS 5.3) - TLSv1.0/1.1 enabled
-2. **SSL Verification Disabled** (CVSS 5.5) - `ssl_verify_client off`
-3. **No Network Segmentation** (CVSS 8.5) - Single flat network
-4. **No Encryption at Rest** (CVSS 6.0) - Secrets в plaintext
-5. **CI Continue-on-Error** (CVSS 5.0) - Security scans не блокируют
-6. **Missing Security Options** (CVSS 5.0) - No `no-new-privileges`
-7. **Fluent Bit TLS unclear** (CVSS 5.8) - Может быть plaintext
-8. **Docker Socket Mounts** (CVSS 6.0) - 3 сервиса с socket access
+1.**Legacy TLS Protocols**(CVSS 5.3) - TLSv1.0/1.1 enabled 2.**SSL Verification
+Disabled**(CVSS 5.5) - `ssl_verify_client off` 3.**No Network
+Segmentation**(CVSS 8.5) - Single flat network 4.**No Encryption at Rest**(CVSS
+6.0) - Secrets в plaintext 5.**CI Continue-on-Error**(CVSS 5.0) - Security scans
+не блокируют 6.**Missing Security Options**(CVSS 5.0) - No
+`no-new-privileges` 7.**Fluent Bit TLS unclear**(CVSS 5.8) - Может быть
+plaintext 8.**Docker Socket Mounts**(CVSS 6.0) - 3 сервиса с socket access
 
 ---
 
@@ -202,11 +202,10 @@ user: '${DOCKER_GID:-999}:${DOCKER_GID:-999}'
 
 ### Сильные стороны
 
-1. ✅ **Go Auth Service** - отличная структура, 100% test coverage
-2. ✅ **Error Handling** - `set -euo pipefail` в shell scripts
-3. ✅ **No Technical Debt** - 0 TODO/FIXME markers
-4. ✅ **Type Hints** - хорошее покрытие в Python
-5. ✅ **Safe SQL** - parameterized queries
+1.**Go Auth Service**- отличная структура, 100% test coverage 2.**Error
+Handling**- `set -euo pipefail` в shell scripts 3.**No Technical Debt**- 0
+TODO/FIXME markers 4.**Type Hints**- хорошее покрытие в Python 5.**Safe SQL**-
+parameterized queries
 
 ### Критичные проблемы
 
@@ -216,7 +215,7 @@ user: '${DOCKER_GID:-999}:${DOCKER_GID:-999}'
 
 #### CODE-2: Inconsistent Shebang Usage
 
-**Статус:** ⚠️ LOW **Impact:** Portability issues
+**Статус:**LOW**Impact:**Portability issues
 
 **Статистика:**
 
@@ -224,23 +223,22 @@ user: '${DOCKER_GID:-999}:${DOCKER_GID:-999}'
 - 29 скриптов: `#!/usr/bin/env bash`
 - 1 скрипт: `#!/bin/sh`
 
-**Рекомендация:** Стандартизировать на `#!/usr/bin/env bash`
+**Рекомендация:**Стандартизировать на `#!/usr/bin/env bash`
 
 ### Средние проблемы (5 issues)
 
-1. **Missing Type Hints** - 4 Python scripts без type hints
-2. **Bare print() Statements** - 203 print() вместо logging
-3. **Hardcoded Admin User ID** - в sync-models-to-database.py
-4. **Missing Secret Validation** - Go service не проверяет WEBUI_SECRET_KEY
-5. **Hardcoded Port** - Go auth service на 9090
+1.**Missing Type Hints**- 4 Python scripts без type hints 2.**Bare print()
+Statements**- 203 print() вместо logging 3.**Hardcoded Admin User ID**- в
+sync-models-to-database.py 4.**Missing Secret Validation**- Go service не
+проверяет WEBUI_SECRET_KEY 5.**Hardcoded Port**- Go auth service на 9090
 
 ### Положительные находки
 
-- ✅ Excellent test coverage в Go auth service
-- ✅ Proper variable quoting в shell scripts
-- ✅ Consistent logging patterns
-- ✅ Good use of helper functions
-- ✅ No command injection risks
+- Excellent test coverage в Go auth service
+- Proper variable quoting в shell scripts
+- Consistent logging patterns
+- Good use of helper functions
+- No command injection risks
 
 ---
 
@@ -248,18 +246,17 @@ user: '${DOCKER_GID:-999}:${DOCKER_GID:-999}'
 
 ### Сильные стороны
 
-1. ✅ **100% Health Check Coverage** - все 32 сервиса
-2. ✅ **4-Tier Logging Strategy** - Critical/Important/Auxiliary/Monitoring
-3. ✅ **Proper Restart Policies** - all services `unless-stopped`
-4. ✅ **Image Version Pinning** - specific versions/digests
-5. ✅ **Docker Secrets** - 16 secrets properly managed
-6. ✅ **Comprehensive Monitoring** - Prometheus + 15 exporters
+1.**100% Health Check Coverage**- все 32 сервиса 2.**4-Tier Logging Strategy**-
+Critical/Important/Auxiliary/Monitoring 3.**Proper Restart Policies**- all
+services `unless-stopped` 4.**Image Version Pinning**- specific
+versions/digests 5.**Docker Secrets**- 16 secrets properly
+managed 6.**Comprehensive Monitoring**- Prometheus + 15 exporters
 
 ### Критичные проблемы
 
 #### INFRA-1: Missing Resource Limits (CVSS 7.0)
 
-**Статус:** ❌ CRITICAL **Приоритет:** P1 **Сроки:** 2-4 часа
+**Статус:**CRITICAL**Приоритет:**P1**Сроки:**2-4 часа
 
 **Проблема:**
 
@@ -288,29 +285,33 @@ prometheus:
 
 #### INFRA-2: Insecure Dockerfiles (CVSS 8.0)
 
-**Статус:** ❌ CRITICAL **Приоритет:** P1 **Сроки:** 4-6 часов
+**Статус:**CRITICAL**Приоритет:**P1**Сроки:**4-6 часов
 
 **Проблемы:**
 
-1. **rag-exporter Dockerfile:**
-   - No version pinning
-   - Runs as root
-   - No health check
+1.**rag-exporter Dockerfile:**
 
-2. **ollama-exporter Dockerfile:**
-   - Same issues
+- No version pinning
+- Runs as root
+- No health check
 
-3. **webhook-receiver Dockerfile:**
-   - Base image not pinned
+  2.**ollama-exporter Dockerfile:**
 
-4. **Auth Dockerfile:**
-   - Go version 1.24.10 doesn't exist (should be 1.23.x)
+- Same issues
 
-**Решение:** Hardening guide в Security Action Plan
+  3.**webhook-receiver Dockerfile:**
+
+- Base image not pinned
+
+  4.**Auth Dockerfile:**
+
+- Go version 1.24.10 doesn't exist (should be 1.23.x)
+
+**Решение:**Hardening guide в Security Action Plan
 
 #### INFRA-3: No Network Segmentation (CVSS 8.5)
 
-**Статус:** ❌ HIGH **Приоритет:** P2 **Сроки:** 1 неделя
+**Статус:**HIGH**Приоритет:**P2**Сроки:**1 неделя
 
 **Проблема:**
 
@@ -321,19 +322,19 @@ prometheus:
 
 ```yaml
 networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
-    internal: true
-  data:
-    driver: bridge
-    internal: true
+ frontend:
+ driver: bridge
+ backend:
+ driver: bridge
+ internal: true
+ data:
+ driver: bridge
+ internal: true
 ```
 
 #### INFRA-4: No Volume Backup Strategy (CVSS 7.5)
 
-**Статус:** ❌ HIGH **Приоритет:** P1 **Сроки:** 8-16 часов
+**Статус:**HIGH**Приоритет:**P1**Сроки:**8-16 часов
 
 **Проблема:**
 
@@ -349,14 +350,14 @@ networks:
 
 #### INFRA-5: Deprecated Docker Compose Syntax (CVSS 3.0)
 
-**Статус:** ⚠️ LOW **Приоритет:** P3
+**Статус:**LOW**Приоритет:**P3
 
 **Проблема:**
 
 - `links:` используется (deprecated)
 - Location: prometheus → postgres-exporter
 
-**Решение:** Remove `links`, use DNS
+**Решение:**Remove `links`, use DNS
 
 ### Production Readiness Score: 78/100
 
@@ -374,35 +375,34 @@ networks:
 
 ### Сильные стороны
 
-1. ✅ **100% Frontmatter Coverage** - 286/286 files
-2. ✅ **0 Metadata Issues** - perfect compliance
-3. ✅ **Active Maintenance** - 251 files updated last 4 days
-4. ✅ **Comprehensive Operations Docs** - runbooks, troubleshooting
-5. ✅ **Strong Automation** - validation scripts, pre-commit hooks
+1.**100% Frontmatter Coverage**- 286/286 files 2.**0 Metadata Issues**- perfect
+compliance 3.**Active Maintenance**- 251 files updated last 4
+days 4.**Comprehensive Operations Docs**- runbooks, troubleshooting 5.**Strong
+Automation**- validation scripts, pre-commit hooks
 
 ### Метрики
 
-| Метрика              | Значение       | Статус       |
-| -------------------- | -------------- | ------------ |
-| Всего MD файлов      | 286            | -            |
-| Frontmatter coverage | 100% (286/286) | ✅ Perfect   |
-| Metadata issues      | 0              | ✅ Perfect   |
-| Documentation score  | 9.2/10         | ✅ Excellent |
-| Russian (canonical)  | 161 (56.3%)    | ✅ Complete  |
-| German translations  | 97 (33.9%)     | ✅ Good      |
-| English translations | 28 (9.8%)      | ⚠️ Low       |
+| Метрика              | Значение       | Статус    |
+| -------------------- | -------------- | --------- |
+| Всего MD файлов      | 286            | -         |
+| Frontmatter coverage | 100% (286/286) | Perfect   |
+| Metadata issues      | 0              | Perfect   |
+| Documentation score  | 9.2/10         | Excellent |
+| Russian (canonical)  | 161 (56.3%)    | Complete  |
+| German translations  | 97 (33.9%)     | Good      |
+| English translations | 28 (9.8%)      | Low       |
 
 ### Проблемы
 
 #### DOC-1: Low English Translation Coverage
 
-**Статус:** ⚠️ MEDIUM **Приоритет:** P2
+**Статус:**MEDIUM**Приоритет:**P2
 
 **Coverage:**
 
 - Russian: 161 files (56.3%)
 - German: 97 files (33.9%) - 77.6% of canonical
-- English: 28 files (9.8%) - **22.4% of canonical**
+- English: 28 files (9.8%) -**22.4% of canonical**
 
 **Critical gaps:**
 
@@ -410,11 +410,11 @@ networks:
 - Getting Started: 1/8 files (12%)
 - Security: 1/6 files (17%)
 
-**Recommendation:** Target 60% EN coverage (64 files) by Q1 2026
+**Recommendation:**Target 60% EN coverage (64 files) by Q1 2026
 
 #### DOC-2: Missing Service Configuration Guides
 
-**Статус:** ⚠️ MEDIUM **Приоритет:** P2
+**Статус:**MEDIUM**Приоритет:**P2
 
 **Missing:**
 
@@ -425,7 +425,7 @@ networks:
 
 #### DOC-3: API Documentation Gaps
 
-**Статус:** ⚠️ MEDIUM **Приоритет:** P2
+**Статус:**MEDIUM**Приоритет:**P2
 
 **Issues:**
 
@@ -451,14 +451,13 @@ networks:
 
 - Enable requirepass в redis.conf
 - Add Docker Secret
-- Update clients
-- **ROTATE:** `ErniKiRedisSecurePassword2024`
+- Update clients -**ROTATE:**`ErniKiRedisSecurePassword2024`
 
 **P0-2: Remove Hardcoded Credentials (1 день)**
 
 - Replace all hardcoded passwords в scripts
-- Use environment variables/secrets
-- **ROTATE:** LiteLLM API key, DB password, Redis password
+- Use environment variables/secrets -**ROTATE:**LiteLLM API key, DB password,
+  Redis password
 
 **P0-3: Fix Port Exposures (5 минут)**
 
@@ -469,7 +468,7 @@ networks:
 
 - Change from root to non-root user
 
-**Estimated Effort:** 1-3 days **Impact:** CRITICAL - разблокирует production
+**Estimated Effort:**1-3 days**Impact:**CRITICAL - разблокирует production
 
 ### Phase 1: Критичные фиксы (1 неделя)
 
@@ -498,8 +497,7 @@ networks:
 - Remove TLSv1.0/1.1 from nginx config
 - Test production domain
 
-**Estimated Effort:** 1 неделя **Impact:** HIGH - повышает reliability и
-security
+**Estimated Effort:**1 неделя**Impact:**HIGH - повышает reliability и security
 
 ### Phase 2: Высокоприоритетные (2-4 недели)
 
@@ -529,7 +527,7 @@ security
 - Update entrypoints
 - Document key management
 
-**Estimated Effort:** 2-4 недели **Impact:** MEDIUM - improves security posture
+**Estimated Effort:**2-4 недели**Impact:**MEDIUM - improves security posture
 
 ### Phase 3: Среднеприоритетные (1-2 месяца)
 
@@ -545,21 +543,21 @@ security
 
 ## 6. Сравнение с предыдущим аудитом
 
-| Проблема              | 2025-11-27  | 2025-11-28 | Изменение     |
-| --------------------- | ----------- | ---------- | ------------- |
-| Secrets в Git         | ❌ CRITICAL | ✅ SECURE  | ✅ FIXED (FP) |
-| Secret Permissions    | ⚠️ MIXED    | ✅ FIXED   | ✅ FIXED      |
-| Uptime Kuma Exposed   | ❌ OPEN     | ❌ OPEN    | UNCHANGED     |
-| Watchtower Root       | ❌ ROOT     | ❌ ROOT    | UNCHANGED     |
-| Network Segmentation  | ❌ NONE     | ❌ NONE    | UNCHANGED     |
-| Redis Authentication  | -           | ❌ NEW     | 🆕 NEW        |
-| Hardcoded Credentials | -           | ❌ NEW     | 🆕 NEW        |
-| Legacy TLS            | -           | ⚠️ NEW     | 🆕 NEW        |
-| Resource Limits       | -           | ⚠️ NEW     | 🆕 NEW        |
-| English Translation   | -           | ⚠️ 9.8%    | 🆕 TRACKED    |
+| Проблема              | 2025-11-27 | 2025-11-28 | Изменение  |
+| --------------------- | ---------- | ---------- | ---------- |
+| Secrets в Git         | CRITICAL   | SECURE     | FIXED (FP) |
+| Secret Permissions    | MIXED      | FIXED      | FIXED      |
+| Uptime Kuma Exposed   | OPEN       | OPEN       | UNCHANGED  |
+| Watchtower Root       | ROOT       | ROOT       | UNCHANGED  |
+| Network Segmentation  | NONE       | NONE       | UNCHANGED  |
+| Redis Authentication  | -          | NEW        | NEW        |
+| Hardcoded Credentials | -          | NEW        | NEW        |
+| Legacy TLS            | -          | NEW        | NEW        |
+| Resource Limits       | -          | NEW        | NEW        |
+| English Translation   | -          | 9.8%       | TRACKED    |
 
-**Improvement:** +25% (secret permissions fixed, false positive resolved) **New
-Issues:** 4 critical findings (Redis, credentials, TLS, resources)
+**Improvement:**+25% (secret permissions fixed, false positive resolved)**New
+Issues:**4 critical findings (Redis, credentials, TLS, resources)
 
 ---
 
@@ -577,26 +575,26 @@ Issues:** 4 critical findings (Redis, credentials, TLS, resources)
 | Документация     | 4.0/5      | 4.6/5      | 4.5/5   | ↑ +15%   |
 | **ОБЩАЯ ОЦЕНКА** | 3.6/5      | 4.0/5      | 4.5/5   | ↑ +11%   |
 
-**Progress to Production Ready:** 89% (4.0/4.5)
+**Progress to Production Ready:**89% (4.0/4.5)
 
 ---
 
 ## 8. Risk Matrix
 
 ```
-         Impact
-       Low  Med  High  Crit
-     ┌──────────────────────────
-High │     │ TLS│ Net │ Redis
-     │     │    │ Seg │ Creds
-     ├──────────────────────────
-Med  │Doc  │Lim │Dock │ Wat
-     │     │ its│ erfi│ chtwr
-     ├──────────────────────────
-Low  │Sheb │Type│Back │
-     │ ang │Hint│ ups │
-     └──────────────────────────
-       Probability
+ Impact
+ Low Med High Crit
+
+High TLS Net Redis
+ Seg Creds
+
+Med Doc Lim Dock Wat
+ its erfi chtwr
+
+Low Sheb TypeBack
+ ang Hint ups
+
+ Probability
 ```
 
 **Legend:**
@@ -617,27 +615,27 @@ Low  │Sheb │Type│Back │
 
 ## 9. Compliance Status
 
-| Requirement               | Status     | Notes                          |
-| ------------------------- | ---------- | ------------------------------ |
-| Secrets not in code       | ✅ PASS    | .gitignore working             |
-| Secret file permissions   | ✅ PASS    | All 600, pre-commit hook       |
-| Encryption at rest        | ❌ FAIL    | Plaintext on disk              |
-| TLS 1.2+ only             | ⚠️ PARTIAL | Legacy TLS on production       |
-| Network isolation         | ❌ FAIL    | Single network                 |
-| Authentication required   | ❌ FAIL    | Redis without password         |
-| Least privilege           | ⚠️ PARTIAL | Watchtower as root             |
-| Resource limits           | ⚠️ PARTIAL | Only 34% coverage              |
-| Health checks             | ✅ PASS    | 100% coverage                  |
-| Rate limiting             | ✅ PASS    | Comprehensive                  |
-| Security headers          | ✅ PASS    | HSTS, CSP, X-Frame-Options     |
-| Monitoring                | ✅ PASS    | Prometheus + 15 exporters      |
-| Audit logging             | ✅ PASS    | Fluent Bit + Loki              |
-| Secret rotation           | ❌ FAIL    | No automation                  |
-| Code quality              | ✅ PASS    | Good practices, minimal issues |
-| Documentation             | ✅ PASS    | Excellent quality              |
-| Translation coverage (EN) | ⚠️ PARTIAL | Only 9.8%                      |
+| Requirement               | Status  | Notes                          |
+| ------------------------- | ------- | ------------------------------ |
+| Secrets not in code       | PASS    | .gitignore working             |
+| Secret file permissions   | PASS    | All 600, pre-commit hook       |
+| Encryption at rest        | FAIL    | Plaintext on disk              |
+| TLS 1.2+ only             | PARTIAL | Legacy TLS on production       |
+| Network isolation         | FAIL    | Single network                 |
+| Authentication required   | FAIL    | Redis without password         |
+| Least privilege           | PARTIAL | Watchtower as root             |
+| Resource limits           | PARTIAL | Only 34% coverage              |
+| Health checks             | PASS    | 100% coverage                  |
+| Rate limiting             | PASS    | Comprehensive                  |
+| Security headers          | PASS    | HSTS, CSP, X-Frame-Options     |
+| Monitoring                | PASS    | Prometheus + 15 exporters      |
+| Audit logging             | PASS    | Fluent Bit + Loki              |
+| Secret rotation           | FAIL    | No automation                  |
+| Code quality              | PASS    | Good practices, minimal issues |
+| Documentation             | PASS    | Excellent quality              |
+| Translation coverage (EN) | PARTIAL | Only 9.8%                      |
 
-**Overall Compliance:** 10/17 PASS (59%) **Production Blockers:** 4 (Redis auth,
+**Overall Compliance:**10/17 PASS (59%)**Production Blockers:**4 (Redis auth,
 hardcoded creds, resource limits, network seg)
 
 ---
@@ -646,18 +644,14 @@ hardcoded creds, resource limits, network seg)
 
 ### Топ-10 Immediate Actions
 
-1. **Enable Redis authentication** → 1 час
-2. **Remove hardcoded credentials** → 1 день
-3. **Rotate compromised secrets** → 2 часа
-4. **Bind Uptime Kuma to localhost** → 5 минут
-5. **Fix Watchtower user** → 15 минут
-6. **Add resource limits** → 4 часа
-7. **Harden Dockerfiles** → 6 часов
-8. **Document backup strategy** → 8 часов
-9. **Disable legacy TLS** → 1 час
-10. **Fix broken API reference** → 5 минут
+1.**Enable Redis authentication**→ 1 час 2.**Remove hardcoded credentials**→ 1
+день 3.**Rotate compromised secrets**→ 2 часа 4.**Bind Uptime Kuma to
+localhost**→ 5 минут 5.**Fix Watchtower user**→ 15 минут 6.**Add resource
+limits**→ 4 часа 7.**Harden Dockerfiles**→ 6 часов 8.**Document backup
+strategy**→ 8 часов 9.**Disable legacy TLS**→ 1 час 10.**Fix broken API
+reference**→ 5 минут
 
-**Total Effort:** 3-4 days **Impact:** CRITICAL → Production ready
+**Total Effort:**3-4 days**Impact:**CRITICAL → Production ready
 
 ### Рекомендации по улучшению
 
@@ -693,26 +687,24 @@ hardcoded creds, resource limits, network seg)
 
 ## 11. Заключение
 
-Проект ERNI-KI демонстрирует **production-ready инфраструктуру** с отличным
+Проект ERNI-KI демонстрирует**production-ready инфраструктуру**с отличным
 monitoring, comprehensive documentation, и strong engineering practices. Общая
-оценка **8.1/10** показывает высокий уровень зрелости.
+оценка**8.1/10**показывает высокий уровень зрелости.
 
 ### Ключевые достижения
 
-1. ✅ **Excellent observability** - Prometheus, Grafana, Loki, 15 exporters
-2. ✅ **Comprehensive documentation** - 9.2/10, 100% metadata compliance
-3. ✅ **Strong code quality** - 8.5/10, minimal technical debt
-4. ✅ **Production-ready monitoring** - USE/RED methodology
-5. ✅ **Good security posture** - Docker Secrets, rate limiting, security
-   headers
+1.**Excellent observability**- Prometheus, Grafana, Loki, 15
+exporters 2.**Comprehensive documentation**- 9.2/10, 100% metadata
+compliance 3.**Strong code quality**- 8.5/10, minimal technical
+debt 4.**Production-ready monitoring**- USE/RED methodology 5.**Good security
+posture**- Docker Secrets, rate limiting, security headers
 
 ### Критичные пробелы
 
-1. ❌ **Redis без аутентификации** - CRITICAL security risk
-2. ❌ **Hardcoded credentials** - 6+ files с credentials в Git
-3. ❌ **Resource limits** - только 34% сервисов имеют limits
-4. ❌ **Network segmentation** - все в одной сети
-5. ⚠️ **English translations** - только 9.8% coverage
+1.**Redis без аутентификации**- CRITICAL security risk 2.**Hardcoded
+credentials**- 6+ files с credentials в Git 3.**Resource limits**- только 34%
+сервисов имеют limits 4.**Network segmentation**- все в одной сети 5.**English
+translations**- только 9.8% coverage
 
 ### Path to Production
 
@@ -730,12 +722,11 @@ monitoring, comprehensive documentation, и strong engineering practices. Общ
 
 ### Следующие шаги
 
-1. **Week 1:** Fix Phase 0 critical issues
-2. **Week 2-3:** Implement Phase 1 improvements
-3. **Month 2:** Network segmentation + documentation
-4. **Month 3:** SOPS encryption + secret rotation
+1.**Week 1:**Fix Phase 0 critical issues 2.**Week 2-3:**Implement Phase 1
+improvements 3.**Month 2:**Network segmentation + documentation 4.**Month
+3:**SOPS encryption + secret rotation
 
-**Next Audit:** 2025-12-28
+**Next Audit:**2025-12-28
 
 ---
 
@@ -790,7 +781,7 @@ monitoring, comprehensive documentation, и strong engineering practices. Общ
 - DOC-8: Naming inconsistencies
 - DOC-9: Missing runbook URLs
 
-**Total:** 38 issues (11 Critical, 8 High, 12 Medium, 7 Low)
+**Total:**38 issues (11 Critical, 8 High, 12 Medium, 7 Low)
 
 ### B. Методология аудита
 
@@ -841,5 +832,5 @@ monitoring, comprehensive documentation, и strong engineering practices. Общ
 
 ---
 
-**Аудитор:** Claude (Sonnet 4.5) **Дата:** 2025-11-28 **Версия отчета:** 1.0
-**Следующий аудит:** 2025-12-28
+**Аудитор:**Claude (Sonnet 4.5)**Дата:**2025-11-28**Версия отчета:**1.0
+**Следующий аудит:**2025-12-28

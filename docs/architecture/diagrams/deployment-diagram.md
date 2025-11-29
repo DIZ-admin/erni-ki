@@ -90,22 +90,19 @@ graph TB
 
 ### GPU-сервисы (NVIDIA RTX 5000, 16GB VRAM)
 
-- **Ollama**: 24GB RAM, 12 CPU cores, OOM score: -900
-- **OpenWebUI**: 8GB RAM, 4 CPU cores, OOM score: -600
-- **Docling**: 12GB RAM, 8 CPU cores, OOM score: -500
+-**Ollama**: 24GB RAM, 12 CPU cores, OOM score: -900 -**OpenWebUI**: 8GB RAM, 4
+CPU cores, OOM score: -600 -**Docling**: 12GB RAM, 8 CPU cores, OOM score: -500
 
 ### Критические сервисы
 
-- **PostgreSQL**: 4GB RAM, 2 CPU cores
-- **Nginx**: 512MB RAM, 1 CPU core
-- **LiteLLM**: 12GB RAM, 1 CPU core, OOM score: -300
+-**PostgreSQL**: 4GB RAM, 2 CPU cores -**Nginx**: 512MB RAM, 1 CPU
+core -**LiteLLM**: 12GB RAM, 1 CPU core, OOM score: -300
 
 ### Стратегия логирования (4-tier)
 
-- **Tier 1 (Critical)**: Dual logging (json-file + fluentd backup)
-- **Tier 2 (Important)**: Fluentd with buffering
-- **Tier 3 (Auxiliary)**: Fluentd with separate tags
-- **Tier 4 (Monitoring)**: Minimal logging
+-**Tier 1 (Critical)**: Dual logging (json-file + fluentd backup) -**Tier 2
+(Important)**: Fluentd with buffering -**Tier 3 (Auxiliary)**: Fluentd with
+separate tags -**Tier 4 (Monitoring)**: Minimal logging
 
 ## Auto-update политика
 

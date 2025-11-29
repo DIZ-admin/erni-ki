@@ -9,7 +9,7 @@ last_updated: '2025-11-28'
 
 [TOC]
 
-**Date**: 2025-10-27 **Status**: ACTION REQUIRED **Priority**: HIGH
+**Date**: 2025-10-27**Status**: ACTION REQUIRED**Priority**: HIGH
 
 ---
 
@@ -62,8 +62,8 @@ last_updated: '2025-11-28'
 
 ### LANCOM Router
 
-**Model**: LANCOM (corporate router) **IP**: 192.168.62.1 **Web Interface**:
-<https://192.168.62.1/> (WEBconfig) **Access**: Admin credentials required
+**Model**: LANCOM (corporate router)**IP**: 192.168.62.1**Web Interface**:
+<https://192.168.62.1/> (WEBconfig)**Access**: Admin credentials required
 
 **Port Forwarding**: NOT VERIFIED (router access required)
 
@@ -100,10 +100,8 @@ last_updated: '2025-11-28'
 4. Click "Configure" → "Public Hostname" → "Add a public hostname"
 5. Fill form:
 
-- **Subdomain**: `ki`
-- **Domain**: `erni-gruppe.ch`
-- **Service Type**: `HTTP`
-- **URL**: `nginx:8080`
+-**Subdomain**: `ki` -**Domain**: `erni-gruppe.ch` -**Service Type**:
+`HTTP` -**URL**: `nginx:8080`
 
 6. Save changes
 
@@ -131,11 +129,9 @@ ingress:
 1. Go to Cloudflare Dashboard → DNS → Records
 2. Add CNAME record:
 
-- **Type**: CNAME
-- **Name**: `ki`
-- **Target**: `02a58963-3f79-4fc0-82ff-f79503366f86.cfargotunnel.com`
-- **Proxy status**: Proxied (orange cloud)
-- **TTL**: Auto
+-**Type**: CNAME -**Name**: `ki` -**Target**:
+`02a58963-3f79-4fc0-82ff-f79503366f86.cfargotunnel.com` -**Proxy status**:
+Proxied (orange cloud) -**TTL**: Auto
 
 #### 1.3 Verification
 
@@ -208,10 +204,7 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 1. Log in to registrar control panel
 2. Add A record:
 
-- **Name**: `ki`
-- **Type**: A
-- **Value**: `185.242.201.210`
-- **TTL**: 3600
+-**Name**: `ki` -**Type**: A -**Value**: `185.242.201.210` -**TTL**: 3600
 
 **Variant B: Via Cloudflare (without Tunnel)**
 
@@ -219,10 +212,8 @@ openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch
 2. Update NS records at registrar
 3. Add A record in Cloudflare:
 
-- **Name**: `ki`
-- **Type**: A
-- **Value**: `185.242.201.210`
-- **Proxy status**: DNS only (grey cloud)
+-**Name**: `ki` -**Type**: A -**Value**: `185.242.201.210` -**Proxy status**:
+DNS only (grey cloud)
 
 #### 2.4 Verification
 
@@ -275,14 +266,14 @@ nc -zv 185.242.201.210 443
 4. Easy setup (5-10 minutes)
 5. Centralized management of all ERNI-KI domains
 
-**Implementation Time**: 10-15 minutes **Required Rights**: Cloudflare Dashboard
+**Implementation Time**: 10-15 minutes**Required Rights**: Cloudflare Dashboard
 Access
 
 ---
 
 ## INSTRUCTION FOR IT DEPARTMENT
 
-If **Option 2 (Port Forwarding)** is selected, provide IT department with:
+If**Option 2 (Port Forwarding)**is selected, provide IT department with:
 
 ### Required LANCOM Router Settings (192.168.62.1)
 
@@ -309,11 +300,11 @@ Rule 2:
  Enabled: Yes
 ```
 
-**Firewall Rules** (if required):
+**Firewall Rules**(if required):
 
 - Allow incoming connections on ports 80/443 for IP 192.168.62.153
 
-**DNS Settings** (if managed by IT):
+**DNS Settings**(if managed by IT):
 
 - Add A record: `ki.erni-gruppe.ch` → `185.242.201.210`
 
@@ -335,16 +326,15 @@ Rule 2:
 
 ## NEXT STEPS
 
-1. **Select solution option** (Option 1 recommended)
-2. **Get Cloudflare Dashboard access** (for Option 1)
+1.**Select solution option**(Option 1 recommended) 2.**Get Cloudflare Dashboard
+access**(for Option 1)
 
 - OR -
 
-3. **Contact IT department** (for Option 2)
-4. **Apply settings** according to selected option
-5. **Test access** from external computer
-6. **Update documentation** with results
+  3.**Contact IT department**(for Option 2) 4.**Apply settings**according to
+  selected option 5.**Test access**from external computer 6.**Update
+  documentation**with results
 
 ---
 
-**Author**: Augment Agent **Date**: 2025-10-27 **Version**: 1.0
+**Author**: Augment Agent**Date**: 2025-10-27**Version**: 1.0

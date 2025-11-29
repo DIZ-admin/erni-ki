@@ -7,8 +7,7 @@ last_updated: '2025-11-24'
 
 # Руководство по конфигурации ERNI-KI
 
-> **Версия:** 11.0 **Дата обновления:** 2025-09-25 **Статус:** Production Ready
-> [TOC]
+> **Версия:**11.0**Дата обновления:**2025-09-25**Статус:**Production Ready [TOC]
 
 Данное руководство содержит production-ready конфигурации для всех компонентов
 системы ERNI-KI с русскими комментариями для ключевых настроек.
@@ -52,7 +51,7 @@ flowchart TD
 
 ### OpenWebUI Configuration
 
-**Файл:** `env/openwebui.env`
+**Файл:**`env/openwebui.env`
 
 ```bash
 # === ОСНОВНЫЕ НАСТРОЙКИ ===
@@ -84,7 +83,7 @@ WEBUI_SESSION_COOKIE_SECURE=true # HTTPS only cookies
 
 ## Ollama Configuration
 
-**Файл:** `env/ollama.env`
+**Файл:**`env/ollama.env`
 
 ```bash
 # === GPU НАСТРОЙКИ ===
@@ -108,7 +107,7 @@ OLLAMA_VERBOSE=false # Минимальное логирование
 
 ## LiteLLM Configuration
 
-**Файл:** `env/litellm.env`
+**Файл:**`env/litellm.env`
 
 ```bash
 # === ОСНОВНЫЕ НАСТРОЙКИ ===
@@ -131,7 +130,7 @@ LITELLM_REQUEST_TIMEOUT=600 # Таймаут запросов (10 минут)
 LITELLM_MAX_BUDGET=1000 # Максимальный бюджет в месяц
 ```
 
-**Файл:** `conf/litellm/config.yaml`
+**Файл:**`conf/litellm/config.yaml`
 
 ```yaml
 # === КОНФИГУРАЦИЯ МОДЕЛЕЙ ===
@@ -169,7 +168,7 @@ general_settings:
 
 ### Apache Tika Configuration
 
-**Файл:** `env/tika.env`
+**Файл:**`env/tika.env`
 
 ```bash
 # === ОСНОВНЫЕ НАСТРОЙКИ ===
@@ -193,7 +192,7 @@ JAVA_OPTS="-Xmx2g -Xms1g -XX:+UseG1GC" # Оптимизация памяти
 
 ### SearXNG Configuration
 
-**Файл:** `env/searxng.env`
+**Файл:**`env/searxng.env`
 
 ```bash
 # === ОСНОВНЫЕ НАСТРОЙКИ ===
@@ -219,7 +218,7 @@ SEARXNG_ENGINES_WIKIPEDIA_TIMEOUT=5.0 # Увеличенный таймаут д
 
 ### PostgreSQL Configuration
 
-**Файл:** `env/postgres.env`
+**Файл:**`env/postgres.env`
 
 ```bash
 # === ОСНОВНЫЕ НАСТРОЙКИ ===
@@ -242,7 +241,7 @@ POSTGRES_EXTENSIONS="pgvector,pg_stat_statements" # Необходимые ра�
 
 ## Redis Configuration
 
-**Файл:** `env/redis.env`
+**Файл:**`env/redis.env`
 
 ```bash
 # === ОСНОВНЫЕ НАСТРОЙКИ ===
@@ -266,7 +265,7 @@ REDIS_TCP_KEEPALIVE=300 # Keep-alive соединений
 
 ### Nginx Configuration
 
-**Основной файл:** `conf/nginx/conf.d/default.conf`
+**Основной файл:**`conf/nginx/conf.d/default.conf`
 
 ```nginx
 # === ОСНОВНОЙ СЕРВЕР БЛОК ===
@@ -317,7 +316,7 @@ server {
 
 ### Prometheus Configuration
 
-**Файл:** `conf/prometheus/prometheus.yml`
+**Файл:**`conf/prometheus/prometheus.yml`
 
 ```yaml
 # === ГЛОБАЛЬНЫЕ НАСТРОЙКИ ===
@@ -374,8 +373,7 @@ scrape_configs:
  target_label: __param_target
  - source_labels: [__param_target]
  target_label: instance
- - target_label: __address__
- replacement: blackbox-exporter:9115
+ - target_label: __address__ replacement: blackbox-exporter:9115
 ```
 
 ## Security Best Practices
@@ -453,6 +451,6 @@ tar -xzf erni-ki-config-YYYYMMDD.tar.gz
 
 ---
 
-> ** Важно:** Всегда тестируйте изменения конфигурации в тестовой среде перед
+> **Важно:**Всегда тестируйте изменения конфигурации в тестовой среде перед
 > применением в продакшене. Создавайте резервные копии перед внесением
 > изменений.

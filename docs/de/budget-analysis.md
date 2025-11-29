@@ -7,22 +7,21 @@ last_updated: '2025-11-24'
 
 # Budgetanalyse des ERNI-KI Projekts
 
-**Analysedatum:** 24. November 2025 **Projektversion:** Production Ready v12.1
-**Technologie-Stack:** 32 Microservices, GPU-Beschleunigung, vollständige
+**Analysedatum:**24. November 2025**Projektversion:**Production Ready v0.61.3
+**Technologie-Stack:**32 Microservices, GPU-Beschleunigung, vollständige
 Observability
 
 ---
 
 ## 1. Projektübersicht
 
-**ERNI-KI** ist eine Enterprise-Grade KI-Plattform, basierend auf:
+**ERNI-KI**ist eine Enterprise-Grade KI-Plattform, basierend auf:
 
-- **Open WebUI v0.6.36** — Benutzeroberfläche
-- **Ollama 0.12.11** — LLM-Server mit GPU-Beschleunigung
-- **LiteLLM v1.80.0.rc.1** — Context Engineering Gateway
-- **32 Microservices** in Docker-Containern
-- **Full Monitoring Stack** (Prometheus, Grafana, Loki, Alertmanager)
-- **Enterprise Security** (Cloudflare Zero Trust, Nginx WAF, JWT Auth)
+-**Open WebUI v0.6.36**— Benutzeroberfläche -**Ollama 0.12.11**— LLM-Server mit
+GPU-Beschleunigung -**LiteLLM v1.80.0.rc.1**— Context Engineering Gateway -**32
+Microservices**in Docker-Containern -**Full Monitoring Stack**(Prometheus,
+Grafana, Loki, Alertmanager) -**Enterprise Security**(Cloudflare Zero Trust,
+Nginx WAF, JWT Auth)
 
 ### Hauptkomponenten des Systems:
 
@@ -73,52 +72,42 @@ Observability
 
 ### Backend
 
-- **Go 1.24.10** — Auth-Service, hochperformante Komponenten
-- **Python 3.x** — Scripting, Automation, LiteLLM Custom Providers
-- **Shell/Bash** — Infrastructure Automation Scripts
+-**Go 1.24.10**— Auth-Service, hochperformante Komponenten -**Python 3.x**—
+Scripting, Automation, LiteLLM Custom Providers -**Shell/Bash**— Infrastructure
+Automation Scripts
 
 ### Frontend & Web
 
-- **TypeScript/JavaScript** — Frontend-Logik, Testing
-- **Node.js 20.18.0** — Build Toolchain
-- **Nginx 1.29.3** — Webserver & Reverse Proxy
+-**TypeScript/JavaScript**— Frontend-Logik, Testing -**Node.js 20.18.0**— Build
+Toolchain -**Nginx 1.29.3**— Webserver & Reverse Proxy
 
 ### Datenbanken & Storage
 
-- **PostgreSQL 17** — Hauptdatenbank mit pgvector für Vektorsuche
-- **Redis 7** — In-Memory Cache, Pub/Sub, Queues
+-**PostgreSQL 17**— Hauptdatenbank mit pgvector für Vektorsuche -**Redis 7**—
+In-Memory Cache, Pub/Sub, Queues
 
 ### CI/CD & DevOps
 
-- **Docker & Docker Compose** — Containerisierung
-- **GitHub Actions** — CI/CD Pipelines
-- **Pre-commit Hooks** — Code-Qualität
-- **Playwright** — E2E Testing
-- **Vitest** — Unit Testing
+-**Docker & Docker Compose**— Containerisierung -**GitHub Actions**— CI/CD
+Pipelines -**Pre-commit Hooks**— Code-Qualität -**Playwright**— E2E
+Testing -**Vitest**— Unit Testing
 
 ### Security & Compliance
 
-- **Cloudflare Zero Trust** — Externer Zugriff
-- **CodeQL** — Statische Sicherheitsanalyse
-- **Trivy/Grype** — Container-Scanning
-- **Checkov** — IaC Security Scanner
-- **Gitleaks** — Secret Detection
-- **Snyk** — Dependency Scanning
+-**Cloudflare Zero Trust**— Externer Zugriff -**CodeQL**— Statische
+Sicherheitsanalyse -**Trivy/Grype**— Container-Scanning -**Checkov**— IaC
+Security Scanner -**Gitleaks**— Secret Detection -**Snyk**— Dependency Scanning
 
 ### AI/ML Stack
 
-- **CUDA 12.6** — GPU-Beschleunigung
-- **NVIDIA Container Runtime** — GPU in Docker
-- **Ollama** — LLM Inference
-- **OpenWebUI** — AI Interface
-- **MCP (Model Context Protocol)** — Tool-Integration
+-**CUDA 12.6**— GPU-Beschleunigung -**NVIDIA Container Runtime**— GPU in
+Docker -**Ollama**— LLM Inference -**OpenWebUI**— AI Interface -**MCP (Model
+Context Protocol)**— Tool-Integration
 
 ### Monitoring & Observability
 
-- **Prometheus Stack** — Metrik-Sammlung
-- **Grafana Stack** — Visualisierung & Dashboards
-- **Loki** — Log-Aggregation
-- **Fluent Bit** — Log-Shipping
+-**Prometheus Stack**— Metrik-Sammlung -**Grafana Stack**— Visualisierung &
+Dashboards -**Loki**— Log-Aggregation -**Fluent Bit**— Log-Shipping
 
 ---
 
@@ -135,8 +124,8 @@ Observability
 | Sicherheits-Design  | Security Architect      | 1 Woche    | Zero Trust, WAF, Verschlüsselung, Compliance |
 | Daten-Design        | Data Architect          | 0.5 Wochen | DB-Schema, Vektorspeicher, Backups           |
 
-**Team:** 1 Solution Architect, 1 Security Architect, 1 Data Architect, 1 PM
-**Gesamt:** 3-4 Wochen parallele Arbeit
+**Team:**1 Solution Architect, 1 Security Architect, 1 Data Architect, 1 PM
+**Gesamt:**3-4 Wochen parallele Arbeit
 
 #### Phase 2: Infrastructure & DevOps (2-3 Wochen)
 
@@ -147,7 +136,7 @@ Observability
 | Monitoring Setup      | DevOps Engineer   | 0.5 Wochen | Prometheus, Grafana, Loki          |
 | GPU Infrastructure    | DevOps + SysAdmin | 0.5 Wochen | NVIDIA Runtime, CUDA Setup         |
 
-**Team:** 1 Senior DevOps Engineer, 1 SysAdmin **Gesamt:** 2-3 Wochen
+**Team:**1 Senior DevOps Engineer, 1 SysAdmin**Gesamt:**2-3 Wochen
 
 #### Phase 3: Security & Networking (2-3 Wochen)
 
@@ -158,7 +147,7 @@ Observability
 | JWT Auth Service      | Backend Developer (Go) | 1 Woche    | Entwicklung und Testing   |
 | Security Scanning     | Security Engineer      | 0.5 Wochen | Setup Trivy, CodeQL, Snyk |
 
-**Team:** 1 Security Engineer, 1 Go Developer **Gesamt:** 2-3 Wochen
+**Team:**1 Security Engineer, 1 Go Developer**Gesamt:**2-3 Wochen
 
 ---
 
@@ -175,8 +164,8 @@ Observability
 | Docling OCR Pipeline     | ML Engineer                | 1 Woche    |             |
 | SearXNG Integration      | Backend Developer          | 1 Woche    |             |
 
-**Team:** 1 ML Engineer, 1 Full-stack Developer, 2 Backend Developers (Python)
-**Gesamt:** 4-6 Wochen parallele Arbeit
+**Team:**1 ML Engineer, 1 Full-stack Developer, 2 Backend Developers (Python)
+**Gesamt:**4-6 Wochen parallele Arbeit
 
 #### Data Layer (3-4 Wochen)
 
@@ -187,8 +176,8 @@ Observability
 | Backrest Backup System    | DevOps Engineer   | 1 Woche    |             |
 | Database Migrationen      | Backend Developer | 0.5 Wochen |             |
 
-**Team:** 1 Database Engineer, 1 DevOps Engineer, 1 Backend Developer
-**Gesamt:** 3-4 Wochen
+**Team:**1 Database Engineer, 1 DevOps Engineer, 1 Backend Developer
+**Gesamt:**3-4 Wochen
 
 #### Processing Layer (2-3 Wochen)
 
@@ -198,7 +187,7 @@ Observability
 | EdgeTTS Service          | Backend Developer | 1 Woche |             |
 | File Processing Pipeline | Backend Developer | 1 Woche |             |
 
-**Team:** 1-2 Backend Developers **Gesamt:** 2-3 Wochen
+**Team:**1-2 Backend Developers**Gesamt:**2-3 Wochen
 
 #### Gateway & Proxy (2-3 Wochen)
 
@@ -208,7 +197,7 @@ Observability
 | Auth Service (Go)   | Backend Developer (Go) | 1.5 Wochen |             |
 | Cloudflared Tunnels | DevOps Engineer        | 1 Woche    |             |
 
-**Team:** 1 DevOps Engineer, 1 Go Developer **Gesamt:** 2-3 Wochen
+**Team:**1 DevOps Engineer, 1 Go Developer**Gesamt:**2-3 Wochen
 
 ---
 
@@ -225,7 +214,7 @@ Observability
 | 8 Exporters Deployment   | DevOps Engineer | 1 Woche    |             |
 | Uptime Kuma              | DevOps Engineer | 0.5 Wochen |             |
 
-**Team:** 1 Senior DevOps Engineer, 1 SRE Engineer **Gesamt:** 4-5 Wochen
+**Team:**1 Senior DevOps Engineer, 1 SRE Engineer**Gesamt:**4-5 Wochen
 
 ---
 
@@ -239,8 +228,8 @@ Observability
 | Runbooks & Operations    | SRE Engineer      | 1.5 Wochen | Incident Response, Wartungsverfahren       |
 | Übersetzungen (DE, EN)   | Technical Writer  | 1.5 Wochen | Mehrsprachigkeit (3 Sprachen)              |
 
-**Team:** 1 Technical Writer, 1 SRE Engineer, 1 Backend Developer **Gesamt:**
-6-8 Wochen parallele Arbeit
+**Team:**1 Technical Writer, 1 SRE Engineer, 1 Backend Developer**Gesamt:**6-8
+Wochen parallele Arbeit
 
 ---
 
@@ -255,8 +244,8 @@ Observability
 | Security Testing       | Security Engineer      | 1.5 Wochen | Penetration Testing, Vulnerability Assessment |
 | UAT                    | Product Owner + Users  | 1 Woche    | User Acceptance Testing                       |
 
-**Team:** 2 QA Engineers, 1 QA Automation Engineer, 1 Performance Engineer, 1
-Security Engineer **Gesamt:** 6-8 Wochen (teilweise parallel mit Entwicklung)
+**Team:**2 QA Engineers, 1 QA Automation Engineer, 1 Performance Engineer, 1
+Security Engineer**Gesamt:**6-8 Wochen (teilweise parallel mit Entwicklung)
 
 ---
 
@@ -270,8 +259,8 @@ Security Engineer **Gesamt:** 6-8 Wochen (teilweise parallel mit Entwicklung)
 | Disaster Recovery      | SRE Engineer         | 1 Woche    | Backup-Tests, Failover-Verfahren  |
 | Production Deployment  | DevOps Team          | 0.5 Wochen | Go-Live, Rollback-Plan            |
 
-**Team:** 1 DevOps, 1 SRE, 1 SysAdmin, 1 Performance Engineer, 1 Backend
-Developer **Gesamt:** 3-4 Wochen
+**Team:**1 DevOps, 1 SRE, 1 SysAdmin, 1 Performance Engineer, 1 Backend
+Developer**Gesamt:**3-4 Wochen
 
 ---
 
@@ -291,7 +280,7 @@ Developer **Gesamt:** 3-4 Wochen
 | Technical Writer           | 1      | 6,000-9,000 CHF   | 2 Monate    |
 | Project Manager            | 1      | 9,000-13,000 CHF  | 6 Monate    |
 
-**Minimales Team:** 10 Personen
+**Minimales Team:**10 Personen
 
 ### Optimales Team (für Production-Ready)
 
@@ -314,7 +303,7 @@ Developer **Gesamt:** 3-4 Wochen
 | Project Manager            | 1      | 11,000 CHF   | 6 Monate    |
 | Product Owner              | 1      | 10,000 CHF   | 6 Monate    |
 
-**Optimales Team:** 23 Personen
+**Optimales Team:**23 Personen
 
 ---
 
@@ -322,12 +311,12 @@ Developer **Gesamt:** 3-4 Wochen
 
 ### Szenario 1: MVP (Minimal Viable Product)
 
-**Zeit:** 5-6 Monate **Team:** 10 Personen **Beschreibung:**
-Basisfunktionalität, begrenzte Dokumentation, minimales Monitoring
+**Zeit:**5-6 Monate**Team:**10 Personen**Beschreibung:**Basisfunktionalität,
+begrenzte Dokumentation, minimales Monitoring
 
-### Szenario 2: Production-Ready (aktuelle Version v12.1)
+### Szenario 2: Production-Ready (aktuelle Version v0.61.3)
 
-**Zeit:** 8-10 Monate **Team:** 20-23 Personen **Beschreibung:** Volle
+**Zeit:**8-10 Monate**Team:**20-23 Personen**Beschreibung:**Volle
 Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 
 ### Aufschlüsselung nach Phasen (Production-Ready):
@@ -341,7 +330,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Testing & QA                | 2-3 Monate | 4-5 (teilweise parallel) |
 | Deployment & Stabilisierung | 1-2 Monate | 6-8                      |
 
-**Gesamtzeit:** 8-10 Monate unter Berücksichtigung paralleler Arbeit
+**Gesamtzeit:**8-10 Monate unter Berücksichtigung paralleler Arbeit
 
 ---
 
@@ -363,7 +352,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Technical Writer   | 1      | 2      | 7,500  | 15,000  |
 | Project Manager    | 1      | 6      | 11,000 | 66,000  |
 
-**Personal MVP gesamt:** 470,500 CHF
+**Personal MVP gesamt:**470,500 CHF
 
 #### Production-Ready Szenario (8-10 Monate)
 
@@ -386,7 +375,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Project Manager    | 1 × 8           | 11,000 | 88,000  |
 | Product Owner      | 1 × 8           | 10,000 | 80,000  |
 
-**Personal Production gesamt:** 1,214,500 CHF
+**Personal Production gesamt:**1,214,500 CHF
 
 ### 6.2 Infrastrukturkosten
 
@@ -398,7 +387,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | CPU/RAM/Storage | High-end Server (64GB+ RAM, NVMe SSD) | 8,000-12,000 CHF  |
 | Backup-Hardware | Backup Server                         | 10,000-15,000 CHF |
 
-**Hardware gesamt:** 33,000-52,000 CHF
+**Hardware gesamt:**33,000-52,000 CHF
 
 #### Cloud-Alternative (falls Cloud genutzt wird)
 
@@ -409,7 +398,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Object Storage         | Backups, Modelle, Daten    | 200-400 CHF     |
 | Netzwerk/Traffic       | CDN, Bandbreite            | 300-500 CHF     |
 
-**Cloud gesamt:** 2,500-4,700 CHF/Monat × 12 Monate = **30,000-56,400 CHF/Jahr**
+**Cloud gesamt:**2,500-4,700 CHF/Monat × 12 Monate =**30,000-56,400 CHF/Jahr**
 
 #### Lizenzen und Abonnements (jährliche Kosten)
 
@@ -422,7 +411,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | SSL-Zertifikate       | Enterprise SSL/TLS             | 500-1,000 CHF   |
 | AI API Keys           | OpenAI, PublicAI Fallbacks     | 1,000-3,000 CHF |
 
-**Lizenzen gesamt:** 8,100-19,500 CHF/Jahr
+**Lizenzen gesamt:**8,100-19,500 CHF/Jahr
 
 #### Entwicklung und DevOps Tooling
 
@@ -433,7 +422,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Confluence/Jira        | Dokumentation, PM       | 3,000 CHF/Jahr |
 | Slack Business+        | Team-Kommunikation      | 1,500 CHF/Jahr |
 
-**Tooling gesamt:** 12,000 CHF/Jahr
+**Tooling gesamt:**12,000 CHF/Jahr
 
 ---
 
@@ -446,7 +435,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Unvorhergesehene Ausgaben | 10-15% des Budgets                  | 50,000-100,000 CHF |
 | Legal & Compliance        | DSGVO, Datenschutz                  | 5,000-15,000 CHF   |
 
-**Sonstige gesamt:** 80,000-165,000 CHF
+**Sonstige gesamt:**80,000-165,000 CHF
 
 ---
 
@@ -486,7 +475,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Tooling (12 Monate)             | 12,000 CHF    |
 | Sonstige                        | 100,000 CHF   |
 
-**Cloud gesamt:** **1,382,500 CHF** (erstes Jahr) **Folgejahre (OpEx):**
+**Cloud gesamt:** **1,382,500 CHF**(erstes Jahr)**Folgejahre (OpEx):**
 ~50,000-70,000 CHF/Jahr (Cloud + Lizenzen + Support)
 
 ---
@@ -503,7 +492,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Sicherheits-Compliance         | Mittel             | +15,000 CHF    | Frühzeitiges Audit, Berater                   |
 | Team-Verfügbarkeit             | Hoch               | +2-4 Wochen    | Reserve-Kandidaten, Überlappungsphasen        |
 
-**Empfohlener Contingency Buffer:** 15-20% des Gesamtbudgets
+**Empfohlener Contingency Buffer:**15-20% des Gesamtbudgets
 
 ---
 
@@ -521,7 +510,7 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 | Security Updates/Patches          | 10,000-15,000 CHF |
 | Dokumentations-Updates            | 15,000-20,000 CHF |
 
-**OpEx gesamt (on-premise):** 335,000-352,000 CHF/Jahr **OpEx gesamt (Cloud):**
+**OpEx gesamt (on-premise):**335,000-352,000 CHF/Jahr**OpEx gesamt (Cloud):**
 362,000-397,000 CHF/Jahr
 
 ---
@@ -530,25 +519,21 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 
 ### Build (aktuelles ERNI-KI Projekt)
 
-- **CapEx:** 1,385,500 CHF
-- **OpEx:** 335,000 CHF/Jahr
-- **Total Cost of Ownership (3 Jahre):** 2,390,500 CHF
-- **Vorteile:** Volle Kontrolle, Anpassungsfähigkeit, On-Premise Daten
-- **Nachteile:** Hohe Anfangsinvestition, Team erforderlich
+-**CapEx:**1,385,500 CHF -**OpEx:**335,000 CHF/Jahr -**Total Cost of Ownership
+(3 Jahre):**2,390,500 CHF -**Vorteile:**Volle Kontrolle, Anpassungsfähigkeit,
+On-Premise Daten -**Nachteile:**Hohe Anfangsinvestition, Team erforderlich
 
 ### Buy (Kommerzielle AI-Plattform)
 
-- **CapEx:** 0-50,000 CHF (Setup)
-- **OpEx:** 150,000-400,000 CHF/Jahr (Lizenzen + Support)
-- **Total Cost of Ownership (3 Jahre):** 500,000-1,250,000 CHF
-- **Vorteile:** Schneller Start, Vendor Support
-- **Nachteile:** Vendor Lock-in, eingeschränkte Anpassung, Daten in der Cloud
+-**CapEx:**0-50,000 CHF (Setup) -**OpEx:**150,000-400,000 CHF/Jahr (Lizenzen +
+Support) -**Total Cost of Ownership (3 Jahre):**500,000-1,250,000
+CHF -**Vorteile:**Schneller Start, Vendor Support -**Nachteile:**Vendor Lock-in,
+eingeschränkte Anpassung, Daten in der Cloud
 
 ### Hybrid (Managed + Custom Components)
 
-- **CapEx:** 400,000-600,000 CHF
-- **OpEx:** 180,000-250,000 CHF/Jahr
-- **Total Cost of Ownership (3 Jahre):** 940,000-1,350,000 CHF
+-**CapEx:**400,000-600,000 CHF -**OpEx:**180,000-250,000 CHF/Jahr -**Total Cost
+of Ownership (3 Jahre):**940,000-1,350,000 CHF
 
 ---
 
@@ -566,10 +551,9 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 
 ### Break-even Analyse (Build)
 
-- **Initiale Investition:** 1,385,500 CHF
-- **Jährliche Einsparungen vs. Cloud-Plattformen:** ~100,000 CHF
-- **Produktivitätsgewinne:** ~200,000 CHF/Jahr (geschätzt)
-- **Break-even:** **~4-5 Jahre**
+-**Initiale Investition:**1,385,500 CHF -**Jährliche Einsparungen vs.
+Cloud-Plattformen:**~100,000 CHF -**Produktivitätsgewinne:**~200,000 CHF/Jahr
+(geschätzt) -**Break-even:** **~4-5 Jahre**
 
 ---
 
@@ -577,19 +561,19 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 
 ### Für Projektstart von Grund auf:
 
-1. **Mit MVP beginnen (6 Monate, 570K CHF)**
+1.**Mit MVP beginnen (6 Monate, 570K CHF)**
 
 - Konzept beweisen
 - Anforderungen validieren
 - Schnelle Feedback-Schleife
 
-2. **Zu Production iterieren (zusätzlich 4 Monate, +800K CHF)**
+  2.**Zu Production iterieren (zusätzlich 4 Monate, +800K CHF)**
 
 - Basierend auf echtem Feedback skalieren
 - Enterprise-Features schrittweise hinzufügen
 - Risiken minimieren
 
-3. **Hybrid-Ansatz**
+  3.**Hybrid-Ansatz**
 
 - Managed Services wo möglich nutzen (DB, Monitoring)
 - Nur kritische Komponenten anpassen
@@ -597,38 +581,35 @@ Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
 
 ### Kritische Erfolgsfaktoren:
 
-**Starke Architektur-Expertise** — Solution Architect ist kritisch **DevOps
-Automation** — CI/CD von Tag 1 **Security by Design** — nicht nachträglich
-**Umfassende Dokumentation** — Wissen muss geteilt werden **Agile Methodik** —
-iterative Lieferung, kein Wasserfall **Stakeholder Buy-in** — Executive Support
+**Starke Architektur-Expertise**— Solution Architect ist kritisch**DevOps
+Automation**— CI/CD von Tag 1**Security by Design**— nicht nachträglich
+**Umfassende Dokumentation**— Wissen muss geteilt werden**Agile Methodik**—
+iterative Lieferung, kein Wasserfall**Stakeholder Buy-in**— Executive Support
 und klarer ROI
 
 ---
 
 ## 13. Fazit
 
-**Das ERNI-KI Projekt** ist eine Enterprise-Grade AI-Plattform mit **32
+**Das ERNI-KI Projekt**ist eine Enterprise-Grade AI-Plattform mit**32
 Microservices**, die erhebliche Investitionen sowohl in Entwicklung als auch in
 operativen Support erfordert.
 
 ### Kernzahlen:
 
-- **Realisierungszeit:** 8-10 Monate (production-ready)
-- **Team:** 20-23 Spezialisten (Peak)
-- **CapEx (Build):** 1,385,500 CHF
-- **OpEx (Jährlich):** 335,000-397,000 CHF
-- **TCO (3 Jahre):** 2,39M CHF
+-**Realisierungszeit:**8-10 Monate (production-ready) -**Team:**20-23
+Spezialisten (Peak) -**CapEx (Build):**1,385,500 CHF -**OpEx
+(Jährlich):**335,000-397,000 CHF -**TCO (3 Jahre):**2,39M CHF
 
 ### Alternativen:
 
-- **MVP:** 6 Monate, 570K CHF — Konzept beweisen
-- **Cloud-basiert:** Schneller, aber +27K/Jahr OpEx
-- **Commercial kaufen:** Kurzfristig günstiger, aber Vendor Lock-in
+-**MVP:**6 Monate, 570K CHF — Konzept beweisen -**Cloud-basiert:**Schneller,
+aber +27K/Jahr OpEx -**Commercial kaufen:**Kurzfristig günstiger, aber Vendor
+Lock-in
 
-Das Projekt ist gerechtfertigt für Organisationen mit **hohen
-Datensicherheitsanforderungen**, **Compliance** und **langfristiger
-AI-Strategie**.
+Das Projekt ist gerechtfertigt für Organisationen mit**hohen
+Datensicherheitsanforderungen**,**Compliance**und**langfristiger AI-Strategie**.
 
 ---
 
-**Erstellt von:** Antigravity AI Assistant **Datum:** 24. November 2025
+**Erstellt von:**Antigravity AI Assistant**Datum:**24. November 2025

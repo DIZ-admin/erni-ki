@@ -55,10 +55,10 @@ Incident Response verwalten.
 - Ergebnisse per Utilities prüfen: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
 - Bei Skript-Fehlern: siehe `../maintenance/backup-restore-procedures.md` für
-  Wiederherstellung, `configuration-change-process.md` für Config-Migrationen.
-- **Neue November-Aufgaben:**
+  Wiederherstellung, `configuration-change-process.md` für
+  Config-Migrationen. -**Neue November-Aufgaben:**
   - `scripts/maintenance/docling-shared-cleanup.sh` — bereinigt Docling Shared
-    Volume und stellt Rechte wieder her (Cron Job **docling_shared_cleanup**).
+    Volume und stellt Rechte wieder her (Cron Job**docling_shared_cleanup**).
   - `scripts/maintenance/redis-fragmentation-watchdog.sh` — überwacht
     `redis_memory_fragmentation_ratio`, aktiviert bei >4 `activedefrag` und kann
     Container neu starten.
@@ -87,16 +87,15 @@ Incident Response verwalten.
 
 ## 7. Data & Storage Dokumentation
 
-- **Datenbankpläne und -optimierungen:**
-  `docs/operations/database/database-monitoring-plan.md`,
-  `docs/operations/database/database-production-optimizations.md`,
-  `docs/operations/database/database-troubleshooting.md`.
-- **Redis:** `docs/operations/database/redis-monitoring-grafana.md`,
-  `docs/operations/database/redis-operations-guide.md`.
-- **vLLM / LiteLLM Ressourcen:**
-  `docs/operations/database/vllm-resource-optimization.md` + Skripte
-  `scripts/monitor-litellm-memory.sh`,
-  `scripts/redis-performance-optimization.sh`.
+-**Datenbankpläne und -optimierungen:**
+`docs/operations/database/database-monitoring-plan.md`,
+`docs/operations/database/database-production-optimizations.md`,
+`docs/operations/database/database-troubleshooting.md`. -**Redis:**`docs/operations/database/redis-monitoring-grafana.md`,
+`docs/operations/database/redis-operations-guide.md`. -**vLLM / LiteLLM
+Ressourcen:**`docs/operations/database/vllm-resource-optimization.md` + Skripte
+`scripts/monitor-litellm-memory.sh`,
+`scripts/redis-performance-optimization.sh`.
+
 - In Runbooks Links zu entsprechenden Data-Dokumenten festhalten bei Maintenance
   (pgvector VACUUM, Redis defrag, Backrest restore).
 
@@ -141,11 +140,11 @@ Incident Response verwalten.
 
 ## 11. CI/CD und Sicherheit
 
-- **Secret Scanning:** Gitleaks oder TruffleHog als separaten CI-Job für PRs
-  hinzufügen. Pipeline bei Funden blockieren, Ausnahmen über Baseline.
-- **Dependency Scanning:** `npm audit --omit=dev` oder Snyk OSS in CI mit Fail
-  bei kritischen CVE; für Go `gosec` + Trivy Filesystem Scan beibehalten.
-- **Container Scanning:** Trivy Image Scan mit explizitem Allowlist/Ignorefile
-  für Fehlalarme, alle anderen kritischen — Pipeline fehlschlagen lassen.
-- **Policy:** Echte Secrets nur in Secret Store/CI Secrets; in Git nur
-  `.example` und Generierungsanleitung (README/Handbuch).
+-**Secret Scanning:**Gitleaks oder TruffleHog als separaten CI-Job für PRs
+hinzufügen. Pipeline bei Funden blockieren, Ausnahmen über
+Baseline. -**Dependency Scanning:**`npm audit --omit=dev` oder Snyk OSS in CI
+mit Fail bei kritischen CVE; für Go `gosec` + Trivy Filesystem Scan
+beibehalten. -**Container Scanning:**Trivy Image Scan mit explizitem
+Allowlist/Ignorefile für Fehlalarme, alle anderen kritischen — Pipeline
+fehlschlagen lassen. -**Policy:**Echte Secrets nur in Secret Store/CI Secrets;
+in Git nur `.example` und Generierungsanleitung (README/Handbuch).

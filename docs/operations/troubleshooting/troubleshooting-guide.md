@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # Руководство по диагностике проблем ERNI-KI
 
-> **Версия:** 1.0 **Дата:** 2025-09-25 **Статус:** Production Ready [TOC]
+> **Версия:**1.0**Дата:**2025-09-25**Статус:**Production Ready [TOC]
 
 ## 1. Введение
 
@@ -31,15 +31,15 @@ flowchart TD
 
 Для эффективной диагностики необходимо:
 
-- **Доступ:** SSH (`sudo`), Grafana, Portainer.
-- **Инструменты:** `docker`, `curl`, `nc`, `htop`, `nvidia-smi`.
-- **Логи:** Доступ к логам через `docker logs` или Grafana/Loki.
+-**Доступ:**SSH (`sudo`), Grafana, Portainer. -**Инструменты:**`docker`, `curl`,
+`nc`, `htop`, `nvidia-smi`. -**Логи:**Доступ к логам через `docker logs` или
+Grafana/Loki.
 
 ## 3. Инструкции по диагностике
 
 ### 3.1 Критические проблемы (SLA < 15m)
 
-### ** Система полностью недоступна**
+### **Система полностью недоступна**
 
 #### **Симптомы:**
 
@@ -80,7 +80,7 @@ docker system prune -a -f
 docker compose up -d
 ```
 
-## ** OpenWebUI недоступен (основной интерфейс)**
+## **OpenWebUI недоступен (основной интерфейс)**
 
 ### **Симптомы:**
 
@@ -122,7 +122,7 @@ curl -f http://localhost/health
 
 ## ЧАСТЫЕ ПРОБЛЕМЫ И РЕШЕНИЯ
 
-### ** GPU/AI Сервисы**
+### **GPU/AI Сервисы**
 
 #### **Проблема: Ollama не использует GPU**
 
@@ -150,7 +150,7 @@ sleep 15
 curl -f http://localhost:4000/health
 ```
 
-## ** Сетевые проблемы**
+## **Сетевые проблемы**
 
 ### **Проблема: Nginx 502 Bad Gateway**
 
@@ -178,7 +178,7 @@ docker exec erni-ki-cloudflared-1 nslookup nginx
 docker compose restart cloudflared
 ```
 
-## ** База данных**
+## **База данных**
 
 ### **Проблема: PostgreSQL connection refused**
 
@@ -209,7 +209,7 @@ sleep 5
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-## ** Мониторинг**
+## **Мониторинг**
 
 ### **Проблема: Prometheus не собирает метрики**
 

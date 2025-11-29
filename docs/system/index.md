@@ -25,9 +25,8 @@ last_updated: '2025-11-27'
 
 ## Онлайн-ресурсы
 
-- **Status Page:** <https://status.ki.erni-gruppe.ch> (Uptime Kuma)
-- **Grafana:** <https://grafana.ki.erni-gruppe.ch>
-- **Prometheus:** <https://prometheus.ki.erni-gruppe.ch>
+-**Status Page:**<https://status.ki.erni-gruppe.ch> (Uptime
+Kuma) -**Grafana:**<https://grafana.ki.erni-gruppe.ch> -**Prometheus:**<https://prometheus.ki.erni-gruppe.ch>
 
 ## Для администраторов
 

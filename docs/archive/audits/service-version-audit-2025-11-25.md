@@ -9,8 +9,8 @@ audit_type: service-version
 
 # Service Version Audit Report
 
-**Date**: November 25, 2025 **Auditor**: Automated System Audit **Scope**: All
-30 services in ERNI-KI infrastructure **Coverage**: 100% (30/30 services)
+**Date**: November 25, 2025**Auditor**: Automated System Audit**Scope**: All 30
+services in ERNI-KI infrastructure**Coverage**: 100% (30/30 services)
 
 ## Executive Summary
 
@@ -21,22 +21,19 @@ including 6 critical priority updates and 1 recommended service migration.
 
 ### Key Findings
 
-- **Total Services Audited**: 30
-- **Services with Updates**: 26 (87%)
-- **Already Current**: 5 services (Watchtower, Uptime Kuma, Nginx mainline,
-  PostgreSQL, Go toolchain)
-- **Critical Updates**: 6 services requiring immediate attention
-- **Security Concerns**: 1 service (Fluent Bit - vulnerabilities fixed in
-  v4.1.1)
-- **Service Migrations**: 1 recommendation (NVIDIA GPU Exporter → DCGM Exporter)
+-**Total Services Audited**: 30 -**Services with Updates**: 26 (87%) -**Already
+Current**: 5 services (Watchtower, Uptime Kuma, Nginx mainline, PostgreSQL, Go
+toolchain) -**Critical Updates**: 6 services requiring immediate
+attention -**Security Concerns**: 1 service (Fluent Bit - vulnerabilities fixed
+in v4.1.1) -**Service Migrations**: 1 recommendation (NVIDIA GPU Exporter → DCGM
+Exporter)
 
 ### Risk Assessment
 
-- **High Priority**: 6 services (Ollama, Open WebUI, LiteLLM, Cloudflared,
-  Prometheus, NVIDIA GPU Exporter migration)
-- **Medium Priority**: 8 services (monitoring exporters, infrastructure
-  components)
-- **Low Priority**: 12 services (minor version updates, maintenance releases)
+-**High Priority**: 6 services (Ollama, Open WebUI, LiteLLM, Cloudflared,
+Prometheus, NVIDIA GPU Exporter migration) -**Medium Priority**: 8 services
+(monitoring exporters, infrastructure components) -**Low Priority**: 12 services
+(minor version updates, maintenance releases)
 
 ## Detailed Findings
 
@@ -44,62 +41,49 @@ including 6 critical priority updates and 1 recommended service migration.
 
 #### 1. LiteLLM Context Engineering Gateway
 
-- **Current**: v1.80.0.rc.1 (Release Candidate)
-- **Latest**: v1.80.5-stable (November 22, 2025)
-- **Recommendation**: **UPDATE IMMEDIATELY**
-- **Risk**: Very Low - moving from RC to stable
-- **Details**: Currently running release candidate; stable version available
-  with Gemini 3.0 support and bug fixes
-- **Breaking Changes**: None
+-**Current**: v1.80.0.rc.1 (Release Candidate) -**Latest**: v1.80.5-stable
+(November 22, 2025) -**Recommendation**:**UPDATE IMMEDIATELY**-**Risk**: Very
+Low - moving from RC to stable -**Details**: Currently running release
+candidate; stable version available with Gemini 3.0 support and bug
+fixes -**Breaking Changes**: None
 
 #### 2. Open WebUI
 
-- **Current**: v0.6.36
-- **Latest**: v0.6.39 (November 25, 2025)
-- **Recommendation**: **UPDATE RECOMMENDED**
-- **Risk**: Very Low - patch version
-- **Details**: Latest patch includes bug fixes and stability improvements
-- **Breaking Changes**: None
+-**Current**: v0.6.36 -**Latest**: v0.6.39 (November
+25, 2025) -**Recommendation**:**UPDATE RECOMMENDED**-**Risk**: Very Low - patch
+version -**Details**: Latest patch includes bug fixes and stability
+improvements -**Breaking Changes**: None
 
 #### 3. Ollama LLM Server
 
-- **Current**: 0.12.11
-- **Latest**: 0.13.0 (November 18, 2025)
-- **Recommendation**: **UPDATE AFTER TESTING**
-- **Risk**: Low - minor version with GPU changes
-- **Details**: Vulkan API support, improved GPU scheduling, enhanced model
-  management, WebP support
-- **Breaking Changes**: None reported
-- **Testing Required**: GPU acceleration, model loading
+-**Current**: 0.12.11 -**Latest**: 0.13.0 (November
+18, 2025) -**Recommendation**:**UPDATE AFTER TESTING**-**Risk**: Low - minor
+version with GPU changes -**Details**: Vulkan API support, improved GPU
+scheduling, enhanced model management, WebP support -**Breaking Changes**: None
+reported -**Testing Required**: GPU acceleration, model loading
 
 #### 4. Cloudflare Tunnel (cloudflared)
 
-- **Current**: 2024.10.0
-- **Latest**: 2025.11.1 (November 7, 2025)
-- **Recommendation**: **UPDATE RECOMMENDED**
-- **Risk**: Low-Medium - ~13 months of updates
-- **Details**: Over a year of security fixes and improvements
-- **Action**: Review changelog for tunnel configuration changes
+-**Current**: 2024.10.0 -**Latest**: 2025.11.1 (November
+7, 2025) -**Recommendation**:**UPDATE RECOMMENDED**-**Risk**: Low-Medium - ~13
+months of updates -**Details**: Over a year of security fixes and
+improvements -**Action**: Review changelog for tunnel configuration changes
 
 #### 5. Prometheus Monitoring
 
-- **Current**: v3.0.0
-- **Latest**: v3.7.3 (October 29, 2025) or v3.5.0 LTS (July 14, 2025)
-- **Recommendation**: **UPDATE TO LTS OR LATEST**
-- **Risk**: Low-Medium - 7 minor versions behind
-- **Details**: LTS preferred for stability; latest for newest features
-- **Testing Required**: Alert rules, query syntax
+-**Current**: v3.0.0 -**Latest**: v3.7.3 (October 29, 2025) or v3.5.0 LTS (July
+14, 2025) -**Recommendation**:**UPDATE TO LTS OR LATEST**-**Risk**: Low-Medium -
+7 minor versions behind -**Details**: LTS preferred for stability; latest for
+newest features -**Testing Required**: Alert rules, query syntax
 
 #### 6. NVIDIA GPU Exporter
 
-- **Current**: mindprince/nvidia_gpu_prometheus_exporter:0.1
-- **Latest Alternative**: NVIDIA DCGM Exporter 4.4.2-4.7.0
-- **Recommendation**: **MIGRATE TO DCGM EXPORTER**
-- **Risk**: Medium - requires service replacement
-- **Details**: Current exporter unmaintained; DCGM is official NVIDIA tool
-- **Benefits**: Official support, comprehensive metrics, MIG support, cloud
-  integration
-- **Action**: Plan migration with Prometheus configuration updates
+-**Current**: mindprince/nvidia_gpu_prometheus_exporter:0.1 -**Latest
+Alternative**: NVIDIA DCGM Exporter 4.4.2-4.7.0 -**Recommendation**:**MIGRATE TO
+DCGM EXPORTER**-**Risk**: Medium - requires service replacement -**Details**:
+Current exporter unmaintained; DCGM is official NVIDIA tool -**Benefits**:
+Official support, comprehensive metrics, MIG support, cloud
+integration -**Action**: Plan migration with Prometheus configuration updates
 
 ---
 
@@ -121,10 +105,9 @@ including 6 critical priority updates and 1 recommended service migration.
 
 **Notable Items**:
 
-- **Redis Exporter**: 18 versions behind - extensive gap requires careful
-  testing
-- **Fluent Bit**: Major version update 3→4 with **security fixes** in v4.1.1
-  (released Nov 24, 2025)
+-**Redis Exporter**: 18 versions behind - extensive gap requires careful
+testing -**Fluent Bit**: Major version update 3→4 with**security fixes**in
+v4.1.1 (released Nov 24, 2025)
 
 ---
 
@@ -177,13 +160,13 @@ LTS (22.11.0). Requires verification.
 
 **Priority**: IMMEDIATE
 
-1. **LiteLLM**: v1.80.0.rc.1 → v1.80.5-stable
+1.**LiteLLM**: v1.80.0.rc.1 → v1.80.5-stable
 
 - File: `compose.yml` line 151
 - Risk: Very Low
 - Testing: API compatibility check
 
-2. **Open WebUI**: v0.6.36 → v0.6.39
+  2.**Open WebUI**: v0.6.36 → v0.6.39
 
 - File: `compose.yml` line 470
 - Risk: Very Low
@@ -193,11 +176,9 @@ LTS (22.11.0). Requires verification.
 
 **Priority**: [WARNING] MEDIUM
 
-3. **Cloudflared**: 2024.10.0 → 2025.11.1
-4. **Apache Tika**: Digest → 3.2.3 (semantic version)
-5. **Prometheus**: v3.0.0 → v3.7.3 (or v3.5.0 LTS)
-6. **Grafana**: 11.3.0 → 11.6.8
-7. **Loki**: 3.0.0 → 3.6.1
+3.**Cloudflared**: 2024.10.0 → 2025.11.1 4.**Apache Tika**: Digest → 3.2.3
+(semantic version) 5.**Prometheus**: v3.0.0 → v3.7.3 (or v3.5.0
+LTS) 6.**Grafana**: 11.3.0 → 11.6.8 7.**Loki**: 3.0.0 → 3.6.1
 
 ### Phase 3: Monitoring Exporters (Next Sprint)
 
@@ -215,19 +196,19 @@ LTS (22.11.0). Requires verification.
 
 **Priority**: [WARNING] MEDIUM - Requires Testing
 
-15. **Fluent Bit**: 3.1.0 → 4.2.0
+15.**Fluent Bit**: 3.1.0 → 4.2.0
 
 - Major version update 3→4
 - Security fixes in v4.1.1 (Nov 24, 2025)
 - Review migration guide for breaking changes
 - Test log pipelines thoroughly
 
-16. **Ollama**: 0.12.11 → 0.13.0
+  16.**Ollama**: 0.12.11 → 0.13.0
 
 - Test GPU acceleration extensively
 - Verify model loading and performance
 
-17. **Backrest**: v1.9.2 → v1.10.0
+  17.**Backrest**: v1.9.2 → v1.10.0
 
 ### Phase 5: Dependencies & Remaining Services (This Month)
 
@@ -242,7 +223,7 @@ LTS (22.11.0). Requires verification.
 
 **Priority**: HIGH
 
-24. **NVIDIA GPU Exporter Migration**
+24.**NVIDIA GPU Exporter Migration**
 
 - Current: mindprince 0.1 (unmaintained)
 - Target: NVIDIA DCGM Exporter 4.4.2-4.7.0
@@ -260,17 +241,17 @@ LTS (22.11.0). Requires verification.
 
 ### High-Risk Changes
 
-1. **Fluent Bit 3→4**: Major version upgrade with potential breaking changes
+1.**Fluent Bit 3→4**: Major version upgrade with potential breaking changes
 
 - Mitigation: Review migration guide, test log pipelines in staging
 - Timeline: Allocate 2-3 days for testing
 
-2. **NVIDIA GPU Exporter Migration**: Service replacement
+  2.**NVIDIA GPU Exporter Migration**: Service replacement
 
 - Mitigation: Parallel deployment, gradual transition
 - Timeline: 1-2 weeks planning + implementation
 
-3. **Redis 7→8**: Major version with data format incompatibility
+  3.**Redis 7→8**: Major version with data format incompatibility
 
 - Current Status: Intentionally pinned
 - Recommendation: Consider incremental update to 7.4.0 first
@@ -278,9 +259,9 @@ LTS (22.11.0). Requires verification.
 
 ### Medium-Risk Changes
 
-1. **Prometheus 7 versions gap**: Potential query language changes
-2. **Redis Exporter 18 versions gap**: Extensive changes require testing
-3. **npm 10→11**: Major version may affect build scripts
+1.**Prometheus 7 versions gap**: Potential query language changes 2.**Redis
+Exporter 18 versions gap**: Extensive changes require testing 3.**npm 10→11**:
+Major version may affect build scripts
 
 ### Low-Risk Changes
 
@@ -299,14 +280,14 @@ All patch and minor version updates for exporters and monitoring tools.
 
 ### Post-Update Validation
 
-1. **Health Checks**
+1.**Health Checks**
 
 ```bash
 docker compose ps
 docker compose logs [service_name]
 ```
 
-2. **Service Connectivity**
+2.**Service Connectivity**
 
 ```bash
 curl http://localhost:4000/health/liveliness # LiteLLM
@@ -315,14 +296,14 @@ curl http://localhost:9091/-/healthy # Prometheus
 curl http://localhost:3000/api/health # Grafana
 ```
 
-3. **Functional Testing**
+3.**Functional Testing**
 
 - Open WebUI: Access interface, test AI model interactions
 - LiteLLM: Verify API endpoints, test model routing
 - Prometheus: Check targets, verify metrics collection
 - Grafana: Validate dashboards render correctly
 
-4. **Performance Baseline**
+  4.**Performance Baseline**
 
 - Compare response times before/after
 - Monitor GPU utilization (Ollama)
@@ -334,25 +315,26 @@ curl http://localhost:3000/api/health # Grafana
 
 ### Immediate Actions
 
-1. **Update LiteLLM and Open WebUI** (Phase 1) - Low risk, high value
-2. **Plan Fluent Bit upgrade** - Security vulnerabilities addressed in 4.1.1
-3. **Investigate Node.js version discrepancy** - Verify 22.14.0 vs LTS 22.11.0
+1.**Update LiteLLM and Open WebUI**(Phase 1) - Low risk, high value 2.**Plan
+Fluent Bit upgrade**- Security vulnerabilities addressed in
+4.1.1 3.**Investigate Node.js version discrepancy**- Verify 22.14.0 vs LTS
+22.11.0
 
 ### Strategic Initiatives
 
-1. **Establish Version Monitoring**
+1.**Establish Version Monitoring**
 
 - Implement Renovate or Dependabot for automated PR creation
 - Configure Watchtower notifications for new image availability
 - Create dashboard tracking version lag
 
-2. **Standardize Image Tagging**
+  2.**Standardize Image Tagging**
 
 - Migrate digest-based images to semantic versions (Tika, SearXNG, EdgeTTS)
 - Avoid `:latest` and `:main` tags in production
 - Document pinning strategy
 
-3. **NVIDIA GPU Monitoring Modernization**
+  3.**NVIDIA GPU Monitoring Modernization**
 
 - Priority migration to DCGM Exporter
 - Official NVIDIA support ensures long-term reliability
@@ -360,13 +342,13 @@ curl http://localhost:3000/api/health # Grafana
 
 ### Long-Term Considerations
 
-1. **Redis Upgrade Path**
+1.**Redis Upgrade Path**
 
 - Evaluate 7.4.0 as incremental step
 - Plan 8.x migration with data compatibility testing
 - Timeline: Q1 2026
 
-2. **Major Version Tracking**
+  2.**Major Version Tracking**
 
 - Grafana 12.x evaluation after 11.6.8 stabilization
 - Go 1.25.x assessment for auth service
@@ -379,12 +361,11 @@ curl http://localhost:3000/api/health # Grafana
 This comprehensive audit identified 26 services (87%) with available updates
 across the ERNI-KI platform. The recommended phased approach prioritizes:
 
-1. **Immediate** (This Week): Stable updates for LiteLLM and Open WebUI
-2. **Short-term** (Next Sprint): Infrastructure and monitoring stack
-   modernization
-3. **Medium-term** (This Month): Major version updates with testing requirements
-4. **Strategic** (Next Quarter): Service migrations and architectural
-   improvements
+1.**Immediate**(This Week): Stable updates for LiteLLM and Open
+WebUI 2.**Short-term**(Next Sprint): Infrastructure and monitoring stack
+modernization 3.**Medium-term**(This Month): Major version updates with testing
+requirements 4.**Strategic**(Next Quarter): Service migrations and architectural
+improvements
 
 All recommendations include risk assessments, testing procedures, and rollback
 strategies to ensure platform stability during the update process.
@@ -418,5 +399,5 @@ for step-by-step update procedures with file locations and code diffs.
 
 ---
 
-**Report Generated**: November 25, 2025 **Next Audit Recommended**: February
-2026 (Quarterly)
+**Report Generated**: November 25, 2025**Next Audit Recommended**: February 2026
+(Quarterly)

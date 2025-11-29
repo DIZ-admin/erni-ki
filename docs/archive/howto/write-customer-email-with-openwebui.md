@@ -23,12 +23,12 @@ delayed.
 
 ## Example prompts
 
-- **Good:** "You are a customer support agent. Task: draft a polite reply to
-  this request. Context: the user wants a delivery date. Constraints: keep it
-  under 120 words, avoid technical jargon. Format: bullet points plus a final
-  paragraph. Request: <paste request>."
-- **Good:** "Role: account manager. Task: write a short follow-up confirming we
-  received the documents. Context: project KI-042, deadline Friday. Constraints:
-  friendly but concise. Output: 3 sentences."
-- **Avoid:** "Just write something fast" (too vague) or sharing confidential
-  data without checking policies (<INSERT INTERNAL POLICY LINK HERE>).
+-**Good:**"You are a customer support agent. Task: draft a polite reply to this
+request. Context: the user wants a delivery date. Constraints: keep it under 120
+words, avoid technical jargon. Format: bullet points plus a final paragraph.
+Request: <paste request>." -**Good:**"Role: account manager. Task: write a short
+follow-up confirming we received the documents. Context: project KI-042,
+deadline Friday. Constraints: friendly but concise. Output: 3
+sentences." -**Avoid:**"Just write something fast" (too vague) or sharing
+confidential data without checking policies
+(<INSERT INTERNAL POLICY LINK HERE>).

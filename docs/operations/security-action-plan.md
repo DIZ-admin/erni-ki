@@ -7,7 +7,7 @@ last_updated: '2025-11-27'
 
 # Security Action Plan - ERNI-KI
 
-**Дата создания:** 2025-11-27 **Статус:** ACTIVE **Приоритет:** CRITICAL
+**Дата создания:**2025-11-27**Статус:**ACTIVE**Приоритет:**CRITICAL
 **Основание:**
 [Comprehensive System Audit 2025-11-27](../reports/comprehensive-system-audit-2025-11-27.md)
 
@@ -15,11 +15,11 @@ last_updated: '2025-11-27'
 
 ## Executive Summary
 
-Выявлены **критические уязвимости безопасности** (CVSS 6.5-10.0), требующие
+Выявлены**критические уязвимости безопасности**(CVSS 6.5-10.0), требующие
 немедленного устранения. Данный план определяет приоритетные действия и
 ответственных.
 
-**Статус блокировки production:** BLOCKED (до выполнения Phase 1)
+**Статус блокировки production:**BLOCKED (до выполнения Phase 1)
 
 ---
 
@@ -27,28 +27,28 @@ last_updated: '2025-11-27'
 
 ### Task 1.1: Удалить секреты из Git (CVSS 10.0)
 
-**Приоритет:** P0 - CRITICAL **Сроки:** 1 день **Ответственный:** DevOps Lead
-**Статус:** ⚠️ TO DO
+**Приоритет:**P0 - CRITICAL**Сроки:**1 день**Ответственный:**DevOps Lead
+**Статус:**TO DO
 
 **Проблема:**
 
 ```bash
 secrets/
-├── postgres_password.txt      # PLAIN TEXT В GIT!
-├── litellm_api_key.txt        # PLAIN TEXT В GIT!
-├── openai_api_key.txt         # PLAIN TEXT В GIT!
-└── grafana_admin_password.txt # Weak: "admin"
+ postgres_password.txt # PLAIN TEXT В GIT!
+ litellm_api_key.txt # PLAIN TEXT В GIT!
+ openai_api_key.txt # PLAIN TEXT В GIT!
+ grafana_admin_password.txt # Weak: "admin"
 ```
 
 **Действия:**
 
-1. **Установить git-filter-repo**
+1.**Установить git-filter-repo**
 
 ```bash
 pip install git-filter-repo
 ```
 
-2. **Удалить секреты из истории Git**
+2.**Удалить секреты из истории Git**
 
 ```bash
 # Бэкап репозитория
@@ -56,15 +56,15 @@ cp -r .git .git.backup
 
 # Удалить secrets/ и env/ из истории
 git filter-repo --invert-paths \
-  --path secrets/ \
-  --path env/ \
-  --force
+ --path secrets/ \
+ --path env/ \
+ --force
 
 # Проверить результат
 git log --all --full-history -- secrets/
 ```
 
-3. **Force push (КООРДИНИРОВАТЬ С КОМАНДОЙ!)**
+3.**Force push (КООРДИНИРОВАТЬ С КОМАНДОЙ!)**
 
 ```bash
 # Уведомить всех разработчиков
@@ -73,7 +73,7 @@ git push --force --all
 git push --force --tags
 ```
 
-4. **Ротация ВСЕХ скомпрометированных секретов**
+4.**Ротация ВСЕХ скомпрометированных секретов**
 
 ```bash
 # PostgreSQL
@@ -85,18 +85,18 @@ redis-cli CONFIG SET requirepass "$(openssl rand -base64 32)"
 # LiteLLM, OpenAI - регенерация API keys в консолях
 ```
 
-5. **Создать .example файлы**
+5.**Создать .example файлы**
 
 ```bash
 for file in secrets/*.txt; do
-  echo "PLACEHOLDER_$(basename $file)" > "$file.example"
+ echo "PLACEHOLDER_$(basename $file)" > "$file.example"
 done
 
 git add secrets/*.example
 git commit -m "security: add secret templates"
 ```
 
-6. **Обновить .gitignore**
+6.**Обновить .gitignore**
 
 ```bash
 echo "secrets/*.txt" >> .gitignore
@@ -117,8 +117,8 @@ git commit -m "security: ignore secrets and env files"
 
 ### Task 1.2: Закрыть Uptime Kuma (CVSS 6.5)
 
-**Приоритет:** P0 - CRITICAL **Сроки:** 1 час **Ответственный:** DevOps Engineer
-**Статус:** ⚠️ TO DO
+**Приоритет:**P0 - CRITICAL**Сроки:**1 час**Ответственный:**DevOps Engineer
+**Статус:**TO DO
 
 **Проблема:**
 
@@ -152,8 +152,8 @@ uptime-kuma:
 
 ### Task 1.3: Исправить Watchtower user (CVSS 7.8)
 
-**Приоритет:** P0 - CRITICAL **Сроки:** 1 час **Ответственный:** DevOps Engineer
-**Статус:** ⚠️ TO DO
+**Приоритет:**P0 - CRITICAL**Сроки:**1 час**Ответственный:**DevOps Engineer
+**Статус:**TO DO
 
 **Проблема:**
 
@@ -192,33 +192,33 @@ getent group docker | cut -d: -f3
 
 ### Task 1.4: Добавить ShellCheck в CI (P1)
 
-**Приоритет:** P1 - HIGH **Сроки:** 1 день **Ответственный:** DevOps Engineer
-**Статус:** ⚠️ TO DO
+**Приоритет:**P1 - HIGH**Сроки:**1 день**Ответственный:**DevOps Engineer
+**Статус:**TO DO
 
-**Проблема:** 110 shell скриптов без статического анализа
+**Проблема:**110 shell скриптов без статического анализа
 
 **Действия:**
 
-1. **Добавить в .pre-commit-config.yaml**
+1.**Добавить в .pre-commit-config.yaml**
 
 ```yaml
 - repo: https://github.com/koalaman/shellcheck-precommit
-  rev: v0.9.0
-  hooks:
-    - id: shellcheck
-      args: ['--severity=warning']
+ rev: v0.9.0
+ hooks:
+ - id: shellcheck
+ args: ['--severity=warning']
 ```
 
-2. **Добавить в CI**
+2.**Добавить в CI**
 
 ```yaml
 # .github/workflows/ci.yml
 - name: ShellCheck
-  run: |
-    find . -name "*.sh" -not -path "./node_modules/*" | xargs shellcheck
+ run: |
+ find . -name "*.sh" -not -path "./node_modules/*" | xargs shellcheck
 ```
 
-3. **Исправить критические issues**
+3.**Исправить критические issues**
 
 ```bash
 shellcheck scripts/**/*.sh conf/**/*.sh | grep "error:"
@@ -236,37 +236,37 @@ shellcheck scripts/**/*.sh conf/**/*.sh | grep "error:"
 
 ### Task 2.1: Network Segmentation (P1)
 
-**Приоритет:** P1 - HIGH **Сроки:** 1 неделя **Ответственный:** DevOps Lead
-**Статус:** ⚠️ TO DO
+**Приоритет:**P1 - HIGH**Сроки:**1 неделя**Ответственный:**DevOps Lead
+**Статус:**TO DO
 
-**Цель:** Изолировать сервисы по функциональным слоям
+**Цель:**Изолировать сервисы по функциональным слоям
 
 **Дизайн:**
 
 ```yaml
 networks:
-  frontend:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
-  backend:
-    driver: bridge
-    internal: true
-    ipam:
-      config:
-        - subnet: 172.21.0.0/24
-  data:
-    driver: bridge
-    internal: true
-    ipam:
-      config:
-        - subnet: 172.22.0.0/24
-  monitoring:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.23.0.0/24
+ frontend:
+ driver: bridge
+ ipam:
+ config:
+ - subnet: 172.20.0.0/24
+ backend:
+ driver: bridge
+ internal: true
+ ipam:
+ config:
+ - subnet: 172.21.0.0/24
+ data:
+ driver: bridge
+ internal: true
+ ipam:
+ config:
+ - subnet: 172.22.0.0/24
+ monitoring:
+ driver: bridge
+ ipam:
+ config:
+ - subnet: 172.23.0.0/24
 ```
 
 **Маппинг сервисов:**
@@ -303,21 +303,21 @@ networks:
 
 ### Task 2.2: Модуляризация compose.yml (P1)
 
-**Приоритет:** P1 - HIGH **Сроки:** 2 недели **Ответственный:** DevOps Engineer
-**Статус:** ⚠️ TO DO
+**Приоритет:**P1 - HIGH**Сроки:**2 недели**Ответственный:**DevOps Engineer
+**Статус:**TO DO
 
-**Цель:** Разделить 1276-строчный монолит
+**Цель:**Разделить 1276-строчный монолит
 
 **Структура:**
 
 ```
 compose/
-├── base.yml           # Networks, volumes, logging anchors
-├── ai-services.yml    # OpenWebUI, Ollama, LiteLLM, Docling
-├── data-services.yml  # PostgreSQL, Redis, Backrest
-├── monitoring.yml     # Prometheus, Grafana, Loki, exporters
-├── infrastructure.yml # Nginx, Cloudflared, Auth, Watchtower
-└── production.yml     # Production overrides
+ base.yml # Networks, volumes, logging anchors
+ ai-services.yml # OpenWebUI, Ollama, LiteLLM, Docling
+ data-services.yml # PostgreSQL, Redis, Backrest
+ monitoring.yml # Prometheus, Grafana, Loki, exporters
+ infrastructure.yml # Nginx, Cloudflared, Auth, Watchtower
+ production.yml # Production overrides
 ```
 
 **Миграция:**
@@ -333,16 +333,16 @@ mkdir compose
 
 # Тестировать
 docker compose -f compose/base.yml \
-               -f compose/ai-services.yml \
-               -f compose/data-services.yml \
-               -f compose/monitoring.yml \
-               -f compose/infrastructure.yml \
-               -f compose/production.yml \
-               config > test-compose.yml
+ -f compose/ai-services.yml \
+ -f compose/data-services.yml \
+ -f compose/monitoring.yml \
+ -f compose/infrastructure.yml \
+ -f compose/production.yml \
+ config > test-compose.yml
 
 # Сравнить с оригиналом
 diff <(yq eval-all 'sort_keys(..)' compose.yml) \
-     <(yq eval-all 'sort_keys(..)' test-compose.yml)
+ <(yq eval-all 'sort_keys(..)' test-compose.yml)
 ```
 
 **Критерии завершения:**
@@ -356,14 +356,14 @@ diff <(yq eval-all 'sort_keys(..)' compose.yml) \
 
 ### Task 2.3: Integration Tests (P2)
 
-**Приоритет:** P2 - MEDIUM **Сроки:** 2 недели **Ответственный:** QA Engineer
-**Статус:** ⚠️ TO DO
+**Приоритет:**P2 - MEDIUM**Сроки:**2 недели**Ответственный:**QA Engineer
+**Статус:**TO DO
 
-**Цель:** Покрыть критические integration flows
+**Цель:**Покрыть критические integration flows
 
 **Test cases:**
 
-1. **OpenWebUI → LiteLLM → Ollama flow**
+1.**OpenWebUI → LiteLLM → Ollama flow**
 
 ```typescript
 // tests/integration/ai-pipeline.test.ts
@@ -384,9 +384,8 @@ describe('AI Pipeline Integration', () => {
 });
 ```
 
-2. **Auth service JWT validation**
-3. **Prometheus scraping all targets**
-4. **Fluent Bit → Loki log ingestion**
+2.**Auth service JWT validation**3.**Prometheus scraping all targets**4.**Fluent
+Bit → Loki log ingestion**
 
 **Критерии завершения:**
 
@@ -400,20 +399,20 @@ describe('AI Pipeline Integration', () => {
 
 ### Task 3.1: SOPS для секретов (P2)
 
-**Приоритет:** P2 - MEDIUM **Сроки:** 1 месяц **Ответственный:** DevOps Lead
-**Статус:** ⚠️ TO DO
+**Приоритет:**P2 - MEDIUM**Сроки:**1 месяц**Ответственный:**DevOps Lead
+**Статус:**TO DO
 
-**Цель:** Шифрование секретов at rest
+**Цель:**Шифрование секретов at rest
 
 **Внедрение:**
 
-1. **Установить SOPS**
+1.**Установить SOPS**
 
 ```bash
-brew install sops  # или apt-get install sops
+brew install sops # или apt-get install sops
 ```
 
-2. **Создать GPG ключ для команды**
+2.**Создать GPG ключ для команды**
 
 ```bash
 gpg --batch --generate-key <<EOF
@@ -429,36 +428,36 @@ EOF
 gpg --export --armor "ERNI-KI DevOps" > .sops.pub
 ```
 
-3. **Конфигурация SOPS**
+3.**Конфигурация SOPS**
 
 ```yaml
 # .sops.yaml
 creation_rules:
-  - path_regex: secrets/.*\.txt$
-    pgp: >-
-      FBC7B9E2A4F9289AC0C1D4843D16CEE4A27381B4
+ - path_regex: secrets/.*\.txt$
+ pgp: >-
+ FBC7B9E2A4F9289AC0C1D4843D16CEE4A27381B4
 ```
 
-4. **Зашифровать секреты**
+4.**Зашифровать секреты**
 
 ```bash
 for file in secrets/*.txt; do
-  sops -e "$file" > "$file.enc"
-  rm "$file"
+ sops -e "$file" > "$file.enc"
+ rm "$file"
 done
 
 git add secrets/*.enc
 git commit -m "security: encrypt secrets with SOPS"
 ```
 
-5. **Entrypoint wrapper**
+5.**Entrypoint wrapper**
 
 ```bash
-#!/usr/bin/env bash
+# !/usr/bin/env bash
 # scripts/entrypoints/sops-wrapper.sh
 for secret_file in /run/secrets-encrypted/*; do
-  secret_name=$(basename "$secret_file" .enc)
-  sops -d "$secret_file" > "/run/secrets/$secret_name"
+ secret_name=$(basename "$secret_file" .enc)
+ sops -d "$secret_file" > "/run/secrets/$secret_name"
 done
 
 exec "$@"
@@ -475,42 +474,42 @@ exec "$@"
 
 ### Task 3.2: JWT Rotation (P2)
 
-**Приоритет:** P2 - MEDIUM **Сроки:** 1 месяц **Ответственный:** Backend
-Developer **Статус:** ⚠️ TO DO
+**Приоритет:**P2 - MEDIUM**Сроки:**1 месяц**Ответственный:**Backend
+Developer**Статус:**TO DO
 
-**Цель:** Автоматическая ротация JWT signing keys
+**Цель:**Автоматическая ротация JWT signing keys
 
 **Дизайн:**
 
 ```go
 // pkg/jwt/rotation.go
 type KeyRotator struct {
-  current  []byte
-  previous []byte
-  next     []byte
-  mutex    sync.RWMutex
+ current []byte
+ previous []byte
+ next []byte
+ mutex sync.RWMutex
 }
 
 func (r *KeyRotator) Rotate() error {
-  r.mutex.Lock()
-  defer r.mutex.Unlock()
+ r.mutex.Lock()
+ defer r.mutex.Unlock()
 
-  r.previous = r.current
-  r.current = r.next
-  r.next = generateSecureKey()
+ r.previous = r.current
+ r.current = r.next
+ r.next = generateSecureKey()
 
-  return r.persistKeys()
+ return r.persistKeys()
 }
 
 func (r *KeyRotator) Verify(token string) (Claims, error) {
-  // Попытка верификации с current key
-  claims, err := jwt.Parse(token, r.current)
-  if err == nil {
-    return claims, nil
-  }
+ // Попытка верификации с current key
+ claims, err := jwt.Parse(token, r.current)
+ if err == nil {
+ return claims, nil
+ }
 
-  // Fallback на previous key
-  return jwt.Parse(token, r.previous)
+ // Fallback на previous key
+ return jwt.Parse(token, r.previous)
 }
 ```
 
@@ -526,14 +525,14 @@ func (r *KeyRotator) Verify(token string) (Claims, error) {
 
 ### Task 3.3: Load Tests (P2)
 
-**Приоритет:** P2 - MEDIUM **Сроки:** 1 месяц **Ответственный:** QA Engineer
-**Статус:** ⚠️ TO DO
+**Приоритет:**P2 - MEDIUM**Сроки:**1 месяц**Ответственный:**QA Engineer
+**Статус:**TO DO
 
-**Цель:** Определить capacity и bottlenecks
+**Цель:**Определить capacity и bottlenecks
 
 **Scenarios:**
 
-1. **Chat completions load**
+1.**Chat completions load**
 
 ```javascript
 // tests/load/chat.k6.js
@@ -572,8 +571,7 @@ export default function () {
 }
 ```
 
-2. **RAG pipeline load**
-3. **Prometheus query load**
+2.**RAG pipeline load**3.**Prometheus query load**
 
 **Критерии завершения:**
 
@@ -588,38 +586,37 @@ export default function () {
 
 ### Task 4.1: SLI/SLO Definition (P3)
 
-**Приоритет:** P3 - LOW **Сроки:** 1 месяц **Ответственный:** SRE **Статус:** ⚠️
-BACKLOG
+**Приоритет:**P3 - LOW**Сроки:**1 месяц**Ответственный:**SRE**Статус:**BACKLOG
 
-**Цель:** Формализовать service level objectives
+**Цель:**Формализовать service level objectives
 
 **SLI Definition:**
 
 ```yaml
 # docs/operations/sli-slo.yml
 slos:
-  - name: API Availability
-    sli: ratio of successful requests to total requests
-    formula:
-      (count(http_requests_total{code=~"2.."}) / count(http_requests_total)) *
-      100
-    target: 99.9%
-    window: 30d
-    error_budget: 43m per month
+ - name: API Availability
+ sli: ratio of successful requests to total requests
+ formula:
+ (count(http_requests_total{code=~"2.."}) / count(http_requests_total)) *
+ 100
+ target: 99.9%
+ window: 30d
+ error_budget: 43m per month
 
-  - name: API Latency
-    sli: p99 response time
-    formula: histogram_quantile(0.99, http_request_duration_seconds_bucket)
-    target: <1000ms
-    window: 30d
+ - name: API Latency
+ sli: p99 response time
+ formula: histogram_quantile(0.99, http_request_duration_seconds_bucket)
+ target: <1000ms
+ window: 30d
 
-  - name: Error Rate
-    sli: ratio of 5xx responses
-    formula:
-      (sum(rate(http_requests_total{code=~"5.."}[5m])) /
-      sum(rate(http_requests_total[5m]))) * 100
-    target: <0.1%
-    window: 30d
+ - name: Error Rate
+ sli: ratio of 5xx responses
+ formula:
+ (sum(rate(http_requests_total{code=~"5.."}[5m])) /
+ sum(rate(http_requests_total[5m]))) * 100
+ target: <0.1%
+ window: 30d
 ```
 
 **Критерии завершения:**
@@ -633,10 +630,10 @@ slos:
 
 ### Task 4.2: Kubernetes Migration (P4)
 
-**Приоритет:** P4 - BACKLOG **Сроки:** 6 месяцев **Ответственный:** DevOps Lead
-**Статус:** ⚠️ BACKLOG
+**Приоритет:**P4 - BACKLOG**Сроки:**6 месяцев**Ответственный:**DevOps Lead
+**Статус:**BACKLOG
 
-**Цель:** Миграция с Docker Compose на Kubernetes
+**Цель:**Миграция с Docker Compose на Kubernetes
 
 **Benefits:**
 
@@ -648,10 +645,8 @@ slos:
 
 **Этапы:**
 
-1. **Proof of Concept (1 месяц)**
-2. **Helm charts разработка (2 месяца)**
-3. **Staging migration (1 месяц)**
-4. **Production migration (2 месяца)**
+1.**Proof of Concept (1 месяц)**2.**Helm charts разработка (2
+месяца)**3.**Staging migration (1 месяц)**4.**Production migration (2 месяца)**
 
 **Критерии завершения:**
 
@@ -675,11 +670,11 @@ slos:
 
 ### Milestones
 
-- [ ] **Milestone 1:** Критические фиксы (Week 1)
-- [ ] **Milestone 2:** Production unblocked (Week 2)
-- [ ] **Milestone 3:** Network segmentation (Week 4)
-- [ ] **Milestone 4:** SOPS + JWT rotation (Month 2)
-- [ ] **Milestone 5:** Load tests + SLI/SLO (Month 3)
+- [ ]**Milestone 1:**Критические фиксы (Week 1)
+- [ ]**Milestone 2:**Production unblocked (Week 2)
+- [ ]**Milestone 3:**Network segmentation (Week 4)
+- [ ]**Milestone 4:**SOPS + JWT rotation (Month 2)
+- [ ]**Milestone 5:**Load tests + SLI/SLO (Month 3)
 
 ---
 
@@ -719,4 +714,4 @@ slos:
 
 ---
 
-**Статус:** ACTIVE **Следующий review:** 2025-12-04
+**Статус:**ACTIVE**Следующий review:**2025-12-04

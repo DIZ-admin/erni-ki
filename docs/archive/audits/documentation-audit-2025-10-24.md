@@ -6,8 +6,8 @@ doc_version: '2025.11'
 
 # КОМПЛЕКСНАЯ РЕВИЗИЯ ДОКУМЕНТАЦИИ ERNI-KI
 
-**Дата проведения:** 2025-10-24 **Версия системы:** Production Ready v12.0
-**Статус системы:** 30/30 сервисов Healthy **Аудитор:** Augment Agent
+**Дата проведения:**2025-10-24**Версия системы:**Production Ready v12.0**Статус
+системы:**30/30 сервисов Healthy**Аудитор:**Augment Agent
 
 ---
 
@@ -26,20 +26,20 @@ doc_version: '2025.11'
 
 ### Критические проблемы
 
-1. ** Отсутствует документация новых компонентов (октябрь 2024)**
+1.**Отсутствует документация новых компонентов (октябрь 2024)**
 
 - Prometheus alerts.yml (18 новых правил)
 - Автоматизация PostgreSQL VACUUM
 - Автоматизация Docker cleanup
 - Обновленная конфигурация node-exporter
 
-2. ** Устаревшие версии в документации**
+  2.**Устаревшие версии в документации**
 
 - Prometheus: документация указывает v2.55.1, реально v3.0.1
 - Loki: документация указывает v2.9.2, реально v3.5.5
 - Fluent Bit: документация указывает v2.2.0, реально v3.2.0
 
-3. **[WARNING] Несоответствия между кодом и документацией**
+  3.**[WARNING] Несоответствия между кодом и документацией**
 
 - Количество сервисов: документация корректна (30)
 - Cron jobs: документация не отражает 2 новых задачи
@@ -89,7 +89,7 @@ doc_version: '2025.11'
 | `docs/locales/de/monitoring-guide.md`  | Версии мониторинга устарели      | 1 месяц    |
 | `docs/locales/de/services-overview.md` | Отсутствуют новые сервисы        | 1 месяц    |
 
-**Рекомендация:** Синхронизировать с основной документацией после её обновления.
+**Рекомендация:**Синхронизировать с основной документацией после её обновления.
 
 ### 3. ОТЧЕТЫ И АУДИТЫ (docs/archive/reports/)
 
@@ -123,78 +123,73 @@ doc_version: '2025.11'
 
 ### КРИТИЧЕСКИЕ (требуют немедленного исправления)
 
-1. **README.md - Устаревшие версии мониторинга**
+1.**README.md - Устаревшие версии мониторинга**
 
-- **Строка:** ~13
-- **Текущее:** "Prometheus v2.47.2, Loki v2.9.2, Fluent Bit v2.2.0"
-- **Должно быть:** "Prometheus v3.0.1, Loki v3.5.5, Fluent Bit v3.2.0"
-- **Файл:** `README.md`
+-**Строка:**~13 -**Текущее:**"Prometheus v2.47.2, Loki v2.9.2, Fluent Bit
+v2.2.0" -**Должно быть:**"Prometheus v3.0.1, Loki v3.5.5, Fluent Bit
+v3.2.0" -**Файл:**`README.md`
 
-2. **monitoring-guide.md - Устаревшая версия Prometheus**
+2.**monitoring-guide.md - Устаревшая версия Prometheus**
 
-- **Строка:** ~12
-- **Текущее:** "Prometheus v2.55.1"
-- **Должно быть:** "Prometheus v3.0.1"
-- **Файл:** `docs/operations/monitoring/monitoring-guide.md`
+-**Строка:**~12 -**Текущее:**"Prometheus v2.55.1" -**Должно быть:**"Prometheus
+v3.0.1" -**Файл:**`docs/operations/monitoring/monitoring-guide.md`
 
-3. **monitoring-guide.md - Отсутствует alerts.yml**
+3.**monitoring-guide.md - Отсутствует alerts.yml**
 
-- **Проблема:** Нет раздела о новых 18 alert rules
-- **Должно быть:** Добавить раздел "Prometheus Alerts Configuration"
-- **Файл:** `docs/operations/monitoring/monitoring-guide.md`
+-**Проблема:**Нет раздела о новых 18 alert rules -**Должно быть:**Добавить
+раздел "Prometheus Alerts
+Configuration" -**Файл:**`docs/operations/monitoring/monitoring-guide.md`
 
-4. **architecture.md - Устаревшие версии**
+4.**architecture.md - Устаревшие версии**
 
-- **Строки:** 26-31
-- **Текущее:** Старые версии Prometheus/Loki/Fluent Bit
-- **Должно быть:** Обновить до v3.0.1/v3.5.5/v3.2.0
-- **Файл:** `docs/architecture/architecture.md`
+-**Строки:**26-31 -**Текущее:**Старые версии Prometheus/Loki/Fluent
+Bit -**Должно быть:**Обновить до
+v3.0.1/v3.5.5/v3.2.0 -**Файл:**`docs/architecture/architecture.md`
 
 ### ВАЖНЫЕ (требуют обновления в течение недели)
 
-5. **admin-guide.md - Отсутствуют cron jobs**
+5.**admin-guide.md - Отсутствуют cron jobs**
 
-- **Проблема:** Нет информации о PostgreSQL VACUUM и Docker cleanup
-- **Должно быть:** Добавить раздел "Automated Maintenance Tasks"
-- **Файл:** `docs/operations/core/admin-guide.md`
+-**Проблема:**Нет информации о PostgreSQL VACUUM и Docker cleanup -**Должно
+быть:**Добавить раздел "Automated Maintenance
+Tasks" -**Файл:**`docs/operations/core/admin-guide.md`
 
-6. **configuration-guide.md - Устаревшие примеры**
+6.**configuration-guide.md - Устаревшие примеры**
 
-- **Проблема:** Примеры конфигураций не соответствуют текущим
-- **Должно быть:** Обновить примеры из conf/
-- **Файл:** `docs/getting-started/configuration-guide.md`
+-**Проблема:**Примеры конфигураций не соответствуют текущим -**Должно
+быть:**Обновить примеры из
+conf/ -**Файл:**`docs/getting-started/configuration-guide.md`
 
-7. **services-overview.md - Отсутствует информация о healthchecks**
+7.**services-overview.md - Отсутствует информация о healthchecks**
 
-- **Проблема:** Нет информации о статусе healthcheck для всех сервисов
-- **Должно быть:** Добавить колонку "Healthcheck Status"
-- **Файл:** `docs/architecture/services-overview.md`
+-**Проблема:**Нет информации о статусе healthcheck для всех сервисов -**Должно
+быть:**Добавить колонку "Healthcheck
+Status" -**Файл:**`docs/architecture/services-overview.md`
 
-8. **Немецкая локализация - Отставание на 1-2 месяца**
+8.**Немецкая локализация - Отставание на 1-2 месяца**
 
-- **Проблема:** docs/locales/de/ не синхронизирована с docs/
-- **Должно быть:** Синхронизировать все изменения
-- **Файлы:** `docs/locales/de/*.md`
+-**Проблема:**docs/locales/de/ не синхронизирована с docs/ -**Должно
+быть:**Синхронизировать все изменения -**Файлы:**`docs/locales/de/*.md`
 
 ### РЕКОМЕНДАЦИИ (можно выполнить позже)
 
-9. **Создать новый файл: prometheus-alerts-guide.md**
+9.**Создать новый файл: prometheus-alerts-guide.md**
 
-- **Содержание:** Документация 18 alert rules из alerts.yml
-- **Разделы:** Critical alerts, Performance alerts, Configuration
-- **Файл:** `docs/prometheus-alerts-guide.md` (новый)
+-**Содержание:**Документация 18 alert rules из alerts.yml -**Разделы:**Critical
+alerts, Performance alerts,
+Configuration -**Файл:**`docs/prometheus-alerts-guide.md` (новый)
 
-10. **Создать новый файл: automated-maintenance-guide.md**
+10.**Создать новый файл: automated-maintenance-guide.md**
 
-- **Содержание:** PostgreSQL VACUUM, Docker cleanup, Log rotation
-- **Разделы:** Cron jobs, Scripts, Monitoring
-- **Файл:** `docs/operations/automation/automated-maintenance-guide.md` (новый)
+-**Содержание:**PostgreSQL VACUUM, Docker cleanup, Log
+rotation -**Разделы:**Cron jobs, Scripts,
+Monitoring -**Файл:**`docs/operations/automation/automated-maintenance-guide.md`
+(новый)
 
-11. **Обновить Mermaid диаграммы**
+11.**Обновить Mermaid диаграммы**
 
-- **Проблема:** Диаграммы не отражают новые компоненты
-- **Должно быть:** Добавить alerts.yml, cron jobs
-- **Файл:** `docs/architecture/architecture.md`
+-**Проблема:**Диаграммы не отражают новые компоненты -**Должно быть:**Добавить
+alerts.yml, cron jobs -**Файл:**`docs/architecture/architecture.md`
 
 ---
 
@@ -202,19 +197,19 @@ doc_version: '2025.11'
 
 ### ЭТАП 1: Критические обновления (сегодня, ~2 часа)
 
-1. **Обновить README.md**
+1.**Обновить README.md**
 
 - Версии мониторинга: Prometheus v3.0.1, Loki v3.5.5, Fluent Bit v3.2.0
 - Добавить информацию о 18 alert rules
 - Обновить статус системы (дата 2025-10-24)
 
-2. **Обновить docs/operations/monitoring/monitoring-guide.md**
+  2.**Обновить docs/operations/monitoring/monitoring-guide.md**
 
 - Версия Prometheus v2.55.1 → v3.0.1
 - Добавить раздел "Prometheus Alerts Configuration"
 - Документировать 18 alert rules из alerts.yml
 
-3. **Обновить docs/architecture/architecture.md**
+  3.**Обновить docs/architecture/architecture.md**
 
 - Версии мониторинга в разделе "Последние обновления"
 - Обновить Mermaid диаграмму с alerts.yml
@@ -222,26 +217,26 @@ doc_version: '2025.11'
 
 ### ЭТАП 2: Важные обновления (эта неделя, ~4 часа)
 
-4. **Создать docs/prometheus-alerts-guide.md**
+4.**Создать docs/prometheus-alerts-guide.md**
 
 - Детальная документация всех 18 alert rules
 - Примеры конфигурации
 - Troubleshooting
 
-5. **Создать docs/operations/automation/automated-maintenance-guide.md**
+  5.**Создать docs/operations/automation/automated-maintenance-guide.md**
 
 - PostgreSQL VACUUM automation
 - Docker cleanup automation
 - Log rotation
 - Cron jobs management
 
-6. **Обновить docs/operations/core/admin-guide.md**
+  6.**Обновить docs/operations/core/admin-guide.md**
 
 - Добавить раздел "Automated Maintenance"
 - Ссылки на новые руководства
 - Примеры команд
 
-7. **Обновить docs/getting-started/configuration-guide.md**
+  7.**Обновить docs/getting-started/configuration-guide.md**
 
 - Актуализировать примеры конфигураций
 - Добавить Redis ACL
@@ -249,7 +244,7 @@ doc_version: '2025.11'
 
 ### ЭТАП 3: Синхронизация локализаций (следующая неделя, ~6 часов)
 
-8. **Синхронизировать docs/locales/de/**
+8.**Синхронизировать docs/locales/de/**
 
 - Перевести все обновления на немецкий
 - Проверить консистентность терминологии
@@ -257,12 +252,12 @@ doc_version: '2025.11'
 
 ### ЭТАП 4: Дополнительные улучшения (по мере необходимости)
 
-9. **Обновить docs/reference/api-reference.md**
+9.**Обновить docs/reference/api-reference.md**
 
 - Проверить актуальность эндпоинтов
 - Добавить новые API endpoints
 
-10. **Обновить docs/reference/development.md**
+  10.**Обновить docs/reference/development.md**
 
 - Актуализировать инструкции по разработке
 - Добавить информацию о pre-commit hooks
@@ -360,7 +355,7 @@ docs/
 - Log Rotation (автоматическая)
 - Обновлена информация о Prometheus alerts в разделе "Monitoring & Operations"
 
-**Результат:** Все версии актуальны, новые компоненты документированы
+**Результат:**Все версии актуальны, новые компоненты документированы
 
 #### 2. docs/operations/monitoring/monitoring-guide.md - Обновлено
 
@@ -375,7 +370,7 @@ docs/
 - Команды для просмотра и тестирования alerts
 - Процедуры обслуживания
 
-**Результат:** Полная документация мониторинга и алертов
+**Результат:**Полная документация мониторинга и алертов
 
 #### 3. docs/architecture/architecture.md - Обновлено
 
@@ -388,7 +383,7 @@ docs/
 - Оптимизация Node Exporter
 - Освобождение 20GB дискового пространства
 
-**Результат:** Архитектура отражает текущее состояние системы
+**Результат:**Архитектура отражает текущее состояние системы
 
 ### Этап 2: Новая документация (ЗАВЕРШЕН)
 
@@ -408,7 +403,7 @@ docs/
 - Performance Alerts (3 alerts)
 - Alert Management (viewing, testing, silencing)
 
-**Объем:** 300+ строк **Результат:** Полная справочная документация по alerts
+**Объем:**300+ строк**Результат:**Полная справочная документация по alerts
 
 #### 5. docs/operations/automation/automated-maintenance-guide.md - СОЗДАН
 
@@ -425,7 +420,7 @@ docs/
 - Примеры команд и скриптов
 - Success criteria и мониторинг
 
-**Объем:** 300+ строк **Результат:** Полное руководство по автоматизации
+**Объем:**300+ строк**Результат:**Полное руководство по автоматизации
 
 #### 6. docs/archive/reports/documentation-audit-2025-10-24.md - СОЗДАН
 
@@ -438,7 +433,7 @@ docs/
 - Таблица "До/После"
 - Рекомендации по улучшению структуры
 
-**Объем:** 300+ строк **Результат:** Полный отчет о ревизии документации
+**Объем:**300+ строк**Результат:**Полный отчет о ревизии документации
 
 ### Статистика выполнения
 
@@ -473,7 +468,7 @@ docs/
 - `docs/locales/de/monitoring-guide.md` - Добавить раздел о Prometheus Alerts
 - Создать немецкие версии новых руководств
 
-**Оценка времени:** ~6 часов
+**Оценка времени:**~6 часов
 
 #### Этап 4: Дополнительные улучшения (по мере необходимости)
 
@@ -483,7 +478,7 @@ docs/
   примеры
 - Проверить `docs/reference/api-reference.md` - Актуальность эндпоинтов
 
-**Оценка времени:** ~2 часа
+**Оценка времени:**~2 часа
 
 ---
 
@@ -501,19 +496,19 @@ docs/
 
 ### Ключевые достижения
 
-1. **Все критические несоответствия устранены**
+1.**Все критические несоответствия устранены**
 
 - Версии Prometheus/Loki/Fluent Bit обновлены
 - Новые компоненты (alerts, automation) документированы
 - README и architecture.md актуализированы
 
-2. **Создана comprehensive документация**
+  2.**Создана comprehensive документация**
 
 - Prometheus Alerts Guide (18 alerts детально описаны)
 - Automated Maintenance Guide (5 automation компонентов)
 - Documentation Audit Report (47 несоответствий выявлено)
 
-3. **Улучшена структура документации**
+  3.**Улучшена структура документации**
 
 - Добавлено 900+ строк новой документации
 - Созданы 3 новых руководства
@@ -521,19 +516,19 @@ docs/
 
 ### Рекомендации на будущее
 
-1. **Автоматизировать проверку документации**
+1.**Автоматизировать проверку документации**
 
 - Pre-commit hook для проверки версий
 - CI/CD pipeline для валидации ссылок
 - Автоматическое обновление дат
 
-2. **Внедрить систему версионирования**
+  2.**Внедрить систему версионирования**
 
 - Добавить версию в каждый файл
 - Использовать CHANGELOG.md
 - Отслеживать изменения
 
-3. **Синхронизировать локализации**
+  3.**Синхронизировать локализации**
 
 - Обновить docs/locales/de/ в течение недели
 - Проверить консистентность терминологии
@@ -541,6 +536,6 @@ docs/
 
 ---
 
-**Подготовлено:** Augment Agent **Дата начала:** 2025-10-24 08:30 UTC **Дата
-завершения:** 2025-10-24 09:15 UTC **Время выполнения:** ~45 минут **Следующий
-аудит:** 2025-11-24
+**Подготовлено:**Augment Agent**Дата начала:**2025-10-24 08:30 UTC**Дата
+завершения:**2025-10-24 09:15 UTC**Время выполнения:**~45 минут**Следующий
+аудит:**2025-11-24

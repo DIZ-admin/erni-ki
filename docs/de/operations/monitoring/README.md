@@ -14,9 +14,9 @@ audience: 'administrators'
 
 Aktueller Stack (November 2025):
 
-- **Prometheus v3.0.0** + 20 Alert Rules
-- **Grafana v11.3.0**, **Loki v3.0.0**, **Fluent Bit v3.1.0**
-- **Alertmanager v0.27.0** inkl. Queue-Watchdog
+-**Prometheus v3.0.0**+ 20 Alert Rules -**Grafana v11.3.0**,**Loki
+v3.0.0**,**Fluent Bit v3.1.0**-**Alertmanager v0.27.0**inkl. Queue-Watchdog
+
 - Automatisierte Skripte:
   - `scripts/monitoring/alertmanager-queue-watch.sh`
   - `scripts/maintenance/docling-shared-cleanup.sh`
@@ -26,12 +26,11 @@ Aktueller Stack (November 2025):
 
 Weitere Details:
 
-- **Monitoring Guide (EN):** `docs/operations/monitoring-guide.md` –
-  Healthchecks, Ports, Exporter.
-- **Operations Handbook (EN):** `docs/operations/operations-handbook.md` – SLA,
-  on-call, cron-Aufgaben.
-- **Archive Diagnostics:** `docs/archive/diagnostics/README.md` – detaillierte
-  Server/RAG-Berichte.
+-**Monitoring Guide (EN):**`docs/operations/monitoring-guide.md` – Healthchecks,
+Ports, Exporter. -**Operations Handbook
+(EN):**`docs/operations/operations-handbook.md` – SLA, on-call,
+cron-Aufgaben. -**Archive Diagnostics:**`docs/archive/diagnostics/README.md` –
+detaillierte Server/RAG-Berichte.
 
 ## Beispielchecks
 

@@ -7,8 +7,8 @@ last_updated: '2025-11-28'
 
 # ERNI-KI User Guide
 
-> **Document Version:** 8.0 **Updated:** 2025-08-29 **Target Audience:** End
-> Users [TOC]
+> **Document Version:**8.0**Updated:**2025-08-29**Target Audience:**End Users
+> [TOC]
 
 ## Introduction
 
@@ -19,11 +19,11 @@ with GPU acceleration and enterprise-grade performance.
 
 ### Current System Status (v8.0 - 2025-08-29)
 
-- **Full Functionality**: 33/33 containers Healthy
-- **External Access**: All 5 domains active (Cloudflare tunnels restored)
-- **Performance**: System response time <0.01 seconds
-- **AI Capabilities**: 9 Ollama models with GPU acceleration (25% utilization)
-- **RAG Search**: SearXNG integration with 6+ sources (<2s response)
+-**Full Functionality**: 33/33 containers Healthy -**External Access**: All 5
+domains active (Cloudflare tunnels restored) -**Performance**: System response
+time <0.01 seconds -**AI Capabilities**: 9 Ollama models with GPU acceleration
+(25% utilization) -**RAG Search**: SearXNG integration with 6+ sources (<2s
+response)
 
 ## First Steps
 
@@ -37,33 +37,30 @@ with GPU acceleration and enterprise-grade performance.
 
 The main interface consists of:
 
-- **Sidebar** - chat list and settings
-- **Central Area** - chat window with AI
-- **Input Field** - message field and action buttons
-- **Top Bar** - model selection and additional settings
+-**Sidebar**- chat list and settings -**Central Area**- chat window with
+AI -**Input Field**- message field and action buttons -**Top Bar**- model
+selection and additional settings
 
 ## Working with Chats
 
 ### Creating a New Chat
 
-1. Click **"+ New Chat"** in the sidebar
+1. Click**"+ New Chat"**in the sidebar
 2. Select a language model from the dropdown list
 3. Enter your first question or prompt
-4. Press **Enter** or the send button
+4. Press**Enter**or the send button
 
 ### Managing Chats
 
-- **Rename**: Click on chat title → "Rename"
-- **Delete**: Click the trash icon next to the chat
-- **Archive**: Move old chats to archive
-- **Search**: Use search to quickly find chats
+-**Rename**: Click on chat title → "Rename" -**Delete**: Click the trash icon
+next to the chat -**Archive**: Move old chats to archive -**Search**: Use search
+to quickly find chats
 
 ### Message Types
 
-- **Text Messages** - standard communication with AI
-- **System Prompts** - special instructions for AI
-- **Files and Documents** - upload for analysis (up to 100MB)
-- **Images** - image analysis and description
+-**Text Messages**- standard communication with AI -**System Prompts**- special
+instructions for AI -**Files and Documents**- upload for analysis (up to
+100MB) -**Images**- image analysis and description
 
 ## Search and RAG
 
@@ -71,8 +68,8 @@ The main interface consists of:
 
 1. Enter a query in chat that requires up-to-date information
 2. AI will automatically perform an internet search
-3. Results will be integrated into the response
-4. **Performance**: <2s response time, result caching
+3. Results will be integrated into the response 4.**Performance**: <2s response
+   time, result caching
 
 ### Document Search
 
@@ -92,16 +89,13 @@ The main interface consists of:
 
 ### Supported Formats
 
-- **Text**: PDF, DOCX, TXT, MD, RTF
-- **Images**: PNG, JPG, JPEG, GIF (with OCR)
-- **Presentations**: PPTX, ODP
-- **Spreadsheets**: XLSX, CSV, ODS
+-**Text**: PDF, DOCX, TXT, MD, RTF -**Images**: PNG, JPG, JPEG, GIF (with
+OCR) -**Presentations**: PPTX, ODP -**Spreadsheets**: XLSX, CSV, ODS
 
 ### OCR and Multilingual Support
 
-- **Supported Languages**: English, German, French, Italian
-- **Automatic Language Detection**: Enabled
-- **High-Quality Recognition**: EasyOCR technology
+-**Supported Languages**: English, German, French, Italian -**Automatic Language
+Detection**: Enabled -**High-Quality Recognition**: EasyOCR technology
 
 ## Voice Functions
 
@@ -123,39 +117,34 @@ The main interface consists of:
 
 ### Model Settings
 
-- **Temperature**: Controls response creativity (0.1-2.0)
-- **Max Length**: Response length limit
-- **Top-p**: Controls response diversity
-- **System Prompt**: Base instructions for AI
+-**Temperature**: Controls response creativity (0.1-2.0) -**Max Length**:
+Response length limit -**Top-p**: Controls response diversity -**System
+Prompt**: Base instructions for AI
 
 ### Interface Settings
 
-- **Theme**: Light/Dark interface theme
-- **Language**: Interface language selection
-- **Notifications**: Push notification settings
-- **Auto-save**: Automatic chat saving
+-**Theme**: Light/Dark interface theme -**Language**: Interface language
+selection -**Notifications**: Push notification settings -**Auto-save**:
+Automatic chat saving
 
 ### Performance Settings
 
-- **Caching**: Enable search query caching
-- **Preloading**: Model preloading
-- **Optimization**: Settings for slow connections
+-**Caching**: Enable search query caching -**Preloading**: Model
+preloading -**Optimization**: Settings for slow connections
 
 ## Monitoring and Statistics
 
 ### Personal Statistics
 
-- **Chat Count**: Total number of created chats
-- **Messages**: Number of sent messages
-- **Usage Time**: Total system usage time
-- **Favorite Models**: Most used models
+-**Chat Count**: Total number of created chats -**Messages**: Number of sent
+messages -**Usage Time**: Total system usage time -**Favorite Models**: Most
+used models
 
 ### System Information
 
-- **Service Status**: Availability of all system components
-- **Performance**: Response time and system load
-- **Available Models**: List of active language models
-- **System Version**: Current ERNI-KI version
+-**Service Status**: Availability of all system components -**Performance**:
+Response time and system load -**Available Models**: List of active language
+models -**System Version**: Current ERNI-KI version
 
 ### RAG Panels (Grafana)
 
@@ -169,10 +158,9 @@ The main interface consists of:
 
 ### Data Protection
 
-- **Local Storage**: All data stored locally
-- **Encryption**: SSL/TLS encryption for all traffic
-- **Backups**: Automatic backups every 24 hours
-- **Access Control**: JWT authentication
+-**Local Storage**: All data stored locally -**Encryption**: SSL/TLS encryption
+for all traffic -**Backups**: Automatic backups every 24 hours -**Access
+Control**: JWT authentication
 
 ### Security Recommendations
 
@@ -213,10 +201,9 @@ The main interface consists of:
 
 ### Getting Help
 
-- **Documentation**: Full documentation in Help section
-- **FAQ**: Frequently Asked Questions
-- **Technical Support**: Contact system administrator
-- **Community**: ERNI-KI user forum
+-**Documentation**: Full documentation in Help section -**FAQ**: Frequently
+Asked Questions -**Technical Support**: Contact system
+administrator -**Community**: ERNI-KI user forum
 
 ## Tips for Effective Use
 

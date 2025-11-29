@@ -12,7 +12,7 @@ audience: 'administrators'
 
 # Nginx Konfigurationsleitfaden - ERNI-KI
 
-> **Version:** 9.0 | **Datum:** 2025-09-11 | **Status:** Production Ready [TOC]
+> **Version:**9.0 |**Datum:**2025-09-11 |**Status:**Production Ready [TOC]
 
 ## Überblick
 
@@ -262,17 +262,17 @@ netstat -tlnp | grep nginx
 
 ### Häufige Probleme
 
-1. **404 bei API-Endpunkten**
+1.**404 bei API-Endpunkten**
 
 - Include-Dateien im Container überprüfen
 - Korrektheit der Upstream-Blöcke sicherstellen
 
-2. **WebSocket-Verbindungen funktionieren nicht**
+  2.**WebSocket-Verbindungen funktionieren nicht**
 
 - websocket-common.conf überprüfen
 - Vorhandensein der Upgrade-Header sicherstellen
 
-3. **SSL-Fehler bei localhost**
+  3.**SSL-Fehler bei localhost**
 
 - ssl_verify_client off überprüfen
 - Korrektheit der CSP-Richtlinie sicherstellen
@@ -292,16 +292,12 @@ docker exec erni-ki-nginx-1 ls -la /etc/nginx/includes/
 
 ## Leistungsmetriken
 
-- **API-Antwortzeit:** <2 Sekunden
-- **WebSocket-Latenz:** <50ms
-- **SSL-Handshake:** <100ms
-- **Cache-Hit-Rate:** >80%
-- **Rate Limiting:** 60 req/s für SearXNG API
+-**API-Antwortzeit:**<2
+Sekunden -**WebSocket-Latenz:**<50ms -**SSL-Handshake:**<100ms -**Cache-Hit-Rate:**>80% -**Rate
+Limiting:**60 req/s für SearXNG API
 
 ## Sicherheit
 
-- **SSL/TLS:** TLSv1.2, TLSv1.3
-- **HSTS:** max-age=31536000
-- **CSP:** Für localhost und Production optimiert
-- **Rate Limiting:** Schutz vor DDoS-Angriffen
-- **CORS:** Für erlaubte Domains konfiguriert
+-**SSL/TLS:**TLSv1.2, TLSv1.3 -**HSTS:**max-age=31536000 -**CSP:**Für localhost
+und Production optimiert -**Rate Limiting:**Schutz vor
+DDoS-Angriffen -**CORS:**Für erlaubte Domains konfiguriert
