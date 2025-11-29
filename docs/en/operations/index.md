@@ -72,7 +72,7 @@ See [monitoring-guide.md](../../operations/monitoring/monitoring-guide.md) (RU).
 
 - [Architecture Overview](../architecture/index.md)
 - [Getting Started](../getting-started/index.md)
-- [Security Guide](../../security/README.md) (RU)
+- [Security Guide](../../security/index.md) (RU)
 
 ## Version
 
