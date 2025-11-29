@@ -14,7 +14,7 @@ import json
 import logging
 import sys
 from datetime import datetime
-from typing import Any
+from pathlib import Path
 
 
 class ColoredFormatter(logging.Formatter):
@@ -116,23 +116,27 @@ def get_logger(
     return logger
 
 
-def log_to_file(logger: logging.Logger, file_path: str | Any) -> None:
+def log_to_file(logger: logging.Logger, file_path: str | Path) -> None:
     """
     Add file handler to logger.
 
     Args:
         logger: Logger instance to add file handler to
         file_path: Path to log file (string or Path object)
+
+    Raises:
+        OSError: If unable to create log file or parent directories
     """
-    file_path_str = str(file_path)
+    file_path_obj = Path(file_path)
 
-    # Create parent directories if needed
-    import os
+    try:
+        # Create parent directories if needed
+        file_path_obj.parent.mkdir(parents=True, exist_ok=True)
 
-    os.makedirs(os.path.dirname(file_path_str) or ".", exist_ok=True)
-
-    file_handler = logging.FileHandler(file_path_str)
-    file_handler.setLevel(logger.level)
-    file_formatter = JSONFormatter()
-    file_handler.setFormatter(file_formatter)
-    logger.addHandler(file_handler)
+        file_handler = logging.FileHandler(str(file_path_obj))
+        file_handler.setLevel(logger.level)
+        file_formatter = JSONFormatter()
+        file_handler.setFormatter(file_formatter)
+        logger.addHandler(file_handler)
+    except OSError as e:
+        logger.error("Failed to setup file logging at %s: %s", file_path_obj, e)

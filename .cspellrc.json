@@ -54,7 +54,15 @@
     "homedir",
     "sighandler",
     "SIGTERM",
-    "autoreload"
+    "autoreload",
+    "enddate",
+    "erni",
+    "fullchain",
+    "gruppe",
+    "journalctl",
+    "noout",
+    "oneshot",
+    "reloadcmd"
   ],
   "ignoreWords": ["erni", "litellm", "searxng", "ollama", "openwebui", "kubernetes", "dockerfile"],
   "dictionaries": ["en", "technical", "node"],
