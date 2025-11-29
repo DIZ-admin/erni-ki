@@ -3,6 +3,12 @@
 # Historical entry point kept for compatibility. Generates a markdown report.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 TARGET="$SCRIPT_DIR/health-monitor.sh"
 
 REPORT_FILE="diagnostic-report-$(date '+%Y-%m-%d_%H-%M-%S').md"

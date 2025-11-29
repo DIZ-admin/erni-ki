@@ -8,6 +8,12 @@
 # ===================================================================
 
 echo "🔍 === ERNI-KI Post-WebSocket Fix Monitor ==="
+
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 echo "📅 Date: $(date)"
 echo "⏰ Analysis time: $(date '+%H:%M:%S')"
 echo ""
