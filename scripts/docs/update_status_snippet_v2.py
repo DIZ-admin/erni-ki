@@ -406,8 +406,8 @@ def main() -> None:
             run_check()
         else:
             run_update()
-    except Exception as exc:
-        logger.exception("Fatal error occurred: %s", exc)
+    except Exception:
+        logger.exception("Fatal error occurred")
         sys.exit(1)
 
 

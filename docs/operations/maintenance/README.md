@@ -4,9 +4,9 @@ doc_version: '2025.11'
 translation_status: pending
 ---
 
-# russische Version
+# Русская версия
 
-> **This is a placeholder document.**
+> This is a placeholder document.
 >
 > This file was automatically generated to fix broken links. Please update with
 > actual content.

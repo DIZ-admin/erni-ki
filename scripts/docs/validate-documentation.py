@@ -157,8 +157,10 @@ def validate_file(file_path: Path, result: ValidationResult) -> bool:
 
 
 def main() -> None:
-    """Main entry point."""
     parser = argparse.ArgumentParser(description="Validate ERNI-KI documentation")
+    # TODO: Implement auto-fix functionality
+    # parser.add_argument("--fix", action="store_true", help="Auto-fix issues where possible")
+    parser.add_argument("--report", type=str, help="Save report to JSON file")
     # TODO: Implement auto-fix functionality before enabling this flag.
     # parser.add_argument("--fix", action="store_true", help="Auto-fix issues where possible")
     parser.add_argument("--report", type=str, help="Save report to JSON file")

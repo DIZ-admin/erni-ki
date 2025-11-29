@@ -53,7 +53,7 @@ curl -s http://localhost:8080/health
 curl -s http://localhost:11434/api/tags | jq -r '.models[0].name'
 
 # LiteLLM health (требует API key)
-curl -s -H "Authorization: Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb" \
+curl -s -H "Authorization: Bearer YOUR_LITELLM_API_KEY" \
  http://localhost:4000/health
 
 # PostgreSQL connectivity
