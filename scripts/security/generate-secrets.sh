@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 # Generate secure random secrets for ERNI-KI
 # Part of ERNI-KI security hardening
 # Reference: docs/security/secrets-audit-2025-11-27.md
-
-log() {
-  echo "[generate-secrets] $*" >&2
-}
 
 generate_secret() {
   local name=$1
@@ -17,7 +18,7 @@ generate_secret() {
   if [[ -f "$file" ]]; then
     read -rp "⚠️  $file already exists. Overwrite? [y/N] " response
     if [[ ! "$response" =~ ^[Yy]$ ]]; then
-      log "Skipped: $name"
+      log_info "Skipped: $name"
       return
     fi
   fi
@@ -26,22 +27,22 @@ generate_secret() {
   openssl rand -base64 "$length" | tr -d '\n' > "$file"
   chmod 600 "$file"
 
-  log "✅ Generated: $file (${length} bytes)"
+  log_info "✅ Generated: $file (${length} bytes)"
 }
 
 main() {
-  log "ERNI-KI Secret Generation Tool"
-  log "================================"
-  log ""
+  log_info "ERNI-KI Secret Generation Tool"
+  log_info "================================"
+  log_info ""
 
   if [[ ! -d "secrets" ]]; then
-    log "Error: secrets/ directory not found"
-    log "Run this script from project root"
+    log_info "Error: secrets/ directory not found"
+    log_info "Run this script from project root"
     exit 1
   fi
 
-  log "Generating secrets..."
-  log ""
+  log_info "Generating secrets..."
+  log_info ""
 
   # Database secrets
   generate_secret "postgres_password" 32
@@ -59,14 +60,14 @@ main() {
   generate_secret "context7_api_key" 32
   generate_secret "watchtower_api_token" 32
 
-  log ""
-  log "✅ Secret generation complete"
-  log ""
-  log "Next steps:"
-  log "1. Update services with new secrets"
-  log "2. Restart affected services"
-  log "3. Verify functionality"
-  log "4. Document rotation in secrets-rotation-log.txt"
+  log_info ""
+  log_info "✅ Secret generation complete"
+  log_info ""
+  log_info "Next steps:"
+  log_info "1. Update services with new secrets"
+  log_info "2. Restart affected services"
+  log_info "3. Verify functionality"
+  log_info "4. Document rotation in secrets-rotation-log.txt"
 }
 
 main "$@"
