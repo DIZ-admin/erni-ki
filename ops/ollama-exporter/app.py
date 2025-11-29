@@ -33,12 +33,15 @@ _STOP_EVENT = threading.Event()
 def fetch_json(path: str) -> dict[str, Any] | None:
     """
     Retrieve and parse JSON from the Ollama API at the given path.
-    
+
     Parameters:
         path (str): API path appended to OLLAMA_URL (e.g., "/api/version").
-    
+
     Returns:
-        dict[str, Any] | None: Parsed JSON object from the response, or `None` if the request failed (timeout, connection error, HTTP error, or other request exceptions). Records request latency to OLLAMA_REQUEST_LATENCY on successful responses.
+        dict[str, Any] | None: Parsed JSON object from the response, or `None` if the
+        request failed (timeout, connection error, HTTP error, or other request
+        exceptions). Records request latency to OLLAMA_REQUEST_LATENCY on successful
+        responses.
     """
     url = f"{OLLAMA_URL}{path}"
     try:
@@ -64,13 +67,14 @@ def fetch_json(path: str) -> dict[str, Any] | None:
 def poll_forever() -> None:
     """
     Continuously polls the Ollama API and updates Prometheus metrics until stopped.
-    
+
     Polls the version and tags endpoints at regular intervals and updates the following metrics:
     - OLLAMA_UP: set to 1 when version data is retrieved, 0 otherwise.
     - OLLAMA_VERSION_INFO (labeled by version): sets the gauge for the reported version.
     - OLLAMA_INSTALLED_MODELS: set to the number of installed models when present in tags.
-    
-    The loop runs until the module-level _STOP_EVENT is set, and waits interruptibly between polls.
+
+    The loop runs until the module-level _STOP_EVENT is set, and waits
+    interruptibly between polls.
     """
     LOGGER.info(
         "Starting poller (url=%s, interval=%ss, timeout=%ss)",
@@ -105,9 +109,12 @@ def shutdown(signum: int, frame: Any) -> None:  # pylint: disable=unused-argumen
 
 def main() -> None:
     """
-    Start the Prometheus metrics server, register shutdown handlers, and run the background poller until termination.
-    
-    Registers SIGTERM and SIGINT to initiate a graceful shutdown, starts the HTTP metrics server on EXPORTER_PORT, launches the daemon poller thread, blocks until shutdown is signaled, and joins the poller before exiting.
+    Start the Prometheus metrics server, register shutdown handlers, and run the
+    background poller until termination.
+
+    Registers SIGTERM and SIGINT to initiate a graceful shutdown, starts the HTTP
+    metrics server on EXPORTER_PORT, launches the daemon poller thread, blocks
+    until shutdown is signaled, and joins the poller before exiting.
     """
     signal.signal(signal.SIGTERM, shutdown)
     signal.signal(signal.SIGINT, shutdown)

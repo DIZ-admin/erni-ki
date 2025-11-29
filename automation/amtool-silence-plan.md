@@ -23,16 +23,21 @@
 1. Подтвердить, что `alertmanager_cluster_messages_queued` < 100 минимум 60
    минут и нет новых алертов в `amtool alert query --active`.
 2. Снять тишины из блоков "Logging stack restored":
+
    ```bash
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire 1c0ccb58-8d0a-4beb-bd94-cdea3e7f77e1
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire 2600cbe5-74e4-4625-a8e3-14904fb9521e
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire a9064144-553f-47ba-a590-789037db503c
    ```
+
 3. Если стек стабилен, снять `RedisCriticalMemoryFragmentation`:
+
    ```bash
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire 92a53749-1762-4d7a-b78b-f36b0bc1b052
    ```
+
 4. Снять пакет cron/synthetic silences:
+
    ```bash
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire 96e54824-6622-41b3-af6e-26bc39bab564
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire 0befe00b-c7bd-4a1b-89fb-4bd79778849e
@@ -44,6 +49,7 @@
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire c0d80893-0293-4b7f-8d98-7212d1d58823
    docker compose exec alertmanager amtool --alertmanager.url=http://localhost:9093 silence expire 1ca3cbf3-42e9-4c92-bdc3-2524a489f62b
    ```
+
 5. После каждого блока проверять `amtool alert query --active` и
    `Grafana → Alertmanager Queue`.
 6. Логировать действия в Ops-канале и обновлять Runbook/incident log.
