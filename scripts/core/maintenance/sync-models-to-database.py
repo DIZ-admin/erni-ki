@@ -5,13 +5,21 @@ Sync models from Ollama and LiteLLM into OpenWebUI database
 """
 
 import json
+import logging
 import os
 import sys
 import uuid
 from datetime import datetime
+from typing import Any
 
 import psycopg2  # type: ignore[import-untyped]
+import psycopg2.extensions  # type: ignore[import-untyped]
 import requests  # type: ignore[import-untyped]
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
 def read_secret(secret_name: str) -> str | None:
@@ -26,7 +34,7 @@ def read_secret(secret_name: str) -> str | None:
     return None
 
 
-def get_database_connection():
+def get_database_connection() -> psycopg2.extensions.connection | None:
     """Get PostgreSQL connection"""
     database_url = os.environ.get("DATABASE_URL")
     if not database_url:
@@ -36,18 +44,21 @@ def get_database_connection():
         db_port = os.environ.get("OPENWEBUI_DB_PORT", "5432")
         password = read_secret("postgres_password")
         if not password:
-            print("❌ DATABASE_URL is not set and postgres_password secret is missing")
+            logger.error("DATABASE_URL is not set and postgres_password secret is missing")
             return None
         database_url = f"postgresql://{db_user}:{password}@{db_host}:{db_port}/{db_name}"
 
     try:
         return psycopg2.connect(database_url)
+    except psycopg2.OperationalError as e:
+        logger.error("Database connection error: %s", e)
+        return None
     except Exception as e:
-        print(f"❌ Database connection error: {e}")
+        logger.error("Unexpected error connecting to database: %s", e, exc_info=True)
         return None
 
 
-def get_ollama_models():
+def get_ollama_models() -> list[dict[str, Any]]:
     """Fetch models from Ollama"""
     try:
         response = requests.get("http://ollama:11434/api/tags", timeout=10)
@@ -68,18 +79,21 @@ def get_ollama_models():
                 )
             return models
         else:
-            print(f"⚠️ Ollama API returned status: {response.status_code}")
+            logger.warning("Ollama API returned status: %s", response.status_code)
             return []
-    except Exception as e:
-        print(f"❌ Failed to fetch Ollama models: {e}")
+    except requests.Timeout:
+        logger.error("Ollama API timeout")
+        return []
+    except requests.RequestException as e:
+        logger.error("Failed to fetch Ollama models: %s", e)
         return []
 
 
-def get_litellm_models():
+def get_litellm_models() -> list[dict[str, Any]]:
     """Fetch models from LiteLLM"""
     api_key = os.environ.get("LITELLM_API_KEY") or read_secret("litellm_api_key")
     if not api_key:
-        print("❌ LITELLM_API_KEY not set (env or secret)")
+        logger.error("LITELLM_API_KEY not set (env or secret)")
         return []
 
     try:
@@ -102,14 +116,17 @@ def get_litellm_models():
                 )
             return models
         else:
-            print(f"⚠️ LiteLLM API returned status: {response.status_code}")
+            logger.warning("LiteLLM API returned status: %s", response.status_code)
             return []
-    except Exception as e:
-        print(f"❌ Failed to fetch LiteLLM models: {e}")
+    except requests.Timeout:
+        logger.error("LiteLLM API timeout")
+        return []
+    except requests.RequestException as e:
+        logger.error("Failed to fetch LiteLLM models: %s", e)
         return []
 
 
-def sync_models_to_database(models):
+def sync_models_to_database(models: list[dict[str, Any]]) -> bool:
     """Sync models into database"""
     conn = get_database_connection()
     if not conn:
@@ -165,7 +182,7 @@ def sync_models_to_database(models):
                     ),
                 )
                 synced_count += 1
-                print(f"✅ Added model: {model['name']} ({model['provider']})")
+                logger.info("Added model: %s (%s)", model["name"], model["provider"])
             else:
                 # Update existing
                 params = {
@@ -182,52 +199,63 @@ def sync_models_to_database(models):
                 """,
                     (json.dumps(params), datetime.now(), model_id),
                 )
-                print(f"🔄 Updated model: {model['name']} ({model['provider']})")
+                logger.info("Updated model: %s (%s)", model["name"], model["provider"])
 
         conn.commit()
         cursor.close()
         conn.close()
 
-        print(f"\n📊 Sync complete: {synced_count} new models added")
+        logger.info("Sync complete: %d new models added", synced_count)
         return True
 
+    except ValueError as e:
+        logger.error("Configuration error: %s", e)
+        if conn:
+            conn.rollback()
+            conn.close()
+        return False
+    except psycopg2.Error as e:
+        logger.error("Database error: %s", e, exc_info=True)
+        if conn:
+            conn.rollback()
+            conn.close()
+        return False
     except Exception as e:
-        print(f"❌ Database sync error: {e}")
+        logger.error("Unexpected error during sync: %s", e, exc_info=True)
         if conn:
             conn.rollback()
             conn.close()
         return False
 
 
-def main():
+def main() -> int:
     """Entry point"""
-    print("🔄 ERNI-KI Model Synchronization")
-    print("=" * 40)
+    logger.info("Starting ERNI-KI Model Synchronization")
 
     # Fetch models from providers
-    print("📡 Fetching models from Ollama...")
+    logger.info("Fetching models from Ollama...")
     ollama_models = get_ollama_models()
-    print(f"   Found: {len(ollama_models)} models")
+    logger.info("Found %d Ollama models", len(ollama_models))
 
-    print("📡 Fetching models from LiteLLM...")
+    logger.info("Fetching models from LiteLLM...")
     litellm_models = get_litellm_models()
-    print(f"   Found: {len(litellm_models)} models")
+    logger.info("Found %d LiteLLM models", len(litellm_models))
 
     # Merge all models
     all_models = ollama_models + litellm_models
-    print(f"\n📋 Total models to sync: {len(all_models)}")
+    logger.info("Total models to sync: %d", len(all_models))
 
     if not all_models:
-        print("⚠️ No models found. Check provider connectivity.")
+        logger.warning("No models found. Check provider connectivity.")
         return 1
 
     # Sync to database
-    print("\n💾 Syncing with database...")
+    logger.info("Syncing models with database...")
     if sync_models_to_database(all_models):
-        print("✅ Sync completed successfully!")
+        logger.info("Sync completed successfully!")
         return 0
     else:
-        print("❌ Sync failed!")
+        logger.error("Sync failed!")
         return 1
 
 
