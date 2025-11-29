@@ -1,9 +1,3 @@
----
-language: ru
-doc_version: 1.0.0
-translation_status: original
----
-
 > **Статус системы (2025-11-23) — Production Ready v0.61.3**
 >
 > - Контейнеры: 34/34 services healthy

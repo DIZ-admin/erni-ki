@@ -1,3 +1,10 @@
+---
+language: ru
+translation_status: original
+doc_version: '2025.11'
+last_updated: '2025-11-29'
+---
+
 # Audits Archive
 
 This directory contains historical audit reports. Reports follow the naming
