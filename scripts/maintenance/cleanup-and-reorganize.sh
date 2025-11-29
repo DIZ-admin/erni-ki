@@ -208,11 +208,19 @@ standardize_shebang() {
             log_debug "Updating shebang in: $file"
 
             if [[ "$DRY_RUN" != "1" ]]; then
+                # Preserve existing pipefail block to avoid duplicates
+                local has_pipefail=0
+                if grep -q "set -euo pipefail" "$file"; then
+                    has_pipefail=1
+                fi
+
                 {
                     echo "#!/usr/bin/env bash"
                     echo ""
-                    echo "set -euo pipefail"
-                    echo ""
+                    if [[ "$has_pipefail" -eq 0 ]]; then
+                        echo "set -euo pipefail"
+                        echo ""
+                    fi
                     tail -n +2 "$file"
                 } > "${file}.tmp"
                 mv "${file}.tmp" "$file"
