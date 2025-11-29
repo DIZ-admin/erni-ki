@@ -6,6 +6,11 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 DRY_RUN=${CLEAN_DRY_RUN:-0}
 
 if [[ "${DRY_RUN}" == "1" ]]; then

@@ -1,16 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 # Test Validation Script for ERNI-KI
 # Validates test structure and coverage
 
 echo "🔍 Validating test infrastructure..."
 
 # Colors for output
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
 
 errors=0
 warnings=0
