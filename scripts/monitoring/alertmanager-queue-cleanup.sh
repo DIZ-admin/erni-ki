@@ -49,9 +49,10 @@ log_info "queue-cleanup: hard limit exceeded, expiring auto-silences (tag ${SILE
 silence_list=$($COMPOSE_CMD exec alertmanager amtool --alertmanager.url="$ALERTMANAGER_URL" \
   silence query --format '{{ .ID }}|{{ .Comment }}')
 
-target_ids=$(python3 - <<'PY'
+target_ids=$(SILENCE_TAG="$SILENCE_TAG" python3 - "$silence_list" <<'PY'
 import os, sys
-payload = sys.stdin.read().strip().splitlines()
+silence_list = sys.argv[1]
+payload = silence_list.strip().splitlines()
 tag = os.environ.get('SILENCE_TAG', '[auto-cleanup]')
 for line in payload:
     if not line:
@@ -59,7 +60,8 @@ for line in payload:
     silence_id, _, comment = line.partition('|')
     if tag in comment:
         print(silence_id)
-PY <<<"$silence_list")
+PY
+)
 
 if [[ -z "$target_ids" ]]; then
   log_info "queue-cleanup: no silences found with tag ${SILENCE_TAG}"

@@ -149,6 +149,16 @@ repos:
         name: "Ruff: Python format"
 
   # ===================================================================
+  # SHELLCHECK
+  # ===================================================================
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.9.0
+    hooks:
+      - id: shellcheck
+        args: ["--severity=error"]
+        files: "\\.sh$"
+
+  # ===================================================================
   # ESLINT CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-eslint

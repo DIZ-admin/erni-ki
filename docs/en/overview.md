@@ -19,10 +19,10 @@ This page summarizes the platform state and links to the main sections.
 
 ## Navigation
 
-- Architecture: [../architecture/README.md](../architecture/README.md)
-- Operations: [../operations/README.md](../operations/README.md)
+- Architecture: [../architecture/index.md](../architecture/index.md)
+- Operations: [../operations/index.md](../operations/index.md)
 - Reference/API: [../reference/api-reference.md](../reference/api-reference.md)
-- Security: [../security/README.md](../security/README.md)
+- Security: [../security/index.md](../security/index.md)
 - Glossary: [../GLOSSARY.md](../GLOSSARY.md)
 
 ## Status & Health

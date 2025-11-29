@@ -1,16 +1,21 @@
 ---
 language: ru
 translation_status: original
-doc_version: '2025.11'
+doc_version: "2025.11"
+last_updated: 2025-11-29
 ---
 
-# Документы в каталоге docs/data
+# Data Directory
 
-Этот каталог зарезервирован для данных и вспомогательных файлов, которые используются в отчётах и диагностике. На текущий момент отдельных документов нет; при добавлении новых файлов обновляйте этот README ссылками и краткими описаниями.
+Documentation and metadata for data-related components live here. Add dataset
+descriptions, schemas, and data pipeline notes as needed.
 
-## Содержимое
+## Index
 
-| Файл      | Описание                       |
-| --------- | ------------------------------ |
-| README.md | Краткое описание каталога data |
-| index.md  | Оглавление раздела data        |
+- [index.md](index.md)
+
+## State
+
+| status | notes |
+| ------ | ----- |
+| active | index.md |

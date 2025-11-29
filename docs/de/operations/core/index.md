@@ -11,7 +11,6 @@ Zentrale Betriebsdokumentation und Runbooks für ERNI-KI.
 
 ## Verfügbare Dokumentation
 
-- [Übersicht](README.md)
 - [Betriebshandbuch](operations-handbook.md)
 - [Admin-Leitfaden](admin-guide.md)
 - [Statusseite](status-page.md)
@@ -20,4 +19,4 @@ Zentrale Betriebsdokumentation und Runbooks für ERNI-KI.
 ## Hinweis
 
 Die russische Version ist die Hauptquelle. Bei Unstimmigkeiten siehe
-[russische Version](../../../operations/core/README.md).
+[russische Version](../../../operations/core/index.md).

@@ -65,7 +65,7 @@ last_updated: '2025-11-28'
 
 - [Обзор архитектуры](../architecture/index.md)
 - [Начало работы](../getting-started/index.md)
-- [Руководство по безопасности](../security/README.md)
+- [Безопасность](../security/index.md)
 
 ## Версия
 
