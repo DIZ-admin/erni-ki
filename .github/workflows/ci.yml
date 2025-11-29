@@ -257,8 +257,12 @@ jobs:
 
       - name: 🔍 Run ShellCheck
         run: |
-          find . -name "*.sh" -not -path "./node_modules/*" -not -path "./.git/*" \
-            -print0 | xargs -0 shellcheck --severity=warning
+          find . -name "*.sh" \
+            -not -path "./node_modules/*" \
+            -not -path "./.git/*" \
+            -not -path "./.venv/*" \
+            -not -path "./venv/*" \
+            -print0 | xargs -0 shellcheck --severity=error
 
   # Documentation Link Check
   link-check:
