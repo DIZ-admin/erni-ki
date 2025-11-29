@@ -16,6 +16,7 @@ from typing import Any
 
 from flask import Flask, jsonify, request
 from pydantic import BaseModel, ValidationError
+from werkzeug.exceptions import BadRequest
 
 try:
     from flask_limiter import Limiter
@@ -50,8 +51,17 @@ else:
 
 # Configuration
 WEBHOOK_PORT = int(os.getenv("WEBHOOK_PORT", 9093))
-LOG_DIR = Path("/app/logs")
-LOG_DIR.mkdir(exist_ok=True)
+LOG_DIR = Path(os.getenv("LOG_DIR", "/app/logs"))
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    # Fallback for local development/testing if /app/logs is not writable
+    if not os.getenv("LOG_DIR"):
+        LOG_DIR = Path("logs")
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+        logger.warning(f"Could not create /app/logs, falling back to {LOG_DIR}")
+    else:
+        raise
 RECOVERY_DIR = Path(os.getenv("RECOVERY_DIR", "/app/scripts/recovery"))
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
 ALLOWED_SERVICES = {"ollama", "openwebui", "searxng"}
@@ -237,7 +247,7 @@ def webhook_general():
 
         return jsonify({"status": "success", "message": "Alert processed"})
 
-    except ValidationError as e:
+    except (ValidationError, BadRequest) as e:
         logger.error("Payload validation failed: %s", e)
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -261,7 +271,7 @@ def webhook_critical():
 
         return jsonify({"status": "success", "message": "Critical alert processed"})
 
-    except ValidationError as e:
+    except (ValidationError, BadRequest) as e:
         logger.error("Payload validation failed: %s", e)
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -285,7 +295,7 @@ def webhook_warning():
 
         return jsonify({"status": "success", "message": "Warning alert processed"})
 
-    except ValidationError as e:
+    except (ValidationError, BadRequest) as e:
         logger.error("Payload validation failed: %s", e)
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -309,7 +319,7 @@ def webhook_gpu():
 
         return jsonify({"status": "success", "message": "GPU alert processed"})
 
-    except ValidationError as e:
+    except (ValidationError, BadRequest) as e:
         logger.error("Payload validation failed: %s", e)
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -333,7 +343,7 @@ def webhook_ai():
 
         return jsonify({"status": "success", "message": "AI alert processed"})
 
-    except ValidationError as e:
+    except (ValidationError, BadRequest) as e:
         logger.error("Payload validation failed: %s", e)
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -357,7 +367,7 @@ def webhook_database():
 
         return jsonify({"status": "success", "message": "Database alert processed"})
 
-    except ValidationError as e:
+    except (ValidationError, BadRequest) as e:
         logger.error("Payload validation failed: %s", e)
         return jsonify({"error": str(e)}), 400
     except Exception as e:
