@@ -10,8 +10,8 @@ import sys
 import uuid
 from datetime import datetime
 
-import psycopg2
-import requests
+import psycopg2  # type: ignore[import-untyped]
+import requests  # type: ignore[import-untyped]
 
 
 def read_secret(secret_name: str) -> str | None:

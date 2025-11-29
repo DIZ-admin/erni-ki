@@ -6,12 +6,17 @@ import sys
 from io import StringIO
 from pathlib import Path
 
-import pytest
+import pytest  # type: ignore[import-not-found]
 
 # Add scripts to path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
-from lib.logger import ColoredFormatter, JSONFormatter, get_logger, log_to_file
+from lib.logger import (  # type: ignore[import-not-found]
+    ColoredFormatter,
+    JSONFormatter,
+    get_logger,
+    log_to_file,
+)
 
 
 def test_get_logger_default():
