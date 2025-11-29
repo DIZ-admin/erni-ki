@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, mock_open, patch
 
-from conf.webhook_receiver.webhook_receiver import (
+from conf.webhook_receiver import (
     app,
     handle_critical_alert,
     handle_gpu_alert,
