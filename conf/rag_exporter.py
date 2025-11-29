@@ -1,7 +1,10 @@
 import contextlib
+import logging
 import os
+import signal
 import threading
 import time
+from typing import Any
 
 import requests
 from flask import Flask, Response
@@ -14,6 +17,10 @@ from prometheus_client import (
 )
 
 app = Flask(__name__)
+logger = logging.getLogger("rag-exporter")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 registry = CollectorRegistry()
 
 rag_latency = Histogram(
@@ -29,16 +36,18 @@ rag_sources = Gauge(
     registry=registry,
 )
 
-OPENWEBUI_TEST_URL = os.getenv("RAG_TEST_URL", "http://openwebui:8080/health")
+OPENWEBUI_TEST_URL = os.getenv("RAG_TEST_URL", "https://openwebui:8080/health")
+OPENWEBUI_VERIFY_TLS = os.getenv("RAG_VERIFY_TLS", "true").lower() == "true"
 RAG_TEST_INTERVAL = float(os.getenv("RAG_TEST_INTERVAL", "30"))
+_shutdown_event = threading.Event()
 
 
 def probe_loop():
-    while True:
+    while not _shutdown_event.is_set():
         start = time.time()
         sources_count = None
         try:
-            r = requests.get(OPENWEBUI_TEST_URL, timeout=10)
+            r = requests.get(OPENWEBUI_TEST_URL, timeout=10, verify=OPENWEBUI_VERIFY_TLS)
             # If an application endpoint returns JSON with sources, extract it here.
             # For now, we default to 0 when not present.
             if r.headers.get("content-type", "").startswith("application/json"):
@@ -53,14 +62,14 @@ def probe_loop():
             r.raise_for_status()
             elapsed = time.time() - start
             rag_latency.observe(elapsed)
-        except Exception:
-            # On failure, record large latency bucket (e.g., 10s) to reflect SLA breach
+        except requests.RequestException as exc:
+            logger.error("RAG health check request failed: %s", exc, exc_info=True)
             rag_latency.observe(10.0)
         finally:
             if sources_count is None:
                 sources_count = 0
             rag_sources.set(sources_count)
-        time.sleep(RAG_TEST_INTERVAL)
+        _shutdown_event.wait(RAG_TEST_INTERVAL)
 
 
 @app.route("/metrics")
@@ -69,6 +78,13 @@ def metrics():
 
 
 def main():
+    def _handle_signal(signum: int, _frame: Any) -> None:
+        logger.info("Received signal %s, shutting down probe loop", signum)
+        _shutdown_event.set()
+
+    signal.signal(signal.SIGTERM, _handle_signal)
+    signal.signal(signal.SIGINT, _handle_signal)
+
     t = threading.Thread(target=probe_loop, daemon=True)
     t.start()
     port = int(os.getenv("PORT", "9808"))
