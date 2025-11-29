@@ -71,6 +71,7 @@
 ### Исправленные проблемы (3 сервиса)
 
 #### 1. OpenWebUI Redis Authentication
+
 - **Проблема:** 76 ошибок Redis authentication за 10 минут
 - **Root Cause:** Неправильный формат REDIS_URL с username `default` для Redis с requirepass
 - **Решение:** Изменён формат с `redis://default:password@host:port/db` на `redis://:password@host:port/db` # pragma: allowlist secret
@@ -78,6 +79,7 @@
 - **Результат:** 0 ошибок за 10 минут, сервис healthy
 
 #### 2. Redis Exporter Connection Issues
+
 - **Проблема:** Периодические ошибки подключения, `redis_up 0`
 - **Root Cause:** Redis использует ACL с user `default`, но REDIS_USER не был указан
 - **Решение:**
@@ -88,6 +90,7 @@
 - **Результат:** `redis_up 1`, 0 ошибок после старта, метрики экспортируются корректно
 
 #### 3. Node Exporter Log Level
+
 - **Проблема:** Множественные "connection reset by peer" ошибки в логах
 - **Root Cause:** Нормальное поведение при отключении Prometheus клиента, но логируется как ERROR
 - **Решение:** Изменён log level с `--log.level=error` на `--log.level=warn`
@@ -106,6 +109,7 @@
 ### Анализ других "проблем"
 
 #### Fluent-bit (56 ошибок)
+
 - **Статус:** НЕ ПРОБЛЕМА
 - **Причина:** Fluent-bit собирает логи из других контейнеров. "Ошибки" - это логи от Nginx и OpenWebUI, которые Fluent-bit корректно пересылает в Loki.
 - **Действие:** Не требуется
@@ -121,6 +125,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 ### Completed Updates (6 services successfully, 1 rolled back)
 
 #### 1. LiteLLM: v1.77.2.rc.1 → v1.77.3-stable
+
 - **Status:** SUCCESS
 - **Type:** Patch update (RC → Stable)
 - **Risk Level:** LOW
@@ -135,6 +140,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 - **Downtime:** 0 seconds (rolling update)
 
 #### 2. Backrest: v1.4.0 → v1.9.2
+
 - **Status:** SUCCESS
 - **Type:** Minor update (5 versions jump)
 - **Risk Level:** MEDIUM
@@ -149,6 +155,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 - **Downtime:** 0 seconds (rolling update)
 
 #### 3. Grafana: 10.2.0 → 11.6.6
+
 - **Status:** SUCCESS
 - **Type:** Minor update (major version 10 → 11)
 - **Risk Level:** MEDIUM-HIGH
@@ -164,6 +171,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 - **Downtime:** 0 seconds (rolling update)
 
 #### 4. Nginx: 1.25.3 → 1.28.0
+
 - **Status:** SUCCESS
 - **Type:** Minor update (stable branch)
 - **Risk Level:** LOW
@@ -178,6 +186,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 - **Downtime:** 0 seconds (rolling update)
 
 #### 5. Redis Exporter: v1.55.0 → v1.77.0 → v1.55.0 (ROLLBACK)
+
 - **Status:** ROLLED BACK
 - **Type:** Minor update attempted, rolled back
 - **Risk Level:** MEDIUM
@@ -196,6 +205,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 - **Downtime:** 0 seconds (rolling update)
 
 #### 6. Nginx Exporter: 1.1.0 → 1.4.2
+
 - **Status:** SUCCESS
 - **Type:** Minor update (3 versions jump)
 - **Risk Level:** LOW
@@ -209,6 +219,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 - **Downtime:** 0 seconds (rolling update)
 
 #### 7. cAdvisor: v0.47.2 → v0.52.1
+
 - **Status:** SUCCESS
 - **Type:** Minor update (5 versions jump)
 - **Risk Level:** MEDIUM
@@ -225,6 +236,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 ### ⏸ Deferred Updates
 
 #### Prometheus: v2.47.2 → v3.6.0
+
 - **Status:** ⏸ DEFERRED
 - **Reason:** Major version upgrade with breaking changes
 - **Risk Level:** HIGH
@@ -277,6 +289,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 ### Known Issues
 
 #### LiteLLM Redis Caching Disabled
+
 - **Issue:** Redis client compatibility issue with `connection_pool_timeout` parameter
 - **Impact:** No centralized caching between LiteLLM instances
 - **Workaround:** Caching disabled in both `env/litellm.env` and `conf/litellm/config.yaml`
@@ -297,11 +310,13 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 ### Next Steps
 
 #### Immediate (Optional)
+
 - Monitor updated services for 24-48 hours
 - Review Grafana dashboards for compatibility
 - Test Backrest backup/restore functionality
 
 #### Short-term (1-2 weeks)
+
 - Plan Prometheus 3.x upgrade
 - Review breaking changes
 - Update queries and alerts
@@ -309,6 +324,7 @@ Comprehensive update of Docker images for ERNI-KI system components. Successfull
 - Schedule maintenance window
 
 #### Medium-term (1 month)
+
 - Review other services for updates:
 - Nginx: 1.25.3 → 1.27.x (mainline) or 1.26.x (stable)
 - Loki: 2.9.2 → 3.x (when stable)
