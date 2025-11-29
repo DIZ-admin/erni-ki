@@ -13,22 +13,19 @@ English-speaking operator can work without switching locales.
 
 ## Quick tour
 
-- **Sidebar** – access chat history, file attachments, and the AG-UI event
-  stream.
-- **Prompt composer** – supports multi-line prompts, Markdown, and tool calls.
-- **Status footer** – shows connected model, MCP tool availability, and GPU
-  usage.
+-**Sidebar**– access chat history, file attachments, and the AG-UI event
+stream. -**Prompt composer**– supports multi-line prompts, Markdown, and tool
+calls. -**Status footer**– shows connected model, MCP tool availability, and GPU
+usage.
 
 ## Daily workflow
 
-1. **Pick a workspace** (project/customer) before sending prompts; this keeps
-   audits and costs separated.
-2. **Attach context** – drag documents or screenshots into the panel so they are
-   indexed for the current session.
-3. **Use system prompts** – the `Templates` menu stores reusable prompts for
-   emails, reports, or diagnostics.
-4. **Track responses** – each reply exposes tokens, latency, and tool calls so
-   you can assess quality or escalate issues.
+1.**Pick a workspace**(project/customer) before sending prompts; this keeps
+audits and costs separated. 2.**Attach context**– drag documents or screenshots
+into the panel so they are indexed for the current session. 3.**Use system
+prompts**– the `Templates` menu stores reusable prompts for emails, reports, or
+diagnostics. 4.**Track responses**– each reply exposes tokens, latency, and tool
+calls so you can assess quality or escalate issues.
 
 ## Attachments & tools
 

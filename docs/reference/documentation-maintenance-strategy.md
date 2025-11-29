@@ -28,15 +28,15 @@ last_updated: '2025-11-25'
 
 ### 1.1 Динамические данные из compose.yml
 
-**Проблема:** Версии сервисов, количество контейнеров, конфигурация часто
+**Проблема:**Версии сервисов, количество контейнеров, конфигурация часто
 меняются.
 
-**Решение:** Автоматическое извлечение и обновление.
+**Решение:**Автоматическое извлечение и обновление.
 
 #### Скрипт: `scripts/docs/sync-system-info.py`
 
 ```python
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Sync system information from compose.yml to documentation.
 Run automatically in pre-commit or CI/CD.
@@ -89,7 +89,7 @@ def extract_service_info(compose_file='compose.yml'):
 def update_status_snippet(info):
     """Update status snippet with current system info."""
     template = f"""
-> **Статус системы ({info['updated']}) — Production Ready**
+>**Статус системы ({info['updated']}) — Production Ready**
 >
 > - Контейнеры: {info['total_services']} services
 > - AI: {', '.join(info['services_by_category'].get('ai', []))}
@@ -136,7 +136,7 @@ def update_service_inventory(info):
     Path(inventory_file).write_text(content)
     print(f"Updated {inventory_file}")
 
-if __name__ == '__main__':
+if __name__== '__main__':
     print("Syncing system information from compose.yml...")
     info = extract_service_info()
     update_status_snippet(info)
@@ -194,12 +194,12 @@ jobs:
 
 ### 1.2 Мониторинг метрик из Prometheus
 
-**Цель:** Автоматически обновлять статистику в документации.
+**Цель:**Автоматически обновлять статистику в документации.
 
 #### Скрипт: `scripts/docs/update-metrics.py`
 
 ```python
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """Extract current metrics from Prometheus and update docs."""
 
 import requests
@@ -240,7 +240,7 @@ def update_operations_docs(metrics):
     # Использовать шаблоны или маркеры для замены
     pass
 
-if __name__ == '__main__':
+if __name__== '__main__':
     metrics = get_prometheus_metrics()
     update_operations_docs(metrics)
 ```
@@ -387,7 +387,7 @@ jobs:
 #### Скрипт: `scripts/docs/check-freshness.py`
 
 ````python
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """Check documentation freshness and quality metrics."""
 
 import re
@@ -524,7 +524,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}
 
     return report
 
-if __name__ == '__main__':
+if __name__== '__main__':
     report = generate_report()
     print(report)
 
@@ -594,7 +594,7 @@ def collect_metrics():
     docs_coverage.labels(lang='en').set(calculate_coverage('en'))
     docs_coverage.labels(lang='de').set(calculate_coverage('de'))
 
-if __name__ == '__main__':
+if __name__== '__main__':
     start_http_server(9101)
     while True:
         collect_metrics()
@@ -611,12 +611,12 @@ if __name__ == '__main__':
 # .github/CODEOWNERS
 
 # Documentation
-/docs/**                      @docs-team
-/docs/reference/**            @docs-team @dev-team
-/docs/architecture/**         @architects
-/docs/operations/**           @ops-team
-/docs/security/**             @security-team
-/docs/academy/**              @product-team
+/docs/**@docs-team
+/docs/reference/**@docs-team @dev-team
+/docs/architecture/**@architects
+/docs/operations/**@ops-team
+/docs/security/**@security-team
+/docs/academy/**@product-team
 
 # Auto-generated docs - require automation approval
 /docs/architecture/service-inventory.md    @automation
@@ -688,7 +688,7 @@ language: ru translation_status: pending doc_version: '2025.11' last_updated:
 
 ## Обзор
 
-**Версия:** {{VERSION}} **Статус:** {{STATUS}} **Категория:** {{CATEGORY}}
+**Версия:**{{VERSION}}**Статус:**{{STATUS}}**Категория:**{{CATEGORY}}
 
 ## Конфигурация
 
@@ -764,8 +764,8 @@ source: '{openapi_file}'
 
 # API Reference: {spec['info']['title']}
 
-**Version:** {spec['info']['version']}
-**Base URL:** {spec['servers'][0]['url']}
+**Version:**{spec['info']['version']}
+**Base URL:**{spec['servers'][0]['url']}
 
 ## Endpoints
 
@@ -775,7 +775,7 @@ source: '{openapi_file}'
         for method, details in methods.items():
             docs += f"\n### {method.upper()} {path}\n\n"
             docs += f"{details.get('summary', '')}\n\n"
-            docs += f"**Description:** {details.get('description', '')}\n\n"
+            docs += f"**Description:**{details.get('description', '')}\n\n"
 
             # Parameters
             if 'parameters' in details:
@@ -787,7 +787,7 @@ source: '{openapi_file}'
 
     return docs
 
-if __name__ == '__main__':
+if __name__== '__main__':
     # Auto-generate API docs
     api_specs = Path('docs/api').glob('*.yaml')
     for spec in api_specs:
@@ -827,7 +827,7 @@ extra:
 
 ```bash
 # scripts/docs/deploy-versioned.sh
-#!/bin/bash
+# !/bin/bash
 # Deploy versioned documentation
 
 VERSION=$(grep "system_version:" docs/VERSION.md | cut -d"'" -f2)
@@ -895,11 +895,10 @@ fi
 
 ### 8.2 Качественные метрики
 
-- **Time to find info**: Время, за которое новый разработчик находит нужную
-  информацию
-- **Documentation usefulness**: Опросы команды (quarterly)
-- **Outdated reports**: Количество issues о неактуальной документации
-- **PR docs compliance**: % PR с обновленной документацией
+-**Time to find info**: Время, за которое новый разработчик находит нужную
+информацию -**Documentation usefulness**: Опросы команды (quarterly) -**Outdated
+reports**: Количество issues о неактуальной документации -**PR docs
+compliance**: % PR с обновленной документацией
 
 ---
 
@@ -910,25 +909,29 @@ fi
 ```markdown
 ## Documentation Feedback Process
 
-1. **Collect:**
-   - GitHub Issues с label `documentation`
-   - Survey after onboarding
-   - PR comments о документации
+1.**Collect:**
 
-2. **Analyze:**
-   - Monthly review of feedback
-   - Identify patterns
-   - Prioritize improvements
+- GitHub Issues с label `documentation`
+- Survey after onboarding
+- PR comments о документации
 
-3. **Act:**
-   - Update documentation
-   - Improve processes
-   - Enhance automation
+  2.**Analyze:**
 
-4. **Measure:**
-   - Track metrics
-   - Compare before/after
-   - Report improvements
+- Monthly review of feedback
+- Identify patterns
+- Prioritize improvements
+
+  3.**Act:**
+
+- Update documentation
+- Improve processes
+- Enhance automation
+
+  4.**Measure:**
+
+- Track metrics
+- Compare before/after
+- Report improvements
 ```
 
 ### 9.2 Retrospectives
@@ -1034,11 +1037,10 @@ fi
 
 Эта стратегия обеспечивает:
 
-1. **Автоматизацию**: 80% обновлений происходят автоматически
-2. **Качество**: Continuous monitoring и metrics
-3. **Ownership**: Четкая ответственность
-4. **Процесс**: Интегрировано в development workflow
-5. **Масштабируемость**: Растет вместе с проектом
+1.**Автоматизацию**: 80% обновлений происходят автоматически 2.**Качество**:
+Continuous monitoring и metrics 3.**Ownership**: Четкая
+ответственность 4.**Процесс**: Интегрировано в development
+workflow 5.**Масштабируемость**: Растет вместе с проектом
 
 **Следующие шаги:**
 
@@ -1050,4 +1052,4 @@ fi
 
 ---
 
-**Версия стратегии:** 1.0 **Дата:** 2025-11-25 **Следующий review:** 2026-02-25
+**Версия стратегии:**1.0**Дата:**2025-11-25**Следующий review:**2026-02-25

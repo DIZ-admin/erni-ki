@@ -51,7 +51,7 @@ flowchart LR
   data on a single filesystem without compactor/retention monitoring, so any
   compromise yields full log access.
 
-**Impact:** Loss of monitoring visibility during incidents, inability to meet
+**Impact:**Loss of monitoring visibility during incidents, inability to meet
 compliance/log retention obligations, and attack surface for lateral movement.
 
 **Recommendations:**
@@ -79,7 +79,7 @@ compliance/log retention obligations, and attack surface for lateral movement.
   expectations or SLO breaches
   (`docs/operations/monitoring/monitoring-guide.md:18-43`).
 
-**Impact:** Critical outages can be silently “auto-remediated” without
+**Impact:**Critical outages can be silently “auto-remediated” without
 visibility, and no one is paged if cron jobs or webhooks fail.
 
 **Recommendations:**
@@ -106,7 +106,7 @@ visibility, and no one is paged if cron jobs or webhooks fail.
   auto-generated dashboards miss exemplars and native histograms available in
   v3.
 
-**Impact:** Blind spots remain for document pipelines, MCP tooling, and logging
+**Impact:**Blind spots remain for document pipelines, MCP tooling, and logging
 agents; regression at those layers won’t trigger alerts until user-visible
 failure.
 
@@ -138,7 +138,7 @@ failure.
 - Loki’s `auth_enabled: false` compounds the issue by granting unrestricted log
   access (`conf/loki/loki-config.yaml:1-18`).
 
-**Impact:** Inability to investigate incidents, potential tampering/injection of
+**Impact:**Inability to investigate incidents, potential tampering/injection of
 logs, and exposure of log data to untrusted clients.
 
 **Recommendations:**
@@ -164,7 +164,7 @@ logs, and exposure of log data to untrusted clients.
 - Monitoring reports live under `docs/archive/config-backup` and require manual
   refresh; there is no CI/CD check verifying they match the current config.
 
-**Impact:** Regressions in cron jobs or scripts go unnoticed until a backlog
+**Impact:**Regressions in cron jobs or scripts go unnoticed until a backlog
 accumulates, creating compliance and audit risk.
 
 **Recommendations:**

@@ -42,9 +42,8 @@ graph TB
 
 ### Thread Binding
 
-- **vLLM**: Nutzt CPU-Kerne 0-6 (7 Kerne)
-- **System**: Reserviert CPU-Kern 7 für Systemprozesse
-- **Ollama**: Kann alle verfügbaren CPU-Kerne nutzen
+-**vLLM**: Nutzt CPU-Kerne 0-6 (7 Kerne) -**System**: Reserviert CPU-Kern 7 für
+Systemprozesse -**Ollama**: Kann alle verfügbaren CPU-Kerne nutzen
 
 ### Umgebungsvariablen
 
@@ -58,26 +57,22 @@ VLLM_CPU_KVCACHE_SPACE=4
 
 ### vLLM Memory Limits
 
-- **Speicher-Limit**: 6GB
-- **Speicher-Reserve**: 2GB
-- **KV Cache**: 4GB
+-**Speicher-Limit**: 6GB -**Speicher-Reserve**: 2GB -**KV Cache**: 4GB
 
 ### CPU-Optimierung
 
-- **Batch size**: 1024 Tokens (für CPU optimiert)
-- **Max sequences**: 64 (für CPU reduziert)
-- **Block size**: 16 (für CPU empfohlen)
+-**Batch size**: 1024 Tokens (für CPU optimiert) -**Max sequences**: 64 (für CPU
+reduziert) -**Block size**: 16 (für CPU empfohlen)
 
 ## Performance
 
 ### Erwartete Kennzahlen
 
-- **vLLM CPU**: 2-5 Tokens/Sek (modellabhängig)
-- **Ollama GPU**: 15-30 Tokens/Sek (mit GPU-Beschleunigung)
-- **Gemeinsamer Betrieb**: Ohne Ressourcenkonflikte
+-**vLLM CPU**: 2-5 Tokens/Sek (modellabhängig) -**Ollama GPU**: 15-30 Tokens/Sek
+(mit GPU-Beschleunigung) -**Gemeinsamer Betrieb**: Ohne Ressourcenkonflikte
 
 [... weitere Abschnitte gekürzt für Effizienz ...]
 
 ---
 
-**Status**: Produktiv **Letzte Aktualisierung**: 2025-11-02
+**Status**: Produktiv**Letzte Aktualisierung**: 2025-11-02

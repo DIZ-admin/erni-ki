@@ -10,13 +10,13 @@ _Last updated: 2025-11-17_
 
 ## 1. Сводка инцидента
 
-- **Симптом**: GitHub Actions пайплайны `ci.yml`, `security.yml` и
-  `deploy-environments.yml` падали уже на стадии интерпретации выражений.
-- **Проявление**: отказывали джобы `notify`, `security-report` и `deploy`, а
-  логи содержали `Unrecognized named-value: 'needs.test'` /
-  `Unrecognized named-value: 'needs.dependency'`.
-- **Влияние**: финальный статус workflow помечался как `failure`, release и
-  deploy блокировались даже при зелёных тестах.
+-**Симптом**: GitHub Actions пайплайны `ci.yml`, `security.yml` и
+`deploy-environments.yml` падали уже на стадии интерпретации
+выражений. -**Проявление**: отказывали джобы `notify`, `security-report` и
+`deploy`, а логи содержали `Unrecognized named-value: 'needs.test'` /
+`Unrecognized named-value: 'needs.dependency'`. -**Влияние**: финальный статус
+workflow помечался как `failure`, release и deploy блокировались даже при
+зелёных тестах.
 
 ## 2. Корневая причина
 

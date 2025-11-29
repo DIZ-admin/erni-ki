@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # Automated Maintenance Guide - ERNI-KI
 
-**Version:** 1.0 **Last Updated:** 2025-10-24 **Status:** Production Ready
+**Version:**1.0**Last Updated:**2025-10-24**Status:**Production Ready
 
 ---
 
@@ -32,11 +32,10 @@ ERNI-KI реализует комплексное автоматизирован
 
 Для управления и проверки автоматизации требуется:
 
-- **Доступ к серверу:** SSH доступ с правами root или sudo.
-- **Docker:** Установленный и запущенный Docker Engine.
-- **Скрипты:** Наличие скриптов в директории `scripts/` (или `/tmp/` для
-  некоторых legacy задач).
-- **Утилиты:** `crontab`, `grep`, `tail`.
+-**Доступ к серверу:**SSH доступ с правами root или
+sudo. -**Docker:**Установленный и запущенный Docker Engine. -**Скрипты:**Наличие
+скриптов в директории `scripts/` (или `/tmp/` для некоторых legacy
+задач). -**Утилиты:**`crontab`, `grep`, `tail`.
 
 ## 3. Инструкции по обслуживанию
 
@@ -47,9 +46,8 @@ ERNI-KI реализует комплексное автоматизирован
 
 **Конфигурация:**
 
-- **Расписание:** Каждое воскресенье в 3:00
-- **Скрипт:** `/tmp/pg_vacuum.sh`
-- **Лог:** `/tmp/pg_vacuum.log`
+-**Расписание:**Каждое воскресенье в
+3:00 -**Скрипт:**`/tmp/pg_vacuum.sh` -**Лог:**`/tmp/pg_vacuum.log`
 
 **Ручной запуск:**
 
@@ -64,9 +62,8 @@ tail -f /tmp/pg_vacuum.log
 
 **Конфигурация:**
 
-- **Расписание:** Каждое воскресенье в 4:00
-- **Скрипт:** `/tmp/docker-cleanup.sh`
-- **Лог:** `/tmp/docker-cleanup.log`
+-**Расписание:**Каждое воскресенье в
+4:00 -**Скрипт:**`/tmp/docker-cleanup.sh` -**Лог:**`/tmp/docker-cleanup.log`
 
 **Ручной запуск:**
 
@@ -81,8 +78,8 @@ tail -f /tmp/docker-cleanup.log
 
 **Конфигурация:**
 
-- **Docker Logging:** `json-file`, max-size 10m, max-file 3.
-- **Скрипт очистки:** `scripts/rotate-logs.sh` (ежедневно в 3:00).
+-**Docker Logging:**`json-file`, max-size 10m, max-file 3. -**Скрипт
+очистки:**`scripts/rotate-logs.sh` (ежедневно в 3:00).
 
 **Ручной запуск:**
 
@@ -92,8 +89,9 @@ tail -f /tmp/docker-cleanup.log
 
 ### 3.4 System Monitoring & Backups
 
-- **Health Monitor:** Запускается ежечасно (`scripts/health-monitor.sh`).
-- **Backrest Backups:** Ежедневно в 1:30. Бэкапы конфигурации и данных.
+-**Health Monitor:**Запускается ежечасно
+(`scripts/health-monitor.sh`). -**Backrest Backups:**Ежедневно в 1:30. Бэкапы
+конфигурации и данных.
 
 ## 4. Верификация
 

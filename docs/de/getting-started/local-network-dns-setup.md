@@ -9,9 +9,8 @@ last_updated: '2025-11-27'
 
 [TOC]
 
-**Datum**: 27.10.2025 **Ziel**: Zugriff auf `ki.erni-gruppe.ch` für alle
-Computer im lokalen Netzwerk 192.168.62.0/24 einrichten **Status**: HANDLUNG
-ERFORDERLICH
+**Datum**: 27.10.2025**Ziel**: Zugriff auf `ki.erni-gruppe.ch` für alle Computer
+im lokalen Netzwerk 192.168.62.0/24 einrichten**Status**: HANDLUNG ERFORDERLICH
 
 ---
 
@@ -28,7 +27,7 @@ ERFORDERLICH
 
 ### DNS-Konfiguration
 
-**Aktuelle DNS-Server** (aus DHCP):
+**Aktuelle DNS-Server**(aus DHCP):
 
 ```
 Primary DNS: 192.168.62.32
@@ -46,7 +45,7 @@ Search domain: intern
 
 ```bash
 $ nslookup ki.erni-gruppe.ch 192.168.62.32
-*** Can't find ki.erni-gruppe.ch: No answer
+***Can't find ki.erni-gruppe.ch: No answer
 ```
 
 ---
@@ -285,7 +284,7 @@ docker logs erni-ki-dnsmasq
 
 ### 3.4 Client-Konfiguration
 
-**Variante A: DHCP auf Router ändern** (empfohlen)
+**Variante A: DHCP auf Router ändern**(empfohlen)
 
 1. In LANCOM WEBconfig einloggen
 2. Primary DNS von 192.168.62.32 auf 192.168.62.153 ändern
@@ -348,9 +347,10 @@ empfohlen**
 4. Funktioniert automatisch für alle Computer
 5. Entspricht Sicherheitsrichtlinien
 
-**Wenn eine DRINGENDE Lösung erforderlich ist** (während wir auf IT warten):
+**Wenn eine DRINGENDE Lösung erforderlich ist**(während wir auf IT warten):
 
-- **OPTION 3** (lokaler DNS auf ERNI-KI) verwenden
+-**OPTION 3**(lokaler DNS auf ERNI-KI) verwenden
+
 - Nach Erhalt des Zugriffs von IT-Abteilung auf OPTION 1 wechseln
 
 ---
@@ -436,4 +436,4 @@ Nach Anwendung der Lösung:
 
 ---
 
-**Autor**: Augment Agent **Datum**: 27.10.2025 **Version**: 1.0
+**Autor**: Augment Agent**Datum**: 27.10.2025**Version**: 1.0

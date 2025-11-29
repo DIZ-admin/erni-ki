@@ -12,7 +12,7 @@ audience: 'administrators'
 
 # ‍ ERNI-KI Administrator-Handbuch
 
-> **Dokumentversion:** 7.0 **Aktualisierungsdatum:** 2025-09-11 **Zielgruppe:**
+> **Dokumentversion:**7.0**Aktualisierungsdatum:**2025-09-11**Zielgruppe:**
 > Systemadministratoren (Optimiertes Nginx + Korrigierte APIs + Verbesserte
 > Diagnose) [TOC]
 
@@ -33,29 +33,30 @@ Als ERNI-KI Administrator sind Sie verantwortlich für:
 
 #### Modulare Nginx-Architektur
 
-- **Konfigurationsdeduplizierung**: 91 Zeilen doppelten Codes eliminiert (-20%)
-- **Include-Dateien**: 4 wiederverwendbare Module erstellt
+-**Konfigurationsdeduplizierung**: 91 Zeilen doppelten Codes eliminiert
+(-20%) -**Include-Dateien**: 4 wiederverwendbare Module erstellt
+
 - `openwebui-common.conf` - gemeinsame OpenWebUI Proxy-Einstellungen
 - `searxng-api-common.conf` - SearXNG API-Konfiguration
 - `searxng-web-common.conf` - SearXNG Web-Interface
-- `websocket-common.conf` - WebSocket Proxy-Einstellungen
-- **Map-Direktiven**: Bedingte Logik für verschiedene Ports
-- **Universelle Variablen**: `$universal_request_id` für alle Include-Dateien
+- `websocket-common.conf` - WebSocket Proxy-Einstellungen -**Map-Direktiven**:
+  Bedingte Logik für verschiedene Ports -**Universelle Variablen**:
+  `$universal_request_id` für alle Include-Dateien
 
 #### HTTPS und CSP Korrekturen
 
-- **Content Security Policy**: Für localhost und Production optimiert
-- **CORS-Header**: Für Entwicklungs- und Produktionsumgebungen erweitert
-- **SSL-Konfiguration**: `ssl_verify_client off` für localhost hinzugefügt
-- **Kritische Fehler**: Skript-Ladefehler behoben
+-**Content Security Policy**: Für localhost und Production
+optimiert -**CORS-Header**: Für Entwicklungs- und Produktionsumgebungen
+erweitert -**SSL-Konfiguration**: `ssl_verify_client off` für localhost
+hinzugefügt -**Kritische Fehler**: Skript-Ladefehler behoben
 
 #### SearXNG API Wiederherstellung
 
-- **Routing korrigiert**: 404-Fehler für `/api/searxng/search` behoben
-- **RAG-Funktionalität**: Vollständig für OpenWebUI wiederhergestellt
-- **Performance**: Antwortzeit <2 Sekunden (entspricht SLA)
-- **Suchmaschinen**: Unterstützung für Google, Bing, DuckDuckGo, Brave
-- **Suchergebnisse**: 31+ Ergebnisse von 4500+ verfügbaren
+-**Routing korrigiert**: 404-Fehler für `/api/searxng/search`
+behoben -**RAG-Funktionalität**: Vollständig für OpenWebUI
+wiederhergestellt -**Performance**: Antwortzeit <2 Sekunden (entspricht
+SLA) -**Suchmaschinen**: Unterstützung für Google, Bing, DuckDuckGo,
+Brave -**Suchergebnisse**: 31+ Ergebnisse von 4500+ verfügbaren
 
 ### Hot-Reload Verfahren
 
@@ -100,14 +101,10 @@ docker stats
 
 ### Service-Status (sollten "healthy" sein)
 
-- **nginx** - Web-Gateway und Load Balancer
-- **auth** - JWT-Authentifizierung
-- **openwebui** - Haupt-AI-Interface
-- **ollama** - Sprachmodell-Server
-- **db** - PostgreSQL-Datenbank
-- **redis** - Cache und Sessions
-- **searxng** - Suchmaschine
-- **backrest** - Backup-System
+-**nginx**- Web-Gateway und Load Balancer -**auth**-
+JWT-Authentifizierung -**openwebui**- Haupt-AI-Interface -**ollama**-
+Sprachmodell-Server -**db**- PostgreSQL-Datenbank -**redis**- Cache und
+Sessions -**searxng**- Suchmaschine -**backrest**- Backup-System
 
 #### Ressourcenverbrauch
 
@@ -423,24 +420,18 @@ docker compose exec redis redis-cli info memory
 
 #### Für kleine Teams (bis 10 Benutzer)
 
-- **CPU**: 8 Kerne
-- **RAM**: 32GB
-- **GPU**: RTX 4060 (8GB VRAM)
-- **Festplatte**: 500GB SSD
+-**CPU**: 8 Kerne -**RAM**: 32GB -**GPU**: RTX 4060 (8GB VRAM) -**Festplatte**:
+500GB SSD
 
 #### Für mittlere Teams (10-50 Benutzer)
 
-- **CPU**: 16 Kerne
-- **RAM**: 64GB
-- **GPU**: RTX 4080 (16GB VRAM)
-- **Festplatte**: 1TB NVMe SSD
+-**CPU**: 16 Kerne -**RAM**: 64GB -**GPU**: RTX 4080 (16GB
+VRAM) -**Festplatte**: 1TB NVMe SSD
 
 #### Für große Teams (50+ Benutzer)
 
-- **CPU**: 32+ Kerne
-- **RAM**: 128GB+
-- **GPU**: RTX 4090 oder mehrere GPUs
-- **Festplatte**: 2TB+ NVMe SSD in RAID
+-**CPU**: 32+ Kerne -**RAM**: 128GB+ -**GPU**: RTX 4090 oder mehrere
+GPUs -**Festplatte**: 2TB+ NVMe SSD in RAID
 
 ## System-Updates
 
@@ -477,12 +468,12 @@ docker compose up -d
 
 ---
 
-** Wichtig**: Erstellen Sie immer Backups vor kritischen Systemänderungen!
+**Wichtig**: Erstellen Sie immer Backups vor kritischen Systemänderungen!
 
 ## ⏱ RAG SLA Exporter
 
-- **URL:** <http://localhost:9808/metrics>
-- **Metriken:**
+-**URL:**<http://localhost:9808/metrics> -**Metriken:**
+
 - `erni_ki_rag_response_latency_seconds` — Latenz-Histogramm
-- `erni_ki_rag_sources_count` — Anzahl der Quellen
-- **Grafana:** RAG-Panels auf dem OpenWebUI-Dashboard (Schwellwert 2s für p95)
+- `erni_ki_rag_sources_count` — Anzahl der Quellen -**Grafana:**RAG-Panels auf
+  dem OpenWebUI-Dashboard (Schwellwert 2s für p95)

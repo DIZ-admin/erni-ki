@@ -9,8 +9,8 @@ last_updated: '2025-11-27'
 
 [TOC]
 
-**Datum**: 27.10.2025 **Router**: LANCOM (192.168.62.1) **Zweck**: Einrichtung
-des externen Zugriffs auf ERNI-KI über direkte Verbindung
+**Datum**: 27.10.2025**Router**: LANCOM (192.168.62.1)**Zweck**: Einrichtung des
+externen Zugriffs auf ERNI-KI über direkte Verbindung
 
 ---
 
@@ -67,7 +67,7 @@ Enabled: Yes
 
 ### Schritt 2: Navigation zu Port Forwarding
 
-**Mögliche Pfade im Menü** (abhängig von LANCOM-Version):
+**Mögliche Pfade im Menü**(abhängig von LANCOM-Version):
 
 **Variante A**:
 
@@ -92,27 +92,19 @@ Advanced Settings → NAT → Port Forwarding
 #### Für HTTP (Port 80)
 
 1. "Add" oder "New Rule" klicken
-2. Felder ausfüllen:
-   - **Rule Name**: `ERNI-KI-HTTP`
-   - **External Interface**: `WAN` oder `Internet`
-   - **Protocol**: `TCP`
-   - **External Port**: `80`
-   - **Internal IP Address**: `192.168.62.153`
-   - **Internal Port**: `80`
-   - **Enabled**: `Yes` oder `On`
+2. Felder ausfüllen: -**Rule Name**: `ERNI-KI-HTTP` -**External Interface**:
+   `WAN` oder `Internet` -**Protocol**: `TCP` -**External Port**:
+   `80` -**Internal IP Address**: `192.168.62.153` -**Internal Port**:
+   `80` -**Enabled**: `Yes` oder `On`
 3. "Save" oder "Apply" klicken
 
 #### Für HTTPS (Port 443)
 
 1. "Add" oder "New Rule" klicken
-2. Felder ausfüllen:
-   - **Rule Name**: `ERNI-KI-HTTPS`
-   - **External Interface**: `WAN` oder `Internet`
-   - **Protocol**: `TCP`
-   - **External Port**: `443`
-   - **Internal IP Address**: `192.168.62.153`
-   - **Internal Port**: `443`
-   - **Enabled**: `Yes` oder `On`
+2. Felder ausfüllen: -**Rule Name**: `ERNI-KI-HTTPS` -**External Interface**:
+   `WAN` oder `Internet` -**Protocol**: `TCP` -**External Port**:
+   `443` -**Internal IP Address**: `192.168.62.153` -**Internal Port**:
+   `443` -**Enabled**: `Yes` oder `On`
 3. "Save" oder "Apply" klicken
 
 ### Schritt 4: Änderungen anwenden
@@ -306,21 +298,25 @@ nslookup ki.erni-gruppe.ch 8.8.8.8
 
 ### Empfehlungen
 
-1. **IP-Zugriff beschränken** (wenn möglich):
-   - Zugriff nur von ERNI-Büro-IPs erlauben
-   - Whitelist in Router-Firewall verwenden
+1.**IP-Zugriff beschränken**(wenn möglich):
 
-2. **Rate Limiting aktivieren**:
-   - Anzahl der Verbindungen pro IP begrenzen
-   - Schutz vor DDoS-Attacken
+- Zugriff nur von ERNI-Büro-IPs erlauben
+- Whitelist in Router-Firewall verwenden
 
-3. **Monitoring**:
-   - Verbindungs-Logging auf Router konfigurieren
-   - Logs regelmäßig auf verdächtige Aktivitäten prüfen
+  2.**Rate Limiting aktivieren**:
 
-4. **Updates**:
-   - LANCOM Router Firmware regelmäßig aktualisieren
-   - SSL-Zertifikate aktualisieren
+- Anzahl der Verbindungen pro IP begrenzen
+- Schutz vor DDoS-Attacken
+
+  3.**Monitoring**:
+
+- Verbindungs-Logging auf Router konfigurieren
+- Logs regelmäßig auf verdächtige Aktivitäten prüfen
+
+  4.**Updates**:
+
+- LANCOM Router Firmware regelmäßig aktualisieren
+- SSL-Zertifikate aktualisieren
 
 ### Alternative: VPN
 
@@ -342,4 +338,4 @@ Für erhöhte Sicherheit VPN statt direktem Zugriff in Betracht ziehen:
 
 ---
 
-**Autor**: Augment Agent **Datum**: 27.10.2025 **Version**: 1.0
+**Autor**: Augment Agent**Datum**: 27.10.2025**Version**: 1.0

@@ -36,12 +36,10 @@ aktualisieren Sie diese README beim Hinzufügen neuer Verfahren.
 
 ## Regelmäßige Aufgaben
 
-- **Täglich:** Überprüfung der Backups (`backrest`) und des freien
-  Speicherplatzes auf dem Docling-Volume.
-- **Wöchentlich:** Aktualisierung der Images über Checklist und Smoke-Test der
-  Dienste.
-- **Monatlich:** Audit der Cron-Skripte, Rotation von Zertifikaten, Inspektion
-  von `./data/*` auf Müllansammlung.
+-**Täglich:**Überprüfung der Backups (`backrest`) und des freien Speicherplatzes
+auf dem Docling-Volume. -**Wöchentlich:**Aktualisierung der Images über
+Checklist und Smoke-Test der Dienste. -**Monatlich:**Audit der Cron-Skripte,
+Rotation von Zertifikaten, Inspektion von `./data/*` auf Müllansammlung.
 
 ## Kommunikation
 

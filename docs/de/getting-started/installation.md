@@ -12,32 +12,30 @@ audience: 'administrators'
 
 # Detaillierte Installationsanleitung für ERNI-KI
 
-> **Dokumentversion:** 2.0 **Aktualisierungsdatum:** 2025-07-04
-> **Installationszeit:** 30-60 Minuten [TOC]
+> **Dokumentversion:**2.0**Aktualisierungsdatum:**2025-07-04
+> **Installationszeit:**30-60 Minuten [TOC]
 
 ## Systemanforderungen
 
 ### Mindestanforderungen
 
-- **OS**: Ubuntu 20.04+ / CentOS 8+ / Debian 11+ / RHEL 8+
-- **CPU**: 4 Kerne (Intel/AMD x86_64)
-- **RAM**: 8GB (Minimum für Grundbetrieb)
-- **Festplatte**: 50GB freier Speicherplatz (SSD empfohlen)
-- **Netzwerk**: Stabile Internetverbindung
+-**OS**: Ubuntu 20.04+ / CentOS 8+ / Debian 11+ / RHEL 8+ -**CPU**: 4 Kerne
+(Intel/AMD x86_64) -**RAM**: 8GB (Minimum für Grundbetrieb) -**Festplatte**:
+50GB freier Speicherplatz (SSD empfohlen) -**Netzwerk**: Stabile
+Internetverbindung
 
 ### Empfohlene Anforderungen
 
-- **CPU**: 8+ Kerne mit AVX2-Unterstützung
-- **RAM**: 32GB (für große Sprachmodelle)
-- **GPU**: NVIDIA GPU mit 8GB+ VRAM (RTX 3070/4060 oder höher)
-- **Festplatte**: 200GB+ NVMe SSD
-- **Netzwerk**: 100 Mbps+ für Modell-Downloads
+-**CPU**: 8+ Kerne mit AVX2-Unterstützung -**RAM**: 32GB (für große
+Sprachmodelle) -**GPU**: NVIDIA GPU mit 8GB+ VRAM (RTX 3070/4060 oder
+höher) -**Festplatte**: 200GB+ NVMe SSD -**Netzwerk**: 100 Mbps+ für
+Modell-Downloads
 
 ### Unterstützte GPUs
 
-- **NVIDIA**: RTX 20/30/40 Serie, Tesla, Quadro mit CUDA 11.8+
-- **Minimaler VRAM**: 6GB für 7B-Parameter-Modelle
-- **Empfohlener VRAM**: 12GB+ für 13B+ Parameter-Modelle
+-**NVIDIA**: RTX 20/30/40 Serie, Tesla, Quadro mit CUDA 11.8+ -**Minimaler
+VRAM**: 6GB für 7B-Parameter-Modelle -**Empfohlener VRAM**: 12GB+ für 13B+
+Parameter-Modelle
 
 ## System-Vorbereitung
 
@@ -453,16 +451,15 @@ sudo systemctl restart docker
 
 Nach erfolgreicher Installation wird empfohlen:
 
-1. **[Benutzerhandbuch](user-guide.md) studieren** - Grundlagen der
-   Interface-Bedienung
-2. **[Monitoring](../operations/core/admin-guide.md#monitoring)
-   konfigurieren** - Systemzustand überwachen
-3. **[API-Dokumentation](../../reference/api-reference.md) studieren** -
-   Integration mit externen Systemen
-4. **[Backup](../operations/core/admin-guide.md#backup) einrichten** -
-   Datenschutz
+1.**[Benutzerhandbuch](user-guide.md) studieren**- Grundlagen der
+Interface-Bedienung 2.**[Monitoring](../../operations/core/admin-guide.md#monitoring)
+konfigurieren**- Systemzustand
+überwachen 3.**[API-Dokumentation](../../reference/api-reference.md)
+studieren**- Integration mit externen
+Systemen 4.**[Backup](../../operations/core/admin-guide.md#backup) einrichten**-
+Datenschutz
 
 ---
 
-** Herzlichen Glückwunsch! ERNI-KI ist erfolgreich installiert und
+**Herzlichen Glückwunsch! ERNI-KI ist erfolgreich installiert und
 einsatzbereit!**

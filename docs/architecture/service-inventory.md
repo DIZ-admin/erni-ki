@@ -59,10 +59,10 @@ title: 'Справочник сервисов ERNI-KI'
 | `rag-exporter`            | SLA-мониторинг RAG.                                   | `127.0.0.1:9808->9808`.           | Переменные `RAG_TEST_URL`, зависит от `openwebui`.                                        | Endpoint виден только локально.                                                                                              |
 | `webhook-receiver`        | Приём уведомлений Alertmanager и кастомные скрипты.   | `127.0.0.1:9095->9093`.           | Скрипты `./conf/webhook-receiver`, логи `./data/webhook-logs`.                            | Endpoint доступен через локальный прокси; лимиты `mem_limit=256M`, `mem_reservation=128M`, `cpus=0.25`, `oom_score_adj=250`. |
 
-> **Примечание:** Docling восстановлен в основном `compose.yml`; shared volume
+> **Примечание:**Docling восстановлен в основном `compose.yml`; shared volume
 > `./data/docling/shared` используется совместно с OpenWebUI.
 >
-> **Доступ к метрикам:** все мониторинговые сервисы проброшены только на
+> **Доступ к метрикам:**все мониторинговые сервисы проброшены только на
 > `127.0.0.1`. Для удалённого просмотра используйте Nginx (с auth/TLS), VPN или
 > SSH-туннель; внутри docker-сети сервисы продолжают работать без изменений.
 
@@ -144,14 +144,12 @@ title: 'Справочник сервисов ERNI-KI'
 
 ## Наблюдаемость и безопасность
 
-- **LLM & Model Context**: LiteLLM v1.80.0.rc.1, MCP Server 8000 и RAG API
-  (`/api/mcp/*`, `/api/search`) используют PostgreSQL + Redis для context
-  storage; `docs/reference/api-reference.md` и
-  `docs/operations/operations-handbook.md` содержат маршруты, SLA и список
-  инструментов.
-- **Docling/EdgeTTS**: работают через internal ports, используют CPU,
-  обеспечивают многоязычный RAG pipeline и служат источником для
-  `docs/operations/monitoring-guide.md`.
+-**LLM & Model Context**: LiteLLM v1.80.0.rc.1, MCP Server 8000 и RAG API
+(`/api/mcp/*`, `/api/search`) используют PostgreSQL + Redis для context storage;
+`docs/reference/api-reference.md` и `docs/operations/operations-handbook.md`
+содержат маршруты, SLA и список инструментов. -**Docling/EdgeTTS**: работают
+через internal ports, используют CPU, обеспечивают многоязычный RAG pipeline и
+служат источником для `docs/operations/monitoring-guide.md`.
 
 - Журналы высылаются во Fluent Bit (24224 forward, 2020 HTTP) и передаются в
   Loki, а критические сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx) также пишут

@@ -20,9 +20,9 @@ finden.
 - [docker-cleanup-guide.md](docker-cleanup-guide.md) — Automatische Bereinigung
   von Docker-Images/-Volumes, Rotation hängender Container,
   Ressourcenempfehlungen.
-- [docker-log-rotation.md](docker-log-rotation.md) — Konfiguration von logrotate
-  und Fluent Bit für Container-Logs, Speicherparameter und Überwachung von
-  Überläufen.
+- [../../../operations/automation/docker-log-rotation.md](../../../operations/automation/docker-log-rotation.md)
+  — Konfiguration von logrotate und Fluent Bit für Container-Logs,
+  Speicherparameter und Überwachung von Überläufen.
 
 ## Wann diesen Abschnitt konsultieren
 
@@ -31,7 +31,7 @@ finden.
   Automatisierungen.
 - Einrichtung von Alerting für Cron/Wartungsaufgaben.
 
-**Tipp:** Dokumentieren Sie das Ergebnis nach Durchführung eines automatisierten
+**Tipp:**Dokumentieren Sie das Ergebnis nach Durchführung eines automatisierten
 Verfahrens in `docs/operations/maintenance/index.md` oder im Wartungsticket.
 
 ## Überwachung der Automatisierung

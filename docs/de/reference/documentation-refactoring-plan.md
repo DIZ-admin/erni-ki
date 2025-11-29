@@ -7,7 +7,7 @@ last_updated: '2025-11-25'
 
 # ERNI-KI Professional Documentation & Refactoring Plan (Nov 2025)
 
-> **Ziel:** Produktive Doku vereinheitlichen, Duplikate entfernen, veraltete
+> **Ziel:**Produktive Doku vereinheitlichen, Duplikate entfernen, veraltete
 > Bereiche schließen, klare Struktur für DevOps/ML/SRE schaffen. [TOC]
 
 ## 1. Ist-Zustand (Audit 82 Markdown-Dateien)
@@ -55,7 +55,7 @@ last_updated: '2025-11-25'
 2. API & Integration auf Nov 2025 bringen (LiteLLM 1.80.0.rc.1, Context7, RAG).
 3. Wichtige Reports aus archive in operations referenzieren.
 4. Runbooks mit `scripts/maintenance/*` abgleichen (Automatisierung vs. Text).
-5. Lokalisierungs-Schulden (DE) abbauen, v12.1 einpflegen.
+5. Lokalisierungs-Schulden (DE) abbauen, v0.61.3 einpflegen.
 6. Data & Storage in README/Handbook verlinken.
 7. MkDocs `nav` an Zielstruktur anpassen.
 

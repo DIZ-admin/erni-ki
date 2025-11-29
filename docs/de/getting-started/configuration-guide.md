@@ -12,8 +12,8 @@ audience: 'administrators'
 
 # ERNI-KI Konfigurationsleitfaden
 
-> **Version:** 11.0 **Aktualisierungsdatum:** 2025-09-25 **Status:** Production
-> Ready [TOC]
+> **Version:**11.0**Aktualisierungsdatum:**2025-09-25**Status:**Production Ready
+> [TOC]
 
 Dieser Leitfaden enthält production-ready Konfigurationen für alle Komponenten
 des ERNI-KI Systems mit deutschen Kommentaren für wichtige Einstellungen.
@@ -44,7 +44,7 @@ conf/ # Konfigurationsdateien
 
 ### OpenWebUI Konfiguration
 
-**Datei:** `env/openwebui.env`
+**Datei:**`env/openwebui.env`
 
 ```bash
 # === GRUNDEINSTELLUNGEN ===
@@ -76,7 +76,7 @@ WEBUI_SESSION_COOKIE_SECURE=true # Nur HTTPS Cookies
 
 ## Ollama Konfiguration
 
-**Datei:** `env/ollama.env`
+**Datei:**`env/ollama.env`
 
 ```bash
 # === GPU EINSTELLUNGEN ===
@@ -100,7 +100,7 @@ OLLAMA_VERBOSE=false # Minimale Protokollierung
 
 ## LiteLLM Konfiguration
 
-**Datei:** `env/litellm.env`
+**Datei:**`env/litellm.env`
 
 ```bash
 # === GRUNDEINSTELLUNGEN ===
@@ -123,7 +123,7 @@ LITELLM_REQUEST_TIMEOUT=600 # Request Timeout (10 Minuten)
 LITELLM_MAX_BUDGET=1000 # Maximales Budget pro Monat
 ```
 
-**Datei:** `conf/litellm/config.yaml`
+**Datei:**`conf/litellm/config.yaml`
 
 ```yaml
 # === MODELL KONFIGURATION ===
@@ -161,7 +161,7 @@ general_settings:
 
 ### Apache Tika Konfiguration
 
-**Datei:** `env/tika.env`
+**Datei:**`env/tika.env`
 
 ```bash
 # === GRUNDEINSTELLUNGEN ===
@@ -185,7 +185,7 @@ JAVA_OPTS="-Xmx2g -Xms1g -XX:+UseG1GC" # Speicher-Optimierung
 
 ### SearXNG Konfiguration
 
-**Datei:** `env/searxng.env`
+**Datei:**`env/searxng.env`
 
 ```bash
 # === GRUNDEINSTELLUNGEN ===
@@ -211,7 +211,7 @@ SEARXNG_ENGINES_WIKIPEDIA_TIMEOUT=5.0 # Erhöhter Wikipedia Timeout
 
 ### PostgreSQL Konfiguration
 
-**Datei:** `env/postgres.env`
+**Datei:**`env/postgres.env`
 
 ```bash
 # === GRUNDEINSTELLUNGEN ===
@@ -234,7 +234,7 @@ POSTGRES_EXTENSIONS="pgvector,pg_stat_statements" # Erforderliche Erweiterungen
 
 ## Redis Konfiguration
 
-**Datei:** `env/redis.env`
+**Datei:**`env/redis.env`
 
 ```bash
 # === GRUNDEINSTELLUNGEN ===
@@ -258,7 +258,7 @@ REDIS_TCP_KEEPALIVE=300 # Keep-alive Verbindungen
 
 ### Nginx Konfiguration
 
-**Hauptdatei:** `conf/nginx/conf.d/default.conf`
+**Hauptdatei:**`conf/nginx/conf.d/default.conf`
 
 ```nginx
 # === HAUPT SERVER BLOCK ===
@@ -309,7 +309,7 @@ server {
 
 ### Prometheus Konfiguration
 
-**Datei:** `conf/prometheus/prometheus.yml`
+**Datei:**`conf/prometheus/prometheus.yml`
 
 ```yaml
 # === GLOBALE EINSTELLUNGEN ===
@@ -366,8 +366,7 @@ scrape_configs:
  target_label: __param_target
  - source_labels: [__param_target]
  target_label: instance
- - target_label: __address__
- replacement: blackbox-exporter:9115
+ - target_label: __address__ replacement: blackbox-exporter:9115
 ```
 
 ## Sicherheits-Best-Practices
@@ -445,5 +444,5 @@ tar -xzf erni-ki-config-YYYYMMDD.tar.gz
 
 ---
 
-> ** Wichtig:** Testen Sie Konfigurationsänderungen immer in einer Testumgebung
+> **Wichtig:**Testen Sie Konfigurationsänderungen immer in einer Testumgebung
 > vor der Anwendung in der Produktion. Erstellen Sie Backups vor Änderungen.

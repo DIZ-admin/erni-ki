@@ -9,7 +9,7 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Datum:** 2025-09-19 **Version:** 1.0
+**Datum:**2025-09-19**Version:**1.0
 
 ## Überblick
 

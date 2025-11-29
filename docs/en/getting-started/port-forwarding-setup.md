@@ -9,7 +9,7 @@ last_updated: '2025-11-28'
 
 [TOC]
 
-**Date**: 2025-10-27 **Router**: LANCOM (192.168.62.1) **Purpose**: Configure
+**Date**: 2025-10-27**Router**: LANCOM (192.168.62.1)**Purpose**: Configure
 external access to ERNI-KI via direct connection
 
 ---
@@ -67,7 +67,7 @@ Enabled: Yes
 
 ### Step 2: Navigate to Port Forwarding
 
-**Possible menu paths** (depends on LANCOM version):
+**Possible menu paths**(depends on LANCOM version):
 
 **Variant A**:
 
@@ -94,13 +94,9 @@ Advanced Settings → NAT → Port Forwarding
 1. Click "Add" or "New Rule"
 2. Fill fields:
 
-- **Rule Name**: `ERNI-KI-HTTP`
-- **External Interface**: `WAN` or `Internet`
-- **Protocol**: `TCP`
-- **External Port**: `80`
-- **Internal IP Address**: `192.168.62.153`
-- **Internal Port**: `80`
-- **Enabled**: `Yes` or `On`
+-**Rule Name**: `ERNI-KI-HTTP` -**External Interface**: `WAN` or
+`Internet` -**Protocol**: `TCP` -**External Port**: `80` -**Internal IP
+Address**: `192.168.62.153` -**Internal Port**: `80` -**Enabled**: `Yes` or `On`
 
 3. Click "Save" or "Apply"
 
@@ -109,13 +105,10 @@ Advanced Settings → NAT → Port Forwarding
 1. Click "Add" or "New Rule"
 2. Fill fields:
 
-- **Rule Name**: `ERNI-KI-HTTPS`
-- **External Interface**: `WAN` or `Internet`
-- **Protocol**: `TCP`
-- **External Port**: `443`
-- **Internal IP Address**: `192.168.62.153`
-- **Internal Port**: `443`
-- **Enabled**: `Yes` or `On`
+-**Rule Name**: `ERNI-KI-HTTPS` -**External Interface**: `WAN` or
+`Internet` -**Protocol**: `TCP` -**External Port**: `443` -**Internal IP
+Address**: `192.168.62.153` -**Internal Port**: `443` -**Enabled**: `Yes` or
+`On`
 
 3. Click "Save" or "Apply"
 
@@ -310,22 +303,22 @@ nslookup ki.erni-gruppe.ch 8.8.8.8
 
 ### Recommendations
 
-1. **Restrict IP Access** (if possible):
+1.**Restrict IP Access**(if possible):
 
 - Allow access only from ERNI office IPs
 - Use whitelist in router firewall
 
-2. **Enable Rate Limiting**:
+  2.**Enable Rate Limiting**:
 
 - Limit number of connections from single IP
 - DDoS protection
 
-3. **Monitoring**:
+  3.**Monitoring**:
 
 - Configure connection logging on router
 - Regularly check logs for suspicious activity
 
-4. **Updates**:
+  4.**Updates**:
 
 - Regularly update LANCOM router firmware
 - Update SSL certificates
@@ -350,4 +343,4 @@ For increased security consider using VPN instead of direct access:
 
 ---
 
-**Author**: Augment Agent **Date**: 2025-10-27 **Version**: 1.0
+**Author**: Augment Agent**Date**: 2025-10-27**Version**: 1.0

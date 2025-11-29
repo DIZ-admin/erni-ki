@@ -10,21 +10,19 @@ title: 'Аутентификация и авторизация'
 
 ## Архитектура
 
-- **Auth service** (`auth/main.go`) выдаёт JWT с aud=\"erni-ki\" и scope
-  (`user`, `admin`, `service`).
-- **Open WebUI** проверяет подпись через секрет `WEBUI_SECRET_KEY`,
-  дополнительно сверяет `session_id` в Redis.
-- **Внешние клиенты** подключаются через Cloudflare Zero Trust либо OpenID
-  Provider (переносимый `id_token`).
+-**Auth service**(`auth/main.go`) выдаёт JWT с aud=\"erni-ki\" и scope (`user`,
+`admin`, `service`). -**Open WebUI**проверяет подпись через секрет
+`WEBUI_SECRET_KEY`, дополнительно сверяет `session_id` в Redis. -**Внешние
+клиенты**подключаются через Cloudflare Zero Trust либо OpenID Provider
+(переносимый `id_token`).
 
 ## Рекомендации
 
-1. **Срок жизни** токена ≤ 30 минут, рефреш через mTLS или SSO.
-2. **Принудительный logout** – инвалидация токена при смене пароля/ролей.
-3. **Tracing** – добавляйте `X-Request-ID` и сохраняйте связь токена с этим
-   идентификатором.
-4. **Health-check** `/validate` – автоматическая проверка подписи и срока
-   действия.
+1.**Срок жизни**токена ≤ 30 минут, рефреш через mTLS или SSO. 2.**Принудительный
+logout**– инвалидация токена при смене пароля/ролей. 3.**Tracing**– добавляйте
+`X-Request-ID` и сохраняйте связь токена с этим
+идентификатором. 4.**Health-check**`/validate` – автоматическая проверка подписи
+и срока действия.
 
 ## Onboarding новых пользователей
 
