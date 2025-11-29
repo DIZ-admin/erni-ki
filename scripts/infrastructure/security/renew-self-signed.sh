@@ -5,16 +5,16 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
 
-log()      { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"; }
-success()  { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"; }
-warning()  { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"; }
+CYAN='\033[0;36m'
+
+[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"; }
+[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"; }
+[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"; }
 error_out(){ echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"; exit 1; }
 
 DOMAIN="ki.erni-gruppe.ch"
@@ -24,7 +24,7 @@ CERT_VALIDITY_DAYS=730
 KEY_SIZE=4096
 
 check_environment() {
-    log "Validating environment..."
+    log_info "Validating environment..."
 
     if [[ ! -f "compose.yml" && ! -f "compose.yml.example" ]]; then
         error_out "Run this script from the ERNI-KI repository root"
@@ -33,11 +33,11 @@ check_environment() {
     [[ -d "$SSL_DIR" ]] || error_out "SSL directory not found: $SSL_DIR"
     command -v openssl >/dev/null 2>&1 || error_out "OpenSSL not installed"
 
-    success "Environment looks good"
+    log_success "Environment looks good"
 }
 
 create_backup() {
-    log "Backing up existing certificates..."
+    log_info "Backing up existing certificates..."
     mkdir -p "$BACKUP_DIR"
 
     if [[ -f "$SSL_DIR/nginx.crt" ]]; then
@@ -45,16 +45,16 @@ create_backup() {
         [[ -f "$SSL_DIR/nginx-fullchain.crt" ]] && cp "$SSL_DIR/nginx-fullchain.crt" "$BACKUP_DIR/"
         [[ -f "$SSL_DIR/nginx-ca.crt" ]] && cp "$SSL_DIR/nginx-ca.crt" "$BACKUP_DIR/"
 
-        log "Backup stored in: $BACKUP_DIR"
-        log "Current certificate details:"
+        log_info "Backup stored in: $BACKUP_DIR"
+        log_info "Current certificate details:"
         openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates
     else
-        warning "No existing certificates found"
+        log_warn "No existing certificates found"
     fi
 }
 
 generate_certificate() {
-    log "Generating new self-signed certificate..."
+    log_info "Generating new self-signed certificate..."
 
     local temp_dir="/tmp/ssl-gen-$$"
     mkdir -p "$temp_dir"
@@ -87,10 +87,10 @@ IP.1 = 127.0.0.1
 IP.2 = 192.168.62.140
 EOF
 
-    log "Generating ${KEY_SIZE}-bit private key..."
+    log_info "Generating ${KEY_SIZE}-bit private key..."
     openssl genrsa -out "$temp_dir/nginx.key" $KEY_SIZE
 
-    log "Generating certificate (valid for $CERT_VALIDITY_DAYS days)..."
+    log_info "Generating certificate (valid for $CERT_VALIDITY_DAYS days)..."
     openssl req -new -x509 -key "$temp_dir/nginx.key" \
         -out "$temp_dir/nginx.crt" \
         -days $CERT_VALIDITY_DAYS \
@@ -100,7 +100,7 @@ EOF
     openssl x509 -in "$temp_dir/nginx.crt" -noout -text >/dev/null 2>&1 \
         || error_out "Generated certificate is invalid"
 
-    log "Installing new certificates..."
+    log_info "Installing new certificates..."
     cp "$temp_dir/nginx.crt" "$SSL_DIR/"
     cp "$temp_dir/nginx.key" "$SSL_DIR/"
     cp "$temp_dir/nginx.crt" "$SSL_DIR/nginx-fullchain.crt"
@@ -110,17 +110,17 @@ EOF
     chmod 600 "$SSL_DIR/nginx.key"
 
     rm -rf "$temp_dir"
-    success "Self-signed certificate installed"
+    log_success "Self-signed certificate installed"
 }
 
 verify_certificate() {
-    log "Verifying new certificate..."
+    log_info "Verifying new certificate..."
 
     if openssl x509 -in "$SSL_DIR/nginx.crt" -noout -text >/dev/null 2>&1; then
-        success "Certificate validation succeeded"
-        log "New certificate details:"
+        log_success "Certificate validation succeeded"
+        log_info "New certificate details:"
         openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject -issuer -dates
-        log "Subject Alternative Names:"
+        log_info "Subject Alternative Names:"
         openssl x509 -in "$SSL_DIR/nginx.crt" -noout -text | grep -A 3 "Subject Alternative Name" || echo "No SAN entries"
     else
         error_out "New certificate is invalid"
@@ -128,13 +128,13 @@ verify_certificate() {
 }
 
 reload_nginx() {
-    log "Reloading nginx..."
+    log_info "Reloading nginx..."
 
     if docker compose exec nginx nginx -t >/dev/null 2>&1; then
         if docker compose exec nginx nginx -s reload >/dev/null 2>&1; then
-            success "nginx reloaded"
+            log_success "nginx reloaded"
         else
-            warning "nginx reload failed, restarting container"
+            log_warn "nginx reload failed, restarting container"
             docker compose restart nginx >/dev/null 2>&1 || error_out "Unable to restart nginx"
         fi
     else
@@ -143,35 +143,35 @@ reload_nginx() {
 }
 
 test_https() {
-    log "Testing HTTPS endpoints..."
+    log_info "Testing HTTPS endpoints..."
     sleep 5
 
     if curl -k -I "https://localhost:443/" --connect-timeout 10 >/dev/null 2>&1; then
-        success "Local HTTPS reachable"
+        log_success "Local HTTPS reachable"
     else
-        warning "Local HTTPS unavailable"
+        log_warn "Local HTTPS unavailable"
     fi
 
     if curl -k -I "https://$DOMAIN/" --connect-timeout 10 >/dev/null 2>&1; then
-        success "HTTPS reachable via domain"
-        log "Response headers:"
+        log_success "HTTPS reachable via domain"
+        log_info "Response headers:"
         curl -k -I "https://$DOMAIN/" --connect-timeout 10 2>/dev/null | head -5
     else
-        warning "HTTPS unavailable via $DOMAIN"
+        log_warn "HTTPS unavailable via $DOMAIN"
     fi
 }
 
 update_monitoring() {
-    log "Updating monitoring metadata..."
+    log_info "Updating monitoring metadata..."
 
     if [[ -f "conf/ssl/monitoring.conf" ]]; then
         echo "# Certificate renewed: $(date)" >> conf/ssl/monitoring.conf
-        log "Monitoring configuration updated"
+        log_info "Monitoring configuration updated"
     fi
 
     if [[ -x "scripts/ssl/monitor-certificates.sh" ]]; then
-        log "Triggering ssl monitoring check..."
-        ./scripts/ssl/monitor-certificates.sh check || warning "Monitoring check reported an issue"
+        log_info "Triggering ssl monitoring check..."
+        ./scripts/ssl/monitor-certificates.sh check || log_warn "Monitoring check reported an issue"
     fi
 }
 
@@ -205,7 +205,7 @@ generate_report() {
         echo "$(date -d "+$((CERT_VALIDITY_DAYS - 30)) days" '+%Y-%m-%d') (30 days before expiration)"
     } > "$report_file"
 
-    log "Report saved to $report_file"
+    log_info "Report saved to $report_file"
 }
 
 main() {
@@ -224,12 +224,12 @@ main() {
     update_monitoring
     generate_report
 
-    success "Self-signed certificate renewed successfully!"
-    log "Next steps:"
+    log_success "Self-signed certificate renewed successfully!"
+    log_info "Next steps:"
     echo "1. Validate HTTPS: https://$DOMAIN"
     echo "2. Accept the self-signed certificate in browsers if prompted"
     echo "3. Plan the next renewal ~$((CERT_VALIDITY_DAYS - 30)) days from now"
-    log "Backup directory: $BACKUP_DIR"
+    log_info "Backup directory: $BACKUP_DIR"
 }
 
 main "$@"

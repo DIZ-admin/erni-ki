@@ -5,16 +5,16 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
 
-log()      { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"; }
-success()  { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"; }
-warning()  { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"; }
+CYAN='\033[0;36m'
+
+[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"; }
+[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"; }
+[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"; }
 error_msg(){ echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"; }
 
 DOMAIN="ki.erni-gruppe.ch"
@@ -47,7 +47,7 @@ send_notification() {
 }
 
 check_certificate_expiry() {
-    log "Checking certificate expiration..."
+    log_info "Checking certificate expiration..."
     local cert_to_check="$CERT_FILE"
 
     [[ -f "$FULLCHAIN_FILE" ]] && cert_to_check="$FULLCHAIN_FILE"
@@ -69,8 +69,8 @@ check_certificate_expiry() {
     local current_timestamp=$(date +%s)
     local days_left=$(((expiry_timestamp - current_timestamp) / 86400))
 
-    log "Certificate valid until: $expiry_date"
-    log "Days left: $days_left"
+    log_info "Certificate valid until: $expiry_date"
+    log_info "Days left: $days_left"
 
     if (( days_left < 0 )); then
         error_msg "Certificate expired $((-days_left)) days ago"
@@ -81,19 +81,19 @@ check_certificate_expiry() {
         send_notification "CRITICAL: SSL certificate expires in $days_left days" "critical"
         return 2
     elif (( days_left < DAYS_WARNING )); then
-        warning "Certificate expires in $days_left days"
+        log_warn "Certificate expires in $days_left days"
         send_notification "SSL certificate expires in $days_left days" "warning"
         return 1
     else
-        success "Certificate valid for another $days_left days"
+        log_success "Certificate valid for another $days_left days"
         return 0
     fi
 }
 
 check_certificate_type() {
-    log "Detecting certificate issuer..."
+    log_info "Detecting certificate issuer..."
     if [[ ! -f "$CERT_FILE" ]]; then
-        warning "Certificate not found"
+        log_warn "Certificate not found"
         return 1
     fi
 
@@ -101,16 +101,16 @@ check_certificate_type() {
     issuer=$(openssl x509 -in "$CERT_FILE" -noout -issuer 2>/dev/null | cut -d= -f2-)
 
     if echo "$issuer" | grep -qi "let's encrypt"; then
-        success "Let's Encrypt certificate detected"
+        log_success "Let's Encrypt certificate detected"
     elif echo "$issuer" | grep -qi "erni-ki"; then
-        warning "Self-signed ERNI-KI certificate detected"
+        log_warn "Self-signed ERNI-KI certificate detected"
     else
-        log "Issuer: $issuer"
+        log_info "Issuer: $issuer"
     fi
 }
 
 auto_renew_certificate() {
-    log "Attempting automatic self-signed renewal..."
+    log_info "Attempting automatic self-signed renewal..."
     local renewal_script="$(pwd)/scripts/ssl/renew-self-signed.sh"
 
     if [[ ! -f "$renewal_script" ]]; then
@@ -120,7 +120,7 @@ auto_renew_certificate() {
     fi
 
     if "$renewal_script"; then
-        success "Self-signed certificate renewed"
+        log_success "Self-signed certificate renewed"
         send_notification "Self-signed SSL certificate renewed" "success"
     else
         error_msg "Self-signed renewal failed"
@@ -130,16 +130,16 @@ auto_renew_certificate() {
 }
 
 reload_nginx() {
-    log "Reloading nginx after certificate update..."
+    log_info "Reloading nginx after certificate update..."
 
     if docker compose exec nginx nginx -t >/dev/null 2>&1; then
         if docker compose exec nginx nginx -s reload >/dev/null 2>&1; then
-            success "nginx reloaded"
+            log_success "nginx reloaded"
             send_notification "nginx reloaded after SSL update" "info"
         else
-            warning "nginx reload failed, restarting container"
+            log_warn "nginx reload failed, restarting container"
             if docker compose restart nginx >/dev/null 2>&1; then
-                success "nginx container restarted"
+                log_success "nginx container restarted"
                 send_notification "nginx container restarted after SSL update" "info"
             else
                 error_msg "Unable to restart nginx container"
@@ -155,21 +155,21 @@ reload_nginx() {
 }
 
 test_https_connectivity() {
-    log "Validating HTTPS endpoints..."
+    log_info "Validating HTTPS endpoints..."
 
     if curl -k -I "https://localhost:443/" --connect-timeout 5 >/dev/null 2>&1; then
-        success "HTTPS reachable locally"
+        log_success "HTTPS reachable locally"
     else
-        warning "Local HTTPS unavailable"
+        log_warn "Local HTTPS unavailable"
         send_notification "Local HTTPS unavailable" "warning"
         attempt_nginx_recovery "local"
     fi
 
     if curl -k -I "https://$DOMAIN/health" --resolve "$DOMAIN:443:127.0.0.1" --connect-timeout 5 >/dev/null 2>&1 \
         || curl -k -I "https://$DOMAIN/" --connect-timeout 8 >/dev/null 2>&1; then
-        success "HTTPS reachable via domain"
+        log_success "HTTPS reachable via domain"
     else
-        warning "HTTPS unreachable via $DOMAIN"
+        log_warn "HTTPS unreachable via $DOMAIN"
         send_notification "Domain HTTPS check failed for $DOMAIN" "warning"
         attempt_nginx_recovery "domain"
     fi
@@ -178,22 +178,22 @@ test_https_connectivity() {
 attempt_nginx_recovery() {
     local scope="${1:-local}"
     if ! command -v docker >/dev/null 2>&1; then
-        warning "Docker unavailable, skipping nginx recovery (${scope})"
+        log_warn "Docker unavailable, skipping nginx recovery (${scope})"
         return
     fi
 
-    log "Attempting nginx recovery (${scope})..."
+    log_info "Attempting nginx recovery (${scope})..."
     if docker compose ps nginx >/dev/null 2>&1; then
         if docker compose exec -T nginx nginx -t >/dev/null 2>&1; then
             docker compose exec -T nginx nginx -s reload >/dev/null 2>&1 \
-                && success "nginx reloaded (${scope})" \
+                && log_success "nginx reloaded (${scope})" \
                 || docker compose restart nginx >/dev/null 2>&1
         else
-            warning "nginx -t failed, restarting container"
-            docker compose restart nginx >/dev/null 2>&1 || warning "Unable to restart nginx automatically"
+            log_warn "nginx -t failed, restarting container"
+            docker compose restart nginx >/dev/null 2>&1 || log_warn "Unable to restart nginx automatically"
         fi
     else
-        warning "nginx container not found"
+        log_warn "nginx container not found"
     fi
 }
 
@@ -232,7 +232,7 @@ generate_report() {
 
     } > "$report_file"
 
-    log "Report saved to $report_file"
+    log_info "Report saved to $report_file"
 }
 
 main() {
@@ -278,7 +278,7 @@ main() {
             ;;
     esac
 
-    success "Monitoring completed"
+    log_success "Monitoring completed"
 }
 
 main "$@"
