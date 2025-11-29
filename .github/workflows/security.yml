@@ -191,9 +191,6 @@ jobs:
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
-          skip-db-update: true
-          skip-java-db-update: true
-          skip-version-check: true
           exit-code: 0
           trivyignores: ".github/trivy.ignore"
 
