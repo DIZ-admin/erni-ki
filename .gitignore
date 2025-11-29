@@ -83,10 +83,13 @@ coverage/
 *.tsbuildinfo
 .tscache/
 
-# Allow tracking package marker in scripts/lib
+# Allow tracking package marker and core libraries in scripts/lib
 !/scripts/lib/
 scripts/lib/*
 !/scripts/lib/__init__.py
+!/scripts/lib/logger.py
+!/scripts/lib/common.sh
+!/scripts/lib/monitoring.sh
 
 # ===================================================================
 # GO
