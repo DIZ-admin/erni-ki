@@ -5,6 +5,11 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # PROJECT_DIR must point to repo root; otherwise docker compose won't find compose.yml.
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -52,45 +57,40 @@ timestamp() {
   date +"%Y-%m-%d %H:%M:%S"
 }
 
-log() {
-  mkdir -p "$(dirname "$LOG_FILE")"
-  printf "[%s] %s\n" "$(timestamp)" "$1" | tee -a "$LOG_FILE"
-}
-
 maybe_autoscale_maxmemory() {
   [[ "$AUTOSCALE_ENABLED" =~ ^(true|1|yes)$ ]] || return
   local current
   current=$(docker compose exec -T redis redis-cli CONFIG GET maxmemory | awk 'NR==2 {print $1}' | tr -d '\r')
   if [[ -z "$current" ]]; then
-    log "Unable to read current maxmemory value; skipping autoscale"
+    log_info "Unable to read current maxmemory value; skipping autoscale"
     return
   fi
   if (( current == 0 )); then
-    log "Redis maxmemory is unlimited, autoscale not required"
+    log_info "Redis maxmemory is unlimited, autoscale not required"
     return
   fi
   local step_bytes=$((AUTOSCALE_STEP_MB * 1024 * 1024))
   local max_bytes=$((AUTOSCALE_MAX_GB * 1024 * 1024 * 1024))
   if (( current >= max_bytes )); then
-    log "Redis maxmemory already at configured cap ${AUTOSCALE_MAX_GB}GB"
+    log_info "Redis maxmemory already at configured cap ${AUTOSCALE_MAX_GB}GB"
     return
   fi
   local proposed=$((current + step_bytes))
   if (( proposed > max_bytes )); then
     proposed=$max_bytes
   fi
-  log "Autoscaling Redis maxmemory from $((current / 1024 / 1024))MB to $((proposed / 1024 / 1024))MB"
+  log_info "Autoscaling Redis maxmemory from $((current / 1024 / 1024))MB to $((proposed / 1024 / 1024))MB"
   if docker compose exec -T redis redis-cli CONFIG SET maxmemory "$proposed" >/dev/null 2>&1; then
     docker compose exec -T redis redis-cli CONFIG REWRITE >/dev/null 2>&1 || true
-    log "Redis maxmemory successfully bumped to $((proposed / 1024 / 1024))MB"
+    log_info "Redis maxmemory successfully bumped to $((proposed / 1024 / 1024))MB"
   else
-    log "Failed to bump Redis maxmemory"
+    log_info "Failed to bump Redis maxmemory"
   fi
 }
 
 info="$(docker compose exec -T redis redis-cli info memory || true)"
 if [[ -z "$info" ]]; then
-  log "redis-cli info memory failed (is redis running?)"
+  log_info "redis-cli info memory failed (is redis running?)"
   exit 1
 fi
 
@@ -140,11 +140,11 @@ RUNS="${RUNS:-0}"
 now="$(date +%s)"
 
 if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
-  log "Fragmentation ratio ${ratio} > threshold ${THRESHOLD} (used=${used:-0} rss=${rss:-0} peak=${peak:-0})"
+  log_info "Fragmentation ratio ${ratio} > threshold ${THRESHOLD} (used=${used:-0} rss=${rss:-0} peak=${peak:-0})"
 
   if (( used < MIN_USED_MEMORY_BYTES )); then
     if should_log_low_memory; then
-      log "Used memory ${used}B is below MIN_USED_MEMORY_BYTES=${MIN_USED_MEMORY_BYTES}B; skipping as likely false positive (adjust via REDIS_FRAGMENTATION_MIN_USED_BYTES)."
+      log_info "Used memory ${used}B is below MIN_USED_MEMORY_BYTES=${MIN_USED_MEMORY_BYTES}B; skipping as likely false positive (adjust via REDIS_FRAGMENTATION_MIN_USED_BYTES)."
       record_low_memory_notice
     fi
     reset_state
@@ -154,15 +154,15 @@ if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
   fi
 
   if (( now - LAST_ACTION_TS < COOLDOWN )); then
-    log "Previous purge executed $((now - LAST_ACTION_TS))s ago (<${COOLDOWN}s). Skipping duplicate action."
+    log_info "Previous purge executed $((now - LAST_ACTION_TS))s ago (<${COOLDOWN}s). Skipping duplicate action."
   else
     if $DRY_RUN; then
-      log "Dry-run: skipping redis-cli memory purge"
+      log_info "Dry-run: skipping redis-cli memory purge"
     else
       if docker compose exec -T redis redis-cli memory purge >/dev/null 2>&1; then
-        log "Issued redis-cli memory purge"
+        log_info "Issued redis-cli memory purge"
       else
-        log "Failed to run redis-cli memory purge"
+        log_info "Failed to run redis-cli memory purge"
         exit 1
       fi
 
@@ -175,8 +175,8 @@ if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
       persist_state "$LAST_ACTION_TS" "$RUNS"
 
       if (( RUNS >= MAX_PURGES )); then
-        log "Fragmentation persists after $RUNS purges, restarting redis container"
-        docker compose restart redis >/dev/null 2>&1 || log "WARN: redis restart failed"
+        log_info "Fragmentation persists after $RUNS purges, restarting redis container"
+        docker compose restart redis >/dev/null 2>&1 || log_info "WARN: redis restart failed"
         RUNS=0
         persist_state "$now" "$RUNS"
         maybe_autoscale_maxmemory
@@ -184,8 +184,8 @@ if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
     fi
   fi
 else
-  log "Fragmentation ratio ${ratio} is within threshold ${THRESHOLD}"
+  log_info "Fragmentation ratio ${ratio} is within threshold ${THRESHOLD}"
   reset_state
 fi
 
-record_status success "Fragmentation ratio ${ratio}"
+record_status log_success "Fragmentation ratio ${ratio}"
