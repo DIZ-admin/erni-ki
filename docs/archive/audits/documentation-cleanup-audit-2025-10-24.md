@@ -215,7 +215,7 @@ rm docs/grafana-datasources.md
 **Pre-commit hook для проверки дат:**
 
 ```bash
-# !/bin/bash
+#!/bin/bash
 # .git/hooks/pre-commit-docs-check
 
 # Проверка дат обновления в документации

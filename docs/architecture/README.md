@@ -1,20 +1,25 @@
 ---
 language: ru
 doc_version: '2025.11'
-translation_status: pending
+translation_status: original
 ---
 
-# ../architecture/README.md
+# Архитектура ERNI-KI
 
-> **This is a placeholder document.**
->
-> This file was automatically generated to fix broken links. Please update with
-> actual content.
+Этот раздел собирает основные артефакты по архитектуре и ссылкует на детальные
+описания сервисов и диаграммы.
 
 ## Overview
 
-TODO: Add content
+- **Сервисы и потоки данных:** см. `docs/architecture/architecture.md` —
+  описание ключевых компонентов, их взаимодействия и ограничения.
+- **Диаграммы:** см. `docs/architecture/diagrams/` (data-flow, network-topology,
+  deployment) для визуализации сетевых границ и потоков.
+- **Сводный обзор сервисов:** см. `docs/architecture/services-overview.md` и
+  `docs/architecture/service-inventory.md` (порты, зависимости, лимиты).
 
 ## Related Documentation
 
-TODO: Add links to related documentation
+- Операции и мониторинг: `docs/operations/`
+- Безопасность: `docs/security/`
+- API и интеграции: `docs/reference/`

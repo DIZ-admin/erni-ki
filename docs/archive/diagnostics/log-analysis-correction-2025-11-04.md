@@ -310,7 +310,7 @@ docker logs erni-ki-node-exporter --since 24h 2>&1 | grep -E "ERROR|CRITICAL" | 
 Создать скрипт `scripts/monitoring/count-real-errors.sh`:
 
 ```bash
-# !/bin/bash
+#!/bin/bash
 # Подсчёт реальных ошибок в логах ERNI-KI
 
 echo "=== ERNI-KI Real Errors Count ==="
