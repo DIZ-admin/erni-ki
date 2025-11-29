@@ -53,16 +53,16 @@ test_api_endpoint() {
 
     log "Testing API endpoint for $domain..."
 
-    local cmd="curl -k -s -w 'HTTP_CODE:%{http_code}' -X POST"
+    local cmd=(curl -k -s -w "HTTP_CODE:%{http_code}" -X POST)
     if [ "$host_header" != "none" ]; then
-        cmd="$cmd -H 'Host: $host_header'"
+        cmd+=(-H "Host: $host_header")
     fi
-    cmd="$cmd -H 'Content-Type: application/x-www-form-urlencoded'"
-    cmd="$cmd -d 'q=test&format=json'"
-    cmd="$cmd https://localhost/api/searxng/search"
+    cmd+=(-H "Content-Type: application/x-www-form-urlencoded")
+    cmd+=(-d "q=test&format=json")
+    cmd+=("https://localhost/api/searxng/search")
 
     local response
-    if response=$(eval "$cmd" 2>/dev/null); then
+    if response=$("${cmd[@]}" 2>/dev/null); then
         local http_code="${response##*HTTP_CODE:}"
         local json_response="${response%HTTP_CODE:*}"
 
@@ -88,14 +88,14 @@ test_main_interface() {
 
     log "Testing main interface for $domain..."
 
-    local cmd="curl -k -s -w 'HTTP_CODE:%{http_code}'"
+    local cmd=(curl -k -s -w "HTTP_CODE:%{http_code}")
     if [ "$host_header" != "none" ]; then
-        cmd="$cmd -H 'Host: $host_header'"
+        cmd+=(-H "Host: $host_header")
     fi
-    cmd="$cmd https://localhost/"
+    cmd+=("https://localhost/")
 
     local response
-    if response=$(eval "$cmd" 2>/dev/null); then
+    if response=$("${cmd[@]}" 2>/dev/null); then
         local http_code="${response##*HTTP_CODE:}"
 
         echo "  HTTP code: $http_code"
