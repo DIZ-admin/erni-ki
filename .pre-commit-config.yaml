@@ -289,10 +289,9 @@ repos:
       # Go imports organization
       - id: goimports
         name: "Go: organize imports"
-        entry: goimports
+        entry: bash -c 'PATH=\"$PATH:$HOME/go/bin:/Users/kostas/go/bin\" goimports -w $(git ls-files \"*.go\")'
         language: system
-        files: \.go$
-        args: [-w]
+        pass_filenames: false
 
       # Validate status snippet is up-to-date
       - id: status-snippet-check

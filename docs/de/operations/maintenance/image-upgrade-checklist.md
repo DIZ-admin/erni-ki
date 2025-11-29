@@ -10,14 +10,14 @@ last_updated: '2025-11-24'
 Diese Checkliste definiert den Prozess zur Aktualisierung von Container-Images
 ohne Rückfall auf instabile `latest` Tags.
 
-1. **Release-Auswahl**
+1.**Release-Auswahl**
 
 - Finden Sie einen stabilen semantischen Tag oder SHA256 Digest (in allen Fällen
   – `docker pull IMAGE@digest`).
 - Speichern Sie den Link zum Changelog/Release, wo die Änderungen beschrieben
   sind.
 
-2. **Repository-Aktualisierung**
+  2.**Repository-Aktualisierung**
 
 - Ersetzen Sie in `compose.yml` und `compose.yml.example` den Tag durch den
   gewählten.
@@ -26,7 +26,7 @@ ohne Rückfall auf instabile `latest` Tags.
 - Wenn das Image Docker Secrets/Entrypoint verwendet, stellen Sie sicher, dass
   die Anweisungen in `docs/` ebenfalls aktualisiert sind.
 
-3. **Testen**
+  3.**Testen**
 
 - `docker compose pull SERVICE && docker compose up -d SERVICE` (oder
   `--no-deps`).
@@ -39,7 +39,7 @@ docker compose logs SERVICE --tail=50
 
 - Für Exporter: `curl -s http://localhost:<port>/metrics | head`.
 
-4. **Watchtower**
+  4.**Watchtower**
 
 - Stellen Sie sicher, dass für Dienste mit automatischer Aktualisierung
   (`watchtower.enable=true`) der neue Tag angegeben ist. Watchtower übernimmt
@@ -47,12 +47,12 @@ docker compose logs SERVICE --tail=50
 - Für kritische Dienste (Nginx, DB) bleibt die automatische Aktualisierung
   deaktiviert.
 
-5. **Release-Dokumentation**
+  5.**Release-Dokumentation**
 
 - Listen Sie in `CHANGELOG.md`/Release-Notes die aktualisierten Images auf.
 - Fügen Sie bei Bedarf Anweisungen zum Rollback (vorheriger Digest) hinzu.
 
-6. **Validierung**
+  6.**Validierung**
 
 - Führen Sie `docker compose config` aus und stellen Sie sicher, dass das
   Ergebnis nur gepinnte Tags enthält.

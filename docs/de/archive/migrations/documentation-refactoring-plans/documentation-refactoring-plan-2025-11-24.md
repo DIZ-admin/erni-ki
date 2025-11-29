@@ -14,7 +14,7 @@ last_updated: '2025-11-25'
 
 ## Kurzfassung des Audits
 
-**Bewertung:** 7.5/10 **Stats:** 194 Dateien (161 aktiv + 33 Archiv).
+**Bewertung:**7.5/10**Stats:**194 Dateien (161 aktiv + 33 Archiv).
 Übersetzungen: DE ≈41% (36/88 RU), EN ≈6% (5/88 RU). 37 deprecated Metadaten, 6
 kaputte Links, 61 Dateien ohne TOC.
 
@@ -44,7 +44,7 @@ kaputte Links, 61 Dateien ohne TOC.
   `architecture/architecture.md`
 - READMEs für alle `operations/*`-Unterordner erstellen
 
-**Ergebnis:** 0 deprecated Felder, 0 kaputte Links, TOC in Top-10, alle
+**Ergebnis:**0 deprecated Felder, 0 kaputte Links, TOC in Top-10, alle
 operations-Unterordner mit README.
 
 ### Phase 2: Content-Qualität (1 Woche) — Status: ⏳ geplant

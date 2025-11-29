@@ -10,7 +10,7 @@ system_status: 'Production Ready'
 
 # ‍ Administration Guide - ERNI-KI
 
-> **Версия:** 8.1 **Дата обновления:** 24.10.2025 **Статус системы:** Production
+> **Версия:**8.1**Дата обновления:**24.10.2025**Статус системы:**Production
 > Ready [TOC]
 
 ## 1. Введение
@@ -25,23 +25,21 @@ system_status: 'Production Ready'
 ERNI-KI — это Production-Ready AI Platform с архитектурой 15+ сервисов,
 включающая:
 
-- **AI Core:** Ollama, LiteLLM, OpenWebUI
-- **Data:** PostgreSQL, Redis, Qdrant
-- **Observability:** Prometheus, Grafana, Loki, Fluent Bit
-- **Security:** Nginx, Cloudflare Tunnel
+-**AI Core:**Ollama, LiteLLM, OpenWebUI -**Data:**PostgreSQL, Redis,
+Qdrant -**Observability:**Prometheus, Grafana, Loki, Fluent
+Bit -**Security:**Nginx, Cloudflare Tunnel
 
 ## 2. Предварительные требования
 
 Для выполнения административных задач необходимо:
 
-- **Доступ:**
+-**Доступ:**
+
 - SSH доступ к серверу с правами `sudo`.
-- Доступ к веб-интерфейсам (Grafana, Portainer, OpenWebUI).
-- **Инструменты:**
+- Доступ к веб-интерфейсам (Grafana, Portainer, OpenWebUI). -**Инструменты:**
 - Docker & Docker Compose v2.
 - `curl`, `jq`, `htop`, `nc` (netcat).
-- `git` для управления конфигурациями.
-- **Знания:**
+- `git` для управления конфигурациями. -**Знания:**
 - Базовое понимание Docker и Linux администрирования.
 - Понимание архитектуры ERNI-KI (см.
   [Architecture Guide](../../architecture/architecture.md)).
@@ -93,9 +91,8 @@ df -h
 
 #### Доступ к дашбордам
 
-- **Grafana:** `https://your-domain/grafana` (admin/admin)
-- **Prometheus:** `https://your-domain/prometheus`
-- **AlertManager:** `https://your-domain/alertmanager`
+-**Grafana:**`https://your-domain/grafana`
+(admin/admin) -**Prometheus:**`https://your-domain/prometheus` -**AlertManager:**`https://your-domain/alertmanager`
 
 ### 3.3 Управление сервисами
 
@@ -233,10 +230,9 @@ ERNI-KI использует полностью автоматизированн
 
 #### PostgreSQL VACUUM
 
-- **Расписание:** Каждое воскресенье в 3:00
-- **Скрипт:** `/tmp/pg_vacuum.sh`
-- **Лог:** `/tmp/pg_vacuum.log`
-- **Назначение:** Оптимизация БД, освобождение дискового пространства
+-**Расписание:**Каждое воскресенье в
+3:00 -**Скрипт:**`/tmp/pg_vacuum.sh` -**Лог:**`/tmp/pg_vacuum.log` -**Назначение:**Оптимизация
+БД, освобождение дискового пространства
 
 ```bash
 # Проверка последнего выполнения
@@ -248,10 +244,9 @@ grep "completed successfully" /tmp/pg_vacuum.log | tail -n 1
 
 ## Docker Cleanup
 
-- **Расписание:** Каждое воскресенье в 4:00
-- **Скрипт:** `/tmp/docker-cleanup.sh`
-- **Лог:** `/tmp/docker-cleanup.log`
-- **Назначение:** Очистка неиспользуемых образов (>7 дней), volumes, build cache
+-**Расписание:**Каждое воскресенье в
+4:00 -**Скрипт:**`/tmp/docker-cleanup.sh` -**Лог:**`/tmp/docker-cleanup.log` -**Назначение:**Очистка
+неиспользуемых образов (>7 дней), volumes, build cache
 
 ```bash
 # Проверка последнего выполнения
@@ -263,9 +258,9 @@ grep "cleanup completed" /tmp/docker-cleanup.log | tail -n 1
 
 ## Log Rotation
 
-- **Конфигурация:** `compose.yml` (x-critical-logging)
-- **Параметры:** max-size=10m, max-file=3, compress=true
-- **Назначение:** Автоматическая ротация логов контейнеров
+-**Конфигурация:**`compose.yml`
+(x-critical-logging) -**Параметры:**max-size=10m, max-file=3,
+compress=true -**Назначение:**Автоматическая ротация логов контейнеров
 
 ### Мониторинг автоматизации
 
@@ -278,7 +273,7 @@ systemctl status cron
 journalctl -u cron --since "1 day ago"
 ```
 
-** Подробная документация:**
+**Подробная документация:**
 [Automated Maintenance Guide](../automation/automated-maintenance-guide.md)
 
 ## Еженедельные задачи
@@ -467,20 +462,19 @@ docker exec erni-ki-nginx-1 grep "universal_request_id" /etc/nginx/nginx.conf
 
 ### Внутренние ресурсы
 
-- **Мониторинг:** <https://your-domain/grafana>
-- **Логи:** <https://your-domain/grafana> (Explore → Loki)
-- **Метрики:** <https://your-domain/prometheus>
+-**Мониторинг:**<https://your-domain/grafana> -**Логи:**<https://your-domain/grafana>
+(Explore → Loki) -**Метрики:**<https://your-domain/prometheus>
 
 ### Внешние ресурсы
 
-- ** Документация:**
-  [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
-- ** Database Troubleshooting:**
-  [docs/operations/database/database-troubleshooting.md](../database/database-troubleshooting.md)
-- ** Database Monitoring:**
-  [docs/operations/database/database-monitoring-plan.md](../database/database-monitoring-plan.md)
-- ** Production Optimizations:**
-  [docs/operations/database/database-production-optimizations.md](../database/database-production-optimizations.md)
+-**Документация:**
+[Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md) -**Database
+Troubleshooting:**
+[docs/operations/database/database-troubleshooting.md](../database/database-troubleshooting.md) -**Database
+Monitoring:**
+[docs/operations/database/database-monitoring-plan.md](../database/database-monitoring-plan.md) -**Production
+Optimizations:**
+[docs/operations/database/database-production-optimizations.md](../database/database-production-optimizations.md)
 
 ## 4. Верификация
 
@@ -570,5 +564,5 @@ flowchart TD
 
 ---
 
-** Примечание:** Данное руководство актуализировано для архитектуры 29 сервисов
+**Примечание:**Данное руководство актуализировано для архитектуры 29 сервисов
 ERNI-KI версии 5.1 (август 2025).

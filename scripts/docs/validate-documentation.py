@@ -127,12 +127,11 @@ def validate_file(file_path: Path, result: ValidationResult) -> bool:
 
     # Check optional fields
     for field, allowed_values in OPTIONAL_FIELDS.items():
-        if field in frontmatter:
-            if allowed_values and frontmatter[field] not in allowed_values:
-                result.add_warning(
-                    rel_path,
-                    f"Invalid {field}: {frontmatter[field]} (expected: {allowed_values})",
-                )
+        if field in frontmatter and allowed_values and frontmatter[field] not in allowed_values:
+            result.add_warning(
+                rel_path,
+                f"Invalid {field}: {frontmatter[field]} (expected: {allowed_values})",
+            )
 
     # Check language vs path consistency
     if "language" in frontmatter:
@@ -146,9 +145,8 @@ def validate_file(file_path: Path, result: ValidationResult) -> bool:
             if not path_str.endswith(("docs/index.md", "docs/overview.md", "docs/VERSION.md")):
                 # Russian is default, should not be in /en/ or /de/
                 pass
-        elif lang == "ru":
-            if "/en/" in path_str or "/de/" in path_str:
-                result.add_error(rel_path, "Language is ru but in /en/ or /de/ directory")
+        elif lang == "ru" and ("/en/" in path_str or "/de/" in path_str):
+            result.add_error(rel_path, "Language is ru but in /en/ or /de/ directory")
 
     if is_valid:
         result.valid_files += 1

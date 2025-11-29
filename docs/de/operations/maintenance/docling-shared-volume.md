@@ -91,7 +91,7 @@ Empfohlener Cron (täglich um 02:10):
 10 2 * * * cd /home/konstantin/Documents/augment-projects/erni-ki && \
   sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply >> logs/docling-shared-cleanup.log 2>&1
 
-> **Wichtig:** Verwenden Sie `sudo -E` (mit NOPASSWD in sudoers) oder führen Sie den Cron unter dem Benutzer aus,
+>**Wichtig:**Verwenden Sie `sudo -E` (mit NOPASSWD in sudoers) oder führen Sie den Cron unter dem Benutzer aus,
 > der Eigentümer von `data/docling` ist. Andernfalls läuft der Task in "Permission denied".
 
 Einen fertigen sudoers-File können Sie so generieren:
@@ -139,14 +139,13 @@ und Alertmanager ein, um bei wiederholten `Permission denied` auszulösen.
 
 ## 4. Vorfallverfahren
 
-1. **Verdächtige Datei entdeckt** — Verschieben Sie sie nach `quarantine/` und
-   dokumentieren Sie dies im Ticket (Datum/Autor im Dateinamen hinzufügen),
-   führen Sie `chmod 640` aus.
-2. **Volume voll** — Starten Sie das Skript mit reduzierten Retention-Parametern
-   oder löschen Sie manuell nach Absprache mit dem Dateneigentümer.
-3. **Wiederherstellungsanfrage** — Daten älter als Retention werden nicht
-   garantiert; verwenden Sie Backrest/Backups, wenn eine gelöschte Datei
-   wiederhergestellt werden muss.
+1.**Verdächtige Datei entdeckt**— Verschieben Sie sie nach `quarantine/` und
+dokumentieren Sie dies im Ticket (Datum/Autor im Dateinamen hinzufügen), führen
+Sie `chmod 640` aus. 2.**Volume voll**— Starten Sie das Skript mit reduzierten
+Retention-Parametern oder löschen Sie manuell nach Absprache mit dem
+Dateneigentümer. 3.**Wiederherstellungsanfrage**— Daten älter als Retention
+werden nicht garantiert; verwenden Sie Backrest/Backups, wenn eine gelöschte
+Datei wiederhergestellt werden muss.
 
 ## 5. Dokumentation
 

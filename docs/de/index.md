@@ -38,9 +38,9 @@ auf Deutsch.
 
 ## Portal-Aufbau
 
-1. **Russisch ist die kanonische Sprache.** Alle Materialien werden zuerst hier
-   veröffentlicht und dienen als Quelle für Übersetzungen.
-2. **Sprachumschalter** ermöglicht den Wechsel zu deutschen und englischen
-   Versionen der Seiten, wenn diese verfügbar sind.
-3. **Einheitliche Struktur**: Academy KI → Grundlagen, Prompting, HowTo,
-   Neuigkeiten, sowie Systembereich mit Zugriff auf Service-Status.
+1.**Russisch ist die kanonische Sprache.**Alle Materialien werden zuerst hier
+veröffentlicht und dienen als Quelle für
+Übersetzungen. 2.**Sprachumschalter**ermöglicht den Wechsel zu deutschen und
+englischen Versionen der Seiten, wenn diese verfügbar sind. 3.**Einheitliche
+Struktur**: Academy KI → Grundlagen, Prompting, HowTo, Neuigkeiten, sowie
+Systembereich mit Zugriff auf Service-Status.

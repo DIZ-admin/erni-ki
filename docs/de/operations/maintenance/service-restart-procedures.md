@@ -9,8 +9,8 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Version:** 1.0 **Erstellungsdatum:** 2025-09-25 **Zuletzt aktualisiert:**
-2025-09-25 **Verantwortlich:** Tech Lead
+**Version:**1.0**Erstellungsdatum:**2025-09-25**Zuletzt aktualisiert:**
+2025-09-25**Verantwortlich:**Tech Lead
 
 ---
 
@@ -18,17 +18,15 @@ last_updated: '2025-11-24'
 
 ### **Vor dem Neustart IMMER:**
 
-1. **Backup erstellen** der aktuellen Konfigurationen
-2. **Status prüfen** der abhängigen Dienste
-3. **Benutzer benachrichtigen** über geplante Wartungsarbeiten
-4. **Rollback-Plan vorbereiten** für den Fall von Problemen
+1.**Backup erstellen**der aktuellen Konfigurationen 2.**Status prüfen**der
+abhängigen Dienste 3.**Benutzer benachrichtigen**über geplante
+Wartungsarbeiten 4.**Rollback-Plan vorbereiten**für den Fall von Problemen
 
 ### **Neustart-Reihenfolge (kritisch wichtig):**
 
-1. **Monitoring Services** (Exporters, Fluent-bit)
-2. **Infrastructure Services** (Redis, PostgreSQL)
-3. **AI Services** (Ollama, LiteLLM)
-4. **Critical Services** (OpenWebUI, Nginx)
+1.**Monitoring Services**(Exporters, Fluent-bit) 2.**Infrastructure
+Services**(Redis, PostgreSQL) 3.**AI Services**(Ollama, LiteLLM) 4.**Critical
+Services**(OpenWebUI, Nginx)
 
 ---
 

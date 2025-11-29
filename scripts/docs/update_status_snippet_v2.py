@@ -17,7 +17,6 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any
 
 # Import logging library
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -249,11 +248,7 @@ def inject_snippet(
 
     # Inject content
     new_text = (
-        text[: start_pos + len(start_marker)].rstrip()
-        + "\n\n"
-        + content
-        + "\n"
-        + text[end_pos:]
+        text[: start_pos + len(start_marker)].rstrip() + "\n\n" + content + "\n" + text[end_pos:]
     )
 
     target.write_text(new_text, encoding="utf-8")

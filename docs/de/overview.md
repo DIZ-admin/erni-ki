@@ -42,29 +42,28 @@ Sprachinteraktion.
 
 ### Erste Schritte
 
-- **[Installationsanleitung](getting-started/installation.md)** - Detaillierte
-  Installationsschritte
-- **[Benutzerhandbuch](getting-started/user-guide.md)** - Anleitung für
-  Endbenutzer
+-**[Installationsanleitung](getting-started/installation.md)**- Detaillierte
+Installationsschritte -**[Benutzerhandbuch](getting-started/user-guide.md)**-
+Anleitung für Endbenutzer
 
 ### Technische Dokumentation
 
-- **[Systemarchitektur](architecture/architecture.md)** - Technische Architektur
-  und Service-Details
-- **[Administrator-Handbuch](operations/core/admin-guide.md)** -
-  Systemverwaltung und Betrieb
-- **[Monitoring Übersicht](operations/monitoring/monitoring-guide.md)** -
-  Kennzahlen, Skripte und Alerts
-- **[Runbooks](operations/core/runbooks-summary.md)** - Deutsche
-  Zusammenfassungen der wichtigsten Abläufe (englische Originale в
-  `operations/maintenance/` und `operations/troubleshooting/`)
-- **[API-Referenz](../reference/api-reference.md)** - API-Dokumentation
-  (Englisch)
+-**[Systemarchitektur](architecture/architecture.md)**- Technische Architektur
+und
+Service-Details -**[Administrator-Handbuch](operations/core/admin-guide.md)**-
+Systemverwaltung und
+Betrieb -**[Monitoring Übersicht](operations/monitoring/monitoring-guide.md)**-
+Kennzahlen, Skripte und
+Alerts -**[Runbooks](operations/core/runbooks-summary.md)**- Deutsche
+Zusammenfassungen der wichtigsten Abläufe (englische Originale в
+`operations/maintenance/` und
+`operations/troubleshooting/`) -**[API-Referenz](../reference/api-reference.md)**-
+API-Dokumentation (Englisch)
 
 ### Entwicklung
 
-- **[Entwicklerhandbuch](../reference/development.md)** - Entwicklungsumgebung
-  einrichten (Englisch)
+-**[Entwicklerhandbuch](../reference/development.md)**- Entwicklungsumgebung
+einrichten (Englisch)
 
 ## Zielgruppen
 
@@ -72,31 +71,31 @@ Sprachinteraktion.
 
 Wenn Sie ERNI-KI verwenden möchten:
 
-1. Beginnen Sie mit dem **[Benutzerhandbuch](getting-started/user-guide.md)**
+1. Beginnen Sie mit dem**[Benutzerhandbuch](getting-started/user-guide.md)**
 2. Lernen Sie die Grundlagen der AI-Interaktion
 3. Entdecken Sie erweiterte Funktionen wie RAG-Suche und Dokumentenverarbeitung
 
-### ‍ **Administratoren**
+### ‍**Administratoren**
 
 Wenn Sie ERNI-KI installieren und verwalten:
 
-1. Folgen Sie der **[Installationsanleitung](getting-started/installation.md)**
-2. Studieren Sie die **[Systemarchitektur](architecture/architecture.md)**
+1. Folgen Sie der**[Installationsanleitung](getting-started/installation.md)**
+2. Studieren Sie die**[Systemarchitektur](architecture/architecture.md)**
 3. Verwenden Sie das
-   **[Administrator-Handbuch](operations/core/admin-guide.md)** für die tägliche
+   **[Administrator-Handbuch](operations/core/admin-guide.md)**für die tägliche
    Verwaltung
 
-### ‍ **Entwickler**
+### ‍**Entwickler**
 
 Wenn Sie ERNI-KI erweitern oder anpassen möchten:
 
-1. Verstehen Sie die **[Systemarchitektur](architecture/architecture.md)**
-2. Lesen Sie das **[Entwicklerhandbuch](../reference/development.md)**
-3. Nutzen Sie die **[API-Referenz](../reference/api-reference.md)**
+1. Verstehen Sie die**[Systemarchitektur](architecture/architecture.md)**
+2. Lesen Sie das**[Entwicklerhandbuch](../reference/development.md)**
+3. Nutzen Sie die**[API-Referenz](../reference/api-reference.md)**
 
 ## Schnellstart-Pfade
 
-### ‍ **Schnelle Installation (30 Minuten)**
+### ‍**Schnelle Installation (30 Minuten)**
 
 ```bash
 # Repository klonen
@@ -114,7 +113,7 @@ docker compose up -d
 docker compose exec ollama ollama pull llama3.2:3b
 ```
 
-→ **Weiter mit:** [Installationsanleitung](getting-started/installation.md)
+→**Weiter mit:**[Installationsanleitung](getting-started/installation.md)
 
 ## **Erste Nutzung (10 Minuten)**
 
@@ -124,7 +123,7 @@ docker compose exec ollama ollama pull llama3.2:3b
 3. Ollama-Verbindung konfigurieren: `http://ollama:11434`
 4. Ersten Chat mit AI starten
 
-→ **Weiter mit:** [Benutzerhandbuch](getting-started/user-guide.md)
+→**Weiter mit:**[Benutzerhandbuch](getting-started/user-guide.md)
 
 ### **System-Administration**
 
@@ -133,48 +132,41 @@ docker compose exec ollama ollama pull llama3.2:3b
 3. Backups konfigurieren: `http://localhost:9898`
 4. Benutzer verwalten
 
-→ **Weiter mit:** [Administrator-Handbuch](operations/core/admin-guide.md)
+→**Weiter mit:**[Administrator-Handbuch](operations/core/admin-guide.md)
 
 ## Hauptfunktionen
 
 ### **AI-Funktionen**
 
-- **Lokale Sprachmodelle** - Vollständige Kontrolle über Ihre Daten
-- **RAG-Suche** - Aktuelle Informationen aus dem Internet
-- **Dokumentenverarbeitung** - PDF, DOCX, PPTX Analyse
-- **Sprachinteraktion** - Ein- und Ausgabe über Sprache
+-**Lokale Sprachmodelle**- Vollständige Kontrolle über Ihre
+Daten -**RAG-Suche**- Aktuelle Informationen aus dem
+Internet -**Dokumentenverarbeitung**- PDF, DOCX, PPTX
+Analyse -**Sprachinteraktion**- Ein- und Ausgabe über Sprache
 
 ### **Sicherheit**
 
-- **JWT-Authentifizierung** - Sichere Benutzeranmeldung
-- **SSL/TLS-Verschlüsselung** - Vollständige HTTPS-Unterstützung
-- **Cloudflare Zero Trust** - Sichere Tunnel ohne offene Ports
-- **Lokale Datenspeicherung** - Ihre Daten bleiben bei Ihnen
+-**JWT-Authentifizierung**- Sichere
+Benutzeranmeldung -**SSL/TLS-Verschlüsselung**- Vollständige
+HTTPS-Unterstützung -**Cloudflare Zero Trust**- Sichere Tunnel ohne offene
+Ports -**Lokale Datenspeicherung**- Ihre Daten bleiben bei Ihnen
 
 ### **DevOps-Features**
 
-- **Docker Compose** - Einfache Containerisierung
-- **Automatische Backups** - Datenschutz durch Backrest
-- **Health Monitoring** - Systemüberwachung
-- **Auto-Updates** - Aktuelle Software-Versionen
+-**Docker Compose**- Einfache Containerisierung -**Automatische Backups**-
+Datenschutz durch Backrest -**Health Monitoring**-
+Systemüberwachung -**Auto-Updates**- Aktuelle Software-Versionen
 
 ## Systemanforderungen
 
 ### Minimum (Testen)
 
-- **OS**: Ubuntu 20.04+ / Debian 11+
-- **CPU**: 4 Kerne
-- **RAM**: 8GB
-- **Festplatte**: 50GB SSD
-- **Docker**: 20.10+
+-**OS**: Ubuntu 20.04+ / Debian 11+ -**CPU**: 4 Kerne -**RAM**:
+8GB -**Festplatte**: 50GB SSD -**Docker**: 20.10+
 
 ### Empfohlen (Produktion)
 
-- **CPU**: 8+ Kerne mit AVX2
-- **RAM**: 32GB
-- **GPU**: NVIDIA RTX 4060+ (8GB VRAM)
-- **Festplatte**: 200GB+ NVMe SSD
-- **Netzwerk**: 100 Mbps+
+-**CPU**: 8+ Kerne mit AVX2 -**RAM**: 32GB -**GPU**: NVIDIA RTX 4060+ (8GB
+VRAM) -**Festplatte**: 200GB+ NVMe SSD -**Netzwerk**: 100 Mbps+
 
 ## Hilfe und Support
 
@@ -186,10 +178,9 @@ docker compose exec ollama ollama pull llama3.2:3b
 
 ### **Problem-Meldung**
 
-- **GitHub Issues**:
-  [github.com/DIZ-admin/erni-ki/issues](https://github.com/DIZ-admin/erni-ki/issues)
-- **Diskussionen**: GitHub Discussions für Fragen
-- **Community**: Austausch mit anderen Benutzern
+-**GitHub Issues**:
+[github.com/DIZ-admin/erni-ki/issues](https://github.com/DIZ-admin/erni-ki/issues) -**Diskussionen**:
+GitHub Discussions für Fragen -**Community**: Austausch mit anderen Benutzern
 
 ### **Diagnose-Tools**
 
@@ -242,28 +233,27 @@ curl http://localhost:8080/health
 
 Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 
-1. **Übersetzungen verbessern** - Korrekturen und Verbesserungen
-2. **Neue Anleitungen** - Zusätzliche Use Cases dokumentieren
-3. **Screenshots hinzufügen** - Visuelle Hilfen für Benutzer
-4. **FAQ erweitern** - Häufige Fragen beantworten
+1.**Übersetzungen verbessern**- Korrekturen und Verbesserungen 2.**Neue
+Anleitungen**- Zusätzliche Use Cases dokumentieren 3.**Screenshots hinzufügen**-
+Visuelle Hilfen für Benutzer 4.**FAQ erweitern**- Häufige Fragen beantworten
 
-→ **Beitragen:** [Entwicklerhandbuch](../reference/development.md)
+→**Beitragen:**[Entwicklerhandbuch](../reference/development.md)
 
 ## Versionshinweise
 
-- **v2.0** - Vollständige deutsche Übersetzung
-- **v1.x** - Ursprüngliche englische/russische Dokumentation
-- **Aktualisierungen** - Regelmäßige Updates mit neuen Features
+-**v2.0**- Vollständige deutsche Übersetzung -**v1.x**- Ursprüngliche
+englische/russische Dokumentation -**Aktualisierungen**- Regelmäßige Updates mit
+neuen Features
 
 ---
 
 ## Los geht's
 
-**Bereit zum Start?** Wählen Sie Ihren Pfad:
+**Bereit zum Start?**Wählen Sie Ihren Pfad:
 
-- **[Schnelle Installation](getting-started/installation.md)** - System in 30
-  Minuten aufsetzen
-- **[Benutzer-Guide](getting-started/user-guide.md)** - Sofort mit AI arbeiten
-- **[Architektur verstehen](architecture/architecture.md)** - Technische Details
+-**[Schnelle Installation](getting-started/installation.md)**- System in 30
+Minuten aufsetzen -**[Benutzer-Guide](getting-started/user-guide.md)**- Sofort
+mit AI arbeiten -**[Architektur verstehen](architecture/architecture.md)**-
+Technische Details
 
 **Viel Erfolg mit ERNI-KI!**

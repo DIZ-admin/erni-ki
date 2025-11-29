@@ -1,15 +1,15 @@
 ---
 language: de
-doc_version: 1.0.0
+doc_version: '2025.11'
 translation_status: pending
 ---
 
 # Übersicht
 
-> **⚠️ This is a placeholder document.**
+> **This is a placeholder document.**
 >
-> This file was automatically generated to fix broken links.
-> Please update with actual content.
+> This file was automatically generated to fix broken links. Please update with
+> actual content.
 
 ## Overview
 

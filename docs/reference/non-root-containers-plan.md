@@ -23,38 +23,42 @@ title: 'План перехода на non-root контейнеры (CKV_DOCKER
 
 ## План действий
 
-1. **Убрать глобальный `user: "0"`** в `compose.yml` и задать user на уровне
-   сервисов:
-   - Определить uid/gid для: `nginx`, `openwebui`, `ollama`, `litellm`,
-     `docling`, `prometheus`, `grafana`, `loki`, `alertmanager`, `fluent-bit`,
-     `watchtower`, `redis`, `postgres-exporter`, `node-exporter`, `cadvisor`,
-     `blackbox-exporter`, `webhook-receiver`, `rag-exporter`, `mcposerver`,
-     `auth`.
-   - Где образ уже имеет non-root (node-exporter, cadvisor, многие официальные),
-     оставить дефолт.
+1.**Убрать глобальный `user: "0"`**в `compose.yml` и задать user на уровне
+сервисов:
 
-2. **Обновить Dockerfile для локальных образов**:
-   - `auth/Dockerfile`: добавить non-root user (`USER 1001:1001`), chmod для
-     бинаря/артефактов.
-   - `conf/Dockerfile.rag-exporter`: добавить non-root user, обновить entrypoint
-     права.
-   - `conf/webhook-receiver/Dockerfile`: добавить non-root user.
-   - `ops/ollama-exporter/Dockerfile`: добавить non-root user.
+- Определить uid/gid для: `nginx`, `openwebui`, `ollama`, `litellm`, `docling`,
+  `prometheus`, `grafana`, `loki`, `alertmanager`, `fluent-bit`, `watchtower`,
+  `redis`, `postgres-exporter`, `node-exporter`, `cadvisor`,
+  `blackbox-exporter`, `webhook-receiver`, `rag-exporter`, `mcposerver`, `auth`.
+- Где образ уже имеет non-root (node-exporter, cadvisor, многие официальные),
+  оставить дефолт.
 
-3. **Volumes и права**:
-   - Прописать chown/chmod для томов, где нужны записи: `./data/*`, `./logs`,
-     `./conf/*` (где монтируется).
-   - Проверить secrets/ssl: оставить root only или задать корректные маски.
+  2.**Обновить Dockerfile для локальных образов**:
 
-4. **Документация**:
-   - Обновить `docs/architecture/service-inventory.md` и
-     `docs/de/architecture/service-inventory.md` с uid/gid/`user` примечаниями.
-   - Добавить раздел в `docs/reference/documentation-maintenance-strategy.md` о
-     non-root политике.
+- `auth/Dockerfile`: добавить non-root user (`USER 1001:1001`), chmod для
+  бинаря/артефактов.
+- `conf/Dockerfile.rag-exporter`: добавить non-root user, обновить entrypoint
+  права.
+- `conf/webhook-receiver/Dockerfile`: добавить non-root user.
+- `ops/ollama-exporter/Dockerfile`: добавить non-root user.
 
-5. **Проверка/CI**:
-   - Добавить Checkov правило обратно (не disable CKV_DOCKER_3) после миграции.
-   - Запустить `docker compose config` и smoke-тест контейнеров под non-root.
+  3.**Volumes и права**:
+
+- Прописать chown/chmod для томов, где нужны записи: `./data/*`, `./logs`,
+  `./conf/*` (где монтируется).
+- Проверить secrets/ssl: оставить root only или задать корректные маски.
+
+  4.**Документация**:
+
+- Обновить `docs/architecture/service-inventory.md` и
+  `docs/de/architecture/service-inventory.md` с uid/gid/`user` примечаниями.
+- Добавить раздел в `docs/reference/documentation-maintenance-strategy.md` о
+  non-root политике.
+
+  5.**Проверка/CI**:
+
+- Добавить Checkov правило обратно (не disable CKV_DOCKER_3) после миграции.
+- Запустить `docker compose config` и smoke-тест контейнеров под non-root.
 
 ## Приоритетные сервисы для миграции (предлагаемые uid/gid)
 

@@ -18,9 +18,8 @@ last_updated: '2025-11-24'
 
 ### Schwachstellen melden
 
-1. **Kein** öffentliches GitHub-Issue erstellen.
-2. Bericht an <security@erni-ki.local> senden.
-3. Bitte folgende Angaben ergänzen:
+1.**Kein**öffentliches GitHub-Issue erstellen. 2. Bericht an
+<security@erni-ki.local> senden. 3. Bitte folgende Angaben ergänzen:
 
 - Beschreibung der Schwachstelle
 - Schritte zur Reproduktion
@@ -29,10 +28,9 @@ last_updated: '2025-11-24'
 
 ### Reaktionszeiten
 
-- **Eingangsbestätigung**: innerhalb von 24 Stunden
-- **Erste Bewertung**: innerhalb von 72 Stunden
-- **Fix für kritische Bugs**: innerhalb von 7 Tagen
-- **Fix für nicht-kritische Bugs**: innerhalb von 30 Tagen
+-**Eingangsbestätigung**: innerhalb von 24 Stunden -**Erste Bewertung**:
+innerhalb von 72 Stunden -**Fix für kritische Bugs**: innerhalb von
+7 Tagen -**Fix für nicht-kritische Bugs**: innerhalb von 30 Tagen
 
 ### Einstufung
 
@@ -183,9 +181,8 @@ deploy:
 
 ## Kontakte
 
-- **Security Team**: <security@erni-ki.local>
-- **Notfall**: +7-XXX-XXX-XXXX
-- **PGP-Key**: siehe veröffentlichter Public Key
+-**Security Team**: <security@erni-ki.local> -**Notfall**:
++7-XXX-XXX-XXXX -**PGP-Key**: siehe veröffentlichter Public Key
 
 ### Dank an Researcher
 
@@ -195,4 +192,4 @@ Wir danken Sicherheitsforscher:innen, die verantwortungsvoll melden:
 
 ---
 
-**Letzte Aktualisierung**: 2024-12-30 — **Policy-Version**: 1.0
+**Letzte Aktualisierung**: 2024-12-30 —**Policy-Version**: 1.0

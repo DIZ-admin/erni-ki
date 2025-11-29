@@ -27,5 +27,5 @@ this version tracks them and highlights the most important user links.
 - Quick start: [Open WebUI basics](../academy/openwebui-basics.md) and
   [Prompting 101](../academy/prompting-101.md).
 - Practical scenarios: [HowTo collection](academy/howto/index.md).
-- Uptime first: **[System status](system/status.md)** before you escalate an
+- Uptime first:**[System status](system/status.md)**before you escalate an
   issue.

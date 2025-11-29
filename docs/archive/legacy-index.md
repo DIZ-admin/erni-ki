@@ -12,7 +12,7 @@ MCP, окружённая полным стеком наблюдаемости, 
 инструкции для офисных сотрудников о том, как безопасно работать с AI в
 повседневных задачах.
 
-**Academy KI** — отдельный вход для сотрудников с быстрым стартом, обучением и
+**Academy KI**— отдельный вход для сотрудников с быстрым стартом, обучением и
 готовыми сценариями. Начните с [портала Academy KI](../academy/index.md), чтобы
 получить ссылки на базовые уроки, примеры промптов и актуальные новости.
 
@@ -37,26 +37,26 @@ MCP, окружённая полным стеком наблюдаемости, 
 
 ## Быстрые переходы
 
-- **Архитектура и сервисы** — `../architecture/architecture.md`,
-  `../architecture/service-inventory.md`,
-  `../architecture/services-overview.md`.
-- **Операции** — `../operations/core/operations-handbook.md`,
-  `../operations/monitoring/monitoring-guide.md`,
-  `../operations/automation/automated-maintenance-guide.md`, `../operations/`.
-- **Хранилище и данные** — `../operations/database/database-monitoring-plan.md`,
-  `../operations/database/redis-operations-guide.md`,
-  `../operations/database/database-production-optimizations.md`.
-- **ML и API** — `reference/api-reference.md`, `README.md` (вне MkDocs, но
-  всегда актуален в корне репозитория).
-- **Безопасность** — `security/security-policy.md` и related compliance notes.
-- **Academy KI** — входная точка для сотрудников: [портал](../academy/index.md),
-  базовые уроки ([Open WebUI basics](../academy/openwebui-basics.md),
-  [Prompting 101](../academy/prompting-101.md)), сценарии
-  ([HowTo](../academy/howto/write-customer-email.md)) и
-  [News](../news/index.md).
-- **Проверить статус ERNI-KI** — смотрите
-  [status page](../operations/core/status-page.md) (ссылку на конкретный URL
-  укажите в конфигурации).
+-**Архитектура и сервисы**— `../architecture/architecture.md`,
+`../architecture/service-inventory.md`,
+`../architecture/services-overview.md`. -**Операции**—
+`../operations/core/operations-handbook.md`,
+`../operations/monitoring/monitoring-guide.md`,
+`../operations/automation/automated-maintenance-guide.md`,
+`../operations/`. -**Хранилище и данные**—
+`../operations/database/database-monitoring-plan.md`,
+`../operations/database/redis-operations-guide.md`,
+`../operations/database/database-production-optimizations.md`. -**ML и API**—
+`reference/api-reference.md`, `README.md` (вне MkDocs, но всегда актуален в
+корне репозитория). -**Безопасность**— `security/security-policy.md` и related
+compliance notes. -**Academy KI**— входная точка для сотрудников:
+[портал](../academy/index.md), базовые уроки
+([Open WebUI basics](../academy/openwebui-basics.md),
+[Prompting 101](../academy/prompting-101.md)), сценарии
+([HowTo](../academy/howto/write-customer-email.md)) и
+[News](../news/index.md). -**Проверить статус ERNI-KI**— смотрите
+[status page](../operations/core/status-page.md) (ссылку на конкретный URL
+укажите в конфигурации).
 
 > Для быстрых решений используйте Archon (runbooks, checklists, status updates)
 > и держите синхронизацию с этими материалами.

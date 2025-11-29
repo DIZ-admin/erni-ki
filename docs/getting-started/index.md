@@ -14,7 +14,8 @@ last_updated: '2025-11-28'
 
 ### Установка
 
-- **[installation.md](installation.md)** - Полное руководство по установке
+-**[installation.md](installation.md)**- Полное руководство по установке
+
 - Системные требования
 - Настройка Docker Compose
 - Первоначальная конфигурация
@@ -22,7 +23,8 @@ last_updated: '2025-11-28'
 
 ### Конфигурация
 
-- **[configuration-guide.md](configuration-guide.md)** - Настройка сервисов
+-**[configuration-guide.md](configuration-guide.md)**- Настройка сервисов
+
 - Переменные окружения
 - Специфичные настройки сервисов
 - Конфигурация GPU
@@ -30,7 +32,8 @@ last_updated: '2025-11-28'
 
 ### Руководство пользователя
 
-- **[user-guide.md](user-guide.md)** - Документация для конечного пользователя
+-**[user-guide.md](user-guide.md)**- Документация для конечного пользователя
+
 - Обзор веб-интерфейса
 - Функции чата
 - Управление моделями
@@ -38,21 +41,19 @@ last_updated: '2025-11-28'
 
 ### Настройка сети
 
-- **[external-access-setup.md](external-access-setup.md)** - Настройка внешнего
-  доступа
-- **[local-network-dns-setup.md](local-network-dns-setup.md)** - Настройка
-  локального DNS
-- **[dnsmasq-setup-instructions.md](dnsmasq-setup-instructions.md)** - Настройка
-  DNSMasq
-- **[port-forwarding-setup.md](port-forwarding-setup.md)** - Руководство по
-  пробросу портов
+-**[external-access-setup.md](external-access-setup.md)**- Настройка внешнего
+доступа -**[local-network-dns-setup.md](local-network-dns-setup.md)**- Настройка
+локального
+DNS -**[dnsmasq-setup-instructions.md](dnsmasq-setup-instructions.md)**-
+Настройка DNSMasq -**[port-forwarding-setup.md](port-forwarding-setup.md)**-
+Руководство по пробросу портов
 
 ## Быстрый старт
 
-1. **Установка:** Следуйте инструкции [installation.md](installation.md) (~30
-   минут)
-2. **Конфигурация:** Изучите [configuration-guide.md](configuration-guide.md)
-3. **Первое использование:** Прочитайте [user-guide.md](user-guide.md)
+1.**Установка:**Следуйте инструкции [installation.md](installation.md) (~30
+минут) 2.**Конфигурация:**Изучите
+[configuration-guide.md](configuration-guide.md) 3.**Первое
+использование:**Прочитайте [user-guide.md](user-guide.md)
 
 ## Требования
 
@@ -70,4 +71,4 @@ last_updated: '2025-11-28'
 
 ## Версия
 
-Версия документации: **12.1** Последнее обновление: **2025-11-28**
+Версия документации:**12.1**Последнее обновление:**2025-11-28**

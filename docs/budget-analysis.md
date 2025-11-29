@@ -7,22 +7,21 @@ last_updated: '2025-11-24'
 
 # Анализ Затратного Бюджета Проекта ERNI-KI
 
-**Дата анализа:** 24 ноября 2025 **Версия проекта:** Production Ready v0.61.3
-**Технологический стек:** 32 микросервиса, GPU-ускорение, полная обсервабилити
+**Дата анализа:**24 ноября 2025**Версия проекта:**Production Ready v0.61.3
+**Технологический стек:**32 микросервиса, GPU-ускорение, полная обсервабилити
 
 ---
 
 ## 1. Обзор Проекта
 
-**ERNI-KI** — это корпоративная AI-платформа enterprise-класса, построенная на
+**ERNI-KI**— это корпоративная AI-платформа enterprise-класса, построенная на
 базе:
 
-- **Open WebUI v0.6.40** — пользовательский интерфейс
-- **Ollama 0.12.11** — LLM-сервер с GPU-ускорением
-- **LiteLLM v1.80.0.rc.1** — Context Engineering Gateway
-- **32 микросервиса** в Docker контейнерах
-- **Полный стек мониторинга** (Prometheus, Grafana, Loki, Alertmanager)
-- **Enterprise Security** (Cloudflare Zero Trust, Nginx WAF, JWT Auth)
+-**Open WebUI v0.6.40**— пользовательский интерфейс -**Ollama 0.12.11**—
+LLM-сервер с GPU-ускорением -**LiteLLM v1.80.0.rc.1**— Context Engineering
+Gateway -**32 микросервиса**в Docker контейнерах -**Полный стек
+мониторинга**(Prometheus, Grafana, Loki, Alertmanager) -**Enterprise
+Security**(Cloudflare Zero Trust, Nginx WAF, JWT Auth)
 
 ### Ключевые компоненты системы:
 
@@ -73,52 +72,42 @@ last_updated: '2025-11-24'
 
 ### Backend
 
-- **Go 1.24.10** — Auth сервис, высокопроизводительные компоненты
-- **Python 3.x** — Scripting, automation, LiteLLM custom providers
-- **Shell/Bash** — Infrastructure automation scripts
+-**Go 1.24.10**— Auth сервис, высокопроизводительные компоненты -**Python 3.x**—
+Scripting, automation, LiteLLM custom providers -**Shell/Bash**— Infrastructure
+automation scripts
 
 ### Frontend & Web
 
-- **TypeScript/JavaScript** — Frontend logic, testing
-- **Node.js 20.18.0** — Build toolchain
-- **Nginx 1.29.3** — Web server & reverse proxy
+-**TypeScript/JavaScript**— Frontend logic, testing -**Node.js 20.18.0**— Build
+toolchain -**Nginx 1.29.3**— Web server & reverse proxy
 
 ### Databases & Storage
 
-- **PostgreSQL 17** — Основная БД с pgvector для векторного поиска
-- **Redis 7** — In-memory cache, pub/sub, queues
+-**PostgreSQL 17**— Основная БД с pgvector для векторного поиска -**Redis 7**—
+In-memory cache, pub/sub, queues
 
 ### CI/CD & DevOps
 
-- **Docker & Docker Compose** — Контейнеризация
-- **GitHub Actions** — CI/CD pipelines
-- **Pre-commit hooks** — Код-качество
-- **Playwright** — E2E тестирование
-- **Vitest** — Unit тестирование
+-**Docker & Docker Compose**— Контейнеризация -**GitHub Actions**— CI/CD
+pipelines -**Pre-commit hooks**— Код-качество -**Playwright**— E2E
+тестирование -**Vitest**— Unit тестирование
 
 ### Security & Compliance
 
-- **Cloudflare Zero Trust** — Внешний доступ
-- **CodeQL** — Статический анализ безопасности
-- **Trivy/Grype** — Сканирование контейнеров
-- **Checkov** — IaC security scanner
-- **Gitleaks** — Поиск секретов
-- **Snyk** — Dependency scanning
+-**Cloudflare Zero Trust**— Внешний доступ -**CodeQL**— Статический анализ
+безопасности -**Trivy/Grype**— Сканирование контейнеров -**Checkov**— IaC
+security scanner -**Gitleaks**— Поиск секретов -**Snyk**— Dependency scanning
 
 ### AI/ML Stack
 
-- **CUDA 12.6** — GPU ускорение
-- **NVIDIA Container Runtime** — GPU в Docker
-- **Ollama** — LLM inference
-- **OpenWebUI** — AI interface
-- **MCP (Model Context Protocol)** — Интеграция инструментов
+-**CUDA 12.6**— GPU ускорение -**NVIDIA Container Runtime**— GPU в
+Docker -**Ollama**— LLM inference -**OpenWebUI**— AI interface -**MCP (Model
+Context Protocol)**— Интеграция инструментов
 
 ### Monitoring & Observability
 
-- **Prometheus Stack** — Metrics collection
-- **Grafana Stack** — Visualization & Dashboards
-- **Loki** — Log aggregation
-- **Fluent Bit** — Log shipping
+-**Prometheus Stack**— Metrics collection -**Grafana Stack**— Visualization &
+Dashboards -**Loki**— Log aggregation -**Fluent Bit**— Log shipping
 
 ---
 
@@ -135,8 +124,8 @@ last_updated: '2025-11-24'
 | Дизайн безопасности  | Security Architect      | 1 неделя   | Zero Trust, WAF, encryption, compliance    |
 | Дизайн данных        | Data Architect          | 0.5 недели | Схема БД, векторное хранилище, бэкапы      |
 
-**Команда:** 1 Solution Architect, 1 Security Architect, 1 Data Architect, 1 PM
-**Итого:** 3-4 недели параллельной работы
+**Команда:**1 Solution Architect, 1 Security Architect, 1 Data Architect, 1 PM
+**Итого:**3-4 недели параллельной работы
 
 #### Фаза 2: Инфраструктура и DevOps (2-3 недели)
 
@@ -147,7 +136,7 @@ last_updated: '2025-11-24'
 | Мониторинг setup       | DevOps Engineer   | 0.5 недели | Prometheus, Grafana, Loki      |
 | GPU infrastructure     | DevOps + SysAdmin | 0.5 недели | NVIDIA runtime, CUDA setup     |
 
-**Команда:** 1 Senior DevOps Engineer, 1 SysAdmin **Итого:** 2-3 недели
+**Команда:**1 Senior DevOps Engineer, 1 SysAdmin**Итого:**2-3 недели
 
 #### Фаза 3: Security & Networking (2-3 недели)
 
@@ -158,7 +147,7 @@ last_updated: '2025-11-24'
 | JWT Auth service      | Backend Developer (Go) | 1 неделя   | Разработка и тестирование |
 | Security scanning     | Security Engineer      | 0.5 недели | Setup Trivy, CodeQL, Snyk |
 
-**Команда:** 1 Security Engineer, 1 Go Developer **Итого:** 2-3 недели
+**Команда:**1 Security Engineer, 1 Go Developer**Итого:**2-3 недели
 
 ---
 
@@ -175,8 +164,8 @@ last_updated: '2025-11-24'
 | Docling OCR pipeline     | ML Engineer                | 1 неделя   |           |
 | SearXNG integration      | Backend Developer          | 1 неделя   |           |
 
-**Команда:** 1 ML Engineer, 1 Full-stack Developer, 2 Backend Developers
-(Python) **Итого:** 4-6 недель параллельной работы
+**Команда:**1 ML Engineer, 1 Full-stack Developer, 2 Backend Developers
+(Python)**Итого:**4-6 недель параллельной работы
 
 #### Data Layer (3-4 недели)
 
@@ -187,8 +176,8 @@ last_updated: '2025-11-24'
 | Backrest backup system     | DevOps Engineer   | 1 неделя   |           |
 | Database migrations        | Backend Developer | 0.5 недели |           |
 
-**Команда:** 1 Database Engineer, 1 DevOps Engineer, 1 Backend Developer
-**Итого:** 3-4 недели
+**Команда:**1 Database Engineer, 1 DevOps Engineer, 1 Backend Developer
+**Итого:**3-4 недели
 
 #### Processing Layer (2-3 недели)
 
@@ -198,7 +187,7 @@ last_updated: '2025-11-24'
 | EdgeTTS service          | Backend Developer | 1 неделя |           |
 | File processing pipeline | Backend Developer | 1 неделя |           |
 
-**Команда:** 1-2 Backend Developers **Итого:** 2-3 недели
+**Команда:**1-2 Backend Developers**Итого:**2-3 недели
 
 #### Gateway & Proxy (2-3 недели)
 
@@ -208,7 +197,7 @@ last_updated: '2025-11-24'
 | Auth service (Go)   | Backend Developer (Go) | 1.5 недели |           |
 | Cloudflared tunnels | DevOps Engineer        | 1 неделя   |           |
 
-**Команда:** 1 DevOps Engineer, 1 Go Developer **Итого:** 2-3 недели
+**Команда:**1 DevOps Engineer, 1 Go Developer**Итого:**2-3 недели
 
 ---
 
@@ -225,7 +214,7 @@ last_updated: '2025-11-24'
 | 8 Exporters deployment   | DevOps Engineer | 1 неделя   |           |
 | Uptime Kuma              | DevOps Engineer | 0.5 недели |           |
 
-**Команда:** 1 Senior DevOps Engineer, 1 SRE Engineer **Итого:** 4-5 недель
+**Команда:**1 Senior DevOps Engineer, 1 SRE Engineer**Итого:**4-5 недель
 
 ---
 
@@ -239,7 +228,7 @@ last_updated: '2025-11-24'
 | Runbooks & operations    | SRE Engineer      | 1.5 недели | Incident response, maintenance procedures  |
 | Переводы (DE, EN)        | Technical Writer  | 1.5 недели | Многоязычность (3 языка)                   |
 
-**Команда:** 1 Technical Writer, 1 SRE Engineer, 1 Backend Developer **Итого:**
+**Команда:**1 Technical Writer, 1 SRE Engineer, 1 Backend Developer**Итого:**
 6-8 недель параллельной работы
 
 ---
@@ -255,8 +244,8 @@ last_updated: '2025-11-24'
 | Security testing       | Security Engineer      | 1.5 недели | Penetration testing, vulnerability assessment |
 | UAT                    | Product Owner + Users  | 1 неделя   | User acceptance testing                       |
 
-**Команда:** 2 QA Engineers, 1 QA Automation Engineer, 1 Performance Engineer, 1
-Security Engineer **Итого:** 6-8 недель (некоторые параллельно с разработкой)
+**Команда:**2 QA Engineers, 1 QA Automation Engineer, 1 Performance Engineer, 1
+Security Engineer**Итого:**6-8 недель (некоторые параллельно с разработкой)
 
 ---
 
@@ -270,8 +259,8 @@ Security Engineer **Итого:** 6-8 недель (некоторые пара�
 | Disaster recovery      | SRE Engineer         | 1 неделя   | Backup testing, failover procedures |
 | Production deployment  | DevOps Team          | 0.5 недели | Go-live, rollback plan              |
 
-**Команда:** 1 DevOps, 1 SRE, 1 SysAdmin, 1 Performance Engineer, 1 Backend
-Developer **Итого:** 3-4 недели
+**Команда:**1 DevOps, 1 SRE, 1 SysAdmin, 1 Performance Engineer, 1 Backend
+Developer**Итого:**3-4 недели
 
 ---
 
@@ -291,7 +280,7 @@ Developer **Итого:** 3-4 недели
 | Technical Writer           | 1          | 6,000-9,000 CHF   | 2 месяца         |
 | Project Manager            | 1          | 9,000-13,000 CHF  | 6 месяцев        |
 
-**Минимальная команда:** 10 человек
+**Минимальная команда:**10 человек
 
 ### Оптимальная Команда (для Production-Ready)
 
@@ -314,7 +303,7 @@ Developer **Итого:** 3-4 недели
 | Project Manager            | 1          | 11,000 CHF   | 6 месяцев        |
 | Product Owner              | 1          | 10,000 CHF   | 6 месяцев        |
 
-**Оптимальная команда:** 23 человека
+**Оптимальная команда:**23 человека
 
 ---
 
@@ -322,12 +311,12 @@ Developer **Итого:** 3-4 недели
 
 ### Сценарий 1: MVP (Минимальный жизнеспособный продукт)
 
-**Время:** 5-6 месяцев **Команда:** 10 человек **Описание:** Базовая
+**Время:**5-6 месяцев**Команда:**10 человек**Описание:**Базовая
 функциональность, ограниченная документация, минимальный мониторинг
 
 ### Сценарий 2: Production-Ready (текущая версия v0.61.3)
 
-**Время:** 8-10 месяцев **Команда:** 20-23 человека **Описание:** Полная
+**Время:**8-10 месяцев**Команда:**20-23 человека**Описание:**Полная
 функциональность, enterprise security, всесторонняя документация, 32 сервиса
 
 ### Breakdown по фазам (Production-Ready):
@@ -341,7 +330,7 @@ Developer **Итого:** 3-4 недели
 | Testing & QA                 | 2-3 месяца   | 4-5 (частично параллельно) |
 | Deployment & stabilization   | 1-2 месяца   | 6-8                        |
 
-**Общее время:** 8-10 месяцев с учетом параллельных работ
+**Общее время:**8-10 месяцев с учетом параллельных работ
 
 ---
 
@@ -363,7 +352,7 @@ Developer **Итого:** 3-4 недели
 | Technical Writer   | 1          | 2      | 7,500  | 15,000  |
 | Project Manager    | 1          | 6      | 11,000 | 66,000  |
 
-**Итого персонал MVP:** 470,500 CHF
+**Итого персонал MVP:**470,500 CHF
 
 #### Сценарий Production-Ready (8-10 месяцев)
 
@@ -386,7 +375,7 @@ Developer **Итого:** 3-4 недели
 | Project Manager    | 1 × 8               | 11,000 | 88,000  |
 | Product Owner      | 1 × 8               | 10,000 | 80,000  |
 
-**Итого персонал Production:** 1,214,500 CHF
+**Итого персонал Production:**1,214,500 CHF
 
 ### 6.2 Инфраструктурные Затраты
 
@@ -398,7 +387,7 @@ Developer **Итого:** 3-4 недели
 | CPU/RAM/Storage        | High-end server (64GB+ RAM, NVMe SSD) | 8,000-12,000 CHF  |
 | Резервное оборудование | Backup server                         | 10,000-15,000 CHF |
 
-**Итого оборудование:** 33,000-52,000 CHF
+**Итого оборудование:**33,000-52,000 CHF
 
 #### Cloud Alternative (если используется облако)
 
@@ -409,7 +398,7 @@ Developer **Итого:** 3-4 недели
 | Object Storage        | Backups, models, data      | 200-400 CHF     |
 | Network/Traffic       | CDN, bandwidth             | 300-500 CHF     |
 
-**Итого облако:** 2,500-4,700 CHF/месяц × 12 месяцев = **30,000-56,400 CHF/год**
+**Итого облако:**2,500-4,700 CHF/месяц × 12 месяцев =**30,000-56,400 CHF/год**
 
 #### Лицензии и Подписки (годовая стоимость)
 
@@ -422,7 +411,7 @@ Developer **Итого:** 3-4 недели
 | SSL Certificates      | Enterprise SSL/TLS            | 500-1,000 CHF   |
 | AI API Keys           | OpenAI, PublicAI fallbacks    | 1,000-3,000 CHF |
 
-**Итого лицензии:** 8,100-19,500 CHF/год
+**Итого лицензии:**8,100-19,500 CHF/год
 
 #### Разработка и DevOps Tooling
 
@@ -433,7 +422,7 @@ Developer **Итого:** 3-4 недели
 | Confluence/Jira        | Documentation, PM         | 3,000 CHF/год |
 | Slack Business+        | Team communication        | 1,500 CHF/год |
 
-**Итого tooling:** 12,000 CHF/год
+**Итого tooling:**12,000 CHF/год
 
 ---
 
@@ -446,7 +435,7 @@ Developer **Итого:** 3-4 недели
 | Непредвиденные расходы | 10-15% от бюджета                   | 50,000-100,000 CHF |
 | Legal & Compliance     | GDPR, data protection               | 5,000-15,000 CHF   |
 
-**Итого прочие:** 80,000-165,000 CHF
+**Итого прочие:**80,000-165,000 CHF
 
 ---
 
@@ -486,7 +475,7 @@ Developer **Итого:** 3-4 недели
 | Tooling (12 месяцев)              | 12,000 CHF    |
 | Прочие                            | 100,000 CHF   |
 
-**Итого Cloud:** **1,382,500 CHF** (первый год) **Последующие годы (OpEx):**
+**Итого Cloud:** **1,382,500 CHF**(первый год)**Последующие годы (OpEx):**
 ~50,000-70,000 CHF/год (облако + лицензии + поддержка)
 
 ---
@@ -503,7 +492,7 @@ Developer **Итого:** 3-4 недели
 | Security compliance    | Средняя     | +15,000 CHF     | Ранний аудит, консультанты                    |
 | Team availability      | Высокая     | +2-4 недели     | Резервные кандидаты, overlap periods          |
 
-**Рекомендуемый contingency buffer:** 15-20% от общего бюджета
+**Рекомендуемый contingency buffer:**15-20% от общего бюджета
 
 ---
 
@@ -521,7 +510,7 @@ Developer **Итого:** 3-4 недели
 | Security updates/patches           | 10,000-15,000 CHF |
 | Documentation updates              | 15,000-20,000 CHF |
 
-**Итого OpEx (on-premise):** 335,000-352,000 CHF/год **Итого OpEx (cloud):**
+**Итого OpEx (on-premise):**335,000-352,000 CHF/год**Итого OpEx (cloud):**
 362,000-397,000 CHF/год
 
 ---
@@ -530,25 +519,21 @@ Developer **Итого:** 3-4 недели
 
 ### Build (текущий проект ERNI-KI)
 
-- **CapEx:** 1,385,500 CHF
-- **OpEx:** 335,000 CHF/год
-- **Total Cost of Ownership (3 года):** 2,390,500 CHF
-- **Преимущества:** Полный контроль, customization, on-premise данные
-- **Недостатки:** Высокий initial investment, требует команду
+-**CapEx:**1,385,500 CHF -**OpEx:**335,000 CHF/год -**Total Cost of Ownership (3
+года):**2,390,500 CHF -**Преимущества:**Полный контроль, customization,
+on-premise данные -**Недостатки:**Высокий initial investment, требует команду
 
 ### Buy (Commercial AI Platform)
 
-- **CapEx:** 0-50,000 CHF (setup)
-- **OpEx:** 150,000-400,000 CHF/год (лицензии + support)
-- **Total Cost of Ownership (3 года):** 500,000-1,250,000 CHF
-- **Преимущества:** Быстрый запуск, vendor support
-- **Недостатки:** Vendor lock-in, ограниченная кастомизация, данные в облаке
+-**CapEx:**0-50,000 CHF (setup) -**OpEx:**150,000-400,000 CHF/год (лицензии +
+support) -**Total Cost of Ownership (3 года):**500,000-1,250,000
+CHF -**Преимущества:**Быстрый запуск, vendor support -**Недостатки:**Vendor
+lock-in, ограниченная кастомизация, данные в облаке
 
 ### Hybrid (Managed + Custom Components)
 
-- **CapEx:** 400,000-600,000 CHF
-- **OpEx:** 180,000-250,000 CHF/год
-- **Total Cost of Ownership (3 года):** 940,000-1,350,000 CHF
+-**CapEx:**400,000-600,000 CHF -**OpEx:**180,000-250,000 CHF/год -**Total Cost
+of Ownership (3 года):**940,000-1,350,000 CHF
 
 ---
 
@@ -566,10 +551,9 @@ Developer **Итого:** 3-4 недели
 
 ### Break-even Analysis (Build)
 
-- **Initial investment:** 1,385,500 CHF
-- **Annual savings vs cloud platforms:** ~100,000 CHF
-- **Productivity gains:** ~200,000 CHF/year (estimated)
-- **Break-even:** **~4-5 лет**
+-**Initial investment:**1,385,500 CHF -**Annual savings vs cloud
+platforms:**~100,000 CHF -**Productivity gains:**~200,000 CHF/year
+(estimated) -**Break-even:** **~4-5 лет**
 
 ---
 
@@ -577,19 +561,19 @@ Developer **Итого:** 3-4 недели
 
 ### Для запуска проекта с нуля:
 
-1. **Start with MVP (6 месяцев, 570K CHF)**
+1.**Start with MVP (6 месяцев, 570K CHF)**
 
 - Доказать концепцию
 - Валидировать требования
 - Быстрый feedback loop
 
-2. **Iterate to Production (дополнительно 4 месяца, +800K CHF)**
+  2.**Iterate to Production (дополнительно 4 месяца, +800K CHF)**
 
 - Масштабировать на основе real feedback
 - Добавить enterprise features поэтапно
 - Минимизировать риски
 
-3. **Hybrid approach**
+  3.**Hybrid approach**
 
 - Используйте managed services где возможно (DB, monitoring)
 - Кастомизируйте только критичные компоненты
@@ -597,37 +581,34 @@ Developer **Итого:** 3-4 недели
 
 ### Критические success factors:
 
-**Сильная архитектурная экспертиза** — Solution Architect критичен **DevOps
-automation** — CI/CD с первого дня **Security by design** — не afterthought
-**Comprehensive documentation** — знания должны быть shared **Agile
-methodology** — iterative delivery, не waterfall **Stakeholder buy-in** —
-executive support и clear ROI
+**Сильная архитектурная экспертиза**— Solution Architect критичен**DevOps
+automation**— CI/CD с первого дня**Security by design**— не afterthought
+**Comprehensive documentation**— знания должны быть shared**Agile methodology**—
+iterative delivery, не waterfall**Stakeholder buy-in**— executive support и
+clear ROI
 
 ---
 
 ## 13. Заключение
 
-**Проект ERNI-KI** — это enterprise-grade AI platform с **32 микросервисами**,
+**Проект ERNI-KI**— это enterprise-grade AI platform с**32 микросервисами**,
 требующий значительных инвестиций как в разработку, так и в операционную
 поддержку.
 
 ### Ключевые цифры:
 
-- **Время реализации:** 8-10 месяцев (production-ready)
-- **Команда:** 20-23 специалиста (peak)
-- **CapEx (Build):** 1,385,500 CHF
-- **OpEx (Ежегодно):** 335,000-397,000 CHF
-- **TCO (3 года):** 2,39M CHF
+-**Время реализации:**8-10 месяцев (production-ready) -**Команда:**20-23
+специалиста (peak) -**CapEx (Build):**1,385,500 CHF -**OpEx
+(Ежегодно):**335,000-397,000 CHF -**TCO (3 года):**2,39M CHF
 
 ### Альтернативы:
 
-- **MVP:** 6 месяцев, 570K CHF — доказать концепцию
-- **Cloud-based:** Быстрее, но +27K/год OpEx
-- **Buy commercial:** Дешевле short-term, но vendor lock-in
+-**MVP:**6 месяцев, 570K CHF — доказать концепцию -**Cloud-based:**Быстрее, но
++27K/год OpEx -**Buy commercial:**Дешевле short-term, но vendor lock-in
 
-Проект оправдан для организаций с **высокими требованиями к безопасности
-данных**, **compliance**, и **долгосрочной AI стратегией**.
+Проект оправдан для организаций с**высокими требованиями к безопасности
+данных**,**compliance**, и**долгосрочной AI стратегией**.
 
 ---
 
-**Подготовлено:** Antigravity AI Assistant **Дата:** 24 ноября 2025
+**Подготовлено:**Antigravity AI Assistant**Дата:**24 ноября 2025

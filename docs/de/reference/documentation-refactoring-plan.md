@@ -7,7 +7,7 @@ last_updated: '2025-11-25'
 
 # ERNI-KI Professional Documentation & Refactoring Plan (Nov 2025)
 
-> **Ziel:** Produktive Doku vereinheitlichen, Duplikate entfernen, veraltete
+> **Ziel:**Produktive Doku vereinheitlichen, Duplikate entfernen, veraltete
 > Bereiche schließen, klare Struktur für DevOps/ML/SRE schaffen. [TOC]
 
 ## 1. Ist-Zustand (Audit 82 Markdown-Dateien)

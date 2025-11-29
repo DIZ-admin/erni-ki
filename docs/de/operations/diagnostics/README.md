@@ -16,7 +16,7 @@ mit kritischen Testfehlern, die zu zu niedrigen Bewertungen führten.
 
 ### Kerndokumente
 
-1. **[erni-ki-diagnostic-methodology.md](../../../operations/diagnostics/erni-ki-diagnostic-methodology.md)**
+1.**[erni-ki-diagnostic-methodology.md](../../../operations/diagnostics/erni-ki-diagnostic-methodology.md)**
 
 - End-to-end Diagnoseleitfaden
 - Korrekte Testmethodik für Komponenten
@@ -26,7 +26,7 @@ mit kritischen Testfehlern, die zu zu niedrigen Bewertungen führten.
 
 ### Werkzeuge
 
-1. **`../scripts/erni-ki-health-check.sh`**
+1.**`../scripts/erni-ki-health-check.sh`**
 
 - Automatisiertes Diagnoseskript
 - Vollständiger Check aller Komponenten
@@ -79,26 +79,26 @@ curl -I "https://ki.erni-gruppe.ch"
 
 ### Schlüsselkriterien
 
-- **Healthy Containers:** Anzahl Container mit Status "healthy"
-- **API Response Time:** Antwortzeiten kritischer APIs
-- **External Access:** Erreichbarkeit via HTTPS-Domains
-- **Integration Status:** Funktionsfähigkeit der Service-Integrationen
+-**Healthy Containers:**Anzahl Container mit Status "healthy" -**API Response
+Time:**Antwortzeiten kritischer APIs -**External Access:**Erreichbarkeit via
+HTTPS-Domains -**Integration Status:**Funktionsfähigkeit der
+Service-Integrationen
 
 ## Typische Probleme & Fixes
 
 ### Häufige Diagnosefehler
 
-1. **Tests ohne Authentifizierung**
+1.**Tests ohne Authentifizierung**
 
 - `curl http://localhost:4000/v1/models`
 - `curl -H "Authorization: Bearer TOKEN" http://localhost:4000/v1/models`
 
-2. **Falsche Endpoints**
+  2.**Falsche Endpoints**
 
 - `curl http://localhost:8080/search?q=test`
 - `curl http://localhost:8080/search?q=test&format=json`
 
-3. **Redis-Passwörter ignoriert**
+  3.**Redis-Passwörter ignoriert**
 
 - `docker exec redis redis-cli ping`
 - `docker exec redis redis-cli -a "PASSWORD" ping`
