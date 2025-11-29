@@ -75,10 +75,10 @@ describe('language-check.cjs - Extended Tests', () => {
     fs.writeFileSync(
       tempFile,
       `# Configuration Guide
-      
+
 This is a configuration guide.
 Some technical terms in English.
-      `
+      `,
     );
 
     const result = spawnSync('node', [scriptPath, tempFile], {
@@ -94,12 +94,12 @@ Some technical terms in English.
     fs.writeFileSync(
       tempFile,
       `# Documentation
-      
+
 \`\`\`bash
 # Configuration example
 echo "Konfiguration"
 \`\`\`
-      `
+      `,
     );
 
     const result = spawnSync('node', [scriptPath, tempFile], {

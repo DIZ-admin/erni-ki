@@ -25,7 +25,7 @@ class TestRAGExporter(unittest.TestCase):
         start = time.time()
         response = mock_get("http://test/health", timeout=10)
         elapsed = time.time() - start
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertLess(elapsed, 1.0)
         data = response.json()
@@ -35,7 +35,7 @@ class TestRAGExporter(unittest.TestCase):
     def test_rag_probe_failure(self, mock_get):
         """Test RAG probe handles failures"""
         mock_get.side_effect = Exception("Connection failed")
-        
+
         try:
             mock_get("http://test/health", timeout=10)
             self.fail("Should have raised exception")
@@ -46,8 +46,9 @@ class TestRAGExporter(unittest.TestCase):
     def test_rag_probe_timeout(self, mock_get):
         """Test RAG probe timeout handling"""
         import requests
+
         mock_get.side_effect = requests.Timeout("Request timeout")
-        
+
         try:
             mock_get("http://test/health", timeout=10)
             self.fail("Should have raised timeout")
@@ -62,7 +63,7 @@ class TestRAGExporter(unittest.TestCase):
             ({"no_sources": []}, 0),
             ({}, 0),
         ]
-        
+
         for data, expected_count in test_cases:
             if "sources" in data and isinstance(data["sources"], list):
                 count = len(data["sources"])
@@ -85,7 +86,7 @@ class TestOllamaExporter(unittest.TestCase):
 
         response = mock_get("http://ollama:11434/api/version", timeout=5)
         data = response.json()
-        
+
         self.assertEqual(data["version"], "0.1.47")
 
     @patch("requests.get")
@@ -102,7 +103,7 @@ class TestOllamaExporter(unittest.TestCase):
 
         response = mock_get("http://ollama:11434/api/tags", timeout=5)
         data = response.json()
-        
+
         self.assertEqual(len(data["models"]), 2)
         self.assertIn("llama2", [m["name"] for m in data["models"]])
 
@@ -121,22 +122,23 @@ class TestOllamaExporter(unittest.TestCase):
         response = mock_get("http://ollama:11434/api/tags", timeout=5)
         data = response.json()
         models = data["models"]
-        
+
         if isinstance(models, dict):
             count = len(models.keys())
         elif isinstance(models, list):
             count = len(models)
         else:
             count = 0
-            
+
         self.assertEqual(count, 2)
 
     @patch("requests.get")
     def test_request_timeout_handling(self, mock_get):
         """Test request timeout is respected"""
         import requests
+
         mock_get.side_effect = requests.Timeout()
-        
+
         with self.assertRaises(requests.Timeout):
             mock_get("http://ollama:11434/api/version", timeout=5)
 
@@ -145,7 +147,7 @@ class TestOllamaExporter(unittest.TestCase):
         start = time.perf_counter()
         time.sleep(0.01)  # Simulate some work
         latency = time.perf_counter() - start
-        
+
         self.assertGreater(latency, 0.01)
         self.assertLess(latency, 0.1)
 
@@ -153,13 +155,13 @@ class TestOllamaExporter(unittest.TestCase):
     def test_ollama_down_detection(self, mock_get):
         """Test Ollama down state detection"""
         mock_get.side_effect = Exception("Connection refused")
-        
+
         try:
             mock_get("http://ollama:11434/api/version", timeout=5)
             ollama_up = 1
         except Exception:
             ollama_up = 0
-            
+
         self.assertEqual(ollama_up, 0)
 
     def test_models_count_with_none(self):
@@ -170,7 +172,7 @@ class TestOllamaExporter(unittest.TestCase):
             ({"models": {}}, 0),
             ({}, 0),
         ]
-        
+
         for data, expected in test_cases:
             models = data.get("models")
             if isinstance(models, list):
@@ -188,13 +190,13 @@ class TestExporterConfiguration(unittest.TestCase):
     def test_default_configuration_values(self):
         """Test default configuration values"""
         import os
-        
+
         # Simulate default env var handling
         ollama_url = os.getenv("OLLAMA_URL", "http://ollama:11434").rstrip("/")
         exporter_port = int(os.getenv("EXPORTER_PORT", "9778"))
         poll_interval = int(os.getenv("OLLAMA_EXPORTER_INTERVAL", "15"))
         request_timeout = float(os.getenv("OLLAMA_REQUEST_TIMEOUT", "5"))
-        
+
         self.assertEqual(ollama_url, "http://ollama:11434")
         self.assertEqual(exporter_port, 9778)
         self.assertEqual(poll_interval, 15)
@@ -207,7 +209,7 @@ class TestExporterConfiguration(unittest.TestCase):
             ("http://ollama:11434", "http://ollama:11434"),
             ("http://test.com///", "http://test.com"),
         ]
-        
+
         for url, expected in test_urls:
             result = url.rstrip("/")
             self.assertEqual(result, expected)

@@ -4,7 +4,7 @@
 setup() {
     export TEST_PROJECT_ROOT="${BATS_TEST_DIRNAME}/../../.."
     export SCRIPT_PATH="${TEST_PROJECT_ROOT}/conf/nginx/healthcheck.sh"
-    
+
     # Skip if script doesn't exist
     if [ ! -f "$SCRIPT_PATH" ]; then
         skip "healthcheck.sh not found"
@@ -18,7 +18,7 @@ setup() {
 
 @test "healthcheck returns 0 for valid nginx status" {
     skip "Requires running nginx"
-    
+
     run bash "$SCRIPT_PATH"
     [ "$status" -eq 0 ]
 }

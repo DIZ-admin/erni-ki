@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('Mock Environment - Extended Tests', () => {
   let originalEnv: NodeJS.ProcessEnv;
@@ -40,17 +40,17 @@ describe('Mock Environment - Extended Tests', () => {
 
 describe('Mock Configuration Values', () => {
   it('provides mock JWT secret', () => {
-    process.env.JWT_SECRET = 'test-jwt-secret';
+    process.env.JWT_SECRET = 'test-jwt-secret'; // pragma: allowlist secret
     expect(process.env.JWT_SECRET).toBe('test-jwt-secret');
   });
 
   it('provides mock WEBUI secret', () => {
-    process.env.WEBUI_SECRET_KEY = 'test-webui-secret';
+    process.env.WEBUI_SECRET_KEY = 'test-webui-secret'; // pragma: allowlist secret
     expect(process.env.WEBUI_SECRET_KEY).toBe('test-webui-secret');
   });
 
   it('provides mock database URL', () => {
-    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db'; // pragma: allowlist secret
     expect(process.env.DATABASE_URL).toContain('test_db');
   });
 
@@ -64,7 +64,7 @@ describe('Environment Variable Validation', () => {
   it('validates required environment variables exist', () => {
     const required = ['NODE_ENV'];
     for (const key of required) {
-      expect(process.env[key]).toBeDefined();
+      expect(process.env).toHaveProperty(key);
     }
   });
 
@@ -79,7 +79,7 @@ describe('Environment Variable Validation', () => {
   });
 
   it('provides sensible defaults for missing values', () => {
-    const port = process.env.PORT || '8080';
+    const port = process.env.PORT ?? '8080';
     expect(port).toBe('8080');
   });
 });

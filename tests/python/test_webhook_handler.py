@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """Comprehensive unit tests for webhook_handler.py"""
 
-import json
 import unittest
-from datetime import datetime
-from unittest.mock import MagicMock, patch
 
 # Note: Adjust import path based on actual module structure
 # from conf.webhook_receiver.webhook_handler import AlertProcessor, app
@@ -31,7 +28,7 @@ class TestAlertProcessorCore(unittest.TestCase):
         """Test severity color and emoji mappings"""
         self.assertEqual(self.severity_colors["critical"], 0xFF0000)
         self.assertEqual(self.severity_emojis["critical"], "🚨")
-        
+
     def test_process_empty_alerts(self):
         """Test processing empty alerts"""
         alerts_data = {"alerts": []}

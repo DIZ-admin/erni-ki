@@ -327,19 +327,6 @@ func createExpiredJWTToken(t *testing.T) string {
 
 	return tokenString
 }
-package main
-
-import (
-	"context"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-)
 
 // Test health check endpoint
 func TestHealthCheckEndpoint(t *testing.T) {
@@ -378,7 +365,7 @@ func TestRequestIDMiddlewareGeneratesUUID(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Contains(t, w.Body.String(), "request_id")
-	
+
 	// Check X-Request-ID header is set
 	assert.NotEmpty(t, w.Header().Get("X-Request-ID"))
 }
@@ -425,7 +412,7 @@ func TestRespondJSONIncludesRequestID(t *testing.T) {
 // Test verifyToken with empty string
 func TestVerifyTokenEmptyString(t *testing.T) {
 	valid, err := verifyToken("")
-	
+
 	assert.Error(t, err)
 	assert.False(t, valid)
 	assert.Contains(t, err.Error(), "token missing")
@@ -434,7 +421,7 @@ func TestVerifyTokenEmptyString(t *testing.T) {
 // Test verifyToken with whitespace only
 func TestVerifyTokenWhitespaceOnly(t *testing.T) {
 	valid, err := verifyToken("   ")
-	
+
 	assert.Error(t, err)
 	assert.False(t, valid)
 	assert.Contains(t, err.Error(), "token missing")
@@ -454,7 +441,7 @@ func TestVerifyTokenMissingSubject(t *testing.T) {
 	require.NoError(t, err)
 
 	valid, err := verifyToken(tokenString)
-	
+
 	assert.Error(t, err)
 	assert.False(t, valid)
 	assert.Contains(t, err.Error(), "sub claim")
@@ -474,7 +461,7 @@ func TestVerifyTokenFutureIssuedAt(t *testing.T) {
 	require.NoError(t, err)
 
 	valid, err := verifyToken(tokenString)
-	
+
 	assert.Error(t, err)
 	assert.False(t, valid)
 	assert.Contains(t, err.Error(), "iat claim")
@@ -505,9 +492,9 @@ func TestRootEndpointReturnsVersion(t *testing.T) {
 // Test concurrent token verification
 func TestVerifyTokenConcurrent(t *testing.T) {
 	token := createValidJWTToken(t)
-	
+
 	done := make(chan bool)
-	
+
 	for i := 0; i < 10; i++ {
 		go func() {
 			valid, err := verifyToken(token)
@@ -516,7 +503,7 @@ func TestVerifyTokenConcurrent(t *testing.T) {
 			done <- true
 		}()
 	}
-	
+
 	for i := 0; i < 10; i++ {
 		<-done
 	}
