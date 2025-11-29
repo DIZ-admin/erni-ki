@@ -14,7 +14,7 @@ import json
 import logging
 import sys
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 
 class ColoredFormatter(logging.Formatter):
@@ -22,10 +22,10 @@ class ColoredFormatter(logging.Formatter):
 
     COLORS = {
         "DEBUG": "\033[0;36m",  # Cyan
-        "INFO": "\033[0;34m",   # Blue
-        "WARNING": "\033[1;33m", # Yellow
+        "INFO": "\033[0;34m",  # Blue
+        "WARNING": "\033[1;33m",  # Yellow
         "ERROR": "\033[0;31m",  # Red
-        "CRITICAL": "\033[0;41m", # Red background
+        "CRITICAL": "\033[0;41m",  # Red background
     }
     RESET = "\033[0m"
 
@@ -72,7 +72,7 @@ class JSONFormatter(logging.Formatter):
 
 def get_logger(
     name: str,
-    level: Optional[str | int] = None,
+    level: str | int | None = None,
     json_output: bool = False,
 ) -> logging.Logger:
     """
@@ -128,6 +128,7 @@ def log_to_file(logger: logging.Logger, file_path: str | Any) -> None:
 
     # Create parent directories if needed
     import os
+
     os.makedirs(os.path.dirname(file_path_str) or ".", exist_ok=True)
 
     file_handler = logging.FileHandler(file_path_str)
