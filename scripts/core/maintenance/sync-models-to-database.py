@@ -122,6 +122,12 @@ def sync_models_to_database(models):
         cursor.execute("SELECT id, base_model_id FROM model")
         existing_models = {row[1]: row[0] for row in cursor.fetchall()}
 
+        admin_user_id = os.environ.get("OPENWEBUI_ADMIN_USER_ID") or read_secret(
+            "openwebui_admin_user_id"
+        )
+        if not admin_user_id:
+            raise ValueError("OPENWEBUI_ADMIN_USER_ID must be configured via env or secret")
+
         synced_count = 0
         for model in models:
             model_id = model["base_model_id"]
@@ -150,7 +156,7 @@ def sync_models_to_database(models):
                 """,
                     (
                         new_uuid,
-                        "b7d1b761-a554-4b77-bd90-7b048ce4b177",  # Admin user ID
+                        admin_user_id,
                         model_id,
                         model["name"],
                         json.dumps(params),
