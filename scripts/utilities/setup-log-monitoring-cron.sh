@@ -8,22 +8,21 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 LOG_MONITORING_SCRIPT="$SCRIPT_DIR/log-monitoring.sh"
 
 # Colors
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
 
-log() {
-    echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
+[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
 }
 
-success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+[SUCCESS]${NC} $1"
 }
 
 warn() {
@@ -32,7 +31,7 @@ warn() {
 
 # Configure cron
 setup_cron() {
-    log "Configuring cron job for log monitoring..."
+    log_info "Configuring cron job for log monitoring..."
 
     # Build temporary cron file
     local temp_cron=$(mktemp)
@@ -55,19 +54,19 @@ EOF
     crontab "$temp_cron"
     rm -f "$temp_cron"
 
-    success "Cron jobs configured:"
+    log_success "Cron jobs configured:"
     echo "  - Monitoring every 30 minutes"
     echo "  - Daily cleanup at 03:00"
 }
 
 # Check cron
 check_cron() {
-    log "Checking current cron jobs..."
+    log_info "Checking current cron jobs..."
 
     local cron_jobs=$(crontab -l 2>/dev/null | grep -c "log-monitoring.sh" || echo "0")
 
     if [[ "$cron_jobs" -gt 0 ]]; then
-        success "Found $cron_jobs cron jobs for log monitoring"
+        log_success "Found $cron_jobs cron jobs for log monitoring"
         echo
         echo "Current jobs:"
         crontab -l | grep "log-monitoring.sh" || true
@@ -79,19 +78,19 @@ check_cron() {
 
 # Remove cron jobs
 remove_cron() {
-    log "Removing log monitoring cron jobs..."
+    log_info "Removing log monitoring cron jobs..."
 
     local temp_cron=$(mktemp)
     crontab -l 2>/dev/null | grep -v "log-monitoring.sh" > "$temp_cron" || true
     crontab "$temp_cron"
     rm -f "$temp_cron"
 
-    success "Cron jobs removed"
+    log_success "Cron jobs removed"
 }
 
 # Create systemd timer (alternative to cron)
 setup_systemd_timer() {
-    log "Configuring systemd timer for log monitoring..."
+    log_info "Configuring systemd timer for log monitoring..."
 
     # Create service file
     sudo tee /etc/systemd/system/erni-ki-log-monitoring.service > /dev/null << EOF
@@ -127,7 +126,7 @@ EOF
     sudo systemctl enable erni-ki-log-monitoring.timer
     sudo systemctl start erni-ki-log-monitoring.timer
 
-    success "Systemd timer configured and started"
+    log_success "Systemd timer configured and started"
 }
 
 # Main
