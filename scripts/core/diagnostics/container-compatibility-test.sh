@@ -15,8 +15,6 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 
 # Logging helpers
-[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
-⚠️  $1${NC}"; }
 info() { echo -e "${CYAN}ℹ️  $1${NC}"; }
 section() { echo -e "${PURPLE}🔍 $1${NC}"; }
 

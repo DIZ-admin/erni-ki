@@ -12,9 +12,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 # Colors
 
 # Logging helpers
-[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
-⚠️  $1${NC}"; }
-❌ $1${NC}"; exit 1; }
 
 # Dependencies check
 check_dependencies() {

@@ -14,9 +14,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 PURPLE='\033[0;35m'
 
 # Logging functions
-[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
-⚠️  $1${NC}"; }
-❌ $1${NC}"; exit 1; }
 step() { echo -e "${PURPLE}🔸 $1${NC}"; }
 
 # Quick dependency check
