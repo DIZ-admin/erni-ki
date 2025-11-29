@@ -13,7 +13,7 @@ system architecture.
 ## Contents
 
 - **[architecture.md](../../architecture/architecture.md)** - Complete system
-  architecture overview (RU) (v12.1)
+  architecture overview (RU) (v0.61.3)
   - System components and their interactions
   - Network architecture and port mappings
   - Service inventory and dependencies

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -166,11 +167,27 @@ func verifyToken(tokenString string) (bool, error) {
 		return false, fmt.Errorf("WEBUI_SECRET_KEY env variable missing")
 	}
 
+	const (
+		maxTokenLength    = 4096
+		requiredAlgorithm = "HS256"
+	)
+
+	if len(strings.TrimSpace(tokenString)) == 0 {
+		return false, fmt.Errorf("token missing")
+	}
+
+	if len(tokenString) > maxTokenLength {
+		return false, fmt.Errorf("token too long")
+	}
+
 	mySigningKey := []byte(jwtSecret)
 
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("error parsing jwt")
+	parser := jwt.NewParser(jwt.WithValidMethods([]string{requiredAlgorithm}))
+	claims := &jwt.RegisteredClaims{}
+
+	token, err := parser.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
+		if method := token.Method.Alg(); method != requiredAlgorithm {
+			return nil, fmt.Errorf("unexpected signing algorithm: %s", method)
 		}
 		return mySigningKey, nil
 	})
@@ -178,5 +195,29 @@ func verifyToken(tokenString string) (bool, error) {
 		return false, err
 	}
 
-	return token.Valid, nil
+	if !token.Valid {
+		return false, fmt.Errorf("token invalid")
+	}
+
+	now := time.Now()
+
+	if claims.ExpiresAt == nil || now.After(claims.ExpiresAt.Time) {
+		return false, fmt.Errorf("exp claim invalid or expired")
+	}
+
+	if claims.IssuedAt == nil || claims.IssuedAt.Time.After(now) {
+		return false, fmt.Errorf("iat claim invalid")
+	}
+
+	if strings.TrimSpace(claims.Subject) == "" {
+		return false, fmt.Errorf("sub claim missing or empty")
+	}
+
+	if expectedIssuer := os.Getenv("WEBUI_JWT_ISSUER"); expectedIssuer != "" {
+		if claims.Issuer != expectedIssuer {
+			return false, fmt.Errorf("issuer mismatch")
+		}
+	}
+
+	return true, nil
 }

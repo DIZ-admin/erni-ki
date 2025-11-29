@@ -28,7 +28,7 @@ full observability stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager
 v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0, 8 exporters + RAG Exporter). External
 access is via Cloudflare tunnels (5 domains).
 
-## System Architecture Diagram (v12.1 – 2025-11-24)
+## System Architecture Diagram (v0.61.3 – 2025-11-24)
 
 ```mermaid
 graph TB
@@ -129,7 +129,7 @@ graph TB
  WATCHTOWER -.-> SEARXNG
 ```
 
-### Latest updates (v12.1 — Nov 2025)
+### Latest updates (v0.61.3 — Nov 2025)
 
 #### Prometheus Exporters fix (07 Nov 2025)
 
@@ -269,7 +269,7 @@ graph TB
 - Response: critical alerts <5 min response; fixes/triage within 30 min.
 - Backups: Backrest daily (7d) + weekly (4w); tests monthly.
 
-## Release Notes Snapshot (v12.1)
+## Release Notes Snapshot (v0.61.3)
 
 - Exporters stabilized (IPv6 fixes, auth fixes); all targets UP.
 - Maintenance automation hardened (cron + scripts).

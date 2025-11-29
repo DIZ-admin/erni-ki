@@ -31,7 +31,7 @@ Observability-Stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0,
 Loki v3.0.0, Fluent Bit v3.1.0, 8 Exporter + RAG Exporter). Externer Zugriff
 über Cloudflare-Tunnel (5 Domains).
 
-## Systemarchitektur (v12.1 – 2025-11-24)
+## Systemarchitektur (v0.61.3 – 2025-11-24)
 
 ```mermaid
 graph TB

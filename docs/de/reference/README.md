@@ -32,7 +32,8 @@ Power-User.
 
 ### Status & Version
 
-- **[status.yml](status.yml)** – Single Source of Truth für Systemstatus.
+- **[../../reference/status.yml](../../reference/status.yml)** – Single Source
+  of Truth für Systemstatus.
 - **[status-snippet.md](status-snippet.md)** – Status-Template für Docs.
 
 ## Für Entwickler:innen

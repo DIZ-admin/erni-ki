@@ -68,7 +68,7 @@ last_updated: '2025-11-24'
    `scripts/maintenance` (часть инструкций описывает уже автоматизированные
    процессы).
 5. **Localization debt:** немецкие документы не включают monitoring/playbooks и
-   не обновлены под v12.1.
+   не обновлены под v0.61.3.
 6. **Data & Storage discoverability:** добавить перекрёстные ссылки в README и
    operations handbook, чтобы инженеры знают о `operations/database/*.md`.
 7. **MkDocs навигация:** привести порядок `nav` к целевой структуре (сейчас Data

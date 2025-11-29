@@ -12,7 +12,7 @@ This page summarizes the platform state and links to the main sections.
 
 ## Platform at a Glance
 
-- 30/30 services healthy (v12.1)
+- 30/30 services healthy (v0.61.3)
 - Core stacks: LiteLLM + Context7, Ollama, Docling, OpenWebUI
 - Monitoring: Prometheus, Grafana, Loki, Alertmanager
 - Security: JWT everywhere, distroless images, secrets in env/ + Docker secrets

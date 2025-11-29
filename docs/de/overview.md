@@ -13,7 +13,7 @@ audience: 'administrators'
 
 <!-- STATUS_SNIPPET_START -->
 
-> **Systemstatus (2025-11-27) — Production Ready v12.1**
+> **Systemstatus (2025-11-27) — Production Ready v0.61.3**
 >
 > - Container: 34/34 services healthy
 > - Grafana: 5/5 Grafana Dashboards (provisioned)

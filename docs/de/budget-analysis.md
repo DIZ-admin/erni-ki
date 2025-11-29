@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # Budgetanalyse des ERNI-KI Projekts
 
-**Analysedatum:** 24. November 2025 **Projektversion:** Production Ready v12.1
+**Analysedatum:** 24. November 2025 **Projektversion:** Production Ready v0.61.3
 **Technologie-Stack:** 32 Microservices, GPU-Beschleunigung, vollständige
 Observability
 
@@ -325,7 +325,7 @@ Developer **Gesamt:** 3-4 Wochen
 **Zeit:** 5-6 Monate **Team:** 10 Personen **Beschreibung:**
 Basisfunktionalität, begrenzte Dokumentation, minimales Monitoring
 
-### Szenario 2: Production-Ready (aktuelle Version v12.1)
+### Szenario 2: Production-Ready (aktuelle Version v0.61.3)
 
 **Zeit:** 8-10 Monate **Team:** 20-23 Personen **Beschreibung:** Volle
 Funktionalität, Enterprise Security, umfassende Dokumentation, 32 Services
