@@ -32,7 +32,7 @@ last_updated: '2025-11-24'
 
 ## Сводная телеметрия Alertmanager (05‑12 ноября)
 
-- Всего за 7 дней: **18 226 событий** (13 313 warning, 4 913 critical).
+- Всего за 7 дней:**18 226 событий**(13 313 warning, 4 913 critical).
 - Суточная нагрузка:
 
 | Дата       | Alert-ов |
@@ -172,60 +172,54 @@ last_updated: '2025-11-24'
 
 ## Рекомендации (в порядке приоритета)
 
-1. **Срочно приглушить или переписать правило `ContainerRestarting`**, иначе
-   Alertmanager остаётся бесполезным. Ограничить количество событий <500/сутки.
-2. **Восстановить устойчивость Redis**: анализ реальных логов, лимиты памяти,
-   watchdog, отдельные alert-ы на `redis_uptime` и `connected_clients`.
-3. **Разгрузить `/boot/efi` и обновить диск-алерты**, чтобы critical приходили
-   только при риске срыва загрузки.
-4. **Починить цепочку Fluent Bit → Loki** (лимиты памяти, persistent
-   backpressure, мониторинг WAL), добавить retention для `data/webhook-logs`.
-5. **Починить cron-скрипты**: заменить `python` на `python3`, либо поставить
-   `/usr/bin/python`, вернуть отсутствующие `logging-*.sh` или убрать вызовы;
-   переписать проверку логов на Loki API, а не `compose logs`.
-6. **Отреагировать на Alertmanager backlog**: увеличить ресурсы контейнера,
-   включить HA/peer, либо временно выключить шумные алерты.
-7. **Продолжить аудит сервисных логов после выдачи прав** на `data/postgres*`,
-   `data/redis/appendonlydir` — сейчас нет возможности подтвердить реальные
-   причины падений БД/кэша.
+1.**Срочно приглушить или переписать правило `ContainerRestarting`**, иначе
+Alertmanager остаётся бесполезным. Ограничить количество событий
+<500/сутки. 2.**Восстановить устойчивость Redis**: анализ реальных логов, лимиты
+памяти, watchdog, отдельные alert-ы на `redis_uptime` и
+`connected_clients`. 3.**Разгрузить `/boot/efi` и обновить диск-алерты**, чтобы
+critical приходили только при риске срыва загрузки. 4.**Починить цепочку
+Fluent Bit → Loki**(лимиты памяти, persistent backpressure, мониторинг WAL),
+добавить retention для `data/webhook-logs`. 5.**Починить cron-скрипты**:
+заменить `python` на `python3`, либо поставить `/usr/bin/python`, вернуть
+отсутствующие `logging-*.sh` или убрать вызовы; переписать проверку логов на
+Loki API, а не `compose logs`. 6.**Отреагировать на Alertmanager backlog**:
+увеличить ресурсы контейнера, включить HA/peer, либо временно выключить шумные
+алерты. 7.**Продолжить аудит сервисных логов после выдачи прав**на
+`data/postgres*`, `data/redis/appendonlydir` — сейчас нет возможности
+подтвердить реальные причины падений БД/кэша.
 
 ## Выполненные remediation (12 ноября 2025)
 
-- **Redis**: снижены пороги активной дефрагментации (1 МБ / 5–50 %) и включены
-  `lazyfree-*` опции в `conf/redis/redis.conf:65-109`, добавлен watchdog
-  `scripts/maintenance/redis-fragmentation-watchdog.sh` (использует
-  `redis-cli memory purge`, лог `logs/redis-fragmentation-watchdog.log`). Запуск
-  автоматизирован через cron (`conf/cron/logging-reports.cron`, каждые 5 мин);
-  добавлен alert `RedisHighFragmentation` (см. `conf/prometheus/alert_rules.yml`
-  и Prometheus Alerts Guide) — при ratio >5 оператор получает уведомление с
-  runbook-ссылкой.
-- **/boot/efi**: проверены каталоги `EFI/{BOOT,Dell,ubuntu}`, удалён устаревший
-  `EFI/Dell/logs/diags_previous.xml` (резервные диагностические логи) — раздел
-  теперь чист, используется <4 %.
-- **Дисковые алерты**: все Prometheus-правила низкого дискового пространства
-  исключают `fstype="vfat"` и `mountpoint="/boot/efi"`
-  (`conf/prometheus/alert_rules.yml:44-63`,
-  `conf/prometheus/rules/erni-ki-alerts.yml:60-95`,
-  `conf/prometheus/rules/production-sla-alerts.yml:120-132`), чтобы
-  предупреждения больше не сыпались по EFI-разделу. После
-  `docker compose restart prometheus alertmanager` убедиться, что
-  `HighDiskUtilization`/`CriticalDiskSpace` теперь отражают критические тома
-  (`/`, `/data`).
-- **Fluent Bit → Loki**: обновлён `conf/fluent-bit/fluent-bit.conf` — теперь
-  используется `Host erni-ki-loki` (container_name) для DNS-устойчивости,
-  `storage.type filesystem` для входного потока и `Retry_Limit False` + лимит
-  backlog 1 ГБ, чтобы Fluent Bit буферизовал логи при недоступности Loki вместо
-  спама `getaddrinfo`.
-- **Ротация Alertmanager вебхуков**: добавлен скрипт
-  `scripts/maintenance/webhook-logs-rotate.sh` (архивация по датам, удаление
-  старше 30 дней) и cron-задание `30 2 * * *` в
-  `conf/cron/logging-reports.cron`. Каталог `data/webhook-logs/archive` содержит
-  tar.gz по дням.
-- **Cron-скрипты мониторинга**: созданы `.config-backup/logging-monitor.sh` и
-  `.config-backup/logging-alerts.sh`, которые вызывают
-  `scripts/health-monitor.sh` и запрашивают Alertmanager API соответственно (лог
-  `.config-backup/logs/alerts.log`). `health-monitor.sh` теперь использует
-  `python3`, что устраняет ошибку `python: command not found`.
+-**Redis**: снижены пороги активной дефрагментации (1 МБ / 5–50 %) и включены
+`lazyfree-*` опции в `conf/redis/redis.conf:65-109`, добавлен watchdog
+`scripts/maintenance/redis-fragmentation-watchdog.sh` (использует
+`redis-cli memory purge`, лог `logs/redis-fragmentation-watchdog.log`). Запуск
+автоматизирован через cron (`conf/cron/logging-reports.cron`, каждые 5 мин);
+добавлен alert `RedisHighFragmentation` (см. `conf/prometheus/alert_rules.yml` и
+Prometheus Alerts Guide) — при ratio >5 оператор получает уведомление с
+runbook-ссылкой. -**/boot/efi**: проверены каталоги `EFI/{BOOT,Dell,ubuntu}`,
+удалён устаревший `EFI/Dell/logs/diags_previous.xml` (резервные диагностические
+логи) — раздел теперь чист, используется <4 %. -**Дисковые алерты**: все
+Prometheus-правила низкого дискового пространства исключают `fstype="vfat"` и
+`mountpoint="/boot/efi"` (`conf/prometheus/alert_rules.yml:44-63`,
+`conf/prometheus/rules/erni-ki-alerts.yml:60-95`,
+`conf/prometheus/rules/production-sla-alerts.yml:120-132`), чтобы предупреждения
+больше не сыпались по EFI-разделу. После
+`docker compose restart prometheus alertmanager` убедиться, что
+`HighDiskUtilization`/`CriticalDiskSpace` теперь отражают критические тома (`/`,
+`/data`). -**Fluent Bit → Loki**: обновлён `conf/fluent-bit/fluent-bit.conf` —
+теперь используется `Host erni-ki-loki` (container_name) для DNS-устойчивости,
+`storage.type filesystem` для входного потока и `Retry_Limit False` + лимит
+backlog 1 ГБ, чтобы Fluent Bit буферизовал логи при недоступности Loki вместо
+спама `getaddrinfo`. -**Ротация Alertmanager вебхуков**: добавлен скрипт
+`scripts/maintenance/webhook-logs-rotate.sh` (архивация по датам, удаление
+старше 30 дней) и cron-задание `30 2 * * *` в `conf/cron/logging-reports.cron`.
+Каталог `data/webhook-logs/archive` содержит tar.gz по дням. -**Cron-скрипты
+мониторинга**: созданы `.config-backup/logging-monitor.sh` и
+`.config-backup/logging-alerts.sh`, которые вызывают `scripts/health-monitor.sh`
+и запрашивают Alertmanager API соответственно (лог
+`.config-backup/logs/alerts.log`). `health-monitor.sh` теперь использует
+`python3`, что устраняет ошибку `python: command not found`.
 
 Отчёт нужно синхронизировать с runbook-ами
 (`docs/operations/monitoring/monitoring-guide.md`,
@@ -236,53 +230,50 @@ last_updated: '2025-11-24'
 
 ### Актуальные метрики (09:05 UTC+1)
 
-- `alertmanager_cluster_messages_queued` — **301** (порог 100, см.
+- `alertmanager_cluster_messages_queued` —**301**(порог 100, см.
   `.config-backup/logs/alertmanager-queue.log`).
 - Активные алерты (`/api/v2/alerts`): 13 шт. (6× `HTTPErrors`, 3×
   `HighHTTPResponseTime`, 1× `AlertmanagerClusterHealthLow`,
   `FluentBitHighMemoryUsage`, `CriticalServiceLogsMissing`,
   `ContainerWarningMemoryUsage`).
-- Redis `mem_fragmentation_ratio` — **5.89**
+- Redis `mem_fragmentation_ratio` —**5.89**
   (`docker compose exec redis redis-cli info memory`).
 - `data/webhook-logs/`: 48 МБ, 5 303 «сырых» JSON и 67 архивов в
   `archive/alert-*.tar.gz` (ротация работает).
 
 ### Новые наблюдения
 
-1. **Cron health-monitor** (`.config-backup/monitoring/cron.log`) каждый час
-   падает на `docker compose ps`, т.к. таски запускаются не из корня
-   репозитория. `conf/cron/logging-reports.cron` теперь задаёт
-   `PROJECT_ROOT=/home/konstantin/Documents/augment-projects/erni-ki` и вызывает
-   `.config-backup/logging-monitor.sh`/`logging-alerts.sh` через `bash`, что
-   исключает ошибку `./.config-backup/...: not found`.
-2. **Очередь Alertmanager**: мониторинг
-   (`scripts/monitoring/alertmanager-queue-watch.sh`) не запускался с 12 ноября;
-   вручную зафиксировано **304** сообщений (WARN). Cron-задача добавлена в
-   `conf/cron/logging-reports.cron`, лог теперь пополняется при каждом запуске.
-3. **Правило `ContainerRestarting`** порождало ​>12 k спур. алертов. В
-   `conf/prometheus/alerts.yml` оно переписано: учитываются только сервисные
-   контейнеры `erni-ki-*`, метрики агрегируются по сервису (strip хеша),
-   требуется ≥3 рестарта за 30 мин + `for: 5m`. Это гасит шум и оставляет только
-   реально «флапающие» сервисы.
-4. **redis-exporter**: ранее
-   `command: /bin/sh -c "export REDIS_ADDR=$(cat secret)"` не выполнялся
-   (entrypoint=/redis_exporter), экспортер смотрел на `redis://localhost:6379` и
-   падал с `dial redis: unknown network redis`. В `compose.yml` теперь прописан
-   стабильный `REDIS_ADDR=redis://redis:6379`, а секрет `redis_exporter_url`
-   хранит JSON-карту `{"redis://redis:6379":""}`. При включении `requirepass`
-   достаточно вписать пароль в карту — экспортер подхватит его через
-   `REDIS_PASSWORD_FILE`.
-5. **Fluent Bit parser conflict**: предупреждение
-   `parser named 'postgres' already exists` убрано переименованием парсера в
-   `postgres_structured` (`conf/fluent-bit/parsers.conf`). После
-   `docker compose restart fluent-bit` ошибки исчезли.
-6. **Redis fragmentation watchdog**: скрипт писал логи в `scripts/logs/...`,
-   т.к. `PROJECT_DIR` указывал на `scripts/`. Исправлено на корень репо
-   (`logs/redis-fragmentation-watchdog.log`), запуск (включая cron) теперь
-   работает из правильной директории.
-7. **Ротация webhook-логов**: `scripts/maintenance/webhook-logs-rotate.sh`
-   очистил каталог до 5.3 k файлов, остальное сложено в 67 архивов —
-   подтверждение, что cron `30 2 * * *` выполняет задачи.
+1.**Cron health-monitor**(`.config-backup/monitoring/cron.log`) каждый час
+падает на `docker compose ps`, т.к. таски запускаются не из корня репозитория.
+`conf/cron/logging-reports.cron` теперь задаёт
+`PROJECT_ROOT=/home/konstantin/Documents/augment-projects/erni-ki` и вызывает
+`.config-backup/logging-monitor.sh`/`logging-alerts.sh` через `bash`, что
+исключает ошибку `./.config-backup/...: not found`. 2.**Очередь Alertmanager**:
+мониторинг (`scripts/monitoring/alertmanager-queue-watch.sh`) не запускался с
+12 ноября; вручную зафиксировано**304**сообщений (WARN). Cron-задача добавлена в
+`conf/cron/logging-reports.cron`, лог теперь пополняется при каждом
+запуске. 3.**Правило `ContainerRestarting`**порождало ​>12 k спур. алертов. В
+`conf/prometheus/alerts.yml` оно переписано: учитываются только сервисные
+контейнеры `erni-ki-*`, метрики агрегируются по сервису (strip хеша), требуется
+≥3 рестарта за 30 мин + `for: 5m`. Это гасит шум и оставляет только реально
+«флапающие» сервисы. 4.**redis-exporter**: ранее
+`command: /bin/sh -c "export REDIS_ADDR=$(cat secret)"` не выполнялся
+(entrypoint=/redis_exporter), экспортер смотрел на `redis://localhost:6379` и
+падал с `dial redis: unknown network redis`. В `compose.yml` теперь прописан
+стабильный `REDIS_ADDR=redis://redis:6379`, а секрет `redis_exporter_url` хранит
+JSON-карту `{"redis://redis:6379":""}`. При включении `requirepass` достаточно
+вписать пароль в карту — экспортер подхватит его через
+`REDIS_PASSWORD_FILE`. 5.**Fluent Bit parser conflict**: предупреждение
+`parser named 'postgres' already exists` убрано переименованием парсера в
+`postgres_structured` (`conf/fluent-bit/parsers.conf`). После
+`docker compose restart fluent-bit` ошибки исчезли. 6.**Redis fragmentation
+watchdog**: скрипт писал логи в `scripts/logs/...`, т.к. `PROJECT_DIR` указывал
+на `scripts/`. Исправлено на корень репо
+(`logs/redis-fragmentation-watchdog.log`), запуск (включая cron) теперь работает
+из правильной директории. 7.**Ротация webhook-логов**:
+`scripts/maintenance/webhook-logs-rotate.sh` очистил каталог до 5.3 k файлов,
+остальное сложено в 67 архивов — подтверждение, что cron `30 2 * * *` выполняет
+задачи.
 
 ### Выполненные remediation (13 ноября)
 

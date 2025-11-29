@@ -9,10 +9,10 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Datum**: 2025-10-27 **Status**: NICHT KRITISCH (kompensiert durch
-Nginx-Caching) **Priorität**: NIEDRIG
+**Datum**: 2025-10-27**Status**: NICHT KRITISCH (kompensiert durch
+Nginx-Caching)**Priorität**: NIEDRIG
 
-> **Update 2025-11-07:** Valkey/Redis für SearXNG vorübergehend deaktiviert
+> **Update 2025-11-07:**Valkey/Redis für SearXNG vorübergehend deaktiviert
 > (siehe `env/searxng.env`, `conf/searxng/settings.yml`).
 > Geschwindigkeitsbegrenzung (Rate Limiting) und Caching werden nun
 > ausschließlich durch Nginx bereitgestellt, was den Fehler
@@ -24,7 +24,7 @@ Nginx-Caching) **Priorität**: NIEDRIG
 ## ZUSAMMENFASSUNG
 
 SearXNG kann aufgrund eines Authentifizierungsfehlers keine Verbindung zu Redis
-über das Valkey-Modul herstellen. Dies hat jedoch **keine Auswirkungen auf die
+über das Valkey-Modul herstellen. Dies hat jedoch**keine Auswirkungen auf die
 Systemleistung**, da das Nginx-Caching hervorragend funktioniert (127-fache
 Beschleunigung).
 
@@ -42,12 +42,11 @@ ERROR:searx.limiter: The limiter requires Valkey, please consult the documentati
 
 ### Auswirkungen
 
-- **Redis-Caching in SearXNG**: Funktioniert NICHT
-- **SearXNG Limiter (Rate Limiting)**: Funktioniert NICHT
-- **Nginx-Caching**: Funktioniert hervorragend (127x Beschleunigung: 766ms →
-  6ms)
-- **Nginx Rate Limiting**: Funktioniert (60 req/s für SearXNG API)
-- **Gesamtleistung**: Hervorragend (SearXNG Antwortzeit: 840ms < 2s)
+-**Redis-Caching in SearXNG**: Funktioniert NICHT -**SearXNG Limiter (Rate
+Limiting)**: Funktioniert NICHT -**Nginx-Caching**: Funktioniert hervorragend
+(127x Beschleunigung: 766ms → 6ms) -**Nginx Rate Limiting**: Funktioniert (60
+req/s für SearXNG API) -**Gesamtleistung**: Hervorragend (SearXNG Antwortzeit:
+840ms < 2s)
 
 ---
 
@@ -269,27 +268,27 @@ docker restart erni-ki-searxng-1
 
 ### Caching
 
-**Nginx-Caching** (funktioniert hervorragend):
+**Nginx-Caching**(funktioniert hervorragend):
 
 - Cache-Zone: `searxng_cache` (256MB)
 - Max Größe: 2GB
 - TTL: 5 Minuten für 200 OK
-- Beschleunigung: **127x** (766ms → 6ms)
+- Beschleunigung:**127x**(766ms → 6ms)
 
-**Redis-Caching** (funktioniert nicht):
+**Redis-Caching**(funktioniert nicht):
 
 - Status: Deaktiviert (Verbindungsfehler)
 - Auswirkung: Keine (kompensiert durch Nginx)
 
 ### Rate Limiting
 
-**Nginx Rate Limiting** (funktioniert):
+**Nginx Rate Limiting**(funktioniert):
 
 - Zone: `searxng_api` (60 req/s, Burst 30)
 - Status: Aktiv
 - Logs: `/var/log/nginx/rate_limit.log`
 
-**SearXNG Limiter** (funktioniert nicht):
+**SearXNG Limiter**(funktioniert nicht):
 
 - Status: Deaktiviert (erfordert Redis)
 - Auswirkung: Keine (kompensiert durch Nginx)
@@ -300,18 +299,18 @@ docker restart erni-ki-searxng-1
 
 ### Sofortmaßnahmen (0-2 Stunden)
 
-1. **Entscheidung treffen**: Option 1 (Redis deaktivieren) oder Option 2
-   (Verbindung reparieren)
+1.**Entscheidung treffen**: Option 1 (Redis deaktivieren) oder Option 2
+(Verbindung reparieren)
 
-- **Empfehlung**: Option 1 (einfacher, ohne Leistungsverlust)
+-**Empfehlung**: Option 1 (einfacher, ohne Leistungsverlust)
 
-2. **Wenn Option 1 gewählt**:
+2.**Wenn Option 1 gewählt**:
 
 - Redis in `env/searxng.env` deaktivieren
 - SearXNG neu starten
 - Logs auf Fehlerfreiheit prüfen
 
-3. **Wenn Option 2 gewählt**:
+  3.**Wenn Option 2 gewählt**:
 
 - Verschiedene URL-Formate ausprobieren
 - Redis ACL konfigurieren
@@ -319,13 +318,13 @@ docker restart erni-ki-searxng-1
 
 ### Langfristig (1-7 Tage)
 
-1. **Leistungsüberwachung**:
+1.**Leistungsüberwachung**:
 
 - SearXNG Antwortzeit überwachen
 - Nginx Cache-Trefferquote prüfen
 - Rate Limiting Logs analysieren
 
-2. **Optimierung**:
+  2.**Optimierung**:
 
 - Nginx Cache Purging konfigurieren
 - Cache TTL optimieren
@@ -335,14 +334,13 @@ docker restart erni-ki-searxng-1
 
 ## FAZIT
 
-1. **Problem unkritisch**: Nginx-Caching kompensiert fehlendes Redis vollständig
-2. **Leistung hervorragend**: 840ms Antwortzeit, 127x Cache-Beschleunigung
-3. **Rate Limiting funktioniert**: Nginx bietet Schutz vor Überlastung
-4. **Kosmetisches Problem**: Fehler in Logs können durch Deaktivierung von Redis
-   behoben werden
-5. **Empfehlung**: Redis in SearXNG deaktivieren (Option 1) zur Vereinfachung
-   der Architektur
+1.**Problem unkritisch**: Nginx-Caching kompensiert fehlendes Redis
+vollständig 2.**Leistung hervorragend**: 840ms Antwortzeit, 127x
+Cache-Beschleunigung 3.**Rate Limiting funktioniert**: Nginx bietet Schutz vor
+Überlastung 4.**Kosmetisches Problem**: Fehler in Logs können durch
+Deaktivierung von Redis behoben werden 5.**Empfehlung**: Redis in SearXNG
+deaktivieren (Option 1) zur Vereinfachung der Architektur
 
 ---
 
-**Autor**: Augment Agent **Datum**: 2025-10-27 **Version**: 1.0
+**Autor**: Augment Agent**Datum**: 2025-10-27**Version**: 1.0

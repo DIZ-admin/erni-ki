@@ -23,12 +23,12 @@ WebUI reports errors, check the
 
 ## Example prompts
 
-- **Good:** "Role: tech lead. Task: draft a JIRA bug ticket. Context: login page
-  shows 500 error on staging. Constraints: include steps to reproduce, expected
-  vs actual, logs reference, and impact. Format: Markdown with headings. Extra:
-  include a checklist for mitigation."
-- **Good:** "You are a product owner. Create a user story for adding SSO.
-  Context: users want one-click access. Constraints: include business value,
-  story, acceptance criteria (Given/When/Then), and non-functional notes."
-- **Avoid:** Submitting auto-generated text without verifying logs, or sharing
-  sensitive data without checking <INSERT INTERNAL POLICY HERE>.
+-**Good:**"Role: tech lead. Task: draft a JIRA bug ticket. Context: login page
+shows 500 error on staging. Constraints: include steps to reproduce, expected vs
+actual, logs reference, and impact. Format: Markdown with headings. Extra:
+include a checklist for mitigation." -**Good:**"You are a product owner. Create
+a user story for adding SSO. Context: users want one-click access. Constraints:
+include business value, story, acceptance criteria (Given/When/Then), and
+non-functional notes." -**Avoid:**Submitting auto-generated text without
+verifying logs, or sharing sensitive data without checking
+<INSERT INTERNAL POLICY HERE>.

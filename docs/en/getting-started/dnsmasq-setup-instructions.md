@@ -9,7 +9,7 @@ last_updated: '2025-11-28'
 
 [TOC]
 
-**Date**: 2025-10-27 **Status**: COMPLETED **Goal**: Configure local DNS server
+**Date**: 2025-10-27**Status**: COMPLETED**Goal**: Configure local DNS server
 for resolving ki.erni-gruppe.ch in corporate network
 
 ---
@@ -451,4 +451,4 @@ sudo nmcli connection up <connection-name>
 
 ---
 
-**Author**: Augment Agent **Date**: 2025-10-27
+**Author**: Augment Agent**Date**: 2025-10-27

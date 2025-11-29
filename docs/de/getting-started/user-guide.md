@@ -12,7 +12,7 @@ audience: 'administrators'
 
 # ERNI-KI Benutzerhandbuch
 
-> **Dokumentversion:** 3.0 **Aktualisierungsdatum:** 2025-07-15 **Zielgruppe:**
+> **Dokumentversion:**3.0**Aktualisierungsdatum:**2025-07-15**Zielgruppe:**
 > Endbenutzer [TOC]
 
 ## Einführung
@@ -33,33 +33,32 @@ AI-Chat, Internetsuche, Dokumentenverarbeitung und Sprachinteraktion.
 
 Das Hauptinterface besteht aus:
 
-- **Seitenleiste** - Chat-Liste und Einstellungen
-- **Zentraler Bereich** - Chat-Fenster mit AI
-- **Eingabefeld** - Feld für Nachrichten und Aktionsschaltflächen
-- **Obere Leiste** - Modellauswahl und zusätzliche Einstellungen
+-**Seitenleiste**- Chat-Liste und Einstellungen -**Zentraler Bereich**-
+Chat-Fenster mit AI -**Eingabefeld**- Feld für Nachrichten und
+Aktionsschaltflächen -**Obere Leiste**- Modellauswahl und zusätzliche
+Einstellungen
 
 ## Arbeiten mit Chats
 
 ### Neuen Chat erstellen
 
-1. Klicken Sie auf **"+ Neuer Chat"** in der Seitenleiste
+1. Klicken Sie auf**"+ Neuer Chat"**in der Seitenleiste
 2. Wählen Sie ein Sprachmodell aus der Dropdown-Liste
 3. Geben Sie Ihre erste Frage oder Anfrage ein
-4. Drücken Sie **Enter** oder die Senden-Schaltfläche
+4. Drücken Sie**Enter**oder die Senden-Schaltfläche
 
 ### Chat-Verwaltung
 
-- **Umbenennen**: Klicken Sie auf den Chat-Namen → "Umbenennen"
-- **Löschen**: Klicken Sie auf das Papierkorb-Symbol neben dem Chat
-- **Archivieren**: Verschieben Sie alte Chats ins Archiv
-- **Suchen**: Verwenden Sie die Suche zum schnellen Finden von Chats
+-**Umbenennen**: Klicken Sie auf den Chat-Namen → "Umbenennen" -**Löschen**:
+Klicken Sie auf das Papierkorb-Symbol neben dem Chat -**Archivieren**:
+Verschieben Sie alte Chats ins Archiv -**Suchen**: Verwenden Sie die Suche zum
+schnellen Finden von Chats
 
 ### Nachrichtentypen
 
-- **Textnachrichten** - normale Kommunikation mit AI
-- **System-Prompts** - spezielle Anweisungen für AI
-- **Dateien und Dokumente** - Upload zur Analyse
-- **Bilder** - Analyse und Beschreibung von Bildern
+-**Textnachrichten**- normale Kommunikation mit AI -**System-Prompts**-
+spezielle Anweisungen für AI -**Dateien und Dokumente**- Upload zur
+Analyse -**Bilder**- Analyse und Beschreibung von Bildern
 
 ## RAG-Suche mit SearXNG
 
@@ -71,10 +70,10 @@ erhalten.
 
 ### Web-Suche verwenden
 
-1. **Automatische Suche**: AI sucht automatisch nach Informationen bei Bedarf
-2. **Manuelle Suche**: Verwenden Sie den Befehl `/search Ihre Anfrage`
-3. **Sucheinstellungen**: In den Einstellungen können Sie die Auto-Suche
-   ein-/ausschalten
+1.**Automatische Suche**: AI sucht automatisch nach Informationen bei
+Bedarf 2.**Manuelle Suche**: Verwenden Sie den Befehl
+`/search Ihre Anfrage` 3.**Sucheinstellungen**: In den Einstellungen können Sie
+die Auto-Suche ein-/ausschalten
 
 ### Beispiele für Suchanfragen
 
@@ -99,16 +98,13 @@ SearXNG sucht Informationen in:
 
 ### Unterstützte Formate
 
-- **PDF** - Dokumente, Bücher, Artikel
-- **DOCX/DOC** - Microsoft Word Dokumente
-- **PPTX/PPT** - PowerPoint Präsentationen
-- **TXT** - Textdateien
-- **MD** - Markdown-Dateien
-- **HTML** - Webseiten
+-**PDF**- Dokumente, Bücher, Artikel -**DOCX/DOC**- Microsoft Word
+Dokumente -**PPTX/PPT**- PowerPoint Präsentationen -**TXT**-
+Textdateien -**MD**- Markdown-Dateien -**HTML**- Webseiten
 
 ### Dokumente hochladen
 
-1. Klicken Sie auf die **""** (Büroklammer) Schaltfläche im Eingabefeld
+1. Klicken Sie auf die**""**(Büroklammer) Schaltfläche im Eingabefeld
 2. Wählen Sie eine Datei vom Computer (bis zu 100MB)
 3. Warten Sie auf die Dokumentenverarbeitung
 4. Stellen Sie Fragen zum Dokumentinhalt
@@ -117,11 +113,9 @@ SearXNG sucht Informationen in:
 
 Nach dem Upload können Sie:
 
-- **Fragen stellen** zum Inhalt
-- **Zusammenfassung erhalten** des Dokuments
-- **Schlüsselinformationen extrahieren**
-- **Inhalte übersetzen** in andere Sprachen
-- **Präsentationen erstellen** basierend auf dem Dokument
+-**Fragen stellen**zum Inhalt -**Zusammenfassung erhalten**des
+Dokuments -**Schlüsselinformationen extrahieren**-**Inhalte übersetzen**in
+andere Sprachen -**Präsentationen erstellen**basierend auf dem Dokument
 
 ### Beispiele für Dokumentenarbeit
 
@@ -145,40 +139,36 @@ Hebe die Hauptthesen aus dem Dokument hervor
 
 ### Sprachausgabe (TTS)
 
-1. Aktivieren Sie **"Sprachantworten"** in den Einstellungen
+1. Aktivieren Sie**"Sprachantworten"**in den Einstellungen
 2. Wählen Sie bevorzugte Stimme und Sprache
 3. AI wird ihre Antworten vorlesen
 4. Verwenden Sie Play/Pause-Schaltflächen
 
 ### Unterstützte Sprachen
 
-- **Deutsch** - männliche und weibliche Stimmen
-- **Englisch** - verschiedene Akzente
-- **Französisch, Spanisch, Italienisch**
-- **Chinesisch, Japanisch, Koreanisch**
+-**Deutsch**- männliche und weibliche Stimmen -**Englisch**- verschiedene
+Akzente -**Französisch, Spanisch, Italienisch**-**Chinesisch, Japanisch,
+Koreanisch**
 
 ## Einstellungen und Personalisierung
 
 ### Modell-Einstellungen
 
-- **Temperatur** (0.1-2.0) - Kreativität der Antworten
-- **Top-p** (0.1-1.0) - Vielfalt der Antworten
-- **Maximale Länge** - Token-Limit für Antworten
-- **System-Prompt** - Grundanweisungen für AI
+-**Temperatur**(0.1-2.0) - Kreativität der Antworten -**Top-p**(0.1-1.0) -
+Vielfalt der Antworten -**Maximale Länge**- Token-Limit für
+Antworten -**System-Prompt**- Grundanweisungen für AI
 
 ### Interface-Einstellungen
 
-- **Theme** - helles/dunkles Design
-- **Interface-Sprache** - Deutsch/Englisch
-- **Schriftgröße** - Lesbarkeits-Anpassung
-- **Auto-Speichern** - Häufigkeit der Chat-Speicherung
+-**Theme**- helles/dunkles Design -**Interface-Sprache**-
+Deutsch/Englisch -**Schriftgröße**- Lesbarkeits-Anpassung -**Auto-Speichern**-
+Häufigkeit der Chat-Speicherung
 
 ### Such-Einstellungen
 
-- **Auto-Suche** - RAG-Suche ein-/ausschalten
-- **Anzahl Ergebnisse** - wie viele Quellen verwenden
-- **Such-Sprachen** - bevorzugte Ergebnis-Sprachen
-- **Sichere Suche** - Inhaltsfilterung
+-**Auto-Suche**- RAG-Suche ein-/ausschalten -**Anzahl Ergebnisse**- wie viele
+Quellen verwenden -**Such-Sprachen**- bevorzugte Ergebnis-Sprachen -**Sichere
+Suche**- Inhaltsfilterung
 
 ## Erweiterte Funktionen
 
@@ -206,9 +196,8 @@ Speichern Sie häufig verwendete Anfragen:
 
 ### Datenexport
 
-- **Chat-Export** - Speichern als PDF/TXT
-- **Einstellungs-Export** - Backup der Konfiguration
-- **Anfrage-Historie** - Nutzungsanalyse
+-**Chat-Export**- Speichern als PDF/TXT -**Einstellungs-Export**- Backup der
+Konfiguration -**Anfrage-Historie**- Nutzungsanalyse
 
 ## Sicherheit und Datenschutz
 
@@ -257,9 +246,9 @@ neuer Modelle.
 
 ### Technischer Support
 
-- **Dokumentation**: Vollständige Dokumentation im `/docs` Ordner
-- **System-Logs**: Verfügbar für Administrator
-- **Community**: GitHub Issues für Fragen und Vorschläge
+-**Dokumentation**: Vollständige Dokumentation im `/docs`
+Ordner -**System-Logs**: Verfügbar für Administrator -**Community**: GitHub
+Issues für Fragen und Vorschläge
 
 ### Nützliche Ressourcen
 
@@ -271,5 +260,5 @@ neuer Modelle.
 
 ---
 
-** Tipp**: Experimentieren Sie mit verschiedenen Einstellungen und Modellen, um
+**Tipp**: Experimentieren Sie mit verschiedenen Einstellungen und Modellen, um
 die optimale Konfiguration für Ihre Aufgaben zu finden!

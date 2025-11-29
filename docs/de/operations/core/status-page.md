@@ -21,12 +21,11 @@ selben internen Netzwerk wie andere Observability-Tools gehalten.
 
 ## Was die Statusmeldungen bedeuten
 
-- **Operational:** Alle überwachten Checks sind gesund.
-- **Degraded:** Mindestens ein Check schlägt fehl oder ist langsam;
-  Grundfunktionen können noch funktionieren.
-- **Maintenance:** Geplante Arbeiten laufen; Unterbrechungen erwarten.
-- **Unknown:** Statusseite kann Checks nicht erreichen — Netzwerk oder
-  Container-Health prüfen.
+-**Operational:**Alle überwachten Checks sind gesund. -**Degraded:**Mindestens
+ein Check schlägt fehl oder ist langsam; Grundfunktionen können noch
+funktionieren. -**Maintenance:**Geplante Arbeiten laufen; Unterbrechungen
+erwarten. -**Unknown:**Statusseite kann Checks nicht erreichen — Netzwerk oder
+Container-Health prüfen.
 
 ## Wie man sie nutzt
 

@@ -9,7 +9,7 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Erstellungsdatum**: 2025-10-24 **Version**: 1.0 **Autor**: Augment Agent
+**Erstellungsdatum**: 2025-10-24**Version**: 1.0**Autor**: Augment Agent
 
 ---
 
@@ -319,20 +319,20 @@ docker exec erni-ki-ollama-1 ollama pull nomic-embed-text:latest
 
 ## Best Practices
 
-1. **Regelmäßiges Monitoring**: Health Check mindestens alle 5-15 Minuten
-   ausführen
-2. **Logging**: Logs mindestens 30 Tage für Trendanalysen aufbewahren
-3. **Benachrichtigungen**: Webhook für kritische Fehler einrichten
-4. **Baseline-Metriken**: Normale Leistungswerte dokumentieren
-5. **Alarme**: Alarme bei Überschreitung der Schwellenwerte um 50%+ einrichten
+1.**Regelmäßiges Monitoring**: Health Check mindestens alle 5-15 Minuten
+ausführen 2.**Logging**: Logs mindestens 30 Tage für Trendanalysen
+aufbewahren 3.**Benachrichtigungen**: Webhook für kritische Fehler
+einrichten 4.**Baseline-Metriken**: Normale Leistungswerte
+dokumentieren 5.**Alarme**: Alarme bei Überschreitung der Schwellenwerte um 50%+
+einrichten
 
 ---
 
 ## Kontakte
 
-**Systemadministrator**: Kostiantyn Konstantinov **Email**:
-<kostiantyn.konstantinov@erni-gruppe.ch> **Teams**: Verfügbar für Fragen
+**Systemadministrator**: Kostiantyn Konstantinov**Email**:
+<kostiantyn.konstantinov@erni-gruppe.ch>**Teams**: Verfügbar für Fragen
 
 ---
 
-**Zuletzt aktualisiert**: 2025-10-24 **Dokumentversion**: 1.0
+**Zuletzt aktualisiert**: 2025-10-24**Dokumentversion**: 1.0

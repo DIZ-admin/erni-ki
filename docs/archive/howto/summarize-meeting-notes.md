@@ -22,12 +22,11 @@ steps. If Open WebUI is slow, see the
 
 ## Example prompts
 
-- **Good:** "Role: project coordinator. Task: summarize the meeting notes.
-  Context: product launch sync, attendees: marketing + engineering. Constraints:
-  highlight risks and owners. Format: sections for Summary, Decisions, Actions
-  with owners and due dates. Notes: <paste notes>."
-- **Good:** "You are an executive assistant. Summarize this transcript into 5
-  bullets and 3 action items. Include who owns each action and the due date if
-  mentioned. Transcript: <paste transcript>."
-- **Avoid:** "Make it short" without context, or omitting ownership and
-  deadlines.
+-**Good:**"Role: project coordinator. Task: summarize the meeting notes.
+Context: product launch sync, attendees: marketing + engineering. Constraints:
+highlight risks and owners. Format: sections for Summary, Decisions, Actions
+with owners and due dates. Notes: <paste notes>." -**Good:**"You are an
+executive assistant. Summarize this transcript into 5 bullets and 3 action
+items. Include who owns each action and the due date if mentioned. Transcript:
+<paste transcript>." -**Avoid:**"Make it short" without context, or omitting
+ownership and deadlines.

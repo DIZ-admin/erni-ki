@@ -7,8 +7,8 @@ last_updated: '2025-11-24'
 
 # Справочник API ERNI-KI
 
-> **Версия документа:** 5.0 **Дата обновления:** 2025-11-14 **API Версия:** v1
-> **Статус:** Все core endpoints, LiteLLM Context7 и RAG интеграции проверены
+> **Версия документа:**5.0**Дата обновления:**2025-11-14**API Версия:**v1
+> **Статус:**Все core endpoints, LiteLLM Context7 и RAG интеграции проверены
 
 ## Обзор API
 
@@ -20,14 +20,14 @@ ERNI-KI предоставляет RESTful API для интеграции с в
 
 ### RAG и Model Context Protocol
 
-- **LiteLLM Context Engineering** (`/lite/api/v1/context` и
-  `/lite/api/v1/think`) собирает контексты, inject’ит history и маршрутизирует
-  запросы на Ollama/Docling.
-- **MCP Server** (`/api/mcp/**`) обеспечивает context-aware инструменты (Time,
-  Filesystem, PostgreSQL, Memory) и используется `MCPO` CLI для ambient actions.
-- **RAG-эндпоинты** (`/api/search`, `/api/documents`,
-  `/api/v1/chats/{chat_id}/rag`) обмениваются с `Docling`/`SearXNG`, возвращают
-  `source_id`, `source_url`, `cursor`, `tokens_used`.
+-**LiteLLM Context Engineering**(`/lite/api/v1/context` и `/lite/api/v1/think`)
+собирает контексты, inject’ит history и маршрутизирует запросы на
+Ollama/Docling. -**MCP Server**(`/api/mcp/**`) обеспечивает context-aware
+инструменты (Time, Filesystem, PostgreSQL, Memory) и используется `MCPO` CLI для
+ambient actions. -**RAG-эндпоинты**(`/api/search`, `/api/documents`,
+`/api/v1/chats/{chat_id}/rag`) обмениваются с `Docling`/`SearXNG`, возвращают
+`source_id`, `source_url`, `cursor`, `tokens_used`.
+
 - Все запросы требуют JWT (см. раздел ` Аутентификация`), а ответы содержат
   `model`, `estimated_tokens`, `sources[]`.
 - Для быстрой проверки доступны `curl -s https://localhost:8080/api/v1/chats` и
@@ -131,7 +131,8 @@ curl -X POST https://ki.erni-gruppe.ch/api/documents \
 
 ### Исправленные endpoints (11 сентября 2025)
 
-- **SearXNG API**: `/api/searxng/search` - **ИСПРАВЛЕНО**
+-**SearXNG API**: `/api/searxng/search` -**ИСПРАВЛЕНО**
+
 - Устранена проблема с 404 ошибками
 - Восстановлена функциональность RAG поиска
 - Время ответа: <2 секунд
@@ -140,16 +141,14 @@ curl -X POST https://ki.erni-gruppe.ch/api/documents \
 
 ### Стабильные endpoints
 
-- **Health Check**: `/health` - проверка состояния системы
-- **Backrest API**: `/v1.Backrest/Backup`, `/v1.Backrest/GetOperations` -
-  управление бэкапами
-- **MCP API**: `/api/mcp/*` - Model Context Protocol endpoints
+-**Health Check**: `/health` - проверка состояния системы -**Backrest API**:
+`/v1.Backrest/Backup`, `/v1.Backrest/GetOperations` - управление бэкапами -**MCP
+API**: `/api/mcp/*` - Model Context Protocol endpoints
 
 ### Базовые URL
 
-- **Production**: `https://ki.erni-gruppe.ch/api/v1`
-- **Alternative**: `https://diz.zone/api/v1`
-- **Development**: `http://localhost:8080/api/v1`
+-**Production**: `https://ki.erni-gruppe.ch/api/v1` -**Alternative**:
+`https://diz.zone/api/v1` -**Development**: `http://localhost:8080/api/v1`
 
 ### Аутентификация
 
@@ -371,7 +370,7 @@ data: {"status": "completed", "progress": 100}
 
 ### GET /api/searxng/search
 
-**Статус:** **ПОЛНОСТЬЮ ФУНКЦИОНАЛЕН** (исправлено 11 сентября 2025)
+**Статус:** **ПОЛНОСТЬЮ ФУНКЦИОНАЛЕН**(исправлено 11 сентября 2025)
 
 Поиск через SearXNG метапоисковый движок для RAG интеграции с OpenWebUI.
 
@@ -745,7 +744,7 @@ curl "http://localhost:8080/api/searxng/search?q=artificial+intelligence&format=
 
 Запускает создание резервной копии для указанного плана.
 
-**Базовый URL:** `http://localhost:9898`
+**Базовый URL:**`http://localhost:9898`
 
 **Запрос:**
 
@@ -792,7 +791,7 @@ curl "http://localhost:8080/api/searxng/search?q=artificial+intelligence&format=
 
 ---
 
-** Дополнительная информация**: Полная OpenAPI спецификация доступна по адресу
+**Дополнительная информация**: Полная OpenAPI спецификация доступна по адресу
 `/api/v1/docs`
 
 ---
@@ -828,7 +827,7 @@ curl "http://localhost:8080/api/searxng/search?q=artificial+intelligence&format=
 
 Унифицированный API для различных LLM провайдеров с Context7 интеграцией.
 
-**Endpoint:** `http://localhost:4000/v1/chat/completions`
+**Endpoint:**`http://localhost:4000/v1/chat/completions`
 
 **Запрос:**
 
@@ -848,7 +847,7 @@ curl "http://localhost:8080/api/searxng/search?q=artificial+intelligence&format=
 
 Многоязычная обработка документов с OCR поддержкой (EN, DE, FR, IT).
 
-**Endpoint:** `http://localhost:5001/api/v1/convert`
+**Endpoint:**`http://localhost:5001/api/v1/convert`
 
 **Запрос (multipart/form-data):**
 
@@ -863,7 +862,7 @@ curl -X POST -F "file=@document.pdf" -F "ocr_languages=en,de,fr,it" \
 
 Улучшение контекста для AI запросов через Context7.
 
-**Endpoint:** `http://localhost:4000/api/v1/enhance-context`
+**Endpoint:**`http://localhost:4000/api/v1/enhance-context`
 
 ## Мониторинг API (обновлено)
 
@@ -871,7 +870,7 @@ curl -X POST -F "file=@document.pdf" -F "ocr_languages=en,de,fr,it" \
 
 #### GET /api/dashboards/search
 
-**Endpoint:** `http://localhost:3000/api/dashboards/search`
+**Endpoint:**`http://localhost:3000/api/dashboards/search`
 
 ### Prometheus Queries (с fallback значениями)
 

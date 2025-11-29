@@ -73,7 +73,7 @@ pre-commit install --hook-type commit-msg
 - Status Snippets aktuell
 - Archive README vorhanden
 
-**Working-Tree Cleanup:** `scripts/utilities/git-clean-safe.sh` entfernt
+**Working-Tree Cleanup:**`scripts/utilities/git-clean-safe.sh` entfernt
 ignorierte/unstaged Artefakte via `git clean -fdX`, schont aber `.git/hooks`.
 Vorschau: `CLEAN_DRY_RUN=1 scripts/utilities/git-clean-safe.sh`.
 

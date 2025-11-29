@@ -66,10 +66,10 @@ flowchart TD
 - Результаты проверяются через утилиты: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
 - При сбоях скриптов — см. `../maintenance/backup-restore-procedures.md` для
-  восстановления, `configuration-change-process.md` для миграций конфигов.
-- **Новые ноябрьские задачи:**
+  восстановления, `configuration-change-process.md` для миграций
+  конфигов. -**Новые ноябрьские задачи:**
   - `scripts/maintenance/docling-shared-cleanup.sh` — очищает Docling shared
-    volume и восстанавливает права (cron job **docling_shared_cleanup**).
+    volume и восстанавливает права (cron job**docling_shared_cleanup**).
   - `scripts/maintenance/redis-fragmentation-watchdog.sh` — следит за
     `redis_memory_fragmentation_ratio`, при >4 включает `activedefrag` и может
     рестартовать контейнер.
@@ -100,16 +100,15 @@ flowchart TD
 
 ## 7. Data & Storage документация
 
-- **Планы и оптимизации БД:**
-  `docs/operations/database/database-monitoring-plan.md`,
-  `docs/operations/database/database-production-optimizations.md`,
-  `docs/operations/database/database-troubleshooting.md`.
-- **Redis:** `docs/operations/database/redis-monitoring-grafana.md`,
-  `docs/operations/database/redis-operations-guide.md`.
-- **vLLM / LiteLLM ресурсы:**
-  `docs/operations/database/vllm-resource-optimization.md` + скрипты
-  `scripts/monitor-litellm-memory.sh`,
-  `scripts/redis-performance-optimization.sh`.
+-**Планы и оптимизации БД:**
+`docs/operations/database/database-monitoring-plan.md`,
+`docs/operations/database/database-production-optimizations.md`,
+`docs/operations/database/database-troubleshooting.md`. -**Redis:**`docs/operations/database/redis-monitoring-grafana.md`,
+`docs/operations/database/redis-operations-guide.md`. -**vLLM / LiteLLM
+ресурсы:**`docs/operations/database/vllm-resource-optimization.md` + скрипты
+`scripts/monitor-litellm-memory.sh`,
+`scripts/redis-performance-optimization.sh`.
+
 - В runbooks фиксируйте ссылки на соответствующие Data-документы при выполнении
   maintenance (pgvector VACUUM, Redis defrag, Backrest restore).
 
@@ -153,11 +152,11 @@ flowchart TD
 
 ## 11. CI/CD и безопасность
 
-- **Secret scanning:** добавьте gitleaks или trufflehog как отдельный CI job для
-  PR. Блокируйте pipeline при находках, исключения оформляйте через baseline.
-- **Dependency scanning:** `npm audit --omit=dev` или Snyk OSS в CI с fail по
-  критическим CVE; для Go оставить `gosec` + Trivy filesystem scan.
-- **Container scanning:** Trivy image scan с явным allowlist/ignorefile на
-  ложные срабатывания, все прочие критичные — fail pipeline.
-- **Policy:** реальные секреты только в секрет-хранилище/CI secrets; в git —
-  только `.example` и инструкции генерации (README/handbook).
+-**Secret scanning:**добавьте gitleaks или trufflehog как отдельный CI job для
+PR. Блокируйте pipeline при находках, исключения оформляйте через
+baseline. -**Dependency scanning:**`npm audit --omit=dev` или Snyk OSS в CI с
+fail по критическим CVE; для Go оставить `gosec` + Trivy filesystem
+scan. -**Container scanning:**Trivy image scan с явным allowlist/ignorefile на
+ложные срабатывания, все прочие критичные — fail pipeline. -**Policy:**реальные
+секреты только в секрет-хранилище/CI secrets; в git — только `.example` и
+инструкции генерации (README/handbook).

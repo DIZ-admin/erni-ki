@@ -29,7 +29,7 @@ last_updated: '2025-11-24'
 
 ## Alertmanager-Telemetrie (05.–12.11.)
 
-- Gesamt: **18 226 Events** (13 313 Warning, 4 913 Critical)
+- Gesamt:**18 226 Events**(13 313 Warning, 4 913 Critical)
 - Tagesverteilung:
 
 | Datum      | Alerts |
@@ -155,20 +155,19 @@ last_updated: '2025-11-24'
 
 ## Remediation (12.11.2025)
 
-- **Redis**: Frag-Parameter reduziert, Watchdog
-  `scripts/maintenance/redis-fragmentation-watchdog.sh` + cron (alle 5 Min),
-  neuer Alert `RedisHighFragmentation`.
-- **/boot/efi**: alte EFI-Logs gelöscht; Nutzung <4 %.
-- **Disk-Alerts**: `fstype="vfat"` & `/boot/efi` ausgeschlossen
-  (`conf/prometheus/*`), danach
-  `docker compose restart prometheus alertmanager`.
-- **Fluent Bit → Loki**: `conf/fluent-bit/fluent-bit.conf` nutzt
-  `Host erni-ki-loki`, `storage.type filesystem`, `Retry_Limit False` und 1 GB
-  Backlog.
-- **Webhook-Rotation**: Skript `scripts/maintenance/webhook-logs-rotate.sh` +
-  Cron `30 2 * * *`, Archiv in `data/webhook-logs/archive`.
-- **Cron-Skripte**: `.config-backup/logging-monitor.sh` und `logging-alerts.sh`
-  erstellt; `health-monitor.sh` nutzt `python3`.
+-**Redis**: Frag-Parameter reduziert, Watchdog
+`scripts/maintenance/redis-fragmentation-watchdog.sh` + cron (alle 5 Min), neuer
+Alert `RedisHighFragmentation`. -**/boot/efi**: alte EFI-Logs gelöscht; Nutzung
+<4 %. -**Disk-Alerts**: `fstype="vfat"` & `/boot/efi` ausgeschlossen
+(`conf/prometheus/*`), danach
+`docker compose restart prometheus alertmanager`. -**Fluent Bit → Loki**:
+`conf/fluent-bit/fluent-bit.conf` nutzt `Host erni-ki-loki`,
+`storage.type filesystem`, `Retry_Limit False` und 1 GB
+Backlog. -**Webhook-Rotation**: Skript
+`scripts/maintenance/webhook-logs-rotate.sh` + Cron `30 2 * * *`, Archiv in
+`data/webhook-logs/archive`. -**Cron-Skripte**:
+`.config-backup/logging-monitor.sh` und `logging-alerts.sh` erstellt;
+`health-monitor.sh` nutzt `python3`.
 
 Sync mit `docs/operations/monitoring/*.md` sowie eigener Task für
 `data/webhook-logs` erforderlich.
@@ -177,11 +176,11 @@ Sync mit `docs/operations/monitoring/*.md` sowie eigener Task für
 
 ### Kennzahlen (09:05 UTC+1)
 
-- `alertmanager_cluster_messages_queued` = **301** (Warnschwelle 100).
+- `alertmanager_cluster_messages_queued` =**301**(Warnschwelle 100).
 - Aktive Alerts: 13 (6× `HTTPErrors`, 3× `HighHTTPResponseTime`, je 1×
   `AlertmanagerClusterHealthLow`, `FluentBitHighMemoryUsage`,
   `CriticalServiceLogsMissing`, `ContainerWarningMemoryUsage`).
-- Redis `mem_fragmentation_ratio` = **5.89**.
+- Redis `mem_fragmentation_ratio` =**5.89**.
 - `data/webhook-logs/`: 48 MB, 5 303 JSONs + 67 Archive (Rotation aktiv).
 
 ### Neue Beobachtungen

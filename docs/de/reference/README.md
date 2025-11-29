@@ -15,25 +15,25 @@ Power-User.
 
 ### Entwicklung
 
-- **[development.md](development.md)** – Entwicklungsumgebung, Workflow,
-  Contribution-Guides, Tests, Build-Prozesse.
+-**[development.md](development.md)**– Entwicklungsumgebung, Workflow,
+Contribution-Guides, Tests, Build-Prozesse.
 
 ### API-Dokumentation
 
-- **[api-reference.md](api-reference.md)** – Endpunkte (OpenWebUI, LiteLLM,
-  Custom), Auth-Flows, Beispiele.
+-**[api-reference.md](api-reference.md)**– Endpunkte (OpenWebUI, LiteLLM,
+Custom), Auth-Flows, Beispiele.
 
 ### Integrations-Guides
 
-- **[mcpo-integration-guide.md](mcpo-integration-guide.md)** –
-  MCP-Server-Integration.
-- **[github-environments-setup.md](github-environments-setup.md)** – GitHub
-  CI/CD Setup.
+-**[mcpo-integration-guide.md](mcpo-integration-guide.md)**–
+MCP-Server-Integration. -**[github-environments-setup.md](github-environments-setup.md)**–
+GitHub CI/CD Setup.
 
 ### Status & Version
 
-- **[status.yml](status.yml)** – Single Source of Truth für Systemstatus.
-- **[status-snippet.md](status-snippet.md)** – Status-Template für Docs.
+-**[../../reference/status.yml](../../reference/status.yml)**– Single Source of
+Truth für Systemstatus. -**[status-snippet.md](status-snippet.md)**–
+Status-Template für Docs.
 
 ## Für Entwickler:innen
 
@@ -54,4 +54,4 @@ Power-User.
 
 ## Version
 
-Dokuversion: **12.1** · Letzte Aktualisierung: **2025-11-22**
+Dokuversion:**12.1**· Letzte Aktualisierung:**2025-11-22**

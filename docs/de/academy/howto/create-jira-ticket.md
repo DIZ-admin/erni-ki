@@ -33,11 +33,11 @@ Strukturkontrolle (ohne Autogenerierung).
 
 ## Prompt-Beispiele
 
-- **Gut:** "Du bist ein Projektmanager. Erstelle ein Jira-Ticket: Es muss eine
-  Autorisierungsprüfung zur API X hinzugefügt werden. Wichtig: Token,
-  Fehlerprotokollierung, Benachrichtigung bei 401. Gib Titel, Beschreibung und 3
-  Akzeptanzkriterien als Liste".
-- **Schlecht:** "Brauche ein Ticket über Autorisierung, denk dir was aus".
+-**Gut:**"Du bist ein Projektmanager. Erstelle ein Jira-Ticket: Es muss eine
+Autorisierungsprüfung zur API X hinzugefügt werden. Wichtig: Token,
+Fehlerprotokollierung, Benachrichtigung bei 401. Gib Titel, Beschreibung und 3
+Akzeptanzkriterien als Liste". -**Schlecht:**"Brauche ein Ticket über
+Autorisierung, denk dir was aus".
 
 ## Fertiger Prompt
 

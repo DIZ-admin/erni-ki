@@ -68,7 +68,7 @@ Enabled: Yes
 
 ### Шаг 2: Навигация к Port Forwarding
 
-**Возможные пути в меню** (зависит от версии LANCOM):
+**Возможные пути в меню**(зависит от версии LANCOM):
 
 **Вариант A**:
 
@@ -93,27 +93,19 @@ Advanced Settings → NAT → Port Forwarding
 #### Для HTTP (порт 80)
 
 1. Нажать "Add" или "New Rule"
-2. Заполнить поля:
-   - **Rule Name**: `ERNI-KI-HTTP`
-   - **External Interface**: `WAN` или `Internet`
-   - **Protocol**: `TCP`
-   - **External Port**: `80`
-   - **Internal IP Address**: `192.168.62.153`
-   - **Internal Port**: `80`
-   - **Enabled**: `Yes` или `On`
+2. Заполнить поля: -**Rule Name**: `ERNI-KI-HTTP` -**External Interface**: `WAN`
+   или `Internet` -**Protocol**: `TCP` -**External Port**: `80` -**Internal IP
+   Address**: `192.168.62.153` -**Internal Port**: `80` -**Enabled**: `Yes` или
+   `On`
 3. Нажать "Save" или "Apply"
 
 #### Для HTTPS (порт 443)
 
 1. Нажать "Add" или "New Rule"
-2. Заполнить поля:
-   - **Rule Name**: `ERNI-KI-HTTPS`
-   - **External Interface**: `WAN` или `Internet`
-   - **Protocol**: `TCP`
-   - **External Port**: `443`
-   - **Internal IP Address**: `192.168.62.153`
-   - **Internal Port**: `443`
-   - **Enabled**: `Yes` или `On`
+2. Заполнить поля: -**Rule Name**: `ERNI-KI-HTTPS` -**External Interface**:
+   `WAN` или `Internet` -**Protocol**: `TCP` -**External Port**:
+   `443` -**Internal IP Address**: `192.168.62.153` -**Internal Port**:
+   `443` -**Enabled**: `Yes` или `On`
 3. Нажать "Save" или "Apply"
 
 ### Шаг 4: Применение изменений
@@ -305,21 +297,25 @@ nslookup ki.erni-gruppe.ch 8.8.8.8
 
 ### Рекомендации
 
-1. **Ограничить доступ по IP** (если возможно):
-   - Разрешить доступ только с IP адресов ERNI офисов
-   - Использовать whitelist в firewall роутера
+1.**Ограничить доступ по IP**(если возможно):
 
-2. **Включить rate limiting**:
-   - Ограничить количество подключений с одного IP
-   - Защита от DDoS атак
+- Разрешить доступ только с IP адресов ERNI офисов
+- Использовать whitelist в firewall роутера
 
-3. **Мониторинг**:
-   - Настроить логирование подключений на роутере
-   - Регулярно проверять логи на подозрительную активность
+  2.**Включить rate limiting**:
 
-4. **Обновления**:
-   - Регулярно обновлять firmware роутера LANCOM
-   - Обновлять SSL сертификаты
+- Ограничить количество подключений с одного IP
+- Защита от DDoS атак
+
+  3.**Мониторинг**:
+
+- Настроить логирование подключений на роутере
+- Регулярно проверять логи на подозрительную активность
+
+  4.**Обновления**:
+
+- Регулярно обновлять firmware роутера LANCOM
+- Обновлять SSL сертификаты
 
 ### Альтернатива: VPN
 

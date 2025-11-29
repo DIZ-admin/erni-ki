@@ -622,9 +622,9 @@ services:
   prometheus:
     image: prom/prometheus:v3.7.3 # Updated from v3.0.0
     container_name: erni-ki-prometheus
-    # Fixed 2025-11-07: explicit link to postgres-exporter for DNS resolution
-    links:
-      - postgres-exporter
+    depends_on:
+      postgres-exporter:
+        condition: service_healthy
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"

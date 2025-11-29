@@ -280,29 +280,29 @@ docker volume ls --format "{{.Name}}" | xargs -I {} sh -c 'echo "{}:$(docker vol
 
 ### Sofort (sicher)
 
-1. **Alte OpenWebUI-Versionen löschen** (v0.6.31, v0.6.34) – spart ~9,66 GB
-2. **Alte LiteLLM-Version löschen** (v1.77.2.rc.1) – spart ~2,2 GB
-3. **Ungenutzte ERNI-FOTO-Images löschen** – spart ~9,92 GB
+1.**Alte OpenWebUI-Versionen löschen**(v0.6.31, v0.6.34) – spart ~9,66
+GB 2.**Alte LiteLLM-Version löschen**(v1.77.2.rc.1) – spart ~2,2
+GB 3.**Ungenutzte ERNI-FOTO-Images löschen**– spart ~9,92 GB
 
 **Gesamte Einsparung: ~21,78 GB**
 
 ### Mit Vorsicht (prüfen)
 
-1. **Ungenutzte Volumes prüfen** – potenziell ~16,36 GB
+1.**Ungenutzte Volumes prüfen**– potenziell ~16,36 GB
 
 - Inhalt jedes Volumes prüfen
 - Sicherstellen, dass keine wichtigen Daten enthalten sind
 - Erst nach Bestätigung löschen
 
-2. **Alte Service-Images löschen** (elasticsearch, mysql, fluent-bit)
+  2.**Alte Service-Images löschen**(elasticsearch, mysql, fluent-bit)
 
 - Nur, wenn sicher nicht benötigt
 
 ### Langfristig
 
-1. **Automatische Bereinigung** per cron (wöchentlich) einrichten
-2. **Docker-Größe monitoren** via `monitor-disk-space.sh`
-3. **Regelmäßig prüfen**: `docker system df -v`
+1.**Automatische Bereinigung**per cron (wöchentlich) einrichten 2.**Docker-Größe
+monitoren**via `monitor-disk-space.sh` 3.**Regelmäßig prüfen**:
+`docker system df -v`
 
 ---
 
@@ -337,6 +337,6 @@ docker system df
 
 ---
 
-**Status:** Dokumentation erstellt **Empfohlene Aktion:** Sichere Bereinigung
-ungenutzter Images (~21,78 GB) **Priorität:** Mittel (innerhalb einer Woche
+**Status:**Dokumentation erstellt**Empfohlene Aktion:**Sichere Bereinigung
+ungenutzter Images (~21,78 GB)**Priorität:**Mittel (innerhalb einer Woche
 umsetzbar)

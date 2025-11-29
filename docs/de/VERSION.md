@@ -9,16 +9,16 @@ system_status: current
 
 # Versionierung der ERNI-KI-Dokumentation
 
-Hält die **globale Version** der Nutzer- und Technik-Dokumentation fest und ist
+Hält die**globale Version**der Nutzer- und Technik-Dokumentation fest und ist
 Kontrollpunkt für Übersetzungs-Sync.
 
 ## Richtlinie
 
-- **Kanonische Sprache:** Russisch zuerst.
-- **Versionsschema:** `YYYY.MM` + Release-Datum; ändern bei inhaltlichen oder
-  strukturellen Updates.
-- **Status:** `current` / `deprecated` / `archived`.
-- **Übersetzungen:** `translation_status` in lokalen Dateien nach Sync setzen.
+-**Kanonische Sprache:**Russisch zuerst. -**Versionsschema:**`YYYY.MM` +
+Release-Datum; ändern bei inhaltlichen oder strukturellen
+Updates. -**Status:**`current` / `deprecated` /
+`archived`. -**Übersetzungen:**`translation_status` in lokalen Dateien nach Sync
+setzen.
 
 ## Aktualisieren
 
@@ -29,11 +29,10 @@ Kontrollpunkt für Übersetzungs-Sync.
 
 ## Release-Historie
 
-- **2025.11 (2025-11-23)** — Audit abgeschlossen, temporäre Dateien entfernt,
-  Komponenten-Versionen (OpenWebUI v0.6.36) aktualisiert, Install-/Integrations-
-  Guides refreshed.
-- **2025.02 (2025-02-15)** — Academy KI Karte, Status-Panel, globales Versioning
-  eingeführt.
+-**2025.11 (2025-11-23)**— Audit abgeschlossen, temporäre Dateien entfernt,
+Komponenten-Versionen (OpenWebUI v0.6.36) aktualisiert, Install-/Integrations-
+Guides refreshed. -**2025.02 (2025-02-15)**— Academy KI Karte, Status-Panel,
+globales Versioning eingeführt.
 
 ## Übersetzungsstand (2025-11-24)
 

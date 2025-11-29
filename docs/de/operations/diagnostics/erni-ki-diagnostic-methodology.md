@@ -22,14 +22,14 @@ eine genaue Diagnose des tatsächlichen Zustands von ERNI-KI.
 
 ### LiteLLM - AI Model Proxy
 
-** FALSCH:**
+**FALSCH:**
 
 ```bash
 curl http://localhost:4000/health # Ohne Authentifizierung
 curl http://localhost:4000/v1/models # Ohne Bearer Token
 ```
 
-** RICHTIG:**
+**RICHTIG:**
 
 ```bash
 # Prüfung der Modellverfügbarkeit
@@ -56,7 +56,7 @@ curl http://localhost:4000/health
 
 ## SearXNG - Suchmaschine
 
-** FALSCH:**
+**FALSCH:**
 
 ```bash
 curl http://localhost:8080/search?q=test # Falscher Pfad - gibt HTML zurück
@@ -64,7 +64,7 @@ curl -I http://localhost:8080 # Nur HTTP-Codes
 curl http://localhost:8080/searxng/search?q=test&format=json # Veralteter Pfad
 ```
 
-** RICHTIG:**
+**RICHTIG:**
 
 ```bash
 # KRITISCH WICHTIG: Verwenden Sie den korrekten API-Pfad über Nginx
@@ -87,21 +87,21 @@ docker logs erni-ki-openwebui-1 --since=5m | grep "GET /search?q=" | tail -5
 - Antwortstruktur enthält Schlüssel: `answers`, `corrections`, `infoboxes`,
   `number_of_results`, `query`, `results`, `suggestions`, `unresponsive_engines`
 - Antwortzeit <2 Sekunden über `/api/searxng/search`
-- OpenWebUI-Logs zeigen erfolgreiche Anfragen an SearXNG
-- **WICHTIG:** Direkter Zugriff auf `/search` gibt HTML zurück - das ist normal!
+- OpenWebUI-Logs zeigen erfolgreiche Anfragen an SearXNG -**WICHTIG:**Direkter
+  Zugriff auf `/search` gibt HTML zurück - das ist normal!
 
 ---
 
 ## Redis - Cache & Session Store
 
-** FALSCH:**
+**FALSCH:**
 
 ```bash
 docker exec erni-ki-redis-1 redis-cli ping # Ohne Passwort
 docker exec erni-ki-redis-1 redis-cli get test # NOAUTH Fehler
 ```
 
-** RICHTIG:**
+**RICHTIG:**
 
 ```bash
 # Verbindungsprüfung mit Passwort
@@ -125,7 +125,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info se
 
 ## Docling - Dokumentenverarbeitung
 
-** RICHTIG:**
+**RICHTIG:**
 
 1. Sicherstellen, dass der Container tatsächlich die GPU nutzt.
 
@@ -152,8 +152,8 @@ ist, setzen Sie `DOCLING_GPU_VISIBLE_DEVICES`/`DOCLING_CUDA_VISIBLE_DEVICES` in
 
 Nach Änderung der Variablen `docker compose up -d docling` ausführen.
 
-3. Für Bildbeschreibungen aktivieren Sie den Block **Dokumente → Bilder
-   beschreiben** in OpenWebUI (Admin-Panel `/admin/settings/documents`). Im
+3. Für Bildbeschreibungen aktivieren Sie den Block**Dokumente → Bilder
+   beschreiben**in OpenWebUI (Admin-Panel `/admin/settings/documents`). Im
    Konfigurationsfeld geben Sie die OpenAI-kompatible Ollama/VLLM API an:
 
 ```json
@@ -196,14 +196,14 @@ leer.
 
 ### Cloudflare Tunnel - Externer Zugriff
 
-** FALSCH:**
+**FALSCH:**
 
 ```bash
 curl https://erni-ki.diz-admin.com # Nicht existierende Domain
 nslookup erni-ki-dev.diz-admin.com # Falsche Domain
 ```
 
-** RICHTIG:**
+**RICHTIG:**
 
 ```bash
 # Zuerst aktuelle Konfiguration prüfen
@@ -235,33 +235,37 @@ curl -s -w "TIME: %{time_total}s\nHTTP: %{http_code}\n" "https://ki.erni-gruppe.
 
 ### Kritische Fehler, die vermieden werden müssen
 
-1. **Testen ohne Authentifizierung**
-   - Prüfen Sie immer die Authentifizierungsanforderungen in der Dokumentation
-   - Verwenden Sie korrekte API-Schlüssel und Passwörter
+1.**Testen ohne Authentifizierung**
 
-2. **Verlassen nur auf HTTP-Codes**
-   - HTTP 200 garantiert keine Funktionalität
-   - Prüfen Sie den Inhalt der Antworten und die Datenstruktur
+- Prüfen Sie immer die Authentifizierungsanforderungen in der Dokumentation
+- Verwenden Sie korrekte API-Schlüssel und Passwörter
 
-3. **Verwendung falscher Endpoints**
-   - Studieren Sie die API-Dokumentation vor dem Testen
-   - Prüfen Sie aktuelle Konfigurationsdateien
+  2.**Verlassen nur auf HTTP-Codes**
 
-4. **Ignorieren von Integrationen**
-   - Testen Sie Verbindungen zwischen Services
-   - Prüfen Sie Logs auf Integrationsfehler
+- HTTP 200 garantiert keine Funktionalität
+- Prüfen Sie den Inhalt der Antworten und die Datenstruktur
 
-5. **Testen nicht existierender Ressourcen**
-   - Prüfen Sie immer die aktuelle Konfiguration
-   - Raten Sie keine Domainnamen oder Endpoints
+  3.**Verwendung falscher Endpoints**
+
+- Studieren Sie die API-Dokumentation vor dem Testen
+- Prüfen Sie aktuelle Konfigurationsdateien
+
+  4.**Ignorieren von Integrationen**
+
+- Testen Sie Verbindungen zwischen Services
+- Prüfen Sie Logs auf Integrationsfehler
+
+  5.**Testen nicht existierender Ressourcen**
+
+- Prüfen Sie immer die aktuelle Konfiguration
+- Raten Sie keine Domainnamen oder Endpoints
 
 ### Richtiger Ansatz
 
-1. **Studium der Konfiguration vor dem Testen**
-2. **Verwendung korrekter Authentifizierungsparameter**
-3. **Prüfung des Antwortinhalts, nicht nur der Statuscodes**
-4. **Testen von Integrationen zwischen Komponenten**
-5. **Validierung von Leistung und Funktionalität**
+1.**Studium der Konfiguration vor dem Testen**2.**Verwendung korrekter
+Authentifizierungsparameter**3.**Prüfung des Antwortinhalts, nicht nur der
+Statuscodes**4.**Testen von Integrationen zwischen Komponenten**5.**Validierung
+von Leistung und Funktionalität**
 
 ---
 
@@ -271,7 +275,7 @@ curl -s -w "TIME: %{time_total}s\nHTTP: %{http_code}\n" "https://ki.erni-gruppe.
 
 #### SearXNG JSON API - Behoben 25.09.2025
 
-**Problem:** SearXNG gab HTML statt JSON bei Anfragen mit `format=json` zurück
+**Problem:**SearXNG gab HTML statt JSON bei Anfragen mit `format=json` zurück
 
 **Ursachen:**
 
@@ -285,7 +289,7 @@ curl -s -w "TIME: %{time_total}s\nHTTP: %{http_code}\n" "https://ki.erni-gruppe.
 - Alle Tests aktualisiert zur Nutzung von `/api/searxng/search`
 - Korrekten API-Pfad dokumentiert
 
-**Lektion:** Prüfen Sie immer die Nginx-Konfiguration, um korrekte API-Pfade zu
+**Lektion:**Prüfen Sie immer die Nginx-Konfiguration, um korrekte API-Pfade zu
 verstehen
 
 #### Docling Service
@@ -300,11 +304,10 @@ Prüfbefehle.
 
 ### Schlüsselprinzipien nach Korrekturen
 
-1. **Verwenden Sie immer korrekte API-Pfade über Nginx**
-2. **Prüfen Sie die Docker Compose Konfiguration, um Ports zu verstehen**
-3. **Testen Sie sowohl innerhalb des Docker-Netzwerks als auch über externe
-   Pfade**
-4. **Dokumentieren Sie alle gefundenen Probleme für zukünftige Diagnosen**
+1.**Verwenden Sie immer korrekte API-Pfade über Nginx**2.**Prüfen Sie die Docker
+Compose Konfiguration, um Ports zu verstehen**3.**Testen Sie sowohl innerhalb
+des Docker-Netzwerks als auch über externe Pfade**4.**Dokumentieren Sie alle
+gefundenen Probleme für zukünftige Diagnosen**
 
 ---
 
@@ -407,7 +410,7 @@ Das Befolgen dieser Methodik gewährleistet:
 - Richtige Priorisierung von Problemen
 - Effiziente Nutzung der Diagnosezeit
 
-**Denken Sie daran:** Das System kann besser funktionieren, als fehlerhaftes
+**Denken Sie daran:**Das System kann besser funktionieren, als fehlerhaftes
 Testen zeigt!
 
 ---
@@ -585,15 +588,15 @@ echo "Diagnostic report saved to: ${REPORT_FILE}"
 
 Diese Methodik zur Diagnose von ERNI-KI gewährleistet:
 
-**Diagnosegenauigkeit** - Vermeidung falscher negativer Ergebnisse
-**Effizienz** - schnelles Erkennen realer Probleme **Reproduzierbarkeit** -
-klare Befehle zur Wiederholung von Tests **Priorisierung** - Fokus auf kritisch
-wichtige Komponenten **Automatisierung** - Möglichkeit zur Erstellung
-automatischer Prüfungen
+**Diagnosegenauigkeit**- Vermeidung falscher negativer Ergebnisse**Effizienz**-
+schnelles Erkennen realer Probleme**Reproduzierbarkeit**- klare Befehle zur
+Wiederholung von Tests**Priorisierung**- Fokus auf kritisch wichtige
+Komponenten**Automatisierung**- Möglichkeit zur Erstellung automatischer
+Prüfungen
 
-**Schlüsselprinzip:** Prüfen Sie immer die aktuelle Konfiguration vor dem Testen
+**Schlüsselprinzip:**Prüfen Sie immer die aktuelle Konfiguration vor dem Testen
 und verwenden Sie die korrekten Authentifizierungsparameter für jeden Service.
 
-**Denken Sie daran:** Ein gut konfiguriertes ERNI-KI System kann auf einem
-Niveau von 95%+ arbeiten - lassen Sie nicht zu, dass falsche Diagnose die reale
+**Denken Sie daran:**Ein gut konfiguriertes ERNI-KI System kann auf einem Niveau
+von 95%+ arbeiten - lassen Sie nicht zu, dass falsche Diagnose die reale
 Bewertung senkt!

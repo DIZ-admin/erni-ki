@@ -14,7 +14,8 @@ und Nutzung der ERNI-KI Plattform.
 
 ### Installation
 
-- **[installation.md](installation.md)** - Vollständige Installationsanleitung
+-**[installation.md](installation.md)**- Vollständige Installationsanleitung
+
 - Systemanforderungen
 - Docker Compose Setup
 - Erstkonfiguration
@@ -22,7 +23,8 @@ und Nutzung der ERNI-KI Plattform.
 
 ### Konfiguration
 
-- **[configuration-guide.md](configuration-guide.md)** - Service-Konfiguration
+-**[configuration-guide.md](configuration-guide.md)**- Service-Konfiguration
+
 - Umgebungsvariablen
 - Service-spezifische Einstellungen
 - GPU-Konfiguration
@@ -30,7 +32,8 @@ und Nutzung der ERNI-KI Plattform.
 
 ### Benutzerhandbuch
 
-- **[user-guide.md](user-guide.md)** - Endanwender-Dokumentation
+-**[user-guide.md](user-guide.md)**- Endanwender-Dokumentation
+
 - Web-Interface Übersicht
 - Chat-Funktionen
 - Modellverwaltung
@@ -38,20 +41,19 @@ und Nutzung der ERNI-KI Plattform.
 
 ### Netzwerkeinrichtung
 
-- **[external-access-setup.md](external-access-setup.md)** -
-  Internetzugriff-Konfiguration
-- **[local-network-dns-setup.md](local-network-dns-setup.md)** - Lokale
-  DNS-Einrichtung
-- **[dnsmasq-setup-instructions.md](dnsmasq-setup-instructions.md)** -
-  DNSMasq-Konfiguration
-- **[port-forwarding-setup.md](port-forwarding-setup.md)** -
-  Port-Forwarding-Anleitung
+-**[external-access-setup.md](external-access-setup.md)**-
+Internetzugriff-Konfiguration -**[local-network-dns-setup.md](local-network-dns-setup.md)**-
+Lokale
+DNS-Einrichtung -**[dnsmasq-setup-instructions.md](dnsmasq-setup-instructions.md)**-
+DNSMasq-Konfiguration -**[port-forwarding-setup.md](port-forwarding-setup.md)**-
+Port-Forwarding-Anleitung
 
 ## Schnellstart-Pfad
 
-1. **Installation:** Folgen Sie [installation.md](installation.md) (~30 Minuten)
-2. **Konfiguration:** Lesen Sie [configuration-guide.md](configuration-guide.md)
-3. **Erste Nutzung:** Lesen Sie [user-guide.md](user-guide.md)
+1.**Installation:**Folgen Sie [installation.md](installation.md) (~30
+Minuten) 2.**Konfiguration:**Lesen Sie
+[configuration-guide.md](configuration-guide.md) 3.**Erste Nutzung:**Lesen Sie
+[user-guide.md](user-guide.md)
 
 ## Voraussetzungen
 
@@ -69,4 +71,4 @@ und Nutzung der ERNI-KI Plattform.
 
 ## Version
 
-Dokumentationsversion: **12.1** Letztes Update: **2025-11-27**
+Dokumentationsversion:**12.1**Letztes Update:**2025-11-27**

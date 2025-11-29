@@ -9,8 +9,8 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Version:** 1.0 **Erstellungsdatum:** 2025-09-25 **Letzte Aktualisierung:**
-2025-09-25 **Verantwortlich:** Tech Lead
+**Version:**1.0**Erstellungsdatum:**2025-09-25**Letzte Aktualisierung:**
+2025-09-25**Verantwortlich:**Tech Lead
 
 ---
 
@@ -18,18 +18,17 @@ last_updated: '2025-11-24'
 
 ### **Obligatorische Anforderungen für ALLE Änderungen:**
 
-1. **Backup VOR Änderung** - immer Sicherungskopie erstellen
-2. **Testen** - Änderungen in sicherer Umgebung prüfen
-3. **Dokumentieren** - alle Änderungen mit Begründung festhalten
-4. **Rollback-Plan** - Rücknahmeplan für Problemfälle vorbereiten
-5. **Monitoring** - System nach Änderungen überwachen
+1.**Backup VOR Änderung**- immer Sicherungskopie erstellen 2.**Testen**-
+Änderungen in sicherer Umgebung prüfen 3.**Dokumentieren**- alle Änderungen mit
+Begründung festhalten 4.**Rollback-Plan**- Rücknahmeplan für Problemfälle
+vorbereiten 5.**Monitoring**- System nach Änderungen überwachen
 
 ### **Änderungsklassifikation:**
 
-- ** KRITISCH** - betreffen Systemverfügbarkeit (requires Maintenance Window)
-- **[WARNING] WICHTIG** - betreffen Performance (requires Benachrichtigung)
-- **[OK] MINOR** - keine Auswirkungen auf Benutzer (kann während Arbeitszeit
-  erfolgen)
+-**KRITISCH**- betreffen Systemverfügbarkeit (requires Maintenance
+Window) -**[WARNING] WICHTIG**- betreffen Performance (requires
+Benachrichtigung) -**[OK] MINOR**- keine Auswirkungen auf Benutzer (kann während
+Arbeitszeit erfolgen)
 
 ---
 
@@ -52,7 +51,7 @@ echo "Rollback-Zeit: [Minuten]"
 ```markdown
 ## Change Request #CR-YYYYMMDD-XXX
 
-**Datum:** YYYY-MM-DD **Initiator:** [Name] **Typ:** [KRITISCH/WICHTIG/MINOR]
+**Datum:**YYYY-MM-DD**Initiator:**[Name]**Typ:**[KRITISCH/WICHTIG/MINOR]
 
 ### Beschreibung der Änderung:
 

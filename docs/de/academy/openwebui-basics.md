@@ -21,7 +21,7 @@ last_updated: '2025-11-27'
 
 1. Klicken Sie auf den Modellselektor in der oberen rechten Ecke der
    Benutzeroberfläche.
-2. Verwenden Sie die Modellbeschreibungen: **GPT-4o** — universell für Text und
+2. Verwenden Sie die Modellbeschreibungen:**GPT-4o**— universell für Text und
    Kommunikation, Code-Modelle — für Entwicklung und Debugging, RAG-Modelle —
    für die Arbeit mit internen Dokumenten.
 3. Wenn Sie unsicher sind, beginnen Sie mit dem Standardmodell im ausgewählten
@@ -34,16 +34,16 @@ last_updated: '2025-11-27'
    Deadline, Antwortsprache.
 3. Hängen Sie Dateien an (falls erforderlich) — sie werden in den
    Anfrage-Kontext einbezogen.
-4. Klicken Sie auf **Send** und bewerten Sie die Antwort. Verfeinern Sie bei
+4. Klicken Sie auf**Send**und bewerten Sie die Antwort. Verfeinern Sie bei
    Bedarf die Anforderungen und wiederholen Sie die Anfrage.
 
 ## Wie verwendet man vorgefertigte Vorlagen
 
-1. Öffnen Sie den Bereich **Prompts** oder **Workspaces** im linken Panel.
+1. Öffnen Sie den Bereich**Prompts**oder**Workspaces**im linken Panel.
 2. Navigieren Sie nach Kategorien (E-Mails, Meeting-Zusammenfassungen, Tickets)
    oder verwenden Sie die Suche.
 3. Füllen Sie die Variablen aus (Kundenname, Thema, Deadline) und klicken Sie
-   auf **Run** — die Vorlage enthält bereits ein bewährtes Format und einen
+   auf**Run**— die Vorlage enthält bereits ein bewährtes Format und einen
    passenden Ton.
 4. Wechseln Sie bei Bedarf zu einem alternativen Modell innerhalb der Vorlage
    (falls angeboten) und führen Sie sie erneut aus.

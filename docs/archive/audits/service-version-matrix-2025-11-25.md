@@ -51,14 +51,14 @@ Quick reference table for all service versions - complete as of November 25,
 
 ## Support Services
 
-| Service                 | Current          | Latest               | Gap            | Priority         | Notes                                 |
-| ----------------------- | ---------------- | -------------------- | -------------- | ---------------- | ------------------------------------- |
-| **Watchtower**          | 1.7.1            | 1.7.1                | CURRENT        | N/A              | Already latest                        |
-| **Backrest**            | v1.9.2           | v1.10.0              | 1 minor        | [OK] LOW         | Backup improvements                   |
-| **EdgeTTS**             | Digest           | v2.0.0/:latest       | Unknown        | [OK] LOW         | Switch to version tag or :latest      |
-| **MCPO Server**         | git-91e8f94      | v0.0.18              | Commit→Version | [WARNING] MEDIUM | OAuth 2.0, check if commit is recent  |
-| **Docling**             | :main            | :main (rolling)      | N/A            | CONSIDER         | Consider pinning for stability        |
-| **NVIDIA GPU Exporter** | 0.1 (mindprince) | **DCGM 4.4.2-4.7.0** | MIGRATION      | HIGH             | **Replace** with NVIDIA DCGM Exporter |
+| Service                 | Current          | Latest               | Gap            | Priority         | Notes                                |
+| ----------------------- | ---------------- | -------------------- | -------------- | ---------------- | ------------------------------------ |
+| **Watchtower**          | 1.7.1            | 1.7.1                | CURRENT        | N/A              | Already latest                       |
+| **Backrest**            | v1.9.2           | v1.10.0              | 1 minor        | [OK] LOW         | Backup improvements                  |
+| **EdgeTTS**             | Digest           | v2.0.0/:latest       | Unknown        | [OK] LOW         | Switch to version tag or :latest     |
+| **MCPO Server**         | git-91e8f94      | v0.0.18              | Commit→Version | [WARNING] MEDIUM | OAuth 2.0, check if commit is recent |
+| **Docling**             | :main            | :main (rolling)      | N/A            | CONSIDER         | Consider pinning for stability       |
+| **NVIDIA GPU Exporter** | 0.1 (mindprince) | **DCGM 4.4.2-4.7.0** | MIGRATION      | HIGH             | **Replace**with NVIDIA DCGM Exporter |
 
 ## Development Dependencies
 
@@ -74,25 +74,23 @@ Quick reference table for all service versions - complete as of November 25,
 
 ## Summary Statistics
 
-- **Total Services**: 30
-- **Services fully researched**: 30 (100% complete )
-- **Services with updates available**: 26
-- **Already on latest**: 5 (Watchtower, Uptime Kuma, Nginx mainline, PostgreSQL,
-  Go toolchain)
-- **Critical priority updates**: 6 (including NVIDIA GPU Exporter migration)
-- **High version gaps**: 3 (Redis Exporter: 18 versions, Prometheus: 7 versions,
-  Fluent Bit: major)
-- **Security-related**: 1 (Fluent Bit 4.1.1 fixes vulnerabilities)
-- **Major version updates**: 3 (Redis 7→8, Fluent Bit 3→4, npm 10→11)
-- **Service migrations**: 1 (NVIDIA GPU Exporter → DCGM Exporter)
+-**Total Services**: 30 -**Services fully researched**: 30 (100% complete
+) -**Services with updates available**: 26 -**Already on latest**: 5
+(Watchtower, Uptime Kuma, Nginx mainline, PostgreSQL, Go toolchain) -**Critical
+priority updates**: 6 (including NVIDIA GPU Exporter migration) -**High version
+gaps**: 3 (Redis Exporter: 18 versions, Prometheus: 7 versions, Fluent Bit:
+major) -**Security-related**: 1 (Fluent Bit 4.1.1 fixes
+vulnerabilities) -**Major version updates**: 3 (Redis 7→8, Fluent Bit 3→4, npm
+10→11) -**Service migrations**: 1 (NVIDIA GPU Exporter → DCGM Exporter)
 
 ## Priority Legend
 
-- **HIGH**: Critical functionality/security, immediate action recommended
-- [WARNING] **MEDIUM**: Important improvements, schedule for next sprint
-- [OK] **LOW**: Minor improvements, update when convenient
-- **N/A**: Already current or requires specific evaluation
-- **HOLD**: Requires careful planning (e.g., Redis major version)
+-**HIGH**: Critical functionality/security, immediate action recommended
+
+- [WARNING]**MEDIUM**: Important improvements, schedule for next sprint
+- [OK]**LOW**: Minor improvements, update when convenient -**N/A**: Already
+  current or requires specific evaluation -**HOLD**: Requires careful planning
+  (e.g., Redis major version)
 
 ## Update Phases
 
@@ -136,7 +134,7 @@ Quick reference table for all service versions - complete as of November 25,
 
 ### Phase 6 (Next Quarter) - Service Migrations
 
-24. **NVIDIA GPU Exporter** → **DCGM Exporter 4.4.2-4.7.0** (HIGH PRIORITY)
+24.**NVIDIA GPU Exporter**→**DCGM Exporter 4.4.2-4.7.0**(HIGH PRIORITY)
 
 - Research DCGM deployment (Docker/Helm)
 - Plan migration from mindprince to DCGM

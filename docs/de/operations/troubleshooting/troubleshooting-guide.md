@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # Leitfaden zur Problemdiagnose ERNI-KI
 
-> **Version:** 1.0 **Datum:** 25.09.2025 **Status:** Production Ready [TOC]
+> **Version:**1.0**Datum:**25.09.2025**Status:**Production Ready [TOC]
 
 ## 1. Einführung
 
@@ -19,15 +19,15 @@ Probleme.
 
 Für wirksame Diagnose benötigt man:
 
-- **Zugriff:** SSH (`sudo`), Grafana, Portainer.
-- **Tools:** `docker`, `curl`, `nc`, `htop`, `nvidia-smi`.
-- **Logs:** Zugriff via `docker logs` oder Grafana/Loki.
+-**Zugriff:**SSH (`sudo`), Grafana, Portainer. -**Tools:**`docker`, `curl`,
+`nc`, `htop`, `nvidia-smi`. -**Logs:**Zugriff via `docker logs` oder
+Grafana/Loki.
 
 ## 3. Diagnose-Anleitungen
 
 ### 3.1 Kritische Probleme (SLA < 15 Min)
 
-### ** Gesamtsystem nicht erreichbar**
+### **Gesamtsystem nicht erreichbar**
 
 #### **Symptome:**
 
@@ -68,7 +68,7 @@ docker system prune -a -f
 docker compose up -d
 ```
 
-## ** OpenWebUI nicht erreichbar (Haupt-UI)**
+## **OpenWebUI nicht erreichbar (Haupt-UI)**
 
 ### **Symptome:**
 
@@ -110,7 +110,7 @@ curl -f http://localhost/health
 
 ## Häufige Probleme und Lösungen
 
-### ** GPU/AI Services**
+### **GPU/AI Services**
 
 #### **Problem: Ollama nutzt GPU nicht**
 
@@ -138,7 +138,7 @@ sleep 15
 curl -f http://localhost:4000/health
 ```
 
-## ** Netzwerk**
+## **Netzwerk**
 
 ### **Problem: Nginx 502 Bad Gateway**
 
@@ -166,7 +166,7 @@ docker exec erni-ki-cloudflared-1 nslookup nginx
 docker compose restart cloudflared
 ```
 
-## ** Datenbank**
+## **Datenbank**
 
 ### **Problem: PostgreSQL connection refused**
 
@@ -197,7 +197,7 @@ sleep 5
 docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 ```
 
-## ** Monitoring**
+## **Monitoring**
 
 ### **Problem: Prometheus sammelt keine Metriken**
 
