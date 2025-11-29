@@ -141,10 +141,12 @@ def validate_file(file_path: Path, result: ValidationResult) -> bool:
         # Check if language matches directory
         if lang == "de" and "/de/" not in path_str:
             result.add_warning(rel_path, f"Language is {lang} but not in /de/ directory")
-        elif lang == "en" and "/en/" not in path_str and "/de/" not in path_str:
-            if not path_str.endswith(("docs/index.md", "docs/overview.md", "docs/VERSION.md")):
-                # Russian is default, should not be in /en/ or /de/
-                pass
+        elif lang == "en" and "/en/" not in path_str:
+            if not any(
+                path_str.endswith(f)
+                for f in ("docs/index.md", "docs/overview.md", "docs/VERSION.md")
+            ):
+                result.add_warning(rel_path, f"Language is {lang} but not in /en/ directory")
         elif lang == "ru" and ("/en/" in path_str or "/de/" in path_str):
             result.add_error(rel_path, "Language is ru but in /en/ or /de/ directory")
 
@@ -157,7 +159,8 @@ def validate_file(file_path: Path, result: ValidationResult) -> bool:
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Validate ERNI-KI documentation")
-    parser.add_argument("--fix", action="store_true", help="Auto-fix issues where possible")
+    # TODO: Implement auto-fix functionality before enabling this flag.
+    # parser.add_argument("--fix", action="store_true", help="Auto-fix issues where possible")
     parser.add_argument("--report", type=str, help="Save report to JSON file")
 
     args = parser.parse_args()
