@@ -76,16 +76,18 @@ def get_logger(
     json_output: bool = False,
 ) -> logging.Logger:
     """
-    Get configured logger instance.
+    Create and configure a logger with a single console handler.
 
-    Args:
-        name: Logger name (usually __name__)
-        level: Logging level as string (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-               or int. Defaults to INFO.
-        json_output: If True, use JSON format; otherwise use colored format
+    Parameters:
+        name (str): Logger name (typically __name__).
+        level (str | int | None): Logging level as a string (e.g.,
+            "DEBUG") or an int; defaults to INFO when None or
+            unrecognized.
+        json_output (bool): If True, format console output as JSON;
+            otherwise use colored terminal formatting.
 
     Returns:
-        Configured logger instance
+        logging.Logger: Configured logger instance with a single stdout handler.
     """
     # Convert string level to logging level
     if level is None:
@@ -118,15 +120,17 @@ def get_logger(
 
 def log_to_file(logger: logging.Logger, file_path: str | Path) -> None:
     """
-    Add file handler to logger.
+    Attach a JSON-formatted file handler to the given logger, creating parent directories as needed.
 
-    Args:
-        logger: Logger instance to add file handler to
-        file_path: Path to log file (string or Path object)
+    Parameters:
+        logger (logging.Logger): Logger to receive the file handler.
+        file_path (str | Path): Path to the log file to write.
 
-    Note:
-        Errors creating log file or parent directories are logged but not raised.
-        This prevents logging failures from crashing the application.
+    Notes:
+        Sets the file handler's level to the logger's current level.
+        If directory creation or handler setup fails, an error is
+        logged on the provided logger; the function does not raise
+        the exception.
     """
     file_path_obj = Path(file_path)
 
