@@ -1,10 +1,23 @@
 import { spawnSync } from 'child_process';
 import { describe, expect, it } from 'vitest';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import os from 'os';
 
 const scriptPath = path.resolve('scripts/language-check.cjs');
+const tmpPrefix = path.join(os.tmpdir(), 'lang-check-');
+
+const createTempFile = (filename: string, content: string) => {
+  const dir = fs.mkdtempSync(tmpPrefix);
+  const filePath = path.join(dir, filename);
+  fs.writeFileSync(filePath, content, { encoding: 'utf8' });
+
+  const cleanup = () => {
+    fs.rmSync(dir, { recursive: true, force: true });
+  };
+
+  return { filePath, cleanup };
+};
 
 describe('language-check.cjs - Extended Tests', () => {
   it('script file exists and is executable', () => {
@@ -12,39 +25,36 @@ describe('language-check.cjs - Extended Tests', () => {
   });
 
   it('detects German language in text', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-german.md');
-    fs.writeFileSync(tempFile, 'Das ist ein deutscher Text.');
+    const { filePath, cleanup } = createTempFile('test-german.md', 'Das ist ein deutscher Text.');
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     // Current language-check only flags Cyrillic; German should pass
     expect(result.status).toBe(0);
   });
 
   it('accepts English-only text', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-english.md');
-    fs.writeFileSync(tempFile, 'This is an English text.');
+    const { filePath, cleanup } = createTempFile('test-english.md', 'This is an English text.');
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     expect(result.status).toBe(0);
   });
 
   it('handles empty files', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-empty.md');
-    fs.writeFileSync(tempFile, '');
+    const { filePath, cleanup } = createTempFile('test-empty.md', '');
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     // Empty files should pass (no forbidden language)
     expect(result.status).toBe(0);
   });
@@ -59,22 +69,23 @@ describe('language-check.cjs - Extended Tests', () => {
     ];
 
     for (const word of germanWords) {
-      const tempFile = path.join(os.tmpdir(), 'test-word.md');
-      fs.writeFileSync(tempFile, `The system uses ${word} for management.`);
+      const { filePath, cleanup } = createTempFile(
+        'test-word.md',
+        `The system uses ${word} for management.`,
+      );
 
-      const result = spawnSync('node', [scriptPath, tempFile], {
+      const result = spawnSync('node', [scriptPath, filePath], {
         encoding: 'utf8',
       });
 
-      fs.unlinkSync(tempFile);
+      cleanup();
       expect(result.status).toBe(0);
     }
   });
 
   it('handles files with mixed content', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-mixed.md');
-    fs.writeFileSync(
-      tempFile,
+    const { filePath, cleanup } = createTempFile(
+      'test-mixed.md',
       `# Configuration Guide
 
 This is a configuration guide.
@@ -82,18 +93,17 @@ Some technical terms in English.
       `,
     );
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     expect(result.status).toBe(0);
   });
 
   it('ignores code blocks with German-like content', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-code.md');
-    fs.writeFileSync(
-      tempFile,
+    const { filePath, cleanup } = createTempFile(
+      'test-code.md',
       `# Documentation
 
 \`\`\`bash
@@ -103,11 +113,11 @@ echo "Konfiguration"
       `,
     );
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     // Code blocks should be ignored
     expect(result.status).toBe(0);
   });
@@ -123,40 +133,40 @@ describe('language-check.cjs - Edge Cases', () => {
   });
 
   it('handles files without extensions', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-no-ext');
-    fs.writeFileSync(tempFile, 'This is a test file.');
+    const { filePath, cleanup } = createTempFile('test-no-ext', 'This is a test file.');
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     expect(result.status).toBe(0);
   });
 
   it('handles very large files', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-large.md');
     const largeContent = 'This is English text. '.repeat(10000);
-    fs.writeFileSync(tempFile, largeContent);
+    const { filePath, cleanup } = createTempFile('test-large.md', largeContent);
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
       timeout: 5000,
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     expect(result.status).toBe(0);
   });
 
   it('handles files with special characters', () => {
-    const tempFile = path.join(os.tmpdir(), 'test-special.md');
-    fs.writeFileSync(tempFile, 'This is a test with émojis 🎉 and special chars: @#$%^&*()');
+    const { filePath, cleanup } = createTempFile(
+      'test-special.md',
+      'This is a test with émojis 🎉 and special chars: @#$%^&*()',
+    );
 
-    const result = spawnSync('node', [scriptPath, tempFile], {
+    const result = spawnSync('node', [scriptPath, filePath], {
       encoding: 'utf8',
     });
 
-    fs.unlinkSync(tempFile);
+    cleanup();
     expect(result.status).toBe(0);
   });
 });
