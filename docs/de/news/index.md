@@ -8,5 +8,5 @@ title: 'News (DE)'
 
 # News & Updates
 
-- **2025-11-20** —
-  [ERNI-KI Status Page Launch](2025-11-erni-ki-status-page-launch.md)
+-**2025-11-20**—
+[ERNI-KI Status Page Launch](2025-11-erni-ki-status-page-launch.md)

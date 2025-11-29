@@ -10,9 +10,9 @@ system_status: 'Production Ready'
 
 # Installation Guide - ERNI-KI
 
-> **Версия:** 12.1 **Дата обновления:** 22.11.2025 **Статус системы:**
-> Production Ready (Система мониторинга: 5 provisioned дашбордов Grafana,
-> актуальные Prometheus
+> **Версия:**12.1**Дата обновления:**22.11.2025**Статус системы:**Production
+> Ready (Система мониторинга: 5 provisioned дашбордов Grafana, актуальные
+> Prometheus
 
 [TOC]
 
@@ -38,21 +38,20 @@ flowchart TD
 
 ### Минимальные требования
 
-- **OS:** Linux (Ubuntu 20.04+ / CentOS 8+ / Debian 11+)
-- **CPU:** 4 cores (8+ рекомендуется)
-- **RAM:** 16GB (оптимизировано для PostgreSQL и Redis)
-- **Storage:** 100GB свободного места (SSD рекомендуется)
-- **Network:** Стабильное интернет-соединение
-- **Системные настройки:** vm.overcommit_memory=1 (для Redis)
+-**OS:**Linux (Ubuntu 20.04+ / CentOS 8+ / Debian 11+) -**CPU:**4 cores (8+
+рекомендуется) -**RAM:**16GB (оптимизировано для PostgreSQL и
+Redis) -**Storage:**100GB свободного места (SSD
+рекомендуется) -**Network:**Стабильное интернет-соединение -**Системные
+настройки:**vm.overcommit_memory=1 (для Redis)
 
 ### Рекомендуемые требования (Production)
 
-- **CPU:** 8+ cores с поддержкой AVX2
-- **RAM:** 32GB+ (PostgreSQL: 256MB shared_buffers, Redis: 2GB limit)
-- **GPU:** NVIDIA GPU с 8GB+ VRAM (для Ollama GPU ускорения)
-- **Storage:** 500GB+ NVMe SSD
-- **Network:** 1Gbps+ для быстрой загрузки моделей
-- **Мониторинг:** Prometheus + Grafana + 8 Exporters (оптимизированы 19.09.2025)
+-**CPU:**8+ cores с поддержкой AVX2 -**RAM:**32GB+ (PostgreSQL: 256MB
+shared_buffers, Redis: 2GB limit) -**GPU:**NVIDIA GPU с 8GB+ VRAM (для Ollama
+GPU ускорения) -**Storage:**500GB+ NVMe SSD -**Network:**1Gbps+ для быстрой
+загрузки моделей -**Мониторинг:**Prometheus + Grafana + 8 Exporters
+(оптимизированы 19.09.2025)
+
 - Дополнительно: ~2GB RAM для полного мониторинга стека
 - Порты: 9101, 9187, 9121, 9445, 9115, 9778, 9113, 9808
 
@@ -101,21 +100,19 @@ sudo systemctl restart docker
 
 ### LiteLLM Context Engineering
 
-- **Назначение:** Унифицированный API для различных LLM провайдеров
-- **Context7 интеграция:** Улучшенный контекст для AI ответов
-- **Порт:** 4000
-- **Конфигурация:** `env/litellm.env`, `conf/litellm/config.yaml`
+-**Назначение:**Унифицированный API для различных LLM провайдеров -**Context7
+интеграция:**Улучшенный контекст для AI
+ответов -**Порт:**4000 -**Конфигурация:**`env/litellm.env`,
+`conf/litellm/config.yaml`
 
-- **Назначение:** Многоязычная обработка документов с OCR
-- **Поддерживаемые языки:** EN, DE, FR, IT
-- **Порт:** 5001
+-**Назначение:**Многоязычная обработка документов с OCR -**Поддерживаемые
+языки:**EN, DE, FR, IT -**Порт:**5001
 
 ### Система мониторинга (актуальное состояние)
 
-- **5 дашбордов Grafana (provisioned)**
-- **Актуализированные Prometheus запросы с fallback значениями**
-- **Время загрузки дашбордов <3 секунд**
-- **Успешность запросов >85%**
+-**5 дашбордов Grafana (provisioned)**-**Актуализированные Prometheus запросы с
+fallback значениями**-**Время загрузки дашбордов <3 секунд**-**Успешность
+запросов >85%**
 
 ## Быстрая установка
 
@@ -163,7 +160,7 @@ nano env/ollama.env
 nano env/openwebui.env
 ```
 
-> ℹ **Информация:** Структура конфигураций оптимизирована (август 2025). Все
+> ℹ**Информация:**Структура конфигураций оптимизирована (август 2025). Все
 > дублирующиеся конфигурации удалены, naming convention стандартизирован.
 
 ## 2. Настройка SSL сертификатов
@@ -257,36 +254,29 @@ curl -s http://localhost:9095/health
 
 **Основные сервисы:**
 
-- **Grafana:** <http://localhost:3000> (admin/admin)
-- **Prometheus:** <http://localhost:9091>
-- **AlertManager:** <http://localhost:9093>
-- **Loki:** <http://localhost:3100> (используйте заголовок
-  `X-Scope-OrgID: erni-ki`)
+-**Grafana:**<http://localhost:3000>
+(admin/admin) -**Prometheus:**<http://localhost:9091> -**AlertManager:**<http://localhost:9093> -**Loki:**<http://localhost:3100>
+(используйте заголовок `X-Scope-OrgID: erni-ki`)
 
 **8 Exporters (стандартизированы и оптимизированы):**
 
-- **Node Exporter:** <http://localhost:9101/metrics> - системные метрики
-- **PostgreSQL Exporter:** <http://localhost:9187/metrics> - метрики БД
-- **Redis Exporter:** <http://localhost:9121/metrics> - метрики кэша ( TCP
-  healthcheck)
-- **NVIDIA GPU Exporter:** <http://localhost:9445/metrics> - метрики GPU (
-  улучшен)
-- **Blackbox Exporter:** <http://localhost:9115/metrics> - мониторинг
-  доступности
-- **Ollama AI Exporter:** <http://localhost:9778/metrics> - метрики AI (
-  стандартизирован)
-- **Nginx Web Exporter:** <http://localhost:9113/metrics> - метрики веб-сервера
-  ( TCP healthcheck)
-- **RAG SLA Exporter:** <http://localhost:9808/metrics> - метрики RAG
-  производительности
+-**Node Exporter:**<http://localhost:9101/metrics> - системные
+метрики -**PostgreSQL Exporter:**<http://localhost:9187/metrics> - метрики
+БД -**Redis Exporter:**<http://localhost:9121/metrics> - метрики кэша ( TCP
+healthcheck) -**NVIDIA GPU Exporter:**<http://localhost:9445/metrics> - метрики
+GPU ( улучшен) -**Blackbox Exporter:**<http://localhost:9115/metrics> -
+мониторинг доступности -**Ollama AI Exporter:**<http://localhost:9778/metrics> -
+метрики AI ( стандартизирован) -**Nginx Web
+Exporter:**<http://localhost:9113/metrics> - метрики веб-сервера ( TCP
+healthcheck) -**RAG SLA Exporter:**<http://localhost:9808/metrics> - метрики RAG
+производительности
 
 **Дополнительные сервисы:**
 
-- **Webhook Receiver:** <http://localhost:9095/health>
-- **Fluent Bit (Prometheus формат):**
-  <http://localhost:2020/api/v1/metrics/prometheus>
+-**Webhook Receiver:**<http://localhost:9095/health> -**Fluent Bit (Prometheus
+формат):**<http://localhost:2020/api/v1/metrics/prometheus>
 
-> ℹ **Информация:** Для внешнего доступа используйте домен ki.erni-gruppe.ch
+> ℹ**Информация:**Для внешнего доступа используйте домен ki.erni-gruppe.ch
 
 ### 3. Верификация работоспособности exporters (Новое 19.09.2025)
 
@@ -474,10 +464,9 @@ sudo firewall-cmd --reload
 
 ### Основные интерфейсы
 
-- **OpenWebUI:** <https://your-domain/> (основной интерфейс)
-- **Grafana:** <https://your-domain/grafana> (мониторинг)
-- **Grafana Explore (Loki):** <https://your-domain/grafana> → вкладка
-  **Explore**
+-**OpenWebUI:**<https://your-domain/> (основной
+интерфейс) -**Grafana:**<https://your-domain/grafana> (мониторинг) -**Grafana
+Explore (Loki):**<https://your-domain/grafana> → вкладка**Explore**
 
 ### Первый вход
 
@@ -513,11 +502,9 @@ nvidia-smi
 
 ## Поддержка
 
-- ** Документация:**
-  [docs/operations/troubleshooting/troubleshooting-guide.md](../operations/troubleshooting/troubleshooting-guide.md)
-- ** Issues:** [GitHub Issues](https://github.com/DIZ-admin/erni-ki/issues)
-- ** Discussions:**
-  [GitHub Discussions](https://github.com/DIZ-admin/erni-ki/discussions)
+-**Документация:**
+[docs/operations/troubleshooting/troubleshooting-guide.md](../operations/troubleshooting/troubleshooting-guide.md) -**Issues:**[GitHub Issues](https://github.com/DIZ-admin/erni-ki/issues) -**Discussions:**
+[GitHub Discussions](https://github.com/DIZ-admin/erni-ki/discussions)
 
 ## Важные обновления
 
@@ -525,7 +512,7 @@ nvidia-smi
 
 **Исправления после установки:**
 
-1. **SearXNG RAG интеграция** - если поиск не работает:
+1.**SearXNG RAG интеграция**- если поиск не работает:
 
 ```bash
 # Проверить статус SearXNG
@@ -535,7 +522,7 @@ docker logs erni-ki-searxng-1 --tail 20
 # Активные движки: Startpage, Brave, Bing
 ```
 
-2. **Backrest API** - использовать правильные endpoints:
+2.**Backrest API**- использовать правильные endpoints:
 
 ```bash
 # Правильные JSON RPC endpoints
@@ -543,9 +530,9 @@ curl -X POST 'http://localhost:9898/v1.Backrest/GetOperations' \
 --data '{}' -H 'Content-Type: application/json'
 ```
 
-3. **Ollama модели** - доступны 6 моделей включая qwen2.5-coder:1.5b
+3.**Ollama модели**- доступны 6 моделей включая qwen2.5-coder:1.5b
 
 ---
 
-> ℹ **Информация:** Данное руководство актуализировано для архитектуры 20+
+> ℹ**Информация:**Данное руководство актуализировано для архитектуры 20+
 > сервисов ERNI-KI версии 5.0.

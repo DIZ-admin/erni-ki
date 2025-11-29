@@ -20,36 +20,39 @@ last_updated: '2025-11-24'
 
 ## Быстрый чеклист
 
-1. **Автобэкапы Backrest**
-   - Статус: `docker compose ps backrest`
-   - Логи: `docker compose logs backrest --tail=50`
-   - История: `curl -s http://localhost:9898/api/v1/repos`
+1.**Автобэкапы Backrest**
 
-2. **Бэкап перед изменениями**
-   - Снимите snapshot (Backrest full/incremental)
-   - Экспортируйте конфиг:
-     `tar -czf config-$(date +%F).tgz env conf compose.yml`
+- Статус: `docker compose ps backrest`
+- Логи: `docker compose logs backrest --tail=50`
+- История: `curl -s http://localhost:9898/api/v1/repos`
 
-3. **Валидация восстановления (раз в месяц)**
-   - Разверните на тестовом стенде
-   - Проверьте запуск OpenWebUI + БД
-   - Убедитесь, что uploads и модели доступны
+  2.**Бэкап перед изменениями**
+
+- Снимите snapshot (Backrest full/incremental)
+- Экспортируйте конфиг: `tar -czf config-$(date +%F).tgz env conf compose.yml`
+
+  3.**Валидация восстановления (раз в месяц)**
+
+- Разверните на тестовом стенде
+- Проверьте запуск OpenWebUI + БД
+- Убедитесь, что uploads и модели доступны
 
 ## Когда что использовать
 
-- **Рутинные бэкапы и vacuum/maintenance:** см.
-  `operations/automation/automated-maintenance-guide.md`
+-**Рутинные бэкапы и vacuum/maintenance:**см.
+`operations/automation/automated-maintenance-guide.md`
 
-- **Полные пошаговые процедуры бэкапа/рестора:** см.
-  `operations/maintenance/backup-restore-procedures.md`
+-**Полные пошаговые процедуры бэкапа/рестора:**см.
+`operations/maintenance/backup-restore-procedures.md`
 
-- **Рестарт сервисов после восстановления:** см.
-  `operations/maintenance/service-restart-procedures.md`
+-**Рестарт сервисов после восстановления:**см.
+`operations/maintenance/service-restart-procedures.md`
 
 ## RPO/RTO
 
-- **RPO:** ≤ 15 минут (инкрементальные бэкапы + WAL streaming)
-- **RTO:** ≤ 45 минут для OpenWebUI + БД
+-**RPO:**≤ 15 минут (инкрементальные бэкапы + WAL streaming) -**RTO:**≤ 45 минут
+для OpenWebUI + БД
+
 - Проверяйте показатели ежемесячно и фиксируйте результат в Backrest dashboard.
 
 ## Визуализация: цикл бэкапов

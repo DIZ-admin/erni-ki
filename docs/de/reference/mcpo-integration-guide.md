@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # MCP-Integrationsleitfaden für ERNI-KI
 
-> **Dokumentversion:** 9.0 **Stand:** 2025-11-14 **Status:** Healthy (Port 8000,
+> **Dokumentversion:**9.0**Stand:**2025-11-14**Status:**Healthy (Port 8000,
 > LiteLLM/Context7-Integration geprüft) [TOC]
 
 ## MCP-Überblick
@@ -16,12 +16,12 @@ Der MCP-Server in ERNI-KI stellt eine standardisierte Schnittstelle bereit, um
 AI-Werkzeuge über das Model Context Protocol mit OpenWebUI v0.6.36 zu verbinden.
 Aktiv sind derzeit vier MCP-Werkzeuge:
 
-- **Time Server** – Zeitinformationen und Zeitzonen
-- **PostgreSQL Server** – SQL-Abfragen gegen PostgreSQL 15.13 + pgvector 0.8.0
-- **Filesystem Server** – Dateioperationen im freigegebenen Workspace
-- **Memory Server** – Steuerung des Knowledge Graph / Memories
+-**Time Server**– Zeitinformationen und Zeitzonen -**PostgreSQL Server**–
+SQL-Abfragen gegen PostgreSQL 15.13 + pgvector 0.8.0 -**Filesystem Server**–
+Dateioperationen im freigegebenen Workspace -**Memory Server**– Steuerung des
+Knowledge Graph / Memories
 
-**Status:** Healthy, Laufzeit 2h, Port 8000.
+**Status:**Healthy, Laufzeit 2h, Port 8000.
 
 ## Architektur
 
@@ -57,19 +57,17 @@ graph TB
 
 ### Läuft stabil
 
-1. **MCPO Server** – Port 8000 erreichbar
-2. **Swagger UI** – <http://localhost:8000/docs>
-3. **OpenAPI** – <http://localhost:8000/openapi.json>
-4. **Alle 5 MCP-Server** – initialisiert und antworten
-5. **Nginx Proxy** – routet korrekt zu den MCP-Servern
-6. **OpenWebUI Konfiguration** – `TOOL_SERVER_CONNECTIONS` gesetzt
+1.**MCPO Server**– Port 8000 erreichbar 2.**Swagger UI**–
+<http://localhost:8000/docs> 3.**OpenAPI**–
+<http://localhost:8000/openapi.json> 4.**Alle 5 MCP-Server**– initialisiert und
+antworten 5.**Nginx Proxy**– routet korrekt zu den MCP-Servern 6.**OpenWebUI
+Konfiguration**– `TOOL_SERVER_CONNECTIONS` gesetzt
 
 ### Performance
 
-- **API-Latenz:** <50 ms bei Standardoperationen
-- **Time Server:** ~11 ms für `get_current_time`
-- **PostgreSQL Server:** ~22 ms für einfache SELECTs
-- **Verfügbarkeit:** 99,9 % (alle Health-Checks grün)
+-**API-Latenz:**<50 ms bei Standardoperationen -**Time Server:**~11 ms für
+`get_current_time` -**PostgreSQL Server:**~22 ms für einfache
+SELECTs -**Verfügbarkeit:**99,9 % (alle Health-Checks grün)
 
 ## Verfügbare MCP-Tools
 
@@ -222,11 +220,10 @@ aus.
 Nach gesetzten `TOOL_SERVER_CONNECTIONS` können Agents folgende Aufgaben
 ausführen:
 
-- **Zeitabfragen** für beliebige Zeitzonen
-- **SQL-Reads** gegen die ERNI-KI-Datenbank
-- **Dateioperationen**: lesen, schreiben, Auflistungen
-- **Memory-Verwaltung**: Entities und Beziehungen anlegen/abfragen
-- **Recherche** über SearXNG
+-**Zeitabfragen**für beliebige Zeitzonen -**SQL-Reads**gegen die
+ERNI-KI-Datenbank -**Dateioperationen**: lesen, schreiben,
+Auflistungen -**Memory-Verwaltung**: Entities und Beziehungen
+anlegen/abfragen -**Recherche**über SearXNG
 
 ### 2. Chat-Beispiele
 
@@ -285,10 +282,8 @@ docker compose logs --tail=50 mcposerver
 
 ## Monitoring
 
-- **Antwortzeit**: <2 s für alle Endpunkte
-- **Verfügbarkeit**: 99,9 %
-- **RAM**: <512 MB
-- **CPU**: <10 % im Nominalbetrieb
+-**Antwortzeit**: <2 s für alle Endpunkte -**Verfügbarkeit**: 99,9 % -**RAM**:
+<512 MB -**CPU**: <10 % im Nominalbetrieb
 
 Alle Requests enthalten Logging zu Statuscode, Dauer, Client-IP und Endpoint.
 
@@ -302,4 +297,4 @@ Alle Requests enthalten Logging zu Statuscode, Dauer, Client-IP und Endpoint.
 
 ---
 
-**Stand:** 2025-08-29 — **ERNI-KI Version:** 8.0 — **MCP Server:** latest
+**Stand:**2025-08-29 —**ERNI-KI Version:**8.0 —**MCP Server:**latest

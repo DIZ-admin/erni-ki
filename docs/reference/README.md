@@ -14,7 +14,8 @@ advanced users.
 
 ### Development
 
-- **[development.md](development.md)** - Development environment setup
+-**[development.md](development.md)**- Development environment setup
+
 - Local development workflow
 - Code contribution guidelines
 - Testing procedures
@@ -22,7 +23,8 @@ advanced users.
 
 ### API Documentation
 
-- **[api-reference.md](api-reference.md)** - API endpoint documentation
+-**[api-reference.md](api-reference.md)**- API endpoint documentation
+
 - OpenWebUI API
 - LiteLLM API
 - Custom endpoints
@@ -30,15 +32,14 @@ advanced users.
 
 ### Integration Guides
 
-- **[mcpo-integration-guide.md](mcpo-integration-guide.md)** - MCP server
-  integration
-- **[github-environments-setup.md](github-environments-setup.md)** - GitHub
-  CI/CD setup
+-**[mcpo-integration-guide.md](mcpo-integration-guide.md)**- MCP server
+integration -**[github-environments-setup.md](github-environments-setup.md)**-
+GitHub CI/CD setup
 
 ### Status & Version
 
-- **[status.yml](status.yml)** - System status YAML (single source of truth)
-- **[status-snippet.md](status-snippet.md)** - Status template for docs
+-**[status.yml](status.yml)**- System status YAML (single source of
+truth) -**[status-snippet.md](status-snippet.md)**- Status template for docs
 
 ## For Developers
 
@@ -61,4 +62,4 @@ advanced users.
 
 ## Version
 
-Documentation version: **12.1** Last updated: **2025-11-22**
+Documentation version:**12.1**Last updated:**2025-11-22**

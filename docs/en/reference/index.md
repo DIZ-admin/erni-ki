@@ -12,10 +12,10 @@ Technical reference materials for developers and advanced users.
 ## Available Documentation
 
 - [Overview](README.md)
-- [API Reference](api-reference.md)
-- [Development Guide](development.md)
-- [GitHub Environments Setup](github-environments-setup.md)
-- [MCPO Integration Guide](mcpo-integration-guide.md)
+- [API Reference](../../reference/api-reference.md)
+- [Development Guide](../../reference/development.md)
+- [GitHub Environments Setup](../../reference/github-environments-setup.md)
+- [MCPO Integration Guide](../../reference/mcpo-integration-guide.md)
 
 ## Note
 

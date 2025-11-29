@@ -7,8 +7,7 @@ last_updated: '2025-11-24'
 
 # Automatisiertes Wartungshandbuch – ERNI-KI
 
-**Version:** 1.0 **Letzte Aktualisierung:** 24.10.2025 **Status:** Production
-Ready
+**Version:**1.0**Letzte Aktualisierung:**24.10.2025**Status:**Production Ready
 
 ---
 
@@ -33,10 +32,9 @@ manuell gestartet werden können.
 
 Für Betrieb und Kontrolle der Automatisierung:
 
-- **Serverzugang:** SSH mit root- oder sudo-Rechten.
-- **Docker:** Docker Engine installiert und laufend.
-- **Skripte:** Skripte in `scripts/` (oder `/tmp/` für einige Legacy-Aufgaben).
-- **Tools:** `crontab`, `grep`, `tail`.
+-**Serverzugang:**SSH mit root- oder sudo-Rechten. -**Docker:**Docker Engine
+installiert und laufend. -**Skripte:**Skripte in `scripts/` (oder `/tmp/` für
+einige Legacy-Aufgaben). -**Tools:**`crontab`, `grep`, `tail`.
 
 ## 3. Wartungsanweisungen
 
@@ -46,9 +44,8 @@ Automatische DB-Bereinigung zur Platzfreigabe und Statistikaktualisierung.
 
 **Konfiguration:**
 
-- **Zeitplan:** Jeden Sonntag 03:00
-- **Skript:** `/tmp/pg_vacuum.sh`
-- **Log:** `/tmp/pg_vacuum.log`
+-**Zeitplan:**Jeden Sonntag
+03:00 -**Skript:**`/tmp/pg_vacuum.sh` -**Log:**`/tmp/pg_vacuum.log`
 
 **Manueller Start:**
 
@@ -63,9 +60,8 @@ Automatische Bereinigung ungenutzter Docker-Ressourcen (Images, Volumes, Cache).
 
 **Konfiguration:**
 
-- **Zeitplan:** Jeden Sonntag 04:00
-- **Skript:** `/tmp/docker-cleanup.sh`
-- **Log:** `/tmp/docker-cleanup.log`
+-**Zeitplan:**Jeden Sonntag
+04:00 -**Skript:**`/tmp/docker-cleanup.sh` -**Log:**`/tmp/docker-cleanup.log`
 
 **Manueller Start:**
 
@@ -80,8 +76,8 @@ Automatische Log-Rotation, um Plattenplatz zu schützen.
 
 **Konfiguration:**
 
-- **Docker Logging:** `json-file`, max-size 10m, max-file 3.
-- **Cleanup-Skript:** `scripts/rotate-logs.sh` (täglich 03:00).
+-**Docker Logging:**`json-file`, max-size 10m,
+max-file 3. -**Cleanup-Skript:**`scripts/rotate-logs.sh` (täglich 03:00).
 
 **Manueller Start:**
 
@@ -91,8 +87,8 @@ Automatische Log-Rotation, um Plattenplatz zu schützen.
 
 ### 3.4 System Monitoring & Backups
 
-- **Health Monitor:** Stündlich (`scripts/health-monitor.sh`).
-- **Backrest Backups:** Täglich 01:30. Backups von Konfiguration und Daten.
+-**Health Monitor:**Stündlich (`scripts/health-monitor.sh`). -**Backrest
+Backups:**Täglich 01:30. Backups von Konfiguration und Daten.
 
 ## 4. Verifizierung
 

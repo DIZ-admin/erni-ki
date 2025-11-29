@@ -11,13 +11,14 @@ Technical overview of the ERNI-KI system architecture.
 
 ## Contents
 
-- **[architecture.md](architecture.md)** – System overview v12.1 (components,
-  networks, dependencies, diagrams)
-- **[services-overview.md](services-overview.md)** – Service catalog (AI/ML,
-  data, infra, monitoring)
-- **[service-inventory.md](service-inventory.md)** – Machine-readable inventory
-- **[nginx-configuration.md](nginx-configuration.md)** – Reverse proxy, TLS,
-  rate limiting, WebSocket, security headers
+-**[architecture.md](architecture.md)**– System overview v0.61.3 (components,
+networks, dependencies,
+diagrams) -**[../../architecture/services-overview.md](../../architecture/services-overview.md)**
+– Service catalog (AI/ML, data, infra,
+monitoring) -**[../../architecture/service-inventory.md](../../architecture/service-inventory.md)**
+– Machine-readable
+inventory -**[../../architecture/nginx-configuration.md](../../architecture/nginx-configuration.md)**
+– Reverse proxy, TLS, rate limiting, WebSocket, security headers
 
 ## Quick Links
 
@@ -27,4 +28,4 @@ Technical overview of the ERNI-KI system architecture.
 
 ## Version
 
-Architecture version: **12.1** · Last updated: **2025-11-22**
+Architecture version:**12.1**· Last updated:**2025-11-22**

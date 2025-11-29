@@ -20,10 +20,9 @@ This file tracks the global version of ERNI-KI docs and sync between locales.
 
 ## Release History
 
-- **2025.11 (2025-11-23)** — Audit completed, components updated (OpenWebUI
-  v0.6.36), install/integration guides refreshed.
-- **2025.02 (2025-02-15)** — Academy map, status page, global versioning
-  introduced.
+-**2025.11 (2025-11-23)**— Audit completed, components updated (OpenWebUI
+v0.6.36), install/integration guides refreshed. -**2025.02 (2025-02-15)**—
+Academy map, status page, global versioning introduced.
 
 ## Translation Coverage (snapshot 2025-11-24)
 

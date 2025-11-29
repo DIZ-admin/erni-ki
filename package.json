@@ -122,7 +122,7 @@
     ],
     "*.go": [
       "gofmt -w",
-      "goimports -w"
+      "bash -lc 'PATH=\"$PATH:$HOME/go/bin:/Users/kostas/go/bin\" goimports -w \"$@\"' --"
     ]
   },
   "config": {

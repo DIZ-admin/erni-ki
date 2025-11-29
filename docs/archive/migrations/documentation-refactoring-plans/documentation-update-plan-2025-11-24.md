@@ -7,14 +7,14 @@ last_updated: '2025-11-24'
 
 # План актуализации документации ERNI-KI
 
-**Дата создания**: 2025-11-24 **Основание**:
-`../../archive/audits/code-audit-2025-11-24.md` **Статус**: Ready for
+**Дата создания**: 2025-11-24**Основание**:
+`../../archive/audits/code-audit-2025-11-24.md`**Статус**: Ready for
 implementation
 
 ## Краткое резюме
 
-На основе комплексного аудита кода выявлено **10 расхождений** между
-документацией и фактическим состоянием проекта. Общее соответствие: **95%**.
+На основе комплексного аудита кода выявлено**10 расхождений**между документацией
+и фактическим состоянием проекта. Общее соответствие:**95%**.
 
 **Приоритеты**:
 
@@ -28,7 +28,7 @@ implementation
 
 ### Task 1.1: Auth Service - Добавить API документацию
 
-**Приоритет**: High **Время**: 2-3 часа **Файл**: Создать
+**Приоритет**: High**Время**: 2-3 часа**Файл**: Создать
 `docs/ru/reference/api/auth-service.md`
 
 **Содержание документа**:
@@ -40,7 +40,7 @@ implementation
 
 JWT authentication service для проверки токенов OpenWebUI.
 
-**Base URL**: `http://auth:9090` **Version**: 1.0.0 **Source**:
+**Base URL**: `http://auth:9090`**Version**: 1.0.0**Source**:
 `../../../../auth/main.go`
 
 ## Endpoints
@@ -139,8 +139,8 @@ sequenceDiagram
 
 ## Monitoring
 
-**Health Check**: CLI mode `./main --health-check` **Logs**: Structured JSON
-format с correlation IDs **Metrics**: Prometheus endpoint не реализован (см.
+**Health Check**: CLI mode `./main --health-check`**Logs**: Structured JSON
+format с correlation IDs**Metrics**: Prometheus endpoint не реализован (см.
 [issue #XXX])
 
 ## Performance
@@ -230,7 +230,7 @@ Redis используется SearXNG для кэширования поиск�
 
 ## Текущее состояние
 
-vLLM сервис **не активен** в production окружении, но секрет `vllm_api_key` объявлен в compose.yml:
+vLLM сервис**не активен**в production окружении, но секрет `vllm_api_key` объявлен в compose.yml:
 
 ```yaml
 litellm:
@@ -324,7 +324,7 @@ error_log /var/log/nginx/error.log info;
 
 ### Task 2.2: Monitoring Stack - Указать версии явно
 
-**Приоритет**: [WARNING] Medium **Время**: 1 час **Файл**: `compose.yml` или
+**Приоритет**: [WARNING] Medium**Время**: 1 час**Файл**: `compose.yml` или
 создать `compose.monitoring.yml`
 
 **Проблема**: Prometheus, Grafana, Loki, Alertmanager без explicit версий.
@@ -357,14 +357,13 @@ fluent-bit:
 
 ### Task 2.3: Python Scripts - Добавить type hints
 
-**Приоритет**: [WARNING] Medium **Время**: 3-4 часа **Файлы**: 29 Python
-скриптов
+**Приоритет**: [WARNING] Medium**Время**: 3-4 часа**Файлы**: 29 Python скриптов
 
 **Проблема**: Отсутствуют аннотации типов в большинстве скриптов.
 
 **Решение**: Добавить type hints согласно PEP 484.
 
-**Пример** (fix-deprecated-metadata.py):
+**Пример**(fix-deprecated-metadata.py):
 
 ```python
 # Before:
@@ -394,8 +393,8 @@ def fix_frontmatter(
 
 ### Task 2.4: Python Scripts - Добавить unit tests
 
-**Приоритет**: [WARNING] Medium **Время**: 4-6 часов **Файлы**: Критические
-Python скрипты
+**Приоритет**: [WARNING] Medium**Время**: 4-6 часов**Файлы**: Критические Python
+скрипты
 
 **Проблема**: 29 скриптов без автоматических тестов.
 
@@ -453,15 +452,14 @@ doc_version: '2025.11'
 
 ### Task 2.5: Architecture Documentation - Обновить диаграммы
 
-**Приоритет**: [WARNING] Medium **Время**: 2 часа **Файл**:
+**Приоритет**: [WARNING] Medium**Время**: 2 часа**Файл**:
 `docs/ru/reference/architecture/overview.md`
 
 **Добавить**:
 
-1. **Services Diagram** - все 32 сервиса с группировкой по tiers
-2. **4-Tier Logging Strategy** - визуализация
-3. **OOM Protection Levels** - таблица с oom_score_adj
-4. **GPU Resource Allocation** - pie chart
+1.**Services Diagram**- все 32 сервиса с группировкой по tiers 2.**4-Tier
+Logging Strategy**- визуализация 3.**OOM Protection Levels**- таблица с
+oom_score_adj 4.**GPU Resource Allocation**- pie chart
 
 **Mermaid диаграммы**:
 
@@ -544,18 +542,18 @@ nginx:
 
 ### Task 3.2: Cloudflare IP Ranges - Автоматизация
 
-**Приоритет**: [OK] Low **Время**: 2 часа **Файл**:
+**Приоритет**: [OK] Low**Время**: 2 часа**Файл**:
 `conf/nginx/nginx.conf:139-147`
 
 **Проблема**: Hardcoded Cloudflare IP ranges могут устареть.
 
 **Решение**:
 
-**Option 1**: Периодический manual update (каждые 6 месяцев) **Option 2**:
-Script для автоматической загрузки
+**Option 1**: Периодический manual update (каждые 6 месяцев)**Option 2**: Script
+для автоматической загрузки
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # scripts/maintenance/update-cloudflare-ips.sh
 
 # Fetch Cloudflare IPs
@@ -604,13 +602,13 @@ include /etc/nginx/includes/cloudflare-ips.conf;
 
 ### Приоритизация
 
-**Sprint 1** (High Priority - 4-5h):
+**Sprint 1**(High Priority - 4-5h):
 
 - 1.1 Auth Service API docs (2-3h)
 - 1.2 LiteLLM Redis caching docs (1h)
 - 1.3 vLLM status documentation (1h)
 
-**Sprint 2** (Medium Priority - 12-16h):
+**Sprint 2**(Medium Priority - 12-16h):
 
 - 2.1 Nginx comments translation (2h)
 - 2.2 Monitoring versions (1h)
@@ -618,7 +616,7 @@ include /etc/nginx/includes/cloudflare-ips.conf;
 - 2.4 Python unit tests (4-6h)
 - 2.5 Architecture diagrams (2h)
 
-**Sprint 3** (Low Priority - 3h):
+**Sprint 3**(Low Priority - 3h):
 
 - 3.1 Standardize comments (1h)
 - 3.2 Cloudflare IPs automation (2h)

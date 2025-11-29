@@ -20,12 +20,11 @@ as other observability tools.
 
 ## What the statuses mean
 
-- **Operational:** all monitored checks are healthy.
-- **Degraded:** at least one check is failing or slow; basic functions may still
-  work.
-- **Maintenance:** planned work is in progress; expect interruptions.
-- **Unknown:** the status page cannot reach its checks—verify network or
-  container health.
+-**Operational:**all monitored checks are healthy. -**Degraded:**at least one
+check is failing or slow; basic functions may still
+work. -**Maintenance:**planned work is in progress; expect
+interruptions. -**Unknown:**the status page cannot reach its checks—verify
+network or container health.
 
 ## How to use it
 

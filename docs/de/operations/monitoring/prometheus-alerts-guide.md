@@ -9,8 +9,7 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Version:** 1.0 **Zuletzt aktualisiert:** 2025-10-24 **Status:** Production
-Ready
+**Version:**1.0**Zuletzt aktualisiert:**2025-10-24**Status:**Production Ready
 
 ---
 
@@ -29,11 +28,11 @@ Prometheus-Alert-Regeln im ERNI-KI-System.
 
 ### Schweregrade
 
-- **Critical** - Sofortiges Handeln erforderlich (Systemausfall, Risiko von
-  Datenverlust)
-- [WARNING] **Warning** - Aufmerksamkeit erforderlich (Leistungsabfall,
-  Annäherung an Grenzwerte)
-- **Info** - Informativ (nicht-kritische Ereignisse)
+-**Critical**- Sofortiges Handeln erforderlich (Systemausfall, Risiko von
+Datenverlust)
+
+- [WARNING]**Warning**- Aufmerksamkeit erforderlich (Leistungsabfall, Annäherung
+  an Grenzwerte) -**Info**- Informativ (nicht-kritische Ereignisse)
 
 ---
 
@@ -41,8 +40,8 @@ Prometheus-Alert-Regeln im ERNI-KI-System.
 
 ### 1. DiskSpaceCritical
 
-**Schweregrad:** Critical **Komponente:** System **Schwellenwert:**
-Festplattennutzung >85% **Dauer:** 5 Minuten
+**Schweregrad:**Critical**Komponente:**System**Schwellenwert:**
+Festplattennutzung >85%**Dauer:**5 Minuten
 
 **Ausdruck:**
 
@@ -50,7 +49,7 @@ Festplattennutzung >85% **Dauer:** 5 Minuten
 (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
 ```
 
-**Beschreibung:** Wird ausgelöst, wenn das Root-Dateisystem weniger als 15%
+**Beschreibung:**Wird ausgelöst, wenn das Root-Dateisystem weniger als 15%
 freien Speicherplatz hat.
 
 **Auswirkung:**
@@ -76,14 +75,14 @@ docker system prune -a --volumes -f
 /tmp/docker-cleanup.sh
 ```
 
-**Zugehörige Automatisierung:** Docker-Cleanup läuft jeden Sonntag um 04:00 Uhr
+**Zugehörige Automatisierung:**Docker-Cleanup läuft jeden Sonntag um 04:00 Uhr
 
 ---
 
 ## 2. MemoryCritical
 
-**Schweregrad:** Critical **Komponente:** System **Schwellenwert:** Verfügbarer
-Speicher <5% **Dauer:** 5 Minuten
+**Schweregrad:**Critical**Komponente:**System**Schwellenwert:**Verfügbarer
+Speicher <5%**Dauer:**5 Minuten
 
 **Ausdruck:**
 
@@ -91,7 +90,7 @@ Speicher <5% **Dauer:** 5 Minuten
 (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 5
 ```
 
-**Beschreibung:** Wird ausgelöst, wenn das System weniger als 5% verfügbaren
+**Beschreibung:**Wird ausgelöst, wenn das System weniger als 5% verfügbaren
 Arbeitsspeicher hat.
 
 **Auswirkung:**
@@ -120,8 +119,8 @@ docker compose restart SERVICE_NAME
 
 ## 3. ContainerDown
 
-**Schweregrad:** Critical **Komponente:** Docker **Schwellenwert:** Container
-läuft nicht **Dauer:** 1 Minute
+**Schweregrad:**Critical**Komponente:**Docker**Schwellenwert:**Container läuft
+nicht**Dauer:**1 Minute
 
 **Ausdruck:**
 
@@ -129,8 +128,7 @@ läuft nicht **Dauer:** 1 Minute
 up{job=~".*"} == 0
 ```
 
-**Beschreibung:** Wird ausgelöst, wenn ein überwachter Container ausgefallen
-ist.
+**Beschreibung:**Wird ausgelöst, wenn ein überwachter Container ausgefallen ist.
 
 **Auswirkung:**
 
@@ -158,8 +156,8 @@ docker inspect SERVICE_NAME | jq '.[0].State.Health'
 
 ## 4. PostgreSQLDown
 
-**Schweregrad:** Critical **Komponente:** Database **Schwellenwert:** PostgreSQL
-nicht verfügbar **Dauer:** 1 Minute
+**Schweregrad:**Critical**Komponente:**Database**Schwellenwert:**PostgreSQL
+nicht verfügbar**Dauer:**1 Minute
 
 **Ausdruck:**
 
@@ -167,7 +165,7 @@ nicht verfügbar **Dauer:** 1 Minute
 pg_up == 0
 ```
 
-**Beschreibung:** Wird ausgelöst, wenn die PostgreSQL-Datenbank nicht verfügbar
+**Beschreibung:**Wird ausgelöst, wenn die PostgreSQL-Datenbank nicht verfügbar
 ist.
 
 **Auswirkung:**
@@ -196,8 +194,8 @@ docker compose restart db
 
 ## 5. RedisDown
 
-**Schweregrad:** Critical **Komponente:** Cache **Schwellenwert:** Redis nicht
-verfügbar **Dauer:** 1 Minute
+**Schweregrad:**Critical**Komponente:**Cache**Schwellenwert:**Redis nicht
+verfügbar**Dauer:**1 Minute
 
 **Ausdruck:**
 
@@ -205,7 +203,7 @@ verfügbar **Dauer:** 1 Minute
 redis_up == 0
 ```
 
-**Beschreibung:** Wird ausgelöst, wenn der Redis-Cache nicht verfügbar ist.
+**Beschreibung:**Wird ausgelöst, wenn der Redis-Cache nicht verfügbar ist.
 
 **Auswirkung:**
 
@@ -233,8 +231,8 @@ docker compose restart redis
 
 ## 6. OllamaGPUDown
 
-**Schweregrad:** Critical **Komponente:** AI/GPU **Schwellenwert:** Ollama GPU
-nicht verfügbar **Dauer:** 2 Minuten
+**Schweregrad:**Critical**Komponente:**AI/GPU**Schwellenwert:**Ollama GPU nicht
+verfügbar**Dauer:**2 Minuten
 
 **Ausdruck:**
 
@@ -242,7 +240,7 @@ nicht verfügbar **Dauer:** 2 Minuten
 ollama_up == 0
 ```
 
-**Beschreibung:** Wird ausgelöst, wenn der Ollama AI-Dienst mit GPU nicht
+**Beschreibung:**Wird ausgelöst, wenn der Ollama AI-Dienst mit GPU nicht
 verfügbar ist.
 
 **Auswirkung:**
@@ -274,8 +272,8 @@ docker compose restart ollama
 
 ## 7. NginxDown
 
-**Schweregrad:** Critical **Komponente:** Gateway **Schwellenwert:** Nginx nicht
-verfügbar **Dauer:** 1 Minute
+**Schweregrad:**Critical**Komponente:**Gateway**Schwellenwert:**Nginx nicht
+verfügbar**Dauer:**1 Minute
 
 **Ausdruck:**
 
@@ -283,7 +281,7 @@ verfügbar **Dauer:** 1 Minute
 nginx_up == 0
 ```
 
-**Beschreibung:** Wird ausgelöst, wenn der Nginx Reverse Proxy nicht verfügbar
+**Beschreibung:**Wird ausgelöst, wenn der Nginx Reverse Proxy nicht verfügbar
 ist.
 
 **Auswirkung:**
@@ -314,8 +312,8 @@ docker compose restart nginx
 
 ### 8. DiskSpaceWarning
 
-**Schweregrad:** Warning **Komponente:** System **Schwellenwert:**
-Festplattennutzung >75% **Dauer:** 10 Minuten
+**Schweregrad:**Warning**Komponente:**System**Schwellenwert:**
+Festplattennutzung >75%**Dauer:**10 Minuten
 
 **Ausdruck:**
 
@@ -324,26 +322,26 @@ Festplattennutzung >75% **Dauer:** 10 Minuten
  node_filesystem_size_bytes{fstype!~"tmpfs|vfat",mountpoint!="/boot/efi"})) * 100 > 80
 ```
 
-**Hinweise:** EFI-Partition (`/boot/efi`, `vfat`) ist ausgeschlossen, um
+**Hinweise:**EFI-Partition (`/boot/efi`, `vfat`) ist ausgeschlossen, um
 Fehlalarme aufgrund des kleinen Boot-Volumes zu vermeiden.
 
-**Lösung:** Siehe DiskSpaceCritical, aber weniger dringend.
+**Lösung:**Siehe DiskSpaceCritical, aber weniger dringend.
 
 ---
 
 ### 9. MemoryWarning
 
-**Schweregrad:** Warning **Komponente:** System **Schwellenwert:** Verfügbarer
-Speicher <15% **Dauer:** 10 Minuten
+**Schweregrad:**Warning**Komponente:**System**Schwellenwert:**Verfügbarer
+Speicher <15%**Dauer:**10 Minuten
 
-**Lösung:** Siehe MemoryCritical, aber weniger dringend.
+**Lösung:**Siehe MemoryCritical, aber weniger dringend.
 
 ---
 
 ### 10. HighCPUUsage
 
-**Schweregrad:** Warning **Komponente:** System **Schwellenwert:**
-CPU-Auslastung >80% **Dauer:** 5 Minuten
+**Schweregrad:**Warning**Komponente:**System**Schwellenwert:**
+CPU-Auslastung >80%**Dauer:**5 Minuten
 
 **Ausdruck:**
 
@@ -368,8 +366,8 @@ docker stats --no-stream --format "table {{.Container}}\t{{CPUPerc}}"
 
 ## 11. ContainerRestarting
 
-**Schweregrad:** Warning **Komponente:** Docker **Schwellenwert:** ≥2 Neustarts
-pro Container innerhalb von 15 Minuten **Dauer:** 1 Minute (Debounce)
+**Schweregrad:**Warning**Komponente:**Docker**Schwellenwert:**≥2 Neustarts pro
+Container innerhalb von 15 Minuten**Dauer:**1 Minute (Debounce)
 
 **Ausdruck:**
 
@@ -410,8 +408,8 @@ docker inspect SERVICE_NAME | jq '.[0].State | {Status, ExitCode, Health}'
 
 ## 12. PostgreSQLHighConnections
 
-**Schweregrad:** Warning **Komponente:** Database **Schwellenwert:** >80
-Verbindungen **Dauer:** 5 Minuten
+**Schweregrad:**Warning**Komponente:**Database**Schwellenwert:**>80
+Verbindungen**Dauer:**5 Minuten
 
 **Ausdruck:**
 
@@ -436,8 +434,8 @@ docker compose exec db psql -U postgres -d openwebui -c "SELECT pg_terminate_bac
 
 ## 13. RedisHighMemory
 
-**Schweregrad:** Warning **Komponente:** Cache **Schwellenwert:**
-Speichernutzung >1GB **Dauer:** 10 Minuten
+**Schweregrad:**Warning**Komponente:**Cache**Schwellenwert:**
+Speichernutzung >1GB**Dauer:**10 Minuten
 
 **Ausdruck:**
 
@@ -462,8 +460,8 @@ docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 FLUSHDB
 
 ## 14. RedisHighFragmentation
 
-**Schweregrad:** Warning **Komponente:** Cache **Schwellenwert:**
-`redis_mem_fragmentation_ratio > 5` **Dauer:** 10 Minuten
+**Schweregrad:**Warning**Komponente:**Cache**Schwellenwert:**
+`redis_mem_fragmentation_ratio > 5`**Dauer:**10 Minuten
 
 **Ausdruck:**
 
@@ -484,7 +482,7 @@ tail -n 50 logs/redis-fragmentation-watchdog.log
 docker compose exec redis redis-cli MEMORY PURGE
 ```
 
-**Hinweise:** Der Cron-Job `*/5 * * * * ... redis-fragmentation-watchdog.sh`
+**Hinweise:**Der Cron-Job `*/5 * * * * ... redis-fragmentation-watchdog.sh`
 führt automatisch `MEMORY PURGE` aus. Der Alert dient als Frühwarnsystem und
 verweist auf das Runbook unter _docs/security/log-audit.md › Durchgeführte
 Remediation_.
@@ -493,8 +491,8 @@ Remediation_.
 
 ## 15. OllamaHighVRAM
 
-**Schweregrad:** Warning **Komponente:** AI/GPU **Schwellenwert:**
-VRAM-Nutzung >80% **Dauer:** 10 Minuten
+**Schweregrad:**Warning**Komponente:**AI/GPU**Schwellenwert:**
+VRAM-Nutzung >80%**Dauer:**10 Minuten
 
 **Ausdruck:**
 
@@ -519,8 +517,8 @@ docker compose exec ollama ollama rm MODEL_NAME
 
 ## 16. NginxHighErrorRate
 
-**Schweregrad:** Warning **Komponente:** Gateway **Schwellenwert:** >10 5xx
-Fehler/Min **Dauer:** 5 Minuten
+**Schweregrad:**Warning**Komponente:**Gateway**Schwellenwert:**>10 5xx
+Fehler/Min**Dauer:**5 Minuten
 
 **Ausdruck:**
 
@@ -547,8 +545,8 @@ curl -I http://localhost:8080
 
 ### 17. OpenWebUISlowResponse
 
-**Schweregrad:** Warning **Komponente:** Application **Schwellenwert:**
-Antwortzeit >5s **Dauer:** 5 Minuten
+**Schweregrad:**Warning**Komponente:**Application**Schwellenwert:**
+Antwortzeit >5s**Dauer:**5 Minuten
 
 **Lösung:**
 
@@ -567,8 +565,8 @@ time curl -X POST http://localhost:11434/api/generate -d '{"model":"llama3.2","p
 
 ## 18. SearXNGSlowSearch
 
-**Schweregrad:** Warning **Komponente:** Search **Schwellenwert:** Suchzeit >3s
-**Dauer:** 5 Minuten
+**Schweregrad:**Warning**Komponente:**Search**Schwellenwert:**Suchzeit >3s
+**Dauer:**5 Minuten
 
 **Lösung:**
 
@@ -587,8 +585,8 @@ docker compose logs searxng --tail 50
 
 ## 19. DockerStoragePoolAlmostFull
 
-**Schweregrad:** Warning **Komponente:** Infrastructure **Schwellenwert:**
-Docker-Speicher >85% **Dauer:** 10 Minuten
+**Schweregrad:**Warning**Komponente:**Infrastructure**Schwellenwert:**
+Docker-Speicher >85%**Dauer:**10 Minuten
 
 **Lösung:**
 
@@ -660,4 +658,4 @@ curl -X POST http://localhost:9093/api/v1/silences \
 
 ---
 
-**Zuletzt aktualisiert:** 2025-10-24 **Nächste Überprüfung:** 2025-11-24
+**Zuletzt aktualisiert:**2025-10-24**Nächste Überprüfung:**2025-11-24

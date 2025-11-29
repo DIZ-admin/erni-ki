@@ -17,21 +17,20 @@ exporters, standardized healthchecks, and production-ready observability stack.
 
 ### Основные компоненты
 
-- **8 Specialized Exporters** - оптимизированы и стандартизированы.
-- **Prometheus v3.0.0** - сбор и хранение метрик.
-- **20 Alert Rules** - проактивный мониторинг.
-- **Grafana v11.3.0** - визуализация и дашборды.
-- **Loki v3.0.0 + Fluent Bit v3.1.0** - централизованное логирование.
-- **AlertManager v0.27.0** - уведомления и алертинг.
+-**8 Specialized Exporters**- оптимизированы и стандартизированы. -**Prometheus
+v3.0.0**- сбор и хранение метрик. -**20 Alert Rules**- проактивный
+мониторинг. -**Grafana v11.3.0**- визуализация и дашборды. -**Loki v3.0.0 +
+Fluent Bit v3.1.0**- централизованное логирование. -**AlertManager v0.27.0**-
+уведомления и алертинг.
 
 ## 2. Предварительные требования
 
 Для работы с системой мониторинга необходимо:
 
-- **Доступ к Grafana:** Учетная запись с правами Viewer или Editor.
-- **Доступ к Prometheus:** Прямой доступ к UI (если требуется отладка запросов).
-- **CLI инструменты:** `curl`, `jq` для проверки эндпоинтов вручную.
-- **Сетевой доступ:** Доступ к портам мониторинга (см. Architecture).
+-**Доступ к Grafana:**Учетная запись с правами Viewer или Editor. -**Доступ к
+Prometheus:**Прямой доступ к UI (если требуется отладка запросов). -**CLI
+инструменты:**`curl`, `jq` для проверки эндпоинтов вручную. -**Сетевой
+доступ:**Доступ к портам мониторинга (см. Architecture).
 
 ## 3. Архитектура и Обновления
 
@@ -42,25 +41,25 @@ exporters, standardized healthchecks, and production-ready observability stack.
 
 ### Обновления ноября 2025
 
-- **Alertmanager queue watchdog** — контроль очереди уведомлений.
-- **Fluent Bit Phase 0-2** — оптимизированные фильтры и маскирование токенов.
-- **Loki object storage** — хранение логов в S3/MinIO с 30-дневным retention.
-- **Correlation IDs** — сквозная трассировка запросов (X-Request-ID).
-- **Мультиканальное уведомление** — Slack + PagerDuty для критических алертов.
+-**Alertmanager queue watchdog**— контроль очереди уведомлений. -**Fluent Bit
+Phase 0-2**— оптимизированные фильтры и маскирование токенов. -**Loki object
+storage**— хранение логов в S3/MinIO с 30-дневным retention. -**Correlation
+IDs**— сквозная трассировка запросов (X-Request-ID). -**Мультиканальное
+уведомление**— Slack + PagerDuty для критических алертов.
 
 ## Alert Delivery & Runbooks
 
 ### Архитектура после аудита (N+1 шаги)
 
-- **Prometheus / Alertmanager / Loki** — текущая топология односерверная. План
-  работ по HA/remote storage отслеживается задачами:
+-**Prometheus / Alertmanager / Loki**— текущая топология односерверная. План
+работ по HA/remote storage отслеживается задачами:
 
 1.  `19d577bc` — удалённое хранилище и кластер Alertmanager.
 2.  `e84d2098` — покрытие / synthetic checks.
 3.  `00130fda` — TLS и доставка логов (выполнено в коммите 6185b74).
 
-- **Инструкции по миграции**: см. новый раздел " Secure Logging Pipeline" и
-  `docs/monitoring-logging-audit-2025-11-14.md`.
+-**Инструкции по миграции**: см. новый раздел " Secure Logging Pipeline" и
+`docs/monitoring-logging-audit-2025-11-14.md`.
 
 ### Чек-лист готовности (обновлять перед релизами)
 
@@ -73,45 +72,43 @@ exporters, standardized healthchecks, and production-ready observability stack.
 
 ### Runbook ссылок
 
-- **Audit notes**: `docs/monitoring-logging-audit-2025-11-14.md`.
-- **TLS refresh**: `scripts/security/prepare-logging-tls.sh`, далее
-  `docker compose restart fluent-bit loki`.
-- **Loki delivery errors**: см. алерт `FluentBitLokiDeliveryErrors` и runbook по
-  ссылке в Alertmanager.
+-**Audit notes**: `docs/monitoring-logging-audit-2025-11-14.md`. -**TLS
+refresh**: `scripts/security/prepare-logging-tls.sh`, далее
+`docker compose restart fluent-bit loki`. -**Loki delivery errors**: см. алерт
+`FluentBitLokiDeliveryErrors` и runbook по ссылке в Alertmanager.
 
 ## SLO Dashboards
 
-- **System Overview / “Platform SRE Overview”**
-  (`conf/grafana/dashboards/system-overview/platform-sre-overview.json`). Этот
-  борд агрегирует доступность `up{job}` по всем сервисам, CPU/Memory pressure по
-  узлам и p95 латентность OpenWebUI ingress. В нижней части добавлен logs-панел
-  из Loki, чтобы быстро увидеть свежие critical события. Используйте переменную
-  `service`, чтобы сфокусироваться на конкретных job.
-- **Infrastructure / “Core Infrastructure Observability”**
-  (`conf/grafana/dashboards/infrastructure/core-infrastructure-observability.json`).
-  Показывает активные/максимальные коннекты PostgreSQL, Redis throughput,
-  файловые системы и сетевой трафик. Таблица “Resource Limits vs Usage” строится
-  из Docker metrics, поэтому её удобно использовать при планировании capacity.
-- **Monitoring Stack / “Observability Control Plane”**
-  (`conf/grafana/dashboards/monitoring-stack/observability-control-plane.json`).
-  Следит за Prometheus/Loki/Alertmanager, отображает нагрузку на Fluent Bit и
-  выводит поток ошибок Grafana. Именно здесь находится зона ответственности за
-  доставку алертов и качество логов.
-- **AI Services / “AI Stack Operations”**
-  (`conf/grafana/dashboards/ai-services/ai-stack-operations.json`). Фокусируется
-  на LiteLLM, OpenWebUI, Ollama и Docling: показывает throughput, p95 latency,
-  GPU utilization и Docling pipeline quantiles. Таблица “Slow Requests”
-  подтягивает соответствующие записи из Loki.
-- **Security & Performance / “SLA & Error Budgets”**
-  (`conf/grafana/dashboards/security-performance/sla-error-budgets.json`).
-  Главный борд по SLO: показывает долю выполненных запросов, burn-rate (считаем
-  относительно целевого 0.5% бюджета), ленты Alertmanager и поток security
-  логов.
+-**System Overview / “Platform SRE Overview”**
+(`conf/grafana/dashboards/system-overview/platform-sre-overview.json`). Этот
+борд агрегирует доступность `up{job}` по всем сервисам, CPU/Memory pressure по
+узлам и p95 латентность OpenWebUI ingress. В нижней части добавлен logs-панел из
+Loki, чтобы быстро увидеть свежие critical события. Используйте переменную
+`service`, чтобы сфокусироваться на конкретных job. -**Infrastructure / “Core
+Infrastructure Observability”**
+(`conf/grafana/dashboards/infrastructure/core-infrastructure-observability.json`).
+Показывает активные/максимальные коннекты PostgreSQL, Redis throughput, файловые
+системы и сетевой трафик. Таблица “Resource Limits vs Usage” строится из Docker
+metrics, поэтому её удобно использовать при планировании capacity. -**Monitoring
+Stack / “Observability Control Plane”**
+(`conf/grafana/dashboards/monitoring-stack/observability-control-plane.json`).
+Следит за Prometheus/Loki/Alertmanager, отображает нагрузку на Fluent Bit и
+выводит поток ошибок Grafana. Именно здесь находится зона ответственности за
+доставку алертов и качество логов. -**AI Services / “AI Stack Operations”**
+(`conf/grafana/dashboards/ai-services/ai-stack-operations.json`). Фокусируется
+на LiteLLM, OpenWebUI, Ollama и Docling: показывает throughput, p95 latency, GPU
+utilization и Docling pipeline quantiles. Таблица “Slow Requests” подтягивает
+соответствующие записи из Loki. -**Security & Performance / “SLA & Error
+Budgets”**
+(`conf/grafana/dashboards/security-performance/sla-error-budgets.json`). Главный
+борд по SLO: показывает долю выполненных запросов, burn-rate (считаем
+относительно целевого 0.5% бюджета), ленты Alertmanager и поток security логов.
 
-- **Cron Evidence Panel** — на любой из новых бордов можно добавить отдельную
-  панель с `erni_cron_job_age_seconds{job=~".*"}` и бинарной метрикой
-  `erni_cron_job_success`. Это остаётся обязательным требованием для недельных
-  отчетов.
+-**Cron Evidence Panel**— на любой из новых бордов можно добавить отдельную
+панель с `erni_cron_job_age_seconds{job=~".*"}` и бинарной метрикой
+`erni_cron_job_success`. Это остаётся обязательным требованием для недельных
+отчетов.
+
 - При изменении SLO формул обновляйте подписи в этом разделе и экспортируйте
   JSON в `conf/grafana/dashboards/`.
 
@@ -168,7 +165,7 @@ exporters, standardized healthchecks, and production-ready observability stack.
 5. Только после согласования с on-call выполняйте ручной
    `docker compose restart alertmanager`.
 
-> **Важно:** скрипт cleanup работает только с silences, в комментариях которых
+> **Важно:**скрипт cleanup работает только с silences, в комментариях которых
 > есть тег `[auto-cleanup]`. Для долгоживущих suppress записывайте уникальные
 > комментарии и снимайте их вручную командой
 > `docker compose exec alertmanager amtool silence expire <id>` после
@@ -196,22 +193,22 @@ exporters, standardized healthchecks, and production-ready observability stack.
 
 ## Cron Evidence Pipeline {#cron-evidence}
 
-- **Как это работает**: каждый cron/watchdog (ежедневный/еженедельный отчёт,
-  redis fragmentation watchdog, монитор очереди Alertmanager) вызывает
-  `scripts/monitoring/record-cron-status.sh <job> <success|failure> <msg>`.
-  Состояния сохраняются в `data/cron-status`. Отдельный cron
-  (`update-cron-metrics`) каждые 5 минут преобразует их в Prometheus метрики
-  `erni_cron_job_*` (через node_exporter textfile collector).
-- **Метрики**:
+-**Как это работает**: каждый cron/watchdog (ежедневный/еженедельный отчёт,
+redis fragmentation watchdog, монитор очереди Alertmanager) вызывает
+`scripts/monitoring/record-cron-status.sh <job> <success|failure> <msg>`.
+Состояния сохраняются в `data/cron-status`. Отдельный cron
+(`update-cron-metrics`) каждые 5 минут преобразует их в Prometheus метрики
+`erni_cron_job_*` (через node_exporter textfile collector). -**Метрики**:
+
 - `erni_cron_job_success{job}` — 1 при последнем успешном выполнении.
 - `erni_cron_job_age_seconds{job}` — сколько секунд прошло с последнего запуска
   (используется для SLA).
 - `erni_cron_job_sla_seconds{job}` — допустимый интервал между запуском.
-- `erni_cron_job_last_run_timestamp{job}` — UNIX time последнего запуска.
-- **Алерты**: в `conf/prometheus/alert_rules.yml` добавлены правила
+- `erni_cron_job_last_run_timestamp{job}` — UNIX time последнего
+  запуска. -**Алерты**: в `conf/prometheus/alert_rules.yml` добавлены правила
   `CronJobStale` и `CronJobFailures`, отправляющие оповещения при нарушении SLA
-  или статусе failure. По умолчанию владельцы — команда Ops.
-- **Добавить новый cron**:
+  или статусе failure. По умолчанию владельцы — команда Ops. -**Добавить новый
+  cron**:
 
 1.  В cron-скрипте перед exit вызвать
     `scripts/monitoring/record-cron-status.sh <job> success "комментарий"`. В
@@ -221,7 +218,7 @@ exporters, standardized healthchecks, and production-ready observability stack.
     `./scripts/monitoring/record-cron-status.sh <job> success "bootstrap"`.
 4.  Перезапустить `update-cron-metrics` (или дождаться cron).
 
-- **Проверка**:
+-**Проверка**:
 
 ```bash
 # ручной прогон для проверки
@@ -233,12 +230,12 @@ cat data/node-exporter-textfile/cron_watchdogs.prom
 ./scripts/monitoring/update-cron-metrics.sh
 ```
 
-- **Grafana**: добавьте панель `erni_cron_job_age_seconds` (group by job) и
-  отображайте линии SLA (`erni_cron_job_sla_seconds`) для быстрого обзора.
-- **Loki + Fluent Bit hardening** — Loki теперь требует заголовок
-  `X-Scope-OrgID: erni-ki`, Grafana datasource и скрипты обновлены. Fluent Bit
-  использует SSD-том `erni-ki-fluent-db` с дисковым буфером 15 ГБ для
-  переживания длительных сбоев сети.
+-**Grafana**: добавьте панель `erni_cron_job_age_seconds` (group by job) и
+отображайте линии SLA (`erni_cron_job_sla_seconds`) для быстрого
+обзора. -**Loki + Fluent Bit hardening**— Loki теперь требует заголовок
+`X-Scope-OrgID: erni-ki`, Grafana datasource и скрипты обновлены. Fluent Bit
+использует SSD-том `erni-ki-fluent-db` с дисковым буфером 15 ГБ для переживания
+длительных сбоев сети.
 
 ## Аудит и соответствие
 
@@ -258,7 +255,7 @@ cat data/node-exporter-textfile/cron_watchdogs.prom
 
 ### Node Exporter (Port 9101)
 
-**Purpose:** System-level metrics (CPU, memory, disk, network)
+**Purpose:**System-level metrics (CPU, memory, disk, network)
 
 ```yaml
 # Configuration in compose.yml
@@ -293,7 +290,7 @@ curl -s http://localhost:9101/metrics | grep node_up
 
 ## PostgreSQL Exporter (Port 9188 via IPv4 proxy)
 
-**Purpose:** Database performance and health metrics
+**Purpose:**Database performance and health metrics
 
 > ℹ Доступ к БД осуществляется через Docker secret `postgres_exporter_dsn.txt`
 > (монтируется как `/etc/postgres_exporter_dsn.txt` и читается в entrypoint).
@@ -332,7 +329,7 @@ curl -s http://localhost:9188/metrics | grep pg_up
 
 ## Redis Exporter (Port 9121) - Fixed 19.09.2025
 
-**Purpose:** Redis cache performance and health metrics
+**Purpose:**Redis cache performance and health metrics
 
 ```yaml
 # Configuration in compose.yml (FIXED)
@@ -351,7 +348,7 @@ redis-exporter:
   healthcheck: {} # monitoring via Prometheus scrape
 ```
 
-**Status:** Running | HTTP 200 | Auth works via `REDIS_PASSWORD_FILE`
+**Status:**Running | HTTP 200 | Auth works via `REDIS_PASSWORD_FILE`
 
 > `redis_exporter_url` secret теперь содержит JSON вида
 > `{"redis://redis:6379":"<password>"}` — это позволяет `redis_exporter`
@@ -379,7 +376,7 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 
 ## NVIDIA GPU Exporter (Port 9445) - Improved 19.09.2025
 
-**Purpose:** GPU utilization and performance metrics
+**Purpose:**GPU utilization and performance metrics
 
 ```yaml
 # Configuration in compose.yml (IMPROVED)
@@ -395,7 +392,7 @@ nvidia-exporter:
   start_period: 15s
 ```
 
-**Status:** Healthy | HTTP 200 | TCP healthcheck (improved from pgrep)
+**Status:**Healthy | HTTP 200 | TCP healthcheck (improved from pgrep)
 
 **Key Metrics:**
 
@@ -412,7 +409,7 @@ curl -s http://localhost:9445/metrics | grep nvidia_gpu_utilization
 
 ## Blackbox Exporter (Port 9115)
 
-**Purpose:** External service availability monitoring
+**Purpose:**External service availability monitoring
 
 ```yaml
 # Configuration in compose.yml
@@ -429,7 +426,7 @@ blackbox-exporter:
  ]
 ```
 
-**Status:** Healthy | HTTP 200 | wget healthcheck
+**Status:**Healthy | HTTP 200 | wget healthcheck
 
 **Key Metrics:**
 
@@ -445,7 +442,7 @@ curl -s http://localhost:9115/metrics | grep probe_success
 
 ## Ollama AI Exporter (Port 9778) - Standardized 19.09.2025
 
-**Purpose:** AI model performance and availability metrics
+**Purpose:**AI model performance and availability metrics
 
 ```yaml
 # Configuration in compose.yml (STANDARDIZED)
@@ -460,7 +457,7 @@ ollama-exporter:
     - EXPORTER_PORT=9778
 ```
 
-**Status:** Healthy | HTTP 200 | wget healthcheck (standardized from 127.0.0.1)
+**Status:**Healthy | HTTP 200 | wget healthcheck (standardized from 127.0.0.1)
 
 **Key Metrics:**
 
@@ -477,7 +474,7 @@ curl -s http://localhost:9778/metrics | grep ollama_models_total
 
 ## Nginx Web Exporter (Port 9113) - Fixed 19.09.2025
 
-**Purpose:** Web server performance and traffic metrics
+**Purpose:**Web server performance and traffic metrics
 
 ```yaml
 # Configuration in compose.yml (FIXED)
@@ -496,7 +493,7 @@ nginx-exporter:
   start_period: 10s
 ```
 
-**Status:** Running | HTTP 200 | TCP healthcheck (fixed from wget)
+**Status:**Running | HTTP 200 | TCP healthcheck (fixed from wget)
 
 **Key Metrics:**
 
@@ -517,7 +514,7 @@ timeout 5 sh -c '</dev/tcp/localhost/9113' && echo "Nginx Exporter available"
 
 ## RAG SLA Exporter (Port 9808)
 
-**Purpose:** RAG (Retrieval-Augmented Generation) performance metrics
+**Purpose:**RAG (Retrieval-Augmented Generation) performance metrics
 
 ```yaml
 # Configuration in compose.yml
@@ -537,7 +534,7 @@ rag-exporter:
  ]
 ```
 
-**Status:** Healthy | HTTP 200 | Python healthcheck
+**Status:**Healthy | HTTP 200 | Python healthcheck
 
 **Key Metrics:**
 
@@ -619,8 +616,8 @@ docker inspect erni-ki-Redis мониторинг через Grafana --format='{
 
 #### 1. Exporter Returns HTTP 200 but Docker Shows No Health Status
 
-**Problem:** Healthcheck configuration uses unavailable tools (wget/curl)
-**Solution:** Use TCP check for minimal containers
+**Problem:**Healthcheck configuration uses unavailable tools (wget/curl)
+**Solution:**Use TCP check for minimal containers
 
 ```bash
 # Diagnosis
@@ -634,8 +631,8 @@ healthcheck:
 
 ## 2. Redis Exporter Shows redis_up = 0
 
-**Problem:** Authentication issue with Redis **Solution:** Verify Redis
-connection string and password
+**Problem:**Authentication issue with Redis**Solution:**Verify Redis connection
+string and password
 
 ```bash
 # Test Redis connection directly
@@ -647,7 +644,7 @@ docker logs erni-ki-Redis мониторинг через Grafana --tail 20
 
 ## 3. NVIDIA Exporter Not Showing GPU Metrics
 
-**Problem:** GPU not accessible or NVIDIA runtime not configured **Solution:**
+**Problem:**GPU not accessible or NVIDIA runtime not configured**Solution:**
 Verify GPU access and runtime
 
 ```bash
@@ -663,7 +660,7 @@ runtime: nvidia
 
 ## 4. Metrics Endpoint Returns 404
 
-**Problem:** Incorrect endpoint path or port configuration **Solution:** Verify
+**Problem:**Incorrect endpoint path or port configuration**Solution:**Verify
 exporter configuration
 
 ```bash
@@ -682,7 +679,7 @@ curl -s http://localhost:PORT/metrics
 
 ### Overview
 
-ERNI-KI uses **20 active alert rules** for proactive monitoring (per
+ERNI-KI uses**20 active alert rules**for proactive monitoring (per
 `conf/prometheus/alerts.yml` and `conf/prometheus/alert_rules.yml`):
 
 ### Alert Groups
@@ -741,7 +738,7 @@ ERNI-KI uses **20 active alert rules** for proactive monitoring (per
 
 ### Alert Configuration
 
-**File:** `conf/prometheus/alerts.yml`
+**File:**`conf/prometheus/alerts.yml`
 
 ```yaml
 groups:
@@ -797,12 +794,13 @@ rm /tmp/test-alert.img
 
 ## Monitoring Alertmanager Queue & Disk Alerts
 
-- **Alertmanager queue:** Grafana dashboard `Observability / Alertmanager` →
-  панель _Queue Depth_ (метрика `alertmanager_cluster_messages_queued`). После
-  изменения правила `ContainerRestarting` значение должно оставаться <500.
-- **Disk utilization sanity:** панель _Disk Usage by Mount_ использует
-  обновлённые выражения (исключая `fstype="vfat"` и `mountpoint="/boot/efi"`). В
-  alert списке `HighDiskUtilization` теперь появляется только для `/` и `/data`.
+-**Alertmanager queue:**Grafana dashboard `Observability / Alertmanager` →
+панель _Queue Depth_ (метрика `alertmanager_cluster_messages_queued`). После
+изменения правила `ContainerRestarting` значение должно оставаться <500. -**Disk
+utilization sanity:**панель _Disk Usage by Mount_ использует обновлённые
+выражения (исключая `fstype="vfat"` и `mountpoint="/boot/efi"`). В alert списке
+`HighDiskUtilization` теперь появляется только для `/` и `/data`.
+
 - Для ручной проверки выполните:
 
 ```bash
@@ -843,19 +841,19 @@ curl -s http://localhost:9091/api/v1/rules | jq '.data.groups[] | .name'
 
 ### Metrics Collection Optimization
 
-1. **Scrape Intervals:** Adjust based on metric importance
+1.**Scrape Intervals:**Adjust based on metric importance
 
 - Critical metrics: 15s interval
 - Standard metrics: 30s interval
 - Historical metrics: 60s interval
 
-2. **Retention Policies:** Configure appropriate data retention
+  2.**Retention Policies:**Configure appropriate data retention
 
 - High-resolution: 7 days
 - Medium-resolution: 30 days
 - Low-resolution: 1 year
 
-3. **Resource Allocation:** Monitor exporter resource usage
+  3.**Resource Allocation:**Monitor exporter resource usage
 
 ```bash
 # Check exporter resource usage
@@ -906,18 +904,16 @@ curl -H 'X-Scope-OrgID: erni-ki' \
 
 ### System Health Indicators
 
-- **All 8 exporters return HTTP 200** on /metrics endpoint
-- **Docker healthcheck status** shows healthy or running
-- **Prometheus targets** show all exporters as UP
-- **Grafana dashboards** display current metrics
-- **AlertManager** receives and processes alerts
+-**All 8 exporters return HTTP 200**on /metrics endpoint -**Docker healthcheck
+status**shows healthy or running -**Prometheus targets**show all exporters as
+UP -**Grafana dashboards**display current metrics -**AlertManager**receives and
+processes alerts
 
 ### Performance Targets
 
-- **Response Time:** <2s for all metrics endpoints
-- **Availability:** >99.9% uptime for critical exporters
-- **Resource Usage:** <5% CPU, <500MB RAM per exporter
-- **Data Freshness:** <30s lag for real-time metrics
+-**Response Time:**<2s for all metrics endpoints -**Availability:**>99.9% uptime
+for critical exporters -**Resource Usage:**<5% CPU, <500MB RAM per
+exporter -**Data Freshness:**<30s lag for real-time metrics
 
 ## Визуализация: контур мониторинга
 

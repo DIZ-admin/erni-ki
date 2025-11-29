@@ -1,0 +1,162 @@
+# Makefile for ERNI-KI Scripts Management and Testing
+# Usage: make -f Makefile.scripts <target>
+
+.PHONY: help test test-shell test-python test-integration lint lint-shell lint-python format clean install-deps
+
+# Default target
+help:
+	@echo "ERNI-KI Scripts Management"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  test              - Run all tests (shell + python)"
+	@echo "  test-shell        - Run shell script tests (BATS)"
+	@echo "  test-python       - Run Python tests (pytest)"
+	@echo "  test-integration  - Run integration tests"
+	@echo "  lint              - Run all linters"
+	@echo "  lint-shell        - Run ShellCheck on shell scripts"
+	@echo "  lint-python       - Run Ruff on Python scripts"
+	@echo "  format            - Format all code"
+	@echo "  format-python     - Format Python code with Ruff"
+	@echo "  cleanup           - Run cleanup and reorganization (dry-run)"
+	@echo "  cleanup-apply     - Apply cleanup changes"
+	@echo "  install-deps      - Install test dependencies"
+	@echo "  clean             - Remove generated files"
+
+# =============================================================================
+# Testing
+# =============================================================================
+
+test: test-python test-shell
+
+test-shell:
+	@echo "Running shell script tests with BATS..."
+	@if command -v bats >/dev/null 2>&1; then \
+		bats tests/integration/bats/test_*.bats; \
+	else \
+		echo "❌ BATS not installed. Install with: npm install -g bats"; \
+		echo "   or: brew install bats-core"; \
+		exit 1; \
+	fi
+
+test-python:
+	@echo "Running Python tests with pytest..."
+	@if [ -f .venv/bin/activate ]; then \
+		. .venv/bin/activate && pytest tests/python/ -v --tb=short; \
+	else \
+		python3 -m pytest tests/python/ -v --tb=short; \
+	fi
+
+test-integration:
+	@echo "Running integration tests..."
+	@if ! docker compose ps >/dev/null 2>&1; then \
+		echo "⚠️  Skipping: Docker Compose stack not running"; \
+		exit 0; \
+	fi
+	@bash tests/integration/test-redis-connections.sh
+	@bash tests/integration/test-admin-models-display.sh
+
+# =============================================================================
+# Linting
+# =============================================================================
+
+lint: lint-shell lint-python
+
+lint-shell:
+	@echo "Running ShellCheck on shell scripts..."
+	@find scripts -name "*.sh" -type f -exec shellcheck -x {} + || \
+		echo "⚠️  ShellCheck found issues. Install with: brew install shellcheck"
+
+lint-python:
+	@echo "Running Ruff on Python scripts..."
+	@if [ -f .venv/bin/activate ]; then \
+		. .venv/bin/activate && ruff check scripts/ tests/python/; \
+	else \
+		python3 -m ruff check scripts/ tests/python/ || \
+			echo "⚠️  Ruff not found. Install with: pip install ruff"; \
+	fi
+
+# =============================================================================
+# Formatting
+# =============================================================================
+
+format: format-python
+
+format-python:
+	@echo "Formatting Python code with Ruff..."
+	@if [ -f .venv/bin/activate ]; then \
+		. .venv/bin/activate && ruff format scripts/ tests/python/; \
+	else \
+		python3 -m ruff format scripts/ tests/python/; \
+	fi
+
+# =============================================================================
+# Cleanup
+# =============================================================================
+
+cleanup:
+	@echo "Running cleanup (dry-run)..."
+	@bash scripts/maintenance/cleanup-and-reorganize.sh --dry-run
+
+cleanup-apply:
+	@echo "Applying cleanup changes..."
+	@bash scripts/maintenance/cleanup-and-reorganize.sh
+
+# =============================================================================
+# Dependencies
+# =============================================================================
+
+install-deps:
+	@echo "Installing test dependencies..."
+	@echo "Installing BATS..."
+	@if command -v brew >/dev/null 2>&1; then \
+		brew install bats-core shellcheck; \
+	elif command -v npm >/dev/null 2>&1; then \
+		npm install -g bats; \
+	else \
+		echo "❌ Neither brew nor npm found. Please install manually."; \
+		exit 1; \
+	fi
+	@echo "Installing Python test dependencies..."
+	@pip install pytest pytest-cov
+
+# =============================================================================
+# Clean
+# =============================================================================
+
+clean:
+	@echo "Cleaning generated files..."
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@find . -type f -name "*.pyo" -delete 2>/dev/null || true
+	@find . -type f -name ".coverage" -delete 2>/dev/null || true
+	@find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
+	@echo "✅ Cleanup complete"
+
+# =============================================================================
+# Development
+# =============================================================================
+
+watch-tests:
+	@echo "Watching for changes and running tests..."
+	@if command -v watchexec >/dev/null 2>&1; then \
+		watchexec -e py,sh -c 'make test'; \
+	else \
+		echo "❌ watchexec not installed. Install with: brew install watchexec"; \
+		exit 1; \
+	fi
+
+# Show script statistics
+stats:
+	@echo "Script Statistics:"
+	@echo ""
+	@echo "Shell scripts:"
+	@find scripts -name "*.sh" -type f | wc -l | xargs echo "  Total:"
+	@find scripts -name "*.sh" -type f -exec wc -l {} + | tail -1 | awk '{print "  Lines: " $$1}'
+	@echo ""
+	@echo "Python scripts:"
+	@find scripts -name "*.py" -type f | wc -l | xargs echo "  Total:"
+	@find scripts -name "*.py" -type f -exec wc -l {} + | tail -1 | awk '{print "  Lines: " $$1}'
+	@echo ""
+	@echo "Tests:"
+	@find tests -name "*.bats" -o -name "test_*.py" | wc -l | xargs echo "  Test files:"

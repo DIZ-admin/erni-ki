@@ -9,28 +9,30 @@ last_updated: '2025-11-24'
 
 ## Setup & Installation
 
-1. **Node & npm**
-   - Node LTS installieren (20.x)
-   - `npm ci` im Repo ausführen
+1.**Node & npm**
 
-2. **Python-Tools** (für Lint/Docs)
-   - Optional: `python3 -m venv .venv && source .venv/bin/activate`
-   - `pip install pre-commit detect-secrets`
+- Node LTS installieren (20.x)
+- `npm ci` im Repo ausführen
 
-3. **Hooks**
-   - `npm run pre-commit:install`
+  2.**Python-Tools**(für Lint/Docs)
 
-4. **Environment**
-   - `.env.example` kopieren → `.env` / `env/*.env` ausfüllen
-   - Für lokale Tests meist ausreichend: `ENV=dev`, Dummy-Secrets
+- Optional: `python3 -m venv .venv && source .venv/bin/activate`
+- `pip install pre-commit detect-secrets`
+
+  3.**Hooks**
+
+- `npm run pre-commit:install`
+
+  4.**Environment**
+
+- `.env.example` kopieren → `.env` / `env/*.env` ausfüllen
+- Für lokale Tests meist ausreichend: `ENV=dev`, Dummy-Secrets
 
 ## Commands
 
-- **Tests (Unit)**: `npm run test:unit`
-- **Lint (TS/JS)**: `npm run lint`
-- **Format**: `npm run format`
-- **Pre-commit (alle Checks)**: `npm run pre-commit:run`
-- **Docs Build**: `.venv/bin/mkdocs build`
+-**Tests (Unit)**: `npm run test:unit` -**Lint (TS/JS)**:
+`npm run lint` -**Format**: `npm run format` -**Pre-commit (alle Checks)**:
+`npm run pre-commit:run` -**Docs Build**: `.venv/bin/mkdocs build`
 
 ## Projektstruktur (Auszug)
 
@@ -41,9 +43,7 @@ last_updated: '2025-11-24'
 
 ## Troubleshooting
 
-- **npm ci schlägt fehl** → Lockfile aktualisieren: `npm install` lokal, Lock
-  committen
-- **pre-commit meckert über Secrets** → prüfen, ob echte Tokens im Repo; ggf.
-  baseline aktualisieren
-- **mkdocs Warnungen** → fehlende Links/Dateien in Docs prüfen
-  (`mkdocs build --strict`)
+-**npm ci schlägt fehl**→ Lockfile aktualisieren: `npm install` lokal, Lock
+committen -**pre-commit meckert über Secrets**→ prüfen, ob echte Tokens im Repo;
+ggf. baseline aktualisieren -**mkdocs Warnungen**→ fehlende Links/Dateien in
+Docs prüfen (`mkdocs build --strict`)

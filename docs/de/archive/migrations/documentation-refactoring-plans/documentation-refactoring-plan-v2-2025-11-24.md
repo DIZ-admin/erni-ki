@@ -67,7 +67,7 @@ Alle Docs <90 Tage alt, saubere Metadaten, kein veralteter Inhalt.
 - Aktualisieren: operations/core/README.md, operations/database/README.md,
   operations/diagnostics/README.md
 
-**Ergebnis Phase 1:** 0 Stubs, 0 Duplikate, 0 deprecation markers, alle
+**Ergebnis Phase 1:**0 Stubs, 0 Duplikate, 0 deprecation markers, alle
 operations-Unterordner mit README.
 
 ---
