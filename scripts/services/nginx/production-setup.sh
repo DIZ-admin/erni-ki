@@ -21,8 +21,7 @@ echo -e "${BLUE}🚀 ERNI-KI NGINX Production Setup${NC}"
 echo "=================================================="
 
 # Logging helpers
-[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
-}
+
 
 warn() {
     echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"
