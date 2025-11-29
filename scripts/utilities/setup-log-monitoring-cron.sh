@@ -19,15 +19,11 @@ LOG_MONITORING_SCRIPT="$SCRIPT_DIR/log-monitoring.sh"
 
 # Colors
 
-[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
-}
 
-[SUCCESS]${NC} $1"
-}
 
-warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
+
+
+
 
 # Configure cron
 setup_cron() {
@@ -71,7 +67,7 @@ check_cron() {
         echo "Current jobs:"
         crontab -l | grep "log-monitoring.sh" || true
     else
-        warn "No cron jobs found for log monitoring"
+        log_warn "No cron jobs found for log monitoring"
         return 1
     fi
 }

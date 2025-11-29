@@ -25,18 +25,13 @@ COMPOSE_FILE="$PROJECT_ROOT/compose.yml"
 # Colors
 
 # Logging
-[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
-}
 
-warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
 
-[ERROR]${NC} $1"
-}
 
-[SUCCESS]${NC} $1"
-}
+
+
+
+
 
 # Webhook sender
 send_webhook() {
@@ -47,7 +42,7 @@ send_webhook() {
         curl -s -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -d "{\"text\":\"🔍 ERNI-KI Log Monitor: $message\", \"severity\":\"$severity\"}" \
-            >/dev/null 2>&1 || warn "Failed to send webhook notification"
+            >/dev/null 2>&1 || log_warn "Failed to send webhook notification"
     fi
 }
 
@@ -83,7 +78,7 @@ check_docker_logs() {
         send_webhook "🚨 Critical log usage: ${total_gb}GB" "critical"
         return 2
     elif [[ $total_gb -gt $ALERT_THRESHOLD_GB ]]; then
-        warn "Warning threshold exceeded: ${total_gb}GB > ${ALERT_THRESHOLD_GB}GB"
+        log_warn "Warning threshold exceeded: ${total_gb}GB > ${ALERT_THRESHOLD_GB}GB"
         send_webhook "⚠️ Log warning threshold exceeded: ${total_gb}GB" "warning"
         return 1
     else
@@ -120,7 +115,7 @@ check_fluent_bit_performance() {
     echo "   Errors (1h): $error_count"
 
     if [[ "$error_count" -gt 50 ]]; then
-        warn "High error count in Fluent Bit: $error_count in the last hour"
+        log_warn "High error count in Fluent Bit: $error_count in the last hour"
         send_webhook "⚠️ Fluent Bit errors: $error_count/hour" "warning"
         return 1
     else
@@ -172,7 +167,7 @@ cleanup_old_logs() {
 
     if [[ "${total_size_gb:-0}" -gt $CRITICAL_THRESHOLD_GB ]]; then
         log_info "Force rotating Docker logs..."
-        docker system prune -f --volumes >/dev/null 2>&1 || warn "Failed to run docker system prune"
+        docker system prune -f --volumes >/dev/null 2>&1 || log_warn "Failed to run docker system prune"
     fi
 
     log_success "Cleaned files: $cleaned_files"
@@ -257,7 +252,7 @@ main() {
             send_webhook "✅ Log monitoring: all systems healthy" "info"
             ;;
         1)
-            warn "⚠️ Warnings detected"
+            log_warn "⚠️ Warnings detected"
             ;;
         2)
             log_error "🚨 Critical issues detected"
