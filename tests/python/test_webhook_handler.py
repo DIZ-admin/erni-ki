@@ -1,13 +1,21 @@
 """Unit tests for conf/webhook_receiver/webhook_handler.py."""
 
 import importlib.util
-import types
 import unittest
 from pathlib import Path
+from typing import Protocol, cast
 from unittest.mock import MagicMock, patch
 
 
-def load_webhook_handler() -> types.ModuleType:
+class WebhookModule(Protocol):
+    DISCORD_WEBHOOK_URL: str
+    SLACK_WEBHOOK_URL: str
+    TELEGRAM_BOT_TOKEN: str
+    TELEGRAM_CHAT_ID: str
+    AlertProcessor: type
+
+
+def load_webhook_handler() -> WebhookModule:
     """Load webhook_handler module from the dashed directory."""
     root = Path(__file__).resolve().parents[2]
     module_path = root / "conf" / "webhook-receiver" / "webhook_handler.py"
@@ -16,7 +24,7 @@ def load_webhook_handler() -> types.ModuleType:
         raise ImportError(f"Cannot load webhook_handler from {module_path}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module
+    return cast(WebhookModule, module)
 
 
 webhook_handler = load_webhook_handler()
