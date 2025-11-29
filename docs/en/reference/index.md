@@ -11,7 +11,7 @@ Technical reference materials for developers and advanced users.
 
 ## Available Documentation
 
-- [Overview](README.md)
+- [Overview](index.md)
 - [API Reference](../../reference/api-reference.md)
 - [Development Guide](../../reference/development.md)
 - [GitHub Environments Setup](../../reference/github-environments-setup.md)
@@ -20,4 +20,4 @@ Technical reference materials for developers and advanced users.
 ## Note
 
 The Russian version is the primary source. This translation may be incomplete.
-For discrepancies, refer to the [Russian version](../../reference/README.md).
+For discrepancies, refer to the [Russian version](../../reference/index.md).

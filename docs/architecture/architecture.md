@@ -30,21 +30,6 @@ v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0, 8
 
 ### Последние обновления (v0.61.3 - ноябрь 2025)
 
-### Исправление Prometheus Exporters (07 ноября 2025)
-
--**Prometheus Targets: 32/32 UP (100%)**- Достигнута полная доступность
-
-- Исправлена проблема с Postgres Exporter (IPv6-only binding)
-- Исправлена аутентификация Redis Exporter
-- Health Score: 92/100 → 94/100 (EXCELLENT - Production Ready)
-
--**Postgres Exporter v0.15.0**: Socat IPv4→IPv6 proxy решение
-
-- Создан sidecar контейнер `postgres-exporter-proxy` с alpine/socat
-- Shared network namespace для минимальной latency (<1ms)
-- Порт 9188 для IPv4 подключений → проксирование на IPv6 localhost:9187
-- Полная совместимость с PostgreSQL 17.6 без изменения Docker network
-
 -**Redis Exporter v1.62.0**: URL формат аутентификации
 
 - Изменен формат с отдельных переменных на `redis://:password@host:port`
@@ -1066,13 +1051,6 @@ targets -**AI метрики:**Ollama + модели -**Веб-аналитик�
 - Время выполнения: 19 минут (вместо запланированных 4-6 часов)
 
 **Документация:**
-
-- Полный отчет:
-  [../archive/cleanup/archive/config-backup/update-execution-report-2025-10-02.md](../archive/cleanup/archive/config-backup/update-execution-report-2025-10-02.md)
-- Мониторинг:
-  [../archive/cleanup/archive/config-backup/monitoring-report-2025-10-02.md](../archive/cleanup/archive/config-backup/monitoring-report-2025-10-02.md)
-- Анализ обновлений:
-  [../archive/cleanup/archive/config-backup/update-analysis-2025-10-02.md](../archive/cleanup/archive/config-backup/update-analysis-2025-10-02.md)
 
 ---
 
