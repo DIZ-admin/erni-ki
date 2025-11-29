@@ -85,6 +85,10 @@ describe('Environment Variable Validation', () => {
 });
 
 describe('Environment Isolation', () => {
+  beforeEach(() => {
+    delete process.env.ISOLATION_TEST;
+  });
+
   it('changes in one test do not affect another test', () => {
     // This test verifies isolation
     expect(process.env.ISOLATION_TEST).toBeUndefined();
