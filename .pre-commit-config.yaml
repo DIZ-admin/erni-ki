@@ -155,7 +155,7 @@ repos:
     rev: v0.9.0
     hooks:
       - id: shellcheck
-        args: ["--severity=warning"]
+        args: ["--severity=error"]
         files: "\\.sh$"
 
   # ===================================================================
