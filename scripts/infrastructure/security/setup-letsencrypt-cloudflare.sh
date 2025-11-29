@@ -17,16 +17,7 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 CYAN='\033[0;36m'
 
 # Logging functions
-[$(date +'%Y-%m-%d %H:%M:%S')] INFO:${NC} $1"
-}
 
-[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS:${NC} $1"
-}
-
-[$(date +'%Y-%m-%d %H:%M:%S')] WARNING:${NC} $1"
-}
-
-[$(date +'%Y-%m-%d %H:%M:%S')] ERROR:${NC} $1"
     exit 1
 }
 
