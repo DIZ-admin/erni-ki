@@ -46,7 +46,7 @@ echo
 
 # Recent alerts
 echo "🚨 Recent alerts:"
-local alert_file="$PROJECT_ROOT/logs/rate-limiting-alerts.log"
+alert_file="$PROJECT_ROOT/logs/rate-limiting-alerts.log"
 if [[ -f "$alert_file" ]]; then
     tail -5 "$alert_file" | grep -E "^\[.*\] \[.*\]" | while read -r line; do
         echo "   $line"
