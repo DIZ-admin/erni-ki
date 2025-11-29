@@ -4,87 +4,87 @@
 
 set -e
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
 
 # Logging helpers
-log() { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
-success() { echo -e "${GREEN}✅ $1${NC}"; }
-warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
-error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
+[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
+✅ $1${NC}"; }
+⚠️  $1${NC}"; }
+❌ $1${NC}"; exit 1; }
 
 # Dependencies check
 check_dependencies() {
-    log "Checking system dependencies..."
+    log_info "Checking system dependencies..."
 
     # Docker
     if ! command -v docker &> /dev/null; then
-        error "Docker is not installed. Install Docker: https://docs.docker.com/get-docker/"
+        log_error "Docker is not installed. Install Docker: https://docs.docker.com/get-docker/"
     fi
-    success "Docker found: $(docker --version)"
+    log_success "Docker found: $(docker --version)"
 
     # Docker Compose
     if ! command -v docker compose &> /dev/null; then
-        error "Docker Compose is not installed"
+        log_error "Docker Compose is not installed"
     fi
-    success "Docker Compose found: $(docker compose version)"
+    log_success "Docker Compose found: $(docker compose version)"
 
     # Node.js (optional)
     if command -v node &> /dev/null; then
-        success "Node.js found: $(node --version)"
+        log_success "Node.js found: $(node --version)"
     else
-        warning "Node.js not found (needed for development)"
+        log_warn "Node.js not found (needed for development)"
     fi
 
     # Go (optional)
     if command -v go &> /dev/null; then
-        success "Go found: $(go version)"
+        log_success "Go found: $(go version)"
     else
-        warning "Go not found (required to build auth service)"
+        log_warn "Go not found (required to build auth service)"
     fi
 
     # OpenSSL for key generation
     if ! command -v openssl &> /dev/null; then
-        error "OpenSSL is not installed (required for secret generation)"
+        log_error "OpenSSL is not installed (required for secret generation)"
     fi
-    success "OpenSSL found"
+    log_success "OpenSSL found"
 }
 
 # Create directories
 create_directories() {
-    log "Creating required directories..."
+    log_info "Creating required directories..."
 
     directories=("data" "data/postgres" "data/redis" "data/ollama" "data/openwebui" "scripts" "logs")
 
     for dir in "${directories[@]}"; do
         if [ ! -d "$dir" ]; then
             mkdir -p "$dir"
-            success "Created directory: $dir"
+            log_success "Created directory: $dir"
         else
-            success "Directory already exists: $dir"
+            log_success "Directory already exists: $dir"
         fi
     done
 
     # Set permissions
     chmod 755 data/
     chmod 700 data/postgres
-    success "Permissions set"
+    log_success "Permissions set"
 }
 
 # Copy configuration files
 copy_config_files() {
-    log "Copying configuration files..."
+    log_info "Copying configuration files..."
 
     # Docker Compose
     if [ ! -f "compose.yml" ]; then
         cp compose.yml.example compose.yml
-        success "Copied compose.yml"
+        log_success "Copied compose.yml"
     else
-        warning "compose.yml already exists"
+        log_warn "compose.yml already exists"
     fi
 
     # Service configs
@@ -103,18 +103,18 @@ copy_config_files() {
 
         if [ -f "$src" ] && [ ! -f "$dst" ]; then
             cp "$src" "$dst"
-            success "Copied: $dst"
+            log_success "Copied: $dst"
         elif [ ! -f "$src" ]; then
-            warning "Source file not found: $src"
+            log_warn "Source file not found: $src"
         else
-            warning "File already exists: $dst"
+            log_warn "File already exists: $dst"
         fi
     done
 }
 
 # Copy env files
 copy_env_files() {
-    log "Copying environment files..."
+    log_info "Copying environment files..."
 
     env_files=(
         "auth" "cloudflared" "db" "edgetts"
@@ -128,46 +128,46 @@ copy_env_files() {
 
         if [ -f "$src" ] && [ ! -f "$dst" ]; then
             cp "$src" "$dst"
-            success "Copied: $dst"
+            log_success "Copied: $dst"
         elif [ ! -f "$src" ]; then
-            warning "Source file not found: $src"
+            log_warn "Source file not found: $src"
         else
-            warning "File already exists: $dst"
+            log_warn "File already exists: $dst"
         fi
     done
 }
 
 # Generate secrets
 generate_secrets() {
-    log "Generating secret keys..."
+    log_info "Generating secret keys..."
 
     # Main secrets
     SECRET_KEY=$(openssl rand -hex 32)
     DB_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
 
-    success "Secrets generated"
+    log_success "Secrets generated"
 
     # Update env files
     # Note: perl used for macOS/Linux compatibility (sed -i differs)
     if [ -f "env/auth.env" ]; then
         perl -pi -e "s/CHANGE_BEFORE_GOING_LIVE/$SECRET_KEY/g" env/auth.env
-        success "Updated JWT_SECRET in env/auth.env"
+        log_success "Updated JWT_SECRET in env/auth.env"
     fi
 
     if [ -f "env/openwebui.env" ]; then
         perl -pi -e "s/CHANGE_BEFORE_GOING_LIVE/$SECRET_KEY/g" env/openwebui.env
         perl -pi -e "s/postgres:postgres@db/postgres:$DB_PASSWORD@db/g" env/openwebui.env
-        success "Updated WEBUI_SECRET_KEY in env/openwebui.env"
+        log_success "Updated WEBUI_SECRET_KEY in env/openwebui.env"
     fi
 
     if [ -f "env/db.env" ]; then
         perl -pi -e "s/POSTGRES_PASSWORD=postgres/POSTGRES_PASSWORD=$DB_PASSWORD/g" env/db.env
-        success "Updated DB password in env/db.env"
+        log_success "Updated DB password in env/db.env"
     fi
 
     if [ -f "env/searxng.env" ]; then
         perl -pi -e "s/YOUR-SECRET-KEY/$SECRET_KEY/g" env/searxng.env
-        success "Updated SEARXNG_SECRET in env/searxng.env"
+        log_success "Updated SEARXNG_SECRET in env/searxng.env"
     fi
 
     # Save keys for reference
@@ -182,27 +182,27 @@ DB_PASSWORD=$DB_PASSWORD
 EOF
 
     chmod 600 .secrets_backup
-    success "Secrets saved to .secrets_backup"
+    log_success "Secrets saved to .secrets_backup"
 }
 
 # Domain setup
 setup_domain() {
-    log "Domain configuration..."
+    log_info "Domain configuration..."
 
     echo -n "Enter your domain (or press Enter for localhost): "
     read -r domain
 
     if [ -z "$domain" ]; then
         domain="localhost"
-        warning "Using localhost (local access only)"
+        log_warn "Using localhost (local access only)"
     else
-        success "Domain set: $domain"
+        log_success "Domain set: $domain"
     fi
 
     # Update Nginx config
     if [ -f "conf/nginx/conf.d/default.conf" ]; then
         sed -i "s/<domain-name>/$domain/g" conf/nginx/conf.d/default.conf
-        success "Domain updated in Nginx config"
+        log_success "Domain updated in Nginx config"
     fi
 
     # Update OpenWebUI URL
@@ -212,13 +212,13 @@ setup_domain() {
         else
             sed -i "s/<domain-name>/$domain/g" env/openwebui.env
         fi
-        success "URL updated in OpenWebUI config"
+        log_success "URL updated in OpenWebUI config"
     fi
 }
 
 # Cloudflare setup (optional)
 setup_cloudflare() {
-    log "Cloudflare tunnel setup (optional)..."
+    log_info "Cloudflare tunnel setup (optional)..."
 
     echo -n "Configure Cloudflare tunnel? (y/N): "
     read -r setup_cf
@@ -229,41 +229,41 @@ setup_cloudflare() {
 
         if [ -n "$tunnel_token" ] && [ -f "env/cloudflared.env" ]; then
             sed -i "s/add-your-cloudflare-tunnel-token-here/$tunnel_token/g" env/cloudflared.env
-            success "Cloudflare token set"
+            log_success "Cloudflare token set"
         else
-            warning "Token not provided or file missing"
+            log_warn "Token not provided or file missing"
         fi
     else
-        success "Cloudflare tunnel skipped"
+        log_success "Cloudflare tunnel skipped"
     fi
 }
 
 # Validate configuration
 validate_config() {
-    log "Validating configuration..."
+    log_info "Validating configuration..."
 
     # Docker Compose validation
     if docker compose config > /dev/null 2>&1; then
-        success "Docker Compose configuration is valid"
+        log_success "Docker Compose configuration is valid"
     else
-        error "Docker Compose configuration error"
+        log_error "Docker Compose configuration error"
     fi
 
     # Secret placeholders check
     if grep -r "CHANGE_BEFORE_GOING_LIVE" env/ > /dev/null 2>&1; then
-        error "Unchanged secret placeholders found!"
+        log_error "Unchanged secret placeholders found!"
     fi
 
     if grep -r "YOUR-SECRET-KEY" env/ > /dev/null 2>&1; then
-        error "Unchanged secret placeholders found!"
+        log_error "Unchanged secret placeholders found!"
     fi
 
-    success "All secret keys configured"
+    log_success "All secret keys configured"
 }
 
 # Create helper scripts
 create_helper_scripts() {
-    log "Creating helper scripts..."
+    log_info "Creating helper scripts..."
 
     # Startup script
     cat > scripts/start.sh << 'EOF'
@@ -304,7 +304,7 @@ EOF
 
     # Set executable permissions
     chmod +x scripts/*.sh
-    success "Helper scripts created in scripts/ directory"
+    log_success "Helper scripts created in scripts/ directory"
 }
 
 # Main function

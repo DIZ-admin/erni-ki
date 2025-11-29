@@ -6,40 +6,34 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 BACKUP_DIR="$PROJECT_ROOT/.config-backup"
 BACKREST_API="http://localhost:9898/v1.Backrest"
 
 # === Logging functions ===
-log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
-}
-
-error() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $*" >&2
-}
-
-success() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $*"
-}
 
 # === Check Backrest availability ===
 check_backrest_availability() {
-    log "Checking Backrest availability..."
+    log_info "Checking Backrest availability..."
 
     if curl -s -f "$BACKREST_API/GetConfig" --data '{}' -H 'Content-Type: application/json' >/dev/null 2>&1; then
-        success "Backrest API is available"
+        log_success "Backrest API is available"
         return 0
     else
-        error "Backrest API is not available"
+        log_error "Backrest API is not available"
         return 1
     fi
 }
 
 # === Create local repository ===
 create_local_repository() {
-    log "Creating local backup repository..."
+    log_info "Creating local backup repository..."
 
     # Create directory for backups
     mkdir -p "$BACKUP_DIR"
@@ -73,15 +67,15 @@ create_local_repository() {
 EOF
     )
 
-    log "Repository configuration created"
+    log_info "Repository configuration created"
     echo "$repo_config" > "$PROJECT_ROOT/conf/backrest/repo-config.json"
 
-    success "Local repository configured in $BACKUP_DIR"
+    log_success "Local repository configured in $BACKUP_DIR"
 }
 
 # === Create backup plans ===
 create_backup_plans() {
-    log "Creating backup plans..."
+    log_info "Creating backup plans..."
 
     # Plan for daily backups
     local daily_plan
@@ -146,12 +140,12 @@ EOF
     echo "$daily_plan" > "$PROJECT_ROOT/conf/backrest/daily-plan.json"
     echo "$weekly_plan" > "$PROJECT_ROOT/conf/backrest/weekly-plan.json"
 
-    success "Backup plans created"
+    log_success "Backup plans created"
 }
 
 # === Create webhook for monitoring integration ===
 create_monitoring_webhook() {
-    log "Creating webhook for rate limiting monitoring integration..."
+    log_info "Creating webhook for rate limiting monitoring integration..."
 
     # Create webhook script
     cat > "$PROJECT_ROOT/scripts/backrest-webhook.sh" <<'EOF'
@@ -180,12 +174,12 @@ EOF
 
     chmod +x "$PROJECT_ROOT/scripts/backrest-webhook.sh"
 
-    success "Monitoring webhook created"
+    log_success "Monitoring webhook created"
 }
 
 # === Create notification hooks ===
 create_notification_hooks() {
-    log "Creating notification hooks..."
+    log_info "Creating notification hooks..."
 
     # Hook for successful backups
     local success_hook
@@ -220,23 +214,23 @@ EOF
     echo "$success_hook" > "$PROJECT_ROOT/conf/backrest/success-hook.json"
     echo "$error_hook" > "$PROJECT_ROOT/conf/backrest/error-hook.json"
 
-    success "Notification hooks created"
+    log_success "Notification hooks created"
 }
 
 # === Integration testing ===
 test_integration() {
-    log "Testing Backrest integration..."
+    log_info "Testing Backrest integration..."
 
     # Check API
     if ! check_backrest_availability; then
-        error "Backrest API not available for testing"
+        log_error "Backrest API not available for testing"
         return 1
     fi
 
     # Test webhook
     if [[ -x "$PROJECT_ROOT/scripts/backrest-webhook.sh" ]]; then
         "$PROJECT_ROOT/scripts/backrest-webhook.sh" "Test notification from setup script"
-        success "Webhook tested"
+        log_success "Webhook tested"
     fi
 
     # Check created files
@@ -250,9 +244,9 @@ test_integration() {
 
     for file in "${required_files[@]}"; do
         if [[ -f "$file" ]]; then
-            success "File created: $file"
+            log_success "File created: $file"
         else
-            error "File not found: $file"
+            log_error "File not found: $file"
             return 1
         fi
     done
@@ -262,7 +256,7 @@ test_integration() {
 
 # === Create documentation ===
 create_documentation() {
-    log "Creating integration documentation..."
+    log_info "Creating integration documentation..."
 
     cat > "$PROJECT_ROOT/docs/backrest-integration.md" <<EOF
 # Backrest Integration for ERNI-KI
@@ -322,16 +316,16 @@ http://localhost:9898
 - Backups are created with root privileges
 EOF
 
-    success "Documentation created: docs/backrest-integration.md"
+    log_success "Documentation created: docs/backrest-integration.md"
 }
 
 # === Main function ===
 main() {
-    log "Setting up Backrest integration for ERNI-KI"
+    log_info "Setting up Backrest integration for ERNI-KI"
 
     # Check Backrest availability
     if ! check_backrest_availability; then
-        error "Backrest is not available. Make sure the service is running."
+        log_error "Backrest is not available. Make sure the service is running."
         exit 1
     fi
 
@@ -349,7 +343,7 @@ main() {
 
     # Testing
     if test_integration; then
-        success "Backrest integration configured successfully!"
+        log_success "Backrest integration configured successfully!"
 
         echo
         echo "📋 What was configured:"
@@ -368,7 +362,7 @@ main() {
         echo "  4. Configure hooks using conf/backrest/*-hook.json"
 
     else
-        error "Error configuring Backrest integration"
+        log_error "Error configuring Backrest integration"
         exit 1
     fi
 }

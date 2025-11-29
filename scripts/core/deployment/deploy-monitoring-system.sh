@@ -4,12 +4,12 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # Color definitions for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,43 +17,35 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="/tmp/erni-ki-monitoring-deployment.log"
 
 # Logging functions
-log() {
-    local message="[$(date +'%Y-%m-%d %H:%M:%S')] $1"
-    echo -e "${BLUE}$message${NC}"
+$message${NC}"
     echo "$message" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-success() {
-    local message="✅ $1"
-    echo -e "${GREEN}$message${NC}"
+$message${NC}"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-warning() {
-    local message="⚠️  $1"
-    echo -e "${YELLOW}$message${NC}"
+$message${NC}"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-error() {
-    local message="❌ $1"
-    echo -e "${RED}$message${NC}"
+$message${NC}"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1" >> "$LOG_FILE" 2>/dev/null || true
 }
 
 # Check prerequisites
 check_prerequisites() {
-    log "Checking prerequisites..."
+    log_info "Checking prerequisites..."
 
     # Check Docker
     if ! command -v docker &> /dev/null; then
-        error "Docker is not installed"
+        log_error "Docker is not installed"
         exit 1
     fi
 
     # Check Docker Compose v2
     if ! docker compose version &> /dev/null; then
-        error "Docker Compose v2 not available (need docker compose)"
+        log_error "Docker Compose v2 not available (need docker compose)"
         exit 1
     fi
 
@@ -61,23 +53,23 @@ check_prerequisites() {
     local ports=(9091 3000 9093 2020 9101 8000)
     for port in "${ports[@]}"; do
         if netstat -tuln 2>/dev/null | grep ":$port " &> /dev/null; then
-            warning "Port $port is already in use"
+            log_warn "Port $port is already in use"
         fi
     done
 
     # Check disk space
     local disk_usage=$(df "$PROJECT_ROOT" | awk 'NR==2 {print $5}' | sed 's/%//')
     if [[ $disk_usage -gt 80 ]]; then
-        error "Insufficient disk space: ${disk_usage}%"
+        log_error "Insufficient disk space: ${disk_usage}%"
         exit 1
     fi
 
-    success "Prerequisites met"
+    log_success "Prerequisites met"
 }
 
 # Create necessary directories
 create_directories() {
-    log "Creating necessary directories..."
+    log_info "Creating necessary directories..."
 
     local dirs=(
         "$PROJECT_ROOT/data/prometheus"
@@ -93,7 +85,7 @@ create_directories() {
     for dir in "${dirs[@]}"; do
         if [[ ! -d "$dir" ]]; then
             mkdir -p "$dir"
-            success "Created directory: $dir"
+            log_success "Created directory: $dir"
         fi
     done
 
@@ -102,32 +94,32 @@ create_directories() {
     chmod 755 "$PROJECT_ROOT/data/grafana"
     chmod 755 "$PROJECT_ROOT/data/alertmanager"
 
-    success "Directories created"
+    log_success "Directories created"
 }
 
 # Create monitoring network
 create_monitoring_network() {
-    log "Creating monitoring network..."
+    log_info "Creating monitoring network..."
 
     # Remove existing network if there are label issues
     if docker network ls | grep -q "erni-ki-monitoring"; then
-        log "Removing existing erni-ki-monitoring network..."
+        log_info "Removing existing erni-ki-monitoring network..."
         docker network rm erni-ki-monitoring 2>/dev/null || true
     fi
 
     # Create new network
     docker network create erni-ki-monitoring --driver bridge --label com.docker.compose.network=monitoring
-    success "Network erni-ki-monitoring created"
+    log_success "Network erni-ki-monitoring created"
 }
 
 # Deploy monitoring system
 deploy_monitoring_stack() {
-    log "Deploying monitoring system..."
+    log_info "Deploying monitoring system..."
 
     cd "$PROJECT_ROOT/monitoring"
 
     # Start basic monitoring components
-    log "Starting Prometheus, Grafana, Alertmanager..."
+    log_info "Starting Prometheus, Grafana, Alertmanager..."
     docker compose -f docker-compose.monitoring.yml up -d prometheus grafana alertmanager node-exporter
 
     # Wait for readiness
@@ -137,16 +129,16 @@ deploy_monitoring_stack() {
     local services=("prometheus" "grafana" "alertmanager" "node-exporter")
     for service in "${services[@]}"; do
         if docker compose -f docker-compose.monitoring.yml ps "$service" | grep -q "Up"; then
-            success "$service started"
+            log_success "$service started"
         else
-            error "$service failed to start"
+            log_error "$service failed to start"
         fi
     done
 }
 
 # Configure critical alerts
 configure_critical_alerts() {
-    log "Configuring critical alerts..."
+    log_info "Configuring critical alerts..."
 
     # Check Prometheus availability
     local prometheus_ready=false
@@ -155,53 +147,53 @@ configure_critical_alerts() {
             prometheus_ready=true
             break
         fi
-        log "Waiting for Prometheus readiness (attempt $i/10)..."
+        log_info "Waiting for Prometheus readiness (attempt $i/10)..."
         sleep 10
     done
 
     if [[ "$prometheus_ready" == "true" ]]; then
-        success "Prometheus is ready"
+        log_success "Prometheus is ready"
 
         # Reload alert configuration
         if curl -s -X POST http://localhost:9091/-/reload &> /dev/null; then
-            success "Alert configuration reloaded"
+            log_success "Alert configuration reloaded"
         else
-            warning "Failed to reload alert configuration"
+            log_warn "Failed to reload alert configuration"
         fi
     else
-        error "Prometheus is not ready"
+        log_error "Prometheus is not ready"
     fi
 }
 
 # Deploy GPU monitoring
 deploy_gpu_monitoring() {
-    log "Deploying GPU monitoring..."
+    log_info "Deploying GPU monitoring..."
 
     # Check NVIDIA availability
     if command -v nvidia-smi &> /dev/null; then
         if nvidia-smi &> /dev/null; then
-            log "Starting NVIDIA GPU Exporter..."
+            log_info "Starting NVIDIA GPU Exporter..."
             cd "$PROJECT_ROOT/monitoring"
             docker compose -f docker-compose.monitoring.yml up -d nvidia-exporter
 
             sleep 10
 
             if docker compose -f docker-compose.monitoring.yml ps nvidia-exporter | grep -q "Up"; then
-                success "NVIDIA GPU Exporter started"
+                log_success "NVIDIA GPU Exporter started"
             else
-                warning "NVIDIA GPU Exporter failed to start"
+                log_warn "NVIDIA GPU Exporter failed to start"
             fi
         else
-            warning "NVIDIA GPU not available"
+            log_warn "NVIDIA GPU not available"
         fi
     else
-        warning "nvidia-smi not found, skipping GPU monitoring"
+        log_warn "nvidia-smi not found, skipping GPU monitoring"
     fi
 }
 
 # Setup webhook notifications
 setup_webhook_notifications() {
-    log "Setting up webhook notifications..."
+    log_info "Setting up webhook notifications..."
 
     cd "$PROJECT_ROOT/monitoring"
 
@@ -211,62 +203,62 @@ setup_webhook_notifications() {
     sleep 10
 
     if docker compose -f docker-compose.monitoring.yml ps webhook-receiver | grep -q "Up"; then
-        success "Webhook receiver started"
+        log_success "Webhook receiver started"
 
         # Test webhook
         if curl -s -f http://localhost:9093/health &> /dev/null; then
-            success "Webhook receiver is available"
+            log_success "Webhook receiver is available"
         else
-            warning "Webhook receiver is not available"
+            log_warn "Webhook receiver is not available"
         fi
     else
-        error "Webhook receiver failed to start"
+        log_error "Webhook receiver failed to start"
     fi
 }
 
 # Fix problematic services
 fix_problematic_services() {
-    log "Fixing problematic services..."
+    log_info "Fixing problematic services..."
 
     cd "$PROJECT_ROOT"
 
     # Check and fix EdgeTTS
-    log "Checking EdgeTTS..."
+    log_info "Checking EdgeTTS..."
     if ! curl -s -f http://localhost:5050/voices &> /dev/null; then
-        warning "EdgeTTS not available, restarting..."
+        log_warn "EdgeTTS not available, restarting..."
         docker compose restart edgetts
         sleep 15
 
         if curl -s -f http://localhost:5050/voices &> /dev/null; then
-            success "EdgeTTS restored"
+            log_success "EdgeTTS restored"
         else
-            error "EdgeTTS still not available"
+            log_error "EdgeTTS still not available"
         fi
     else
-        success "EdgeTTS is working"
+        log_success "EdgeTTS is working"
     fi
 
     # Check proxied SearXNG
     local searx_url="http://localhost:8080/api/searxng/search?q=monitoring&format=json"
-    log "Checking SearXNG..."
+    log_info "Checking SearXNG..."
     if ! curl -s -f --max-time 5 "$searx_url" &> /dev/null; then
-        warning "SearXNG not available, restarting..."
+        log_warn "SearXNG not available, restarting..."
         docker compose restart searxng || true
         sleep 20
 
         if curl -s -f --max-time 5 "$searx_url" &> /dev/null; then
-            success "SearXNG restored"
+            log_success "SearXNG restored"
         else
-            error "SearXNG still not available"
+            log_error "SearXNG still not available"
         fi
     else
-        success "SearXNG is working"
+        log_success "SearXNG is working"
     fi
 }
 
 # Verify monitoring system
 verify_monitoring_system() {
-    log "Verifying monitoring system..."
+    log_info "Verifying monitoring system..."
 
     local endpoints=(
         "http://localhost:9091/-/healthy:Prometheus"
@@ -284,27 +276,27 @@ verify_monitoring_system() {
         local service=$(echo "$endpoint_info" | cut -d: -f2)
 
         if curl -s -f "$endpoint" &> /dev/null; then
-            success "$service is available"
+            log_success "$service is available"
             ((healthy_count++))
         else
-            error "$service is not available ($endpoint)"
+            log_error "$service is not available ($endpoint)"
         fi
     done
 
-    log "Verification result: $healthy_count/$total_count services are healthy"
+    log_info "Verification result: $healthy_count/$total_count services are healthy"
 
     if [[ $healthy_count -eq $total_count ]]; then
-        success "Monitoring system is fully functional"
+        log_success "Monitoring system is fully functional"
         return 0
     else
-        error "Monitoring system is partially operational"
+        log_error "Monitoring system is partially operational"
         return 1
     fi
 }
 
 # Generate deployment report
 generate_deployment_report() {
-    log "Generating deployment report..."
+    log_info "Generating deployment report..."
 
     local report_file="$PROJECT_ROOT/.config-backup/monitoring-deployment-report-$(date +%Y%m%d_%H%M%S).txt"
 
@@ -339,7 +331,7 @@ generate_deployment_report() {
 
     } > "$report_file"
 
-    success "Report saved: $report_file"
+    log_success "Report saved: $report_file"
 }
 
 # Main function
@@ -385,7 +377,7 @@ main() {
     generate_deployment_report
     echo ""
 
-    success "Monitoring system deployment completed!"
+    log_success "Monitoring system deployment completed!"
     echo ""
     echo -e "${GREEN}🎯 Next steps:${NC}"
     echo "1. Open Grafana: http://localhost:3000 (admin/admin123)"
@@ -397,7 +389,7 @@ main() {
 # Handle command-line arguments
 case "${1:-}" in
     --quick)
-        log "Quick deployment (basic components only)"
+        log_info "Quick deployment (basic components only)"
         check_prerequisites
         create_directories
         create_monitoring_network
@@ -405,15 +397,15 @@ case "${1:-}" in
         verify_monitoring_system
         ;;
     --gpu-only)
-        log "Deploying GPU monitoring only"
+        log_info "Deploying GPU monitoring only"
         deploy_gpu_monitoring
         ;;
     --fix-services)
-        log "Fixing problematic services"
+        log_info "Fixing problematic services"
         fix_problematic_services
         ;;
     --verify)
-        log "Verifying monitoring system"
+        log_info "Verifying monitoring system"
         verify_monitoring_system
         ;;
     *)
