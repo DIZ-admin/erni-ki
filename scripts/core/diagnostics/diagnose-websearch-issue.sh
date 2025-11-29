@@ -12,19 +12,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 
 # Colors for output
 
-# Logging functions
-[INFO]${NC} $1"
-}
-
-[SUCCESS]${NC} $1"
-}
-
-[WARNING]${NC} $1"
-}
-
-[ERROR]${NC} $1"
-}
-
 # Check service availability
 check_services() {
     log_info "Checking service status..."

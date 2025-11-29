@@ -16,19 +16,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="/tmp/erni-ki-monitoring-deployment.log"
 
-# Logging functions
-    echo "$message" >> "$LOG_FILE" 2>/dev/null || true
-}
-
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1" >> "$LOG_FILE" 2>/dev/null || true
-}
-
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1" >> "$LOG_FILE" 2>/dev/null || true
-}
-
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1" >> "$LOG_FILE" 2>/dev/null || true
-}
-
 # Check prerequisites
 check_prerequisites() {
     log_info "Checking prerequisites..."
