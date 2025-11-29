@@ -7,6 +7,11 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 # Webhook configuration (can be set via env vars)
 WEBHOOK_URL="${RAG_WEBHOOK_URL:-}"
 WEBHOOK_ENABLED="${RAG_WEBHOOK_ENABLED:-false}"

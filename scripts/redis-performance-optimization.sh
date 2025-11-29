@@ -4,26 +4,23 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 # Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 echo -e "${GREEN}=== Redis Performance Optimization for ERNI-KI ===${NC}"
 
 # Logging helpers
-log() {
-    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
+[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
 }
 
-warning() {
-    echo -e "${YELLOW}[WARNING] $1${NC}"
+[WARNING] $1${NC}"
 }
 
-error() {
-    echo -e "${RED}[ERROR] $1${NC}"
+[ERROR] $1${NC}"
 }
 
 info() {
@@ -49,25 +46,25 @@ if [[ -z "${REDIS_PASSWORD}" ]]; then
     if REDIS_PASSWORD="$(read_secret "redis_password")"; then
         :
     else
-        error "redis_password secret not found; export REDIS_PASSWORD or create secrets/redis_password.txt"
+        log_error "redis_password secret not found; export REDIS_PASSWORD or create secrets/redis_password.txt"
         exit 1
     fi
 fi
 
 # Ensure we are in repo root
 if [[ ! -f "compose.yml" ]]; then
-    error "compose.yml not found. Run from ERNI-KI repo root."
+    log_error "compose.yml not found. Run from ERNI-KI repo root."
     exit 1
 fi
 
 # Backup
-log "Creating configuration backup..."
+log_info "Creating configuration backup..."
 mkdir -p .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)
 cp compose.yml .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)/
 cp -r env/ .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)/ 2>/dev/null || true
 
 # 1. Optimize Redis Main settings
-log "Optimizing Redis Main settings..."
+log_info "Optimizing Redis Main settings..."
 
 # Add performance parameters if missing
 if ! grep -q "tcp-keepalive" compose.yml; then
@@ -81,7 +78,7 @@ if ! grep -q "tcp-keepalive" compose.yml; then
 fi
 
 # 2. Create redis.conf
-log "Creating optimized redis.conf..."
+log_info "Creating optimized redis.conf..."
 mkdir -p conf/redis
 
 cat > conf/redis/redis.conf << 'EOF'
@@ -167,7 +164,7 @@ rdb-save-incremental-fsync yes
 EOF
 
 # 3. Update compose.yml to use redis.conf
-log "Updating compose.yml to use redis.conf..."
+log_info "Updating compose.yml to use redis.conf..."
 if ! grep -q "conf/redis/redis.conf" compose.yml; then
     # Add volume for config
     sed -i '/redis:/,/volumes:/{
@@ -184,7 +181,7 @@ if ! grep -q "conf/redis/redis.conf" compose.yml; then
 fi
 
 # 4. Create performance monitoring script
-log "Creating performance monitoring script..."
+log_info "Creating performance monitoring script..."
 cat > scripts/redis-monitor.sh << 'EOF'
 #!/bin/bash
 # Redis Performance Monitor for ERNI-KI
@@ -217,11 +214,6 @@ if [[ -z "${REDIS_PASSWORD}" ]]; then
 fi
 
 # Colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-NC='\033[0m'
 
 echo -e "${BLUE}=== Redis Performance Monitor ===${NC}"
 echo "Time: $(date)"
@@ -323,7 +315,7 @@ EOF
 chmod +x scripts/redis-monitor.sh
 
 # 5. Create cron job for monitoring
-log "Creating monitoring cron job..."
+log_info "Creating monitoring cron job..."
 cat > scripts/setup-redis-monitoring.sh << 'EOF'
 #!/bin/bash
 # Configure automatic Redis monitoring
@@ -341,7 +333,7 @@ EOF
 
 chmod +x scripts/setup-redis-monitoring.sh
 
-log "Performance optimization completed!"
+log_info "Performance optimization completed!"
 
 echo -e "${GREEN}=== Optimization summary ===${NC}"
 echo "✅ Optimized redis.conf created"
