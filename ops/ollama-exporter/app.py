@@ -4,6 +4,7 @@ import signal
 import sys
 import threading
 import time
+from typing import Any
 
 import requests
 from prometheus_client import Gauge, start_http_server
@@ -29,7 +30,8 @@ OLLAMA_REQUEST_LATENCY = Gauge(
 _STOP_EVENT = threading.Event()
 
 
-def fetch_json(path: str) -> dict | None:
+def fetch_json(path: str) -> dict[str, Any] | None:
+    """Fetch JSON from Ollama API endpoint"""
     url = f"{OLLAMA_URL}{path}"
     try:
         start = time.perf_counter()
@@ -37,7 +39,16 @@ def fetch_json(path: str) -> dict | None:
         response.raise_for_status()
         OLLAMA_REQUEST_LATENCY.set(time.perf_counter() - start)
         return response.json()
-    except Exception as exc:  # pylint: disable=broad-except
+    except requests.Timeout:
+        LOGGER.warning("Request timeout for %s", url)
+        return None
+    except requests.ConnectionError as exc:
+        LOGGER.warning("Connection error for %s: %s", url, exc)
+        return None
+    except requests.HTTPError as exc:
+        LOGGER.warning("HTTP error for %s: %s", url, exc)
+        return None
+    except requests.RequestException as exc:
         LOGGER.warning("Request failed for %s: %s", url, exc)
         return None
 
@@ -68,12 +79,14 @@ def poll_forever() -> None:
         _STOP_EVENT.wait(POLL_INTERVAL)
 
 
-def shutdown(signum: int, frame) -> None:  # pylint: disable=unused-argument
+def shutdown(signum: int, frame: Any) -> None:  # pylint: disable=unused-argument
+    """Signal handler for graceful shutdown"""
     LOGGER.info("Received signal %s, stopping exporter", signum)
     _STOP_EVENT.set()
 
 
 def main() -> None:
+    """Start Ollama exporter"""
     signal.signal(signal.SIGTERM, shutdown)
     signal.signal(signal.SIGINT, shutdown)
 
