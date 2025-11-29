@@ -15,12 +15,11 @@ interactions.
 
 ## Golden rules
 
-1. **Role → Task → Context → Format.** Explicitly set the assistant role, what
-   it should do, which facts matter, and how to respond.
-2. **Reference materials.** Attach files or snippets and quote their filenames
-   so the model cites them.
-3. **Fail fast.** Ask for intermediate reasoning (`"list assumptions"`) before
-   requesting a final answer.
+1.**Role → Task → Context → Format.**Explicitly set the assistant role, what it
+should do, which facts matter, and how to respond. 2.**Reference
+materials.**Attach files or snippets and quote their filenames so the model
+cites them. 3.**Fail fast.**Ask for intermediate reasoning
+(`"list assumptions"`) before requesting a final answer.
 
 ## Prompt skeleton
 

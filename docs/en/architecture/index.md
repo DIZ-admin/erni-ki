@@ -12,29 +12,32 @@ system architecture.
 
 ## Contents
 
-- **[architecture.md](../../architecture/architecture.md)** - Complete system
-  architecture overview (RU) (v0.61.3)
-  - System components and their interactions
-  - Network architecture and port mappings
-  - Service inventory and dependencies
-  - Mermaid diagrams for visual reference
+-**[architecture.md](../../architecture/architecture.md)**- Complete system
+architecture overview (RU) (v0.61.3)
 
-- **[services-overview.md](../../architecture/services-overview.md)** - Detailed
-  service catalog (RU)
-  - AI/ML services (Ollama, LiteLLM, Context7)
-  - Data services (PostgreSQL, Redis)
-  - Infrastructure services (Nginx, Cloudflare)
-  - Monitoring stack (Prometheus, Grafana, Loki)
+- System components and their interactions
+- Network architecture and port mappings
+- Service inventory and dependencies
+- Mermaid diagrams for visual reference
 
-- **[service-inventory.md](../../architecture/service-inventory.md)** -
-  Machine-readable service catalog (RU)
+-**[services-overview.md](../../architecture/services-overview.md)**- Detailed
+service catalog (RU)
 
-- **[nginx-configuration.md](../../architecture/nginx-configuration.md)** -
-  Nginx reverse proxy setup (RU)
-  - SSL/TLS configuration
-  - Rate limiting
-  - WebSocket proxying
-  - Security headers
+- AI/ML services (Ollama, LiteLLM, Context7)
+- Data services (PostgreSQL, Redis)
+- Infrastructure services (Nginx, Cloudflare)
+- Monitoring stack (Prometheus, Grafana, Loki)
+
+-**[service-inventory.md](../../architecture/service-inventory.md)**-
+Machine-readable service catalog (RU)
+
+-**[nginx-configuration.md](../../architecture/nginx-configuration.md)**- Nginx
+reverse proxy setup (RU)
+
+- SSL/TLS configuration
+- Rate limiting
+- WebSocket proxying
+- Security headers
 
 ## Quick Links
 
@@ -44,4 +47,4 @@ system architecture.
 
 ## Version
 
-Current architecture version: **12.1** (Wave 3) Last updated: **2025-11-22**
+Current architecture version:**12.1**(Wave 3) Last updated:**2025-11-22**

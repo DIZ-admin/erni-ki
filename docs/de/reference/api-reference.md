@@ -7,8 +7,8 @@ last_updated: '2025-11-25'
 
 # ERNI-KI API Referenz
 
-> **Dokumentversion:** 5.0 · **Stand:** 2025-11-14 · **API Version:** v1
-> **Status:** Core Endpoints, LiteLLM Context7 und RAG verifiziert
+> **Dokumentversion:**5.0 ·**Stand:**2025-11-14 ·**API Version:**v1
+> **Status:**Core Endpoints, LiteLLM Context7 und RAG verifiziert
 
 ## API-Überblick
 
@@ -20,13 +20,12 @@ alle Requests Pflicht (`Authorization: Bearer <token>`); Antworten enthalten
 
 ### RAG und Model Context Protocol
 
-- **LiteLLM Context Engineering** (`/lite/api/v1/context`, `/lite/api/v1/think`)
-  injiziert History und routet auf Ollama/Docling.
-- **MCP Server** (`/api/mcp/**`) stellt Tools (Time, FS, Postgres, Memory) für
-  MCPO bereit.
-- **RAG** (`/api/search`, `/api/documents`, `/api/v1/chats/{chat_id}/rag`)
-  spricht Docling/SearXNG an und liefert `source_id`, `source_url`, `cursor`,
-  `tokens_used`.
+-**LiteLLM Context Engineering**(`/lite/api/v1/context`, `/lite/api/v1/think`)
+injiziert History und routet auf Ollama/Docling. -**MCP Server**(`/api/mcp/**`)
+stellt Tools (Time, FS, Postgres, Memory) für MCPO
+bereit. -**RAG**(`/api/search`, `/api/documents`, `/api/v1/chats/{chat_id}/rag`)
+spricht Docling/SearXNG an und liefert `source_id`, `source_url`, `cursor`,
+`tokens_used`.
 
 ### LiteLLM Context7 Gateway
 
@@ -90,9 +89,8 @@ curl -X POST https://ki.erni-gruppe.ch/api/documents \
 
 ### API Updates (September 2025)
 
-- **SearXNG** `/api/searxng/search` gefixt: 404 behoben, RAG-Suche stabil, <2s,
-  4 Engines.
-- **Stabile Endpoints:** `/health`, `/v1.Backrest/*`, `/api/mcp/*`.
+-**SearXNG**`/api/searxng/search` gefixt: 404 behoben, RAG-Suche stabil, <2s, 4
+Engines. -**Stabile Endpoints:**`/health`, `/v1.Backrest/*`, `/api/mcp/*`.
 
 ### Basis-URLs
 

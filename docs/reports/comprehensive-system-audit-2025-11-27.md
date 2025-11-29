@@ -10,16 +10,16 @@ auditor: Claude (Sonnet 4.5)
 
 # Комплексный аудит системы ERNI-KI
 
-**Дата аудита:** 2025-11-27 **Версия проекта:** v0.61.3 (Production Ready)
-**Анализируемая ветка:** develop **Охват:** 34 Docker сервиса, 16 Python
-скриптов, 110 Shell скриптов, Go auth service, TypeScript тесты
+**Дата аудита:**2025-11-27**Версия проекта:**v0.61.3 (Production Ready)
+**Анализируемая ветка:**develop**Охват:**34 Docker сервиса, 16 Python скриптов,
+110 Shell скриптов, Go auth service, TypeScript тесты
 
 ---
 
 ## Executive Summary
 
-Проект ERNI-KI демонстрирует **высокий уровень инженерной культуры** и
-готовность к production использованию. Однако выявлены **критические уязвимости
+Проект ERNI-KI демонстрирует**высокий уровень инженерной культуры**и готовность
+к production использованию. Однако выявлены**критические уязвимости
 безопасности**, требующие немедленного устранения.
 
 ### Общая оценка: 3.6/5
@@ -34,10 +34,10 @@ auditor: Claude (Sonnet 4.5)
 
 **Критические риски:**
 
-- **CVSS 10.0:** Секреты (API keys, пароли) в Git репозитории
-- **CVSS 8.5:** Отсутствие network segmentation (все сервисы в одной сети)
-- **CVSS 7.8:** Watchtower работает с root правами
-- **CVSS 6.5:** Uptime Kuma dashboard открыт в сеть без защиты
+-**CVSS 10.0:**Секреты (API keys, пароли) в Git репозитории -**CVSS
+8.5:**Отсутствие network segmentation (все сервисы в одной сети) -**CVSS
+7.8:**Watchtower работает с root правами -**CVSS 6.5:**Uptime Kuma dashboard
+открыт в сеть без защиты
 
 ---
 
@@ -54,9 +54,9 @@ auditor: Claude (Sonnet 4.5)
 
 **Проблемы:**
 
-1. **Отсутствие network segmentation** - все сервисы в одной default bridge сети
-2. **Монолитный compose.yml** - 1276 строк в одном файле
-3. **Нет service mesh** - отсутствие mTLS между сервисами
+1.**Отсутствие network segmentation**- все сервисы в одной default bridge
+сети 2.**Монолитный compose.yml**- 1276 строк в одном файле 3.**Нет service
+mesh**- отсутствие mTLS между сервисами
 
 **Рекомендации:**
 
@@ -69,17 +69,16 @@ auditor: Claude (Sonnet 4.5)
 
 **Позитивные аспекты:**
 
-- **Go auth service:** Отличный линтинг (46 linters), security-first подход,
-  distroless image
-- **TypeScript:** Strict mode, 90% coverage threshold, ESLint security plugin
-- **Python:** Ruff config с банdit rules, modern Python patterns
+-**Go auth service:**Отличный линтинг (46 linters), security-first подход,
+distroless image -**TypeScript:**Strict mode, 90% coverage threshold, ESLint
+security plugin -**Python:**Ruff config с банdit rules, modern Python patterns
 
 **Проблемы:**
 
-1. **Python scripts:** 16 утилит без unit тестов, нет mypy/pyright type checking
-2. **Shell scripts:** 110 файлов без ShellCheck в CI/pre-commit
-3. **Go auth:** Нет JWT key rotation, hardcoded port в healthcheck
-4. **E2E тесты:** Только mock-режим в CI, нет real E2E
+1.**Python scripts:**16 утилит без unit тестов, нет mypy/pyright type
+checking 2.**Shell scripts:**110 файлов без ShellCheck в CI/pre-commit 3.**Go
+auth:**Нет JWT key rotation, hardcoded port в healthcheck 4.**E2E тесты:**Только
+mock-режим в CI, нет real E2E
 
 **Рекомендации:**
 
@@ -96,13 +95,13 @@ auditor: Claude (Sonnet 4.5)
 
 ```bash
 secrets/
-├── postgres_password.txt    # В Git!
-├── litellm_api_key.txt      # В Git!
-├── openai_api_key.txt       # В Git!
-└── grafana_admin_password.txt # "admin"
+ postgres_password.txt # В Git!
+ litellm_api_key.txt # В Git!
+ openai_api_key.txt # В Git!
+ grafana_admin_password.txt # "admin"
 ```
 
-**Воздействие:** Полная компрометация системы при утечке репозитория
+**Воздействие:**Полная компрометация системы при утечке репозитория
 
 **Немедленные действия:**
 
@@ -165,10 +164,9 @@ uptime-kuma:
 
 **Проблемы:**
 
-1. **Log rotation:** Отсутствует для volume logs (nginx, openwebui)
-2. **Redis:** В некоторых сценариях без пароля
-3. **Secrets rotation:** Нет автоматизации
-4. **Base images:** Nginx mainline вместо stable
+1.**Log rotation:**Отсутствует для volume logs (nginx, openwebui) 2.**Redis:**В
+некоторых сценариях без пароля 3.**Secrets rotation:**Нет автоматизации 4.**Base
+images:**Nginx mainline вместо stable
 
 **Рекомендации:**
 
@@ -189,9 +187,8 @@ uptime-kuma:
 
 **Проблемы:**
 
-1. **SLI/SLO:** Не определены формальные SLI/SLO/SLA
-2. **Alerting:** Нет runbooks для всех алертов
-3. **Log encryption:** Fluent Bit → Loki без TLS
+1.**SLI/SLO:**Не определены формальные SLI/SLO/SLA 2.**Alerting:**Нет runbooks
+для всех алертов 3.**Log encryption:**Fluent Bit → Loki без TLS
 
 **Рекомендации:**
 
@@ -210,10 +207,9 @@ uptime-kuma:
 
 **Проблемы:**
 
-1. **Gosec continue-on-error:** Security issues не блокируют CI
-2. **Docker scan:** Триггерится ПОСЛЕ push в registry
-3. **Semantic versioning:** Нет enforcement для Conventional Commits в PR
-4. **Performance:** Нет benchmarks в CI
+1.**Gosec continue-on-error:**Security issues не блокируют CI 2.**Docker
+scan:**Триггерится ПОСЛЕ push в registry 3.**Semantic versioning:**Нет
+enforcement для Conventional Commits в PR 4.**Performance:**Нет benchmarks в CI
 
 **Рекомендации:**
 
@@ -232,11 +228,10 @@ uptime-kuma:
 
 **Проблемы:**
 
-1. **Python:** 16 скриптов без pytest coverage
-2. **Integration:** Директория существует, но тесты не написаны
-3. **Contract:** Нет тестов для API контрактов (OpenWebUI ↔ LiteLLM)
-4. **Load:** Нет k6/Artillery tests
-5. **E2E CI:** Только mock-режим, не real environment
+1.**Python:**16 скриптов без pytest coverage 2.**Integration:**Директория
+существует, но тесты не написаны 3.**Contract:**Нет тестов для API контрактов
+(OpenWebUI ↔ LiteLLM) 4.**Load:**Нет k6/Artillery tests 5.**E2E CI:**Только
+mock-режим, не real environment
 
 **Рекомендации:**
 
@@ -256,9 +251,9 @@ uptime-kuma:
 
 **Проблемы:**
 
-1. **API docs:** Нет OpenAPI/Swagger спецификаций
-2. **ADR:** Отсутствуют Architecture Decision Records
-3. **Diagrams:** Mermaid диаграммы могут быть устаревшими
+1.**API docs:**Нет OpenAPI/Swagger спецификаций 2.**ADR:**Отсутствуют
+Architecture Decision Records 3.**Diagrams:**Mermaid диаграммы могут быть
+устаревшими
 
 **Рекомендации:**
 
@@ -277,9 +272,9 @@ uptime-kuma:
 - Сроки: 1 день
 - Сложность: Средняя
 - Действия:
-  - `git filter-repo --invert-paths --path secrets/`
-  - Ротация всех API keys и паролей
-  - Внедрение SOPS для шифрования
+- `git filter-repo --invert-paths --path secrets/`
+- Ротация всех API keys и паролей
+- Внедрение SOPS для шифрования
 
 **2. Закрыть Uptime Kuma (CVSS 6.5)**
 
@@ -344,18 +339,18 @@ uptime-kuma:
 ## 3. Risk Matrix
 
 ```
-         Impact
-       Low  Med  High  Crit
-     ┌──────────────────────
-High │     │    │  4  │  1
-     ├──────────────────────
-Med  │     │  7 │  2  │
-     ├──────────────────────
-Low  │ 10  │  8 │  3  │
-     ├──────────────────────
-VLow │  6  │  9 │  5  │
-     └──────────────────────
-       Probability
+ Impact
+ Low Med High Crit
+
+High 4 1
+
+Med 7 2
+
+Low 10 8 3
+
+VLow 6 9 5
+
+ Probability
 ```
 
 1. Секреты в Git (Crit x High)
@@ -391,38 +386,38 @@ VLow │  6  │  9 │  5  │
 
 ### Docker Best Practices
 
-- ✅ Multi-stage builds
-- ✅ Distroless images
-- ✅ Health checks
-- ✅ Resource limits
-- ⚠️ Non-root user (кроме Watchtower)
-- ⚠️ Secrets management (plaintext в Git)
-- ❌ Network segmentation
-- ⚠️ Image scanning (после push)
+- Multi-stage builds
+- Distroless images
+- Health checks
+- Resource limits
+- Non-root user (кроме Watchtower)
+- Secrets management (plaintext в Git)
+- Network segmentation
+- Image scanning (после push)
 
 ### Security Best Practices (OWASP)
 
-- ✅ Secret scanning (CI + pre-commit)
-- ✅ Dependency scanning
-- ✅ SAST (CodeQL, Gosec)
-- ✅ Container scanning
-- ❌ Secrets in code (FAIL)
-- ❌ Password policy (weak)
-- ❌ Encryption at rest
-- ⚠️ Encryption in transit (partial)
-- ⚠️ Rate limiting (Nginx only)
-- ❌ JWT rotation
+- Secret scanning (CI + pre-commit)
+- Dependency scanning
+- SAST (CodeQL, Gosec)
+- Container scanning
+- Secrets in code (FAIL)
+- Password policy (weak)
+- Encryption at rest
+- Encryption in transit (partial)
+- Rate limiting (Nginx only)
+- JWT rotation
 
 ### Monitoring Best Practices (Google SRE)
 
-- ✅ USE methodology
-- ✅ RED methodology
-- ❌ SLI/SLO definition
-- ❌ Error budgets
-- ✅ Dashboards
-- ✅ Alerts
-- ⚠️ Runbooks (partial)
-- ❌ Postmortems template
+- USE methodology
+- RED methodology
+- SLI/SLO definition
+- Error budgets
+- Dashboards
+- Alerts
+- Runbooks (partial)
+- Postmortems template
 
 ---
 
@@ -430,24 +425,22 @@ VLow │  6  │  9 │  5  │
 
 ### Код
 
-1. **God compose.yml** - 1276 строк монолит
-2. **Magic numbers** - `mem_limit: 12g` без констант
-3. **Hardcoded credentials** - env файлы с паролями
-4. **Copy-paste** - повторяющийся код в shell скриптах
+1.**God compose.yml**- 1276 строк монолит 2.**Magic numbers**- `mem_limit: 12g`
+без констант 3.**Hardcoded credentials**- env файлы с паролями 4.**Copy-paste**-
+повторяющийся код в shell скриптах
 
 ### Инфраструктура
 
-5. **All-in-one network** - нет сегментации
-6. **Root user в containers** - Watchtower
-7. **Secrets в Git** - plaintext sensitive data
-8. **No backup testing** - есть Backrest, но нет restore тестов
+5.**All-in-one network**- нет сегментации 6.**Root user в containers**-
+Watchtower 7.**Secrets в Git**- plaintext sensitive data 8.**No backup
+testing**- есть Backrest, но нет restore тестов
 
 ### Процессы
 
-9. **Security scan после push** - уязвимые образы в registry
-10. **Continue-on-error для security** - не блокирует CI
-11. **Mock E2E в CI** - не тестируется real environment
-12. **No performance benchmarks** - деградация не отслеживается
+9.**Security scan после push**- уязвимые образы в
+registry 10.**Continue-on-error для security**- не блокирует CI 11.**Mock E2E в
+CI**- не тестируется real environment 12.**No performance benchmarks**-
+деградация не отслеживается
 
 ---
 
@@ -459,52 +452,52 @@ VLow │  6  │  9 │  5  │
 
 ```
 compose/
-├── base.yml           # Общие настройки, сети, volumes
-├── ai-services.yml    # OpenWebUI, Ollama, LiteLLM, Docling
-├── data-services.yml  # PostgreSQL, Redis, Backrest
-├── monitoring.yml     # Prometheus, Grafana, exporters
-└── production.yml     # Production overrides
+ base.yml # Общие настройки, сети, volumes
+ ai-services.yml # OpenWebUI, Ollama, LiteLLM, Docling
+ data-services.yml # PostgreSQL, Redis, Backrest
+ monitoring.yml # Prometheus, Grafana, exporters
+ production.yml # Production overrides
 
 # Запуск:
 docker compose -f compose/base.yml \
-               -f compose/ai-services.yml \
-               -f compose/production.yml up -d
+ -f compose/ai-services.yml \
+ -f compose/production.yml up -d
 ```
 
 **Внедрить network segmentation**
 
 ```yaml
 networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
-    internal: true
-  data:
-    driver: bridge
-    internal: true
-  monitoring:
-    driver: bridge
-    internal: true
+ frontend:
+ driver: bridge
+ backend:
+ driver: bridge
+ internal: true
+ data:
+ driver: bridge
+ internal: true
+ monitoring:
+ driver: bridge
+ internal: true
 
 services:
-  nginx:
-    networks:
-      - frontend
-  openwebui:
-    networks:
-      - frontend
-      - backend
-  litellm:
-    networks:
-      - backend
-  postgres:
-    networks:
-      - data
-  prometheus:
-    networks:
-      - monitoring
-      - backend # для scraping
+ nginx:
+ networks:
+ - frontend
+ openwebui:
+ networks:
+ - frontend
+ - backend
+ litellm:
+ networks:
+ - backend
+ postgres:
+ networks:
+ - data
+ prometheus:
+ networks:
+ - monitoring
+ - backend # для scraping
 ```
 
 ### 7.2 Кодовый рефакторинг
@@ -514,12 +507,12 @@ services:
 ```python
 # scripts/lib/common.py
 class ERNIKILogger:
-    def log(self, level: str, msg: str) -> None:
-        ...
+ def log(self, level: str, msg: str) -> None:
+ ...
 
 class SecretsManager:
-    def read_secret(self, name: str) -> str:
-        ...
+ def read_secret(self, name: str) -> str:
+ ...
 ```
 
 **Создать Go SDK**
@@ -527,13 +520,13 @@ class SecretsManager:
 ```go
 // pkg/health/checker.go
 type HealthChecker interface {
-    Check(ctx context.Context) error
+ Check(ctx context.Context) error
 }
 
 // pkg/jwt/manager.go
 type JWTManager interface {
-    Verify(token string) (Claims, error)
-    Rotate() error
+ Verify(token string) (Claims, error)
+ Rotate() error
 }
 ```
 
@@ -607,8 +600,8 @@ log_with_correlation_id() { ... }
 
 ## 9. Заключение
 
-Проект ERNI-KI находится на **высоком уровне зрелости** (3.6/5) и готов к
-production использованию **после устранения критических уязвимостей
+Проект ERNI-KI находится на**высоком уровне зрелости**(3.6/5) и готов к
+production использованию**после устранения критических уязвимостей
 безопасности**.
 
 ### Немедленные действия (blocking для production):
@@ -630,7 +623,7 @@ production использованию **после устранения крит
 9. Integration + load tests
 10. SLI/SLO + error budgets
 
-**Вердикт:** После фикса пунктов 1-3 проект может быть запущен в production с
+**Вердикт:**После фикса пунктов 1-3 проект может быть запущен в production с
 уверенностью. Пункты 4-10 улучшат устойчивость и масштабируемость системы.
 
 ---
@@ -646,5 +639,5 @@ production использованию **после устранения крит
 
 ---
 
-**Подготовлено:** Claude (Sonnet 4.5) **Методология:** OWASP Top 10, Google SRE,
-Docker Best Practices, 12-Factor App **Следующий аудит:** 2026-02-27
+**Подготовлено:**Claude (Sonnet 4.5)**Методология:**OWASP Top 10, Google SRE,
+Docker Best Practices, 12-Factor App**Следующий аудит:**2026-02-27

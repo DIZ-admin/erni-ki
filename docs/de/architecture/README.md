@@ -12,21 +12,24 @@ Systemarchitektur.
 
 ## Inhalt
 
-- **[architecture.md](architecture.md)** – Gesamtüberblick v0.61.3
-  - Komponenten und Abhängigkeiten
-  - Netzwerk/Ports
-  - Service-Inventar und Mermaid-Diagramme
+-**[architecture.md](architecture.md)**– Gesamtüberblick v0.61.3
 
-- **[services-overview.md](services-overview.md)** – Service-Katalog
-  - AI/ML (Ollama, LiteLLM, Context7)
-  - Daten (PostgreSQL, Redis)
-  - Infrastruktur (Nginx, Cloudflare)
-  - Monitoring (Prometheus, Grafana, Loki)
+- Komponenten und Abhängigkeiten
+- Netzwerk/Ports
+- Service-Inventar und Mermaid-Diagramme
 
-- **[service-inventory.md](service-inventory.md)** – Maschinenlesbarer Katalog
+-**[services-overview.md](services-overview.md)**– Service-Katalog
 
-- **[nginx-configuration.md](nginx-configuration.md)** – Reverse Proxy Setup
-  - SSL/TLS, Rate Limiting, WebSocket Proxy, Security Headers
+- AI/ML (Ollama, LiteLLM, Context7)
+- Daten (PostgreSQL, Redis)
+- Infrastruktur (Nginx, Cloudflare)
+- Monitoring (Prometheus, Grafana, Loki)
+
+-**[service-inventory.md](service-inventory.md)**– Maschinenlesbarer Katalog
+
+-**[nginx-configuration.md](nginx-configuration.md)**– Reverse Proxy Setup
+
+- SSL/TLS, Rate Limiting, WebSocket Proxy, Security Headers
 
 ## Quick Links
 
@@ -36,4 +39,4 @@ Systemarchitektur.
 
 ## Version
 
-Architekturversion: **12.1** (Wave 3) · Letzte Aktualisierung: **2025-11-22**
+Architekturversion:**12.1**(Wave 3) · Letzte Aktualisierung:**2025-11-22**

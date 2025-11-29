@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # Redis-Betriebshandbuch für ERNI-KI
 
-**Version:** 1.0 **Datum:** 23. September 2025 **System:** ERNI-KI
+**Version:**1.0**Datum:**23. September 2025**System:**ERNI-KI
 
 ---
 
@@ -66,24 +66,21 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Kernmetriken
 
-- **redis_up** – Verfügbarkeit (sollte 1 sein)
-- **redis_memory_used_bytes** – Speichernutzung
-- **redis_connected_clients** – Anzahl Verbindungen
-- **redis_commands_processed_total** – Gesamtzahl Befehle
+-**redis_up**– Verfügbarkeit (sollte 1 sein) -**redis_memory_used_bytes**–
+Speichernutzung -**redis_connected_clients**– Anzahl
+Verbindungen -**redis_commands_processed_total**– Gesamtzahl Befehle
 
 ### Kritische Alerts
 
-1. **RedisDown** – Redis nicht verfügbar
-2. **RedisHighMemoryUsage** – Speicher >90%
-3. **RedisCriticalMemoryUsage** – Speicher >95%
-4. **RedisHighConnections** – zu viele Verbindungen
-5. **RedisBackupFailed** – Backup fehlgeschlagen
+1.**RedisDown**– Redis nicht verfügbar 2.**RedisHighMemoryUsage**–
+Speicher >90% 3.**RedisCriticalMemoryUsage**–
+Speicher >95% 4.**RedisHighConnections**– zu viele
+Verbindungen 5.**RedisBackupFailed**– Backup fehlgeschlagen
 
 ### Monitoring-Zugriff
 
-- **Prometheus:** <http://localhost:9091>
-- **Redis Exporter:** <http://localhost:9121/metrics>
-- **Grafana:** über das ERNI-KI UI
+-**Prometheus:**<http://localhost:9091> -**Redis
+Exporter:**<http://localhost:9121/metrics> -**Grafana:**über das ERNI-KI UI
 
 ---
 
@@ -91,9 +88,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Automatisch
 
-- **Täglich:** 01:30 (7 Tage Aufbewahrung)
-- **Wöchentlich:** So 02:00 (4 Wochen Aufbewahrung)
-- **Speicherort:** `.config-backup/`
+-**Täglich:**01:30 (7 Tage Aufbewahrung) -**Wöchentlich:**So 02:00 (4 Wochen
+Aufbewahrung) -**Speicherort:**`.config-backup/`
 
 ### Manuell
 
@@ -116,10 +112,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Aktuelle Settings
 
-- **Max Memory:** 512MB
-- **Eviction Policy:** allkeys-lru
-- **HZ:** 50
-- **TCP keepalive:** 300s
+-**Max Memory:**512MB -**Eviction Policy:**allkeys-lru -**HZ:**50 -**TCP
+keepalive:**300s
 
 ### Optimierung
 

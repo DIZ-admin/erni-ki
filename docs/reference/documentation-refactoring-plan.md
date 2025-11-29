@@ -7,9 +7,9 @@ last_updated: '2025-11-24'
 
 # ERNI-KI Professional Documentation & Refactoring Plan (ноябрь 2025)
 
-> **Цель:** унифицировать производственную документацию ERNI-KI, устранить
-> дубли, закрыть устаревшие разделы и обеспечить понятную структуру для DevOps,
-> ML и SRE команд. [TOC]
+> **Цель:**унифицировать производственную документацию ERNI-KI, устранить дубли,
+> закрыть устаревшие разделы и обеспечить понятную структуру для DevOps, ML и
+> SRE команд. [TOC]
 
 ## 1. Текущее состояние (аудит 82 Markdown-файлов)
 
@@ -55,25 +55,22 @@ last_updated: '2025-11-24'
 
 ## 3. Гэп-анализ и приоритеты
 
-1. **Статусные сводки:** выровнять даты и формулировки между `README.md`,
-   `docs/index.md` и `docs/overview.md`, заведя единый YAML блок (вставка через
-   `include-markdown`).
-2. **API & интеграции:** обновить `docs/reference/api-reference.md` и
-   `mcpo-integration-guide.md` на ноябрь 2025 (новые модели, Context7, RAG
-   workflow). Сейчас последняя дата — 2025-09-19.
-3. **Operations ↔ Archive:** выделить важные отчёты (например,
-   `log-audit-2025-11-14.md`, `full-server-diagnostics-2025-11-04.md`) в
-   «Living» раздел operations, оставив архиву только историю.
-4. **Runbooks vs scripts:** синхронизировать шаги runbook’ов с скриптами из
-   `scripts/maintenance` (часть инструкций описывает уже автоматизированные
-   процессы).
-5. **Localization debt:** немецкие документы не включают monitoring/playbooks и
-   не обновлены под v0.61.3.
-6. **Data & Storage discoverability:** добавить перекрёстные ссылки в README и
-   operations handbook, чтобы инженеры знают о `operations/database/*.md`.
-7. **MkDocs навигация:** привести порядок `nav` к целевой структуре (сейчас Data
-   & Storage идёт после Operations, но операции с базами не ссылаются на
-   runbook’и).
+1.**Статусные сводки:**выровнять даты и формулировки между `README.md`,
+`docs/index.md` и `docs/overview.md`, заведя единый YAML блок (вставка через
+`include-markdown`). 2.**API & интеграции:**обновить
+`docs/reference/api-reference.md` и `mcpo-integration-guide.md` на ноябрь 2025
+(новые модели, Context7, RAG workflow). Сейчас последняя дата —
+2025-09-19. 3.**Operations ↔ Archive:**выделить важные отчёты (например,
+`log-audit-2025-11-14.md`, `full-server-diagnostics-2025-11-04.md`) в «Living»
+раздел operations, оставив архиву только историю. 4.**Runbooks vs
+scripts:**синхронизировать шаги runbook’ов с скриптами из `scripts/maintenance`
+(часть инструкций описывает уже автоматизированные процессы). 5.**Localization
+debt:**немецкие документы не включают monitoring/playbooks и не обновлены под
+v0.61.3. 6.**Data & Storage discoverability:**добавить перекрёстные ссылки в
+README и operations handbook, чтобы инженеры знают о
+`operations/database/*.md`. 7.**MkDocs навигация:**привести порядок `nav` к
+целевой структуре (сейчас Data & Storage идёт после Operations, но операции с
+базами не ссылаются на runbook’и).
 
 ## 4. План рефакторинга (3 волны)
 

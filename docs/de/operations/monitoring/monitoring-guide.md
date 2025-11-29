@@ -22,21 +22,20 @@ Observability-Stack.
 
 Das ERNI-KI Monitoring-System umfasst:
 
-- **9 spezialisierte Exporters** - optimiert und standardisiert (25.
-  September 2025)
-- **Prometheus v3.0.0** - Metriken-Sammlung und -Speicherung
-- **Grafana v11.3.0** - 18 Dashboards (100% funktional) - Visualisierung
-- **Loki v3.0.0 + Fluent Bit v3.1.0** - zentralisierte Protokollierung
-- **AlertManager v0.27.0** - Benachrichtigungen und Alarmierung
-- **System Health:** 96,4% (26/30 Container gesund)
+-**9 spezialisierte Exporters**- optimiert und standardisiert (25.
+September 2025) -**Prometheus v3.0.0**- Metriken-Sammlung und
+-Speicherung -**Grafana v11.3.0**- 18 Dashboards (100% funktional) -
+Visualisierung -**Loki v3.0.0 + Fluent Bit v3.1.0**- zentralisierte
+Protokollierung -**AlertManager v0.27.0**- Benachrichtigungen und
+Alarmierung -**System Health:**96,4% (26/30 Container gesund)
 
 ## Exporter-Konfiguration
 
 ### Node Exporter (Port 9101)
 
-**Zweck:** Systemebene-Metriken (CPU, Speicher, Festplatte, Netzwerk)
+**Zweck:**Systemebene-Metriken (CPU, Speicher, Festplatte, Netzwerk)
 
-**Status:** Healthy | HTTP 200 | Standard wget healthcheck
+**Status:**Healthy | HTTP 200 | Standard wget healthcheck
 
 **Wichtige Metriken:**
 
@@ -53,9 +52,9 @@ curl -s http://localhost:9101/metrics | grep node_up
 
 ### PostgreSQL Exporter (Port 9187)
 
-**Zweck:** Datenbankleistung und Gesundheitsmetriken
+**Zweck:**Datenbankleistung und Gesundheitsmetriken
 
-**Status:** Healthy | HTTP 200 | Standard wget healthcheck
+**Status:**Healthy | HTTP 200 | Standard wget healthcheck
 
 **Wichtige Metriken:**
 
@@ -72,9 +71,9 @@ curl -s http://localhost:9187/metrics | grep pg_up
 
 ### Redis Exporter (Port 9121) - Behoben 19.09.2025
 
-**Zweck:** Redis Cache-Leistung und Gesundheitsmetriken
+**Zweck:**Redis Cache-Leistung und Gesundheitsmetriken
 
-**Status:** Running | HTTP 200 | TCP healthcheck (behoben von wget) **Problem:**
+**Status:**Running | HTTP 200 | TCP healthcheck (behoben von wget)**Problem:**
 Redis-Authentifizierung (nicht kritisch für HTTP-Metriken-Endpunkt)
 
 **Konfiguration (BEHOBEN):**
@@ -122,9 +121,9 @@ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 
 ## NVIDIA GPU Exporter (Port 9445) - Verbessert 19.09.2025
 
-**Zweck:** GPU-Auslastung und Leistungsmetriken
+**Zweck:**GPU-Auslastung und Leistungsmetriken
 
-**Status:** Healthy | HTTP 200 | TCP healthcheck (verbessert von pgrep)
+**Status:**Healthy | HTTP 200 | TCP healthcheck (verbessert von pgrep)
 
 **Konfiguration (VERBESSERT):**
 
@@ -156,9 +155,9 @@ curl -s http://localhost:9445/metrics | grep nvidia_gpu_utilization
 
 ### Blackbox Exporter (Port 9115)
 
-**Zweck:** Überwachung der Verfügbarkeit externer Services
+**Zweck:**Überwachung der Verfügbarkeit externer Services
 
-**Status:** Healthy | HTTP 200 | Standard wget healthcheck
+**Status:**Healthy | HTTP 200 | Standard wget healthcheck
 
 **Wichtige Metriken:**
 
@@ -174,9 +173,9 @@ curl -s http://localhost:9115/metrics | grep probe_success
 
 ### Ollama AI Exporter (Port 9778) - Standardisiert 19.09.2025
 
-**Zweck:** AI-Modell-Leistung und Verfügbarkeitsmetriken
+**Zweck:**AI-Modell-Leistung und Verfügbarkeitsmetriken
 
-**Status:** Healthy | HTTP 200 | wget healthcheck (standardisiert von 127.0.0.1)
+**Status:**Healthy | HTTP 200 | wget healthcheck (standardisiert von 127.0.0.1)
 
 **Konfiguration (STANDARDISIERT):**
 
@@ -207,9 +206,9 @@ curl -s http://localhost:9778/metrics | grep ollama_models_total
 
 ### Nginx Web Exporter (Port 9113) - Behoben 19.09.2025
 
-**Zweck:** Webserver-Leistung und Traffic-Metriken
+**Zweck:**Webserver-Leistung und Traffic-Metriken
 
-**Status:** Running | HTTP 200 | TCP healthcheck (behoben von wget)
+**Status:**Running | HTTP 200 | TCP healthcheck (behoben von wget)
 
 **Konfiguration (BEHOBEN):**
 
@@ -248,9 +247,9 @@ timeout 5 sh -c '</dev/tcp/localhost/9113' && echo "Nginx Exporter verfügbar"
 
 ## RAG SLA Exporter (Port 9808)
 
-**Zweck:** RAG (Retrieval-Augmented Generation) Leistungsmetriken
+**Zweck:**RAG (Retrieval-Augmented Generation) Leistungsmetriken
 
-**Status:** Healthy | HTTP 200 | Python healthcheck
+**Status:**Healthy | HTTP 200 | Python healthcheck
 
 **Wichtige Metriken:**
 
@@ -332,8 +331,8 @@ docker inspect erni-ki-Redis Monitoring über Grafana --format='{{.State.Health.
 
 #### 1. Exporter gibt HTTP 200 zurück, aber Docker zeigt keinen Gesundheitsstatus
 
-**Problem:** Healthcheck-Konfiguration verwendet nicht verfügbare Tools
-(wget/curl) **Lösung:** TCP-Prüfung für minimale Container verwenden
+**Problem:**Healthcheck-Konfiguration verwendet nicht verfügbare Tools
+(wget/curl)**Lösung:**TCP-Prüfung für minimale Container verwenden
 
 ```bash
 # Diagnose
@@ -347,7 +346,7 @@ healthcheck:
 
 ## 2. Redis Exporter zeigt redis_up = 0
 
-**Problem:** Authentifizierungsproblem mit Redis **Lösung:**
+**Problem:**Authentifizierungsproblem mit Redis**Lösung:**
 Redis-Verbindungsstring und Passwort überprüfen
 
 ```bash

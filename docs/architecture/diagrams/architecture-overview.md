@@ -94,37 +94,31 @@ graph TB
 
 ### Уровень доступа
 
-- **Cloudflare Tunnel**: Безопасный внешний доступ
-- **Nginx**: Reverse proxy и SSL termination
-- **Auth**: JWT аутентификация
+-**Cloudflare Tunnel**: Безопасный внешний доступ -**Nginx**: Reverse proxy и
+SSL termination -**Auth**: JWT аутентификация
 
 ### Уровень приложений
 
-- **Open WebUI**: Основной пользовательский интерфейс (GPU-ускорение)
-- **LiteLLM**: Context Engineering Gateway
-- **SearXNG**: Поисковый движок
+-**Open WebUI**: Основной пользовательский интерфейс
+(GPU-ускорение) -**LiteLLM**: Context Engineering Gateway -**SearXNG**:
+Поисковый движок
 
 ### AI/ML уровень
 
-- **Ollama**: LLM инференс (GPU RTX 5000)
-- **Docling**: OCR и обработка документов (GPU)
-- **EdgeTTS**: Синтез речи
+-**Ollama**: LLM инференс (GPU RTX 5000) -**Docling**: OCR и обработка
+документов (GPU) -**EdgeTTS**: Синтез речи
 
 ### Уровень данных
 
-- **PostgreSQL**: Основная БД с pgvector расширением
-- **Redis**: Кэш и очереди
+-**PostgreSQL**: Основная БД с pgvector расширением -**Redis**: Кэш и очереди
 
 ### Вспомогательные сервисы
 
-- **Apache Tika**: Обработка файлов
-- **MCP Server**: Обработка запросов
-- **Backrest**: Резервное копирование
+-**Apache Tika**: Обработка файлов -**MCP Server**: Обработка
+запросов -**Backrest**: Резервное копирование
 
 ### Мониторинг
 
-- **Prometheus**: Сбор метрик
-- **Grafana**: Визуализация
-- **Loki**: Логирование
-- **Alertmanager**: Управление алертами
-- **Uptime Kuma**: Мониторинг доступности
+-**Prometheus**: Сбор метрик -**Grafana**: Визуализация -**Loki**:
+Логирование -**Alertmanager**: Управление алертами -**Uptime Kuma**: Мониторинг
+доступности

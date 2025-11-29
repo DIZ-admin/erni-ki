@@ -9,7 +9,7 @@ last_updated: '2025-11-24'
 
 [TOC]
 
-**Версия:** 1.0 **Дата:** 23 сентября 2025 **Система:** ERNI-KI
+**Версия:**1.0**Дата:**23 сентября 2025**Система:**ERNI-KI
 
 ---
 
@@ -68,24 +68,22 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Ключевые метрики
 
-- **redis_up** - Доступность Redis (должно быть 1)
-- **redis_memory_used_bytes** - Использование памяти
-- **redis_connected_clients** - Количество подключений
-- **redis_commands_processed_total** - Общее количество команд
+-**redis_up**- Доступность Redis (должно быть 1) -**redis_memory_used_bytes**-
+Использование памяти -**redis_connected_clients**- Количество
+подключений -**redis_commands_processed_total**- Общее количество команд
 
 ### Критические алерты
 
-1. **RedisDown** - Redis недоступен
-2. **RedisHighMemoryUsage** - Использование памяти >90%
-3. **RedisCriticalMemoryUsage** - Использование памяти >95%
-4. **RedisHighConnections** - Слишком много подключений
-5. **RedisBackupFailed** - Неудачное резервное копирование
+1.**RedisDown**- Redis недоступен 2.**RedisHighMemoryUsage**- Использование
+памяти >90% 3.**RedisCriticalMemoryUsage**- Использование
+памяти >95% 4.**RedisHighConnections**- Слишком много
+подключений 5.**RedisBackupFailed**- Неудачное резервное копирование
 
 ### Доступ к мониторингу
 
-- **Prometheus:** <http://localhost:9091>
-- **Redis Exporter:** <http://localhost:9121/metrics>
-- **Grafana:** Через основной интерфейс ERNI-KI
+-**Prometheus:**<http://localhost:9091> -**Redis
+Exporter:**<http://localhost:9121/metrics> -**Grafana:**Через основной интерфейс
+ERNI-KI
 
 ---
 
@@ -93,9 +91,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Автоматическое резервное копирование
 
-- **Ежедневно:** 01:30 (хранится 7 дней)
-- **Еженедельно:** Воскресенье 02:00 (хранится 4 недели)
-- **Местоположение:** `.config-backup/`
+-**Ежедневно:**01:30 (хранится 7 дней) -**Еженедельно:**Воскресенье 02:00
+(хранится 4 недели) -**Местоположение:**`.config-backup/`
 
 ### Ручное резервное копирование
 
@@ -126,10 +123,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 ### Текущие настройки
 
-- **Максимальная память:** 512MB
-- **Политика вытеснения:** allkeys-lru
-- **Частота фоновых задач:** 50 Hz
-- **TCP keepalive:** 300 секунд
+-**Максимальная память:**512MB -**Политика вытеснения:**allkeys-lru -**Частота
+фоновых задач:**50 Hz -**TCP keepalive:**300 секунд
 
 ### Оптимизация
 
@@ -215,9 +210,8 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 
 ### Аутентификация
 
-- **Пароль:** ErniKiRedisSecurePassword2024
-- **Доступ:** Только из Docker сети ERNI-KI
-- **Порты:** Не экспонированы наружу
+-**Пароль:**ErniKiRedisSecurePassword2024 -**Доступ:**Только из Docker сети
+ERNI-KI -**Порты:**Не экспонированы наружу
 
 ### Рекомендации
 

@@ -8,17 +8,17 @@ audit_type: secrets-security
 
 # Аудит безопасности секретов
 
-**Дата:** 2025-11-27 **Аудитор:** Security Review Process **Статус:** ✅ SECURE
-(с рекомендациями)
+**Дата:**2025-11-27**Аудитор:**Security Review Process**Статус:**SECURE (с
+рекомендациями)
 
 ---
 
 ## Executive Summary
 
-**Текущий статус:** ✅ **SECURE**
+**Текущий статус:\*\***SECURE\*\*
 
-Вопреки первоначальным опасениям из комплексного аудита, **секреты НЕ находятся
-в Git истории**. Система правильно настроена с использованием .gitignore для
+Вопреки первоначальным опасениям из комплексного аудита,**секреты НЕ находятся в
+Git истории**. Система правильно настроена с использованием .gitignore для
 защиты sensitive data.
 
 ---
@@ -27,7 +27,7 @@ audit_type: secrets-security
 
 ### 1. Git History Scan
 
-**Результат:** ✅ PASS
+**Результат:**PASS
 
 ```bash
 # Проверка истории на наличие секретных файлов
@@ -35,11 +35,12 @@ git log --all --full-history -- "secrets/*.txt" "env/*.env"
 # Результат: Пусто (кроме .example файлов)
 ```
 
-**Вывод:** Секретные файлы (_.txt, _.env) никогда не коммитились в репозиторий.
+**Вывод:** Секретные файлы (`*.txt`, `*.env`) никогда не коммитились в
+репозиторий.
 
 ### 2. .gitignore Configuration
 
-**Результат:** ✅ PASS
+**Результат:**PASS
 
 ```gitignore
 # .gitignore lines 16-18
@@ -51,11 +52,11 @@ secrets/*.txt
 env/*.env
 ```
 
-**Вывод:** Правильная конфигурация с исключениями для .example файлов.
+**Вывод:**Правильная конфигурация с исключениями для .example файлов.
 
 ### 3. Tracked Files
 
-**Результат:** ✅ PASS
+**Результат:**PASS
 
 ```bash
 $ git ls-files secrets/
@@ -65,36 +66,36 @@ $ git ls-files env/ | grep -v ".example"
 # Пусто
 ```
 
-**Вывод:** Только документация и примеры tracked в Git.
+**Вывод:**Только документация и примеры tracked в Git.
 
 ### 4. File Permissions
 
-**Результат:** ⚠️ MIXED
+**Результат:**MIXED
 
 ```bash
 $ ls -la secrets/*.txt | head -5
--rw------- context7_api_key.txt      # ✅ Secure (600)
--rw-r--r-- grafana_admin_password.txt # ⚠️ World-readable (644)
--rw------- litellm_api_key.txt       # ✅ Secure (600)
--rw------- litellm_db_password.txt   # ✅ Secure (600)
--rw-rw-r-- litellm_master_key.txt    # ⚠️ Group-readable (664)
+-rw------- context7_api_key.txt # Secure (600)
+-rw-r--r-- grafana_admin_password.txt # World-readable (644)
+-rw------- litellm_api_key.txt # Secure (600)
+-rw------- litellm_db_password.txt # Secure (600)
+-rw-rw-r-- litellm_master_key.txt # Group-readable (664)
 ```
 
-**Проблема:** Некоторые секреты имеют небезопасные права доступа.
+**Проблема:**Некоторые секреты имеют небезопасные права доступа.
 
 ### 5. Secret Detection Tools
 
-**Результат:** ✅ PASS
+**Результат:**PASS
 
 ```yaml
 # .pre-commit-config.yaml
 - repo: https://github.com/Yelp/detect-secrets
-  rev: v1.5.0
-  hooks:
-    - id: detect-secrets
+ rev: v1.5.0
+ hooks:
+ - id: detect-secrets
 ```
 
-**Вывод:** Автоматическое сканирование на коммитах активно.
+**Вывод:**Автоматическое сканирование на коммитах активно.
 
 ---
 
@@ -102,11 +103,11 @@ $ ls -la secrets/*.txt | head -5
 
 ### Проблема 1: Inconsistent file permissions
 
-**Критичность:** MEDIUM (CVSS 5.5)
+**Критичность:**MEDIUM (CVSS 5.5)
 
 Некоторые файлы секретов доступны для чтения группой или всем пользователям.
 
-**Воздействие:** Локальная утечка при компрометации сервера.
+**Воздействие:**Локальная утечка при компрометации сервера.
 
 **Решение:**
 
@@ -117,23 +118,23 @@ chmod 600 env/*.env
 
 ### Проблема 2: Отсутствие encryption at rest
 
-**Критичность:** MEDIUM (CVSS 6.0)
+**Критичность:**MEDIUM (CVSS 6.0)
 
 Секреты хранятся в plaintext на диске.
 
-**Воздействие:** Утечка при физическом доступе к серверу или бэкапам.
+**Воздействие:**Утечка при физическом доступе к серверу или бэкапам.
 
-**Решение:** Внедрить SOPS (см. Task 3.1 в Security Action Plan).
+**Решение:**Внедрить SOPS (см. Task 3.1 в Security Action Plan).
 
 ### Проблема 3: Нет rotation механизма
 
-**Критичность:** MEDIUM (CVSS 5.0)
+**Критичность:**MEDIUM (CVSS 5.0)
 
 Секреты не ротируются автоматически.
 
-**Воздействие:** Долгоживущие credentials увеличивают окно уязвимости.
+**Воздействие:**Долгоживущие credentials увеличивают окно уязвимости.
 
-**Решение:** Создать скрипт автоматической ротации (см. Task 3.1).
+**Решение:**Создать скрипт автоматической ротации (см. Task 3.1).
 
 ---
 
@@ -141,45 +142,45 @@ chmod 600 env/*.env
 
 ### Немедленные действия (1 день)
 
-1. **Исправить file permissions**
+1.**Исправить file permissions**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # scripts/security/fix-secret-permissions.sh
 
 find secrets -name "*.txt" ! -name "*.example" -exec chmod 600 {} \;
 find env -name "*.env" ! -name "*.example" -exec chmod 600 {} \;
 
-echo "✅ Secret permissions fixed"
+echo " Secret permissions fixed"
 ```
 
-2. **Добавить pre-commit hook для permissions**
+2.**Добавить pre-commit hook для permissions**
 
 ```yaml
 # .pre-commit-config.yaml
 - repo: local
-  hooks:
-    - id: check-secret-permissions
-      name: Check secret file permissions
-      entry: scripts/security/check-secret-permissions.sh
-      language: script
-      pass_filenames: false
+ hooks:
+ - id: check-secret-permissions
+ name: Check secret file permissions
+ entry: scripts/security/check-secret-permissions.sh
+ language: script
+ pass_filenames: false
 ```
 
 ### Краткосрочные действия (1-2 недели)
 
-3. **Создать secrets generation script**
+3.**Создать secrets generation script**
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # scripts/security/generate-secrets.sh
 
 generate_secret() {
-  local name=$1
-  local length=${2:-32}
-  openssl rand -base64 $length | tr -d '\n' > "secrets/${name}.txt"
-  chmod 600 "secrets/${name}.txt"
-  echo "✅ Generated: secrets/${name}.txt"
+ local name=$1
+ local length=${2:-32}
+ openssl rand -base64 $length | tr -d '\n' > "secrets/${name}.txt"
+ chmod 600 "secrets/${name}.txt"
+ echo " Generated: secrets/${name}.txt"
 }
 
 generate_secret "postgres_password" 32
@@ -188,27 +189,26 @@ generate_secret "litellm_master_key" 48
 # ...
 ```
 
-4. **Документировать secrets lifecycle**
+4.**Документировать secrets lifecycle**
 
 ```markdown
 # docs/security/secrets-lifecycle.md
 
 ## Lifecycle
 
-1. **Generation:** `scripts/security/generate-secrets.sh`
-2. **Rotation:** Quarterly (automated via cron)
-3. **Revocation:** Immediate при компрометации
-4. **Audit:** Monthly review
+1.**Generation:**`scripts/security/generate-secrets.sh` 2.**Rotation:**Quarterly
+(automated via cron) 3.**Revocation:**Immediate при
+компрометации 4.**Audit:**Monthly review
 ```
 
 ### Среднесрочные действия (1 месяц)
 
-5. **Внедрить SOPS encryption**
+5.**Внедрить SOPS encryption**
 
 См. подробности в
 [Security Action Plan Task 3.1](../operations/security-action-plan.md#task-31-sops-для-секретов-p2)
 
-6. **Automated rotation**
+6.**Automated rotation**
 
 ```bash
 # Cron job: каждые 90 дней
@@ -219,14 +219,14 @@ generate_secret "litellm_master_key" 48
 
 ## Compliance Status
 
-| Требование         | Статус           | Комментарий                       |
-| ------------------ | ---------------- | --------------------------------- |
-| Secrets не в Git   | ✅ COMPLIANT     | .gitignore настроен               |
-| File permissions   | ✅ COMPLIANT     | chmod 600 + pre-commit hook       |
-| Encryption at rest | ❌ NON-COMPLIANT | Plaintext на диске                |
-| Rotation policy    | ❌ NON-COMPLIANT | Нет автоматизации                 |
-| Access audit       | ⚠️ PARTIAL       | Нет логирования доступа           |
-| Secret scanning    | ✅ COMPLIANT     | detect-secrets + permissions hook |
+| Требование         | Статус        | Комментарий                       |
+| ------------------ | ------------- | --------------------------------- |
+| Secrets не в Git   | COMPLIANT     | .gitignore настроен               |
+| File permissions   | COMPLIANT     | chmod 600 + pre-commit hook       |
+| Encryption at rest | NON-COMPLIANT | Plaintext на диске                |
+| Rotation policy    | NON-COMPLIANT | Нет автоматизации                 |
+| Access audit       | PARTIAL       | Нет логирования доступа           |
+| Secret scanning    | COMPLIANT     | detect-secrets + permissions hook |
 
 ---
 
@@ -234,13 +234,13 @@ generate_secret "litellm_master_key" 48
 
 ### Ошибка в Comprehensive System Audit
 
-**Проблема 18 (CVSS 10.0)** из
+**Проблема 18 (CVSS 10.0)**из
 [Comprehensive System Audit](../reports/comprehensive-system-audit-2025-11-27.md)
 указывала:
 
 > "Секреты коммитятся в репозиторий"
 
-**Статус:** ❌ FALSE POSITIVE
+**Статус:**FALSE POSITIVE
 
 **Реальность:**
 
@@ -250,7 +250,7 @@ generate_secret "litellm_master_key" 48
 
 **Обновленная оценка:**
 
-- ~~CVSS 10.0 (Critical)~~ → **CVSS 6.0 (Medium)**
+- ~~CVSS 10.0 (Critical)~~ →**CVSS 6.0 (Medium)**
 - Проблема: Plaintext storage + отсутствие rotation
 - НЕ проблема: Секреты в Git
 
@@ -258,7 +258,7 @@ generate_secret "litellm_master_key" 48
 
 ## Action Items
 
-### Completed ✅
+### Completed
 
 - [x] Audit Git history для секретов
 - [x] Verify .gitignore configuration
@@ -268,7 +268,7 @@ generate_secret "litellm_master_key" 48
 - [x] Create permissions check script
 - [x] Add pre-commit hook for permissions
 
-### To Do ⚠️
+### To Do
 
 - [ ] Implement SOPS encryption
 - [ ] Setup automated rotation
@@ -285,8 +285,8 @@ generate_secret "litellm_master_key" 48
 
 ---
 
-**Вывод:** Система безопасности секретов работает корректно. Требуются улучшения
+**Вывод:**Система безопасности секретов работает корректно. Требуются улучшения
 в permissions, encryption at rest, и rotation механизме, но критической
 уязвимости "секреты в Git" НЕ существует.
 
-**Следующий аудит:** 2025-12-27
+**Следующий аудит:**2025-12-27

@@ -7,8 +7,8 @@ last_updated: '2025-11-24'
 
 # Data & Storage Übersicht
 
-> **Aktualität:** November 2025 (Release v0.61.3). Verwenden Sie diesen
-> Abschnitt als Einstiegspunkt vor dem Übergang zu einzelnen Guides.
+> **Aktualität:**November 2025 (Release v0.61.3). Verwenden Sie diesen Abschnitt
+> als Einstiegspunkt vor dem Übergang zu einzelnen Guides.
 
 ## Kurzstatus
 

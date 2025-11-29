@@ -12,13 +12,12 @@ summary: 'Regeln für Sprache in Code und Dokumentation von ERNI-KI'
 
 # Sprachrichtlinie
 
-1. **Code, Configs und Skripte immer auf Englisch**: Kommentare, Log-Messages,
-   Fehler und CLI-Ausgaben dürfen keine kyrillischen oder deutschen Zeichen
-   enthalten.
-2. **Dokumentation nur ru/de/en**: `docs/` = RU, `docs/de/` = DE, `docs/en/` =
-   EN. Neue Dateien müssen `language: <locale>` im Frontmatter enthalten.
-3. **Lokalisierte Inhalte** (z. B. Status-Snippet) liegen in `docs/*` oder
-   separaten JSON/YAML-Dateien – nicht im Quellcode.
+1.**Code, Configs und Skripte immer auf Englisch**: Kommentare, Log-Messages,
+Fehler und CLI-Ausgaben dürfen keine kyrillischen oder deutschen Zeichen
+enthalten. 2.**Dokumentation nur ru/de/en**: `docs/` = RU, `docs/de/` = DE,
+`docs/en/` = EN. Neue Dateien müssen `language: <locale>` im Frontmatter
+enthalten. 3.**Lokalisierte Inhalte**(z. B. Status-Snippet) liegen in `docs/*`
+oder separaten JSON/YAML-Dateien – nicht im Quellcode.
 
 # Automatische Prüfung
 

@@ -14,7 +14,7 @@ title: 'Authentifizierung und Autorisierung'
   damit keine offenen Ports exponiert werden.
 - Token-Lebensdauer so kurz wie möglich halten und jeder Anfrage eine
   `X-Request-ID` hinzufügen, um Traceability sicherzustellen.
-- Bei **jedem** API- und Frontend-Request Token validieren und ein dediziertes
+- Bei**jedem**API- und Frontend-Request Token validieren und ein dediziertes
   `/validate`-Healthcheck implementieren, damit Automatisierungen Tokens testen
   können.
 

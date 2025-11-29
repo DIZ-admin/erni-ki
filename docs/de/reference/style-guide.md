@@ -16,20 +16,21 @@ Siehe `docs/reference/emoji-style-guide.md` für Kategorien und Beispiele.
 
 Erlaubte Vorlagen:
 
-- **Wichtig**
+-**Wichtig**
 
-> **Wichtig:** Kritische Info, darf nicht übersehen werden.
+> **Wichtig:**Kritische Info, darf nicht übersehen werden.
 
-- **Warnung**
+-**Warnung**
 
-> **WARNUNG:** Potenzielle Risiken/Probleme.
+> **WARNUNG:**Potenzielle Risiken/Probleme.
 
-- **Tipp**
+-**Tipp**
 
-> **Tipp:** Empfehlung oder Best Practice.
+> **Tipp:**Empfehlung oder Best Practice.
 
-- **Info**
-  > ℹ **Info:** Zusatzdetails oder Kontext.
+-**Info**
+
+> ℹ**Info:**Zusatzdetails oder Kontext.
 
 ## 3. Code-Blöcke
 

@@ -11,22 +11,21 @@ system_status: 'Production Ready'
 
 # ERNI-KI System Architecture
 
-> **Doc version:** 12.1 · **Updated:** 2025-11-23 · **Status:** Production Ready
-> 32 services in `compose.yml`; 5/5 Grafana dashboards provisioned; 20 active
-> alert rules. LiteLLM v1.80.0.rc.1, Docling, MCP Server, Apache Tika,
-> Watchtower monitor-only. Monitoring: Prometheus v3.0.0, Loki v3.0.0, Fluent
-> Bit v3.1.0, Alertmanager v0.27.0. **Prometheus targets: 32/32 UP (100%)**
-> [TOC]
+> **Doc version:**12.1 ·**Updated:**2025-11-23 ·**Status:**Production Ready 32
+> services in `compose.yml`; 5/5 Grafana dashboards provisioned; 20 active alert
+> rules. LiteLLM v1.80.0.rc.1, Docling, MCP Server, Apache Tika, Watchtower
+> monitor-only. Monitoring: Prometheus v3.0.0, Loki v3.0.0, Fluent Bit v3.1.0,
+> Alertmanager v0.27.0.**Prometheus targets: 32/32 UP (100%)**[TOC]
 
 ## Architecture Overview
 
 ERNI-KI is a modern microservice AI platform built for containerization,
-security, and scalability. The stack includes **32 services**: OpenWebUI
-v0.6.36, Ollama 0.12.11 (GPU), LiteLLM v1.80.0.rc.1 (Context Engineering),
-SearXNG, Docling, Tika, EdgeTTS, MCP Server, Watchtower (monitor-only), and a
-full observability stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager
-v0.27.0, Loki v3.0.0, Fluent Bit v3.1.0, 8 exporters + RAG Exporter). External
-access is via Cloudflare tunnels (5 domains).
+security, and scalability. The stack includes**32 services**: OpenWebUI v0.6.36,
+Ollama 0.12.11 (GPU), LiteLLM v1.80.0.rc.1 (Context Engineering), SearXNG,
+Docling, Tika, EdgeTTS, MCP Server, Watchtower (monitor-only), and a full
+observability stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0,
+Loki v3.0.0, Fluent Bit v3.1.0, 8 exporters + RAG Exporter). External access is
+via Cloudflare tunnels (5 domains).
 
 ## System Architecture Diagram (v0.61.3 – 2025-11-24)
 
@@ -133,16 +132,17 @@ graph TB
 
 #### Prometheus Exporters fix (07 Nov 2025)
 
-- **Prometheus Targets: 32/32 UP (100%)** — full availability
+-**Prometheus Targets: 32/32 UP (100%)**— full availability
+
 - Fixed Postgres Exporter (IPv6-only binding)
 - Fixed Redis Exporter authentication
-- Health Score: 92/100 → 94/100 (EXCELLENT - Production Ready)
-- **Postgres Exporter v0.15.0**: Socat IPv4→IPv6 proxy
+- Health Score: 92/100 → 94/100 (EXCELLENT - Production Ready) -**Postgres
+  Exporter v0.15.0**: Socat IPv4→IPv6 proxy
 - Sidecar `postgres-exporter-proxy` with alpine/socat
 - Shared network namespace, latency <1 ms
 - Port 9188 IPv4 → proxy to IPv6 localhost:9187
-- Full compatibility with PostgreSQL 17.6 without network changes
-- **Redis Exporter v1.62.0**: URL auth format
+- Full compatibility with PostgreSQL 17.6 without network changes -**Redis
+  Exporter v1.62.0**: URL auth format
 - Switched to `redis://:password@host:port`
 - Enabled system metrics and debug
 - `redis_up 1` is stable
@@ -151,14 +151,14 @@ graph TB
 
 #### Maintenance & monitoring automation (24 Oct 2025)
 
-- **Prometheus Alerts:** 20 active rules (`conf/prometheus/alerts.yml`)
+-**Prometheus Alerts:**20 active rules (`conf/prometheus/alerts.yml`)
+
 - Critical: Disk <15%, Memory <5%, Container Down, PostgreSQL/Redis/Ollama GPU
   Down
-- Performance: OpenWebUI >5s, SearXNG >3s, Docker storage >85%
-- **Maintenance automation:** VACUUM (Sun 03:00), Docker Cleanup (Sun 04:00),
-  log rotation, Backrest backups (01:30); freed ~20GB disk (65% → 60%).
-- **Node Exporter tuning:** interval 60s→30s, timeout 15s→25s, log level warn→
-  error.
+- Performance: OpenWebUI >5s, SearXNG >3s, Docker storage >85% -**Maintenance
+  automation:**VACUUM (Sun 03:00), Docker Cleanup (Sun 04:00), log rotation,
+  Backrest backups (01:30); freed ~20GB disk (65% → 60%). -**Node Exporter
+  tuning:**interval 60s→30s, timeout 15s→25s, log level warn→ error.
 
 #### Monitoring refresh & stabilization (02 Oct 2025)
 
@@ -169,17 +169,18 @@ graph TB
 
 #### Monitoring optimized (19 Sep 2025)
 
-- **5 Grafana dashboards** provisioned; load <3s.
-- Prometheus queries optimized with safe fallbacks; SLA probes restored.
-- **Context Engineering:** LiteLLM + Context7 (thinking tokens, advanced
-  reasoning).
+-**5 Grafana dashboards**provisioned; load <3s.
+
+- Prometheus queries optimized with safe fallbacks; SLA probes
+  restored. -**Context Engineering:**LiteLLM + Context7 (thinking tokens,
+  advanced reasoning).
 
 #### Earlier optimizations (11 Sep 2025)
 
-- **Nginx config dedup:** removed 91 duplicate lines, 4 reusable include files,
-  CSP/CORS fixed, SSL config corrected.
-- **HTTPS/CSP fixes:** restored full functionality; expanded CORS; SSL fixes.
-- **SearXNG API:** routing repaired; response <2s.
+-**Nginx config dedup:**removed 91 duplicate lines, 4 reusable include files,
+CSP/CORS fixed, SSL config corrected. -**HTTPS/CSP fixes:**restored full
+functionality; expanded CORS; SSL fixes. -**SearXNG API:**routing repaired;
+response <2s.
 
 #### Components (as of 2025-10-02)
 

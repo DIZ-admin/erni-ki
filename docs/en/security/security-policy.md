@@ -23,9 +23,8 @@ We ship security updates for the following versions:
 
 If you discover a vulnerability in erni-ki, please:
 
-1. **Do NOT open a public GitHub issue**
-2. Send a report to: <security@erni-ki.local>
-3. Include:
+1.**Do NOT open a public GitHub issue**2. Send a report to:
+<security@erni-ki.local> 3. Include:
 
 - Vulnerability description
 - Reproduction steps
@@ -34,10 +33,8 @@ If you discover a vulnerability in erni-ki, please:
 
 ### Response time
 
-- **Acknowledgement:** within 24 hours
-- **Initial assessment:** within 72 hours
-- **Critical fix:** within 7 days
-- **Non-critical fix:** within 30 days
+-**Acknowledgement:**within 24 hours -**Initial assessment:**within 72
+hours -**Critical fix:**within 7 days -**Non-critical fix:**within 30 days
 
 ### Severity classes
 
@@ -68,30 +65,23 @@ If you discover a vulnerability in erni-ki, please:
 
 ### Remediation process
 
-1. **Analyze and confirm** the vulnerability
-2. **Develop the fix** in a private branch
-3. **Test** the fix
-4. **Coordinate disclosure** with the reporter
-5. **Publish the security update**
-6. **Public disclosure** after 90 days
+1.**Analyze and confirm**the vulnerability 2.**Develop the fix**in a private
+branch 3.**Test**the fix 4.**Coordinate disclosure**with the
+reporter 5.**Publish the security update**6.**Public disclosure**after 90 days
 
 ### Security recommendations
 
 #### For administrators
 
-1. **Keep all components updated**
-2. **Use strong passwords** and secret keys
-3. **Enable security monitoring**
-4. **Restrict network access** to services
-5. **Back up regularly**
+1.**Keep all components updated**2.**Use strong passwords**and secret
+keys 3.**Enable security monitoring**4.**Restrict network access**to
+services 5.**Back up regularly**
 
 #### For developers
 
-1. **Follow secure coding practices**
-2. **Run code reviews** on every change
-3. **Use static analysis** tools
-4. **Security-test before releases**
-5. **Do not store secrets** in the codebase
+1.**Follow secure coding practices**2.**Run code reviews**on every
+change 3.**Use static analysis**tools 4.**Security-test before releases**5.**Do
+not store secrets**in the codebase
 
 ### Security configuration
 
@@ -161,11 +151,8 @@ deploy:
 
 ### Logs to monitor
 
-1. **Failed authentication attempts**
-2. **Suspicious HTTP requests**
-3. **File access errors**
-4. **Unusual network activity**
-5. **Configuration changes**
+1.**Failed authentication attempts**2.**Suspicious HTTP requests**3.**File
+access errors**4.**Unusual network activity**5.**Configuration changes**
 
 #### Security alerts
 
@@ -188,9 +175,8 @@ deploy:
 
 ## Contacts
 
-- **Security Team:** <security@erni-ki.local>
-- **Emergency Contact:** +7-XXX-XXX-XXXX
-- **PGP Key:** [Public key link]
+-**Security Team:**<security@erni-ki.local> -**Emergency
+Contact:**+7-XXX-XXX-XXXX -**PGP Key:**[Public key link]
 
 ### Acknowledgements
 

@@ -49,10 +49,10 @@ response.
 - Validate results with: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
 - On script failures — see `../maintenance/backup-restore-procedures.md` for
-  recovery, `configuration-change-process.md` for config migrations.
-- **New November tasks:**
+  recovery, `configuration-change-process.md` for config migrations. -**New
+  November tasks:**
   - `scripts/maintenance/docling-shared-cleanup.sh` — cleans Docling shared
-    volume and restores permissions (cron job **docling_shared_cleanup**).
+    volume and restores permissions (cron job**docling_shared_cleanup**).
   - `scripts/maintenance/redis-fragmentation-watchdog.sh` — watches
     `redis_memory_fragmentation_ratio`; if >4, enables `activedefrag` and may
     restart the container.
@@ -81,16 +81,15 @@ response.
 
 ## 7. Data & Storage Docs
 
-- **DB plans & optimizations:**
-  `docs/operations/database/database-monitoring-plan.md`,
-  `docs/operations/database/database-production-optimizations.md`,
-  `docs/operations/database/database-troubleshooting.md`.
-- **Redis:** `docs/operations/database/redis-monitoring-grafana.md`,
-  `docs/operations/database/redis-operations-guide.md`.
-- **vLLM / LiteLLM resources:**
-  `docs/operations/database/vllm-resource-optimization.md` + scripts
-  `scripts/monitor-litellm-memory.sh`,
-  `scripts/redis-performance-optimization.sh`.
+-**DB plans & optimizations:**
+`docs/operations/database/database-monitoring-plan.md`,
+`docs/operations/database/database-production-optimizations.md`,
+`docs/operations/database/database-troubleshooting.md`. -**Redis:**`docs/operations/database/redis-monitoring-grafana.md`,
+`docs/operations/database/redis-operations-guide.md`. -**vLLM / LiteLLM
+resources:**`docs/operations/database/vllm-resource-optimization.md` + scripts
+`scripts/monitor-litellm-memory.sh`,
+`scripts/redis-performance-optimization.sh`.
+
 - In runbooks, cross-link the relevant Data docs when doing maintenance
   (pgvector VACUUM, Redis defrag, Backrest restore).
 
@@ -133,11 +132,10 @@ response.
 
 ## 11. CI/CD & Security
 
-- **Secret scanning:** add gitleaks or trufflehog as a CI job for PRs. Block
-  pipeline on findings; handle exceptions via baseline.
-- **Dependency scanning:** `npm audit --omit=dev` or Snyk OSS in CI with fail on
-  critical CVEs; keep `gosec` + Trivy filesystem scan for Go.
-- **Container scanning:** Trivy image scan with explicit allowlist/ignorefile
-  for false positives; fail on other criticals.
-- **Policy:** real secrets only in secret managers/CI secrets; git holds
-  `.example` plus generation instructions (README/handbook).
+-**Secret scanning:**add gitleaks or trufflehog as a CI job for PRs. Block
+pipeline on findings; handle exceptions via baseline. -**Dependency
+scanning:**`npm audit --omit=dev` or Snyk OSS in CI with fail on critical CVEs;
+keep `gosec` + Trivy filesystem scan for Go. -**Container scanning:**Trivy image
+scan with explicit allowlist/ignorefile for false positives; fail on other
+criticals. -**Policy:**real secrets only in secret managers/CI secrets; git
+holds `.example` plus generation instructions (README/handbook).

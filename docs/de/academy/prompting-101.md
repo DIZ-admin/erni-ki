@@ -25,29 +25,26 @@ Tonfall (formell/freundlich).
 
 ## Beispiele für Büroaufgaben
 
-- **Kunden-E-Mail:**
-  - "Du bist ein Account Manager. Aufgabe: Schreibe eine E-Mail an den Kunden
-    mit den Meeting-Ergebnissen. Kontext: Wir haben uns auf einen Testzugang
-    geeinigt, Deadline ist Freitag. Format: Begrüßung, 3 Punkte mit Ergebnissen,
-    CTA."
-- **Anruf-Zusammenfassung:**
-  - "Du bist ein Business-Analyst. Aufgabe: Erstelle eine Zusammenfassung eines
-    30-minütigen Meetings. Kontext: Wir haben die Roadmap besprochen, 2
-    Entscheidungen getroffen. Format: Aufzählungspunkte, Abschnitt
-    'Risiken/Maßnahmen'."
-- **Textverbesserung:**
-  - "Du bist ein Redakteur. Aufgabe: Verbessere den E-Mail-Text. Kontext:
-    Zielgruppe ist der CIO, Stil ist geschäftlich, ohne Jargon. Format:
-    Endgültige Version + kurze Empfehlungen."
-- **Ticket-Entwurf:**
-  - "Du bist ein Support-Ingenieur. Aufgabe: Bereite einen JIRA-Entwurf vor.
-    Kontext: Bug in der Authentifizierung nach dem Update, Reproduktionsschritte
-    und Screenshots vorhanden. Format: summary, steps to reproduce,
-    expected/actual."
-- **Optionenvergleich:**
-  - "Du bist ein Berater. Aufgabe: Vergleiche zwei Deployment-Ansätze. Kontext:
-    k8s vs docker-compose. Format: Tabelle mit Vor-/Nachteilen + kurze
-    Empfehlung."
+-**Kunden-E-Mail:**
+
+- "Du bist ein Account Manager. Aufgabe: Schreibe eine E-Mail an den Kunden mit
+  den Meeting-Ergebnissen. Kontext: Wir haben uns auf einen Testzugang geeinigt,
+  Deadline ist Freitag. Format: Begrüßung, 3 Punkte mit Ergebnissen,
+  CTA." -**Anruf-Zusammenfassung:**
+- "Du bist ein Business-Analyst. Aufgabe: Erstelle eine Zusammenfassung eines
+  30-minütigen Meetings. Kontext: Wir haben die Roadmap besprochen, 2
+  Entscheidungen getroffen. Format: Aufzählungspunkte, Abschnitt
+  'Risiken/Maßnahmen'." -**Textverbesserung:**
+- "Du bist ein Redakteur. Aufgabe: Verbessere den E-Mail-Text. Kontext:
+  Zielgruppe ist der CIO, Stil ist geschäftlich, ohne Jargon. Format: Endgültige
+  Version + kurze Empfehlungen." -**Ticket-Entwurf:**
+- "Du bist ein Support-Ingenieur. Aufgabe: Bereite einen JIRA-Entwurf vor.
+  Kontext: Bug in der Authentifizierung nach dem Update, Reproduktionsschritte
+  und Screenshots vorhanden. Format: summary, steps to reproduce,
+  expected/actual." -**Optionenvergleich:**
+- "Du bist ein Berater. Aufgabe: Vergleiche zwei Deployment-Ansätze. Kontext:
+  k8s vs docker-compose. Format: Tabelle mit Vor-/Nachteilen + kurze
+  Empfehlung."
 
 ## Checkliste vor dem Absenden des Prompts
 

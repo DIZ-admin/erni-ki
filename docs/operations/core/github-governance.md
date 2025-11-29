@@ -22,9 +22,9 @@ flowchart TD
 
 ## 1. Структура веток
 
-- **Основная ветка:** `main`
-- **Рабочая ветка:** `develop` (ранее `dev`). Требуется переименовать удалённую
-  ветку и перенастроить branch protection через GitHub UI/CLI:
+-**Основная ветка:**`main` -**Рабочая ветка:**`develop` (ранее `dev`). Требуется
+переименовать удалённую ветку и перенастроить branch protection через GitHub
+UI/CLI:
 
 ```bash
 git push origin develop:develop

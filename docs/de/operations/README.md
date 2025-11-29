@@ -13,44 +13,42 @@ Runbooks, Anleitungen und Prozesse zur Verwaltung der ERNI-KI Plattform.
 
 ### Kern-Guides
 
-- **[admin-guide.md](core/admin-guide.md)** – Administration
-  - Nutzerverwaltung, Service-Konfiguration, Backup/Restore, Security
+-**[admin-guide.md](core/admin-guide.md)**– Administration
 
-- **[monitoring-guide.md](monitoring/monitoring-guide.md)** – Monitoring
-  - Prometheus Metriken/Alerts, Grafana Dashboards (5), Loki Logs, SLO-Tracking
+- Nutzerverwaltung, Service-Konfiguration, Backup/Restore, Security
+
+-**[monitoring-guide.md](monitoring/monitoring-guide.md)**– Monitoring
+
+- Prometheus Metriken/Alerts, Grafana Dashboards (5), Loki Logs, SLO-Tracking
 
 ### Troubleshooting & Runbooks
 
-- **[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)** –
-  Diagnosen & typische Issues
-- **Maintenance:**
-  [Service restarts](maintenance/service-restart-procedures.md),
-  [Backup & Restore](maintenance/backup-restore-procedures.md)
+-**[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)**–
+Diagnosen & typische Issues -**Maintenance:**
+[Service restarts](maintenance/service-restart-procedures.md),
+[Backup & Restore](maintenance/backup-restore-procedures.md)
 
 ### Spezialisierte Guides
 
-- **Automation:**
-  [Automated maintenance](automation/automated-maintenance-guide.md)
-- **Database:** [Operations overview](core/index.md)
-- **Monitoring:** [Monitoring guide](monitoring/monitoring-guide.md)
+-**Automation:**
+[Automated maintenance](automation/automated-maintenance-guide.md) -**Database:**[Operations overview](core/index.md) -**Monitoring:**[Monitoring guide](monitoring/monitoring-guide.md)
 
 ### Diagnostics
 
-- **[core/index.md](core/index.md)** – Reports & Methodik
+-**[core/index.md](core/index.md)**– Reports & Methodik
 
 ## Quick Start
 
-**Operatoren:** [admin-guide.md](core/admin-guide.md)  
-**Monitoring:** [monitoring-guide.md](monitoring/monitoring-guide.md)  
-**Incidents:** [troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)
+**Operatoren:**[admin-guide.md](core/admin-guide.md)  
+**Monitoring:**[monitoring-guide.md](monitoring/monitoring-guide.md)  
+**Incidents:**[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)
 
 ## Operations-Rhythmus
 
-- **Täglich:** Status-Page, `CronJobFailed`, Backup-Kontrolle.
-- **Wöchentlich:** Audit laut `configuration-change-process.md`, Maintenance-Log
-  pflegen.
-- **Monatlich:** Restore-Übungen gemäß
-  `maintenance/backup-restore-procedures.md`.
+-**Täglich:**Status-Page, `CronJobFailed`,
+Backup-Kontrolle. -**Wöchentlich:**Audit laut `configuration-change-process.md`,
+Maintenance-Log pflegen. -**Monatlich:**Restore-Übungen gemäß
+`maintenance/backup-restore-procedures.md`.
 
 ## Verwandte Doku
 
@@ -60,4 +58,4 @@ Runbooks, Anleitungen und Prozesse zur Verwaltung der ERNI-KI Plattform.
 
 ## Version
 
-Dokuversion: **12.1** · Letzte Aktualisierung: **2025-11-24**
+Dokuversion:**12.1**· Letzte Aktualisierung:**2025-11-24**

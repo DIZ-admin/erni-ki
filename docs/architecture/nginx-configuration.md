@@ -7,7 +7,7 @@ last_updated: '2025-11-24'
 
 # Nginx Configuration Guide - ERNI-KI
 
-> **Версия:** 9.0 | **Дата:** 2025-09-11 | **Статус:** Production Ready
+> **Версия:**9.0 |**Дата:**2025-09-11 |**Статус:**Production Ready
 
 ## Обзор
 
@@ -257,17 +257,17 @@ netstat -tlnp | grep nginx
 
 ### Частые проблемы
 
-1. **404 на API эндпоинтах**
+1.**404 на API эндпоинтах**
 
 - Проверить include файлы в контейнере
 - Убедиться в корректности upstream блоков
 
-2. **WebSocket соединения не работают**
+  2.**WebSocket соединения не работают**
 
 - Проверить websocket-common.conf
 - Убедиться в наличии Upgrade заголовков
 
-3. **SSL ошибки на localhost**
+  3.**SSL ошибки на localhost**
 
 - Проверить ssl_verify_client off
 - Убедиться в корректности CSP политики
@@ -287,16 +287,13 @@ docker exec erni-ki-nginx-1 ls -la /etc/nginx/includes/
 
 ## Метрики производительности
 
-- **Время ответа API:** <2 секунд
-- **WebSocket latency:** <50ms
-- **SSL handshake:** <100ms
-- **Кэш hit ratio:** >80%
-- **Rate limiting:** 60 req/s для SearXNG API
+-**Время ответа API:**<2 секунд -**WebSocket latency:**<50ms -**SSL
+handshake:**<100ms -**Кэш hit ratio:**>80% -**Rate limiting:**60 req/s для
+SearXNG API
 
 ## Безопасность
 
-- **SSL/TLS:** TLSv1.2, TLSv1.3
-- **HSTS:** max-age=31536000
-- **CSP:** Оптимизированная для localhost и production
-- **Rate limiting:** Защита от DDoS атак
-- **CORS:** Настроенный для разрешенных доменов
+-**SSL/TLS:**TLSv1.2,
+TLSv1.3 -**HSTS:**max-age=31536000 -**CSP:**Оптимизированная для localhost и
+production -**Rate limiting:**Защита от DDoS атак -**CORS:**Настроенный для
+разрешенных доменов

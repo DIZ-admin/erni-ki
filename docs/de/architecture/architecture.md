@@ -14,19 +14,19 @@ audience: 'administrators'
 
 [TOC]
 
-> **Dokumentversion:** 12.1 **Aktualisierungsdatum:** 2025-11-23 **Status:**
+> **Dokumentversion:**12.1**Aktualisierungsdatum:**2025-11-23**Status:**
 > Production Ready (compose.yml enthält 32 Services; 5/5 Grafana Dashboards
 > provisioniert; 20 aktive Alarmregeln. LiteLLM v1.80.0.rc.1, Docling, MCP
 > Server, Apache Tika, Watchtower monitor-only. Monitoring: Prometheus v3.0.0,
-> Loki v3.0.0, Fluent Bit v3.1.0, Alertmanager v0.27.0. **Prometheus Targets:
-> 32/32 UP (100%)** )
+> Loki v3.0.0, Fluent Bit v3.1.0, Alertmanager v0.27.0.**Prometheus Targets:
+> 32/32 UP (100%)**)
 
 ## Architektur-Überblick
 
 ERNI-KI ist eine moderne Microservice-basierte AI-Plattform, die auf den
 Prinzipien der Containerisierung, Sicherheit und Skalierbarkeit aufbaut. Das
-System besteht aus **32 Microservices**: OpenWebUI v0.6.36, Ollama 0.12.11
-(GPU), LiteLLM v1.80.0.rc.1, MCP Server, Watchtower (monitor-only) und einem
+System besteht aus**32 Microservices**: OpenWebUI v0.6.36, Ollama 0.12.11 (GPU),
+LiteLLM v1.80.0.rc.1, MCP Server, Watchtower (monitor-only) und einem
 Observability-Stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0,
 Loki v3.0.0, Fluent Bit v3.1.0, 8 Exporter + RAG Exporter). Externer Zugriff
 über Cloudflare-Tunnel (5 Domains).
@@ -134,9 +134,10 @@ graph TB
 
 ### Neueste Updates (v12.0 - Oktober 2025)
 
-#### Monitoring-Update und Systemstabilisierung (02. Oktober 2025)
+### Monitoring-Update und Systemstabilisierung (02. Oktober 2025)
 
-- **Monitoring auf neueste stabile Versionen aktualisiert**:
+-**Monitoring auf neueste stabile Versionen aktualisiert**:
+
 - Prometheus v2.47.2 → v3.0.1 (+30% Performance, -14% Speicher, 132
   Alert-Regeln)
 - Loki v2.9.2 → v3.5.5 (TSDB v13, +40% Query-Geschwindigkeit, -9% Speicher)
@@ -144,34 +145,37 @@ graph TB
 - Alertmanager v0.26.0 → v0.28.0 (verbessertes UI, -9% Speicher)
 - Grafana v10.2.0 → v11.6.6 (verbesserte Performance)
 
-- **System vollständig stabilisiert**:
+-**System vollständig stabilisiert**:
+
 - 30/30 Container im Status Healthy (100% Verfügbarkeit)
 - OpenWebUI v0.6.36 mit GPU-Beschleunigung (aktualisiert 2025-11-18)
 - Ollama 0.12.11 mit optimiertem VRAM (4GB Limit)
 - LiteLLM v1.80.0.rc.1 mit erhöhtem Speicher (12GB)
 - Watchtower 1.7.1 mit selektiven Auto-Updates
 
-#### Kritische Verbesserungen (25. September 2025)
+### Kritische Verbesserungen (25. September 2025)
 
-- **Systemstabilität**: Erreicht 96,4% Gesundheitsstatus
+-**Systemstabilität**: Erreicht 96,4% Gesundheitsstatus
+
 - 26 von 30 Containern im gesunden Zustand
 - Alle kritischen Probleme behoben (nginx routing, SSL handshake, Cloudflare
   tunnels)
 - GPU-Beschleunigung für Ollama und OpenWebUI aktiv
 
-- **Neue Komponenten integriert**:
-- **LiteLLM v1.77.2**: Context Engineering Gateway mit PostgreSQL Integration
-- **MCP Server**: Model Context Protocol für erweiterte AI-Funktionen
-- **Apache Tika**: Metadaten-Extraktion für Dokumente
-- **Fluent Bit**: Zentralisierte Log-Sammlung
+-**Neue Komponenten integriert**: -**LiteLLM v1.77.2**: Context Engineering
+Gateway mit PostgreSQL Integration -**MCP Server**: Model Context Protocol für
+erweiterte AI-Funktionen -**Apache Tika**: Metadaten-Extraktion für
+Dokumente -**Fluent Bit**: Zentralisierte Log-Sammlung
 
-- **Architektur-Updates**: Neue Mermaid-Diagramme mit allen 30 Services
+-**Architektur-Updates**: Neue Mermaid-Diagramme mit allen 30 Services
+
 - Content Security Policy für localhost-Unterstützung optimiert
 - CORS-Header für Entwicklung und Production erweitert
 - SSL-Konfiguration mit ssl_verify_client off korrigiert
 - Kritische Skript-Ladefehler behoben
 
-- **SearXNG API Wiederherstellung**: Vollständige Routing-Korrektur
+-**SearXNG API Wiederherstellung**: Vollständige Routing-Korrektur
+
 - Problem mit $universal_request_id Variable behoben
 - Funktionalität des /api/searxng/search Endpunkts wiederhergestellt
 - API gibt korrekte JSON-Antworten mit Suchergebnissen zurück (31 Ergebnisse
@@ -179,53 +183,49 @@ graph TB
 - Unterstützung für 4 Suchmaschinen: Google, Bing, DuckDuckGo, Brave
 - Antwortzeit <2 Sekunden (entspricht SLA-Anforderungen)
 
-#### Vorherige Korrekturen (29. August 2025)
+### Vorherige Korrekturen (29. August 2025)
 
-- **Cloudflare-Tunnel**: DNS-Resolution-Fehler behoben
-- **System-Diagnose**: Umfassende Überprüfung von 29 Microservices
-- **Alle Services im Status "Healthy"** (15+ Container)
+-**Cloudflare-Tunnel**: DNS-Resolution-Fehler behoben -**System-Diagnose**:
+Umfassende Überprüfung von 29 Microservices -**Alle Services im Status
+"Healthy"**(15+ Container)
 
-#### Architektur-Komponenten (aktualisiert 2025-10-02)
+### Architektur-Komponenten (aktualisiert 2025-10-02)
 
 **AI & ML Services:**
 
-- **OpenWebUI v0.6.36**: Haupt-AI-Interface mit CUDA-Unterstützung, GPU runtime
-  (aktualisiert 2025-11-04)
-- **Ollama 0.12.11**: Lokaler LLM-Server mit GPU-Beschleunigung (4GB VRAM Limit)
-- **LiteLLM v1.80.0.rc.1**: Context Engineering Gateway (12GB Memory Limit)
-- **MCP Server**: Model Context Protocol für erweiterte AI-Funktionen
-- **Apache Tika**: Text- und Metadaten-Extraktion aus Dokumenten
-- **EdgeTTS**: Sprachsynthese über OpenAI Edge TTS
+-**OpenWebUI v0.6.36**: Haupt-AI-Interface mit CUDA-Unterstützung, GPU runtime
+(aktualisiert 2025-11-04) -**Ollama 0.12.11**: Lokaler LLM-Server mit
+GPU-Beschleunigung (4GB VRAM Limit) -**LiteLLM v1.80.0.rc.1**: Context
+Engineering Gateway (12GB Memory Limit) -**MCP Server**: Model Context Protocol
+für erweiterte AI-Funktionen -**Apache Tika**: Text- und Metadaten-Extraktion
+aus Dokumenten -**EdgeTTS**: Sprachsynthese über OpenAI Edge TTS
 
 **Data Layer:**
 
-- **PostgreSQL 17 + pgvector**: Vektor-Datenbank (shared: OpenWebUI + LiteLLM)
-- **Redis 7-alpine**: WebSocket-Manager, Caching, Active Defragmentation
-- **Backrest v1.9.2**: Lokale Backups (7 Tage + 4 Wochen)
+-**PostgreSQL 17 + pgvector**: Vektor-Datenbank (shared: OpenWebUI +
+LiteLLM) -**Redis 7-alpine**: WebSocket-Manager, Caching, Active
+Defragmentation -**Backrest v1.9.2**: Lokale Backups (7 Tage + 4 Wochen)
 
 **Search & Processing:**
 
-- **SearXNG**: RAG-Integration mit 6+ Suchquellen (Brave, Startpage, Bing,
-  Wikipedia)
+-**SearXNG**: RAG-Integration mit 6+ Suchquellen (Brave, Startpage, Bing,
+Wikipedia)
 
 **Gateway & Security:**
 
-- **Nginx 1.28.0**: Reverse Proxy, SSL-Terminierung, WAF-Schutz
-- **Auth Service**: JWT-Authentifizierung (Go-Service)
-- **Cloudflared 2025.9.1**: Cloudflare Zero Trust Tunnel (5 Domains)
+-**Nginx 1.28.0**: Reverse Proxy, SSL-Terminierung, WAF-Schutz -**Auth
+Service**: JWT-Authentifizierung (Go-Service) -**Cloudflared 2025.9.1**:
+Cloudflare Zero Trust Tunnel (5 Domains)
 
-#### Monitoring und Observability (aktualisiert 2025-11-23)
+### Monitoring und Observability (aktualisiert 2025-11-23)
 
-- **Prometheus v3.0.0**: Metriken-Sammlung mit 35+ Targets, 20 Alert-Regeln
-  (+30% Performance, -14% Speicher)
-- **Grafana v11.3.0**: Visualisierung und Dashboards (5 Dashboards)
-- **Loki v3.0.0**: Zentralisierte Protokollierung über Fluent Bit (TSDB v13)
-- **Fluent Bit v3.1.0**: Log-Sammlung
-- **Alertmanager v0.27.0**: Event-Benachrichtigungen
-- **8 Exporter**: node, postgres, redis, nginx, ollama, nvidia, cadvisor,
-  blackbox
-- **RAG Exporter**: SLA-Metriken für RAG (Latenz, Quellen)
-- **Watchtower 1.7.1**: monitor-only (keine Auto-Updates)
+-**Prometheus v3.0.0**: Metriken-Sammlung mit 35+ Targets, 20 Alert-Regeln (+30%
+Performance, -14% Speicher) -**Grafana v11.3.0**: Visualisierung und Dashboards
+(5 Dashboards) -**Loki v3.0.0**: Zentralisierte Protokollierung über Fluent Bit
+(TSDB v13) -**Fluent Bit v3.1.0**: Log-Sammlung -**Alertmanager v0.27.0**:
+Event-Benachrichtigungen -**8 Exporter**: node, postgres, redis, nginx, ollama,
+nvidia, cadvisor, blackbox -**RAG Exporter**: SLA-Metriken für RAG (Latenz,
+Quellen) -**Watchtower 1.7.1**: monitor-only (keine Auto-Updates)
 
 ## Architektur-Prinzipien
 
@@ -415,31 +415,31 @@ graph TB
 
 ### **Gateway Layer (Gateway)**
 
-#### Nginx Reverse Proxy
+### Nginx Reverse Proxy
 
-- **Zweck**: Einheitlicher Eingangspunkt, Load Balancing, SSL-Terminierung
-- **Ports**: 80 (HTTP), 443 (HTTPS), 8080 (Internal)
-- **Funktionen**:
+-**Zweck**: Einheitlicher Eingangspunkt, Load Balancing,
+SSL-Terminierung -**Ports**: 80 (HTTP), 443 (HTTPS), 8080
+(Internal) -**Funktionen**:
+
 - Rate Limiting (100 req/min für allgemeine Anfragen, 10 req/min für SearXNG)
 - SSL/TLS-Terminierung mit modernen Cipher Suites
 - WebSocket-Verbindungen proxying
 - Statische Datei-Bereitstellung
 - Caching von statischem Content
 
-#### Auth Service (JWT)
+### Auth Service (JWT)
 
-- **Technologie**: Go 1.24+
-- **Port**: 9090
-- **Funktionen**:
+-**Technologie**: Go 1.24+ -**Port**: 9090 -**Funktionen**:
+
 - JWT-Token-Generierung und -Validierung
 - Integration mit nginx auth_request
 - Benutzer-Session-Management
 - Rate Limiting für Authentifizierung
 
-#### Cloudflared Tunnel
+### Cloudflared Tunnel
 
-- **Zweck**: Sichere Verbindung zu Cloudflare Zero Trust
-- **Funktionen**:
+-**Zweck**: Sichere Verbindung zu Cloudflare Zero Trust -**Funktionen**:
+
 - Verschlüsselte Tunnel ohne offene Ports
 - Automatisches SSL-Zertifikat-Management
 - DDoS-Schutz auf Cloudflare-Ebene
@@ -447,12 +447,11 @@ graph TB
 
 ### **Application Layer (Anwendungen)**
 
-#### Open WebUI
+### Open WebUI
 
-- **Technologie**: Python FastAPI + Svelte
-- **Port**: 8080
-- **GPU**: NVIDIA CUDA-Unterstützung
-- **Funktionen**:
+-**Technologie**: Python FastAPI + Svelte -**Port**: 8080 -**GPU**: NVIDIA
+CUDA-Unterstützung -**Funktionen**:
+
 - Web-Interface für AI-Modelle
 - RAG (Retrieval-Augmented Generation) Suche
 - Chat- und Verlaufs-Management
@@ -460,34 +459,31 @@ graph TB
 - Dokument-Upload und -Verarbeitung
 - Sprach-Ein-/Ausgabe
 
-#### Ollama LLM Server
+### Ollama LLM Server
 
-- **Technologie**: Go + CUDA
-- **Port**: 11434
-- **GPU**: Vollständige NVIDIA GPU-Unterstützung
-- **Funktionen**:
+-**Technologie**: Go + CUDA -**Port**: 11434 -**GPU**: Vollständige NVIDIA
+GPU-Unterstützung -**Funktionen**:
+
 - Lokale Ausführung von Sprachmodellen
 - Automatisches GPU-Speicher-Management
 - OpenAI-kompatible API
 - Multi-Modell-Unterstützung
 - Streaming-Antworten
 
-#### SearXNG Search Engine
+### SearXNG Search Engine
 
-- **Technologie**: Python Flask
-- **Port**: 8080 (internal)
-- **Funktionen**:
+-**Technologie**: Python Flask -**Port**: 8080 (internal) -**Funktionen**:
+
 - Meta-Suchmaschine (Google, Bing, DuckDuckGo)
 - Private Suche ohne Tracking
 - JSON API für RAG-Integration
 - Ergebnis-Caching in Redis
 - Rate Limiting und Blockierungs-Schutz
 
-#### MCP Servers
+### MCP Servers
 
-- **Technologie**: Model Context Protocol
-- **Port**: 8000
-- **Funktionen**:
+-**Technologie**: Model Context Protocol -**Port**: 8000 -**Funktionen**:
+
 - AI-Funktionserweiterung durch Tools
 - Integration mit externen APIs
 - Code- und Befehlsausführung
@@ -495,29 +491,26 @@ graph TB
 
 ### **Processing Layer (Verarbeitung)**
 
-- **Technologie**: Python + AI-Modelle
-- **Port**: 5001
-- **Funktionen**:
+-**Technologie**: Python + AI-Modelle -**Port**: 5001 -**Funktionen**:
+
 - Textextraktion aus PDF, DOCX, PPTX
 - OCR für gescannte Dokumente
 - Strukturelle Dokumentenanalyse
 - Tabellen- und Bildunterstützung
 
-#### Apache Tika
+### Apache Tika
 
-- **Technologie**: Java
-- **Port**: 9998
-- **Funktionen**:
+-**Technologie**: Java -**Port**: 9998 -**Funktionen**:
+
 - Metadaten-Extraktion aus Dateien
 - Unterstützung für 1000+ Dateiformate
 - Dateityp-Erkennung
 - Text- und Strukturextraktion
 
-#### EdgeTTS Speech Synthesis
+### EdgeTTS Speech Synthesis
 
-- **Technologie**: Python + Microsoft Edge TTS
-- **Port**: 5050
-- **Funktionen**:
+-**Technologie**: Python + Microsoft Edge TTS -**Port**: 5050 -**Funktionen**:
+
 - Hochqualitative Sprachsynthese
 - Multi-Sprach- und Stimmen-Unterstützung
 - Streaming-Audio
@@ -525,32 +518,31 @@ graph TB
 
 ### **Data Layer (Daten)**
 
-#### PostgreSQL + pgvector
+### PostgreSQL + pgvector
 
-- **Version**: PostgreSQL 16 + pgvector Extension
-- **Port**: 5432
-- **Funktionen**:
+-**Version**: PostgreSQL 16 + pgvector Extension -**Port**:
+5432 -**Funktionen**:
+
 - Haupt-Anwendungsdatenbank
 - Vektor-Speicher für RAG
 - Volltext-Suche
 - ACID-Transaktionen
 - Replikation und Backups
 
-#### Redis Cache
+### Redis Cache
 
-- **Version**: Redis Stack (Redis + RedisInsight)
-- **Ports**: 6379 (Redis), 8001 (RedisInsight)
-- **Funktionen**:
+-**Version**: Redis Stack (Redis + RedisInsight) -**Ports**: 6379 (Redis), 8001
+(RedisInsight) -**Funktionen**:
+
 - Suchanfragen-Caching
 - Benutzer-Sessions
 - Task-Queues
 - Pub/Sub für Real-time-Benachrichtigungen
 
-#### Backrest Backup System
+### Backrest Backup System
 
-- **Technologie**: Go + Restic
-- **Port**: 9898
-- **Funktionen**:
+-**Technologie**: Go + Restic -**Port**: 9898 -**Funktionen**:
+
 - Automatische inkrementelle Backups
 - Datenverschlüsselung
 - Deduplizierung
@@ -559,9 +551,10 @@ graph TB
 
 ### **Infrastructure Layer (Infrastruktur)**
 
-#### Watchtower Auto-updater
+### Watchtower Auto-updater
 
-- **Funktionen**:
+-**Funktionen**:
+
 - Automatische Docker-Image-Updates
 - Überwachung neuer Versionen
 - Graceful Service-Neustarts
@@ -587,31 +580,30 @@ graph TB
 
 ### Docker Networks
 
-- **erni-ki_default**: Haupt-Netzwerk für alle Services
-- **Isolation**: Jeder Service nur über Container-Namen erreichbar
-- **DNS**: Automatische Namensauflösung über Docker DNS
+-**erni-ki_default**: Haupt-Netzwerk für alle Services -**Isolation**: Jeder
+Service nur über Container-Namen erreichbar -**DNS**: Automatische
+Namensauflösung über Docker DNS
 
 ## Datenflüsse
 
 ### Benutzeranfrage
 
-1. **Browser** → **Cloudflare** → **Cloudflared** → **Nginx**
-2. **Nginx** → **Auth Service** (JWT-Validierung)
-3. **Nginx** → **Open WebUI** (Haupt-Interface)
-4. **Open WebUI** → **Ollama** (Antwort-Generierung)
-5. **Open WebUI** → **PostgreSQL** (Verlaufs-Speicherung)
+1.**Browser**→**Cloudflare**→**Cloudflared**→**Nginx**2.**Nginx**→**Auth
+Service**(JWT-Validierung) 3.**Nginx**→**Open WebUI**(Haupt-Interface) 4.**Open
+WebUI**→**Ollama**(Antwort-Generierung) 5.**Open
+WebUI**→**PostgreSQL**(Verlaufs-Speicherung)
 
 ### RAG-Suche
 
-1. **Open WebUI** → **SearXNG** (Informationssuche)
-2. **SearXNG** → **Redis** (Ergebnis-Caching)
-3. **Open WebUI** → **PostgreSQL/pgvector** (Vektor-Suche)
-4. **Open WebUI** → **Ollama** (Generierung mit Kontext)
+1.**Open
+WebUI**→**SearXNG**(Informationssuche) 2.**SearXNG**→**Redis**(Ergebnis-Caching) 3.**Open
+WebUI**→**PostgreSQL/pgvector**(Vektor-Suche) 4.**Open
+WebUI**→**Ollama**(Generierung mit Kontext)
 
 ### Dokumentenverarbeitung
 
-1. **Open WebUI** → **PostgreSQL/pgvector** (Vektor-Speicherung)
-2. **Open WebUI** → **Ollama** (Inhalts-Analyse)
+1.**Open WebUI**→**PostgreSQL/pgvector**(Vektor-Speicherung) 2.**Open
+WebUI**→**Ollama**(Inhalts-Analyse)
 
 ## Monitoring und Observability
 
@@ -675,5 +667,5 @@ graph TB
 
 ---
 
-** Hinweis**: Diese Architektur ist für den Produktionseinsatz optimiert mit
+**Hinweis**: Diese Architektur ist für den Produktionseinsatz optimiert mit
 Fokus auf Sicherheit, Performance und Zuverlässigkeit.

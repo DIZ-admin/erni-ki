@@ -7,7 +7,7 @@ last_updated: '2025-11-25'
 
 # Aktualisierungsplan Dokumentation ERNI-KI (2025-11-24)
 
-**Basis:** `../../archive/audits/code-audit-2025-11-24.md` **Status:** Ready for
+**Basis:**`../../archive/audits/code-audit-2025-11-24.md`**Status:**Ready for
 implementation
 
 ## Kurzfassung
@@ -24,8 +24,7 @@ Aufwand: 12–16 Stunden.
 
 ### Task 1.1 Auth Service – API-Doku hinzufügen
 
-**Priorität:** · **Zeit:** 2–3h · **Datei:**
-`docs/ru/reference/api/auth-service.md`
+**Priorität:**·**Zeit:**2–3h ·**Datei:**`docs/ru/reference/api/auth-service.md`
 
 Inhalt (Auszug):
 

@@ -108,7 +108,9 @@ class LinkFixer:
         # If source is in /en/ or /de/ and target is also /en/ or /de/,
         # check if Russian version exists
         source_rel = str(source_file.relative_to(DOCS_DIR))
-        if ("/en/" in source_rel or "/de/" in source_rel) and ("../en/" in broken_path or "../de/" in broken_path):
+        if ("/en/" in source_rel or "/de/" in source_rel) and (
+            "../en/" in broken_path or "../de/" in broken_path
+        ):
             # Try to find Russian version by replacing /en/ or /de/ with /operations/
             russian_path = broken_path.replace("../en/", "../").replace("../de/", "../")
             russian_target = (source_file.parent / russian_path).resolve()
@@ -151,7 +153,7 @@ class LinkFixer:
                 # Count common path parts
                 source_parts = Path(source_rel).parts
                 match_parts = Path(match_rel).parts
-                for s, m in zip(source_parts, match_parts):
+                for s, m in zip(source_parts, match_parts, strict=False):
                     if s == m:
                         score += 1
                     else:
@@ -161,8 +163,13 @@ class LinkFixer:
 
             # Sort by score (highest first)
             scored_matches.sort(key=lambda x: x[0], reverse=True)
-            logger.debug("Found %d matches for %s, using best: %s (score: %d)",
-                        len(matches), filename, scored_matches[0][1], scored_matches[0][0])
+            logger.debug(
+                "Found %d matches for %s, using best: %s (score: %d)",
+                len(matches),
+                filename,
+                scored_matches[0][1],
+                scored_matches[0][0],
+            )
             return scored_matches[0][1]
 
         return None
@@ -325,7 +332,9 @@ TODO: Add links to related documentation
 def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Fix broken links in ERNI-KI documentation")
-    parser.add_argument("--dry-run", action="store_true", help="Show what would be done without making changes")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Show what would be done without making changes"
+    )
     parser.add_argument("--report", type=str, help="Save report to file")
 
     args = parser.parse_args()

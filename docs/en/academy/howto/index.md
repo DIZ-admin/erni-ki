@@ -13,19 +13,17 @@ checklists so non-Russian speakers can still benefit from the playbook.
 
 The scenarios currently covered are:
 
-- **Customer email** – gather facts, pick the right tone, and deliver clear next
-  steps.
-- **Meeting summary** – condense transcripts or chat logs into actionable notes
-  and owner lists.
-- **JIRA ticket creation** – turn semi-structured requirements into ready-to-
-  triage issues.
+-**Customer email**– gather facts, pick the right tone, and deliver clear next
+steps. -**Meeting summary**– condense transcripts or chat logs into actionable
+notes and owner lists. -**JIRA ticket creation**– turn semi-structured
+requirements into ready-to- triage issues.
 
 Each guide includes:
 
-1. **Preparation checklist** – what context to collect before prompting.
-2. **Prompt template** – copy-and-paste friendly structure referencing the
-   collected facts.
-3. **Quality gate** – quick QA to ensure the AI output meets expectations.
+1.**Preparation checklist**– what context to collect before
+prompting. 2.**Prompt template**– copy-and-paste friendly structure referencing
+the collected facts. 3.**Quality gate**– quick QA to ensure the AI output meets
+expectations.
 
 - [Write a customer email](write-customer-email.md)
 - [Summarize meeting notes](summarize-meeting-notes.md)

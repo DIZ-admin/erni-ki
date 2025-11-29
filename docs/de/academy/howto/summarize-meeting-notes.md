@@ -42,15 +42,15 @@ Format: Aufzählungspunkte + kurze Einleitung mit Datum. Füge keine neuen Fakte
 
 ## Prompt-Beispiele
 
-- **Gut:**
-  - "Du bist ein Business-Analyst. Aufgabe: Erstelle ein Protokoll eines
-    30-minütigen Meetings. Kontext: Wir haben den Pilot-Start besprochen,
-    Entscheidungen über Daten und Verantwortliche getroffen. Format:
-    Zusammenfassung (3 Punkte), Entscheidungen, Risiken, Nächste Schritte (mit
-    Daten). Hier sind die Notizen: <Text einfügen>."
-- **Schlecht:**
-  - "Mach es kurz" (nicht angegeben, was hervorgehoben werden soll und welches
-    Format benötigt wird)
+-**Gut:**
+
+- "Du bist ein Business-Analyst. Aufgabe: Erstelle ein Protokoll eines
+  30-minütigen Meetings. Kontext: Wir haben den Pilot-Start besprochen,
+  Entscheidungen über Daten und Verantwortliche getroffen. Format:
+  Zusammenfassung (3 Punkte), Entscheidungen, Risiken, Nächste Schritte (mit
+  Daten). Hier sind die Notizen: <Text einfügen>." -**Schlecht:**
+- "Mach es kurz" (nicht angegeben, was hervorgehoben werden soll und welches
+  Format benötigt wird)
 
 ## Checkliste vor dem Versand
 

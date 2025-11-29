@@ -26,27 +26,24 @@ doc_version: '2025.11'
 
 ### 2. Ключевые проблемы
 
-1. **LiteLLM auth flood** (`docker compose logs litellm --since 10m`): каждую
-   минуту падает `ProxyException` из `user_api_key_auth`. Источник `172.18.0.1`
-   (OpenWebUI или internal scheduler) опрашивает
-   `/schedule/model_cost_map_reload/status` без токена → HTTP 400 и ERROR-логи.
-   Требуется либо выдать валидный `X-API-KEY`, либо отключить cron/endpoint.
-2. **Exporter health coverage**: перечисленные выше контейнеры не имеют
-   `healthcheck`, но входят в список критических экспортёров. Рекомендуется
-   добавить curl/wget проверки, иначе health monitor всегда WARN и Watchtower не
-   сможет отследить сбои.
-3. **Postgres exporter config warning**: при старте появляется
-   `Error opening config file "postgres_exporter.yml"`. Сейчас используется
-   только DSN, поэтому стоит передать `--config.file=/dev/null` или смонтировать
-   пустой конфиг, чтобы убрать WARN.
-4. **Логовый шум → Alert fatigue**: health-monitor FAIL обусловлен большим
-   количеством ошибок от LiteLLM и предупреждений экспортера. Пока шум не
-   устранён, проверка всегда возвращает non-zero и CI/cron воспримут это как
-   инцидент.
-5. **Диск 78% (346 ГБ из 468 ГБ)** — пока ниже порога 80%, но нужно
-   контролировать рост `./data` и Docker volumes после обновлений моделей. План:
-   автоматизировать `prune` или расширить storage alert c 75% WARN / 85% CRIT.
-6. **Security best practices**:
+1.**LiteLLM auth flood**(`docker compose logs litellm --since 10m`): каждую
+минуту падает `ProxyException` из `user_api_key_auth`. Источник `172.18.0.1`
+(OpenWebUI или internal scheduler) опрашивает
+`/schedule/model_cost_map_reload/status` без токена → HTTP 400 и ERROR-логи.
+Требуется либо выдать валидный `X-API-KEY`, либо отключить
+cron/endpoint. 2.**Exporter health coverage**: перечисленные выше контейнеры не
+имеют `healthcheck`, но входят в список критических экспортёров. Рекомендуется
+добавить curl/wget проверки, иначе health monitor всегда WARN и Watchtower не
+сможет отследить сбои. 3.**Postgres exporter config warning**: при старте
+появляется `Error opening config file "postgres_exporter.yml"`. Сейчас
+используется только DSN, поэтому стоит передать `--config.file=/dev/null` или
+смонтировать пустой конфиг, чтобы убрать WARN. 4.**Логовый шум → Alert
+fatigue**: health-monitor FAIL обусловлен большим количеством ошибок от LiteLLM
+и предупреждений экспортера. Пока шум не устранён, проверка всегда возвращает
+non-zero и CI/cron воспримут это как инцидент. 5.**Диск 78% (346 ГБ из
+468 ГБ)**— пока ниже порога 80%, но нужно контролировать рост `./data` и Docker
+volumes после обновлений моделей. План: автоматизировать `prune` или расширить
+storage alert c 75% WARN / 85% CRIT. 6.**Security best practices**:
 
 - `litellm` опубликован на `0.0.0.0:4000` без TLS/Ingress, только health-check и
   WebAuth. Рекомендуется ограничить доступ (localhost/nginx) или включить TLS из
@@ -68,24 +65,21 @@ doc_version: '2025.11'
 
 ### 4. Рекомендации
 
-1. **Ввести healthcheck** для fluent-bit, nginx-exporter, nvidia-exporter,
-   ollama-exporter, postgres-exporter-proxy, redis-exporter (простая `wget`/`nc`
-   проверка). Это снимет системный WARN.
-2. **Нормализовать LiteLLM cron**: либо изменить
-   `/schedule/model_cost_map_reload/...` вызовы на авторизованные, либо
-   отключить scheduler, если не используется. До исправления добавить log
-   sampling, чтобы не перегружать Fluent Bit.
-3. **Убрать postgres-exporter warning**: явный
-   `--config.file=/app/config/postgres_exporter.yml` (пусть будет пустой) или
-   `--config.file=/dev/null`.
-4. **Настроить лог-политику health-monitor**: добавить фильтр “известных” ошибок
-   (LiteLLM ProxyException) либо снизить окно анализа, чтобы FAIL означал
-   реальные инциденты.
-5. **Security hardening**: ограничить доступ к `4000/tcp` (Docker network only
-   или через Nginx/TLS). Watchtower — оставить только monitor mode либо
-   полностью отключить для прод-контейнеров.
-6. **Storage план**: добавить cron `docker system prune` / очистку
-   `./data/openwebui` от старых моделей, поднять алерт до 75% WARN/85% CRIT.
+1.**Ввести healthcheck**для fluent-bit, nginx-exporter, nvidia-exporter,
+ollama-exporter, postgres-exporter-proxy, redis-exporter (простая `wget`/`nc`
+проверка). Это снимет системный WARN. 2.**Нормализовать LiteLLM cron**: либо
+изменить `/schedule/model_cost_map_reload/...` вызовы на авторизованные, либо
+отключить scheduler, если не используется. До исправления добавить log sampling,
+чтобы не перегружать Fluent Bit. 3.**Убрать postgres-exporter warning**: явный
+`--config.file=/app/config/postgres_exporter.yml` (пусть будет пустой) или
+`--config.file=/dev/null`. 4.**Настроить лог-политику health-monitor**: добавить
+фильтр “известных” ошибок (LiteLLM ProxyException) либо снизить окно анализа,
+чтобы FAIL означал реальные инциденты. 5.**Security hardening**: ограничить
+доступ к `4000/tcp` (Docker network only или через Nginx/TLS). Watchtower —
+оставить только monitor mode либо полностью отключить для
+прод-контейнеров. 6.**Storage план**: добавить cron `docker system prune` /
+очистку `./data/openwebui` от старых моделей, поднять алерт до 75% WARN/85%
+CRIT.
 
 ### 5. Следующие шаги
 
