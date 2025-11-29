@@ -268,7 +268,7 @@ audit_configuration() {
     if [ -z "$COMPOSE_VERSION" ]; then
         warning "Docker Compose version not specified"
         add_issue "CONFIG" "LOW" "Missing Compose version" "Docker Compose file version not specified" "Add version: '3.8' at the beginning of file"
-    elif [[ "$COMPOSE_VERSION" < "3.7" ]]; then
+    elif awk -v ver="$COMPOSE_VERSION" 'BEGIN {exit !(ver < 3.7)}'; then
         warning "Outdated Docker Compose version: $COMPOSE_VERSION"
         add_issue "CONFIG" "MEDIUM" "Outdated Compose version" "Using version $COMPOSE_VERSION" "Update to version 3.8 or higher"
     fi
