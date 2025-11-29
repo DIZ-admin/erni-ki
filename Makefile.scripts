@@ -48,9 +48,12 @@ test-python:
 
 test-integration:
 	@echo "Running integration tests..."
-	@echo "⚠️  Integration tests require Docker Compose stack to be running"
-	@bash tests/integration/test-redis-connections.sh || true
-	@bash tests/integration/test-admin-models-display.sh || true
+	@if ! docker compose ps >/dev/null 2>&1; then \
+		echo "⚠️  Skipping: Docker Compose stack not running"; \
+		exit 0; \
+	fi
+	@bash tests/integration/test-redis-connections.sh
+	@bash tests/integration/test-admin-models-display.sh
 
 # =============================================================================
 # Linting
