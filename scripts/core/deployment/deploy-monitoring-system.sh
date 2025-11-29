@@ -17,19 +17,15 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 LOG_FILE="/tmp/erni-ki-monitoring-deployment.log"
 
 # Logging functions
-$message${NC}"
     echo "$message" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-$message${NC}"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-$message${NC}"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-$message${NC}"
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1" >> "$LOG_FILE" 2>/dev/null || true
 }
 
