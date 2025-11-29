@@ -13,9 +13,9 @@ Core operational documentation and runbooks for ERNI-KI.
 
 - [Overview](README.md)
 - [Operations Handbook](operations-handbook.md)
-- [Admin Guide](../../../de/operations/core/admin-guide.md)
-- [Status Page](../../../de/operations/core/status-page.md)
-- [Runbooks Summary](../../../de/operations/core/runbooks-summary.md)
+- [Admin Guide](admin-guide.md)
+- [Status Page](status-page.md)
+- [Runbooks Summary](runbooks-summary.md)
 
 ## Note
 

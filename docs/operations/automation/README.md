@@ -4,7 +4,7 @@ doc_version: '2025.11'
 translation_status: pending
 ---
 
-# russische Version
+# Русская версия
 
 > **This is a placeholder document.**
 >
