@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 ALERTMANAGER_URL=${ALERTMANAGER_URL:-http://localhost:9093}
 SEVERITY=${1:-critical}
 OWNER=${2:-ops}
