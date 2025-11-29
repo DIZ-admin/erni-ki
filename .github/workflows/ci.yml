@@ -232,20 +232,8 @@ jobs:
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
-          skip-db-update: true
-          skip-java-db-update: true
-          skip-version-check: true
-          skip-dirs: |
-            node_modules
-            tests/node_modules
-            playwright-artifacts
-            playwright-report
-            coverage
-            site
-            docs
-          skip-files: |
-            package-lock.json
-            package.json
+          skip-dirs: "node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs"
+          skip-files: "package-lock.json,package.json"
           exit-code: "0"
 
       - name: 📤 Upload Trivy results
@@ -442,9 +430,6 @@ jobs:
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
-          skip-db-update: true
-          skip-java-db-update: true
-          skip-version-check: true
           exit-code: "0"
 
       - name: 📤 Upload Docker Trivy results
