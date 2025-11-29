@@ -23,6 +23,15 @@ logging.basicConfig(
 
 
 def read_secret(secret_name: str) -> str | None:
+    """
+    Locate and read a secret value by name from common secret file locations.
+    
+    Parameters:
+        secret_name (str): Name of the secret to locate. The function checks, in order, /run/secrets/{secret_name} and the project-relative secrets/{secret_name}.txt file.
+    
+    Returns:
+        str | None: Secret contents with surrounding whitespace removed if found; otherwise `None`.
+    """
     secret_paths = [
         f"/run/secrets/{secret_name}",
         os.path.join(os.path.dirname(__file__), "..", "..", "..", "secrets", f"{secret_name}.txt"),
@@ -35,7 +44,13 @@ def read_secret(secret_name: str) -> str | None:
 
 
 def get_database_connection() -> psycopg2.extensions.connection | None:
-    """Get PostgreSQL connection"""
+    """
+    Create and return a PostgreSQL database connection using configuration from environment variables or secrets.
+    
+    Builds the connection from DATABASE_URL if set; otherwise constructs a URL from OPENWEBUI_DB_USER, OPENWEBUI_DB_NAME, OPENWEBUI_DB_HOST, OPENWEBUI_DB_PORT and the `postgres_password` secret. Returns None if required configuration or secrets are missing or if the connection attempt fails.
+    Returns:
+        psycopg2.extensions.connection | None: A live PostgreSQL connection on success, `None` on failure.
+    """
     database_url = os.environ.get("DATABASE_URL")
     if not database_url:
         db_user = os.environ.get("OPENWEBUI_DB_USER", "openwebui_user")
@@ -59,7 +74,21 @@ def get_database_connection() -> psycopg2.extensions.connection | None:
 
 
 def get_ollama_models() -> list[dict[str, Any]]:
-    """Fetch models from Ollama"""
+    """
+    Retrieve available model entries from the Ollama service.
+    
+    Each returned item is a dictionary with the following keys:
+    - `id`: model identifier (string)
+    - `name`: model name (string)
+    - `provider`: the literal string `"ollama"`
+    - `base_model_id`: base model identifier (string)
+    - `size`: model size (numeric, 0 if unavailable)
+    - `details`: additional metadata (dict)
+    - `modified_at`: ISO-formatted timestamp string
+    
+    Returns:
+        list[dict[str, Any]]: A list of model dictionaries; returns an empty list on HTTP errors, timeouts, or other request failures.
+    """
     try:
         response = requests.get("http://ollama:11434/api/tags", timeout=10)
         if response.status_code == 200:
@@ -90,7 +119,21 @@ def get_ollama_models() -> list[dict[str, Any]]:
 
 
 def get_litellm_models() -> list[dict[str, Any]]:
-    """Fetch models from LiteLLM"""
+    """
+    Retrieve available models from a local LiteLLM instance.
+    
+    Queries the LiteLLM models endpoint and returns a list of model descriptor dictionaries.
+    
+    Returns:
+        list[dict[str, Any]]: A list of model dictionaries. Each dictionary contains:
+            - `id`: model identifier (str)
+            - `name`: display name for the model (str)
+            - `provider`: provider identifier, always `"litellm"` (str)
+            - `base_model_id`: identifier used to match existing models (str)
+            - `size`: numeric size placeholder (int, set to 0 since LiteLLM does not provide size)
+            - `details`: vendor-provided metadata (dict), includes at least an `"object"` key
+            - `modified_at`: ISO-8601 timestamp string representing when the local entry was created/updated
+    """
     api_key = os.environ.get("LITELLM_API_KEY") or read_secret("litellm_api_key")
     if not api_key:
         logger.error("LITELLM_API_KEY not set (env or secret)")
@@ -127,7 +170,18 @@ def get_litellm_models() -> list[dict[str, Any]]:
 
 
 def sync_models_to_database(models: list[dict[str, Any]]) -> bool:
-    """Sync models into database"""
+    """
+    Synchronize the provided model metadata into the OpenWebUI PostgreSQL database.
+    
+    Inserts a new record for each model whose `base_model_id` is not present in the database and updates the `params` and `updated_at` for models that already exist. The function reads the admin user ID from the `OPENWEBUI_ADMIN_USER_ID` environment variable or the `openwebui_admin_user_id` secret to set the `user_id` for new rows. Database changes are committed on success; on failure the transaction is rolled back.
+    
+    Parameters:
+        models (list[dict[str, Any]]): A list of model dictionaries. Each dictionary must include at least the keys
+            `base_model_id`, `name`, `provider`, `size`, and `details`.
+    
+    Returns:
+        bool: `True` if the sync completed and changes were committed, `False` otherwise.
+    """
     conn = get_database_connection()
     if not conn:
         return False
@@ -229,7 +283,14 @@ def sync_models_to_database(models: list[dict[str, Any]]) -> bool:
 
 
 def main() -> int:
-    """Entry point"""
+    """
+    Orchestrates fetching models from providers and syncing them into the OpenWebUI database.
+    
+    Retrieves model lists from Ollama and LiteLLM, merges them, and attempts to persist them to the database. Logs progress and reasons for early termination (e.g., no models found or sync failure).
+    
+    Returns:
+        int: Exit code where `0` indicates a successful sync, and `1` indicates failure or that no models were found.
+    """
     logger.info("Starting ERNI-KI Model Synchronization")
 
     # Fetch models from providers
