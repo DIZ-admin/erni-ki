@@ -12,7 +12,8 @@ Core operational documentation and runbooks for ERNI-KI.
 ## Available Documentation
 
 - [Overview](README.md) - Project overview
-- [Operations Handbook](operations-handbook.md) - Standard operational procedures
+- [Operations Handbook](operations-handbook.md) - Standard operational
+  procedures
 
 ## Note
 
