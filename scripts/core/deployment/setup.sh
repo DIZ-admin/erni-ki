@@ -13,7 +13,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 
 # Logging helpers
 [$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
-✅ $1${NC}"; }
 ⚠️  $1${NC}"; }
 ❌ $1${NC}"; exit 1; }
 
