@@ -124,8 +124,9 @@ def log_to_file(logger: logging.Logger, file_path: str | Path) -> None:
         logger: Logger instance to add file handler to
         file_path: Path to log file (string or Path object)
 
-    Raises:
-        OSError: If unable to create log file or parent directories
+    Note:
+        Errors creating log file or parent directories are logged but not raised.
+        This prevents logging failures from crashing the application.
     """
     file_path_obj = Path(file_path)
 
