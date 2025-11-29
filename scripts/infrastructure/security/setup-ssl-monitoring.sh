@@ -13,16 +13,7 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 # Colors for output
 
 # Functions for logging
-[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"
-}
 
-[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"
-}
-
-[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"
-}
-
-[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"
     exit 1
 }
 

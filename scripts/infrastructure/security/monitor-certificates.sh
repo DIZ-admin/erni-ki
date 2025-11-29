@@ -12,9 +12,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 
 CYAN='\033[0;36m'
 
-[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"; }
-[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"; }
-[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"; }
 error_msg(){ echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"; }
 
 DOMAIN="ki.erni-gruppe.ch"
