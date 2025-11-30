@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 ROOT="${DOC_SHARED_ROOT:-$(cd -- "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/data/docling/shared}"
 MODE="dry-run"
 
@@ -8,10 +13,6 @@ if [[ "${1:-}" == "--apply" ]]; then
   MODE="apply"
   shift
 fi
-
-log() {
-  printf '[%s] %s\n' "$(date -Iseconds)" "$*"
-}
 
 OWNER="${DOC_SHARED_OWNER:-}"
 GROUP="${DOC_SHARED_GROUP:-}"
@@ -33,7 +34,7 @@ use_sudo() {
   fi
 
   if [[ "$SUDO_MODE" == "noninteractive" ]]; then
-    log "ERROR: sudo -n $* failed (configure passwordless sudo via scripts/maintenance/render-docling-cleanup-sudoers.sh or set DOC_SHARED_USE_SUDO=false)."
+    log_info "ERROR: sudo -n $* failed (configure passwordless sudo via scripts/maintenance/render-docling-cleanup-sudoers.sh or set DOC_SHARED_USE_SUDO=false)."
   fi
   return 1
 }
@@ -49,9 +50,9 @@ ensure_dir() {
   if mkdir -p "$dir" >/dev/null 2>&1; then
     :
   elif use_sudo mkdir -p "$dir"; then
-    log "Created $dir via sudo"
+    log_info "Created $dir via sudo"
   else
-    log "ERROR: cannot create $dir (permission denied)"
+    log_info "ERROR: cannot create $dir (permission denied)"
     exit 1
   fi
 
@@ -70,12 +71,12 @@ ensure_perms() {
       if use_sudo chown "$target" "$dir"; then
         :
       else
-        log "WARN: cannot chown $dir to $target"
+        log_info "WARN: cannot chown $dir to $target"
       fi
     fi
   fi
 
-  chmod "$PERMS" "$dir" >/dev/null 2>&1 || log "WARN: cannot chmod $PERMS on $dir"
+  chmod "$PERMS" "$dir" >/dev/null 2>&1 || log_info "WARN: cannot chmod $PERMS on $dir"
 }
 
 cleanup_bucket() {
@@ -85,7 +86,7 @@ cleanup_bucket() {
 
   [[ -d "$path" ]] || return 0
 
-  log "Checking $label ($path), retention ${days}d, mode=${MODE}"
+  log_info "Checking $label ($path), retention ${days}d, mode=${MODE}"
 
   if [[ "$MODE" == "apply" ]]; then
     find "$path" -type f -mtime +"$days" -print -delete
@@ -124,8 +125,8 @@ MAX_GB="${DOC_SHARED_MAX_SIZE_GB:-20}"
 if [[ "$TOTAL_GB" != "unknown" ]]; then
   exceed=$(awk -v total="$TOTAL_GB" -v max="$MAX_GB" 'BEGIN {print (total > max) ? 1 : 0}')
   if [[ "$exceed" -eq 1 ]]; then
-    log "WARNING: shared volume size ${TOTAL_GB}GB exceeds soft limit ${MAX_GB}GB"
+    log_info "WARNING: shared volume size ${TOTAL_GB}GB exceeds soft limit ${MAX_GB}GB"
   fi
 else
-  log "WARNING: unable to determine shared volume size (du failed)"
+  log_info "WARNING: unable to determine shared volume size (du failed)"
 fi

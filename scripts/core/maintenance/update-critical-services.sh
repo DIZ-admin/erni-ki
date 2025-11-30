@@ -169,15 +169,35 @@ create_backup() {
 
 run_health_check() {
   local service="$1"
-  local cmd="${SERVICE_HEALTHCHECKS[$service]:-}"
+  local cmd=()
 
-  if [[ -z "$cmd" ]]; then
-    log "Health-check for $service not defined, skipping."
-    return 0
-  fi
+  case "$service" in
+    ollama)
+      cmd=(curl -fsS http://localhost:11434/api/tags)
+      ;;
+    openwebui)
+      cmd=(curl -fsS http://localhost:8080/health)
+      ;;
+    litellm)
+      cmd=(curl -fsS http://localhost:4000/health/liveliness)
+      ;;
+    nginx)
+      cmd=(curl -fsS http://localhost/health)
+      ;;
+    db)
+      cmd=(docker compose exec -T db pg_isready -U postgres)
+      ;;
+    redis)
+      cmd=(docker compose exec -T redis redis-cli ping)
+      ;;
+    *)
+      log "Health-check for $service not defined, skipping."
+      return 0
+      ;;
+  esac
 
   log "Checking health of $service..."
-  if (cd "$PROJECT_ROOT" && eval "$cmd"); then
+  if (cd "$PROJECT_ROOT" && "${cmd[@]}" >/dev/null); then
     success "$service is healthy"
     return 0
   else

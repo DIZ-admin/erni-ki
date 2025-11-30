@@ -5,30 +5,16 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 # Functions for logging
-log() {
-    echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}"
-}
 
-success() {
-    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}"
-}
 
-warning() {
-    echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"
-}
-
-error() {
-    echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"
-    exit 1
-}
 
 # Configuration
 PROJECT_DIR="$(pwd)"
@@ -38,13 +24,13 @@ TIMER_NAME="erni-ki-ssl-monitor"
 
 # Check access permissions
 check_permissions() {
-    log "Checking access permissions..."
+    log_info "Checking access permissions..."
 
     if [ "$EUID" -eq 0 ]; then
-        log "Starting as root, creating system timer"
+        log_info "Starting as root, creating system timer"
         SYSTEMD_DIR="/etc/systemd/system"
     else
-        log "Starting as user, creating user timer"
+        log_info "Starting as user, creating user timer"
         SYSTEMD_DIR="$HOME/.config/systemd/user"
         mkdir -p "$SYSTEMD_DIR"
     fi
@@ -52,7 +38,7 @@ check_permissions() {
 
 # Creating systemd service
 create_systemd_service() {
-    log "Creating systemd service..."
+    log_info "Creating systemd service..."
 
     local service_file="$SYSTEMD_DIR/$SERVICE_NAME.service"
 
@@ -101,12 +87,12 @@ WantedBy=default.target
 EOF
     fi
 
-    success "Systemd service created: $service_file"
+    log_success "Systemd service created: $service_file"
 }
 
 # Creating systemd timer
 create_systemd_timer() {
-    log "Creating systemd timer..."
+    log_info "Creating systemd timer..."
 
     local timer_file="$SYSTEMD_DIR/$TIMER_NAME.timer"
 
@@ -129,12 +115,12 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
-    success "Systemd timer created: $timer_file"
+    log_success "Systemd timer created: $timer_file"
 }
 
 # Setup systemd monitoring
 setup_systemd_monitoring() {
-    log "Setting up systemd monitoring..."
+    log_info "Setting up systemd monitoring..."
 
     check_permissions
     create_systemd_service
@@ -146,27 +132,27 @@ setup_systemd_monitoring() {
         systemctl enable "$TIMER_NAME.timer"
         systemctl start "$TIMER_NAME.timer"
 
-        log "Checking timer status:"
+        log_info "Checking timer status:"
         systemctl status "$TIMER_NAME.timer" --no-pager || true
     else
         systemctl --user daemon-reload
         systemctl --user enable "$TIMER_NAME.timer"
         systemctl --user start "$TIMER_NAME.timer"
 
-        log "Checking timer status:"
+        log_info "Checking timer status:"
         systemctl --user status "$TIMER_NAME.timer" --no-pager || true
     fi
 
-    success "Systemd monitoring configured"
+    log_success "Systemd monitoring configured"
 }
 
 # Creating cron job (alternative)
 setup_cron_monitoring() {
-    log "Setting up cron monitoring..."
+    log_info "Setting up cron monitoring..."
 
     # Check existing cron jobs
     if crontab -l 2>/dev/null | grep -q "monitor-certificates.sh"; then
-        warning "Cron job already exists"
+        log_warn "Cron job already exists"
         return 0
     fi
 
@@ -176,16 +162,16 @@ setup_cron_monitoring() {
     # Adding to existing crontab
     (crontab -l 2>/dev/null; echo "$cron_entry") | crontab -
 
-    success "Cron job created: $cron_entry"
+    log_success "Cron job created: $cron_entry"
 
     # Show current crontab
-    log "Current cron jobs:"
+    log_info "Current cron jobs:"
     crontab -l | grep -E "(monitor-certificates|acme)" || echo "No related cron jobs found"
 }
 
 # Creating script for manual execution
 create_manual_script() {
-    log "Creating script for manual execution..."
+    log_info "Creating script for manual execution..."
 
     local manual_script="$PROJECT_DIR/scripts/ssl/check-ssl-now.sh"
 
@@ -198,12 +184,12 @@ cd "$(dirname "$0")/../.."
 EOF
 
     chmod +x "$manual_script"
-    success "Script for manual execution created: $manual_script"
+    log_success "Script for manual execution created: $manual_script"
 }
 
 # Creating configuration file
 create_config_file() {
-    log "Creating configuration file..."
+    log_info "Creating configuration file..."
 
     local config_file="$PROJECT_DIR/conf/ssl/monitoring.conf"
     mkdir -p "$(dirname "$config_file")"
@@ -239,29 +225,29 @@ AUTO_RENEW_DAYS_BEFORE=7
 # CF_Key=your_cloudflare_global_api_key_here
 EOF
 
-    success "Configuration file created: $config_file"
+    log_success "Configuration file created: $config_file"
 }
 
 # Testing monitoring
 test_monitoring() {
-    log "Testing monitoring..."
+    log_info "Testing monitoring..."
 
     if [ -x "$MONITOR_SCRIPT" ]; then
-        log "Starting test check..."
+        log_info "Starting test check..."
         "$MONITOR_SCRIPT" check
-        success "Test check completed"
+        log_success "Test check completed"
     else
-        error "Monitoring script not found or not executable: $MONITOR_SCRIPT"
+        log_error "Monitoring script not found or not executable: $MONITOR_SCRIPT"
     fi
 }
 
 # Show usage instructions
 show_usage_instructions() {
     echo ""
-    log "=== USAGE INSTRUCTIONS ==="
+    log_info "=== USAGE INSTRUCTIONS ==="
     echo ""
 
-    log "Commands for managing monitoring:"
+    log_info "Commands for managing monitoring:"
     echo "• Manual check: ./scripts/infrastructure/security/monitor-certificates.sh check"
     echo "• Forced renewal: ./scripts/infrastructure/security/monitor-certificates.sh renew"
     echo "• Generate report: ./scripts/infrastructure/security/monitor-certificates.sh report"
@@ -269,7 +255,7 @@ show_usage_instructions() {
     echo ""
 
     if command -v systemctl >/dev/null 2>&1; then
-        log "Systemd commands:"
+        log_info "Systemd commands:"
         if [ "$EUID" -eq 0 ]; then
             echo "• Timer status: systemctl status $TIMER_NAME.timer"
             echo "• Stop timer: systemctl stop $TIMER_NAME.timer"
@@ -284,13 +270,13 @@ show_usage_instructions() {
     fi
     echo ""
 
-    log "Configuration files:"
+    log_info "Configuration files:"
     echo "• Monitoring configuration: conf/ssl/monitoring.conf"
     echo "• Monitoring logs: logs/ssl-monitor.log"
     echo "• Reports: logs/ssl-report-*.txt"
     echo ""
 
-    log "Setup notifications:"
+    log_info "Setup notifications:"
     echo "• Edit conf/ssl/monitoring.conf"
     echo "• Add SSL_WEBHOOK_URL for Slack/Discord notifications"
     echo "• Configure CF_Token for automatic renewal"
@@ -309,12 +295,12 @@ main() {
 
     # Ensure script runs from project root
     if [ ! -f "compose.yml" ] && [ ! -f "compose.yml.example" ]; then
-        error "Run this script from the ERNI-KI repository root"
+        log_error "Run this script from the ERNI-KI repository root"
     fi
 
     # Ensure monitoring script exists
     if [ ! -f "$MONITOR_SCRIPT" ]; then
-        error "Monitoring script not found: $MONITOR_SCRIPT"
+        log_error "Monitoring script not found: $MONITOR_SCRIPT"
     fi
 
     case "$method" in
@@ -322,7 +308,7 @@ main() {
             if command -v systemctl >/dev/null 2>&1; then
                 setup_systemd_monitoring
             else
-                warning "systemd not available, falling back to cron"
+                log_warn "systemd not available, falling back to cron"
                 setup_cron_monitoring
             fi
             ;;
@@ -330,7 +316,7 @@ main() {
             setup_cron_monitoring
             ;;
         "manual")
-            log "Manual-only monitoring selected"
+            log_info "Manual-only monitoring selected"
             ;;
         *)
             echo "Usage: $0 [systemd|cron|manual]"
@@ -346,7 +332,7 @@ main() {
     test_monitoring
     show_usage_instructions
 
-    success "SSL monitoring setup finished!"
+    log_success "SSL monitoring setup finished!"
 }
 
 # Starting script

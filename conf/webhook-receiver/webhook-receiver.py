@@ -4,14 +4,26 @@ ERNI-KI Webhook Receiver
 Simple webhook receiver for Alertmanager alerts
 """
 
+import hashlib
+import hmac
 import json
 import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from subprocess import CalledProcessError, run
+from subprocess import CalledProcessError, TimeoutExpired, run
+from typing import Any
 
 from flask import Flask, jsonify, request
+from pydantic import BaseModel, ValidationError
+from werkzeug.exceptions import BadRequest
+
+try:
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
+except Exception:  # pragma: no cover - optional dependency fallback
+    Limiter = None
+    get_remote_address = None
 
 # Logging configuration
 logging.basicConfig(
@@ -20,12 +32,78 @@ logging.basicConfig(
 logger = logging.getLogger("webhook-receiver")
 
 app = Flask(__name__)
+if Limiter and get_remote_address:
+    limiter = Limiter(
+        app=app,
+        key_func=get_remote_address,
+        default_limits=["200 per day", "50 per hour"],
+    )
+else:
+
+    class _NoopLimiter:
+        def limit(self, *_args: Any, **_kwargs: Any):  # pragma: no cover - fallback
+            def decorator(fn):
+                return fn
+
+            return decorator
+
+    limiter = _NoopLimiter()
 
 # Configuration
 WEBHOOK_PORT = int(os.getenv("WEBHOOK_PORT", 9093))
-LOG_DIR = Path("/app/logs")
-LOG_DIR.mkdir(exist_ok=True)
+LOG_DIR = Path(os.getenv("LOG_DIR", "/app/logs"))
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    # Fallback for local development/testing if /app/logs is not writable
+    if not os.getenv("LOG_DIR"):
+        LOG_DIR = Path("logs")
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+        logger.warning(f"Could not create /app/logs, falling back to {LOG_DIR}")
+    else:
+        raise
 RECOVERY_DIR = Path(os.getenv("RECOVERY_DIR", "/app/scripts/recovery"))
+WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
+ALLOWED_SERVICES = {"ollama", "openwebui", "searxng"}
+
+
+def _path_within(base: Path, target: Path) -> bool:
+    try:
+        target_resolved = target.resolve()
+        base_resolved = base.resolve()
+        return str(target_resolved).startswith(str(base_resolved))
+    except Exception:
+        return False
+
+
+class AlertLabels(BaseModel):
+    alertname: str
+    severity: str | None = None
+    service: str | None = None
+    category: str | None = None
+    gpu_id: str | None = None
+    component: str | None = None
+
+
+class Alert(BaseModel):
+    labels: AlertLabels
+    annotations: dict[str, Any] = {}
+    status: str
+
+
+class AlertPayload(BaseModel):
+    alerts: list[Alert]
+    groupLabels: dict[str, Any] = {}
+
+
+def verify_signature(body: bytes, signature: str | None) -> bool:
+    if not WEBHOOK_SECRET:
+        logger.error("WEBHOOK_SECRET not configured; rejecting request")
+        return False
+    if not signature:
+        return False
+    expected = hmac.new(WEBHOOK_SECRET.encode(), body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(signature, expected)
 
 
 def save_alert_to_file(alert_data, alert_type="general"):
@@ -83,7 +161,7 @@ def handle_critical_alert(alert):
     # - Notifications to Slack/Teams
     # - Recovery scripts per service
 
-    if service in ["ollama", "openwebui", "searxng"]:
+    if service in ALLOWED_SERVICES:
         run_recovery_script(service)
     else:
         logger.info(
@@ -107,7 +185,15 @@ def handle_gpu_alert(alert):
 
 def run_recovery_script(service: str) -> None:
     """Execute recovery script for a critical service if available."""
+    if service not in ALLOWED_SERVICES:
+        logger.error("Invalid service: %s", service)
+        return
+
     script_path = RECOVERY_DIR / f"{service}-recovery.sh"
+
+    if not _path_within(RECOVERY_DIR, script_path):
+        logger.error("Path traversal attempt for %s", script_path)
+        return
 
     if not script_path.exists():
         logger.warning(f"No recovery script found for {service} at {script_path}")
@@ -119,10 +205,12 @@ def run_recovery_script(service: str) -> None:
 
     try:
         logger.info(f"Running recovery script for {service}: {script_path}")
-        result = run([str(script_path)], check=True, capture_output=True, text=True)
+        result = run([str(script_path)], check=True, capture_output=True, text=True, timeout=30)
         logger.info("Recovery script output:\n%s", result.stdout)
         if result.stderr:
             logger.warning("Recovery script stderr:\n%s", result.stderr)
+    except TimeoutExpired:
+        logger.error("Recovery script timeout for %s", service)
     except CalledProcessError as exc:
         logger.error(
             "Recovery script failed for %s (exit %s): %s", service, exc.returncode, exc.stderr
@@ -144,110 +232,146 @@ def health_check():
 
 
 @app.route("/webhook", methods=["POST"])
+@limiter.limit("10 per minute")
 def webhook_general():
     """General webhook endpoint"""
     try:
-        alert_data = request.get_json()
-        if not alert_data:
-            return jsonify({"error": "No JSON data received"}), 400
+        signature = request.headers.get("X-Signature")
+        if not verify_signature(request.get_data(), signature):
+            return jsonify({"error": "Unauthorized"}), 401
 
-        save_alert_to_file(alert_data, "general")
-        process_alert(alert_data, "general")
+        payload = AlertPayload(**request.get_json(force=True))
+
+        save_alert_to_file(payload.model_dump(), "general")
+        process_alert(payload.model_dump(), "general")
 
         return jsonify({"status": "success", "message": "Alert processed"})
 
+    except (ValidationError, BadRequest) as e:
+        logger.error("Payload validation failed: %s", e)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        logger.error(f"Error in general webhook: {e}")
+        logger.error(f"Error in general webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/webhook/critical", methods=["POST"])
+@limiter.limit("10 per minute")
 def webhook_critical():
     """Critical alerts"""
     try:
-        alert_data = request.get_json()
-        if not alert_data:
-            return jsonify({"error": "No JSON data received"}), 400
+        signature = request.headers.get("X-Signature")
+        if not verify_signature(request.get_data(), signature):
+            return jsonify({"error": "Unauthorized"}), 401
 
-        save_alert_to_file(alert_data, "critical")
-        process_alert(alert_data, "critical")
+        payload = AlertPayload(**request.get_json(force=True))
+
+        save_alert_to_file(payload.model_dump(), "critical")
+        process_alert(payload.model_dump(), "critical")
 
         return jsonify({"status": "success", "message": "Critical alert processed"})
 
+    except (ValidationError, BadRequest) as e:
+        logger.error("Payload validation failed: %s", e)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        logger.error(f"Error in critical webhook: {e}")
+        logger.error(f"Error in critical webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/webhook/warning", methods=["POST"])
+@limiter.limit("10 per minute")
 def webhook_warning():
     """Warnings"""
     try:
-        alert_data = request.get_json()
-        if not alert_data:
-            return jsonify({"error": "No JSON data received"}), 400
+        signature = request.headers.get("X-Signature")
+        if not verify_signature(request.get_data(), signature):
+            return jsonify({"error": "Unauthorized"}), 401
 
-        save_alert_to_file(alert_data, "warning")
-        process_alert(alert_data, "warning")
+        payload = AlertPayload(**request.get_json(force=True))
+
+        save_alert_to_file(payload.model_dump(), "warning")
+        process_alert(payload.model_dump(), "warning")
 
         return jsonify({"status": "success", "message": "Warning alert processed"})
 
+    except (ValidationError, BadRequest) as e:
+        logger.error("Payload validation failed: %s", e)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        logger.error(f"Error in warning webhook: {e}")
+        logger.error(f"Error in warning webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/webhook/gpu", methods=["POST"])
+@limiter.limit("10 per minute")
 def webhook_gpu():
     """GPU alerts"""
     try:
-        alert_data = request.get_json()
-        if not alert_data:
-            return jsonify({"error": "No JSON data received"}), 400
+        signature = request.headers.get("X-Signature")
+        if not verify_signature(request.get_data(), signature):
+            return jsonify({"error": "Unauthorized"}), 401
 
-        save_alert_to_file(alert_data, "gpu")
-        process_alert(alert_data, "gpu")
+        payload = AlertPayload(**request.get_json(force=True))
+
+        save_alert_to_file(payload.model_dump(), "gpu")
+        process_alert(payload.model_dump(), "gpu")
 
         return jsonify({"status": "success", "message": "GPU alert processed"})
 
+    except (ValidationError, BadRequest) as e:
+        logger.error("Payload validation failed: %s", e)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        logger.error(f"Error in GPU webhook: {e}")
+        logger.error(f"Error in GPU webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/webhook/ai", methods=["POST"])
+@limiter.limit("10 per minute")
 def webhook_ai():
     """AI services alerts"""
     try:
-        alert_data = request.get_json()
-        if not alert_data:
-            return jsonify({"error": "No JSON data received"}), 400
+        signature = request.headers.get("X-Signature")
+        if not verify_signature(request.get_data(), signature):
+            return jsonify({"error": "Unauthorized"}), 401
 
-        save_alert_to_file(alert_data, "ai")
-        process_alert(alert_data, "ai")
+        payload = AlertPayload(**request.get_json(force=True))
+
+        save_alert_to_file(payload.model_dump(), "ai")
+        process_alert(payload.model_dump(), "ai")
 
         return jsonify({"status": "success", "message": "AI alert processed"})
 
+    except (ValidationError, BadRequest) as e:
+        logger.error("Payload validation failed: %s", e)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        logger.error(f"Error in AI webhook: {e}")
+        logger.error(f"Error in AI webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/webhook/database", methods=["POST"])
+@limiter.limit("10 per minute")
 def webhook_database():
     """Database alerts"""
     try:
-        alert_data = request.get_json()
-        if not alert_data:
-            return jsonify({"error": "No JSON data received"}), 400
+        signature = request.headers.get("X-Signature")
+        if not verify_signature(request.get_data(), signature):
+            return jsonify({"error": "Unauthorized"}), 401
 
-        save_alert_to_file(alert_data, "database")
-        process_alert(alert_data, "database")
+        payload = AlertPayload(**request.get_json(force=True))
+
+        save_alert_to_file(payload.model_dump(), "database")
+        process_alert(payload.model_dump(), "database")
 
         return jsonify({"status": "success", "message": "Database alert processed"})
 
+    except (ValidationError, BadRequest) as e:
+        logger.error("Payload validation failed: %s", e)
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        logger.error(f"Error in database webhook: {e}")
+        logger.error(f"Error in database webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 

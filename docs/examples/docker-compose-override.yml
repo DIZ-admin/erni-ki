@@ -1,0 +1,551 @@
+---
+language: en
+translation_status: complete
+doc_version: "2025.11"
+last_updated: "2025-11-30"
+---
+# ERNI-KI Docker Compose Override Examples
+#
+# This file contains Docker Compose override configurations for common scenarios.
+# Copy relevant sections to docker-compose.override.yml in the project root to customize deployments.
+#
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+#
+# Sections:
+#   1. Production Hardening - Security and resource limits
+#   2. GPU Configuration - Multi-GPU setup and isolation
+#   3. High Performance - Optimized for throughput
+#   4. Development - Relaxed constraints for development
+#   5. Custom Networking - Custom networks and host ports
+#   6. Persistent Storage - Advanced volume configuration
+#   7. Monitoring Stack - Extended monitoring configuration
+#   8. Multi-Provider - Multiple LLM providers setup
+
+################################################################################
+# EXAMPLE 1: Production Hardening Override
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   openwebui:
+#     restart: always
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+#       start_period: 40s
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '4'
+#           memory: 4G
+#         reservations:
+#           cpus: '2'
+#           memory: 2G
+#     environment:
+#       - OPENWEBUI_LOG_LEVEL=WARNING
+#       - RATE_LIMIT_ENABLED=true
+#       - RATE_LIMIT_PER_MINUTE=60
+#       - CORS_ORIGINS=https://example.com
+#     secrets:
+#       - jwt_secret
+#       - webhook_secret
+#       - db_password
+#     cap_drop:
+#       - ALL
+#     cap_add:
+#       - NET_BIND_SERVICE
+#     read_only: true
+#     tmpfs:
+#       - /tmp
+#       - /run
+#     networks:
+#       - internal
+#     ports: []  # No direct port exposure in production
+#
+#   ollama:
+#     restart: always
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '8'
+#           memory: 8G
+#         reservations:
+#           cpus: '6'
+#           memory: 6G
+#     environment:
+#       - OLLAMA_NUM_PARALLEL=4
+#       - OLLAMA_KEEP_ALIVE=10m
+#       - OLLAMA_DEBUG=false
+#     networks:
+#       - internal
+#     ports: []
+#
+#   postgres:
+#     restart: always
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U openwebui"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '4'
+#           memory: 2G
+#         reservations:
+#           cpus: '2'
+#           memory: 1G
+#     environment:
+#       - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+#       - POSTGRES_INITDB_ARGS=-c shared_buffers=1GB -c work_mem=256MB
+#     secrets:
+#       - db_password
+#     networks:
+#       - internal
+#     ports: []
+#
+#   redis:
+#     restart: always
+#     healthcheck:
+#       test: ["CMD", "redis-cli", "ping"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 3
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '2'
+#           memory: 1G
+#         reservations:
+#           cpus: '1'
+#           memory: 512M
+#     command: redis-server --maxmemory 900mb --maxmemory-policy allkeys-lru
+#     networks:
+#       - internal
+#     ports: []
+#
+# secrets:
+#   jwt_secret:
+#     file: ./secrets/jwt_secret.txt
+#   webhook_secret:
+#     file: ./secrets/webhook_secret.txt
+#   db_password:
+#     file: ./secrets/db_password.txt
+#
+# networks:
+#   internal:
+#     driver: bridge
+#     driver_opts:
+#       com.docker.network.bridge.enable_icc: "false"
+
+################################################################################
+# EXAMPLE 2: GPU Configuration - Multi-GPU Isolation
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   ollama:
+#     # GPU 0 reserved for Ollama LLM inference
+#     deploy:
+#       resources:
+#         reservations:
+#           devices:
+#             - driver: nvidia
+#               device_ids: ['0']
+#               capabilities: [gpu]
+#     environment:
+#       - CUDA_VISIBLE_DEVICES=0
+#       - OLLAMA_GPU_VISIBLE_DEVICES=0
+#       - OLLAMA_NUM_PARALLEL=4
+#       - OLLAMA_CUDA_COMPUTE_CAPABILITY=8.6
+#     networks:
+#       - internal
+#
+#   openwebui:
+#     # GPU 1 reserved for image processing and embeddings
+#     deploy:
+#       resources:
+#         reservations:
+#           devices:
+#             - driver: nvidia
+#               device_ids: ['1']
+#               capabilities: [gpu]
+#     environment:
+#       - CUDA_VISIBLE_DEVICES=1
+#       - OPENWEBUI_GPU_VISIBLE_DEVICES=1
+#     networks:
+#       - internal
+#
+#   docling:
+#     # Docling for OCR and document processing
+#     image: erni-ki/docling:latest
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '4'
+#           memory: 2G
+#         reservations:
+#           cpus: '2'
+#           memory: 1G
+#           devices:
+#             - driver: nvidia
+#               device_ids: ['1']  # Share GPU 1 with OpenWebUI
+#               capabilities: [gpu]
+#     environment:
+#       - CUDA_VISIBLE_DEVICES=1
+#       - DOCLING_GPU_VISIBLE_DEVICES=1
+#     networks:
+#       - internal
+
+################################################################################
+# EXAMPLE 3: High Performance - Optimized for Throughput
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   openwebui:
+#     deploy:
+#       replicas: 2  # Multiple replicas behind load balancer
+#       resources:
+#         limits:
+#           cpus: '8'
+#           memory: 8G
+#         reservations:
+#           cpus: '6'
+#           memory: 6G
+#       update_config:
+#         parallelism: 1
+#         delay: 10s
+#     environment:
+#       - OPENWEBUI_WORKERS=8
+#       - WORKER_CONNECTIONS=2048
+#       - CACHE_TYPE=redis
+#       - CACHE_REDIS_URL=redis://redis:6379/0
+#       - DB_QUERY_TIMEOUT=60
+#     depends_on:
+#       - redis
+#       - postgres
+#     networks:
+#       - internal
+#
+#   postgres:
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '8'
+#           memory: 4G
+#         reservations:
+#           cpus: '6'
+#           memory: 3G
+#     environment:
+#       - POSTGRES_INITDB_ARGS=
+#           -c shared_buffers=2GB
+#           -c work_mem=512MB
+#           -c maintenance_work_mem=512MB
+#           -c effective_cache_size=6GB
+#           -c random_page_cost=1.1
+#           -c max_parallel_workers_per_gather=2
+#           -c max_parallel_workers=4
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#
+#   redis:
+#     deploy:
+#       resources:
+#         limits:
+#           cpus: '4'
+#           memory: 2G
+#         reservations:
+#           cpus: '2'
+#           memory: 1G
+#     command: >
+#       redis-server
+#       --maxmemory 1800mb
+#       --maxmemory-policy allkeys-lru
+#       --save ""
+#       --appendonly no
+#       --tcp-backlog 511
+#       --timeout 0
+#       --tcp-keepalive 300
+
+################################################################################
+# EXAMPLE 4: Development Environment - Relaxed Constraints
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   openwebui:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#       target: development
+#     environment:
+#       - DEBUG=true
+#       - FLASK_ENV=development
+#       - OPENWEBUI_LOG_LEVEL=DEBUG
+#       - PYTHONUNBUFFERED=1
+#     volumes:
+#       - ./src:/app/src
+#       - ./tests:/app/tests
+#     ports:
+#       - "8080:8080"
+#       - "5678:5678"  # debugpy
+#     networks:
+#       - internal
+#
+#   postgres:
+#     environment:
+#       - POSTGRES_PASSWORD=dev-password # pragma: allowlist secret
+#     volumes:
+#       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+#     ports:
+#       - "5432:5432"
+#
+#   redis:
+#     ports:
+#       - "6379:6379"
+#
+#   ollama:
+#     ports:
+#       - "11434:11434"
+
+################################################################################
+# EXAMPLE 5: Custom Networking - External Access with Reverse Proxy
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   nginx:
+#     image: nginx:latest
+#     container_name: erni-ki-nginx
+#     ports:
+#       - "80:80"
+#       - "443:443"
+#     volumes:
+#       - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+#       - ./certs/tls.crt:/etc/nginx/tls.crt:ro
+#       - ./certs/tls.key:/etc/nginx/tls.key:ro
+#     depends_on:
+#       - openwebui
+#       - ollama
+#     networks:
+#       - external
+#       - internal
+#     restart: always
+#
+#   openwebui:
+#     expose:
+#       - "8080"
+#     networks:
+#       - internal
+#     environment:
+#       - OPENWEBUI_BASE_URL=https://example.com
+#
+#   ollama:
+#     expose:
+#       - "11434"
+#     networks:
+#       - internal
+#
+# networks:
+#   external:
+#     driver: bridge
+#   internal:
+#     driver: bridge
+#     internal: true
+
+################################################################################
+# EXAMPLE 6: Persistent Storage - Advanced Volume Configuration
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   openwebui:
+#     volumes:
+#       - openwebui_data:/data
+#       - openwebui_cache:/var/cache/openwebui
+#       - openwebui_logs:/var/log
+#
+#   postgres:
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#       - postgres_backups:/backups
+#     environment:
+#       - BACKUP_SCHEDULE=0 2 * * *
+#
+#   ollama:
+#     volumes:
+#       - ollama_models:/root/.ollama/models
+#       - ollama_cache:/tmp/ollama_cache
+#
+#   redis:
+#     volumes:
+#       - redis_data:/data
+#       - redis_logs:/var/log/redis
+#
+#   minio:
+#     volumes:
+#       - minio_data:/minio/data
+#
+# volumes:
+#   openwebui_data:
+#     driver: local
+#     driver_opts:
+#       type: nfs
+#       o: addr=storage.local,vers=4,soft,timeo=180,bg,tcp,rw
+#       device: ":/exports/openwebui"
+#   postgres_data:
+#     driver: local
+#     driver_opts:
+#       type: nfs
+#       o: addr=storage.local,vers=4,soft,timeo=180,bg,tcp,rw
+#       device: ":/exports/postgres"
+#   ollama_models:
+#     driver: local
+#     driver_opts:
+#       type: nfs
+#       o: addr=storage.local,vers=4,soft,timeo=180,bg,tcp,rw
+#       device: ":/exports/ollama"
+
+################################################################################
+# EXAMPLE 7: Monitoring Stack - Extended Monitoring Configuration
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   prometheus:
+#     restart: always
+#     ports:
+#       - "9090:9090"
+#     volumes:
+#       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+#       - prometheus_data:/prometheus
+#     command:
+#       - '--config.file=/etc/prometheus/prometheus.yml'
+#       - '--storage.tsdb.path=/prometheus'
+#       - '--storage.tsdb.retention.time=15d'
+#       - '--query.timeout=2m'
+#     networks:
+#       - internal
+#
+#   grafana:
+#     restart: always
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       - GF_SECURITY_ADMIN_PASSWORD=admin # pragma: allowlist secret
+#       - GF_INSTALL_PLUGINS=grafana-piechart-panel
+#     volumes:
+#       - grafana_data:/var/lib/grafana
+#       - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+#     networks:
+#       - internal
+#
+#   loki:
+#     restart: always
+#     ports:
+#       - "3100:3100"
+#     volumes:
+#       - ./config/loki.yml:/etc/loki/local-config.yml:ro
+#       - loki_data:/loki
+#     command: -config.file=/etc/loki/local-config.yml
+#     networks:
+#       - internal
+#
+#   fluent-bit:
+#     restart: always
+#     image: fluent/fluent-bit:latest
+#     volumes:
+#       - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+#       - /var/log:/var/log:ro
+#     networks:
+#       - internal
+#
+#   node-exporter:
+#     restart: always
+#     image: prom/node-exporter:latest
+#     ports:
+#       - "9100:9100"
+#     command:
+#       - '--path.procfs=/host/proc'
+#       - '--path.sysfs=/host/sys'
+#       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+#     volumes:
+#       - /proc:/host/proc:ro
+#       - /sys:/host/sys:ro
+#       - /:/rootfs:ro
+#     networks:
+#       - internal
+#
+#   cadvisor:
+#     restart: always
+#     image: gcr.io/cadvisor/cadvisor:latest
+#     ports:
+#       - "8081:8081"
+#     volumes:
+#       - /:/rootfs:ro
+#       - /var/run:/var/run:ro
+#       - /sys:/sys:ro
+#       - /var/lib/docker/:/var/lib/docker:ro
+#     networks:
+#       - internal
+#
+# volumes:
+#   prometheus_data:
+#   grafana_data:
+#   loki_data:
+
+################################################################################
+# EXAMPLE 8: Multi-Provider LLM Setup with LiteLLM
+################################################################################
+
+# version: '3.8'
+#
+# services:
+#   litellm:
+#     image: ghcr.io/berriai/litellm:latest
+#     container_name: litellm-gateway
+#     ports:
+#       - "4000:4000"
+#     environment:
+#       - DEBUG=false
+#       - LITELLM_LOG_LEVEL=INFO
+#     volumes:
+#       - ./config/litellm_config.yaml:/app/config.yaml:ro
+#     command: litellm --config /app/config.yaml --port 4000
+#     networks:
+#       - internal
+#     restart: always
+#
+#   openwebui:
+#     environment:
+#       # Route to LiteLLM gateway instead of Ollama
+#       - OLLAMA_HOST=http://litellm:4000
+#       - LITELLM_ENABLED=true
+#     depends_on:
+#       - litellm
+#     networks:
+#       - internal
+#
+#   ollama:
+#     # Still available for local models
+#     networks:
+#       - internal
+#
+# networks:
+#   internal:
+#     driver: bridge

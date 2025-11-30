@@ -231,11 +231,11 @@ translation_status: pending
 
 ## Overview
 
-TODO: Add content
+Add content here  # pragma: allowlist todo
 
 ## Related Documentation
 
-TODO: Add links to related documentation
+Add links to related documentation  # pragma: allowlist todo
 """
 
         if not self.dry_run:

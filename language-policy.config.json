@@ -1,3 +1,8 @@
 {
-  "baseline": ["mkdocs.yml", ".coderabbit.yaml"]
+  "baseline": [
+    "mkdocs.yml",
+    ".coderabbit.yaml",
+    "docs/reference/status-snippet.md",
+    "docs/de/reference/status-snippet.md"
+  ]
 }

@@ -224,7 +224,7 @@ class Pipe:
             yield (
                 "data: "
                 + json.dumps(
-                    {"choices": [{"delta": {"content": "🤖 Starting OpenAI Assistant...\n\n"}}]}
+                    {"choices": [{"delta": {"content": "Starting OpenAI Assistant...\n\n"}}]}
                 )
                 + "\n\n"
             )
@@ -234,9 +234,7 @@ class Pipe:
             if not thread_id:
                 yield (
                     "data: "
-                    + json.dumps(
-                        {"choices": [{"delta": {"content": "❌ Failed to create thread"}}]}
-                    )
+                    + json.dumps({"choices": [{"delta": {"content": "Failed to create thread"}}]})
                     + "\n\n"
                 )
                 return
@@ -244,11 +242,7 @@ class Pipe:
             yield (
                 "data: "
                 + json.dumps(
-                    {
-                        "choices": [
-                            {"delta": {"content": "✅ Thread created, adding message...\n\n"}}
-                        ]
-                    }
+                    {"choices": [{"delta": {"content": "Thread created, adding message...\n\n"}}]}
                 )
                 + "\n\n"
             )

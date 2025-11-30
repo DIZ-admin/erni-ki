@@ -3,6 +3,7 @@
 ## Установленные линтеры
 
 ### JavaScript/TypeScript
+
 - **ESLint** v9.15.0 (Flat Config)
 - **TypeScript** v5.7.2
 - **Prettier** v3.6.2
@@ -10,16 +11,19 @@
 Конфигурация: `eslint.config.js`, `.prettierrc.json`
 
 ### Python
+
 - **Ruff** v0.14.6 (lint + format)
 
 Конфигурация: `ruff.toml`
 
 ### Go
+
 - **gofmt** - форматирование
 - **goimports** - организация импортов
 - **golangci-lint** - линтинг
 
 ### Другое
+
 - **Pre-commit hooks** - 26 проверок перед коммитом
 - **Detect-secrets** - поиск секретов в коде
 - **Prettier** - форматирование YAML/JSON/Markdown
@@ -76,17 +80,20 @@ git commit                # автоматически
 ## Troubleshooting
 
 ### Python линтер не работает
+
 ```bash
 source .venv/bin/activate
 pip install -r requirements-dev.txt
 ```
 
 ### Pre-commit хуки не запускаются
+
 ```bash
 npm run pre-commit:install
 ```
 
 ### ESLint не находит конфигурацию
+
 Убедитесь, что используется Flat Config (`eslint.config.js`)
 и в VSCode настроен `"eslint.useFlatConfig": true`
 

@@ -8,5 +8,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py ./
 
+# Create non-root user
+RUN useradd -r -u 1001 -g root appuser
+USER appuser
+
 EXPOSE 9778
 CMD ["python", "app.py"]

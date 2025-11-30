@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, Page, Request, Response, test } from '@playwright/test';
 import fs from 'node:fs';
 
 /**
@@ -130,7 +130,7 @@ function attachNetworkLogging(page: Page) {
       fs.appendFileSync(NET_LOG, line + '\n');
     } catch {}
   };
-  page.on('request', (req: any) => {
+  page.on('request', (req: Request) => {
     const url = req.url();
     if (/searxng|ollama|openwebui\/api/i.test(url)) {
       const line = `→ ${req.method()} ${url}`;
@@ -138,7 +138,7 @@ function attachNetworkLogging(page: Page) {
       append(line);
     }
   });
-  page.on('response', async (res: any) => {
+  page.on('response', async (res: Response) => {
     const url = res.url();
     if (/searxng|ollama|openwebui\/api/i.test(url)) {
       const line = `← ${res.status()} ${url}`;

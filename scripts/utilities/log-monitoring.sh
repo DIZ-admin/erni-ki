@@ -8,6 +8,11 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
@@ -18,28 +23,15 @@ WEBHOOK_URL="${LOG_MONITORING_WEBHOOK_URL:-}"
 COMPOSE_FILE="$PROJECT_ROOT/compose.yml"
 
 # Colors
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 # Logging
-log() {
-    echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
-}
 
-warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
 
-error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
 
-success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
+
+
+
+
 
 # Webhook sender
 send_webhook() {
@@ -50,13 +42,13 @@ send_webhook() {
         curl -s -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -d "{\"text\":\"🔍 ERNI-KI Log Monitor: $message\", \"severity\":\"$severity\"}" \
-            >/dev/null 2>&1 || warn "Failed to send webhook notification"
+            >/dev/null 2>&1 || log_warn "Failed to send webhook notification"
     fi
 }
 
 # Docker log size check
 check_docker_logs() {
-    log "Checking Docker container log sizes..."
+    log_info "Checking Docker container log sizes..."
 
     local total_size=0
     local alerts=()
@@ -82,22 +74,22 @@ check_docker_logs() {
     echo "📊 Total Docker log size: ${total_gb}GB (${total_size}MB)"
 
     if [[ $total_gb -gt $CRITICAL_THRESHOLD_GB ]]; then
-        error "CRITICAL log usage: ${total_gb}GB > ${CRITICAL_THRESHOLD_GB}GB"
+        log_error "CRITICAL log usage: ${total_gb}GB > ${CRITICAL_THRESHOLD_GB}GB"
         send_webhook "🚨 Critical log usage: ${total_gb}GB" "critical"
         return 2
     elif [[ $total_gb -gt $ALERT_THRESHOLD_GB ]]; then
-        warn "Warning threshold exceeded: ${total_gb}GB > ${ALERT_THRESHOLD_GB}GB"
+        log_warn "Warning threshold exceeded: ${total_gb}GB > ${ALERT_THRESHOLD_GB}GB"
         send_webhook "⚠️ Log warning threshold exceeded: ${total_gb}GB" "warning"
         return 1
     else
-        success "Log size is within limits: ${total_gb}GB"
+        log_success "Log size is within limits: ${total_gb}GB"
         return 0
     fi
 }
 
 # Fluent Bit performance check
 check_fluent_bit_performance() {
-    log "Checking Fluent Bit performance..."
+    log_info "Checking Fluent Bit performance..."
 
     local container_name="erni-ki-fluent-bit"
 
@@ -123,18 +115,18 @@ check_fluent_bit_performance() {
     echo "   Errors (1h): $error_count"
 
     if [[ "$error_count" -gt 50 ]]; then
-        warn "High error count in Fluent Bit: $error_count in the last hour"
+        log_warn "High error count in Fluent Bit: $error_count in the last hour"
         send_webhook "⚠️ Fluent Bit errors: $error_count/hour" "warning"
         return 1
     else
-        success "Fluent Bit is stable"
+        log_success "Fluent Bit is stable"
         return 0
     fi
 }
 
 # Loki API availability check
 check_loki_api() {
-    log "Checking Loki API availability..."
+    log_info "Checking Loki API availability..."
 
     # Local API check
     local local_status=$(curl -s -o /dev/null -w "%{http_code}" -H "X-Scope-OrgID: erni-ki" "http://localhost:3100/ready" 2>/dev/null || echo "000")
@@ -147,10 +139,10 @@ check_loki_api() {
     echo "   Nginx proxy: $nginx_status"
 
     if [[ "$local_status" == "200" && "$nginx_status" == "200" ]]; then
-        success "Loki API is fully available"
+        log_success "Loki API is fully available"
         return 0
     else
-        error "Loki API availability issues"
+        log_error "Loki API availability issues"
         send_webhook "🚨 Loki API unavailable (local: $local_status, nginx: $nginx_status)" "critical"
         return 1
     fi
@@ -158,7 +150,7 @@ check_loki_api() {
 
 # Remove old logs when thresholds are breached
 cleanup_old_logs() {
-    log "Cleaning up old logs..."
+    log_info "Cleaning up old logs..."
 
     local cleaned_files=0
 
@@ -174,11 +166,11 @@ cleanup_old_logs() {
     local total_size_gb=$(check_docker_logs | grep "Total Docker log size" | awk '{print $5}' | sed 's/GB.*//' || echo "0")
 
     if [[ "${total_size_gb:-0}" -gt $CRITICAL_THRESHOLD_GB ]]; then
-        log "Force rotating Docker logs..."
-        docker system prune -f --volumes >/dev/null 2>&1 || warn "Failed to run docker system prune"
+        log_info "Force rotating Docker logs..."
+        docker system prune -f --volumes >/dev/null 2>&1 || log_warn "Failed to run docker system prune"
     fi
 
-    success "Cleaned files: $cleaned_files"
+    log_success "Cleaned files: $cleaned_files"
 }
 
 # Report generation
@@ -186,7 +178,7 @@ generate_report() {
     local timestamp=$(date '+%Y-%m-%d_%H-%M-%S')
     local report_file="$LOG_DIR/log-monitoring-report-$timestamp.json"
 
-    log "Generating report: $report_file"
+    log_info "Generating report: $report_file"
 
     # Ensure log directory exists
     mkdir -p "$LOG_DIR"
@@ -220,7 +212,7 @@ generate_report() {
 }
 EOF
 
-    success "Report saved: $report_file"
+    log_success "Report saved: $report_file"
 }
 
 # Main entrypoint
@@ -256,14 +248,14 @@ main() {
     # Final status
     case $exit_code in
         0)
-            success "✅ All checks passed"
+            log_success "✅ All checks passed"
             send_webhook "✅ Log monitoring: all systems healthy" "info"
             ;;
         1)
-            warn "⚠️ Warnings detected"
+            log_warn "⚠️ Warnings detected"
             ;;
         2)
-            error "🚨 Critical issues detected"
+            log_error "🚨 Critical issues detected"
             ;;
     esac
 

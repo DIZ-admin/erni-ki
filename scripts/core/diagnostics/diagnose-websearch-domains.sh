@@ -5,29 +5,12 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Logging functions
-log() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
 
 # Check JSON function
 check_json() {
@@ -36,10 +19,10 @@ check_json() {
 
     if echo "$response" | jq . >/dev/null 2>&1; then
         local result_count=$(echo "$response" | jq '.results | length' 2>/dev/null || echo "0")
-        success "$domain: Valid JSON, $result_count results"
+        log_success "$domain: Valid JSON, $result_count results"
         return 0
     else
-        error "$domain: Invalid JSON"
+        log_error "$domain: Invalid JSON"
         echo "First 200 characters of response:"
         echo "${response:0:200}"
         return 1
@@ -51,18 +34,18 @@ test_api_endpoint() {
     local domain="$1"
     local host_header="$2"
 
-    log "Testing API endpoint for $domain..."
+    log_info "Testing API endpoint for $domain..."
 
-    local cmd="curl -k -s -w 'HTTP_CODE:%{http_code}' -X POST"
+    local cmd=(curl -k -s -w "HTTP_CODE:%{http_code}" -X POST)
     if [ "$host_header" != "none" ]; then
-        cmd="$cmd -H 'Host: $host_header'"
+        cmd+=(-H "Host: $host_header")
     fi
-    cmd="$cmd -H 'Content-Type: application/x-www-form-urlencoded'"
-    cmd="$cmd -d 'q=test&format=json'"
-    cmd="$cmd https://localhost/api/searxng/search"
+    cmd+=(-H "Content-Type: application/x-www-form-urlencoded")
+    cmd+=(-d "q=test&format=json")
+    cmd+=("https://localhost/api/searxng/search")
 
     local response
-    if response=$(eval "$cmd" 2>/dev/null); then
+    if response=$("${cmd[@]}" 2>/dev/null); then
         local http_code="${response##*HTTP_CODE:}"
         local json_response="${response%HTTP_CODE:*}"
 
@@ -71,12 +54,12 @@ test_api_endpoint() {
         if [ "$http_code" = "200" ]; then
             check_json "$json_response" "$domain"
         else
-            error "$domain: HTTP error $http_code"
+            log_error "$domain: HTTP log_error $http_code"
             echo "  Response: ${json_response:0:200}"
             return 1
         fi
     else
-        error "$domain: Failed to execute request"
+        log_error "$domain: Failed to execute request"
         return 1
     fi
 }
@@ -86,36 +69,36 @@ test_main_interface() {
     local domain="$1"
     local host_header="$2"
 
-    log "Testing main interface for $domain..."
+    log_info "Testing main interface for $domain..."
 
-    local cmd="curl -k -s -w 'HTTP_CODE:%{http_code}'"
+    local cmd=(curl -k -s -w "HTTP_CODE:%{http_code}")
     if [ "$host_header" != "none" ]; then
-        cmd="$cmd -H 'Host: $host_header'"
+        cmd+=(-H "Host: $host_header")
     fi
-    cmd="$cmd https://localhost/"
+    cmd+=("https://localhost/")
 
     local response
-    if response=$(eval "$cmd" 2>/dev/null); then
+    if response=$("${cmd[@]}" 2>/dev/null); then
         local http_code="${response##*HTTP_CODE:}"
 
         echo "  HTTP code: $http_code"
 
         if [ "$http_code" = "200" ]; then
-            success "$domain: Main interface available"
+            log_success "$domain: Main interface available"
             return 0
         else
-            warning "$domain: HTTP code $http_code"
+            log_warn "$domain: HTTP code $http_code"
             return 1
         fi
     else
-        error "$domain: Main interface unavailable"
+        log_error "$domain: Main interface unavailable"
         return 1
     fi
 }
 
 # Check Nginx configuration function
 check_nginx_config() {
-    log "Checking Nginx configuration..."
+    log_info "Checking Nginx configuration..."
 
     echo "=== Server Names ==="
     docker-compose exec nginx grep -A 2 "server_name" /etc/nginx/conf.d/default.conf || true
@@ -127,15 +110,15 @@ check_nginx_config() {
     echo ""
     echo "=== Nginx Syntax Check ==="
     if docker-compose exec nginx nginx -t 2>/dev/null; then
-        success "Nginx configuration is valid"
+        log_success "Nginx configuration is valid"
     else
-        error "Error in Nginx configuration"
+        log_error "Error in Nginx configuration"
     fi
 }
 
 # Check environment variables function
 check_environment() {
-    log "Checking OpenWebUI environment variables..."
+    log_info "Checking OpenWebUI environment variables..."
 
     echo "=== SEARXNG Configuration ==="
     grep -E "(SEARXNG|WEB_SEARCH)" env/openwebui.env || true
@@ -147,7 +130,7 @@ check_environment() {
 
 # Check service status function
 check_services() {
-    log "Checking service status..."
+    log_info "Checking service status..."
 
     echo "=== Docker Compose Status ==="
     docker-compose ps nginx openwebui searxng
@@ -165,7 +148,7 @@ check_services() {
 
 # Check logs function
 check_logs() {
-    log "Checking service logs..."
+    log_info "Checking service logs..."
 
     echo "=== Nginx Logs (last 5 lines) ==="
     docker-compose logs --tail=5 nginx 2>/dev/null || echo "Failed to get Nginx logs"
@@ -181,7 +164,7 @@ check_logs() {
 
 # Simulate problem function
 simulate_problem() {
-    log "Simulating problem with JSON.parse..."
+    log_info "Simulating problem with JSON.parse..."
 
     # Test what happens if API returns HTML instead of JSON
     echo "=== Test: what if API returns HTML? ==="
@@ -210,7 +193,7 @@ main() {
 
     # Check dependencies
     if ! command -v jq >/dev/null 2>&1; then
-        error "jq not installed. Install: sudo apt-get install jq"
+        log_error "jq not installed. Install: sudo apt-get install jq"
         exit 1
     fi
 
@@ -299,7 +282,7 @@ main() {
         echo "For detailed results, see terminal output above."
     } > "$report_file"
 
-    log "Report saved to: $report_file"
+    log_info "Report saved to: $report_file"
 }
 
 # Run diagnosis

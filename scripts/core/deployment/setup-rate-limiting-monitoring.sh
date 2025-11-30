@@ -6,41 +6,35 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 # === Logging functions ===
-log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
-}
-
-error() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $*" >&2
-}
-
-success() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $*"
-}
 
 # === Create cron job ===
 setup_cron_monitoring() {
-    log "Setting up cron monitoring..."
+    log_info "Setting up cron monitoring..."
 
     local cron_entry="*/1 * * * * cd $PROJECT_ROOT && ./scripts/monitor-rate-limiting.sh monitor >/dev/null 2>&1"
 
     # Check existing cron job
     if crontab -l 2>/dev/null | grep -q "monitor-rate-limiting.sh"; then
-        log "Cron job already exists"
+        log_info "Cron job already exists"
     else
         # Add new cron job
         (crontab -l 2>/dev/null; echo "$cron_entry") | crontab -
-        success "Cron job added: monitoring every minute"
+        log_success "Cron job added: monitoring every minute"
     fi
 }
 
 # === Create systemd service ===
 setup_systemd_service() {
-    log "Creating systemd service..."
+    log_info "Creating systemd service..."
 
     local service_file="/etc/systemd/system/erni-ki-rate-monitor.service"
     local timer_file="/etc/systemd/system/erni-ki-rate-monitor.timer"
@@ -83,12 +77,12 @@ EOF
     sudo systemctl enable erni-ki-rate-monitor.timer
     sudo systemctl start erni-ki-rate-monitor.timer
 
-    success "Systemd service configured and started"
+    log_success "Systemd service configured and started"
 }
 
 # === Setup log rotation ===
 setup_log_rotation() {
-    log "Setting up log rotation..."
+    log_info "Setting up log rotation..."
 
     local logrotate_config="/etc/logrotate.d/erni-ki-rate-limiting"
 
@@ -107,12 +101,12 @@ $PROJECT_ROOT/logs/rate-limiting-*.log {
 }
 EOF
 
-    success "Log rotation configured"
+    log_success "Log rotation configured"
 }
 
 # === Create dashboard script ===
 create_dashboard() {
-    log "Creating dashboard script..."
+    log_info "Creating dashboard script..."
 
     cat > "$PROJECT_ROOT/scripts/rate-limiting-dashboard.sh" <<'EOF'
 #!/bin/bash
@@ -179,12 +173,12 @@ echo "Press Ctrl+C to exit"
 EOF
 
     chmod +x "$PROJECT_ROOT/scripts/rate-limiting-dashboard.sh"
-    success "Dashboard created: scripts/rate-limiting-dashboard.sh"
+    log_success "Dashboard created: scripts/rate-limiting-dashboard.sh"
 }
 
 # === Setup notifications ===
 setup_notifications() {
-    log "Setting up notification integration..."
+    log_info "Setting up notification integration..."
 
     # Create configuration file for notifications
     cat > "$PROJECT_ROOT/conf/rate-limiting-notifications.conf" <<EOF
@@ -216,26 +210,26 @@ BACKREST_ENABLED=true
 BACKREST_URL="http://localhost:9898"
 EOF
 
-    success "Notification configuration created"
+    log_success "Notification configuration created"
 }
 
 # === Test system ===
 test_monitoring() {
-    log "Testing monitoring system..."
+    log_info "Testing monitoring system..."
 
     # Run a test check
     if "$PROJECT_ROOT/scripts/monitor-rate-limiting.sh" monitor; then
-        success "Monitoring works correctly"
+        log_success "Monitoring works correctly"
     else
-        error "Monitoring error"
+        log_error "Monitoring error"
         return 1
     fi
 
     # Check file creation
     if [[ -f "$PROJECT_ROOT/logs/rate-limiting-monitor.log" ]]; then
-        success "Log file created"
+        log_success "Log file created"
     else
-        error "Log file not created"
+        log_error "Log file not created"
     fi
 
     return 0
@@ -243,7 +237,7 @@ test_monitoring() {
 
 # === Main function ===
 main() {
-    log "Setting up ERNI-KI rate limiting monitoring system"
+    log_info "Setting up ERNI-KI rate limiting monitoring system"
 
     # Create directories
     mkdir -p "$PROJECT_ROOT/logs"
@@ -262,7 +256,7 @@ main() {
             setup_systemd_service
             ;;
         *)
-            error "Unknown method: $1"
+            log_error "Unknown method: $1"
             echo "Available methods: cron, systemd, both"
             exit 1
             ;;
@@ -280,7 +274,7 @@ main() {
         echo "  tail -f logs/rate-limiting-monitor.log      # View logs"
 
     else
-        error "Error setting up monitoring system"
+        log_error "Error setting up monitoring system"
         exit 1
     fi
 }
