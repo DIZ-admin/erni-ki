@@ -25,7 +25,7 @@ trap 'record_status failure "Redis watchdog failed"' ERR
 
 DRY_RUN=false
 THRESHOLD="${REDIS_FRAGMENTATION_THRESHOLD:-6.0}"
-# LOG_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.log"
+
 STATE_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.state"
 LOW_MEMORY_NOTICE_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.lowmem"
 LOW_MEMORY_NOTICE_INTERVAL="${REDIS_FRAGMENTATION_LOW_MEMORY_NOTICE_INTERVAL:-3600}"
@@ -139,7 +139,7 @@ LAST_ACTION_TS="${LAST_ACTION_TS:-0}"
 RUNS="${RUNS:-0}"
 now="$(date +%s)"
 
-if awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
+if    awk "BEGIN {exit !(\"$ratio\" > \"$THRESHOLD\")}"; then
   log_info "Fragmentation ratio ${ratio} > threshold ${THRESHOLD} (used=${used:-0} rss=${rss:-0} peak=${peak:-0})"
 
   if (( used < MIN_USED_MEMORY_BYTES )); then
