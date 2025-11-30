@@ -333,148 +333,62 @@ def health_check():
     )
 
 
-@app.route("/webhook", methods=["POST"])
-@limiter.limit("10 per minute")
-def webhook_general():
-    """General webhook endpoint"""
-    try:
-        signature = request.headers.get("X-Signature")
-        if not verify_signature(request.get_data(), signature):
-            return jsonify({"error": "Unauthorized"}), 401
+def _create_webhook_handler(alert_type: str, description: str):
+    """Factory function to create webhook handlers, reducing code duplication.
 
-        payload = AlertPayload(**request.get_json(force=True))
+    Args:
+        alert_type: Type of alert (general, critical, warning, gpu, ai, database)
+        description: Human-readable description for response messages
 
-        save_alert_to_file(payload.model_dump(), "general")
-        process_alert(payload.model_dump(), "general")
+    Returns:
+        A Flask route handler function
+    """
 
-        return jsonify({"status": "success", "message": "Alert processed"})
+    def handler():
+        try:
+            signature = request.headers.get("X-Signature")
+            if not verify_signature(request.get_data(), signature):
+                return jsonify({"error": "Unauthorized"}), 401
 
-    except (ValidationError, BadRequest) as e:
-        logger.error("Payload validation failed: %s", e)
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        logger.error(f"Error in general webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+            payload = AlertPayload(**request.get_json(force=True))
 
+            save_alert_to_file(payload.model_dump(), alert_type)
+            process_alert(payload.model_dump(), alert_type)
 
-@app.route("/webhook/critical", methods=["POST"])
-@limiter.limit("10 per minute")
-def webhook_critical():
-    """Critical alerts"""
-    try:
-        signature = request.headers.get("X-Signature")
-        if not verify_signature(request.get_data(), signature):
-            return jsonify({"error": "Unauthorized"}), 401
+            return jsonify({"status": "success", "message": f"{description} processed"})
 
-        payload = AlertPayload(**request.get_json(force=True))
+        except (ValidationError, BadRequest) as e:
+            logger.error("Payload validation failed: %s", e)
+            return jsonify({"error": str(e)}), 400
+        except Exception as e:
+            logger.error(f"Error in {alert_type} webhook: {e}", exc_info=True)
+            return jsonify({"error": str(e)}), 500
 
-        save_alert_to_file(payload.model_dump(), "critical")
-        process_alert(payload.model_dump(), "critical")
-
-        return jsonify({"status": "success", "message": "Critical alert processed"})
-
-    except (ValidationError, BadRequest) as e:
-        logger.error("Payload validation failed: %s", e)
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        logger.error(f"Error in critical webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+    handler.__doc__ = f"{description} webhook handler"
+    return handler
 
 
-@app.route("/webhook/warning", methods=["POST"])
-@limiter.limit("10 per minute")
-def webhook_warning():
-    """Warnings"""
-    try:
-        signature = request.headers.get("X-Signature")
-        if not verify_signature(request.get_data(), signature):
-            return jsonify({"error": "Unauthorized"}), 401
+# Register webhook handlers using factory pattern
+# This consolidates 6 nearly identical functions into 1 factory + configuration
+WEBHOOK_ROUTES = [
+    ("", "general", "Alert"),
+    ("/critical", "critical", "Critical alert"),
+    ("/warning", "warning", "Warning alert"),
+    ("/gpu", "gpu", "GPU alert"),
+    ("/ai", "ai", "AI alert"),
+    ("/database", "database", "Database alert"),
+]
 
-        payload = AlertPayload(**request.get_json(force=True))
+for route_suffix, alert_type, description in WEBHOOK_ROUTES:
+    route_path = f"/webhook{route_suffix}"
+    handler = _create_webhook_handler(alert_type, description)
+    handler_name = f"webhook_{alert_type}"
 
-        save_alert_to_file(payload.model_dump(), "warning")
-        process_alert(payload.model_dump(), "warning")
+    # Register the route with rate limiting
+    app.route(route_path, methods=["POST"])(limiter.limit("10 per minute")(handler))
 
-        return jsonify({"status": "success", "message": "Warning alert processed"})
-
-    except (ValidationError, BadRequest) as e:
-        logger.error("Payload validation failed: %s", e)
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        logger.error(f"Error in warning webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/webhook/gpu", methods=["POST"])
-@limiter.limit("10 per minute")
-def webhook_gpu():
-    """GPU alerts"""
-    try:
-        signature = request.headers.get("X-Signature")
-        if not verify_signature(request.get_data(), signature):
-            return jsonify({"error": "Unauthorized"}), 401
-
-        payload = AlertPayload(**request.get_json(force=True))
-
-        save_alert_to_file(payload.model_dump(), "gpu")
-        process_alert(payload.model_dump(), "gpu")
-
-        return jsonify({"status": "success", "message": "GPU alert processed"})
-
-    except (ValidationError, BadRequest) as e:
-        logger.error("Payload validation failed: %s", e)
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        logger.error(f"Error in GPU webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/webhook/ai", methods=["POST"])
-@limiter.limit("10 per minute")
-def webhook_ai():
-    """AI services alerts"""
-    try:
-        signature = request.headers.get("X-Signature")
-        if not verify_signature(request.get_data(), signature):
-            return jsonify({"error": "Unauthorized"}), 401
-
-        payload = AlertPayload(**request.get_json(force=True))
-
-        save_alert_to_file(payload.model_dump(), "ai")
-        process_alert(payload.model_dump(), "ai")
-
-        return jsonify({"status": "success", "message": "AI alert processed"})
-
-    except (ValidationError, BadRequest) as e:
-        logger.error("Payload validation failed: %s", e)
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        logger.error(f"Error in AI webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/webhook/database", methods=["POST"])
-@limiter.limit("10 per minute")
-def webhook_database():
-    """Database alerts"""
-    try:
-        signature = request.headers.get("X-Signature")
-        if not verify_signature(request.get_data(), signature):
-            return jsonify({"error": "Unauthorized"}), 401
-
-        payload = AlertPayload(**request.get_json(force=True))
-
-        save_alert_to_file(payload.model_dump(), "database")
-        process_alert(payload.model_dump(), "database")
-
-        return jsonify({"status": "success", "message": "Database alert processed"})
-
-    except (ValidationError, BadRequest) as e:
-        logger.error("Payload validation failed: %s", e)
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        logger.error(f"Error in database webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+    # Register handler for debugging
+    app.view_functions[handler_name] = handler
 
 
 @app.route("/alerts", methods=["GET"])
