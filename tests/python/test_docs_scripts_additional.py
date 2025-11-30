@@ -50,7 +50,7 @@ def test_normalize_headings_and_insert_toc_respect_frontmatter() -> None:
     assert inserted
     joined = "\n".join(toc_lines)
     assert "[TOC]" in joined
-    # TOC should appear after frontmatter and first heading (which is now "# Second level" after normalization)
+    # TOC should appear after frontmatter and first heading ("# Second level" after normalization)
     assert joined.index("[TOC]") > joined.index("# Second level")
 
 
