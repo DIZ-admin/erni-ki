@@ -110,13 +110,12 @@ class AlertProcessor:
             for alert in alerts:
                 try:
                     self._process_single_alert(alert, group_labels)
-                    results["processed"] += 1
-                except requests.RequestException as e:
-                    logger.error(f"Network error processing alert: {e}")
-                    results["errors"].append(str(e))
                 except Exception as e:
                     logger.error(f"Error processing alert: {e}", exc_info=True)
                     results["errors"].append(str(e))
+                finally:
+                    # Count alert as processed even if notification failed, to reflect attempt.
+                    results["processed"] += 1
 
             return results
 
@@ -193,7 +192,7 @@ class AlertProcessor:
 
             logger.info(f"Discord notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Discord notification: %s", e)
 
     def _send_slack_notification(self, message_data: dict[str, Any]):
@@ -225,7 +224,7 @@ class AlertProcessor:
 
             logger.info(f"Slack notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Slack notification: %s", e)
 
     def _send_telegram_notification(self, message_data: dict[str, Any]):
@@ -257,7 +256,7 @@ class AlertProcessor:
 
             logger.info(f"Telegram notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Telegram notification: %s", e)
 
 

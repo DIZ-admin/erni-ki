@@ -218,7 +218,7 @@ redis_up == 0
 docker compose ps redis
 
 # Redis-Verbindung testen
-docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker compose exec redis redis-cli -a $REDIS_PASSWORD ping
 
 # Redis-Logs ansehen
 docker compose logs redis --tail 50
@@ -447,13 +447,13 @@ redis_memory_used_bytes > 1073741824
 
 ```bash
 # Redis-Speicher prüfen
-docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 INFO memory
+docker compose exec redis redis-cli -a $REDIS_PASSWORD INFO memory
 
 # Anzahl der Keys prüfen
-docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 DBSIZE
+docker compose exec redis redis-cli -a $REDIS_PASSWORD DBSIZE
 
 # Cache leeren bei Bedarf (VORSICHT)
-docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 FLUSHDB
+docker compose exec redis redis-cli -a $REDIS_PASSWORD FLUSHDB
 ```
 
 ---
@@ -575,7 +575,7 @@ time curl -X POST http://localhost:11434/api/generate -d '{"model":"llama3.2","p
 time curl -s "http://localhost:8080/search?q=test&format=json"
 
 # Redis-Cache prüfen
-docker compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 INFO stats
+docker compose exec redis redis-cli -a $REDIS_PASSWORD INFO stats
 
 # SearXNG-Logs prüfen
 docker compose logs searxng --tail 50
