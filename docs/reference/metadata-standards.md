@@ -11,4 +11,4 @@ last_updated: '2025-11-30'
 
 ## Link
 
-- [Metadata Standards](/en/reference/metadata-standards/)
+- [Metadata Standards](./metadata-standards.md)

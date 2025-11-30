@@ -2,7 +2,7 @@
 language: ru
 translation_status: original
 doc_version: '2025.11'
-last_updated: '2025-11-28'
+last_updated: '2025-11-30'
 ---
 
 # Начало работы с ERNI-KI
