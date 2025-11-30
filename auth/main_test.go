@@ -5,7 +5,8 @@ import (
 	"testing"
 )
 
-const longSecret = "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890"
+var longSecret = "this-is-an-extremely-long-secret-key-with-many-characters-to-" +
+	"ensure-maximum-security-12345678901234567890"
 
 func TestValidateSecrets(t *testing.T) {
 	tests := []struct {
@@ -258,7 +259,9 @@ func BenchmarkValidateSecrets(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = validateSecrets()
+		if err := validateSecrets(); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
