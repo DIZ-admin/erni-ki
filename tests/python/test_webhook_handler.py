@@ -566,3 +566,472 @@ class TestNotificationChannelCombinations(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ============================================================================
+# Tests for AlertLabels field validators (webhook_handler.py)
+# ============================================================================
+
+
+def test_alert_labels_validate_alertname_required():
+    """Test that alertname is required and cannot be None."""
+    with pytest.raises(ValidationError, match="alertname is required"):
+        AlertLabels(alertname=None, severity="critical")
+
+
+def test_alert_labels_validate_alertname_empty_string():
+    """Test that empty alertname after stripping is rejected."""
+    with pytest.raises(ValidationError, match="alertname cannot be empty"):
+        AlertLabels(alertname="   ", severity="critical")
+
+
+def test_alert_labels_validate_alertname_max_length():
+    """Test alertname length validation at boundary."""
+    # Exactly 256 chars should be OK
+    labels = AlertLabels(alertname="a" * 256, severity="info")
+    assert len(labels.alertname) == 256
+    
+    # 257 chars should fail
+    with pytest.raises(ValidationError, match="cannot exceed 256 characters"):
+        AlertLabels(alertname="a" * 257, severity="info")
+
+
+def test_alert_labels_validate_instance_max_length():
+    """Test instance field length validation."""
+    # Valid
+    labels = AlertLabels(alertname="Test", instance="192.168.1.1:9090")
+    assert labels.instance == "192.168.1.1:9090"
+    
+    # Too long
+    with pytest.raises(ValidationError, match="instance cannot exceed 256 characters"):
+        AlertLabels(alertname="Test", instance="a" * 257)
+
+
+def test_alert_labels_validate_instance_whitespace_trimmed():
+    """Test that instance whitespace is trimmed."""
+    labels = AlertLabels(alertname="Test", instance="  192.168.1.1:9090  ")
+    assert labels.instance == "192.168.1.1:9090"
+
+
+def test_alert_labels_validate_severity_normalization():
+    """Test that severity is normalized to lowercase."""
+    test_cases = [
+        ("CRITICAL", "critical"),
+        ("Warning", "warning"),
+        ("INFO", "info"),
+        ("DeBuG", "debug"),
+    ]
+    
+    for input_val, expected in test_cases:
+        labels = AlertLabels(alertname="Test", severity=input_val)
+        assert labels.severity == expected
+
+
+def test_alert_labels_validate_severity_invalid_values():
+    """Test that invalid severity values are rejected."""
+    invalid_severities = ["high", "low", "urgent", "error", "fatal"]
+    
+    for severity in invalid_severities:
+        with pytest.raises(ValidationError, match="severity must be one of"):
+            AlertLabels(alertname="Test", severity=severity)
+
+
+# ============================================================================
+# Tests for enhanced notification error handling
+# ============================================================================
+
+
+def test_process_alerts_network_error_counted_as_processed(monkeypatch):
+    """Test that alerts are counted as processed even when notifications fail."""
+    processor = AlertProcessor()
+    
+    # Mock notification methods to raise network errors
+    def mock_send_discord(*args, **kwargs):
+        raise requests.RequestException("Connection timeout")
+    
+    monkeypatch.setattr(processor, "_send_discord_notification", mock_send_discord)
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.com/webhook/test")
+    
+    alerts_data = {
+        "alerts": [
+            {
+                "labels": {"alertname": "TestAlert", "severity": "critical"},
+                "status": "firing",
+                "startsAt": "2024-01-01T00:00:00Z"
+            }
+        ]
+    }
+    
+    result = processor.process_alerts(alerts_data)
+    
+    # Alert should be counted as processed despite notification failure
+    assert result["processed"] == 1
+    assert len(result["errors"]) > 0
+
+
+def test_send_discord_notification_connection_error(monkeypatch, caplog):
+    """Test Discord notification handling of connection errors."""
+    processor = AlertProcessor()
+    
+    def mock_post(*args, **kwargs):
+        raise requests.ConnectionError("Failed to connect")
+    
+    monkeypatch.setattr(requests, "post", mock_post)
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.com/webhook/test")
+    
+    message_data = {
+        "alert_name": "TestAlert",
+        "severity": "critical",
+        "status": "firing",
+        "instance": "test-instance",
+        "starts_at": "2024-01-01T00:00:00Z"
+    }
+    
+    # Should not raise, just log error
+    processor._send_discord_notification(message_data)
+    
+    assert "Failed to send Discord notification" in caplog.text
+
+
+def test_send_slack_notification_timeout_error(monkeypatch, caplog):
+    """Test Slack notification handling of timeout errors."""
+    processor = AlertProcessor()
+    
+    def mock_post(*args, **kwargs):
+        raise requests.Timeout("Request timed out")
+    
+    monkeypatch.setattr(requests, "post", mock_post)
+    monkeypatch.setenv("SLACK_WEBHOOK_URL", "https://hooks.slack.com/test")
+    
+    message_data = {
+        "alert_name": "TestAlert",
+        "severity": "warning",
+        "status": "firing",
+        "instance": "test-instance",
+        "starts_at": "2024-01-01T00:00:00Z"
+    }
+    
+    processor._send_slack_notification(message_data)
+    
+    assert "Failed to send Slack notification" in caplog.text
+
+
+def test_send_telegram_notification_network_error(monkeypatch, caplog):
+    """Test Telegram notification handling of various network errors."""
+    processor = AlertProcessor()
+    
+    def mock_post(*args, **kwargs):
+        raise requests.RequestException("Network unreachable")
+    
+    monkeypatch.setattr(requests, "post", mock_post)
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "test_token")
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "123456")
+    
+    message_data = {
+        "alert_name": "TestAlert",
+        "severity": "info",
+        "status": "firing",
+        "instance": "test-instance",
+        "starts_at": "2024-01-01T00:00:00Z"
+    }
+    
+    processor._send_telegram_notification(message_data)
+    
+    assert "Failed to send Telegram notification" in caplog.text
+
+
+# ============================================================================
+# Tests for notification timeout configuration
+# ============================================================================
+
+
+def test_notification_timeout_applied_to_discord(monkeypatch):
+    """Test that NOTIFICATION_TIMEOUT is applied to Discord requests."""
+    processor = AlertProcessor()
+    
+    timeout_used = None
+    
+    def mock_post(*args, **kwargs):
+        nonlocal timeout_used
+        timeout_used = kwargs.get("timeout")
+        return MagicMock(status_code=200, json=lambda: {})
+    
+    monkeypatch.setattr(requests, "post", mock_post)
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.com/webhook/test")
+    monkeypatch.setenv("NOTIFICATION_TIMEOUT", "15")
+    
+    # Reimport to pick up new env var
+    import importlib
+    import sys
+    if 'conf.webhook_receiver.webhook_handler' in sys.modules:
+        del sys.modules['conf.webhook_receiver.webhook_handler']
+    from conf.webhook_receiver.webhook_handler import AlertProcessor
+    processor = AlertProcessor()
+    
+    message_data = {
+        "alert_name": "Test",
+        "severity": "critical",
+        "status": "firing",
+        "instance": "test",
+        "starts_at": "2024-01-01T00:00:00Z"
+    }
+    
+    processor._send_discord_notification(message_data)
+    
+    assert timeout_used == 15
+
+
+# ============================================================================
+# Tests for production secret validation
+# ============================================================================
+
+
+def test_production_secret_validation_on_startup(monkeypatch):
+    """Test that production startup validates ALERTMANAGER_WEBHOOK_SECRET."""
+    import sys
+    
+    # Test with missing secret
+    monkeypatch.delenv("ALERTMANAGER_WEBHOOK_SECRET", raising=False)
+    
+    with pytest.raises(SystemExit) as exc_info:
+        # Simulate __main__ execution
+        exec(open("conf/webhook-receiver/webhook_handler.py").read())
+    
+    assert exc_info.value.code == 1
+
+
+def test_production_secret_validation_test_placeholder(monkeypatch, caplog):
+    """Test that test placeholder secret is rejected in production."""
+    import sys
+    
+    monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-placeholder")
+    
+    # Should log error and exit
+    with pytest.raises(SystemExit):
+        exec(open("conf/webhook-receiver/webhook_handler.py").read())
+
+
+# ============================================================================
+# Tests for malformed alert payloads
+# ============================================================================
+
+
+def test_process_alerts_missing_alerts_key():
+    """Test handling of payload without 'alerts' key."""
+    processor = AlertProcessor()
+    
+    result = processor.process_alerts({"invalid": "payload"})
+    
+    assert result["processed"] == 0
+    assert result["total"] == 0
+
+
+def test_process_alerts_empty_alerts_array():
+    """Test handling of empty alerts array."""
+    processor = AlertProcessor()
+    
+    result = processor.process_alerts({"alerts": []})
+    
+    assert result["processed"] == 0
+    assert result["total"] == 0
+
+
+def test_process_alerts_malformed_alert_structure():
+    """Test handling of malformed individual alerts."""
+    processor = AlertProcessor()
+    
+    alerts_data = {
+        "alerts": [
+            {"invalid": "structure"},  # Missing required fields
+            {
+                "labels": {"alertname": "ValidAlert", "severity": "info"},
+                "status": "firing"
+            }
+        ]
+    }
+    
+    result = processor.process_alerts(alerts_data)
+    
+    # Second alert should be processed
+    assert result["processed"] >= 1
+    assert len(result["errors"]) >= 1  # First alert should cause error
+
+
+# ============================================================================
+# Tests for notification message formatting edge cases
+# ============================================================================
+
+
+def test_format_alert_message_with_missing_fields():
+    """Test message formatting when optional fields are missing."""
+    processor = AlertProcessor()
+    
+    # Minimal alert with only required fields
+    alert = {
+        "labels": {"alertname": "MinimalAlert", "severity": "info"},
+        "status": "firing"
+    }
+    
+    message = processor._format_alert_message(alert, {})
+    
+    assert "MinimalAlert" in message["alert_name"]
+    assert message["severity"] == "info"
+    assert message["status"] == "firing"
+
+
+def test_format_alert_message_with_unicode_content():
+    """Test message formatting with unicode content."""
+    processor = AlertProcessor()
+    
+    alert = {
+        "labels": {
+            "alertname": "Unicode Alert 测试 🚨",
+            "severity": "warning"
+        },
+        "status": "firing",
+        "annotations": {
+            "description": "Alert with unicode: 日本語 Ελληνικά العربية"
+        }
+    }
+    
+    message = processor._format_alert_message(alert, {})
+    
+    assert "测试" in message["alert_name"]
+    assert "日本語" in message.get("description", "")
+
+
+def test_format_alert_message_with_very_long_description():
+    """Test message formatting with very long description."""
+    processor = AlertProcessor()
+    
+    long_description = "A" * 5000
+    
+    alert = {
+        "labels": {"alertname": "LongAlert", "severity": "critical"},
+        "status": "firing",
+        "annotations": {"description": long_description}
+    }
+    
+    message = processor._format_alert_message(alert, {})
+    
+    # Message should handle long content gracefully
+    assert "description" in message
+    assert len(message["description"]) > 0
+
+
+# ============================================================================
+# Tests for webhook endpoint health check
+# ============================================================================
+
+
+def test_health_check_response_format(client):
+    """Test that health check returns proper response format."""
+    response = client.get("/health")
+    
+    assert response.status_code == 200
+    data = response.get_json()
+    
+    assert "status" in data
+    assert data["status"] == "healthy"
+    assert "service" in data
+    assert data["service"] == "erni-ki-webhook-receiver"
+
+
+def test_health_check_under_load(client):
+    """Test health check reliability under load."""
+    # Make many rapid health check requests
+    responses = []
+    for _ in range(100):
+        response = client.get("/health")
+        responses.append(response.status_code)
+    
+    # Most should succeed (some might be rate-limited)
+    success_count = responses.count(200)
+    assert success_count >= 30  # At least rate limit allows
+
+
+# ============================================================================
+# Tests for alert grouping and deduplication
+# ============================================================================
+
+
+def test_process_alerts_with_group_labels():
+    """Test that group labels are properly passed to alert processing."""
+    processor = AlertProcessor()
+    
+    group_labels = {"cluster": "prod", "env": "production"}
+    
+    alerts_data = {
+        "alerts": [
+            {
+                "labels": {"alertname": "TestAlert", "severity": "info"},
+                "status": "firing"
+            }
+        ],
+        "groupLabels": group_labels
+    }
+    
+    result = processor.process_alerts(alerts_data)
+    
+    assert result["processed"] == 1
+    # Group labels should be used in processing
+
+
+def test_process_alerts_multiple_same_alertname():
+    """Test handling of multiple alerts with same name."""
+    processor = AlertProcessor()
+    
+    alerts_data = {
+        "alerts": [
+            {
+                "labels": {"alertname": "DuplicateAlert", "severity": "warning", "instance": "host1"},
+                "status": "firing"
+            },
+            {
+                "labels": {"alertname": "DuplicateAlert", "severity": "warning", "instance": "host2"},
+                "status": "firing"
+            }
+        ]
+    }
+    
+    result = processor.process_alerts(alerts_data)
+    
+    # Both should be processed
+    assert result["processed"] == 2
+
+
+# ============================================================================
+# Tests for notification retry logic (if implemented)
+# ============================================================================
+
+
+def test_notification_failure_logged_but_not_retried(monkeypatch, caplog):
+    """Test that notification failures are logged but don't trigger retries."""
+    processor = AlertProcessor()
+    
+    call_count = 0
+    
+    def mock_post(*args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        raise requests.RequestException("Simulated failure")
+    
+    monkeypatch.setattr(requests, "post", mock_post)
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.com/webhook/test")
+    
+    message_data = {
+        "alert_name": "Test",
+        "severity": "critical",
+        "status": "firing",
+        "instance": "test",
+        "starts_at": "2024-01-01T00:00:00Z"
+    }
+    
+    processor._send_discord_notification(message_data)
+    
+    # Should only try once (no retries)
+    assert call_count == 1
+    assert "Failed to send Discord notification" in caplog.text
+
+
+# End of additional tests for webhook_handler.py
