@@ -44,6 +44,7 @@ def check_data_readme() -> list[str]:
     if not DATA_README.exists():
         return [f"{DATA_README} is missing."]
     text = DATA_README.read_text(encoding="utf-8")
+    errors: list[str] = []
     missing = missing_entries(DATA_DIR, DATA_README)
     if missing:
         errors.append(f"{DATA_README} does not contain entries for: {', '.join(missing)}")
