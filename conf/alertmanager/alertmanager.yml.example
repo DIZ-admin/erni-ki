@@ -1,0 +1,8 @@
+route:
+  receiver: "default-receiver"
+  group_by: ["alertname", "severity"]
+
+receivers:
+  - name: "default-receiver"
+    webhook_configs:
+      - url: "http://webhook-receiver:9093/webhook"
