@@ -12,10 +12,14 @@ Technical reference materials for developers and advanced users.
 ## Available Documentation
 
 - [Overview](../../overview.md)
-- [API Reference](../../reference/api-reference.md)
-- [Development Guide](../../development/setup-guide.md)
-- [GitHub Environments Setup](../../reference/github-environments-setup.md)
-- [MCPO Integration Guide](../../reference/mcpo-integration-guide.md)
+- [API Reference](../reference/api-reference.md)
+- [Development Guide](../development/setup-guide.md)
+- [GitHub Environments Setup](../reference/github-environments-setup.md)
+- [MCPO Integration Guide](../reference/mcpo-integration-guide.md)
+- [Metadata Standards](../reference/metadata-standards.md)
+- [Style Guide](../reference/style-guide.md)
+- [Documentation Maintenance Strategy](../reference/documentation-maintenance-strategy.md)
+- [NO-EMOJI Policy](../reference/NO-EMOJI-POLICY.md)
 
 ## Note
 

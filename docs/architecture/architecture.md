@@ -775,11 +775,11 @@ Running (исправлена аутентификация 2025-11-07) -**Фун
 # compose.yml - Redis Exporter (ДО исправления)
 environment:
  - REDIS_ADDR=redis:6379
- - REDIS_PASSWORD=ErniKiRedisSecurePassword2024
+ - REDIS_PASSWORD=$REDIS_PASSWORD
 
 # compose.yml - Redis Exporter (ПОСЛЕ исправления)
 environment:
- - REDIS_ADDR=redis://:ErniKiRedisSecurePassword2024@redis:6379
+ - REDIS_ADDR=redis://:$REDIS_PASSWORD@redis:6379
  - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
  - REDIS_EXPORTER_DEBUG=true
 ```
