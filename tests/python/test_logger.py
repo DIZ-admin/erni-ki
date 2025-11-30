@@ -3,7 +3,6 @@
 
 import logging
 import sys
-from io import StringIO
 from pathlib import Path
 
 import pytest  # type: ignore[import-not-found]
@@ -128,25 +127,18 @@ def test_logger_no_duplicate_handlers():
     assert logger1 is logger2  # Same instance
 
 
-def test_logger_exception_logging():
+def test_logger_exception_logging(caplog):
     """Test exception logging."""
     logger = get_logger("test_exception", json_output=True)
-
-    # Capture stdout (logger writes to stdout by default)
-    old_stdout = sys.stdout
-    sys.stdout = StringIO()
 
     try:
         raise ValueError("Test exception")
     except ValueError:
         logger.exception("An error occurred")
 
-    output = sys.stdout.getvalue()
-    sys.stdout = old_stdout
-
-    # Should contain exception info in JSON output
-    assert "exception" in output.lower() or "traceback" in output.lower()
-    assert "ValueError" in output
+    # Check that exception was logged with traceback
+    assert "ValueError" in caplog.text
+    assert "Test exception" in caplog.text
 
 
 if __name__ == "__main__":
