@@ -22,14 +22,14 @@ Indicators (SLI) for monitoring and accountability.
 
 ERNI-KI is a production AI platform with the following SLAs:
 
-| Service        | Availability | Response Time (p99) | Error Rate | Status    |
-| -------------- | ------------ | ------------------- | ---------- | --------- |
-| OpenWebUI      | 99.95%       | 5,000ms             | <0.1%      | 🟢 Active |
-| Ollama (LLM)   | 99.9%        | 10,000ms            | <0.5%      | 🟢 Active |
-| PostgreSQL     | 99.99%       | 100ms               | 0%         | 🟢 Active |
-| Redis Cache    | 99.95%       | 10ms                | <0.1%      | 🟢 Active |
-| SearXNG (RAG)  | 99.9%        | 3,000ms             | <1%        | 🟢 Active |
-| Infrastructure | 99.95%       | -                   | -          | 🟢 Active |
+| Service        | Availability | Response Time (p99) | Error Rate | Status |
+| -------------- | ------------ | ------------------- | ---------- | ------ |
+| OpenWebUI      | 99.95%       | 5,000ms             | <0.1%      | Active |
+| Ollama (LLM)   | 99.9%        | 10,000ms            | <0.5%      | Active |
+| PostgreSQL     | 99.99%       | 100ms               | 0%         | Active |
+| Redis Cache    | 99.95%       | 10ms                | <0.1%      | Active |
+| SearXNG (RAG)  | 99.9%        | 3,000ms             | <1%        | Active |
+| Infrastructure | 99.95%       | -                   | -          | Active |
 
 **Overall System SLA:** 99.9% uptime (8.77 hours downtime per year)
 
@@ -460,7 +460,7 @@ Emergency Maintenance:
 ### Maintenance Notification Template
 
 ```
-🔧 SCHEDULED MAINTENANCE
+SCHEDULED MAINTENANCE
 - Date/Time: [ISO 8601]
 - Duration: 30-60 minutes
 - Services: [List affected]
@@ -521,7 +521,7 @@ ERNI-KI Weekly Health Report
 November 2025 SLA Report
 - Target: 99.9%
 - Achieved: 99.94%
-- Status: PASSED ✅
+- Status: PASSED
 - Error budget remaining: 15 minutes
 - Incidents: 1 (P2, resolved in 2 hours)
 - Improvement actions: [List]
