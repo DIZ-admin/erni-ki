@@ -161,10 +161,7 @@ def validate_versions(check_only: bool = True) -> int:
     file_counts = Counter(ref[0] for ref in refs)
     print("📊 Files with most version references:")
     for file_path, count in file_counts.most_common(10):
-        try:
-            rel_path = file_path.relative_to(REPO_ROOT)
-        except ValueError:
-            rel_path = file_path
+        rel_path = file_path.relative_to(REPO_ROOT)
         print(f"   {count:3d} references in {rel_path}")
 
     if check_only:

@@ -38,7 +38,7 @@ router_settings:
   # Redis settings for router are temporarily disabled due to incompatibility
   # redis_host: "redis"
   # redis_port: 6379
-  # redis_password: "$REDIS_PASSWORD"
+  # redis_password: "ErniKiRedisSecurePassword2024"
   # redis_db: 1 # Use the same DB as caching
 
 general_settings:

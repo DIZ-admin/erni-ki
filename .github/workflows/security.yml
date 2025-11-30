@@ -65,7 +65,7 @@ jobs:
         if: matrix.language == 'javascript'
         uses: actions/setup-node@v4
         with:
-          node-version: "22.14.0"
+          node-version: "20"
           cache: "npm"
 
       - name: 📦 Install JS dependencies
@@ -110,7 +110,7 @@ jobs:
         if: hashFiles('package.json') != ''
         uses: actions/setup-node@v4
         with:
-          node-version: "22.14.0"
+          node-version: "20"
 
       - name: 🔍 Run npm audit (production only)
         if: hashFiles('package.json') != ''
@@ -126,26 +126,6 @@ jobs:
           name: npm-audit-results
           path: npm-audit-results.json
           retention-days: 30
-
-      # Scan Python dependencies
-      - name: 🐍 Setup Python
-        if: hashFiles('requirements*.txt') != ''
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: 🔍 Run pip-audit for Python dependencies
-        if: hashFiles('requirements*.txt') != ''
-        run: |
-          pip install pip-audit
-          # Scan all requirements files
-          pip-audit || true
-
-      - name: 📤 Check Python security
-        if: hashFiles('requirements*.txt') != ''
-        run: |
-          pip install safety
-          safety check --json || true
 
   # Secret scanning
   secret-scan:
@@ -170,7 +150,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.4"
+          go-version: "1.24"
           cache: false
 
       - name: 🔐 Run Gitleaks

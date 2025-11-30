@@ -31,7 +31,7 @@ Redis-Exporter und bietet stabiles Monitoring für Redis 7.4.5 Alpine.
 
 -**Name**: Redis-ERNI-KI -**Typ**: redis-datasource -**URL**:
 redis://redis:6379 -**Authentifizierung**: requirepass
-($REDIS_PASSWORD) -**Modus**: standalone
+(ErniKiRedisSecurePassword2024) -**Modus**: standalone
 
 ### Automatische Konfiguration
 
@@ -106,7 +106,7 @@ Sekunde 5.**keyspace_hits/misses**- Cache-Effizienz
 docker-compose ps redis
 
 # Verbindung prüfen
-docker-compose exec redis redis-cli -a $REDIS_PASSWORD ping
+docker-compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 ping
 
 # Grafana-Logs prüfen
 docker-compose logs grafana --tail=20
