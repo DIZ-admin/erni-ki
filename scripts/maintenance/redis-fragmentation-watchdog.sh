@@ -139,7 +139,7 @@ LAST_ACTION_TS="${LAST_ACTION_TS:-0}"
 RUNS="${RUNS:-0}"
 now="$(date +%s)"
 
-if    awk "BEGIN {exit !(\"$ratio\" > \"$THRESHOLD\")}"; then
+if    awk "BEGIN {exit !($ratio > $THRESHOLD)}"; then
   log_info "Fragmentation ratio ${ratio} > threshold ${THRESHOLD} (used=${used:-0} rss=${rss:-0} peak=${peak:-0})"
 
   if (( used < MIN_USED_MEMORY_BYTES )); then

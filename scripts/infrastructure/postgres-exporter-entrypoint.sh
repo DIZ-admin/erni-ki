@@ -1,5 +1,6 @@
 #!/bin/sh
-set -eu
+# shellcheck disable=SC3040
+set -euo pipefail
 
 # Source common library
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
