@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # mypy: ignore-errors
 """
 Comprehensive unit tests for webhook-receiver.py

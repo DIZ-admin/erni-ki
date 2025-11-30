@@ -25,10 +25,17 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
     by_name: dict[str, list[Path]] = defaultdict(list)
 
     if search_path:
-        # For testing: scan only top-level files (not recursive)
         if not search_path.exists():
             return by_name
-        for path in search_path.iterdir():
+        # Only recurse for expected top-level targets; otherwise scan shallowly
+        iterator = (
+            search_path.rglob("*") if search_path.name in TARGET_DIRS else search_path.glob("*")
+        )
+        for path in iterator:
+            if path.is_dir() and path.name == "__pycache__":
+                continue
+            if path.suffix == ".pyc":
+                continue
             if path.is_file() and path.name not in ALLOWLIST and path.name != ".gitkeep":
                 by_name[path.name].append(path)
         return by_name
@@ -41,6 +48,8 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
 
     for file_path in files:
         path = Path(file_path)
+        if "__pycache__" in path.parts or path.suffix == ".pyc":
+            continue
         if not any(
             str(path).startswith(prefix + "/") or str(path) == prefix for prefix in TARGET_DIRS
         ):
@@ -80,15 +89,14 @@ def main() -> None:
     conf_basenames = get_basenames(Path.cwd() / "conf")
     duplicates = check_duplicates(scripts_basenames, conf_basenames)
 
-    if not duplicates:
-        sys.exit(0)
-
-    print("Duplicate basenames detected in scripts/ or conf/:")
-    for name, paths in sorted(duplicates.items()):
-        print(f"- {name}")
-        for p in paths:
-            print(f"    {p}")
-    sys.exit(1)
+    exit_code = 1 if duplicates else 0
+    if duplicates:
+        print("Duplicate basenames detected in scripts/ or conf/:")
+        for name, paths in sorted(duplicates.items()):
+            print(f"- {name}")
+            for p in paths:
+                print(f"    {p}")
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

@@ -14,11 +14,7 @@ import pytest
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from scripts.maintenance.check_duplicate_basenames import (
-    check_duplicates,
-    get_basenames,
-    main,
-)
+from scripts.maintenance.check_duplicate_basenames import check_duplicates, get_basenames, main
 
 
 class TestGetBasenames:

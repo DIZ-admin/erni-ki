@@ -23,6 +23,8 @@ class AlertLabels(BaseModel):
         """Validate alert name length and content."""
         if not v:
             raise ValueError("alertname cannot be empty")
+        if "\x00" in v:
+            raise ValueError("alertname cannot contain null bytes")
         if len(v) > 256:
             raise ValueError("alertname cannot exceed 256 characters")
         return v.strip()

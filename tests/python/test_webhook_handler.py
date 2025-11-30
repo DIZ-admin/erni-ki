@@ -751,8 +751,6 @@ def test_send_telegram_notification_network_error(monkeypatch, caplog):
 
 def test_notification_timeout_applied_to_discord(monkeypatch):
     """Test that NOTIFICATION_TIMEOUT is applied to Discord requests."""
-    processor = AlertProcessor()
-
     timeout_used = None
 
     def mock_post(*args, **kwargs):
@@ -799,7 +797,7 @@ def test_production_secret_validation_on_startup(monkeypatch):
 
     with pytest.raises(SystemExit) as exc_info:
         # Simulate __main__ execution
-        exec(open("conf/webhook-receiver/webhook_handler.py").read())
+        exec(open("conf/webhook-receiver/webhook_handler.py").read())  # noqa: S102,SIM115
 
     assert exc_info.value.code == 1
 
@@ -811,7 +809,7 @@ def test_production_secret_validation_test_placeholder(monkeypatch, caplog):
 
     # Should log error and exit
     with pytest.raises(SystemExit):
-        exec(open("conf/webhook-receiver/webhook_handler.py").read())
+        exec(open("conf/webhook-receiver/webhook_handler.py").read())  # noqa: S102,SIM115
 
 
 # ============================================================================
