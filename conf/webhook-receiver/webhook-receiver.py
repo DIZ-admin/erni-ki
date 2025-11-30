@@ -63,7 +63,7 @@ except OSError:
     else:
         raise
 RECOVERY_DIR = Path(os.getenv("RECOVERY_DIR", "/app/scripts/recovery"))
-WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
+WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-placeholder")
 ALLOWED_SERVICES = {"ollama", "openwebui", "searxng"}
 
 # Explicit mapping of services to recovery script filenames
@@ -382,11 +382,10 @@ for route_suffix, alert_type, description in WEBHOOK_ROUTES:
     handler = _create_webhook_handler(alert_type, description)
     handler_name = f"webhook_{alert_type}"
 
-    # Register the route with rate limiting
-    app.route(route_path, methods=["POST"])(limiter.limit("10 per minute")(handler))
-
-    # Register handler for debugging
-    app.view_functions[handler_name] = handler
+    # Register the route with rate limiting and a unique endpoint name
+    app.route(route_path, methods=["POST"], endpoint=handler_name)(
+        limiter.limit("10 per minute")(handler)
+    )
 
 
 @app.route("/alerts", methods=["GET"])
