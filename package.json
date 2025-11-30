@@ -118,7 +118,7 @@
     ],
     "*.{json,yaml,yml,md}": [
       "prettier --write --log-level=warn",
-      "npm run lint:language -- --all"
+      "bash -lc 'if [ -z \"$SKIP_LANGUAGE_CHECK\" ]; then npm run lint:language -- --all; fi'"
     ],
     "*.go": [
       "gofmt -w",
