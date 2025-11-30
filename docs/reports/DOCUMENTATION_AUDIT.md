@@ -7,13 +7,15 @@ last_updated: '2025-11-30'
 
 # ERNI-KI PROJECT - DOCUMENTATION AUDIT REPORT
 
-**Assessment:** COMPREHENSIVE documentation with metadata and password exposure issues
+**Assessment:** COMPREHENSIVE documentation with metadata and password exposure
+issues
 
 ---
 
 ## KEY FINDINGS
 
 ### ✅ STRENGTHS
+
 - Extensive documentation (300+ markdown files)
 - Multi-language support (Russian, German, English)
 - API documentation exists
@@ -22,12 +24,14 @@ last_updated: '2025-11-30'
 - Examples and use cases documented
 
 ### ⚠️ CRITICAL ISSUES
+
 1. **Redis password exposed in 90+ documentation files** (SECURITY RISK)
    - `$REDIS_PASSWORD` appears throughout docs
    - Example: docs/operations/database/redis-operations-guide.md line 45
    - Impact: Credentials visible in public documentation
 
 ### ⚠️ STRUCTURAL ISSUES
+
 1. Language metadata inconsistencies
    - 23 files declare English but live in Russian directory
    - Missing language metadata in some files
@@ -50,12 +54,14 @@ last_updated: '2025-11-30'
 **Total Files:** 300+
 
 **By Language:**
+
 - Russian (ru/): 120+ files
 - English (en/): 85+ files
 - German (de/): 45+ files
 - Archive: 50+ files (outdated)
 
 **By Type:**
+
 - Guides: 95 files
 - API docs: 35 files
 - Reference: 45 files
@@ -64,6 +70,7 @@ last_updated: '2025-11-30'
 - Troubleshooting: 30 files
 
 **Status:**
+
 - ✅ Well-organized structure
 - ⚠️ Metadata inconsistencies
 - ❌ Password exposure
@@ -76,6 +83,7 @@ last_updated: '2025-11-30'
 **Severity:** CRITICAL - Credentials in public documentation
 
 **Affected Files (Sample):**
+
 ```
 docs/operations/database/redis-operations-guide.md:45
 docs/operations/monitoring/searxng-redis-issue-analysis.md:120
@@ -85,13 +93,17 @@ docs/operations/backup-restore/backup-strategy.md:67
 ```
 
 **Example Exposure:**
+
 ```markdown
 ### Testing Redis Connection
+
 docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
+
 # Output: PONG
 ```
 
 **Remediation:**
+
 ```bash
 # 1. Find all occurrences
 grep -r "$REDIS_PASSWORD" docs/
@@ -114,16 +126,19 @@ grep -r "password\|secret\|token" docs/ | grep -v "\$\|<your"
 
 ```markdown
 # docs/reference/api-reference.md
+
 ---
-language: en  # ❌ But lives in /docs/ru/
-translation_status: complete
+
+language: en # ❌ But lives in /docs/ru/ translation_status: complete
+
 ---
 ```
 
 **Fix:** Update frontmatter
+
 ```yaml
 ---
-language: ru  # ✅ Correct
+language: ru # ✅ Correct
 translation_status: original
 ---
 ```
@@ -134,13 +149,18 @@ translation_status: original
 
 ```markdown
 # docs/de/reference/status-snippet.md
+
 ---
+
 language: de
+
 # ❌ Missing: translation_status, doc_version, last_updated
+
 ---
 ```
 
 **Fix:** Add complete frontmatter
+
 ```yaml
 ---
 language: de
@@ -161,11 +181,13 @@ last_updated: '2025-11-30'
 **Broken Links Found:** 8-12 instances
 
 **Examples:**
+
 - `[Recovery Scripts](../scripts/recovery/)` - Incorrect path
 - `[API Reference](#api-endpoints)` - Anchor not found
 - `[Database Setup](./database-setup.md)` - File moved to /operations/
 
 **Recommendation:** Use linkchecker or custom script
+
 ```bash
 # Check for broken links
 npm install -g linkchecker
@@ -185,6 +207,7 @@ find docs/ -name "*.md" -exec markdown-link-check {} \;
 **Current State:** ⚠️ PARTIAL
 
 **Documented APIs:**
+
 - ✅ Webhook endpoints (basic)
 - ✅ Health check endpoints
 - ⚠️ Recovery script API (incomplete)
@@ -222,6 +245,7 @@ paths:
 ```
 
 **Benefit:**
+
 - Auto-generated interactive documentation
 - Client SDK generation
 - Validation support
@@ -237,11 +261,13 @@ paths:
 **Docstring Coverage:** 62%
 
 **Missing Documentation:**
+
 - 108 functions without docstrings
 - 45 classes without documentation
 - No module-level docstrings in core modules
 
 **Quick Wins:**
+
 ```python
 # Before
 def verify_signature(body, signature):
@@ -305,17 +331,20 @@ def verify_signature(body: bytes, signature: str | None) -> bool:
 ## REMEDIATION ROADMAP
 
 **Phase 1 (CRITICAL - Week 1):**
+
 - [ ] Remove Redis password from all docs (2-3 hours)
 - [ ] Update language metadata (1 day)
 - [ ] Fix broken links (4 hours)
 - **Total:** 2 days
 
 **Phase 2 (HIGH - Week 2):**
+
 - [ ] Add docstrings to core functions (4 days)
 - [ ] Create OpenAPI spec (2-3 days)
 - **Total:** 6-7 days
 
 **Phase 3 (MEDIUM - Week 3-4):**
+
 - [ ] Auto-generate API docs from OpenAPI
 - [ ] Add code examples for each API
 - [ ] Create migration guides
@@ -323,5 +352,5 @@ def verify_signature(body: bytes, signature: str | None) -> bool:
 
 ---
 
-**Report Generated:** 2025-11-30
-**Documentation Grade:** C+ (Content good, metadata/security issues)
+**Report Generated:** 2025-11-30 **Documentation Grade:** C+ (Content good,
+metadata/security issues)
