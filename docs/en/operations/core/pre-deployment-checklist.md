@@ -507,8 +507,8 @@ docker compose up -d
 
 **Approval**
 
-- DevOps Lead: ********\_******** Date: **\_\_\_**
-- Release Manager: ********\_******** Date: **\_\_\_**
+- DevOps Lead: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
+- Release Manager: **\*\*\*\***\_**\*\*\*\*** Date: **\_\_\_**
 ```
 
 ---
