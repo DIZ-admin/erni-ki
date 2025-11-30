@@ -22,8 +22,14 @@ from flask import Flask, jsonify, request
 from pydantic import ValidationError
 from werkzeug.exceptions import BadRequest
 
-from .models import AlertPayload
-from .services import process_alert
+try:
+    # Try relative imports first (normal package use)
+    from .models import AlertPayload
+    from .services import process_alert
+except ImportError:
+    # Fall back to absolute imports (for testing with importlib)
+    from models import AlertPayload  # type: ignore
+    from services import process_alert  # type: ignore
 
 try:
     from flask_limiter import Limiter
