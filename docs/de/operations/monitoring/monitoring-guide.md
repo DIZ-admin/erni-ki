@@ -116,7 +116,7 @@ curl -s http://localhost:9121/metrics | head -5
 timeout 5 sh -c '</dev/tcp/localhost/9121' && echo "Redis Exporter verfügbar"
 
 # Direkte Redis-Prüfung (mit Passwort)
-docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 ```
 
 ## NVIDIA GPU Exporter (Port 9445) - Verbessert 19.09.2025
@@ -351,7 +351,7 @@ Redis-Verbindungsstring und Passwort überprüfen
 
 ```bash
 # Redis-Verbindung direkt testen
-docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 
 # Redis Exporter Logs prüfen
 docker logs erni-ki-Redis Monitoring über Grafana --tail 20

@@ -40,17 +40,19 @@ def check_archive_readmes() -> list[str]:
 
 
 def check_data_readme() -> list[str]:
+    errors: list[str] = []
     if not DATA_README.exists():
         return [f"{DATA_README} is missing."]
     text = DATA_README.read_text(encoding="utf-8")
+    errors: list[str] = []
     missing = missing_entries(DATA_DIR, DATA_README)
     if missing:
-        return [f"{DATA_README} does not contain entries for: {', '.join(missing)}"]
+        errors.append(f"{DATA_README} does not contain entries for: {', '.join(missing)}")
     # Also ensure each entry has a date row in the table
     table_rows = [line for line in text.splitlines() if line.strip().startswith("| ")]
     if len(table_rows) < 3:
-        return [f"{DATA_README} state table looks incomplete (found {len(table_rows)} rows)."]
-    return []
+        errors.append(f"{DATA_README} state table looks incomplete (found {len(table_rows)} rows).")
+    return errors
 
 
 def main() -> None:
