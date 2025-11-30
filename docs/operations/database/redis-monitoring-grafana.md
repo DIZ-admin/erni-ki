@@ -2,17 +2,16 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-30'
+last_updated: '2025-11-24'
 ---
 
 # Redis Monitoring с Grafana в системе ERNI-KI
 
 ## Обзор
 
-Система ERNI-KI включает полноценный мониторинг Redis через Grafana с
+Система ERNI-KI теперь включает полноценный мониторинг Redis через Grafana с
 использованием Redis Data Source plugin. Это решение заменяет проблемный
-Redis-exporter и обеспечивает стабильный мониторинг Redis 7.0.15-alpine (образ
-закреплён в `compose.yml` из-за несовместимости RDB v12).
+Redis-exporter и обеспечивает стабильный мониторинг Redis 7.4.5 Alpine.
 
 ## Быстрый старт
 
@@ -32,7 +31,7 @@ Redis-exporter и обеспечивает стабильный монитори
 
 -**Название**: Redis-ERNI-KI -**Тип**: redis-datasource -**URL**:
 redis://redis:6379 -**Аутентификация**: requirepass
-($REDIS_PASSWORD) -**Режим**: standalone
+(ErniKiRedisSecurePassword2024) -**Режим**: standalone
 
 ### Автоматическая настройка
 
@@ -106,7 +105,7 @@ CONFIG GET maxmemory
 docker-compose ps redis
 
 # Проверка подключения
-docker-compose exec redis redis-cli -a $REDIS_PASSWORD ping
+docker-compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 ping
 
 # Проверка логов Grafana
 docker-compose logs grafana --tail=20

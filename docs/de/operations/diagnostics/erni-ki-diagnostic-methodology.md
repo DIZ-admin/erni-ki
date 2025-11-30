@@ -105,14 +105,14 @@ docker exec erni-ki-redis-1 redis-cli get test # NOAUTH Fehler
 
 ```bash
 # Verbindungsprüfung mit Passwort
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
 
 # Testen von Schreib-/Leseoperationen
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" set test_key "test_value"
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" get test_key
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" set test_key "test_value"
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" get test_key
 
 # Prüfung von Version und Status
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info server | grep redis_version
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info server | grep redis_version
 ```
 
 **Erfolgskriterien:**
@@ -447,7 +447,7 @@ echo
 
 # 4. Redis Connection
 echo "4. REDIS CONNECTION TEST:"
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping 2>/dev/null || echo "FAILED"
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping 2>/dev/null || echo "FAILED"
 echo
 
 # 5. Docling Health (BEHOBEN: korrekter Pfad über Nginx)
@@ -478,7 +478,7 @@ docker logs erni-ki-openwebui-1 --since=10m | grep -c "litellm" || echo "No Lite
 
 # Testen von Redis Caching
 echo "Testing Redis caching:"
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats | grep keyspace_hits
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info stats | grep keyspace_hits
 
 # Prüfung der GPU-Nutzung von Ollama
 echo "Testing Ollama GPU usage:"

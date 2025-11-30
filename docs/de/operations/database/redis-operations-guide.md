@@ -28,30 +28,30 @@ Performance optimiert.
 docker ps | grep redis
 
 # Redis CLI
-docker exec -it erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD"
+docker exec -it erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024"
 
 # Ping
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
 ```
 
 ## Monitoring
 
 ```bash
 # Speicherinfo
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info memory
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info memory
 
 # Stats
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info stats
 
 # Schlüsselanzahl
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" dbsize
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" dbsize
 ```
 
 ## Backups
 
 ```bash
 # Snapshot erstellen
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" BGSAVE
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 
 # Backup-Status
 ./scripts/redis-backup-metrics.sh status
@@ -94,7 +94,7 @@ Aufbewahrung) -**Speicherort:**`.config-backup/`
 ### Manuell
 
 ```bash
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" BGSAVE
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 ./scripts/redis-backup-metrics.sh success
 ```
 
@@ -120,7 +120,7 @@ keepalive:**300s
 ```bash
 ./scripts/redis-performance-optimization.sh
 ./scripts/redis-comprehensive-test.sh
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" memory purge
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" memory purge
 ```
 
 ---
@@ -138,17 +138,17 @@ docker logs erni-ki-redis-1 --tail 50
 ### Hohe Speichernutzung
 
 ```bash
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info memory
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" memory purge
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" --bigkeys
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info memory
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" memory purge
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" --bigkeys
 ```
 
 ### Performanceprobleme
 
 ```bash
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" slowlog get 10
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" slowlog get 10
 ./scripts/redis-comprehensive-test.sh
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info stats
 ```
 
 ---

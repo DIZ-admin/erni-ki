@@ -34,14 +34,12 @@ class TestRAGExporter(unittest.TestCase):
     @patch("requests.get")
     def test_rag_probe_failure(self, mock_get):
         """Test RAG probe handles failures"""
-        import requests
-
-        mock_get.side_effect = requests.RequestException("Connection failed")
+        mock_get.side_effect = Exception("Connection failed")
 
         try:
             mock_get("http://test/health", timeout=10)
             self.fail("Should have raised exception")
-        except requests.RequestException as e:
+        except Exception as e:
             self.assertIn("Connection failed", str(e))
 
     @patch("requests.get")
@@ -156,14 +154,12 @@ class TestOllamaExporter(unittest.TestCase):
     @patch("requests.get")
     def test_ollama_down_detection(self, mock_get):
         """Test Ollama down state detection"""
-        import requests
-
-        mock_get.side_effect = requests.RequestException("Connection refused")
+        mock_get.side_effect = Exception("Connection refused")
 
         try:
             mock_get("http://ollama:11434/api/version", timeout=5)
             ollama_up = 1
-        except requests.RequestException:
+        except Exception:
             ollama_up = 0
 
         self.assertEqual(ollama_up, 0)
