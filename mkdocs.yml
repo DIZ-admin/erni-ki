@@ -386,12 +386,21 @@ nav:
       - "Local DNS": getting-started/local-network-dns-setup.md
       - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
       - "Port Forwarding": getting-started/port-forwarding-setup.md
+  - Deployment:
+      - "Production Checklist": deployment/production-checklist.md
   - Architecture:
       - "Overview (README)": architecture/index.md
       - Overview: architecture/architecture.md
       - "Services": architecture/services-overview.md
       - "Inventory": architecture/service-inventory.md
       - "Nginx configuration": architecture/nginx-configuration.md
+  - "Development Guides":
+      - "Setup Guide": development/setup-guide.md
+      - "Testing Guide": development/testing-guide.md
+  - Examples:
+      - "Overview": examples/index.md
+      - "API Usage (REST)": examples/api-usage-rest.md
+      - "Nginx Examples": examples/nginx-examples.md
   - "Academy KI":
       - Overview: academy/index.md
       - "Open WebUI Basics": academy/openwebui-basics.md
@@ -478,6 +487,7 @@ nav:
       - "Overview": reference/index.md
       - "API Overview": api/index.md
       - "API Reference": reference/api-reference.md
+      - "Webhook API": reference/webhook-api.md
       - Development: reference/development.md
       - "GitHub Environments": reference/github-environments-setup.md
       - "MCPO Integration": reference/mcpo-integration-guide.md
@@ -489,10 +499,13 @@ nav:
       - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
       - "Documentation Maintenance": reference/documentation-maintenance-strategy.md
       - "Non-root Containers Plan": reference/non-root-containers-plan.md
+      - "Service Versions": reference/service-versions.md
       - "Status Snippet": reference/status-snippet.md
       - "Language Policy": reference/language-policy.md
       - VERSION: VERSION.md
       - CHANGELOG: reference/CHANGELOG.md
+  - Troubleshooting:
+      - "Common Issues": troubleshooting/common-issues.md
 
   - "Reports & Archive":
       - "Archive Overview": archive/index.md

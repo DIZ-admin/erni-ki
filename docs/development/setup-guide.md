@@ -578,7 +578,9 @@ docker system prune -a
 - Check the [API Reference](../reference/api-reference.md) for available
   endpoints
 - Review [Security Policy](../security/security-policy.md) for authentication
-- Read [CONTRIBUTING.md](../../CONTRIBUTING.md) for contribution guidelines
+- Read
+  [CONTRIBUTING.md](https://github.com/DIZ-admin/erni-ki/blob/main/CONTRIBUTING.md)
+  for contribution guidelines
 
 ## Getting Help
 

@@ -714,7 +714,7 @@ def test_with_mock_ollama(mock_ollama):
 - [Development Setup Guide](./setup-guide.md)
 - [Code Quality Standards](../quality/code-standards.md)
 - [API Reference](../reference/api-reference.md)
-- [Webhook Testing Examples](../examples/README.md)
+- [Webhook Testing Examples](../examples/index.md)
 
 ---
 
