@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# mypy: ignore-errors
 """
 ERNI-KI Webhook Receiver for alert handling.
 Processes Alertmanager notifications and forwards them to various channels.
@@ -20,7 +19,7 @@ from pydantic import BaseModel, ValidationError, field_validator
 try:
     from flask_limiter import Limiter
     from flask_limiter.util import get_remote_address
-except Exception:  # pragma: no cover - optional dependency fallback
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - optional dependency fallback
     Limiter = None
     get_remote_address = None
 
@@ -145,8 +144,8 @@ class AlertProcessor:
             for alert in alerts:
                 try:
                     self._process_single_alert(alert, group_labels)
-                except Exception as e:
-                    logger.error(f"Error processing alert: {e}", exc_info=True)
+                except (KeyError, TypeError, ValueError) as e:
+                    logger.error(f"Error processing alert data: {e}", exc_info=True)
                     results["errors"].append(str(e))
                 finally:
                     # Count alert as processed even if notification failed, to reflect attempt.
@@ -154,9 +153,12 @@ class AlertProcessor:
 
             return results
 
+        except (KeyError, TypeError) as e:
+            logger.error(f"Invalid alerts data structure: {e}")
+            return {"error": "Invalid alerts data structure"}
         except Exception as e:
-            logger.error(f"Error processing alerts: {e}", exc_info=True)
-            return {"error": str(e)}
+            logger.exception(f"Unexpected error processing alerts: {e}")
+            return {"error": "Internal server error"}
 
     def _process_single_alert(self, alert: dict[str, Any], group_labels: dict[str, Any]):
         """Process a single alert."""
@@ -324,9 +326,12 @@ def handle_critical_webhook():
         return jsonify({"error": str(e)}), 400
     except PermissionError:
         return jsonify({"error": "Unauthorized"}), 401
+    except (KeyError, TypeError) as e:
+        logger.error(f"Invalid payload structure: {e}", exc_info=True)
+        return jsonify({"error": "Invalid payload"}), 400
     except Exception as e:
-        logger.error(f"Error handling critical webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception(f"Unexpected error handling critical webhook: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/webhook/warning", methods=["POST"])
@@ -347,9 +352,12 @@ def handle_warning_webhook():
         return jsonify({"error": str(e)}), 400
     except PermissionError:
         return jsonify({"error": "Unauthorized"}), 401
+    except (KeyError, TypeError) as e:
+        logger.error(f"Invalid payload structure: {e}", exc_info=True)
+        return jsonify({"error": "Invalid payload"}), 400
     except Exception as e:
-        logger.error(f"Error handling warning webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception(f"Unexpected error handling warning webhook: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/health", methods=["GET"])
