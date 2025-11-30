@@ -133,32 +133,25 @@ class AlertProcessor:
 
     def process_alerts(self, alerts_data: dict[str, Any]) -> dict[str, Any]:
         """Process incoming alerts payload."""
-        try:
-            alerts = alerts_data.get("alerts", [])
-            group_labels = alerts_data.get("groupLabels", {})
+        alerts = alerts_data.get("alerts", [])
+        group_labels = alerts_data.get("groupLabels", {})
 
-            logger.info(f"Processing {len(alerts)} alerts")
+        logger.info(f"Processing {len(alerts)} alerts")
 
-            results = {"processed": 0, "total": len(alerts), "errors": [], "notifications_sent": []}
+        results = {"processed": 0, "total": len(alerts), "errors": [], "notifications_sent": []}
 
-            for alert in alerts:
-                try:
-                    self._process_single_alert(alert, group_labels)
-                except (KeyError, TypeError, ValueError) as e:
-                    logger.error(f"Error processing alert data: {e}", exc_info=True)
-                    results["errors"].append(str(e))
-                finally:
-                    # Count alert as processed even if notification failed, to reflect attempt.
-                    results["processed"] += 1
+        for alert in alerts:
+            try:
+                self._process_single_alert(alert, group_labels)
+            except Exception as e:
+                # Catch all exceptions to ensure processing continues
+                logger.error(f"Error processing alert: {e}", exc_info=True)
+                results["errors"].append(str(e))
+            finally:
+                # Count alert as processed even if notification failed
+                results["processed"] += 1
 
-            return results
-
-        except (KeyError, TypeError) as e:
-            logger.error(f"Invalid alerts data structure: {e}")
-            return {"error": "Invalid alerts data structure"}
-        except Exception as e:
-            logger.exception(f"Unexpected error processing alerts: {e}")
-            return {"error": "Internal server error"}
+        return results
 
     def _format_alert_message(
         self, alert: dict[str, Any], group_labels: dict[str, Any]
