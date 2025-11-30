@@ -14,7 +14,7 @@ from typing import Any
 
 import requests
 from flask import Flask, jsonify, request
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, field_validator
 
 try:
     from flask_limiter import Limiter
@@ -92,6 +92,63 @@ class AlertLabels(BaseModel):
     service: str | None = None
     category: str | None = None
     instance: str | None = None
+
+    @field_validator("alertname", mode="before")
+    @classmethod
+    def validate_alertname(cls, v: str) -> str:
+        """Validate alert name length and content."""
+        if not v:
+            raise ValueError("alertname cannot be empty")
+        if len(v) > 256:
+            raise ValueError("alertname cannot exceed 256 characters")
+        return v.strip()
+
+    @field_validator("severity", mode="before")
+    @classmethod
+    def validate_severity(cls, v: str | None) -> str | None:
+        """Validate severity is one of allowed values."""
+        if v is None:
+            return v
+        allowed = {"critical", "warning", "info", "debug"}
+        v_lower = str(v).lower().strip()
+        if v_lower not in allowed:
+            raise ValueError(f"severity must be one of {allowed}, got {v_lower}")
+        return v_lower
+
+    @field_validator("service", mode="before")
+    @classmethod
+    def validate_service(cls, v: str | None) -> str | None:
+        """Validate service name."""
+        if v is None:
+            return v
+        v = str(v).strip()
+        if len(v) > 128:
+            raise ValueError("service cannot exceed 128 characters")
+        if not v.replace("-", "").replace("_", "").isalnum():
+            raise ValueError("service must contain only alphanumeric characters, hyphens, or underscores")
+        return v
+
+    @field_validator("category", mode="before")
+    @classmethod
+    def validate_category(cls, v: str | None) -> str | None:
+        """Validate alert category."""
+        if v is None:
+            return v
+        v = str(v).strip()
+        if len(v) > 128:
+            raise ValueError("category cannot exceed 128 characters")
+        return v
+
+    @field_validator("instance", mode="before")
+    @classmethod
+    def validate_instance(cls, v: str | None) -> str | None:
+        """Validate instance identifier."""
+        if v is None:
+            return v
+        v = str(v).strip()
+        if len(v) > 256:
+            raise ValueError("instance cannot exceed 256 characters")
+        return v
 
 
 class Alert(BaseModel):
@@ -340,6 +397,7 @@ def handle_warning_webhook():
 
 
 @app.route("/health", methods=["GET"])
+@limiter.limit("30 per minute")  # Rate limit health checks to prevent DDoS
 def health_check():
     """Health check endpoint"""
     return jsonify(
