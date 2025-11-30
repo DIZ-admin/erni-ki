@@ -192,7 +192,7 @@ class AlertProcessor:
 
             logger.info(f"Discord notification sent for {message_data['alert_name']}")
 
-        except Exception as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Discord notification: %s", e)
 
     def _send_slack_notification(self, message_data: dict[str, Any]):
@@ -224,7 +224,7 @@ class AlertProcessor:
 
             logger.info(f"Slack notification sent for {message_data['alert_name']}")
 
-        except Exception as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Slack notification: %s", e)
 
     def _send_telegram_notification(self, message_data: dict[str, Any]):
@@ -256,7 +256,7 @@ class AlertProcessor:
 
             logger.info(f"Telegram notification sent for {message_data['alert_name']}")
 
-        except Exception as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Telegram notification: %s", e)
 
 
