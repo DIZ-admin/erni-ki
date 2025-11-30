@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source environment validation utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck disable=SC1091
+if [[ -f "$SCRIPT_DIR/functions/env-validator.sh" ]]; then
+  source "$SCRIPT_DIR/functions/env-validator.sh"
+fi
+
 log() {
   echo "[litellm-entrypoint] $*" >&2
 }
@@ -111,6 +118,44 @@ prepare_publicai_metrics_dir() {
   export PROMETHEUS_MULTIPROC_DIR="${metrics_dir}"
 }
 
+validate_litellm_config() {
+  log "Validating LiteLLM configuration..."
+
+  local errors=0
+
+  # Check required configuration
+  if [[ -z "${DATABASE_URL:-}" ]]; then
+    log "ERROR: DATABASE_URL not set after configuration"
+    ((errors++))
+  fi
+
+  if [[ -z "${REDIS_URL:-}" ]]; then
+    log "ERROR: REDIS_URL not set after configuration"
+    ((errors++))
+  fi
+
+  # Validate that metrics directory is writable
+  if [[ ! -w "${PROMETHEUS_MULTIPROC_DIR:-/tmp/litellm-publicai-prom}" ]]; then
+    log "ERROR: Metrics directory is not writable"
+    ((errors++))
+  fi
+
+  # Validate URLs are reachable (warning only)
+  if command -v validate_url &> /dev/null; then
+    log "Checking service connectivity..."
+    validate_url "http://db:5432" "PostgreSQL" || true
+    validate_url "http://redis:6379" "Redis" || true
+  fi
+
+  if [[ $errors -gt 0 ]]; then
+    log "ERROR: Configuration validation failed with $errors error(s)"
+    return 1
+  fi
+
+  log "✓ LiteLLM configuration is valid"
+  return 0
+}
+
 main() {
   prepare_publicai_metrics_dir
   configure_database_url
@@ -120,6 +165,12 @@ main() {
   configure_openai_credentials
   configure_publicai_credentials
   configure_redis_url
+
+  # Validate configuration
+  if ! validate_litellm_config; then
+    log "FATAL: Configuration validation failed"
+    exit 1
+  fi
 
   if [[ $# -gt 0 ]]; then
     exec litellm "$@"
