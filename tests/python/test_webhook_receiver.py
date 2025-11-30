@@ -537,7 +537,7 @@ class TestSignatureVerification(unittest.TestCase):
 
         original_secret = webhook.WEBHOOK_SECRET
         try:
-            webhook.WEBHOOK_SECRET = "some_secret"  # noqa: S105 - test stub  # pragma: allowlist secret
+            webhook.WEBHOOK_SECRET = "some_secret"  # noqa: S105  # pragma: allowlist secret
             result = verify_signature(test_body, None)
             self.assertFalse(result)
         finally:
