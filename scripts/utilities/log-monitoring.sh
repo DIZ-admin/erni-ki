@@ -20,7 +20,7 @@ LOG_DIR="$PROJECT_ROOT/logs"
 ALERT_THRESHOLD_GB=1
 CRITICAL_THRESHOLD_GB=5
 WEBHOOK_URL="${LOG_MONITORING_WEBHOOK_URL:-}"
-COMPOSE_FILE="$PROJECT_ROOT/compose.yml"
+# COMPOSE_FILE="$PROJECT_ROOT/compose.yml"
 
 # Colors
 
@@ -57,12 +57,14 @@ check_docker_logs() {
         if [[ -n "$container" ]]; then
             local log_file="/var/lib/docker/containers/$container/$container-json.log"
             if [[ -f "$log_file" ]]; then
-                local size_bytes=$(stat -f%z "$log_file" 2>/dev/null || stat -c%s "$log_file" 2>/dev/null || echo 0)
+                local size_bytes
+                size_bytes=$(stat -f%z "$log_file" 2>/dev/null || stat -c%s "$log_file" 2>/dev/null || echo 0)
                 local size_mb=$((size_bytes / 1024 / 1024))
                 total_size=$((total_size + size_mb))
 
                 if [[ $size_mb -gt 100 ]]; then
-                    local container_name=$(docker inspect --format='{{.Name}}' "$container" 2>/dev/null | sed 's/^\/*//' || echo "unknown")
+                    local container_name
+                    container_name=$(docker inspect --format='{{.Name}}' "$container" 2>/dev/null | sed 's/^\/*//' || echo "unknown")
                     alerts+=("$container_name: ${size_mb}MB")
                 fi
             fi
@@ -94,24 +96,31 @@ check_fluent_bit_performance() {
     local container_name="erni-ki-fluent-bit"
 
     # Check CPU and memory
-    local stats=$(docker stats --no-stream --format "table {{.CPUPerc}}\t{{.MemUsage}}" "$container_name" 2>/dev/null || echo "N/A	N/A")
-    local cpu_percent=$(echo "$stats" | tail -n1 | awk '{print $1}' | sed 's/%//')
-    local mem_usage=$(echo "$stats" | tail -n1 | awk '{print $2}')
+    local stats
+    stats=$(docker stats --no-stream --format "table {{.CPUPerc}}\t{{.MemUsage}}" "$container_name" 2>/dev/null || echo "N/A      N/A")
+    local cpu_percent
+    cpu_percent=$(echo "$stats" | tail -n1 | awk '{print $1}' | sed 's/%//')
+    local mem_usage
+    mem_usage=$(echo "$stats" | tail -n1 | awk '{print $2}')
 
     echo "📈 Fluent Bit performance:"
     echo "   CPU: ${cpu_percent}%"
     echo "   Memory: $mem_usage"
 
     # Metrics via API
-    local metrics_response=$(curl -s "http://localhost:2020/api/v1/metrics" 2>/dev/null || echo "{}")
-    local input_records=$(echo "$metrics_response" | jq -r '.input.forward.records // 0' 2>/dev/null || echo "0")
-    local output_records=$(echo "$metrics_response" | jq -r '.output.loki.proc_records // 0' 2>/dev/null || echo "0")
+    local metrics_response
+    metrics_response=$(curl -s "http://localhost:2020/api/v1/metrics" 2>/dev/null || echo "{}")
+    local input_records
+    input_records=$(echo "$metrics_response" | jq -r '.input.forward.records // 0' 2>/dev/null || echo "0")
+    local output_records
+    output_records=$(echo "$metrics_response" | jq -r '.output.loki.proc_records // 0' 2>/dev/null || echo "0")
 
     echo "   Input records: $input_records"
     echo "   Output records: $output_records"
 
     # Errors in the last hour
-    local error_count=$(docker logs "$container_name" --since 1h 2>/dev/null | grep -c -E "(ERROR|error)" || echo "0")
+    local error_count
+    error_count=$(docker logs "$container_name" --since 1h 2>/dev/null | grep -c -E "(ERROR|error)" || echo "0")
     echo "   Errors (1h): $error_count"
 
     if [[ "$error_count" -gt 50 ]]; then
@@ -129,10 +138,12 @@ check_loki_api() {
     log_info "Checking Loki API availability..."
 
     # Local API check
-    local local_status=$(curl -s -o /dev/null -w "%{http_code}" -H "X-Scope-OrgID: erni-ki" "http://localhost:3100/ready" 2>/dev/null || echo "000")
+    local local_status
+    local_status=$(curl -s -o /dev/null -w "%{http_code}" -H "X-Scope-OrgID: erni-ki" "http://localhost:3100/ready" 2>/dev/null || echo "000")
 
-    # API check through nginx
-    local nginx_status=$(curl -k -s -o /dev/null -w "%{http_code}" -H "X-Scope-OrgID: erni-ki" "https://localhost/loki/api/v1/labels" 2>/dev/null || echo "000")
+    # Check Loki API (via Nginx)
+    local nginx_status
+    nginx_status=$(curl -k -s -o /dev/null -w "%{http_code}" -H "X-Scope-OrgID: erni-ki" "https://localhost/loki/api/v1/labels" 2>/dev/null || echo "000")
 
     echo "🔗 Loki API status:"
     echo "   Local API: $local_status"
@@ -163,7 +174,8 @@ cleanup_old_logs() {
     fi
 
     # Rotate Docker logs if usage is critical
-    local total_size_gb=$(check_docker_logs | grep "Total Docker log size" | awk '{print $5}' | sed 's/GB.*//' || echo "0")
+    local total_size_gb
+    total_size_gb=$(check_docker_logs | grep "Total Docker log size" | awk '{print $5}' | sed 's/GB.*//' || echo "0")
 
     if [[ "${total_size_gb:-0}" -gt $CRITICAL_THRESHOLD_GB ]]; then
         log_info "Force rotating Docker logs..."
@@ -175,7 +187,8 @@ cleanup_old_logs() {
 
 # Report generation
 generate_report() {
-    local timestamp=$(date '+%Y-%m-%d_%H-%M-%S')
+    local timestamp
+    timestamp=$(date '+%Y-%m-%d_%H-%M-%S')
     local report_file="$LOG_DIR/log-monitoring-report-$timestamp.json"
 
     log_info "Generating report: $report_file"
@@ -184,9 +197,12 @@ generate_report() {
     mkdir -p "$LOG_DIR"
 
     # Collect check outputs
-    local docker_log_check=$(check_docker_logs 2>&1)
-    local fluent_bit_check=$(check_fluent_bit_performance 2>&1)
-    local loki_api_check=$(check_loki_api 2>&1)
+    local docker_log_check
+    docker_log_check=$(check_docker_logs 2>&1)
+    local fluent_bit_check
+    fluent_bit_check=$(check_fluent_bit_performance 2>&1)
+    local loki_api_check
+    loki_api_check=$(check_loki_api 2>&1)
 
     # Build JSON report
     cat > "$report_file" << EOF

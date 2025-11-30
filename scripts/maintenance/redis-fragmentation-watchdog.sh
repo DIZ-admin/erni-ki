@@ -25,7 +25,7 @@ trap 'record_status failure "Redis watchdog failed"' ERR
 
 DRY_RUN=false
 THRESHOLD="${REDIS_FRAGMENTATION_THRESHOLD:-6.0}"
-LOG_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.log"
+# LOG_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.log"
 STATE_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.state"
 LOW_MEMORY_NOTICE_FILE="${PROJECT_DIR}/logs/redis-fragmentation-watchdog.lowmem"
 LOW_MEMORY_NOTICE_INTERVAL="${REDIS_FRAGMENTATION_LOW_MEMORY_NOTICE_INTERVAL:-3600}"

@@ -80,6 +80,8 @@ lint: ## Run all linters (JS + Python + Shells)
 	npm run lint:js
 	@echo "  → Python..."
 	npm run lint:py
+	@echo "  → Shell..."
+	npm run lint:sh
 	@echo "$(GREEN)✓ All linters passed$(NC)"
 
 lint-fix: ## Fix linting issues (auto-fixable only)

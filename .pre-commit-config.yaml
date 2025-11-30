@@ -181,7 +181,7 @@ repos:
     rev: v0.9.0
     hooks:
       - id: shellcheck
-        args: ["--severity=error"]
+        args: ["--severity=error", "-e", "SC1091"]
         files: "\\.sh$"
 
   # ===================================================================
