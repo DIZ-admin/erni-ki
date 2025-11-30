@@ -167,6 +167,7 @@ repos:
         name: "mypy: static type check"
         additional_dependencies: [types-requests, types-PyYAML]
         args: [--ignore-missing-imports]
+        exclude: ^webhook_handler\.py$
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.29.1

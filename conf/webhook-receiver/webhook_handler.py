@@ -5,7 +5,6 @@ ERNI-KI Webhook Receiver for alert handling.
 Processes Alertmanager notifications and forwards them to various channels.
 """
 
-import contextlib
 import hashlib
 import hmac
 import logging
@@ -56,20 +55,13 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
 TEST_SECRET_PLACEHOLDER = "test-secret-placeholder"  # pragma: allowlist secret  # noqa: S105
-WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", TEST_SECRET_PLACEHOLDER)
-
-# Provide stable module name for tests patching via `webhook_handler.*`
-with contextlib.suppress(KeyError):  # pragma: no cover - defensive guard for unusual import paths
-    sys.modules["webhook_handler"] = sys.modules[__name__]
+WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
 
 
 def verify_signature(body: bytes, signature: str | None) -> bool:
     if not WEBHOOK_SECRET:
         logger.error("WEBHOOK_SECRET not configured; rejecting request")
         return False
-    # In test environments we allow missing signatures when using the placeholder secret.
-    if signature is None and WEBHOOK_SECRET == TEST_SECRET_PLACEHOLDER:
-        return True  # pragma: no cover - test shim
     if not signature:
         return False
     expected = hmac.new(WEBHOOK_SECRET.encode(), body, hashlib.sha256).hexdigest()
@@ -373,5 +365,8 @@ def health_check():
 
 
 if __name__ == "__main__":
+    if not WEBHOOK_SECRET or WEBHOOK_SECRET == TEST_SECRET_PLACEHOLDER:
+        logger.error("ALERTMANAGER_WEBHOOK_SECRET must be configured in production")
+        sys.exit(1)
     logger.info("Starting ERNI-KI Webhook Receiver")
     app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container
