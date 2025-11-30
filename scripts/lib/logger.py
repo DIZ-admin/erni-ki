@@ -13,8 +13,10 @@ Usage:
 import json
 import logging
 import sys
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
+from typing import IO
 
 
 class ColoredFormatter(logging.Formatter):
@@ -104,7 +106,20 @@ def get_logger(
     logger.handlers = []
 
     # Console handler
-    console_handler = logging.StreamHandler(sys.stderr)
+    class _DynamicStreamHandler(logging.StreamHandler):
+        """Stream handler that re-evaluates the target stream on every emit."""
+
+        def __init__(self, stream_getter: Callable[[], IO[str] | None]) -> None:
+            super().__init__()
+            self._stream_getter = stream_getter
+
+        def emit(self, record: logging.LogRecord) -> None:
+            stream = self._stream_getter() or sys.__stderr__
+            if stream is not None:
+                self.stream = stream
+            super().emit(record)
+
+    console_handler = _DynamicStreamHandler(lambda: sys.stderr)
     console_handler.setLevel(log_level)
 
     if json_output:
