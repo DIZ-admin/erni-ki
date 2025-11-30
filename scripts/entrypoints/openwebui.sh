@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source environment validation utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck disable=SC1091
+if [[ -f "$SCRIPT_DIR/functions/env-validator.sh" ]]; then
+  source "$SCRIPT_DIR/functions/env-validator.sh"
+fi
+
 log() {
   echo "[openwebui-entrypoint] $*" >&2
 }
@@ -78,11 +85,50 @@ configure_redis_url() {
   export REDIS_URL="${REDIS_URL:-redis://${host}:${port}/${db}}"
 }
 
+validate_openwebui_config() {
+  log "Validating OpenWebUI configuration..."
+
+  local errors=0
+
+  # Check required URLs are set after configuration
+  if [[ -z "${DATABASE_URL:-}" ]]; then
+    log "ERROR: DATABASE_URL not set after configuration"
+    ((errors++))
+  fi
+
+  if [[ -z "${REDIS_URL:-}" ]]; then
+    log "ERROR: REDIS_URL not set after configuration"
+    ((errors++))
+  fi
+
+  # Validate URLs are reachable (warning only)
+  if command -v validate_url &> /dev/null; then
+    log "Checking service connectivity..."
+    validate_url "http://db:5432" "PostgreSQL" || true
+    validate_url "http://redis:6379" "Redis" || true
+    validate_url "http://ollama:11434/api/tags" "Ollama" || true
+  fi
+
+  if [[ $errors -gt 0 ]]; then
+    log "ERROR: Configuration validation failed with $errors error(s)"
+    return 1
+  fi
+
+  log "✓ OpenWebUI configuration is valid"
+  return 0
+}
+
 main() {
   configure_postgres_urls
   configure_webui_secret
   configure_openai_keys
   configure_redis_url
+
+  # Validate configuration
+  if ! validate_openwebui_config; then
+    log "FATAL: Configuration validation failed"
+    exit 1
+  fi
 
   if [[ $# -gt 0 ]]; then
     exec "$@"

@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source environment validation utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck disable=SC1091
+if [[ -f "$SCRIPT_DIR/functions/env-validator.sh" ]]; then
+  source "$SCRIPT_DIR/functions/env-validator.sh"
+fi
+
 log() {
   echo "[searxng-entrypoint] $*" >&2
 }
@@ -32,8 +39,40 @@ configure_redis_url() {
   export SEARXNG_REDIS_URL="${SEARXNG_REDIS_URL:-redis://${host}:${port}/${db}}"
 }
 
+validate_searxng_config() {
+  log "Validating SearXNG configuration..."
+
+  local errors=0
+
+  # Check required URLs are set after configuration
+  if [[ -z "${SEARXNG_REDIS_URL:-}" ]]; then
+    log "ERROR: SEARXNG_REDIS_URL not set after configuration"
+    ((errors++))
+  fi
+
+  # Validate Redis is reachable (warning only)
+  if command -v validate_url &> /dev/null; then
+    log "Checking service connectivity..."
+    validate_url "http://redis:6379" "Redis" || true
+  fi
+
+  if [[ $errors -gt 0 ]]; then
+    log "ERROR: Configuration validation failed with $errors error(s)"
+    return 1
+  fi
+
+  log "✓ SearXNG configuration is valid"
+  return 0
+}
+
 main() {
   configure_redis_url
+
+  # Validate configuration
+  if ! validate_searxng_config; then
+    log "FATAL: Configuration validation failed"
+    exit 1
+  fi
 
   if [[ $# -gt 0 ]]; then
     exec "$@"

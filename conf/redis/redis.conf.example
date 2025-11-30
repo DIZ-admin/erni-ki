@@ -1,0 +1,15 @@
+# Minimal Redis config for ERNI-KI template
+protected-mode yes
+port 6379
+bind 0.0.0.0
+timeout 0
+databases 16
+
+# Persistence
+save 900 1
+save 300 10
+save 60 10000
+rdbcompression yes
+
+# Security (use Docker secrets for real password)
+requirepass "CHANGEME_SECURE_PASSWORD"

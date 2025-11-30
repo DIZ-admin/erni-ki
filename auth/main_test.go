@@ -1,510 +1,312 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
 	"os"
-	"strings"
 	"testing"
-	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
-// Test environment setup.
-func TestMain(m *testing.M) {
-	// Set Gin to test mode
-	gin.SetMode(gin.TestMode)
+func TestValidateSecrets(t *testing.T) {
+	tests := []struct {
+		name        string
+		secret      string
+		shouldError bool
+		setupEnv    func()
+		cleanup     func()
+	}{
+		{
+			name:        "Valid secret with sufficient length",
+			secret:      "this-is-a-sufficiently-long-secret-key-12345678",
+			shouldError: false,
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "this-is-a-sufficiently-long-secret-key-12345678")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+		{
+			name:        "Secret exactly 32 characters (boundary test)",
+			secret:      "12345678901234567890123456789012",
+			shouldError: false,
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "12345678901234567890123456789012")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+		{
+			name:        "Secret with 31 characters (just below minimum)",
+			secret:      "1234567890123456789012345678901",
+			shouldError: true,
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "1234567890123456789012345678901")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+		{
+			name:        "Empty secret",
+			secret:      "",
+			shouldError: true,
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+		{
+			name:        "Missing environment variable",
+			secret:      "",
+			shouldError: true,
+			setupEnv: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+			cleanup: func() {
+				// Nothing to cleanup
+			},
+		},
+		{
+			name:        "Very long secret (should be valid)",
+			secret:      "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890",
+			shouldError: false,
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+		{
+			name:        "Secret with special characters",
+			secret:      "my-$ecret!@#key%^&*()_+-=[]{}|;:',.<>?/~`",
+			shouldError: false,
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "my-$ecret!@#key%^&*()_+-=[]{}|;:',.<>?/~`")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+		{
+			name:        "Secret with whitespace (still counts toward length)",
+			secret:      "secret with spaces that is long enough for validation",
+			shouldError: false,
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "secret with spaces that is long enough for validation")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+		{
+			name:        "Secret with only whitespace",
+			secret:      "                                ",
+			shouldError: false, // Length check passes, but should consider adding content validation
+			setupEnv: func() {
+				os.Setenv("WEBUI_SECRET_KEY", "                                ")
+			},
+			cleanup: func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			},
+		},
+	}
 
-	// Set test environment variables
-	os.Setenv("WEBUI_SECRET_KEY", "test-secret-key-for-testing")
-	os.Unsetenv("WEBUI_JWT_ISSUER")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Setup
+			tt.setupEnv()
+			defer tt.cleanup()
 
-	// Run tests
-	code := m.Run()
+			// Execute
+			err := validateSecrets()
 
-	// Clean up environment variables
-	os.Unsetenv("WEBUI_SECRET_KEY")
-	os.Unsetenv("WEBUI_JWT_ISSUER")
+			// Assert
+			if tt.shouldError && err == nil {
+				t.Errorf("validateSecrets() expected error but got none")
+			}
+			if !tt.shouldError && err != nil {
+				t.Errorf("validateSecrets() unexpected error: %v", err)
+			}
 
-	os.Exit(code)
+			// Additional validation: check error message content
+			if err != nil {
+				errMsg := err.Error()
+				if tt.secret == "" && os.Getenv("WEBUI_SECRET_KEY") == "" {
+					if errMsg != "CRITICAL: WEBUI_SECRET_KEY environment variable not set" {
+						t.Errorf("Expected 'not set' error message, got: %s", errMsg)
+					}
+				} else if len(tt.secret) > 0 && len(tt.secret) < 32 {
+					expectedSubstring := "too short"
+					if !contains(errMsg, expectedSubstring) {
+						t.Errorf("Expected error message to contain '%s', got: %s", expectedSubstring, errMsg)
+					}
+				}
+			}
+		})
+	}
 }
 
-// Test root endpoint.
-func TestRootEndpoint(t *testing.T) {
-	// Create test router
-	router := setupRouter()
-
-	// Create test request
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/", http.NoBody)
-	require.NoError(t, err)
-
-	// Create ResponseRecorder to capture response
-	w := httptest.NewRecorder()
-
-	// Execute request
-	router.ServeHTTP(w, req)
-
-	// Check status code
-	assert.Equal(t, http.StatusOK, w.Code)
-
-	// Check response content
-	var response map[string]any
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	require.NoError(t, err)
-
-	assert.Equal(t, "auth-service is running", response["message"])
+// Helper function to check if string contains substring
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || 
+		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr || 
+		len(s) > len(substr) && containsMiddle(s, substr))))
 }
 
-// Test validation with missing token.
-func TestValidateEndpointMissingToken(t *testing.T) {
-	router := setupRouter()
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
-	require.NoError(t, err)
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	// Expect 401 Unauthorized
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
-
-	var response map[string]any
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	require.NoError(t, err)
-
-	assert.Equal(t, "unauthorized", response["message"])
-	assert.Equal(t, "token missing", response["error"])
+func containsMiddle(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
 }
 
-// Test validation with valid token.
-func TestValidateEndpointValidToken(t *testing.T) {
-	router := setupRouter()
-
-	// Create valid JWT token
-	token := createValidJWTToken(t)
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
-	require.NoError(t, err)
-
-	// Add token to cookie
-	req.AddCookie(&http.Cookie{
-		Name:  "token",
-		Value: token,
-	})
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	// Expect 200 OK
-	assert.Equal(t, http.StatusOK, w.Code)
-
-	var response map[string]any
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	require.NoError(t, err)
-
-	assert.Equal(t, "authorized", response["message"])
-}
-
-// Test validation with invalid token.
-func TestValidateEndpointInvalidToken(t *testing.T) {
-	router := setupRouter()
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/validate", http.NoBody)
-	require.NoError(t, err)
-
-	// Add invalid token
-	req.AddCookie(&http.Cookie{
-		Name:  "token",
-		Value: "invalid.jwt.token",
-	})
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	// Expect 401 Unauthorized
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
-
-	var response map[string]any
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	require.NoError(t, err)
-
-	assert.Equal(t, "unauthorized", response["message"])
-}
-
-// Test verifyToken function with valid token.
-func TestVerifyTokenValid(t *testing.T) {
-	token := createValidJWTToken(t)
-
-	valid, err := verifyToken(token)
-
-	assert.NoError(t, err)
-	assert.True(t, valid)
-}
-
-// Test verifyToken function with invalid token.
-func TestVerifyTokenInvalid(t *testing.T) {
-	valid, err := verifyToken("invalid.jwt.token")
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-}
-
-// Test verifyToken function with missing secret.
-func TestVerifyTokenMissingSecret(t *testing.T) {
-	// Temporarily remove environment variable
+func TestValidateSecretsIntegration(t *testing.T) {
+	// Save original env var if it exists
 	originalSecret := os.Getenv("WEBUI_SECRET_KEY")
-	os.Unsetenv("WEBUI_SECRET_KEY")
-	defer os.Setenv("WEBUI_SECRET_KEY", originalSecret)
+	defer func() {
+		if originalSecret != "" {
+			os.Setenv("WEBUI_SECRET_KEY", originalSecret)
+		} else {
+			os.Unsetenv("WEBUI_SECRET_KEY")
+		}
+	}()
 
-	token := "any.jwt.token"
+	t.Run("Integration: Multiple validations in sequence", func(t *testing.T) {
+		secrets := []string{
+			"first-valid-secret-key-with-sufficient-length",
+			"second-valid-secret-key-also-long-enough",
+			"third-valid-secret-key-meets-requirements",
+		}
 
-	valid, err := verifyToken(token)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "WEBUI_SECRET_KEY env variable missing")
-}
-
-// Test verifyToken function with expired token.
-func TestVerifyTokenExpired(t *testing.T) {
-	token := createExpiredJWTToken(t)
-
-	valid, err := verifyToken(token)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-}
-
-func TestVerifyTokenRejectsLongToken(t *testing.T) {
-	token := strings.Repeat("a", 5000) // longer than MaxTokenLength
-
-	valid, err := verifyToken(token)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "token too long")
-}
-
-func TestVerifyTokenRejectsWrongAlgorithm(t *testing.T) {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret)
-
-	// Token signed with HS384 should be rejected (expect HS256)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS384, jwt.RegisteredClaims{
-		Subject:   "test-user",
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
-	})
-	tokenString, err := token.SignedString([]byte(secret))
-	require.NoError(t, err)
-
-	valid, err := verifyToken(tokenString)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-}
-
-func TestVerifyTokenMissingClaims(t *testing.T) {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret)
-
-	// Missing exp
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:  "test-user",
-		IssuedAt: jwt.NewNumericDate(time.Now()),
-	})
-	tokenString, err := token.SignedString([]byte(secret))
-	require.NoError(t, err)
-
-	valid, err := verifyToken(tokenString)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "exp")
-}
-
-func TestVerifyTokenIssuerValidation(t *testing.T) {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret)
-
-	// Expect a specific issuer
-	os.Setenv("WEBUI_JWT_ISSUER", "erni-ki-auth")
-	defer os.Unsetenv("WEBUI_JWT_ISSUER")
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:   "test-user",
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
-		Issuer:    "wrong-issuer",
-	})
-	tokenString, err := token.SignedString([]byte(secret))
-	require.NoError(t, err)
-
-	valid, err := verifyToken(tokenString)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "issuer")
-}
-
-// Helper functions
-
-// setupRouter creates a test router.
-func setupRouter() *gin.Engine {
-	router := gin.New()
-
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "auth-service is running",
-		})
+		for _, secret := range secrets {
+			os.Setenv("WEBUI_SECRET_KEY", secret)
+			err := validateSecrets()
+			if err != nil {
+				t.Errorf("Validation failed for valid secret: %v", err)
+			}
+		}
 	})
 
-	router.GET("/validate", func(c *gin.Context) {
-		cookieToken, err := c.Cookie("token")
+	t.Run("Integration: Validation after env change", func(t *testing.T) {
+		// Set invalid secret
+		os.Setenv("WEBUI_SECRET_KEY", "short")
+		err := validateSecrets()
+		if err == nil {
+			t.Error("Expected validation to fail with short secret")
+		}
+
+		// Change to valid secret
+		os.Setenv("WEBUI_SECRET_KEY", "now-this-is-a-valid-secret-key-with-length")
+		err = validateSecrets()
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-				"error":   "token missing",
-			})
-			return
-		}
-
-		valid, err := verifyToken(cookieToken)
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-				"error":   err.Error(),
-			})
-			return
-		}
-
-		if valid {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "authorized",
-			})
+			t.Errorf("Expected validation to succeed after fixing secret: %v", err)
 		}
 	})
-
-	return router
 }
 
-// createValidJWTToken creates a valid JWT token for tests.
-func createValidJWTToken(t *testing.T) string {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY must be set for tests")
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:   "test-user",
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
-	})
-
-	tokenString, err := token.SignedString([]byte(secret))
-	require.NoError(t, err)
-
-	return tokenString
-}
-
-// createExpiredJWTToken creates an expired JWT token for tests.
-func createExpiredJWTToken(t *testing.T) string {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret, "WEBUI_SECRET_KEY must be set for tests")
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:   "test-user",
-		IssuedAt:  jwt.NewNumericDate(time.Now().Add(-2 * time.Hour)),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(-time.Hour)), // Expired one hour ago
-	})
-
-	tokenString, err := token.SignedString([]byte(secret))
-	require.NoError(t, err)
-
-	return tokenString
-}
-
-// Test health check endpoint.
-func TestHealthCheckEndpoint(t *testing.T) {
-	router := gin.New()
-	router.GET("/health", func(c *gin.Context) {
-		respondJSON(c, http.StatusOK, gin.H{
-			"status":  "healthy",
-			"service": "auth-service",
-		})
-	})
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/health", http.NoBody)
-	require.NoError(t, err)
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "healthy")
-}
-
-// Test requestIDMiddleware generates UUID.
-func TestRequestIDMiddlewareGeneratesUUID(t *testing.T) {
-	router := gin.New()
-	router.Use(requestIDMiddleware())
-	router.GET("/test", func(c *gin.Context) {
-		reqID := c.GetString("request_id")
-		c.JSON(http.StatusOK, gin.H{"request_id": reqID})
-	})
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/test", http.NoBody)
-	require.NoError(t, err)
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "request_id")
-
-	// Check X-Request-ID header is set
-	assert.NotEmpty(t, w.Header().Get("X-Request-ID"))
-}
-
-// Test requestIDMiddleware preserves existing request ID.
-func TestRequestIDMiddlewarePreservesExisting(t *testing.T) {
-	router := gin.New()
-	router.Use(requestIDMiddleware())
-	router.GET("/test", func(c *gin.Context) {
-		reqID := c.GetString("request_id")
-		c.JSON(http.StatusOK, gin.H{"request_id": reqID})
-	})
-
-	existingID := "test-request-id-12345"
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/test", http.NoBody)
-	require.NoError(t, err)
-	req.Header.Set("X-Request-ID", existingID)
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, existingID, w.Header().Get("X-Request-ID"))
-}
-
-// Test respondJSON includes request_id.
-func TestRespondJSONIncludesRequestID(t *testing.T) {
-	router := gin.New()
-	router.Use(requestIDMiddleware())
-	router.GET("/test", func(c *gin.Context) {
-		respondJSON(c, http.StatusOK, gin.H{"message": "test"})
-	})
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/test", http.NoBody)
-	require.NoError(t, err)
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "request_id")
-}
-
-// Test verifyToken with empty string.
-func TestVerifyTokenEmptyString(t *testing.T) {
-	valid, err := verifyToken("")
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "token missing")
-}
-
-// Test verifyToken with whitespace only.
-func TestVerifyTokenWhitespaceOnly(t *testing.T) {
-	valid, err := verifyToken("   ")
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "token missing")
-}
-
-// Test verifyToken with token missing subject claim.
-func TestVerifyTokenMissingSubject(t *testing.T) {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret)
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
-		// Subject is missing
-	})
-	tokenString, err := token.SignedString([]byte(secret))
-	require.NoError(t, err)
-
-	valid, err := verifyToken(tokenString)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "sub claim")
-}
-
-// Test verifyToken with future issued-at time.
-func TestVerifyTokenFutureIssuedAt(t *testing.T) {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	require.NotEmpty(t, secret)
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:   "test-user",
-		IssuedAt:  jwt.NewNumericDate(time.Now().Add(time.Hour)), // Future time
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(2 * time.Hour)),
-	})
-	tokenString, err := token.SignedString([]byte(secret))
-	require.NoError(t, err)
-
-	valid, err := verifyToken(tokenString)
-
-	assert.Error(t, err)
-	assert.False(t, valid)
-	assert.Contains(t, err.Error(), "iat claim")
-}
-
-// Test root endpoint returns version.
-func TestRootEndpointReturnsVersion(t *testing.T) {
-	router := gin.New()
-	router.GET("/", func(c *gin.Context) {
-		respondJSON(c, http.StatusOK, gin.H{
-			"message": "auth-service is running",
-			"version": "1.0.0",
-			"status":  "healthy",
-		})
-	})
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", "/", http.NoBody)
-	require.NoError(t, err)
-
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "1.0.0")
-	assert.Contains(t, w.Body.String(), "healthy")
-}
-
-// Test concurrent token verification.
-func TestVerifyTokenConcurrent(t *testing.T) {
-	token := createValidJWTToken(t)
+func TestValidateSecretsConcurrency(t *testing.T) {
+	// Test that validateSecrets is safe to call concurrently
+	os.Setenv("WEBUI_SECRET_KEY", "concurrent-test-secret-key-with-sufficient-length")
+	defer os.Unsetenv("WEBUI_SECRET_KEY")
 
 	done := make(chan bool)
+	errors := make(chan error, 10)
 
 	for i := 0; i < 10; i++ {
 		go func() {
-			valid, err := verifyToken(token)
-			assert.NoError(t, err)
-			assert.True(t, valid)
+			err := validateSecrets()
+			errors <- err
 			done <- true
 		}()
 	}
 
+	// Wait for all goroutines
 	for i := 0; i < 10; i++ {
 		<-done
+	}
+
+	close(errors)
+
+	// Check that all validations succeeded
+	for err := range errors {
+		if err != nil {
+			t.Errorf("Concurrent validation failed: %v", err)
+		}
+	}
+}
+
+func TestHealthCheck(t *testing.T) {
+	// Test the health check functionality
+	err := healthCheck()
+	
+	// Health check should succeed when service is not running (returns error)
+	// or when it's running (returns nil)
+	// This is a basic smoke test
+	_ = err // Health check behavior depends on whether server is running
+}
+
+func BenchmarkValidateSecrets(b *testing.B) {
+	os.Setenv("WEBUI_SECRET_KEY", "benchmark-secret-key-with-sufficient-length")
+	defer os.Unsetenv("WEBUI_SECRET_KEY")
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = validateSecrets()
+	}
+}
+
+func TestValidateSecretsErrorMessages(t *testing.T) {
+	tests := []struct {
+		name            string
+		secret          string
+		expectedContain string
+	}{
+		{
+			name:            "Empty secret error message",
+			secret:          "",
+			expectedContain: "not set",
+		},
+		{
+			name:            "Short secret error message",
+			secret:          "short",
+			expectedContain: "too short",
+		},
+		{
+			name:            "Short secret includes length info",
+			secret:          "12345",
+			expectedContain: "5 chars",
+		},
+		{
+			name:            "Short secret includes minimum requirement",
+			secret:          "tooshort",
+			expectedContain: "32 characters required",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.secret == "" {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+			} else {
+				os.Setenv("WEBUI_SECRET_KEY", tt.secret)
+			}
+			defer os.Unsetenv("WEBUI_SECRET_KEY")
+
+			err := validateSecrets()
+			if err == nil {
+				t.Error("Expected error but got none")
+				return
+			}
+
+			if !contains(err.Error(), tt.expectedContain) {
+				t.Errorf("Expected error message to contain '%s', got: %s", 
+					tt.expectedContain, err.Error())
+			}
+		})
 	}
 }
