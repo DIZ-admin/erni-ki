@@ -145,3 +145,7 @@ def log_to_file(logger: logging.Logger, file_path: str | Path) -> None:
         logger.addHandler(file_handler)
     except OSError as e:
         logger.error("Failed to setup file logging at %s: %s", file_path_obj, e)
+
+
+# Default logger instance for direct imports
+logger = get_logger("erni-ki")
