@@ -64,7 +64,7 @@ curl -H "Authorization: Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d
 curl -s "http://localhost:8080/search?q=test&format=json" | jq -r '.results | length'
 
 # 4. Тестирование Redis
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
 
 # 5. Тестирование внешнего доступа
 curl -I "https://ki.erni-gruppe.ch"
