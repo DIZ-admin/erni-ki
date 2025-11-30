@@ -670,7 +670,7 @@ curl -s https://ki.erni-gruppe.ch/health
 - [Development Setup Guide](../development/setup-guide.md)
 - [Testing Guide](../development/testing-guide.md)
 - [Security Policy](../security/security-policy.md)
-- [Monitoring Guide](../operations/monitoring-guide.md)
+- [Monitoring Guide](../operations/monitoring/monitoring-guide.md)
 - [Backup & Recovery](../operations/backup-guide.md)
 
 ## Support
