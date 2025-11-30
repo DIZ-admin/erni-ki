@@ -112,13 +112,13 @@ It's automatically synchronized from `docker-compose.yml`.
 - Max connections: 100
 - Shared buffers: 256MB
 - Work memory: 4MB
-- **Backup:**Daily snapshots, 30-day retention
+- **Backup:** Daily snapshots, 30-day retention
 - **Documentation:** https://www.postgresql.org/docs/15/
 
 ### Redis
 
 - **Version:** 7.2.1
-- **Purpose:**Session storage, caching, rate limiting
+- **Purpose:** Session storage, caching, rate limiting
 - **Configuration:**
 - Max memory: 512MB
 - Eviction policy: allkeys-lru
@@ -379,7 +379,9 @@ docker inspect ollama:latest | grep RepoTags
 ## Related Documentation
 
 - [Deployment Guide](../deployment/production-checklist.md)
-- [Upgrade Procedures](../operations/upgrade-guide.md)
+- See [Upgrade Guide](../operations/maintenance/image-upgrade-checklist.md) for
+  upgrade instructions.
+- See [Changelog](CHANGELOG.md) for version history.
 - [API Reference](./api-reference.md)
 - [Webhook API](./webhook-api.md)
 
