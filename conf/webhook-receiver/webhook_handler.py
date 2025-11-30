@@ -205,26 +205,40 @@ class AlertProcessor:
     def _send_discord_notification(self, message_data: dict[str, Any]):
         """Send Discord notification."""
         try:
-            severity = message_data["severity"]
+            severity = message_data.get("severity", "info")
             emoji = self.severity_emojis.get(severity, "ℹ️")
             color = self.severity_colors.get(severity, 0x0099FF)
 
             embed = {
-                "title": f"{emoji} {message_data['alert_name']}",
-                "description": message_data["summary"],
+                "title": f"{emoji} {message_data.get('alert_name', 'Unknown Alert')}",
+                "description": message_data.get("summary", "No summary available"),
                 "color": color,
                 "fields": [
-                    {"name": "🔧 Service", "value": message_data["service"], "inline": True},
-                    {"name": "📊 Category", "value": message_data["category"], "inline": True},
-                    {"name": "🎯 Instance", "value": message_data["instance"], "inline": True},
+                    {
+                        "name": "🔧 Service",
+                        "value": message_data.get("service", "unknown"),
+                        "inline": True,
+                    },
+                    {
+                        "name": "📊 Category",
+                        "value": message_data.get("category", "general"),
+                        "inline": True,
+                    },
+                    {
+                        "name": "🎯 Instance",
+                        "value": message_data.get("instance", "unknown"),
+                        "inline": True,
+                    },
                     {
                         "name": "📝 Description",
-                        "value": message_data["description"],
+                        "value": message_data.get("description", "No description available"),
                         "inline": False,
                     },
                 ],
-                "timestamp": message_data["timestamp"],
-                "footer": {"text": f"ERNI-KI Monitoring • Status: {message_data['status']}"},
+                "timestamp": message_data.get("timestamp", datetime.now().isoformat()),
+                "footer": {
+                    "text": f"ERNI-KI Monitoring • Status: {message_data.get('status', 'unknown')}"
+                },
             }
 
             payload = {"embeds": [embed], "username": "ERNI-KI Monitor"}
@@ -234,7 +248,8 @@ class AlertProcessor:
             )
             response.raise_for_status()
 
-            logger.info(f"Discord notification sent for {message_data['alert_name']}")
+            alert_name = message_data.get("alert_name", "unknown")
+            logger.info(f"Discord notification sent for {alert_name}")
 
         except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Discord notification: %s", e)
@@ -242,7 +257,7 @@ class AlertProcessor:
     def _send_slack_notification(self, message_data: dict[str, Any]):
         """Send Slack notification."""
         try:
-            severity = message_data["severity"]
+            severity = message_data.get("severity", "info")
             emoji = self.severity_emojis.get(severity, "ℹ️")
 
             color_map = {"critical": "danger", "warning": "warning", "info": "good"}
@@ -250,12 +265,24 @@ class AlertProcessor:
 
             attachment = {
                 "color": color,
-                "title": f"{emoji} {message_data['alert_name']}",
-                "text": message_data["summary"],
+                "title": f"{emoji} {message_data.get('alert_name', 'Unknown Alert')}",
+                "text": message_data.get("summary", "No summary available"),
                 "fields": [
-                    {"title": "Service", "value": message_data["service"], "short": True},
-                    {"title": "Instance", "value": message_data["instance"], "short": True},
-                    {"title": "Description", "value": message_data["description"], "short": False},
+                    {
+                        "title": "Service",
+                        "value": message_data.get("service", "unknown"),
+                        "short": True,
+                    },
+                    {
+                        "title": "Instance",
+                        "value": message_data.get("instance", "unknown"),
+                        "short": True,
+                    },
+                    {
+                        "title": "Description",
+                        "value": message_data.get("description", "No description available"),
+                        "short": False,
+                    },
                 ],
                 "footer": "ERNI-KI Monitoring",
                 "ts": int(datetime.now().timestamp()),
@@ -266,7 +293,8 @@ class AlertProcessor:
             response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=NOTIFICATION_TIMEOUT)
             response.raise_for_status()
 
-            logger.info(f"Slack notification sent for {message_data['alert_name']}")
+            alert_name = message_data.get("alert_name", "unknown")
+            logger.info(f"Slack notification sent for {alert_name}")
 
         except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Slack notification: %s", e)
@@ -274,22 +302,22 @@ class AlertProcessor:
     def _send_telegram_notification(self, message_data: dict[str, Any]):
         """Send Telegram notification."""
         try:
-            severity = message_data["severity"]
+            severity = message_data.get("severity", "info")
             emoji = self.severity_emojis.get(severity, "ℹ️")
 
             text = f"""
-{emoji} *{message_data["alert_name"]}*
+{emoji} *{message_data.get("alert_name", "Unknown Alert")}*
 
-📝 *Summary:* {message_data["summary"]}
-🔧 *Service:* {message_data["service"]}
-📊 *Category:* {message_data["category"]}
-🎯 *Instance:* {message_data["instance"]}
-⏰ *Time:* {message_data["timestamp"]}
+📝 *Summary:* {message_data.get("summary", "No summary available")}
+🔧 *Service:* {message_data.get("service", "unknown")}
+📊 *Category:* {message_data.get("category", "general")}
+🎯 *Instance:* {message_data.get("instance", "unknown")}
+⏰ *Time:* {message_data.get("timestamp", datetime.now().isoformat())}
 
 📄 *Description:*
-{message_data["description"]}
+{message_data.get("description", "No description available")}
 
-🔗 *Status:* {message_data["status"]}
+🔗 *Status:* {message_data.get("status", "unknown")}
             """.strip()
 
             url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -298,7 +326,8 @@ class AlertProcessor:
             response = requests.post(url, json=payload, timeout=NOTIFICATION_TIMEOUT)
             response.raise_for_status()
 
-            logger.info(f"Telegram notification sent for {message_data['alert_name']}")
+            alert_name = message_data.get("alert_name", "unknown")
+            logger.info(f"Telegram notification sent for {alert_name}")
 
         except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Telegram notification: %s", e)
