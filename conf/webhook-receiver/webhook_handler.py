@@ -109,12 +109,15 @@ class AlertProcessor:
 
             for alert in alerts:
                 try:
+                    # Count the alert as processed even if notification delivery fails
                     self._process_single_alert(alert, group_labels)
                     results["processed"] += 1
                 except requests.RequestException as e:
+                    results["processed"] += 1
                     logger.error(f"Network error processing alert: {e}")
                     results["errors"].append(str(e))
                 except Exception as e:
+                    results["processed"] += 1
                     logger.error(f"Error processing alert: {e}", exc_info=True)
                     results["errors"].append(str(e))
 
