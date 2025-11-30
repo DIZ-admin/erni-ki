@@ -10,12 +10,12 @@ system_status: 'Production Ready'
 
 # Pre-Deployment Checklist for ERNI-KI
 
-**Purpose:** Ensure system stability and safety before every production deployment.
+**Purpose:** Ensure system stability and safety before every production
+deployment.
 
-**Used by:** DevOps team, Release Manager, On-call Engineer
-**Frequency:** Before every deploy to main branch
-**Time estimate:** 15-30 minutes
-**Runbook:** See [Emergency Procedures](#emergency-procedures)
+**Used by:** DevOps team, Release Manager, On-call Engineer **Frequency:**
+Before every deploy to main branch **Time estimate:** 15-30 minutes **Runbook:**
+See [Emergency Procedures](#emergency-procedures)
 
 ---
 
@@ -24,6 +24,7 @@ system_status: 'Production Ready'
 **Responsible:** CI/CD Pipeline (automatic) + Manual verification
 
 ### Automated Checks (Must Pass)
+
 - [ ] **CI Pipeline green** — All GitHub Actions passing
   - ✅ Linting (ESLint + Ruff)
   - ✅ Type checking (TypeScript)
@@ -33,6 +34,7 @@ system_status: 'Production Ready'
   - ✅ Gitleaks (no secrets detected)
 
 ### Manual Verification
+
 - [ ] **Code review completed**
   - Minimum 1 approval from CODEOWNERS
   - No "blocked" reviews
@@ -52,11 +54,13 @@ system_status: 'Production Ready'
 
 ## Phase 2: Pre-Deployment Backup & Snapshots ⚠️
 
-**Responsible:** DevOps / SRE
-**Critical:** These must complete BEFORE deployment
+**Responsible:** DevOps / SRE **Critical:** These must complete BEFORE
+deployment
 
 ### Database Backups
+
 - [ ] **PostgreSQL backup created**
+
   ```bash
   # Command should succeed
   docker compose exec db pg_dump -U postgres erni_ki | gzip > backups/erni_ki_$(date +%Y%m%d_%H%M%S).sql.gz
@@ -64,10 +68,12 @@ system_status: 'Production Ready'
   # Verify
   ls -lh backups/erni_ki_*.sql.gz | tail -1
   ```
+
   - Backup size > 1MB (sanity check)
   - Timestamp is recent (within last 2 minutes)
 
 - [ ] **Redis snapshot created**
+
   ```bash
   # Trigger Redis BGSAVE
   docker compose exec redis redis-cli BGSAVE
@@ -75,6 +81,7 @@ system_status: 'Production Ready'
   # Verify snapshot exists
   docker volume inspect erni-ki_redis_data
   ```
+
   - Snapshot in `/data/dump.rdb`
   - File size > 100KB
 
@@ -84,6 +91,7 @@ system_status: 'Production Ready'
   ```
 
 ### System Snapshots
+
 - [ ] **Docker volume snapshots** (optional, for critical systems)
   ```bash
   # For PostgreSQL
@@ -94,11 +102,13 @@ system_status: 'Production Ready'
 
 ## Phase 3: Staging Environment Validation 🧪
 
-**Responsible:** QA / Release Manager
-**Environment:** Staging (compose-staging.yml or equivalent)
+**Responsible:** QA / Release Manager **Environment:** Staging
+(compose-staging.yml or equivalent)
 
 ### Smoke Tests
+
 - [ ] **Health checks pass on staging**
+
   ```bash
   ./scripts/health-monitor.sh --report
   # Expected output: All 34/34 services healthy
@@ -121,7 +131,9 @@ system_status: 'Production Ready'
   ```
 
 ### Monitoring & Alerting
+
 - [ ] **Prometheus scrapes all targets**
+
   ```bash
   curl -s http://localhost:9090/api/v1/targets | jq '.data.activeTargets | length'
   # Expected: 32 (or verify all critical services are UP)
@@ -139,7 +151,9 @@ system_status: 'Production Ready'
   ```
 
 ### Data Integrity
+
 - [ ] **Database connects and responds**
+
   ```bash
   docker compose exec db psql -U postgres -d erni_ki -c "SELECT version();"
   ```
@@ -155,11 +169,12 @@ system_status: 'Production Ready'
 
 ## Phase 4: Production Environment Pre-flight 🚀
 
-**Responsible:** DevOps / SRE
-**Timing:** 5-10 minutes before deployment
+**Responsible:** DevOps / SRE **Timing:** 5-10 minutes before deployment
 
 ### System Resources
+
 - [ ] **Disk space sufficient**
+
   ```bash
   # On production server
   df -h / | grep -v "^Filesystem"
@@ -167,6 +182,7 @@ system_status: 'Production Ready'
   ```
 
 - [ ] **Memory available**
+
   ```bash
   # Expected: >4GB free
   free -h | grep Mem | awk '{print $7}'
@@ -179,13 +195,16 @@ system_status: 'Production Ready'
   ```
 
 ### Connectivity
+
 - [ ] **Internet connectivity stable**
+
   ```bash
   ping -c 3 8.8.8.8
   # All packets should succeed
   ```
 
 - [ ] **Docker registry accessible**
+
   ```bash
   docker pull ghcr.io/open-webui/open-webui:latest --dry-run
   # Should not timeout
@@ -198,7 +217,9 @@ system_status: 'Production Ready'
   ```
 
 ### Logs & Monitoring
+
 - [ ] **No critical errors in recent logs**
+
   ```bash
   docker compose logs --tail 100 | grep -i error | grep -v "expected" | wc -l
   # Should be 0 or minimal
@@ -214,11 +235,13 @@ system_status: 'Production Ready'
 
 ## Phase 5: Deployment Execution 🔄
 
-**Responsible:** DevOps / Release Manager
-**Duration:** 5-15 minutes (depending on image size)
+**Responsible:** DevOps / Release Manager **Duration:** 5-15 minutes (depending
+on image size)
 
 ### Pre-execution
+
 - [ ] **Slack notification sent**
+
   ```
   🚀 Starting deployment of ERNI-KI v0.6.3 to production
   Expected downtime: <2 minutes
@@ -231,17 +254,21 @@ system_status: 'Production Ready'
   - Communication channel open
 
 ### Deployment Steps
+
 - [ ] **Pull latest images**
+
   ```bash
   docker compose pull
   ```
 
 - [ ] **Apply database migrations** (if any)
+
   ```bash
   # Custom migration script, if needed
   ```
 
 - [ ] **Perform rolling update**
+
   ```bash
   # Option 1: Full restart (2-5 min downtime)
   docker compose down
@@ -265,18 +292,20 @@ system_status: 'Production Ready'
 
 ## Phase 6: Post-Deployment Validation ✔️
 
-**Responsible:** DevOps + On-call Engineer
-**Duration:** 10-15 minutes
+**Responsible:** DevOps + On-call Engineer **Duration:** 10-15 minutes
 **Critical:** All items must pass before declaring success
 
 ### Immediate Health Checks (0-2 min)
+
 - [ ] **All services are running**
+
   ```bash
   docker compose ps
   # Expected: All services "Up" status
   ```
 
 - [ ] **Health check passes**
+
   ```bash
   ./scripts/health-monitor.sh --report
   # Expected output: 34/34 services healthy
@@ -289,13 +318,16 @@ system_status: 'Production Ready'
   ```
 
 ### System Stability Checks (2-5 min)
+
 - [ ] **Prometheus targets healthy**
+
   ```bash
   curl -s http://localhost:9090/api/v1/targets | jq '.data.activeTargets | length'
   # Expected: 32-34 UP targets
   ```
 
 - [ ] **No alerts firing** (unexpected)
+
   ```bash
   curl -s http://localhost:9093/api/v1/alerts | jq '.data | length'
   # Expected: 0 (or only expected alerts)
@@ -309,7 +341,9 @@ system_status: 'Production Ready'
   ```
 
 ### Functional Validation (5-15 min)
+
 - [ ] **Chat works end-to-end**
+
   ```bash
   # Send test message
   curl -X POST http://localhost:8080/api/chat \
@@ -320,6 +354,7 @@ system_status: 'Production Ready'
   ```
 
 - [ ] **RAG search works**
+
   ```bash
   # Test SearXNG integration
   curl -s 'http://localhost:8888/api/v1/search?q=test'
@@ -334,6 +369,7 @@ system_status: 'Production Ready'
   ```
 
 ### Monitoring Validation
+
 - [ ] **Grafana dashboards load**
   - Visit: http://ki.erni-gruppe.ch/grafana
   - Check: GPU/LLM metrics visible
@@ -351,7 +387,9 @@ system_status: 'Production Ready'
 **Responsible:** Release Manager / Product
 
 ### Internal Team
+
 - [ ] **Slack notification sent**
+
   ```
   ✅ ERNI-KI v0.6.3 successfully deployed to production
   - All services healthy (34/34)
@@ -366,6 +404,7 @@ system_status: 'Production Ready'
   - Status page updated
 
 ### External Users
+
 - [ ] **Status page updated** (if public)
   - Deployment completed
   - No service degradation
@@ -383,6 +422,7 @@ system_status: 'Production Ready'
 ### Rollback (if issues detected)
 
 **Trigger conditions:**
+
 - Error rate > 1%
 - Response time p99 > 10s
 - Any service unhealthy for >5 minutes
@@ -414,6 +454,7 @@ docker compose up -d
 ```
 
 **Notification template:**
+
 ```
 🚨 ROLLBACK EXECUTED
 - Rolled back to: v0.6.2
@@ -428,11 +469,13 @@ docker compose up -d
 ## SLA Impact Tracking
 
 **During deployment:**
+
 - Expected downtime: <2 minutes (if rolling update used)
 - Services affected: All (potential, but monitoring continues)
 - SLA impact: <0.003% (30 sec / 1440 min per day)
 
 **Post-deployment:**
+
 - Monitor SLA metrics for 24 hours
 - If SLA violated, document in incident report
 - Alert if: uptime < 99.95%
@@ -445,6 +488,7 @@ docker compose up -d
 
 ```markdown
 **Deployment Details**
+
 - Version: 0.6.3
 - Branch: main
 - Commit SHA: abc1234567
@@ -452,6 +496,7 @@ docker compose up -d
 - Deployment start time: 2025-11-30 14:00:00 UTC
 
 **Sign-off**
+
 - [ ] Code quality: PASSED
 - [ ] Staging validation: PASSED
 - [ ] Pre-flight checks: PASSED
@@ -461,23 +506,24 @@ docker compose up -d
 - [ ] Communication sent: CONFIRMED
 
 **Approval**
-- DevOps Lead: _________________ Date: _______
-- Release Manager: _________________ Date: _______
+
+- DevOps Lead: ********\_******** Date: **\_\_\_**
+- Release Manager: ********\_******** Date: **\_\_\_**
 ```
 
 ---
 
 ## Quick Reference
 
-| Phase | Duration | Owner | Critical? |
-|-------|----------|-------|-----------|
-| Code Quality | 5 min | CI/CD | ✅ YES |
-| Backups | 10 min | DevOps | ✅ YES |
-| Staging Tests | 10 min | QA | ✅ YES |
-| Pre-flight | 5 min | SRE | ✅ YES |
-| Deployment | 5-15 min | DevOps | ✅ YES |
-| Post-deployment | 10-15 min | DevOps | ✅ YES |
-| Communication | 5 min | Release Mgr | ⚠️ IMPORTANT |
+| Phase           | Duration  | Owner       | Critical?    |
+| --------------- | --------- | ----------- | ------------ |
+| Code Quality    | 5 min     | CI/CD       | ✅ YES       |
+| Backups         | 10 min    | DevOps      | ✅ YES       |
+| Staging Tests   | 10 min    | QA          | ✅ YES       |
+| Pre-flight      | 5 min     | SRE         | ✅ YES       |
+| Deployment      | 5-15 min  | DevOps      | ✅ YES       |
+| Post-deployment | 10-15 min | DevOps      | ✅ YES       |
+| Communication   | 5 min     | Release Mgr | ⚠️ IMPORTANT |
 
 **Total time:** 50-65 minutes
 
@@ -487,5 +533,5 @@ docker compose up -d
 
 - [SLA Definitions](./sla-definitions.md)
 - [Operations Handbook](./operations-handbook.md)
-- [Admin Guide](./admin-guide.md)
-- [Runbooks Summary](./runbooks-summary.md)
+- [Admin Guide](../../../operations/core/admin-guide.md)
+- [Runbooks Summary](../../../operations/core/runbooks-summary.md)

@@ -1,6 +1,6 @@
 ---
-language: en
-translation_status: complete
+language: ru
+translation_status: pending
 doc_version: '2025.11'
 title: 'API Reference'
 system_version: '0.6.3'
@@ -10,25 +10,30 @@ system_status: 'Production Ready'
 
 # ERNI-KI API Reference
 
-Complete API documentation for ERNI-KI v0.6.3. All endpoints are available through the main OpenWebUI interface or LiteLLM gateway.
+Complete API documentation for ERNI-KI v0.6.3. All endpoints are available
+through the main OpenWebUI interface or LiteLLM gateway.
 
 **Base URLs:**
-- OpenWebUI: `http://localhost:8080` (development) | `https://ki.erni-gruppe.ch` (production)
+
+- OpenWebUI: `http://localhost:8080` (development) | `https://ki.erni-gruppe.ch`
+  (production)
 - LiteLLM Gateway: `http://localhost:8000`
 - Webhook Receiver: `http://localhost:5000`
 
-**Authentication:** JWT Bearer token (optional for some endpoints, required for protected operations)
+**Authentication:** JWT Bearer token (optional for some endpoints, required for
+protected operations)
 
 ---
 
 ## OpenAPI 3.0 Specification
 
 ### Info
+
 ```yaml
 openapi: 3.0.0
 info:
   title: ERNI-KI AI Platform API
-  version: "0.6.3"
+  version: '0.6.3'
   description: |
     Production-grade AI platform combining OpenWebUI, LiteLLM, and RAG.
     Supports local LLMs (Ollama), document processing (Docling), and search (SearXNG).
@@ -54,6 +59,7 @@ info:
 Send a message to the LLM and receive a response.
 
 **Request:**
+
 ```http
 POST /api/chat HTTP/1.1
 Host: localhost:8080
@@ -70,6 +76,7 @@ Authorization: Bearer {token}
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "id": "chat-abc123",
@@ -95,6 +102,7 @@ Authorization: Bearer {token}
 ```
 
 **Error Response (400 Bad Request):**
+
 ```json
 {
   "error": {
@@ -106,17 +114,16 @@ Authorization: Bearer {token}
 }
 ```
 
-**Parameters:**
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| message | string | Yes | - | User message to send to LLM |
-| model | string | Yes | - | Model name (e.g., "ollama") |
-| temperature | float | No | 0.7 | Sampling temperature (0-2) |
-| top_p | float | No | 0.9 | Top-p sampling (0-1) |
-| max_tokens | integer | No | 2000 | Max response tokens |
-| stream | boolean | No | false | Stream response (chunked) |
+**Parameters:** | Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------| | message | string | Yes
+| - | User message to send to LLM | | model | string | Yes | - | Model name
+(e.g., "ollama") | | temperature | float | No | 0.7 | Sampling temperature (0-2)
+| | top_p | float | No | 0.9 | Top-p sampling (0-1) | | max_tokens | integer |
+No | 2000 | Max response tokens | | stream | boolean | No | false | Stream
+response (chunked) |
 
 **Status Codes:**
+
 - `200 OK` - Successful response
 - `400 Bad Request` - Invalid parameters
 - `401 Unauthorized` - Missing/invalid token
@@ -135,12 +142,14 @@ Authorization: Bearer {token}
 Search across multiple sources using RAG (Retrieval-Augmented Generation).
 
 **Request:**
+
 ```http
 GET /api/searxng/search?q=python+programming&lang=en&limit=10
 Host: localhost:8080
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "query": "python programming",
@@ -165,15 +174,13 @@ Host: localhost:8080
 }
 ```
 
-**Parameters:**
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| q | string | Yes | - | Search query |
-| lang | string | No | en | Language code (en, de, ru, etc) |
-| limit | integer | No | 10 | Max results to return |
-| page | integer | No | 1 | Page number for pagination |
-| time_range | string | No | - | Time filter (day, week, month, year) |
-| safe_search | integer | No | 0 | Safe search level (0-2) |
+**Parameters:** | Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------| | q | string | Yes | - |
+Search query | | lang | string | No | en | Language code (en, de, ru, etc) | |
+limit | integer | No | 10 | Max results to return | | page | integer | No | 1 |
+Page number for pagination | | time_range | string | No | - | Time filter (day,
+week, month, year) | | safe_search | integer | No | 0 | Safe search level (0-2)
+|
 
 ---
 
@@ -184,6 +191,7 @@ Host: localhost:8080
 Check if service is running.
 
 **Response (200 OK):**
+
 ```json
 {
   "status": "ok",
@@ -201,6 +209,7 @@ Check if service is running.
 #### GET /api/v1/health (LiteLLM)
 
 **Response (200 OK):**
+
 ```json
 {
   "status": "healthy",
@@ -224,6 +233,7 @@ Check if service is running.
 List available models.
 
 **Response (200 OK):**
+
 ```json
 {
   "object": "list",
@@ -252,6 +262,7 @@ List available models.
 Receive Prometheus AlertManager alerts.
 
 **Request:**
+
 ```json
 {
   "receiver": "slack",
@@ -289,6 +300,7 @@ Receive Prometheus AlertManager alerts.
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "status": "success",
@@ -308,6 +320,7 @@ Receive Prometheus AlertManager alerts.
 Process documents with Docling (OCR, layout analysis).
 
 **Request:**
+
 ```http
 POST /api/process-document HTTP/1.1
 Host: localhost:8080
@@ -320,6 +333,7 @@ extract_images=true
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "file_id": "doc-abc123",
@@ -360,6 +374,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 #### POST /api/auth/login
 
 **Request:**
+
 ```json
 {
   "email": "user@example.com",
@@ -368,6 +383,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 **Response (200 OK):**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -386,6 +402,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 Refresh expired token.
 
 **Request:**
+
 ```json
 {
   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -414,26 +431,28 @@ Refresh expired token.
 
 ### Common Error Codes
 
-| Code | HTTP | Meaning |
-|------|------|---------|
-| INVALID_REQUEST | 400 | Malformed request |
-| AUTHENTICATION_FAILED | 401 | Invalid/missing credentials |
-| PERMISSION_DENIED | 403 | User lacks permissions |
-| NOT_FOUND | 404 | Resource not found |
-| RATE_LIMIT_EXCEEDED | 429 | Too many requests |
-| INTERNAL_ERROR | 500 | Server error |
-| SERVICE_UNAVAILABLE | 503 | Service temporarily down |
+| Code                  | HTTP | Meaning                     |
+| --------------------- | ---- | --------------------------- |
+| INVALID_REQUEST       | 400  | Malformed request           |
+| AUTHENTICATION_FAILED | 401  | Invalid/missing credentials |
+| PERMISSION_DENIED     | 403  | User lacks permissions      |
+| NOT_FOUND             | 404  | Resource not found          |
+| RATE_LIMIT_EXCEEDED   | 429  | Too many requests           |
+| INTERNAL_ERROR        | 500  | Server error                |
+| SERVICE_UNAVAILABLE   | 503  | Service temporarily down    |
 
 ---
 
 ## Rate Limiting
 
 **Limits per minute (default):**
+
 - Anonymous: 10 requests
 - Authenticated: 100 requests
 - Admin: Unlimited
 
 **Headers in response:**
+
 ```http
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 87
@@ -471,13 +490,13 @@ const response = await fetch('http://localhost:8080/api/chat', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer YOUR_TOKEN'
+    Authorization: 'Bearer YOUR_TOKEN',
   },
   body: JSON.stringify({
     message: 'Hello, ERNI-KI!',
     model: 'ollama',
-    temperature: 0.7
-  })
+    temperature: 0.7,
+  }),
 });
 
 const data = await response.json();
@@ -516,5 +535,5 @@ Deprecated endpoints are supported for 2 minor versions before removal.
 - [LiteLLM Documentation](https://docs.litellm.ai)
 - [OpenWebUI Documentation](https://docs.openwebui.com)
 - [SearXNG Documentation](https://docs.searxng.org)
-- [Authentication Guide](../getting-started/authentication.md)
-- [Webhook Setup](./webhook-receiver-setup.md)
+- [Authentication Guide](../getting-started/user-guide.md)
+- [Webhook Setup](./webhook-api.md)

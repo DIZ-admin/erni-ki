@@ -10,10 +10,10 @@ system_status: 'Production Ready'
 
 # SLA and SLI Definitions for ERNI-KI
 
-**Purpose:** Define explicit Service Level Agreements (SLA) and Service Level Indicators (SLI) for monitoring and accountability.
+**Purpose:** Define explicit Service Level Agreements (SLA) and Service Level
+Indicators (SLI) for monitoring and accountability.
 
-**Audience:** DevOps, SRE, Product, Management
-**Last reviewed:** 2025-11-30
+**Audience:** DevOps, SRE, Product, Management **Last reviewed:** 2025-11-30
 **Next review:** 2026-02-28
 
 ---
@@ -22,14 +22,14 @@ system_status: 'Production Ready'
 
 ERNI-KI is a production AI platform with the following SLAs:
 
-| Service | Availability | Response Time (p99) | Error Rate | Status |
-|---------|--------------|-------------------|-----------|--------|
-| OpenWebUI | 99.95% | 5,000ms | <0.1% | 🟢 Active |
-| Ollama (LLM) | 99.9% | 10,000ms | <0.5% | 🟢 Active |
-| PostgreSQL | 99.99% | 100ms | 0% | 🟢 Active |
-| Redis Cache | 99.95% | 10ms | <0.1% | 🟢 Active |
-| SearXNG (RAG) | 99.9% | 3,000ms | <1% | 🟢 Active |
-| Infrastructure | 99.95% | - | - | 🟢 Active |
+| Service        | Availability | Response Time (p99) | Error Rate | Status    |
+| -------------- | ------------ | ------------------- | ---------- | --------- |
+| OpenWebUI      | 99.95%       | 5,000ms             | <0.1%      | 🟢 Active |
+| Ollama (LLM)   | 99.9%        | 10,000ms            | <0.5%      | 🟢 Active |
+| PostgreSQL     | 99.99%       | 100ms               | 0%         | 🟢 Active |
+| Redis Cache    | 99.95%       | 10ms                | <0.1%      | 🟢 Active |
+| SearXNG (RAG)  | 99.9%        | 3,000ms             | <1%        | 🟢 Active |
+| Infrastructure | 99.95%       | -                   | -          | 🟢 Active |
 
 **Overall System SLA:** 99.9% uptime (8.77 hours downtime per year)
 
@@ -37,13 +37,14 @@ ERNI-KI is a production AI platform with the following SLAs:
 
 ## SLO vs SLI vs SLA (Terminology)
 
-| Term | Definition | Example |
-|------|-----------|---------|
-| **SLO** (Service Level Objective) | Internal target we strive for | "99.95% uptime" |
-| **SLI** (Service Level Indicator) | Metric that measures SLO | "uptime = 99.94%" |
+| Term                              | Definition                          | Example                   |
+| --------------------------------- | ----------------------------------- | ------------------------- |
+| **SLO** (Service Level Objective) | Internal target we strive for       | "99.95% uptime"           |
+| **SLI** (Service Level Indicator) | Metric that measures SLO            | "uptime = 99.94%"         |
 | **SLA** (Service Level Agreement) | Contract with users, usually looser | "99.9% uptime guaranteed" |
 
 **Rule of thumb:**
+
 - SLO > SLA (we aim higher than we promise)
 - SLI measures against SLO (alert if SLI < SLO)
 
@@ -56,16 +57,18 @@ ERNI-KI is a production AI platform with the following SLAs:
 **Role:** User-facing chat interface and AI interaction
 
 #### SLA
+
 ```yaml
-availability_slo: "99.95%"           # 21 min/month downtime acceptable
-availability_sla: "99.9%"             # 43 min/month guaranteed to users
-response_time_p50: "500ms"           # Median response time
-response_time_p99: "5000ms"          # 99th percentile (5 seconds)
-response_time_p999: "15000ms"        # 99.9th percentile (15 seconds)
-error_rate_target: "<0.1%"           # Max 1 error per 1000 requests
+availability_slo: '99.95%' # 21 min/month downtime acceptable
+availability_sla: '99.9%' # 43 min/month guaranteed to users
+response_time_p50: '500ms' # Median response time
+response_time_p99: '5000ms' # 99th percentile (5 seconds)
+response_time_p999: '15000ms' # 99.9th percentile (15 seconds)
+error_rate_target: '<0.1%' # Max 1 error per 1000 requests
 ```
 
 #### SLI - Metrics to Monitor
+
 ```prometheus
 # Request latency
 histogram_quantile(0.99, http_request_duration_seconds{service="openwebui"})
@@ -86,14 +89,18 @@ pg_up{service="openwebui"}
 ```
 
 #### Alerting Rules
+
 ```yaml
 - alert: OpenWebUIHighLatency
-  expr: histogram_quantile(0.99, http_request_duration_seconds{service="openwebui"}) > 5000
+  expr:
+    histogram_quantile(0.99, http_request_duration_seconds{service="openwebui"})
+    > 5000
   for: 5m
   severity: warning
 
 - alert: OpenWebUIHighErrorRate
-  expr: rate(http_requests_total{service="openwebui", status=~"5.."}[5m]) > 0.001
+  expr:
+    rate(http_requests_total{service="openwebui", status=~"5.."}[5m]) > 0.001
   for: 5m
   severity: critical
 
@@ -104,6 +111,7 @@ pg_up{service="openwebui"}
 ```
 
 #### Maintenance Windows
+
 - **Scheduled:** Sundays 03:00-04:00 UTC (SLA suspended)
 - **Unplanned:** 30 min/quarter allowed for emergency fixes
 
@@ -114,16 +122,18 @@ pg_up{service="openwebui"}
 **Role:** Local LLM inference with GPU acceleration
 
 #### SLA
+
 ```yaml
-availability_slo: "99.9%"             # 43 min/month downtime
-availability_sla: "99.5%"             # 217 min/month guaranteed
-response_time_p99: "10000ms"         # 10 seconds for LLM inference
-error_rate_target: "<0.5%"           # May be higher during model loads
-gpu_memory_utilization: "50-90%"     # Healthy range
-model_load_time: "<5s"               # Loading models from cache
+availability_slo: '99.9%' # 43 min/month downtime
+availability_sla: '99.5%' # 217 min/month guaranteed
+response_time_p99: '10000ms' # 10 seconds for LLM inference
+error_rate_target: '<0.5%' # May be higher during model loads
+gpu_memory_utilization: '50-90%' # Healthy range
+model_load_time: '<5s' # Loading models from cache
 ```
 
 #### SLI - Metrics
+
 ```prometheus
 # Ollama process uptime
 up{job="ollama"}
@@ -143,12 +153,13 @@ ollama_models_loaded
 ```
 
 #### Critical Thresholds
-| Metric | Threshold | Action |
-|--------|-----------|--------|
-| GPU Memory | >95% | Alert WARNING, consider model unload |
-| Inference Time | >15s | Alert CRITICAL, likely GPU hang |
-| Model Load Failure | Any | Alert CRITICAL, restart container |
-| VRAM Limit Exceeded | >4GB | Auto-kill process (configured) |
+
+| Metric              | Threshold | Action                               |
+| ------------------- | --------- | ------------------------------------ |
+| GPU Memory          | >95%      | Alert WARNING, consider model unload |
+| Inference Time      | >15s      | Alert CRITICAL, likely GPU hang      |
+| Model Load Failure  | Any       | Alert CRITICAL, restart container    |
+| VRAM Limit Exceeded | >4GB      | Auto-kill process (configured)       |
 
 ---
 
@@ -157,16 +168,18 @@ ollama_models_loaded
 **Role:** Primary data store with pgvector for embeddings
 
 #### SLA
+
 ```yaml
-availability_slo: "99.99%"            # 4 min/month downtime only
-availability_sla: "99.95%"            # 21 min/month guaranteed
-response_time_p99: "100ms"           # Database queries
-error_rate_target: "0%"              # No query errors
-backup_rpo: "1 hour"                 # Recovery Point Objective
-backup_rto: "15 minutes"             # Recovery Time Objective
+availability_slo: '99.99%' # 4 min/month downtime only
+availability_sla: '99.95%' # 21 min/month guaranteed
+response_time_p99: '100ms' # Database queries
+error_rate_target: '0%' # No query errors
+backup_rpo: '1 hour' # Recovery Point Objective
+backup_rto: '15 minutes' # Recovery Time Objective
 ```
 
 #### SLI - Key Metrics
+
 ```prometheus
 # Database connectivity
 pg_up
@@ -190,6 +203,7 @@ pg_database_size_bytes / (1024^3)
 ```
 
 #### Alerting
+
 ```yaml
 - alert: PostgreSQLDown
   expr: pg_up == 0
@@ -219,16 +233,18 @@ pg_database_size_bytes / (1024^3)
 **Role:** Session storage, caching, rate limiting
 
 #### SLA
+
 ```yaml
-availability_slo: "99.95%"            # 21 min/month
-availability_sla: "99.9%"             # 43 min/month
-response_time_p99: "10ms"            # Very fast
-error_rate_target: "<0.1%"
-memory_limit: "2GB"
-eviction_policy: "allkeys-lru"
+availability_slo: '99.95%' # 21 min/month
+availability_sla: '99.9%' # 43 min/month
+response_time_p99: '10ms' # Very fast
+error_rate_target: '<0.1%'
+memory_limit: '2GB'
+eviction_policy: 'allkeys-lru'
 ```
 
 #### SLI - Metrics
+
 ```prometheus
 # Connection health
 redis_up
@@ -255,15 +271,17 @@ rate(redis_keyspace_hits_total[5m]) /
 **Role:** Retrieval-Augmented Generation search engine
 
 #### SLA
+
 ```yaml
-availability_slo: "99.9%"
-availability_sla: "99.5%"
-response_time_p99: "3000ms"          # Search queries
-error_rate_target: "<1%"             # May timeout occasionally
-search_sources: ">=4"                # Min Google, Bing, DuckDuckGo, Brave
+availability_slo: '99.9%'
+availability_sla: '99.5%'
+response_time_p99: '3000ms' # Search queries
+error_rate_target: '<1%' # May timeout occasionally
+search_sources: '>=4' # Min Google, Bing, DuckDuckGo, Brave
 ```
 
 #### SLI - Metrics
+
 ```prometheus
 # Availability
 up{job="searxng"}
@@ -289,14 +307,16 @@ searxng_source_up{source=~"google|bing|duckduckgo|brave"}
 ### 6. Prometheus Monitoring
 
 #### SLA
+
 ```yaml
-availability_slo: "99.95%"
-response_time_p99: "1000ms"          # Query latency
-scrape_interval: "30s"               # Data collection frequency
-targets_up: "32/32"                  # All services being scraped
+availability_slo: '99.95%'
+response_time_p99: '1000ms' # Query latency
+scrape_interval: '30s' # Data collection frequency
+targets_up: '32/32' # All services being scraped
 ```
 
 #### SLI - Metrics
+
 ```prometheus
 # Prometheus uptime
 up{job="prometheus"}
@@ -314,10 +334,11 @@ count(up{job!="prometheus"} == 1) / count(up{job!="prometheus"})
 ### 7. Grafana Dashboards
 
 #### SLA
+
 ```yaml
-availability_slo: "99.9%"
-response_time_p99: "2000ms"          # Dashboard load time
-dashboards_provisioned: "5/5"
+availability_slo: '99.9%'
+response_time_p99: '2000ms' # Dashboard load time
+dashboards_provisioned: '5/5'
 ```
 
 ---
@@ -325,13 +346,15 @@ dashboards_provisioned: "5/5"
 ### 8. Alertmanager
 
 #### SLA
+
 ```yaml
-availability_slo: "99.95%"
-notification_latency_p99: "5s"       # Time to send alert
-delivery_success_rate: ">99%"        # Alerts reach channels
+availability_slo: '99.95%'
+notification_latency_p99: '5s' # Time to send alert
+delivery_success_rate: '>99%' # Alerts reach channels
 ```
 
 #### SLI - Metrics
+
 ```prometheus
 # Alertmanager uptime
 up{job="alertmanager"}
@@ -421,17 +444,17 @@ If we consume > 129 minutes, we've violated SLA.
 ```yaml
 Regular Window:
   day: Sunday
-  time: "03:00-04:00 UTC"
-  duration: "60 minutes"
-  services_affected: "All (acceptable)"
-  frequency: "Weekly"
-  advance_notice: "24 hours"
+  time: '03:00-04:00 UTC'
+  duration: '60 minutes'
+  services_affected: 'All (acceptable)'
+  frequency: 'Weekly'
+  advance_notice: '24 hours'
 
 Emergency Maintenance:
-  trigger: "Critical security patch required"
-  notice: "ASAP (minimum 1 hour)"
-  max_frequency: "Once per quarter"
-  duration: "30 minutes (target)"
+  trigger: 'Critical security patch required'
+  notice: 'ASAP (minimum 1 hour)'
+  max_frequency: 'Once per quarter'
+  duration: '30 minutes (target)'
 ```
 
 ### Maintenance Notification Template
@@ -452,12 +475,12 @@ Emergency Maintenance:
 
 ### Severity Levels & Response Times
 
-| Severity | Condition | Response Time | Resolution Time |
-|----------|-----------|---------------|-----------------|
-| **P0 Critical** | System completely down, data loss risk | <15 min | <1 hour |
-| **P1 Major** | Core functionality broken, high impact | <30 min | <4 hours |
-| **P2 Medium** | Partial functionality broken | <2 hours | <8 hours |
-| **P3 Minor** | Non-critical issue, workaround available | <1 day | <1 week |
+| Severity        | Condition                                | Response Time | Resolution Time |
+| --------------- | ---------------------------------------- | ------------- | --------------- |
+| **P0 Critical** | System completely down, data loss risk   | <15 min       | <1 hour         |
+| **P1 Major**    | Core functionality broken, high impact   | <30 min       | <4 hours        |
+| **P2 Medium**   | Partial functionality broken             | <2 hours      | <8 hours        |
+| **P3 Minor**    | Non-critical issue, workaround available | <1 day        | <1 week         |
 
 ### Escalation Matrix
 
@@ -476,12 +499,14 @@ Director/VP: Escalated + Customer notification
 ## Monitoring and Reporting
 
 ### Daily Monitoring
+
 - [ ] Check dashboard health (Grafana)
 - [ ] Review error logs
 - [ ] Monitor error budget consumption
 - [ ] Verify backups completed
 
 ### Weekly Reporting (Monday morning)
+
 ```
 ERNI-KI Weekly Health Report
 - Uptime: [X.XX%]
@@ -491,6 +516,7 @@ ERNI-KI Weekly Health Report
 ```
 
 ### Monthly SLA Review (Last Friday)
+
 ```
 November 2025 SLA Report
 - Target: 99.9%
@@ -504,6 +530,7 @@ November 2025 SLA Report
 ### Quarterly Business Review
 
 Document for stakeholders:
+
 - Actual uptime vs. SLA
 - Incidents and root causes
 - Improvement actions implemented
@@ -515,6 +542,7 @@ Document for stakeholders:
 ## Dashboard Queries (Prometheus)
 
 ### Uptime Dashboard
+
 ```prometheus
 # Overall uptime (last 30 days)
 avg_over_time(up[30d]) * 100
@@ -529,6 +557,7 @@ count(up == 1) / count(up) * 100
 ```
 
 ### Performance Dashboard
+
 ```prometheus
 # Response times
 histogram_quantile(0.50, http_request_duration_seconds)
@@ -546,12 +575,11 @@ rate(http_requests_total{status=~"5.."}[5m]) * 100
 
 ## Review and Updates
 
-**Last reviewed:** 2025-11-30
-**Next review:** 2026-02-28
-**Owner:** DevOps / SRE Team
-**Approver:** Engineering Manager
+**Last reviewed:** 2025-11-30 **Next review:** 2026-02-28 **Owner:** DevOps /
+SRE Team **Approver:** Engineering Manager
 
 Changes require:
+
 1. Engineering team review
 2. Product approval (if affecting user-facing SLA)
 3. Update in this document + version bump
@@ -563,6 +591,6 @@ Changes require:
 ## See Also
 
 - [Pre-Deployment Checklist](./pre-deployment-checklist.md)
-- [Monitoring Guide](../monitoring/monitoring-guide.md)
-- [Admin Guide](./admin-guide.md)
-- [Incident Response Plan](../incidents/incident-response-playbook.md)
+- [Monitoring Guide](../../../operations/monitoring/monitoring-guide.md)
+- [Admin Guide](../../../operations/core/admin-guide.md)
+- [Incident Response Plan](../../../operations/core/operations-handbook.md#incident-response)

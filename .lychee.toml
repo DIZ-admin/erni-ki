@@ -1,0 +1,5 @@
+[general]
+offline = true
+max_concurrency = 4
+include_verbatim = true
+exclude_path = ["node_modules", "site"]

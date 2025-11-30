@@ -11,13 +11,14 @@ Technical reference materials for developers and advanced users.
 
 ## Available Documentation
 
-- [Overview](index.md)
+- [Overview](../../overview.md)
 - [API Reference](../../reference/api-reference.md)
-- [Development Guide](../../reference/development.md)
+- [Development Guide](../../development/setup-guide.md)
 - [GitHub Environments Setup](../../reference/github-environments-setup.md)
 - [MCPO Integration Guide](../../reference/mcpo-integration-guide.md)
 
 ## Note
 
 The Russian version is the primary source. This translation may be incomplete.
-For discrepancies, refer to the [Russian version](../../reference/index.md).
+For discrepancies, refer to the Russian sources under `docs/reference/` in the
+root.
