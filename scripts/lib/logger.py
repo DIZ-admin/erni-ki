@@ -103,8 +103,9 @@ def get_logger(
     # Remove existing handlers to avoid duplicates
     logger.handlers = []
 
-    # Console handler
-    console_handler = logging.StreamHandler(sys.stdout)
+    # Console handler: respect current stderr/stdout (important for tests that capture stderr)
+    target_stream = sys.stderr if json_output else sys.stdout
+    console_handler = logging.StreamHandler(target_stream)
     console_handler.setLevel(log_level)
 
     if json_output:
