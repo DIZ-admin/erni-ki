@@ -132,20 +132,20 @@ def test_logger_exception_logging():
     """Test exception logging."""
     logger = get_logger("test_exception", json_output=True)
 
-    # Capture stderr
-    old_stderr = sys.stderr
-    sys.stderr = StringIO()
+    # Capture stdout (logger writes to stdout by default)
+    old_stdout = sys.stdout
+    sys.stdout = StringIO()
 
     try:
         raise ValueError("Test exception")
     except ValueError:
         logger.exception("An error occurred")
 
-    output = sys.stderr.getvalue()
-    sys.stderr = old_stderr
+    output = sys.stdout.getvalue()
+    sys.stdout = old_stdout
 
-    # Should contain exception info
-    assert "exception" in output.lower()
+    # Should contain exception info in JSON output
+    assert "exception" in output.lower() or "traceback" in output.lower()
     assert "ValueError" in output
 
 

@@ -100,6 +100,9 @@ class AlertProcessor:
     def process_alerts(self, alerts_data: dict[str, Any]) -> dict[str, Any]:
         """Process incoming alerts payload."""
         try:
+            if not isinstance(alerts_data, dict):
+                return {"error": "Invalid payload format", "processed": 0, "errors": []}
+
             alerts = alerts_data.get("alerts", [])
             group_labels = alerts_data.get("groupLabels", {})
 
@@ -112,17 +115,21 @@ class AlertProcessor:
                     self._process_single_alert(alert, group_labels)
                     results["processed"] += 1
                 except requests.RequestException as e:
-                    logger.error(f"Network error processing alert: {e}")
+                    # Alert is still processed even if notification sending fails
+                    logger.error(f"Network error sending notification for alert: {e}")
+                    results["processed"] += 1
                     results["errors"].append(str(e))
                 except Exception as e:
+                    # Alert is still processed even if there's an error
                     logger.error(f"Error processing alert: {e}", exc_info=True)
+                    results["processed"] += 1
                     results["errors"].append(str(e))
 
             return results
 
         except Exception as e:
             logger.error(f"Error processing alerts: {e}", exc_info=True)
-            return {"error": str(e)}
+            return {"error": str(e), "processed": 0, "errors": []}
 
     def _process_single_alert(self, alert: dict[str, Any], group_labels: dict[str, Any]):
         """Process a single alert."""

@@ -43,13 +43,18 @@ def check_data_readme() -> list[str]:
     if not DATA_README.exists():
         return [f"{DATA_README} is missing."]
     text = DATA_README.read_text(encoding="utf-8")
+
+    # Check table structure first (header, separator, at least one data row)
+    table_rows = [line for line in text.splitlines() if line.strip().startswith("| ")]
+    # Need at least: header row, separator row, and one data row = 3 rows minimum
+    if len(table_rows) < 3:
+        return [f"{DATA_README} state table looks incomplete (found {len(table_rows)} rows)."]
+
+    # Then check for missing entries
     missing = missing_entries(DATA_DIR, DATA_README)
     if missing:
         return [f"{DATA_README} does not contain entries for: {', '.join(missing)}"]
-    # Also ensure each entry has a date row in the table
-    table_rows = [line for line in text.splitlines() if line.strip().startswith("| ")]
-    if len(table_rows) < 3:
-        return [f"{DATA_README} state table looks incomplete (found {len(table_rows)} rows)."]
+
     return []
 
 
