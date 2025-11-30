@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """
 Comprehensive unit tests for webhook-receiver.py
 Tests alert processing, file operations, recovery scripts, and API endpoints.

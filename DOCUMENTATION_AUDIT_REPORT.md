@@ -21,14 +21,14 @@ last_updated: '2025-11-30'
 
 ### Ключевые результаты
 
-| Категория                              | Найдено | Статус                |
-| -------------------------------------- | ------- | --------------------- |
-| Нарушенные ссылки                      | 6       | ⚠️ Требует действия   |
-| Устаревшие ссылки (2025-09 до 2025-10) | 20+     | ⚠️ Требует обновления |
-| Файлы без frontmatter                  | 0       | ✅ OK                 |
-| Дублирующееся содержимое               | 0       | ✅ OK                 |
-| Ошибки языковых тегов                  | 0       | ✅ OK                 |
-| Файлы с недостаточным содержимым       | 18      | ⚠️ Требует доработки  |
+| Категория                              | Найдено | Статус             |
+| -------------------------------------- | ------- | ------------------ |
+| Нарушенные ссылки                      | 6       | Требует действия   |
+| Устаревшие ссылки (2025-09 до 2025-10) | 20+     | Требует обновления |
+| Файлы без frontmatter                  | 0       | OK                 |
+| Дублирующееся содержимое               | 0       | OK                 |
+| Ошибки языковых тегов                  | 0       | OK                 |
+| Файлы с недостаточным содержимым       | 18      | Требует доработки  |
 
 ---
 
@@ -39,29 +39,29 @@ last_updated: '2025-11-30'
 #### 1.1 Несуществующие файлы
 
 ```
-❌ docs/development/testing-guide.md
-   Ссылка: ../quality/code-standards.md
-   Проблема: Файл не существует
+ docs/development/testing-guide.md
+ Ссылка: ../quality/code-standards.md
+ Проблема: Файл не существует
 
-❌ docs/troubleshooting/common-issues.md
-   Ссылка: ./faq.md
-   Проблема: FAQ документ не создан
+ docs/troubleshooting/common-issues.md
+ Ссылка: ./faq.md
+ Проблема: FAQ документ не создан
 
-❌ docs/deployment/production-checklist.md
-   Ссылка: ../operations/monitoring-guide.md
-   Проблема: Неправильный путь (существует в operations/monitoring/)
+ docs/deployment/production-checklist.md
+ Ссылка: ../operations/monitoring-guide.md
+ Проблема: Неправильный путь (существует в operations/monitoring/)
 
-❌ docs/reference/webhook-api.md
-   Ссылка: ../operations/monitoring-guide.md
-   Проблема: Неправильный путь
+ docs/reference/webhook-api.md
+ Ссылка: ../operations/monitoring-guide.md
+ Проблема: Неправильный путь
 
-❌ docs/reference/service-versions.md
-   Ссылка: ../../docker-compose.yml
-   Проблема: Относительный путь к файлу вне docs/
+ docs/reference/service-versions.md
+ Ссылка: ../../docker-compose.yml
+ Проблема: Относительный путь к файлу вне docs/
 
-❌ docs/reference/service-versions.md
-   Ссылка: ../operations/upgrade-guide.md
-   Проблема: Документ upgrade-guide.md не существует
+ docs/reference/service-versions.md
+ Ссылка: ../operations/upgrade-guide.md
+ Проблема: Документ upgrade-guide.md не существует
 ```
 
 ### Рекомендации
@@ -70,27 +70,28 @@ last_updated: '2025-11-30'
 
 1. **Создать недостающие файлы**:
 
-   ```
-   docs/quality/code-standards.md          (referenced from testing-guide.md)
-   docs/troubleshooting/faq.md             (referenced from common-issues.md)
-   docs/operations/upgrade-guide.md        (referenced from service-versions.md)
-   ```
+```
+docs/quality/code-standards.md (referenced from testing-guide.md)
+docs/troubleshooting/faq.md (referenced from common-issues.md)
+docs/operations/upgrade-guide.md (referenced from service-versions.md)
+```
 
 2. **Исправить пути в существующих ссылках**:
 
-   ```
-   deployment/production-checklist.md:
-   ../operations/monitoring-guide.md  →  ../operations/monitoring/monitoring-guide.md
+```
+deployment/production-checklist.md:
+../operations/monitoring-guide.md → ../operations/monitoring/monitoring-guide.md
 
-   reference/webhook-api.md:
-   ../operations/monitoring-guide.md  →  ../operations/monitoring/monitoring-guide.md
-   ```
+reference/webhook-api.md:
+../operations/monitoring-guide.md → ../operations/monitoring/monitoring-guide.md
+```
 
 3. **Исправить относительные пути к корню репо**:
-   ```
-   reference/service-versions.md:
-   ../../docker-compose.yml  →  [Добавить примечание что это находится в корне репо]
-   ```
+
+```
+reference/service-versions.md:
+../../docker-compose.yml → [Добавить примечание что это находится в корне репо]
+```
 
 ---
 
@@ -125,17 +126,17 @@ docs/en/getting-started/user-guide.md
 
 ```yaml
 docs/operations/core/configuration-change-process.md:
-  "Дата создания: 2025-09-25"
-  "Последнее обновление: 2025-09-25"
-  Требует: Обновление даты
+ "Дата создания: 2025-09-25"
+ "Последнее обновление: 2025-09-25"
+ Требует: Обновление даты
 
 docs/operations/database/redis-monitoring-grafana.md:
-  "Последнее обновление: 2025-09-19"
-  Требует: Обновление даты
+ "Последнее обновление: 2025-09-19"
+ Требует: Обновление даты
 
 docs/operations/ai/litellm-redis-caching.md:
-  "2025-10-02 | v1.80.0.rc.1 | Включен → Отключен | Обнаружен баг"
-  Требует: Проверка релевантности информации
+ "2025-10-02 | v1.80.0.rc.1 | Включен → Отключен | Обнаружен баг"
+ Требует: Проверка релевантности информации
 ```
 
 ### Рекомендации
@@ -156,16 +157,16 @@ docs/operations/ai/litellm-redis-caching.md:
 Эти файлы являются valid index/overview и не требуют расширения:
 
 ```
-✅ docs/news/index.md (40 слов) - Это index, OK для навигации
-✅ docs/api/index.md (13 слов) - Минималистичный index, ссылается на OpenAPI
-✅ docs/data/README.md (42 слова) - Вводный файл, может быть расширен
-✅ docs/reports/follow-up-audit-2025-11-28.md (39 слов) - Placeholder doc
-✅ docs/en/security/index.md (40 слов) - Index на английском
-✅ docs/en/system/index.md (30 слов) - Index на английском
-✅ docs/en/reference/status-snippet.md (44 слова) - Технический snippet
-✅ docs/de/operations/backup-guide.md (8 слов) - Требует наполнения
-✅ docs/de/system/index.md (25 слов) - Index на немецком
-✅ docs/de/news/index.md (9 слов) - Index на немецком
+ docs/news/index.md (40 слов) - Это index, OK для навигации
+ docs/api/index.md (13 слов) - Минималистичный index, ссылается на OpenAPI
+ docs/data/README.md (42 слова) - Вводный файл, может быть расширен
+ docs/reports/follow-up-audit-2025-11-28.md (39 слов) - Placeholder doc
+ docs/en/security/index.md (40 слов) - Index на английском
+ docs/en/system/index.md (30 слов) - Index на английском
+ docs/en/reference/status-snippet.md (44 слова) - Технический snippet
+ docs/de/operations/backup-guide.md (8 слов) - Требует наполнения
+ docs/de/system/index.md (25 слов) - Index на немецком
+ docs/de/news/index.md (9 слов) - Index на немецком
 ```
 
 ### Проблемные файлы, требующие действия
@@ -199,25 +200,26 @@ docs/de/system/index.md (25 слов)
 
 1. **Удалить placeholder документы**:
 
-   ```
-   rm docs/en/security/index.md
-   rm docs/reports/follow-up-audit-2025-11-28.md
-   ```
+```
+rm docs/en/security/index.md
+rm docs/reports/follow-up-audit-2025-11-28.md
+```
 
 2. **Синхронизировать переводы**:
 
-   ```
-   Убедиться что docs/de/ версии содержат полные переводы или
-   удалить недоделанные переводы в ожидании завершения
-   ```
+```
+Убедиться что docs/de/ версии содержат полные переводы или
+удалить недоделанные переводы в ожидании завершения
+```
 
 3. **Стандартизировать index файлы**:
-   ```
-   Index файлы должны содержать:
-   - Краткое описание
-   - Навигационные ссылки
-   - 30-100 слов - нормальный размер
-   ```
+
+```
+Index файлы должны содержать:
+- Краткое описание
+- Навигационные ссылки
+- 30-100 слов - нормальный размер
+```
 
 ---
 
@@ -225,17 +227,17 @@ docs/de/system/index.md (25 слов)
 
 ### Положительные результаты
 
-✅ **YAML Frontmatter**: 100% файлов имеют правильное YAML оформление ✅
-**Языковые теги**: Полная консистентность между путем (ru/, de/, en/) и
-языковыми тегами ✅ **Дублирование**: Нет значительного повторения содержимого
-✅ **Структура**: Логичная иерархия директорий
+**YAML Frontmatter**: 100% файлов имеют правильное YAML оформление **Языковые
+теги**: Полная консистентность между путем (ru/, de/, en/) и языковыми тегами
+**Дублирование**: Нет значительного повторения содержимого **Структура**:
+Логичная иерархия директорий
 
 ### Области для улучшения
 
-⚠️ **Cross-references**: 6 нарушенных ссылок требуют исправления ⚠️
-**Freshness**: 20+ файлов содержат устаревшие даты (2025-09/10) ⚠️
-**Completeness**: 10-15 файлов требуют наполнения или удаления ⚠️
-**Consistency**: Отдельные ссылки указывают на неправильные пути
+**Cross-references**: 6 нарушенных ссылок требуют исправления **Freshness**: 20+
+файлов содержат устаревшие даты (2025-09/10) **Completeness**: 10-15 файлов
+требуют наполнения или удаления **Consistency**: Отдельные ссылки указывают на
+неправильные пути
 
 ---
 
@@ -244,13 +246,15 @@ docs/de/system/index.md (25 слов)
 ### БЛОКИРУЮЩИЕ ПРОБЛЕМЫ (Выполнить сразу)
 
 1. Создать недостающие файлы:
-   - `docs/operations/upgrade-guide.md`
-   - `docs/quality/code-standards.md`
-   - `docs/troubleshooting/faq.md`
+
+- `docs/operations/upgrade-guide.md`
+- `docs/quality/code-standards.md`
+- `docs/troubleshooting/faq.md`
 
 2. Исправить пути ссылок в:
-   - `docs/deployment/production-checklist.md`
-   - `docs/reference/webhook-api.md`
+
+- `docs/deployment/production-checklist.md`
+- `docs/reference/webhook-api.md`
 
 ### ВАЖНЫЕ ЗАДАЧИ (Выполнить в течение недели)
 

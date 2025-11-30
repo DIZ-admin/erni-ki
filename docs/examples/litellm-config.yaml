@@ -1,0 +1,264 @@
+---
+language: en
+translation_status: complete
+doc_version: "2025.11"
+last_updated: "2025-11-30"
+---
+# ERNI-KI LiteLLM Gateway Configuration Examples
+#
+# This file contains LiteLLM gateway configurations for common deployment scenarios.
+# LiteLLM provides:
+#   - Multi-provider LLM access (OpenAI, Anthropic, Cohere, local models via Ollama)
+#   - Model routing and fallback
+#   - Load balancing and failover
+#   - Cost tracking and rate limiting
+#   - Prompt caching and context optimization
+#
+# Copy relevant configuration to your litellm_config.yaml file.
+#
+# Documentation: https://github.com/BerriAI/litellm
+
+################################################################################
+# EXAMPLE 1: Local-Only Configuration (Ollama)
+################################################################################
+
+# model_list:
+#   - model_name: llama2
+#     litellm_params:
+#       model: "ollama/llama2"
+#       api_base: "http://ollama:11434"
+#
+#   - model_name: neural-chat
+#     litellm_params:
+#       model: "ollama/neural-chat"
+#       api_base: "http://ollama:11434"
+#
+#   - model_name: mistral
+#     litellm_params:
+#       model: "ollama/mistral"
+#       api_base: "http://ollama:11434"
+
+################################################################################
+# EXAMPLE 2: Single Provider Fallback (OpenAI primary, Ollama fallback)
+################################################################################
+
+# model_list:
+#   - model_name: gpt-4
+#     litellm_params:
+#       model: "gpt-4"
+#
+#   - model_name: gpt-3.5-turbo
+#     litellm_params:
+#       model: "gpt-3.5-turbo"
+#
+#   - model_name: gpt-3.5-turbo-fallback
+#     litellm_params:
+#       model: "ollama/llama2"
+#       api_base: "http://ollama:11434"
+
+################################################################################
+# EXAMPLE 3: Multi-Provider Load Balancing
+################################################################################
+
+# model_list:
+#   # High-quality inference tier (GPT-4 equivalent)
+#   - model_name: gpt-4
+#     litellm_params:
+#       model: "gpt-4"
+#
+#   - model_name: gpt-4-fallback-1
+#     litellm_params:
+#       model: "claude-3-opus"
+#
+#   - model_name: gpt-4-fallback-2
+#     litellm_params:
+#       model: "ollama/neural-chat"
+#       api_base: "http://ollama:11434"
+#
+#   # Standard inference tier (GPT-3.5 equivalent)
+#   - model_name: gpt-3.5-turbo
+#     litellm_params:
+#       model: "gpt-3.5-turbo"
+#
+#   - model_name: gpt-3.5-turbo-fallback-1
+#     litellm_params:
+#       model: "command"  # Cohere
+#
+#   - model_name: gpt-3.5-turbo-fallback-2
+#     litellm_params:
+#       model: "ollama/mistral"
+#       api_base: "http://ollama:11434"
+#
+#   # Cost-optimized tier (local only)
+#   - model_name: gpt-3.5-turbo-local
+#     litellm_params:
+#       model: "ollama/llama2"
+#       api_base: "http://ollama:11434"
+
+################################################################################
+# EXAMPLE 4: Context-Optimized Configuration with Prompt Caching
+################################################################################
+
+# model_list:
+#   - model_name: gpt-4-with-cache
+#     litellm_params:
+#       model: "gpt-4"
+#       cache_control:
+#         enabled: true
+#         max_age: 3600
+#       prompt_cache_max_tokens: 10000
+#
+#   - model_name: claude-3-with-cache
+#     litellm_params:
+#       model: "claude-3-opus"
+#       cache_control:
+#         enabled: true
+#         max_age: 3600
+#
+#   # Embedding models for RAG
+#   - model_name: text-embedding-3-small
+#     litellm_params:
+#       model: "text-embedding-3-small"
+#
+#   - model_name: text-embedding-ada-002
+#     litellm_params:
+#       model: "text-embedding-ada-002"
+
+################################################################################
+# EXAMPLE 5: Rate Limiting and Cost Control
+################################################################################
+
+# model_list:
+#   - model_name: expensive-model
+#     litellm_params:
+#       model: "gpt-4"
+#     tpm_limit: 10000
+#     rpm_limit: 100
+#     max_cost: 100.00  # Daily max spend in dollars
+#
+#   - model_name: cheap-model
+#     litellm_params:
+#       model: "gpt-3.5-turbo"
+#     tpm_limit: 50000
+#     rpm_limit: 500
+#     max_cost: 20.00
+#
+#   - model_name: local-model
+#     litellm_params:
+#       model: "ollama/llama2"
+#       api_base: "http://ollama:11434"
+#     tpm_limit: 100000
+#     rpm_limit: 1000
+
+################################################################################
+# EXAMPLE 6: Production-Grade Multi-Provider Setup
+################################################################################
+
+################################################################################
+# EXAMPLE 9: Comprehensive Production Configuration
+################################################################################
+
+# Router settings
+router_settings:
+  timeout: 600
+  retry_failed_requests: true
+  num_retries: 3
+  fallback_enabled: true
+
+  # Logging configuration
+  logging:
+    level: INFO
+    log_format: json
+    log_file: /var/log/litellm/router.log
+
+  # Monitoring configuration
+  monitoring:
+    enabled: true
+    prometheus_port: 8000
+    track_cost: true
+    track_latency: true
+
+  # Rate limiting
+  rate_limits:
+    global_tpm: 500000
+    global_rpm: 10000
+    per_model_tpm: 100000
+    per_model_rpm: 1000
+    per_user_tpm: 50000
+    per_user_rpm: 500
+
+  # Health checks
+  health_checks:
+    enabled: true
+    check_interval: 60
+    timeout: 10
+    unhealthy_threshold: 3
+
+# Model list with full configuration
+model_list:
+  - model_name: gpt-4
+    litellm_params:
+      model: "gpt-4"
+      api_key: "${OPENAI_API_KEY}"
+      timeout: 120
+    tpm_limit: 10000
+    rpm_limit: 200
+    max_cost_per_day: 100
+    priority: 1
+    fallback_to: ["claude-3-opus", "ollama/neural-chat"]
+
+  - model_name: claude-3-opus
+    litellm_params:
+      model: "claude-3-opus"
+      api_key: "${ANTHROPIC_API_KEY}"
+      timeout: 120
+    tpm_limit: 10000
+    rpm_limit: 200
+    max_cost_per_day: 80
+    priority: 2
+    fallback_to: ["gpt-4", "ollama/mistral"]
+
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: "gpt-3.5-turbo"
+      api_key: "${OPENAI_API_KEY}"
+      timeout: 60
+    tpm_limit: 50000
+    rpm_limit: 500
+    max_cost_per_day: 30
+    priority: 3
+    fallback_to: ["command", "ollama/llama2"]
+
+  - model_name: neural-chat
+    litellm_params:
+      model: "ollama/neural-chat"
+      api_base: "http://ollama:11434"
+      timeout: 180
+    tpm_limit: 100000
+    rpm_limit: 1000
+    max_cost_per_day: 0
+    priority: 10
+
+  - model_name: mistral
+    litellm_params:
+      model: "ollama/mistral"
+      api_base: "http://ollama:11434"
+      timeout: 180
+    tpm_limit: 100000
+    rpm_limit: 1000
+    max_cost_per_day: 0
+    priority: 10
+
+# General settings
+general_settings:
+  # Log costs to track spending
+  log_costs: true
+
+  # Verbose logging
+  verbose: false
+
+  # Enable telemetry
+  enable_telemetry: true
+
+  # Setup database for persistent logging
+  # database_url: "postgresql://user:password@localhost/litellm" # pragma: allowlist secret

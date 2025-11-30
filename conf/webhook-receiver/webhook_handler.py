@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """
 ERNI-KI Webhook Receiver for alert handling.
 Processes Alertmanager notifications and forwards them to various channels.

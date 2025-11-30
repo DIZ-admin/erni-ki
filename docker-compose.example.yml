@@ -6,7 +6,7 @@ services:
     image: pgvector/pgvector:pg16
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: example-password # pragma: allowlist secret
       POSTGRES_DB: erni_ki
     ports:
       - "5432:5432"
@@ -15,7 +15,7 @@ services:
 
   redis:
     image: redis:7.0-alpine
-    command: redis-server --requirepass password
+    command: redis-server --requirepass example-password # pragma: allowlist secret
     ports:
       - "6379:6379"
     volumes:

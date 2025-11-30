@@ -1,3 +1,5 @@
+# Pull Request Template
+
 ## Краткое описание
 
 - [ ] Изменение описано в `CHANGELOG.md` (если нужно)
