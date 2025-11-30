@@ -14,7 +14,7 @@ from typing import Any
 
 import requests
 from flask import Flask, jsonify, request
-from pydantic import BaseModel, ValidationError, field_validator
+from pydantic import BaseModel, ValidationError
 
 try:
     from flask_limiter import Limiter
@@ -56,26 +56,6 @@ NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
 
 
-def _validate_secrets() -> None:
-    """Validate required secrets are configured on startup."""
-    if not WEBHOOK_SECRET:
-        logger.error(
-            "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET environment variable not set. "
-            "Webhook handler cannot start without it."
-        )
-        raise RuntimeError(
-            "Missing required ALERTMANAGER_WEBHOOK_SECRET environment variable"
-        )
-    if len(WEBHOOK_SECRET) < 16:
-        logger.error(
-            "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET is too short. "
-            "Minimum 16 characters required for security."
-        )
-        raise RuntimeError(
-            "ALERTMANAGER_WEBHOOK_SECRET must be at least 16 characters long"
-        )
-
-
 def verify_signature(body: bytes, signature: str | None) -> bool:
     if not WEBHOOK_SECRET:
         logger.error("WEBHOOK_SECRET not configured; rejecting request")
@@ -92,63 +72,6 @@ class AlertLabels(BaseModel):
     service: str | None = None
     category: str | None = None
     instance: str | None = None
-
-    @field_validator("alertname", mode="before")
-    @classmethod
-    def validate_alertname(cls, v: str) -> str:
-        """Validate alert name length and content."""
-        if not v:
-            raise ValueError("alertname cannot be empty")
-        if len(v) > 256:
-            raise ValueError("alertname cannot exceed 256 characters")
-        return v.strip()
-
-    @field_validator("severity", mode="before")
-    @classmethod
-    def validate_severity(cls, v: str | None) -> str | None:
-        """Validate severity is one of allowed values."""
-        if v is None:
-            return v
-        allowed = {"critical", "warning", "info", "debug"}
-        v_lower = str(v).lower().strip()
-        if v_lower not in allowed:
-            raise ValueError(f"severity must be one of {allowed}, got {v_lower}")
-        return v_lower
-
-    @field_validator("service", mode="before")
-    @classmethod
-    def validate_service(cls, v: str | None) -> str | None:
-        """Validate service name."""
-        if v is None:
-            return v
-        v = str(v).strip()
-        if len(v) > 128:
-            raise ValueError("service cannot exceed 128 characters")
-        if not v.replace("-", "").replace("_", "").isalnum():
-            raise ValueError("service must contain only alphanumeric characters, hyphens, or underscores")
-        return v
-
-    @field_validator("category", mode="before")
-    @classmethod
-    def validate_category(cls, v: str | None) -> str | None:
-        """Validate alert category."""
-        if v is None:
-            return v
-        v = str(v).strip()
-        if len(v) > 128:
-            raise ValueError("category cannot exceed 128 characters")
-        return v
-
-    @field_validator("instance", mode="before")
-    @classmethod
-    def validate_instance(cls, v: str | None) -> str | None:
-        """Validate instance identifier."""
-        if v is None:
-            return v
-        v = str(v).strip()
-        if len(v) > 256:
-            raise ValueError("instance cannot exceed 256 characters")
-        return v
 
 
 class Alert(BaseModel):
@@ -187,13 +110,11 @@ class AlertProcessor:
             for alert in alerts:
                 try:
                     self._process_single_alert(alert, group_labels)
-                except requests.RequestException as e:
-                    logger.error(f"Network error processing alert: {e}")
-                    results["errors"].append(str(e))
                 except Exception as e:
                     logger.error(f"Error processing alert: {e}", exc_info=True)
                     results["errors"].append(str(e))
                 finally:
+                    # Count alert as processed even if notification failed, to reflect attempt.
                     results["processed"] += 1
 
             return results
@@ -271,7 +192,7 @@ class AlertProcessor:
 
             logger.info(f"Discord notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Discord notification: %s", e)
 
     def _send_slack_notification(self, message_data: dict[str, Any]):
@@ -303,7 +224,7 @@ class AlertProcessor:
 
             logger.info(f"Slack notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Slack notification: %s", e)
 
     def _send_telegram_notification(self, message_data: dict[str, Any]):
@@ -335,7 +256,7 @@ class AlertProcessor:
 
             logger.info(f"Telegram notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Telegram notification: %s", e)
 
 
@@ -397,7 +318,6 @@ def handle_warning_webhook():
 
 
 @app.route("/health", methods=["GET"])
-@limiter.limit("30 per minute")  # Rate limit health checks to prevent DDoS
 def health_check():
     """Health check endpoint"""
     return jsonify(
@@ -410,6 +330,5 @@ def health_check():
 
 
 if __name__ == "__main__":
-    _validate_secrets()
     logger.info("Starting ERNI-KI Webhook Receiver")
     app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container
