@@ -1,7 +1,6 @@
 # Developer tooling for linting/formatting
 ruff==0.14.6
 pre-commit==4.3.0
-mypy==1.11.2
 mkdocs==1.6.1
 mkdocs-material==9.5.49
 mkdocs-static-i18n==1.2.3

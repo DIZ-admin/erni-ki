@@ -54,16 +54,16 @@ API) -**Общая производительность**: Отличная (Sea
 
 ```bash
 # env/redis.env
-REDIS_PASSWORD=$REDIS_PASSWORD
+REDIS_PASSWORD=ErniKiRedisSecurePassword2024
 
 # redis.conf
-requirepass $REDIS_PASSWORD
+requirepass ErniKiRedisSecurePassword2024
 ```
 
 **Тест подключения**:
 
 ```bash
-$ docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
+$ docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
 PONG # Redis работает
 ```
 
@@ -73,13 +73,13 @@ PONG # Redis работает
 
 ```bash
 # env/searxng.env
-SEARXNG_VALKEY_URL=redis://:$REDIS_PASSWORD@redis:6379/0
+SEARXNG_VALKEY_URL=redis://:ErniKiRedisSecurePassword2024@redis:6379/0
 ```
 
 **Формат**: `redis://:password@host:port/db`
 
 - Пустой username (`:` перед паролем)
-- Пароль: `$REDIS_PASSWORD`
+- Пароль: `ErniKiRedisSecurePassword2024`
 - Host: `redis` (Docker network)
 - Port: `6379`
 - Database: `0`
@@ -99,7 +99,7 @@ $ docker exec erni-ki-searxng-1 /usr/local/searxng/.venv/bin/python3 -c "import 
 
 ```python
 import valkey
-r = valkey.Redis.from_url('redis://:$REDIS_PASSWORD@redis:6379/0')
+r = valkey.Redis.from_url('redis://:ErniKiRedisSecurePassword2024@redis:6379/0')
 r.ping()
 # AuthenticationError: invalid username-password pair or user is disabled
 ```
@@ -114,19 +114,19 @@ r.ping()
 
 ```python
 # РАБОТАЕТ: Прямое подключение
-r = valkey.Redis(host='redis', port=6379, password='$REDIS_PASSWORD', db=0)
+r = valkey.Redis(host='redis', port=6379, password='ErniKiRedisSecurePassword2024', db=0)
 r.ping() # True
 
 # НЕ РАБОТАЕТ: Подключение через from_url()
-r = valkey.Redis.from_url('redis://:$REDIS_PASSWORD@redis:6379/0')
+r = valkey.Redis.from_url('redis://:ErniKiRedisSecurePassword2024@redis:6379/0')
 r.ping() # AuthenticationError: invalid username-password pair or user is disabled
 ```
 
 **Причина**:
 
 - Модуль `valkey-py 6.1.1` имеет баг в методе `from_url()`
-- URL парсится правильно (username='', password='$REDIS_PASSWORD') # pragma:
-  allowlist secret
+- URL парсится правильно (username='',
+  password='ErniKiRedisSecurePassword2024') # pragma: allowlist secret
 - Но при аутентификации отправляется неправильная команда AUTH
 - SearXNG использует ТОЛЬКО `from_url()` метод (нет возможности использовать
   прямое подключение)
@@ -161,7 +161,7 @@ r.ping() # AuthenticationError: invalid username-password pair or user is disabl
 SEARXNG_CACHE_RESULTS=false
 SEARXNG_LIMITER=false
 # Закомментировать SEARXNG_VALKEY_URL
-# SEARXNG_VALKEY_URL=redis://:$REDIS_PASSWORD@redis:6379/0
+# SEARXNG_VALKEY_URL=redis://:ErniKiRedisSecurePassword2024@redis:6379/0
 ```
 
 2. Перезапустить SearXNG:
@@ -198,17 +198,17 @@ docker logs --tail 50 erni-ki-searxng-1 | grep -E "ERROR|WARN"
 
 ```bash
 # env/searxng.env
-SEARXNG_VALKEY_URL=redis://default:$REDIS_PASSWORD@redis:6379/0 # pragma: allowlist secret
+SEARXNG_VALKEY_URL=redis://default:ErniKiRedisSecurePassword2024@redis:6379/0 # pragma: allowlist secret
 ```
 
 ## 2.2 Настроить Redis ACL
 
 ```bash
 # Создать пользователя для SearXNG
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ACL SETUSER searxng on >password $REDIS_PASSWORD ~* +@all
+docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL SETUSER searxng on >password ErniKiRedisSecurePassword2024 ~* +@all
 
 # Обновить URL
-SEARXNG_VALKEY_URL=redis://searxng:$REDIS_PASSWORD@redis:6379/0 # pragma: allowlist secret
+SEARXNG_VALKEY_URL=redis://searxng:ErniKiRedisSecurePassword2024@redis:6379/0 # pragma: allowlist secret
 ```
 
 ## 2.3 Обновить модуль Valkey

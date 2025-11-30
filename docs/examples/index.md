@@ -156,8 +156,8 @@ To integrate ERNI-KI webhooks in your application:
 2. Set `X-Signature` header to the hex digest
 3. POST to webhook endpoint with `Content-Type: application/json`
 
-- See [Webhook API Reference](../../reference/webhook-api.md) for complete
-  specification.
+See [Webhook API Reference](../reference/webhook-api.md) for complete
+specification.
 
 ## Testing
 
@@ -203,12 +203,12 @@ docker-compose logs webhook-receiver
 
 ## Related Documentation
 
-- [Webhook API Reference](../../reference/webhook-api.md) - Complete API
+- [Webhook API Reference](../reference/webhook-api.md) - Complete API
   specification
 - [API Reference](../reference/api-reference.md) - Full OpenWebUI API
   documentation
-- [Development Setup Guide](../../development/setup-guide.md) - Local
-  development setup
+- [Development Setup Guide](../development/setup-guide.md) - Local development
+  setup
 - [Security Policy](../security/security-policy.md) - Authentication and
   authorization
 
@@ -273,4 +273,4 @@ To add new examples:
 ---
 
 For more information, see the
-[full webhook API documentation](../../reference/webhook-api.md).
+[full webhook API documentation](../reference/webhook-api.md).

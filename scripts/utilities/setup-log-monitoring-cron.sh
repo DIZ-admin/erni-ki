@@ -30,8 +30,7 @@ setup_cron() {
     log_info "Configuring cron job for log monitoring..."
 
     # Build temporary cron file
-    local temp_cron
-    temp_cron=$(mktemp)
+    local temp_cron=$(mktemp)
 
     # Current cron jobs (excluding this monitoring)
     crontab -l 2>/dev/null | grep -v "log-monitoring.sh" > "$temp_cron" || true
@@ -60,8 +59,7 @@ EOF
 check_cron() {
     log_info "Checking current cron jobs..."
 
-    local cron_jobs
-    cron_jobs=$(crontab -l 2>/dev/null | grep -c "log-monitoring.sh" || echo "0")
+    local cron_jobs=$(crontab -l 2>/dev/null | grep -c "log-monitoring.sh" || echo "0")
 
     if [[ "$cron_jobs" -gt 0 ]]; then
         log_success "Found $cron_jobs cron jobs for log monitoring"
@@ -78,8 +76,7 @@ check_cron() {
 remove_cron() {
     log_info "Removing log monitoring cron jobs..."
 
-    local temp_cron
-    temp_cron=$(mktemp)
+    local temp_cron=$(mktemp)
     crontab -l 2>/dev/null | grep -v "log-monitoring.sh" > "$temp_cron" || true
     crontab "$temp_cron"
     rm -f "$temp_cron"

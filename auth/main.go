@@ -14,27 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func validateSecrets() error {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
-	if secret == "" {
-		return fmt.Errorf("CRITICAL: WEBUI_SECRET_KEY environment variable not set")
-	}
-	if len(secret) < 32 {
-		return fmt.Errorf(
-			"CRITICAL: WEBUI_SECRET_KEY is too short (%d chars). "+
-				"Minimum 32 characters required for security",
-			len(secret),
-		)
-	}
-	return nil
-}
-
 func main() {
-	// Validate required secrets on startup
-	if err := validateSecrets(); err != nil {
-		log.Fatalf("Secret validation failed: %v", err)
-	}
-
 	// Check command line arguments for health check
 	if len(os.Args) > 1 && os.Args[1] == "--health-check" {
 		if err := healthCheck(); err != nil {

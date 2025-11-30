@@ -185,7 +185,7 @@ format с correlation IDs**Metrics**: Prometheus endpoint не реализов�
 router_settings:
  # redis_host: "redis"
  # redis_port: 6379
- # redis_password: "$REDIS_PASSWORD" # pragma: allowlist secret
+ # redis_password: "ErniKiRedisSecurePassword2024" # pragma: allowlist secret
  # redis_db: 1
 ````
 

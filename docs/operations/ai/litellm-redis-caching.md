@@ -2,7 +2,7 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-30'
+last_updated: '2025-11-24'
 ---
 
 # LiteLLM Redis Caching Configuration
@@ -65,7 +65,7 @@ router_settings:
   # Redis settings for router are temporarily disabled due to incompatibility
   # redis_host: "redis"
   # redis_port: 6379
-  # redis_password: "$REDIS_PASSWORD" # pragma: allowlist secret
+  # redis_password: "ErniKiRedisSecurePassword2024" # pragma: allowlist secret
   # redis_db: 1 # Use the same DB as caching
 ```
 
@@ -103,7 +103,7 @@ router_settings:
   # ... другие настройки ...
   redis_host: 'redis'
   redis_port: 6379
-  redis_password: '$REDIS_PASSWORD' # pragma: allowlist secret
+  redis_password: 'ErniKiRedisSecurePassword2024' # pragma: allowlist secret
   redis_db: 1
 ```
 
@@ -116,7 +116,7 @@ litellm_settings:
  type: 'redis' # Было: "local"
  host: 'redis'
  port: 6379
- password: '$REDIS_PASSWORD' # pragma: allowlist secret
+ password: 'ErniKiRedisSecurePassword2024' # pragma: allowlist secret
  db: 1
  ttl: 1800
  supported_call_types:
@@ -142,10 +142,10 @@ docker compose restart litellm
 docker logs erni-ki-litellm-1 --tail 100 | grep -i redis
 
 # Проверьте Redis connections
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD CLIENT LIST
+docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 CLIENT LIST
 
 # Проверьте кеш в Redis
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD -n 1 KEYS "*"
+docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 -n 1 KEYS "*"
 ```
 
 ## Как вернуться на Local caching
@@ -173,7 +173,7 @@ router_settings:
   # Redis settings for router are temporarily disabled due to incompatibility
   # redis_host: "redis"
   # redis_port: 6379
-  # redis_password: "$REDIS_PASSWORD" # pragma: allowlist secret
+  # redis_password: "ErniKiRedisSecurePassword2024" # pragma: allowlist secret
   # redis_db: 1
 ```
 
@@ -256,7 +256,7 @@ docker exec erni-ki-litellm-1 ping redis
 
 ```bash
 # Очистить все ключи в DB 1 (cache DB)
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD -n 1 FLUSHDB
+docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 -n 1 FLUSHDB
 ```
 
 **Решение для Local:**

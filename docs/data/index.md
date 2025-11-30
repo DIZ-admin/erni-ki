@@ -1,8 +1,8 @@
 ---
-language: ru
+language: en
 translation_status: original
 doc_version: "2025.11"
-last_updated: 2025-11-30
+last_updated: 2025-11-29
 ---
 
 # Data Directory
