@@ -7,6 +7,7 @@ Tests alert processing, file operations, recovery scripts, and API endpoints.
 
 import importlib.util
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -41,6 +42,7 @@ def load_webhook_receiver() -> WebhookModule:
     if spec is None or spec.loader is None:
         raise ImportError(f"Cannot load webhook-receiver from {module_path}")
     module = importlib.util.module_from_spec(spec)
+    sys.modules["webhook_receiver"] = module
     spec.loader.exec_module(module)
     return cast(WebhookModule, module)
 
