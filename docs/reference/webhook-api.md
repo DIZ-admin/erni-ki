@@ -1,14 +1,14 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-29'
 ---
 
-# Webhook API Reference
+# Справочник API вебхуков
 
-> **Document Version:** 1.0 **Last Updated:** 2025-11-29 **Status:** Webhooks
-> with HMAC authentication enabled (October 2025+)
+> **Document Version:** 2025.11 **Last Updated:** 2025-11-29 **Status:**
+> Webhooks with HMAC authentication enabled (October 2025+)
 
 ## Overview
 
@@ -823,7 +823,8 @@ curl -s http://localhost:5001/health | jq .
 ## Related Documentation
 
 - [API Reference](./api-reference.md) - Full OpenWebUI API documentation
-- [Alertmanager Guide](../operations/monitoring-guide.md) - Alerting setup
+- See [Monitoring Guide](../operations/monitoring/monitoring-guide.md) for
+  details.
 - [Development Guide](../development/setup-guide.md) - Local development setup
 - [Security Policy](../security/security-policy.md) - Authentication and
   authorization

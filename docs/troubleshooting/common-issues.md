@@ -1065,5 +1065,6 @@ tar -czf debug-bundle.tar.gz \
 
 ---
 
-**Still having issues?** Check if your problem is covered in the [FAQ](./faq.md)
-or contact support!
+See
+[Troubleshooting Guide](../operations/troubleshooting/troubleshooting-guide.md)
+for more help.

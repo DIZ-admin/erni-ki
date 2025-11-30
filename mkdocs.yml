@@ -429,7 +429,7 @@ nav:
           - "GitHub Governance": operations/core/github-governance.md
           - "Configuration Changes": operations/core/configuration-change-process.md
       - Monitoring:
-          - "Overview": operations/monitoring/README.md
+          - "Overview": operations/monitoring/index.md
           - "Monitoring Guide": operations/monitoring/monitoring-guide.md
           - "Grafana Dashboards": operations/monitoring/grafana-dashboards-guide.md
           - "Prometheus Alerts Guide": operations/monitoring/prometheus-alerts-guide.md
@@ -495,11 +495,11 @@ nav:
       - CHANGELOG: reference/CHANGELOG.md
 
   - "Reports & Archive":
-      - "Archive Overview": archive/README.md
+      - "Archive Overview": archive/index.md
       - "Archive READMEs":
           - archive/audits/index.md
-          - archive/diagnostics/README.md
-          - archive/incidents/README.md
+          - archive/diagnostics/index.md
+          - archive/incidents/index.md
           - archive/diagnostics/system-diagnostics-2025-11-18.md
       - Audits:
           - "documentation-audit (2025-10-24)": archive/audits/documentation-audit-2025-10-24.md

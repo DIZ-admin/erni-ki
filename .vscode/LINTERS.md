@@ -95,7 +95,7 @@ npm run pre-commit:install
 ### ESLint не находит конфигурацию
 
 Убедитесь, что используется Flat Config (`eslint.config.js`)
-и в VSCode настроен `"eslint.useFlatConfig": true"
+и в VSCode настроен `"eslint.useFlatConfig": true`
 
 ---
 Обновлено: 2025-11-24

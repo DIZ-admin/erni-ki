@@ -33,6 +33,7 @@ import hmac
 import json
 import sys
 from datetime import datetime
+from json import JSONDecodeError
 from typing import Any
 
 import requests
@@ -172,7 +173,13 @@ class WebhookClient:
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            return response.json()
+            try:
+                return response.json()
+            except JSONDecodeError:
+                return {
+                    "status": "success",
+                    "raw_response": response.text[:200],
+                }
 
         except requests.exceptions.Timeout:
             return {
