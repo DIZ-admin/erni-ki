@@ -6,6 +6,9 @@ import (
 )
 
 func TestValidateSecrets(t *testing.T) {
+	longSecret := "this-is-an-extremely-long-secret-key-with-many-characters-to-" + // pragma: allowlist secret
+		"ensure-maximum-security-12345678901234567890"
+
 	tests := []struct {
 		name        string
 		secret      string
@@ -70,10 +73,10 @@ func TestValidateSecrets(t *testing.T) {
 		},
 		{
 			name:        "Very long secret (should be valid)",
-			secret:      "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890",
+			secret:      longSecret,
 			shouldError: false,
 			setupEnv: func() {
-				os.Setenv("WEBUI_SECRET_KEY", "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890")
+				os.Setenv("WEBUI_SECRET_KEY", longSecret)
 			},
 			cleanup: func() {
 				os.Unsetenv("WEBUI_SECRET_KEY")
@@ -138,7 +141,7 @@ func TestValidateSecrets(t *testing.T) {
 					if errMsg != "CRITICAL: WEBUI_SECRET_KEY environment variable not set" {
 						t.Errorf("Expected 'not set' error message, got: %s", errMsg)
 					}
-				} else if len(tt.secret) > 0 && len(tt.secret) < 32 {
+				} else if tt.secret != "" && len(tt.secret) < 32 {
 					expectedSubstring := "too short"
 					if !contains(errMsg, expectedSubstring) {
 						t.Errorf("Expected error message to contain '%s', got: %s", expectedSubstring, errMsg)
@@ -149,11 +152,11 @@ func TestValidateSecrets(t *testing.T) {
 	}
 }
 
-// Helper function to check if string contains substring
+// Helper function to check if string contains substring.
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || 
-		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr || 
-		len(s) > len(substr) && containsMiddle(s, substr))))
+	return len(s) >= len(substr) && (s == substr || substr == "" ||
+		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr ||
+			len(s) > len(substr) && containsMiddle(s, substr))))
 }
 
 func containsMiddle(s, substr string) bool {
@@ -178,12 +181,12 @@ func TestValidateSecretsIntegration(t *testing.T) {
 
 	t.Run("Integration: Multiple validations in sequence", func(t *testing.T) {
 		secrets := []string{
-			"first-valid-secret-key-with-sufficient-length",
-			"second-valid-secret-key-also-long-enough",
-			"third-valid-secret-key-meets-requirements",
+			"first-valid-secret-key-with-sufficient-length", // pragma: allowlist secret
+			"second-valid-secret-key-also-long-enough",      // pragma: allowlist secret
+			"third-valid-secret-key-meets-requirements",     // pragma: allowlist secret
 		}
 
-		for _, secret := range secrets {
+		for _, secret := range secrets { // pragma: allowlist secret
 			os.Setenv("WEBUI_SECRET_KEY", secret)
 			err := validateSecrets()
 			if err != nil {
@@ -201,7 +204,7 @@ func TestValidateSecretsIntegration(t *testing.T) {
 		}
 
 		// Change to valid secret
-		os.Setenv("WEBUI_SECRET_KEY", "now-this-is-a-valid-secret-key-with-length")
+		os.Setenv("WEBUI_SECRET_KEY", "now-this-is-a-valid-secret-key-with-length") // pragma: allowlist secret
 		err = validateSecrets()
 		if err != nil {
 			t.Errorf("Expected validation to succeed after fixing secret: %v", err)
@@ -211,7 +214,7 @@ func TestValidateSecretsIntegration(t *testing.T) {
 
 func TestValidateSecretsConcurrency(t *testing.T) {
 	// Test that validateSecrets is safe to call concurrently
-	os.Setenv("WEBUI_SECRET_KEY", "concurrent-test-secret-key-with-sufficient-length")
+	os.Setenv("WEBUI_SECRET_KEY", "concurrent-test-secret-key-with-sufficient-length") // pragma: allowlist secret
 	defer os.Unsetenv("WEBUI_SECRET_KEY")
 
 	done := make(chan bool)
@@ -240,10 +243,10 @@ func TestValidateSecretsConcurrency(t *testing.T) {
 	}
 }
 
-func TestHealthCheck(t *testing.T) {
+func TestHealthCheck(_ *testing.T) {
 	// Test the health check functionality
 	err := healthCheck()
-	
+
 	// Health check should succeed when service is not running (returns error)
 	// or when it's running (returns nil)
 	// This is a basic smoke test
@@ -256,7 +259,9 @@ func BenchmarkValidateSecrets(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = validateSecrets()
+		if err := validateSecrets(); err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -304,7 +309,7 @@ func TestValidateSecretsErrorMessages(t *testing.T) {
 			}
 
 			if !contains(err.Error(), tt.expectedContain) {
-				t.Errorf("Expected error message to contain '%s', got: %s", 
+				t.Errorf("Expected error message to contain '%s', got: %s",
 					tt.expectedContain, err.Error())
 			}
 		})

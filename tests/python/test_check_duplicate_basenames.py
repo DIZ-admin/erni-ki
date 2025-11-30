@@ -5,9 +5,7 @@ This module tests the duplicate basename detection script that prevents
 naming conflicts between scripts/ and conf/ directories.
 """
 
-import os
 import sys
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -16,11 +14,7 @@ import pytest
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from scripts.maintenance.check_duplicate_basenames import (
-    check_duplicates,
-    get_basenames,
-    main,
-)
+from scripts.maintenance.check_duplicate_basenames import check_duplicates, get_basenames, main
 
 
 class TestGetBasenames:

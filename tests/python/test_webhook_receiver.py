@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
 # mypy: ignore-errors
 """
 Comprehensive unit tests for webhook-receiver.py
 Tests alert processing, file operations, recovery scripts, and API endpoints.
 """
 
+import hashlib
+import hmac
 import importlib.util
 import json
 import sys
@@ -13,6 +14,9 @@ import unittest
 from pathlib import Path
 from typing import Any, Protocol, cast
 from unittest.mock import MagicMock, mock_open, patch
+
+import pytest
+from pydantic import ValidationError
 
 
 class WebhookModule(Protocol):
@@ -820,27 +824,30 @@ if __name__ == "__main__":
 def test_validate_secrets_missing_env_var(monkeypatch):
     """Test that _validate_secrets raises error when ALERTMANAGER_WEBHOOK_SECRET is missing."""
     monkeypatch.delenv("ALERTMANAGER_WEBHOOK_SECRET", raising=False)
-    
+
     # Re-import to trigger validation
     with pytest.raises(RuntimeError, match="Missing required ALERTMANAGER_WEBHOOK_SECRET"):
         from conf.webhook_receiver import webhook_receiver
+
         webhook_receiver._validate_secrets()
 
 
 def test_validate_secrets_too_short(monkeypatch):
     """Test that _validate_secrets raises error when secret is too short."""
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "short")
-    
+
     with pytest.raises(RuntimeError, match="must be at least 16 characters"):
         from conf.webhook_receiver import webhook_receiver
+
         webhook_receiver._validate_secrets()
 
 
 def test_validate_secrets_minimum_length_boundary(monkeypatch):
     """Test secret validation at minimum length boundary (16 chars)."""
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "a" * 16)
-    
+
     from conf.webhook_receiver import webhook_receiver
+
     # Should not raise
     webhook_receiver._validate_secrets()
 
@@ -848,8 +855,9 @@ def test_validate_secrets_minimum_length_boundary(monkeypatch):
 def test_validate_secrets_valid_long_secret(monkeypatch):
     """Test secret validation with a sufficiently long secret."""
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "a" * 64)
-    
+
     from conf.webhook_receiver import webhook_receiver
+
     webhook_receiver._validate_secrets()
 
 
@@ -882,7 +890,7 @@ def test_alert_labels_validate_severity_allowed_values():
     for severity in ["critical", "warning", "info", "debug"]:
         labels = AlertLabels(alertname="Test", severity=severity)
         assert labels.severity == severity
-    
+
     # Invalid severity
     with pytest.raises(ValidationError, match="severity must be one of"):
         AlertLabels(alertname="Test", severity="invalid")
@@ -901,11 +909,11 @@ def test_alert_labels_validate_service_name():
     for name in valid_names:
         labels = AlertLabels(alertname="Test", service=name)
         assert labels.service == name
-    
+
     # Invalid service name (special chars)
     with pytest.raises(ValidationError, match="must contain only alphanumeric"):
         AlertLabels(alertname="Test", service="service@#$")
-    
+
     # Too long
     with pytest.raises(ValidationError, match="service cannot exceed 128 characters"):
         AlertLabels(alertname="Test", service="a" * 129)
@@ -918,11 +926,11 @@ def test_alert_labels_validate_gpu_id():
     for gpu_id in valid_ids:
         labels = AlertLabels(alertname="Test", gpu_id=gpu_id)
         assert labels.gpu_id == gpu_id
-    
+
     # Invalid GPU ID (special chars)
     with pytest.raises(ValidationError, match="gpu_id must be alphanumeric"):
         AlertLabels(alertname="Test", gpu_id="gpu@0")
-    
+
     # Too long
     with pytest.raises(ValidationError, match="gpu_id cannot exceed 32 characters"):
         AlertLabels(alertname="Test", gpu_id="a" * 33)
@@ -933,7 +941,7 @@ def test_alert_labels_validate_component_length():
     # Valid
     labels = AlertLabels(alertname="Test", component="api-gateway")
     assert labels.component == "api-gateway"
-    
+
     # Too long
     with pytest.raises(ValidationError, match="component cannot exceed 128 characters"):
         AlertLabels(alertname="Test", component="a" * 129)
@@ -947,10 +955,10 @@ def test_alert_labels_validate_component_length():
 def test_recovery_scripts_mapping_prevents_traversal(client, monkeypatch):
     """Test that RECOVERY_SCRIPTS mapping prevents path traversal attacks."""
     from conf.webhook_receiver import webhook_receiver
-    
+
     # Attempt path traversal through service name
     malicious_service = "../../../etc/passwd"
-    
+
     # The service should be rejected before even reaching the script
     assert malicious_service not in webhook_receiver.RECOVERY_SCRIPTS
     assert malicious_service not in webhook_receiver.ALLOWED_SERVICES
@@ -959,7 +967,7 @@ def test_recovery_scripts_mapping_prevents_traversal(client, monkeypatch):
 def test_recovery_scripts_only_allowed_services():
     """Test that only explicitly allowed services have recovery scripts."""
     from conf.webhook_receiver import webhook_receiver
-    
+
     # Check that RECOVERY_SCRIPTS keys match ALLOWED_SERVICES
     assert set(webhook_receiver.RECOVERY_SCRIPTS.keys()) == webhook_receiver.ALLOWED_SERVICES
 
@@ -967,30 +975,30 @@ def test_recovery_scripts_only_allowed_services():
 def test_run_recovery_script_invalid_service(monkeypatch, caplog):
     """Test that run_recovery_script rejects invalid services."""
     from conf.webhook_receiver import webhook_receiver
-    
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    
+
     webhook_receiver.run_recovery_script("invalid_service")
-    
+
     assert "Invalid service: invalid_service" in caplog.text
 
 
 def test_run_recovery_script_path_traversal_attempt(monkeypatch, caplog, tmp_path):
     """Test that path traversal attempts are blocked."""
     from conf.webhook_receiver import webhook_receiver
-    
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
     monkeypatch.setattr(webhook_receiver, "RECOVERY_DIR", tmp_path)
-    
+
     # Create a recovery script outside the recovery directory
     outside_script = tmp_path.parent / "malicious.sh"
     outside_script.write_text("#!/bin/bash\necho 'pwned'")
     outside_script.chmod(0o755)
-    
+
     # Attempt to execute it (should be blocked)
     # This shouldn't even get to path checking due to RECOVERY_SCRIPTS mapping
     webhook_receiver.run_recovery_script("../../malicious")
-    
+
     assert "Invalid service" in caplog.text or "Path traversal" in caplog.text
 
 
@@ -1002,7 +1010,7 @@ def test_run_recovery_script_path_traversal_attempt(monkeypatch, caplog, tmp_pat
 def test_webhook_factory_reduces_code_duplication():
     """Test that webhook routes are created using factory pattern."""
     from conf.webhook_receiver import webhook_receiver
-    
+
     # Verify all expected routes exist
     expected_routes = [
         "/webhook",
@@ -1012,9 +1020,9 @@ def test_webhook_factory_reduces_code_duplication():
         "/webhook/ai",
         "/webhook/database",
     ]
-    
+
     app_rules = [rule.rule for rule in webhook_receiver.app.url_map.iter_rules()]
-    
+
     for route in expected_routes:
         assert route in app_rules, f"Route {route} not found"
 
@@ -1022,15 +1030,11 @@ def test_webhook_factory_reduces_code_duplication():
 def test_webhook_handlers_rate_limited(client, monkeypatch):
     """Test that all webhook handlers have rate limiting applied."""
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    
+
     # Generate valid signature
     test_data = b'{"alerts": []}'
-    signature = hmac.new(
-        b"test-secret-123456",
-        test_data,
-        hashlib.sha256
-    ).hexdigest()
-    
+    signature = hmac.new(b"test-secret-123456", test_data, hashlib.sha256).hexdigest()
+
     endpoints = [
         "/webhook",
         "/webhook/critical",
@@ -1039,19 +1043,16 @@ def test_webhook_handlers_rate_limited(client, monkeypatch):
         "/webhook/ai",
         "/webhook/database",
     ]
-    
+
     for endpoint in endpoints:
         # Make multiple requests to trigger rate limit
         for i in range(12):  # Rate limit is 10 per minute
             response = client.post(
                 endpoint,
                 data=test_data,
-                headers={
-                    "X-Signature": signature,
-                    "Content-Type": "application/json"
-                }
+                headers={"X-Signature": signature, "Content-Type": "application/json"},
             )
-            
+
             if i >= 10:
                 assert response.status_code == 429, f"{endpoint} should be rate-limited"
                 break
@@ -1067,7 +1068,7 @@ def test_health_check_rate_limiting(client):
     # Rate limit is 30 per minute
     for i in range(35):
         response = client.get("/health")
-        
+
         if i < 30:
             assert response.status_code == 200
         else:
@@ -1081,33 +1082,28 @@ def test_health_check_rate_limiting(client):
 
 def test_process_alert_network_error_handling(monkeypatch, tmp_path, caplog):
     """Test that network errors in notifications don't prevent alert processing."""
-    from conf.webhook_receiver import webhook_receiver
     import requests
-    
+
+    from conf.webhook_receiver import webhook_receiver
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
     monkeypatch.setattr(webhook_receiver, "ALERTS_DIR", tmp_path)
-    
+
     # Mock requests to raise network error
     def mock_post(*args, **kwargs):
         raise requests.RequestException("Network error")
-    
+
     monkeypatch.setattr(requests, "post", mock_post)
-    
+
     payload = {
         "alerts": [
-            {
-                "labels": {
-                    "alertname": "TestAlert",
-                    "severity": "critical"
-                },
-                "status": "firing"
-            }
+            {"labels": {"alertname": "TestAlert", "severity": "critical"}, "status": "firing"}
         ]
     }
-    
+
     # Should not raise, alert should still be processed
     webhook_receiver.process_alert(payload, "test")
-    
+
     # Check that alert was saved despite notification failure
     alert_files = list(tmp_path.glob("test_*.json"))
     assert len(alert_files) > 0
@@ -1127,13 +1123,9 @@ def test_alert_payload_extremely_large_alertname():
 def test_alert_payload_unicode_and_special_characters():
     """Test handling of unicode and special characters in alert fields."""
     # Should handle unicode properly
-    labels = AlertLabels(
-        alertname="テスト Alert 🚨",
-        severity="warning",
-        service="test-service"
-    )
+    labels = AlertLabels(alertname="テスト Alert 🚨", severity="warning", service="test-service")
     assert "テスト" in labels.alertname
-    
+
     # But should reject invalid service names with special chars
     with pytest.raises(ValidationError):
         AlertLabels(alertname="Test", service="service🚨")
@@ -1149,10 +1141,7 @@ def test_alert_payload_null_bytes():
 def test_alert_payload_sql_injection_patterns():
     """Test that SQL injection patterns don't cause issues."""
     # Should be safe due to Pydantic validation
-    labels = AlertLabels(
-        alertname="'; DROP TABLE alerts; --",
-        severity="critical"
-    )
+    labels = AlertLabels(alertname="'; DROP TABLE alerts; --", severity="critical")
     assert labels.alertname == "'; DROP TABLE alerts; --"
     # The key is that this gets validated and sanitized, not executed
 
@@ -1164,43 +1153,45 @@ def test_alert_payload_sql_injection_patterns():
 
 def test_run_recovery_script_timeout_handling(monkeypatch, tmp_path, caplog):
     """Test that recovery script timeouts are handled properly."""
-    from conf.webhook_receiver import webhook_receiver
     from subprocess import TimeoutExpired
-    
+
+    from conf.webhook_receiver import webhook_receiver
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
     monkeypatch.setattr(webhook_receiver, "RECOVERY_DIR", tmp_path)
-    
+
     # Create a mock script that would timeout
     script_path = tmp_path / "ollama-recovery.sh"
     script_path.write_text("#!/bin/bash\nsleep 100\n")
     script_path.chmod(0o755)
-    
+
     # Mock run to raise TimeoutExpired
     def mock_run(*args, **kwargs):
         raise TimeoutExpired(cmd=args[0], timeout=30)
-    
+
     import subprocess
+
     monkeypatch.setattr(subprocess, "run", mock_run)
-    
+
     webhook_receiver.run_recovery_script("ollama")
-    
+
     assert "timed out" in caplog.text.lower()
 
 
 def test_run_recovery_script_permission_denied(monkeypatch, tmp_path, caplog):
     """Test handling of permission denied errors for recovery scripts."""
     from conf.webhook_receiver import webhook_receiver
-    
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
     monkeypatch.setattr(webhook_receiver, "RECOVERY_DIR", tmp_path)
-    
+
     # Create a script without execute permissions
     script_path = tmp_path / "searxng-recovery.sh"
     script_path.write_text("#!/bin/bash\necho 'test'\n")
     script_path.chmod(0o644)  # No execute permission
-    
+
     webhook_receiver.run_recovery_script("searxng")
-    
+
     assert "permission" in caplog.text.lower() or "failed" in caplog.text.lower()
 
 
@@ -1212,101 +1203,98 @@ def test_run_recovery_script_permission_denied(monkeypatch, tmp_path, caplog):
 def test_concurrent_webhook_requests(client, monkeypatch):
     """Test handling of concurrent webhook requests."""
     import threading
-    import time
-    
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    
+
     results = []
-    
+
     def make_request():
-        test_data = b'{"alerts": [{"labels": {"alertname": "Test", "severity": "info"}, "status": "firing"}]}'
-        signature = hmac.new(
-            b"test-secret-123456",
-            test_data,
-            hashlib.sha256
-        ).hexdigest()
-        
+        test_data = (
+            b'{"alerts": [{"labels": {"alertname": "Test", '
+            b'"severity": "info"}, "status": "firing"}]}'
+        )
+        signature = hmac.new(b"test-secret-123456", test_data, hashlib.sha256).hexdigest()
+
         response = client.post(
             "/webhook",
             data=test_data,
-            headers={
-                "X-Signature": signature,
-                "Content-Type": "application/json"
-            }
+            headers={"X-Signature": signature, "Content-Type": "application/json"},
         )
         results.append(response.status_code)
-    
+
     # Create multiple threads
     threads = [threading.Thread(target=make_request) for _ in range(5)]
-    
+
     # Start all threads
     for thread in threads:
         thread.start()
-    
+
     # Wait for completion
     for thread in threads:
         thread.join()
-    
+
     # All requests should succeed (200) or be rate-limited (429)
     assert all(code in [200, 429] for code in results)
     assert results.count(200) >= 1  # At least one should succeed
 
 
 # ============================================================================
-# Tests for alert file storage edge cases  
+# Tests for alert file storage edge cases
 # ============================================================================
 
 
 def test_save_alert_disk_full_simulation(monkeypatch, tmp_path, caplog):
     """Test handling of disk full scenarios when saving alerts."""
     from conf.webhook_receiver import webhook_receiver
-    
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
     monkeypatch.setattr(webhook_receiver, "ALERTS_DIR", tmp_path)
-    
+
     # Mock open to raise OSError (disk full)
     original_open = open
+
     def mock_open(*args, **kwargs):
-        if 'w' in str(kwargs.get('mode', args[1] if len(args) > 1 else '')):
+        if "w" in str(kwargs.get("mode", args[1] if len(args) > 1 else "")):
             raise OSError("No space left on device")
         return original_open(*args, **kwargs)
-    
+
     monkeypatch.setattr("builtins.open", mock_open)
-    
+
     payload = {"test": "data"}
-    
+
     # Should handle gracefully and log error
     webhook_receiver.save_alert_to_file(payload, "test")
-    
+
     assert "error" in caplog.text.lower() or "failed" in caplog.text.lower()
 
 
 def test_save_alert_concurrent_writes(monkeypatch, tmp_path):
     """Test concurrent alert file writes don't corrupt data."""
-    from conf.webhook_receiver import webhook_receiver
-    import threading
     import json
-    
+    import threading
+
+    from conf.webhook_receiver import webhook_receiver
+
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
     monkeypatch.setattr(webhook_receiver, "ALERTS_DIR", tmp_path)
-    
+
     def write_alert(alert_id):
         payload = {"alert_id": alert_id, "data": "test"}
         webhook_receiver.save_alert_to_file(payload, f"test_{alert_id}")
-    
+
     # Create multiple threads writing alerts
     threads = [threading.Thread(target=write_alert, args=(i,)) for i in range(10)]
-    
+
     for thread in threads:
         thread.start()
-    
+
     for thread in threads:
         thread.join()
-    
+
     # Verify all files were created and contain valid JSON
     alert_files = list(tmp_path.glob("test_*.json"))
     assert len(alert_files) == 10
-    
+
     for alert_file in alert_files:
         data = json.loads(alert_file.read_text())
         assert "alert_id" in data
