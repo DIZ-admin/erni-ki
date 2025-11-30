@@ -9,12 +9,13 @@ import hashlib
 import hmac
 import logging
 import os
+import sys
 from datetime import datetime
 from typing import Any
 
 import requests
 from flask import Flask, jsonify, request
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, field_validator
 
 try:
     from flask_limiter import Limiter
@@ -53,6 +54,7 @@ SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
+TEST_SECRET_PLACEHOLDER = "test-secret-placeholder"  # pragma: allowlist secret  # noqa: S105
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
 
 
@@ -72,6 +74,39 @@ class AlertLabels(BaseModel):
     service: str | None = None
     category: str | None = None
     instance: str | None = None
+
+    @field_validator("alertname", mode="before")
+    @classmethod
+    def validate_alertname(cls, v: str | None) -> str:
+        if v is None:
+            raise ValueError("alertname is required")
+        value = str(v).strip()
+        if not value:
+            raise ValueError("alertname cannot be empty")
+        if len(value) > 256:
+            raise ValueError("alertname cannot exceed 256 characters")
+        return value
+
+    @field_validator("instance", mode="before")
+    @classmethod
+    def validate_instance(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        value = str(v).strip()
+        if len(value) > 256:
+            raise ValueError("instance cannot exceed 256 characters")
+        return value
+
+    @field_validator("severity", mode="before")
+    @classmethod
+    def validate_severity(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        value = str(v).lower().strip()
+        allowed = {"critical", "warning", "info", "debug"}
+        if value not in allowed:
+            raise ValueError(f"severity must be one of {allowed}")
+        return value
 
 
 class Alert(BaseModel):
@@ -330,5 +365,8 @@ def health_check():
 
 
 if __name__ == "__main__":
+    if not WEBHOOK_SECRET or WEBHOOK_SECRET == TEST_SECRET_PLACEHOLDER:
+        logger.error("ALERTMANAGER_WEBHOOK_SECRET must be configured in production")
+        sys.exit(1)
     logger.info("Starting ERNI-KI Webhook Receiver")
     app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container
