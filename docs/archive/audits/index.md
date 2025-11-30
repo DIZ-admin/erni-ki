@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: original
 doc_version: '2025.11'
 last_updated: '2025-11-29'
@@ -33,10 +33,3 @@ pattern `*-audit-YYYY-MM-DD.md` and remain read-only for traceability.
 - [service-version-audit-2025-11-25.md](service-version-audit-2025-11-25.md)
 - [service-version-matrix-2025-11-25.md](service-version-matrix-2025-11-25.md)
 - [service-version-matrix-2025-11-28.md](service-version-matrix-2025-11-28.md)
-
----
-
-language: en translation_status: original doc_version: "2025.11" last_updated:
-2025-11-29 category: archive state: active
-
----
