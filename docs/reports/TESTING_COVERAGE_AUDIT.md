@@ -27,11 +27,11 @@ coverage
 
 **Key Findings:**
 
-- ✅ Excellent Go code test coverage (100% in auth/main_test.go)
-- ✅ Strong TypeScript test infrastructure (Playwright + Vitest)
-- ⚠️ Python webhook module has NO dedicated unit tests
-- ⚠️ Mock data inconsistent across test files
-- ⚠️ E2E tests have flaky timeouts and network dependencies
+- Excellent Go code test coverage (100% in auth/main_test.go)
+- Strong TypeScript test infrastructure (Playwright + Vitest)
+- Python webhook module has NO dedicated unit tests
+- Mock data inconsistent across test files
+- E2E tests have flaky timeouts and network dependencies
 
 ---
 
@@ -45,7 +45,7 @@ coverage
 - `conf/webhook-receiver/webhook_handler.py` (343 lines)
 - **Total:** 751 lines of production code
 
-**Current Test Coverage:** ❌ MISSING
+**Current Test Coverage:** MISSING
 
 **Critical Issue:** No unit tests exist for webhook receivers!
 
@@ -56,8 +56,9 @@ coverage
 
 **Example Test Gaps:**
 
+## Signature Verification Tests
+
 ```python
-# ❌ NOT TESTED
 def verify_signature(body: bytes, signature: str | None) -> bool:
     if not WEBHOOK_SECRET:
         logger.error("WEBHOOK_SECRET not configured; rejecting request")
@@ -66,16 +67,18 @@ def verify_signature(body: bytes, signature: str | None) -> bool:
         return False
     expected = hmac.new(WEBHOOK_SECRET.encode(), body, hashlib.sha256).hexdigest()
     return hmac.compare_digest(signature, expected)
+```
 
-# ✅ RECOMMENDED TEST
+```python
 def test_verify_signature_valid():
     """Test HMAC verification with correct signature."""
     body = b'{"test": "data"}'
-    secret = "test-secret"
+    secret = "test-secret-placeholder"  # pragma: allowlist secret
     expected = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
 
     # Should verify valid signature
-    assert verify_signature(body, expected) == True
+    assert verify_signature(body, expected) is True
+
 
 def test_verify_signature_invalid():
     """Test HMAC verification with incorrect signature."""
@@ -83,26 +86,27 @@ def test_verify_signature_invalid():
     wrong_signature = "wrong-signature"
 
     # Should reject invalid signature
-    assert verify_signature(body, wrong_signature) == False
+    assert verify_signature(body, wrong_signature) is False
+
 
 def test_verify_signature_missing_secret():
     """Test verification fails when WEBHOOK_SECRET not configured."""
     # Temporarily clear secret
-    with patch.dict(os.environ, {'ALERTMANAGER_WEBHOOK_SECRET': ''}):
-        result = verify_signature(b'data', 'any-signature')
-        assert result == False
+    with patch.dict(os.environ, {"ALERTMANAGER_WEBHOOK_SECRET": ""}):
+        result = verify_signature(b"data", "any-signature")
+        assert result is False
 ```
 
 **Recommended Test Coverage:**
 
-| Function              | Current | Target  | Priority |
-| --------------------- | ------- | ------- | -------- |
-| `verify_signature`    | ❌ 0%   | ✅ 100% | CRITICAL |
-| `save_alert_to_file`  | ⚠️ 30%  | ✅ 100% | HIGH     |
-| `process_alert`       | ⚠️ 40%  | ✅ 100% | HIGH     |
-| `run_recovery_script` | ❌ 0%   | ✅ 100% | HIGH     |
-| `_handle_webhook`     | ❌ 0%   | ✅ 100% | CRITICAL |
-| Notification methods  | ❌ 0%   | ✅ 80%  | MEDIUM   |
+| Function              | Current | Target | Priority |
+| --------------------- | ------- | ------ | -------- |
+| `verify_signature`    | 0%      | 100%   | CRITICAL |
+| `save_alert_to_file`  | 30%     | 100%   | HIGH     |
+| `process_alert`       | 40%     | 100%   | HIGH     |
+| `run_recovery_script` | 0%      | 100%   | HIGH     |
+| `_handle_webhook`     | 0%      | 100%   | CRITICAL |
+| Notification methods  | 0%      | 80%    | MEDIUM   |
 
 **Effort Estimate:** 3-4 days to add 200+ test cases
 
@@ -113,17 +117,17 @@ def test_verify_signature_missing_secret():
 - `ops/ollama-exporter/app.py` (139 lines)
 - `conf/rag_exporter.py` (95 lines)
 
-**Test Status:** ⚠️ PARTIAL
+**Test Status:** PARTIAL
 
 **Positive:**
 
 ```python
 # tests/python/test_exporters.py - GOOD TEST COVERAGE
 def test_ollama_up():
-    """Test successful health check."""
-    response = mock_get("http://test/health", timeout=10)
-    response.return_value.json.return_value = {"status": "ok"}
-    # ... assertions
+ """Test successful health check."""
+ response = mock_get("http://test/health", timeout=10)
+ response.return_value.json.return_value = {"status": "ok"}
+ # ... assertions
 ```
 
 **Gaps:**
@@ -140,7 +144,7 @@ def test_ollama_up():
 
 **File:** `scripts/lib/logger.py` (148 lines)
 
-**Test Status:** ✅ GOOD
+**Test Status:** GOOD
 
 **Coverage:** 85%+
 
@@ -149,16 +153,16 @@ def test_ollama_up():
 ```python
 # tests/python/test_logger.py
 def test_get_logger_creates_handler():
-    """Test that logger creates proper handler."""
-    logger = get_logger("test", level="DEBUG")
-    assert len(logger.handlers) == 1
+ """Test that logger creates proper handler."""
+ logger = get_logger("test", level="DEBUG")
+ assert len(logger.handlers) == 1
 
 def test_json_formatter():
-    """Test JSON formatter output."""
-    record = logging.LogRecord(...)
-    formatter = JSONFormatter()
-    output = formatter.format(record)
-    assert json.loads(output)  # Valid JSON
+ """Test JSON formatter output."""
+ record = logging.LogRecord(...)
+ formatter = JSONFormatter()
+ output = formatter.format(record)
+ assert json.loads(output) # Valid JSON
 ```
 
 **Gaps:**
@@ -174,7 +178,7 @@ def test_json_formatter():
 
 **File:** `auth/main_test.go` (510 lines)
 
-**Test Status:** ✅ EXCELLENT
+**Test Status:** EXCELLENT
 
 **Coverage:** 95%+
 
@@ -183,11 +187,11 @@ def test_json_formatter():
 - 45 test functions
 - 23 test cases for JWT validation
 - Edge cases covered:
-  - Expired tokens ✅
-  - Invalid signatures ✅
-  - Missing claims ✅
-  - Malformed tokens ✅
-  - Token algorithm attacks (alg: none) ✅
+- Expired tokens
+- Invalid signatures
+- Missing claims
+- Malformed tokens
+- Token algorithm attacks (alg: none)
 
 **Test-to-Code Ratio:** 2.3:1 (510 test lines / 223 code lines)
 
@@ -195,20 +199,20 @@ def test_json_formatter():
 
 ```go
 func TestVerifyTokenInvalidAlgorithm(t *testing.T) {
-    // Prevents alg: none attacks
-    token := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
-        "sub": "user123",
-        "exp": time.Now().Add(time.Hour).Unix(),
-    })
-    tokenString, _ := token.SigningString()
+ // Prevents alg: none attacks
+ token := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
+ "sub": "user123",
+ "exp": time.Now().Add(time.Hour).Unix(),
+ })
+ tokenString, _ := token.SigningString()
 
-    ok, err := verifyToken(tokenString)
-    assert.False(t, ok, "Should reject alg: none")
-    assert.Error(t, err)
+ ok, err := verifyToken(tokenString)
+ assert.False(t, ok, "Should reject alg: none")
+ assert.Error(t, err)
 }
 ```
 
-**Verdict:** ✅ NO ISSUES - Production-ready test coverage
+**Verdict:** NO ISSUES - Production-ready test coverage
 
 ---
 
@@ -218,26 +222,26 @@ func TestVerifyTokenInvalidAlgorithm(t *testing.T) {
 
 **Primary Test File:** `tests/e2e/openwebui-rag.spec.ts` (931 lines)
 
-**Test Status:** ⚠️ MODERATE with fragility issues
+**Test Status:** MODERATE with fragility issues
 
 **Test Scenarios:**
 
-1. ✅ File upload (multiple formats)
-2. ✅ RAG configuration validation
-3. ✅ Combined RAG with docs and web
-4. ⚠️ Network resilience (flaky)
-5. ⚠️ Timeout handling (magic numbers)
+1. File upload (multiple formats)
+2. RAG configuration validation
+3. Combined RAG with docs and web
+4. Network resilience (flaky)
+5. Timeout handling (magic numbers)
 
 **Issues Found:**
 
 **Issue 1: Flaky Timeouts**
 
 ```typescript
-// ❌ PROBLEMATIC
+// PROBLEMATIC
 await page.waitForTimeout(2000); // Why 2000ms?
 await page.waitForNavigation({ timeout: 10_000 }); // May timeout on slow networks
 
-// ✅ RECOMMENDED
+// RECOMMENDED
 const UPLOAD_TIMEOUT_MS = 10_000;
 const SEARCH_TIMEOUT_MS = 15_000;
 
@@ -247,28 +251,28 @@ await page.waitForTimeout(UPLOAD_TIMEOUT_MS);
 **Issue 2: Missing Error Scenarios**
 
 ```typescript
-// ❌ NOT TESTED
+// NOT TESTED
 - Network interruption during upload
 - Server errors (500, 503)
 - Invalid file formats
 - Maximum file size exceeded
 - Concurrent uploads
 
-// ✅ RECOMMENDATION
+// RECOMMENDATION
 Add test scenarios:
 test("handles network error gracefully", async () => {
-    // Simulate network failure
-    await page.context().setExtraHTTPHeaders({
-        'Connection': 'close'
-    });
-    // Assert appropriate error handling
+ // Simulate network failure
+ await page.context().setExtraHTTPHeaders({
+ 'Connection': 'close'
+ });
+ // Assert appropriate error handling
 });
 ```
 
 **Issue 3: Console Error Logging Inconsistency**
 
 ```typescript
-// ❌ INCONSISTENT
+// INCONSISTENT
 const finalize = await assertNoConsoleErrors(page);
 // Called in some tests but not all
 ```
@@ -281,9 +285,9 @@ const finalize = await assertNoConsoleErrors(page);
 
 **Files:**
 
-- `tests/unit/docker-tags.test.ts` ✅ GOOD
-- `tests/unit/language-check.test.ts` ✅ GOOD
-- `tests/unit/mock-env.test.ts` ✅ GOOD
+- `tests/unit/docker-tags.test.ts` GOOD
+- `tests/unit/language-check.test.ts` GOOD
+- `tests/unit/mock-env.test.ts` GOOD
 
 **Test Statistics:**
 
@@ -291,7 +295,7 @@ const finalize = await assertNoConsoleErrors(page);
 - Average coverage: 85%+
 - No critical gaps
 
-**Verdict:** ✅ ACCEPTABLE
+**Verdict:** ACCEPTABLE
 
 ---
 
@@ -300,7 +304,7 @@ const finalize = await assertNoConsoleErrors(page);
 **Files:**
 
 - `tests/integration/` - DIRECTORY EXISTS
-- Status: ⚠️ MINIMAL
+- Status: MINIMAL
 
 **Current State:**
 
@@ -314,31 +318,31 @@ const finalize = await assertNoConsoleErrors(page);
 # tests/integration/test_webhook_integration.py
 
 class TestWebhookIntegration:
-    """Integration tests for full webhook flow."""
+ """Integration tests for full webhook flow."""
 
-    def test_webhook_to_recovery_flow(self):
-        """Test complete flow: webhook → alert processing → recovery script."""
-        # Send webhook
-        # Verify alert saved
-        # Verify recovery script called
-        # Verify status updated
-        pass
+ def test_webhook_to_recovery_flow(self):
+ """Test complete flow: webhook → alert processing → recovery script."""
+ # Send webhook
+ # Verify alert saved
+ # Verify recovery script called
+ # Verify status updated
+ pass
 
-    def test_notification_delivery_flow(self):
-        """Test notification sending through all channels."""
-        # Send alert
-        # Mock Discord/Slack/Telegram endpoints
-        # Verify all notifications sent
-        # Check retry logic
-        pass
+ def test_notification_delivery_flow(self):
+ """Test notification sending through all channels."""
+ # Send alert
+ # Mock Discord/Slack/Telegram endpoints
+ # Verify all notifications sent
+ # Check retry logic
+ pass
 
-    def test_error_resilience(self):
-        """Test handling of service failures."""
-        # Network timeout
-        # Database error
-        # File system error
-        # Verify graceful degradation
-        pass
+ def test_error_resilience(self):
+ """Test handling of service failures."""
+ # Network timeout
+ # Database error
+ # File system error
+ # Verify graceful degradation
+ pass
 ```
 
 **Effort Estimate:** 2-3 days
@@ -349,32 +353,32 @@ class TestWebhookIntegration:
 
 ### 5.1 Test Fixtures and Mocks
 
-**Status:** ⚠️ DUPLICATED SETUP
+**Status:** DUPLICATED SETUP
 
 **Example Problem:**
 
 ```python
-# ❌ DUPLICATED in test_webhook_receiver.py
+# DUPLICATED in test_webhook_receiver.py
 @pytest.fixture
 def mock_alert_payload():
-    return {
-        "alerts": [{
-            "status": "firing",
-            "labels": {"alertname": "TestAlert", "severity": "critical"},
-            "annotations": {"summary": "Test"}
-        }]
-    }
+ return {
+ "alerts": [{
+ "status": "firing",
+ "labels": {"alertname": "TestAlert", "severity": "critical"},
+ "annotations": {"summary": "Test"}
+ }]
+ }
 
-# ❌ DUPLICATED again in test_webhook_handler.py
+# DUPLICATED again in test_webhook_handler.py
 @pytest.fixture
 def alert_data():
-    return {
-        "alerts": [{
-            "status": "firing",
-            "labels": {"alertname": "TestAlert", "severity": "critical"},
-            "annotations": {"summary": "Test"}
-        }]
-    }
+ return {
+ "alerts": [{
+ "status": "firing",
+ "labels": {"alertname": "TestAlert", "severity": "critical"},
+ "annotations": {"summary": "Test"}
+ }]
+ }
 ```
 
 **Solution:** Create `tests/python/conftest.py`
@@ -383,34 +387,34 @@ def alert_data():
 # tests/python/conftest.py
 @pytest.fixture
 def alert_payload():
-    """Standard alert payload for testing."""
-    return {
-        "alerts": [{
-            "status": "firing",
-            "labels": {
-                "alertname": "TestAlert",
-                "severity": "critical",
-                "service": "test-service"
-            },
-            "annotations": {
-                "summary": "Test summary",
-                "description": "Test description"
-            }
-        }],
-        "groupLabels": {}
-    }
+ """Standard alert payload for testing."""
+ return {
+ "alerts": [{
+ "status": "firing",
+ "labels": {
+ "alertname": "TestAlert",
+ "severity": "critical",
+ "service": "test-service"
+ },
+ "annotations": {
+ "summary": "Test summary",
+ "description": "Test description"
+ }
+ }],
+ "groupLabels": {}
+ }
 
 @pytest.fixture
 def webhook_secret():
-    """Standard secret for signature testing."""
-    return "test-webhook-secret-key"
+ """Standard secret for signature testing."""
+ return "test-webhook-secret-key"
 ```
 
 **Effort Estimate:** 2 hours
 
 ### 5.2 Test Documentation
 
-**Status:** ⚠️ INCOMPLETE
+**Status:** INCOMPLETE
 
 **Missing Documentation:**
 
@@ -422,43 +426,43 @@ def webhook_secret():
 **Example Issue:**
 
 ```python
-# ❌ UNCLEAR
+# UNCLEAR
 def test_process_alerts(mock_alert, mock_env):
-    result = process_alert(mock_alert)
-    assert result["processed"] == 1
-    # What about other fields? What about error cases?
+ result = process_alert(mock_alert)
+ assert result["processed"] == 1
+ # What about other fields? What about error cases?
 ```
 
-**✅ RECOMMENDED:**
+**RECOMMENDED:**
 
 ```python
 def test_process_alerts_successful(mock_alert_payload, webhook_secret):
-    """
-    Test successful alert processing.
+ """
+ Test successful alert processing.
 
-    Verifies that:
-    1. Alert is parsed correctly
-    2. Alert is saved to file
-    3. Processing completes without errors
-    4. Correct status returned
+ Verifies that:
+ 1. Alert is parsed correctly
+ 2. Alert is saved to file
+ 3. Processing completes without errors
+ 4. Correct status returned
 
-    Given:
-        - Valid alert payload with critical severity
-        - Webhook secret configured
+ Given:
+ - Valid alert payload with critical severity
+ - Webhook secret configured
 
-    When:
-        - process_alert() called with payload
+ When:
+ - process_alert() called with payload
 
-    Then:
-        - Returns {"processed": 1, "errors": []}
-        - Alert file created with timestamp
-        - No exceptions raised
-    """
-    result = process_alert(mock_alert_payload)
+ Then:
+ - Returns {"processed": 1, "errors": []}
+ - Alert file created with timestamp
+ - No exceptions raised
+ """
+ result = process_alert(mock_alert_payload)
 
-    assert result["processed"] == 1
-    assert result["errors"] == []
-    assert len(result.get("notifications_failed", 0)) == 0
+ assert result["processed"] == 1
+ assert result["errors"] == []
+ assert len(result.get("notifications_failed", 0)) == 0
 ```
 
 **Effort Estimate:** 1 day to add docstrings
@@ -471,32 +475,32 @@ def test_process_alerts_successful(mock_alert_payload, webhook_secret):
 
 **File:** `.github/workflows/ci.yml`
 
-**Status:** ✅ GOOD
+**Status:** GOOD
 
 **Current Configuration:**
 
-- Python tests run with pytest ✅
-- Go tests run with `go test` ✅
-- TypeScript tests run with Playwright ✅
-- Linting enabled (ruff, eslint) ✅
+- Python tests run with pytest
+- Go tests run with `go test`
+- TypeScript tests run with Playwright
+- Linting enabled (ruff, eslint)
 
 **Recommended Enhancements:**
 
 ```yaml
 # Add test coverage reporting
 - name: Upload coverage reports
-  uses: codecov/codecov-action@v3
-  with:
-    files: ./coverage/coverage.xml
-    flags: unittests
-    fail_ci_if_error: true
+ uses: codecov/codecov-action@v3
+ with:
+ files: ./coverage/coverage.xml
+ flags: unittests
+ fail_ci_if_error: true
 
 # Add test result reporting
 - name: Publish test results
-  uses: EnricoMi/publish-unit-test-result-action@v2
-  with:
-    files: test-results/**/*.xml
-    check_name: Test Results
+ uses: EnricoMi/publish-unit-test-result-action@v2
+ with:
+ files: test-results/**/*.xml
+ check_name: Test Results
 ```
 
 **Effort Estimate:** 2 hours
@@ -549,32 +553,32 @@ def test_process_alerts_successful(mock_alert_payload, webhook_secret):
 ## 8. TESTING SCORECARD
 
 ```
-╔════════════════════════════════════════════════════════════════╗
-║           ERNI-KI TESTING COVERAGE SCORECARD                   ║
-╠════════════════════════════════════════════════════════════════╣
-║                                                                ║
-║  PYTHON TEST COVERAGE                                          ║
-║  ├─ Webhook Receivers:      0% ░░░░░░░░░░  [CRITICAL GAP]    ║
-║  ├─ Exporters:              65% ██████░░░░ [NEEDS WORK]       ║
-║  ├─ Libraries:              85% ████████░░ [GOOD]             ║
-║  └─ Average:                50% █████░░░░░ [TARGET: 80%]     ║
-║                                                                ║
-║  GO TEST COVERAGE                                              ║
-║  ├─ Auth Service:          95% █████████░ [EXCELLENT]         ║
-║  └─ Average:               95% █████████░ [EXCELLENT]         ║
-║                                                                ║
-║  TYPESCRIPT/E2E COVERAGE                                       ║
-║  ├─ E2E Tests:             55% █████░░░░░ [NEEDS IMPROVEMENT] ║
-║  ├─ Unit Tests:            85% ████████░░ [GOOD]              ║
-║  └─ Average:               70% ███████░░░ [ACCEPTABLE]        ║
-║                                                                ║
-║  CI/CD INTEGRATION:        ✅ GOOD                             ║
-║  TEST EXECUTION TIME:      ✅ 4 min (GOOD)                    ║
-║  TEST DOCUMENTATION:       ⚠️  INCOMPLETE                      ║
-║                                                                ║
-║  OVERALL SCORE:            70% ███████░░░                      ║
-║                               GOOD WITH GAPS                    ║
-╚════════════════════════════════════════════════════════════════╝
+
+ ERNI-KI TESTING COVERAGE SCORECARD
+
+
+ PYTHON TEST COVERAGE
+ Webhook Receivers: 0% [CRITICAL GAP]
+ Exporters: 65% [NEEDS WORK]
+ Libraries: 85% [GOOD]
+ Average: 50% [TARGET: 80%]
+
+ GO TEST COVERAGE
+ Auth Service: 95% [EXCELLENT]
+ Average: 95% [EXCELLENT]
+
+ TYPESCRIPT/E2E COVERAGE
+ E2E Tests: 55% [NEEDS IMPROVEMENT]
+ Unit Tests: 85% [GOOD]
+ Average: 70% [ACCEPTABLE]
+
+ CI/CD INTEGRATION: GOOD
+ TEST EXECUTION TIME: 4 min (GOOD)
+ TEST DOCUMENTATION: INCOMPLETE
+
+ OVERALL SCORE: 70%
+ GOOD WITH GAPS
+
 ```
 
 ---
@@ -619,17 +623,17 @@ def test_process_alerts_successful(mock_alert_payload, webhook_secret):
 
 **Strengths:**
 
-- ✅ Excellent Go test coverage (95%+)
-- ✅ Good TypeScript unit tests
-- ✅ CI/CD properly integrated
-- ✅ Fast test execution (~4 minutes)
+- Excellent Go test coverage (95%+)
+- Good TypeScript unit tests
+- CI/CD properly integrated
+- Fast test execution (~4 minutes)
 
 **Critical Weaknesses:**
 
-- ❌ Zero tests for webhook handlers (core functionality)
-- ❌ No integration tests
-- ❌ E2E tests are flaky
-- ❌ Test fixtures duplicated
+- Zero tests for webhook handlers (core functionality)
+- No integration tests
+- E2E tests are flaky
+- Test fixtures duplicated
 
 **Recommended Priority:**
 

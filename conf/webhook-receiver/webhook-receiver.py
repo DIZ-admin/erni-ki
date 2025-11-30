@@ -82,17 +82,13 @@ def _validate_secrets() -> None:
             "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET environment variable not set. "
             "Webhook receiver cannot start without it."
         )
-        raise RuntimeError(
-            "Missing required ALERTMANAGER_WEBHOOK_SECRET environment variable"
-        )
+        raise RuntimeError("Missing required ALERTMANAGER_WEBHOOK_SECRET environment variable")
     if len(WEBHOOK_SECRET) < 16:
         logger.error(
             "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET is too short. "
             "Minimum 16 characters required for security."
         )
-        raise RuntimeError(
-            "ALERTMANAGER_WEBHOOK_SECRET must be at least 16 characters long"
-        )
+        raise RuntimeError("ALERTMANAGER_WEBHOOK_SECRET must be at least 16 characters long")
 
 
 def _path_within(base: Path, target: Path) -> bool:
@@ -144,7 +140,9 @@ class AlertLabels(BaseModel):
         if len(v) > 128:
             raise ValueError("service cannot exceed 128 characters")
         if not v.replace("-", "").replace("_", "").isalnum():
-            raise ValueError("service must contain only alphanumeric characters, hyphens, or underscores")
+            raise ValueError(
+                "service must contain only alphanumeric characters, hyphens, or underscores"
+            )
         return v
 
     @field_validator("category", mode="before")

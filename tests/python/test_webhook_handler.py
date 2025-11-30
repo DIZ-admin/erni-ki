@@ -464,7 +464,7 @@ class TestSignatureVerification(unittest.TestCase):
 
     def test_verify_signature_with_valid_signature(self):
         """Test that valid signatures are accepted."""
-        test_secret = "test_secret_key_for_webhook_verification"  # noqa: S105 - test stub
+        test_secret = "test_secret_key_for_webhook_verification"  # noqa: S105 - test stub  # pragma: allowlist secret
         test_body = b"test webhook payload"
 
         expected_signature = hmac.new(test_secret.encode(), test_body, hashlib.sha256).hexdigest()
@@ -479,7 +479,7 @@ class TestSignatureVerification(unittest.TestCase):
 
     def test_verify_signature_with_invalid_signature(self):
         """Test that invalid signatures are rejected."""
-        test_secret = "test_secret_key_for_webhook_verification"  # noqa: S105 - test stub
+        test_secret = "test_secret_key_for_webhook_verification"  # noqa: S105 - test stub  # pragma: allowlist secret
         test_body = b"test webhook payload"
         invalid_signature = "invalid_signature_that_doesnt_match"  # noqa: S105 - test stub
 
@@ -495,7 +495,7 @@ class TestSignatureVerification(unittest.TestCase):
         """Test that missing signatures are rejected."""
         original_secret = webhook_handler.WEBHOOK_SECRET
         try:
-            webhook_handler.WEBHOOK_SECRET = "some_secret"  # noqa: S105 - test stub
+            webhook_handler.WEBHOOK_SECRET = "some_secret"  # noqa: S105 - test stub  # pragma: allowlist secret
             result = verify_signature(b"test", None)
             self.assertFalse(result)
         finally:

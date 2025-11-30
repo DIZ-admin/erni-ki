@@ -501,7 +501,7 @@ class TestSignatureVerification(unittest.TestCase):
         import hashlib
         import hmac
 
-        test_secret = "test_secret_key_for_signature_verification"  # noqa: S105 - test stub
+        test_secret = "test_secret_key_for_signature_verification"  # noqa: S105 - test stub  # pragma: allowlist secret
         test_body = b"test alert payload"
 
         expected_signature = hmac.new(test_secret.encode(), test_body, hashlib.sha256).hexdigest()
@@ -517,7 +517,7 @@ class TestSignatureVerification(unittest.TestCase):
 
     def test_verify_signature_with_invalid_signature(self):
         """Test that invalid signatures are rejected."""
-        test_secret = "test_secret_key_for_signature_verification"  # noqa: S105 - test stub
+        test_secret = "test_secret_key_for_signature_verification"  # noqa: S105 - test stub  # pragma: allowlist secret
         test_body = b"test alert payload"
         invalid_signature = "invalid_signature_that_does_not_match"  # noqa: S105 - test stub
 
@@ -535,7 +535,7 @@ class TestSignatureVerification(unittest.TestCase):
 
         original_secret = webhook.WEBHOOK_SECRET
         try:
-            webhook.WEBHOOK_SECRET = "some_secret"  # noqa: S105 - test stub
+            webhook.WEBHOOK_SECRET = "some_secret"  # noqa: S105 - test stub  # pragma: allowlist secret
             result = verify_signature(test_body, None)
             self.assertFalse(result)
         finally:
