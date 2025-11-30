@@ -104,7 +104,7 @@ def get_logger(
     logger.handlers = []
 
     # Console handler
-    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler = logging.StreamHandler(sys.stderr)
     console_handler.setLevel(log_level)
 
     if json_output:

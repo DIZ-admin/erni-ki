@@ -110,13 +110,14 @@ class AlertProcessor:
             for alert in alerts:
                 try:
                     self._process_single_alert(alert, group_labels)
-                    results["processed"] += 1
                 except requests.RequestException as e:
                     logger.error(f"Network error processing alert: {e}")
                     results["errors"].append(str(e))
                 except Exception as e:
                     logger.error(f"Error processing alert: {e}", exc_info=True)
                     results["errors"].append(str(e))
+                finally:
+                    results["processed"] += 1
 
             return results
 
