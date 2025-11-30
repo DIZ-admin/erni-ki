@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import importlib.util
 import json
+import sys
 import unittest
 from pathlib import Path
 from typing import Any, Protocol, cast
@@ -37,6 +38,7 @@ def load_webhook_handler() -> WebhookModule:
     if spec is None or spec.loader is None:
         raise ImportError(f"Cannot load webhook_handler from {module_path}")
     module = importlib.util.module_from_spec(spec)
+    sys.modules["webhook_handler"] = module
     spec.loader.exec_module(module)
     return cast(WebhookModule, module)
 
