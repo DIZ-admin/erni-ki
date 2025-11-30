@@ -28,6 +28,13 @@ try:
     from .services import process_alert
 except ImportError:
     # Fall back to absolute imports (for testing with importlib)
+    import sys
+
+    # Add current directory to path for absolute imports
+    _current_dir = str(Path(__file__).parent)
+    if _current_dir not in sys.path:
+        sys.path.insert(0, _current_dir)
+
     from models import AlertPayload  # type: ignore
     from services import process_alert  # type: ignore
 
