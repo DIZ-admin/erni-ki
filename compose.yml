@@ -1005,7 +1005,7 @@ services:
       - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
       - REDIS_EXPORTER_LOG_FORMAT=txt
       - REDIS_EXPORTER_DEBUG=true
-      - REDIS_ADDR=redis://:ErniKiRedisSecurePassword2024@redis:6379
+      - REDIS_ADDR=redis://:${REDIS_PASSWORD}@redis:6379
     ports:
       - "127.0.0.1:9121:9121"
     restart: unless-stopped

@@ -4,7 +4,7 @@
 
 default_language_version:
   python: python3.11
-  node: "20.18.0"
+  node: "22.14.0"
 
 default_stages: [pre-commit]
 
@@ -169,7 +169,7 @@ repos:
         args: [--ignore-missing-imports]
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.1
+    rev: v8.29.1
     hooks:
       - id: gitleaks
 
@@ -207,8 +207,8 @@ repos:
           )$
         additional_dependencies:
           - eslint@9.15.0
-          - "@typescript-eslint/eslint-plugin@8.18.1"
-          - "@typescript-eslint/parser@8.18.1"
+          - "@typescript-eslint/eslint-plugin@8.47.0"
+          - "@typescript-eslint/parser@8.47.0"
           - eslint-plugin-security@3.0.1
           - eslint-plugin-n@17.13.2
           - eslint-plugin-promise@7.1.0
