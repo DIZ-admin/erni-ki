@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-var longSecret = "this-is-an-extremely-long-secret-key-with-many-characters-to-" +
-	"ensure-maximum-security-12345678901234567890"
-
 func TestValidateSecrets(t *testing.T) {
+	longSecret := "this-is-an-extremely-long-secret-key-with-many-characters-to-" +
+		"ensure-maximum-security-12345678901234567890"
+
 	tests := []struct {
 		name        string
 		secret      string
