@@ -21,7 +21,7 @@ from werkzeug.exceptions import BadRequest
 try:
     from flask_limiter import Limiter
     from flask_limiter.util import get_remote_address
-except Exception:  # pragma: no cover - optional dependency fallback
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - optional dependency fallback
     Limiter = None
     get_remote_address = None
 
@@ -51,17 +51,25 @@ else:
 
 # Configuration
 WEBHOOK_PORT = int(os.getenv("WEBHOOK_PORT", 9093))
-LOG_DIR = Path(os.getenv("LOG_DIR", "/app/logs"))
-try:
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
-except OSError:
-    # Fallback for local development/testing if /app/logs is not writable
-    if not os.getenv("LOG_DIR"):
-        LOG_DIR = Path("logs")
-        LOG_DIR.mkdir(parents=True, exist_ok=True)
-        logger.warning(f"Could not create /app/logs, falling back to {LOG_DIR}")
-    else:
+RECOVERY_SCRIPT_TIMEOUT = int(os.getenv("RECOVERY_SCRIPT_TIMEOUT", "30"))
+
+
+def _get_log_dir() -> Path:
+    """Get log directory with fallback for development."""
+    default = Path(os.getenv("LOG_DIR", "/app/logs"))
+    try:
+        default.mkdir(parents=True, exist_ok=True)
+        return default
+    except OSError:
+        if not os.getenv("LOG_DIR"):
+            fallback = Path("logs")
+            fallback.mkdir(parents=True, exist_ok=True)
+            logger.warning(f"Could not create {default}, falling back to {fallback}")
+            return fallback
         raise
+
+
+LOG_DIR = _get_log_dir()
 RECOVERY_DIR = Path(os.getenv("RECOVERY_DIR", "/app/scripts/recovery"))
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-placeholder")
 ALLOWED_SERVICES = {"ollama", "openwebui", "searxng"}
@@ -92,11 +100,13 @@ def _validate_secrets() -> None:
 
 
 def _path_within(base: Path, target: Path) -> bool:
+    """Check if target path is within base path (security check)."""
     try:
         target_resolved = target.resolve()
         base_resolved = base.resolve()
         return str(target_resolved).startswith(str(base_resolved))
-    except Exception:
+    except (OSError, ValueError):
+        # Path resolution can fail on invalid paths
         return False
 
 
@@ -211,8 +221,10 @@ def save_alert_to_file(alert_data, alert_type="general"):
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(alert_data, f, indent=2, ensure_ascii=False)
         logger.info(f"Alert saved to {filename}")
-    except Exception as e:
-        logger.error(f"Failed to save alert to file: {e}")
+    except OSError as e:
+        logger.error(f"Failed to save alert to file at {filename}: {e}")
+    except (ValueError, TypeError) as e:
+        logger.error(f"Failed to serialize alert data: {e}")
 
 
 def process_alert(alert_data, alert_type="general"):
@@ -241,8 +253,10 @@ def process_alert(alert_data, alert_type="general"):
             if alert_type == "gpu" or labels.get("service") == "gpu":
                 handle_gpu_alert(alert)
 
+    except (KeyError, TypeError) as e:
+        logger.error(f"Invalid alert data structure: {e}")
     except Exception as e:
-        logger.error(f"Error processing alert: {e}")
+        logger.exception(f"Unexpected error processing alert: {e}")
 
 
 def handle_critical_alert(alert):
@@ -304,18 +318,26 @@ def run_recovery_script(service: str) -> None:
 
     try:
         logger.info(f"Running recovery script for {service}: {script_path}")
-        result = run([str(script_path)], check=True, capture_output=True, text=True, timeout=30)
+        result = run(
+            [str(script_path)],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=RECOVERY_SCRIPT_TIMEOUT,
+        )
         logger.info("Recovery script output:\n%s", result.stdout)
         if result.stderr:
             logger.warning("Recovery script stderr:\n%s", result.stderr)
     except TimeoutExpired:
-        logger.error("Recovery script timeout for %s", service)
+        logger.error(
+            "Recovery script timeout for %s after %d seconds", service, RECOVERY_SCRIPT_TIMEOUT
+        )
     except CalledProcessError as exc:
         logger.error(
             "Recovery script failed for %s (exit %s): %s", service, exc.returncode, exc.stderr
         )
-    except Exception as exc:
-        logger.error("Unexpected error executing recovery script for %s: %s", service, exc)
+    except (OSError, FileNotFoundError) as exc:
+        logger.error("Failed to execute recovery script for %s: %s", service, exc)
 
 
 @app.route("/health", methods=["GET"])
@@ -358,9 +380,12 @@ def _create_webhook_handler(alert_type: str, description: str):
         except (ValidationError, BadRequest) as e:
             logger.error("Payload validation failed: %s", e)
             return jsonify({"error": str(e)}), 400
+        except OSError as e:
+            logger.error(f"File operation error in {alert_type} webhook: {e}")
+            return jsonify({"error": "Internal server error"}), 500
         except Exception as e:
-            logger.error(f"Error in {alert_type} webhook: {e}", exc_info=True)
-            return jsonify({"error": str(e)}), 500
+            logger.exception(f"Unexpected error in {alert_type} webhook: {e}")
+            return jsonify({"error": "Internal server error"}), 500
 
     handler.__doc__ = f"{description} webhook handler"
     return handler
@@ -406,14 +431,16 @@ def list_alerts():
                             "alerts_count": len(alert_data.get("alerts", [])),
                         }
                     )
-            except Exception as e:
-                logger.error(f"Error reading alert file {alert_file}: {e}")
+            except OSError as e:
+                logger.error(f"Failed to read alert file {alert_file}: {e}")
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid JSON in alert file {alert_file}: {e}")
 
         return jsonify({"alerts": alerts})
 
-    except Exception as e:
+    except (OSError, ValueError) as e:
         logger.error(f"Error listing alerts: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Failed to list alerts"}), 500
 
 
 if __name__ == "__main__":

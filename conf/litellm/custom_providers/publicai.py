@@ -28,6 +28,8 @@ from litellm.litellm_core_utils.llm_response_utils.convert_dict_to_response impo
 from litellm.llms.custom_llm import CustomLLMError
 from litellm.types.utils import GenericStreamingChunk
 
+LOGGER = logging.getLogger("erni_ki.publicai")
+
 _DEFAULT_METRICS_DIR = Path(tempfile.gettempdir()) / "litellm-publicai-prom"
 METRICS_STORAGE_DIR = os.getenv("LITELLM_PUBLICAI_METRICS_DIR", str(_DEFAULT_METRICS_DIR))
 os.makedirs(METRICS_STORAGE_DIR, exist_ok=True)
@@ -41,10 +43,12 @@ try:
         multiprocess,
         start_http_server,
     )
-except Exception:  # pragma: no cover - optional dependency fallback
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - optional dependency fallback
     CollectorRegistry = Counter = Histogram = multiprocess = start_http_server = None
-
-LOGGER = logging.getLogger("erni_ki.publicai")
+except Exception as e:
+    # Log unexpected import errors but continue (metrics are optional)
+    LOGGER.warning("Unexpected error importing prometheus_client: %s", e)
+    CollectorRegistry = Counter = Histogram = multiprocess = start_http_server = None
 DEFAULT_BASE_URL = "https://api.publicai.co/v1"
 USER_AGENT = "erni-ki-litellm-publicai/1.0"
 METRICS_PORT = int(os.getenv("LITELLM_PUBLICAI_METRICS_PORT", "9109"))
@@ -568,8 +572,18 @@ class PublicAICustomLLM(CustomLLM):
                 ERROR_COUNTER.labels(status=status_label, stream=stream_label).inc()
             if duration is not None and LATENCY_HISTOGRAM is not None:
                 LATENCY_HISTOGRAM.labels(stream=stream_label).observe(duration)
-        except Exception:  # pragma: no cover - metrics are best effort
-            LOGGER.debug("Failed to record PublicAI metrics", exc_info=True)
+        except (ValueError, TypeError) as e:
+            # pragma: no cover - metrics are best effort, but log invalid values
+            LOGGER.debug(
+                "Invalid metric value (status=%s, duration=%s, stream=%s): %s",
+                status_code,
+                duration,
+                stream,
+                e,
+            )
+        except Exception as e:
+            # pragma: no cover - metrics are best effort
+            LOGGER.debug("Failed to record PublicAI metrics: %s", e, exc_info=True)
 
 
 publicai_handler = PublicAICustomLLM()
