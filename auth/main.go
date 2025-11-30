@@ -221,3 +221,18 @@ func verifyToken(tokenString string) (bool, error) {
 
 	return true, nil
 }
+
+// validateSecrets ensures WEBUI_SECRET_KEY is present and sufficiently long.
+// Minimum length chosen to discourage weak secrets used for JWT signing.
+func validateSecrets() error {
+	secret := os.Getenv("WEBUI_SECRET_KEY")
+	if secret == "" {
+		return fmt.Errorf("CRITICAL: WEBUI_SECRET_KEY environment variable not set")
+	}
+
+	if len(secret) < 32 {
+		return fmt.Errorf("WEBUI_SECRET_KEY too short: %d chars, 32 characters required", len(secret))
+	}
+
+	return nil
+}
