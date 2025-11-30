@@ -70,6 +70,17 @@ class JSONFormatter(logging.Formatter):
         return json.dumps(log_data, ensure_ascii=False, default=str)
 
 
+class DynamicStderrHandler(logging.StreamHandler):
+    """StreamHandler that honors runtime replacements of sys.stderr."""
+
+    def __init__(self) -> None:
+        super().__init__(stream=None)
+
+    def emit(self, record: logging.LogRecord) -> None:  # pragma: no cover - thin shim
+        self.setStream(sys.stderr)
+        super().emit(record)
+
+
 def get_logger(
     name: str,
     level: str | int | None = None,
@@ -103,8 +114,8 @@ def get_logger(
     # Remove existing handlers to avoid duplicates
     logger.handlers = []
 
-    # Console handler
-    console_handler = logging.StreamHandler(sys.stdout)
+    # Console handler (stderr) that respects runtime redirection in tests
+    console_handler = DynamicStderrHandler()
     console_handler.setLevel(log_level)
 
     if json_output:
