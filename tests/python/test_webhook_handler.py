@@ -495,7 +495,7 @@ class TestSignatureVerification(unittest.TestCase):
         """Test that missing signatures are rejected."""
         original_secret = webhook_handler.WEBHOOK_SECRET
         try:
-            webhook_handler.WEBHOOK_SECRET = "some_secret"  # noqa: S105 - test stub  # pragma: allowlist secret
+            webhook_handler.WEBHOOK_SECRET = "some_secret"  # noqa: S105  # pragma: allowlist secret
             result = verify_signature(b"test", None)
             self.assertFalse(result)
         finally:
