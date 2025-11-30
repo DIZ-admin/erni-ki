@@ -24,8 +24,15 @@ from werkzeug.exceptions import BadRequest
 
 try:
     # Try relative imports first (normal package use)
-    from .models import AlertPayload
-    from .services import process_alert
+    from .models import AlertLabels, AlertPayload
+    from .services import (
+        RECOVERY_DIR,
+        _path_within,
+        handle_critical_alert,
+        handle_gpu_alert,
+        process_alert,
+        run_recovery_script,
+    )
 except ImportError:
     # Fall back to absolute imports (for testing with importlib)
     import sys
@@ -35,8 +42,15 @@ except ImportError:
     if _current_dir not in sys.path:
         sys.path.insert(0, _current_dir)
 
-    from models import AlertPayload  # type: ignore
-    from services import process_alert  # type: ignore
+    from models import AlertLabels, AlertPayload  # type: ignore
+    from services import (  # type: ignore
+        RECOVERY_DIR,
+        _path_within,
+        handle_critical_alert,
+        handle_gpu_alert,
+        process_alert,
+        run_recovery_script,
+    )
 
 try:
     from flask_limiter import Limiter
