@@ -5,9 +5,7 @@ This module tests the duplicate basename detection script that prevents
 naming conflicts between scripts/ and conf/ directories.
 """
 
-import os
 import sys
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
 

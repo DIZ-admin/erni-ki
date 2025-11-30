@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+const longSecret = "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890"
+
 func TestValidateSecrets(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -70,10 +72,10 @@ func TestValidateSecrets(t *testing.T) {
 		},
 		{
 			name:        "Very long secret (should be valid)",
-			secret:      "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890",
+			secret:      longSecret,
 			shouldError: false,
 			setupEnv: func() {
-				os.Setenv("WEBUI_SECRET_KEY", "this-is-an-extremely-long-secret-key-with-many-characters-to-ensure-maximum-security-12345678901234567890")
+				os.Setenv("WEBUI_SECRET_KEY", longSecret)
 			},
 			cleanup: func() {
 				os.Unsetenv("WEBUI_SECRET_KEY")
@@ -138,7 +140,7 @@ func TestValidateSecrets(t *testing.T) {
 					if errMsg != "CRITICAL: WEBUI_SECRET_KEY environment variable not set" {
 						t.Errorf("Expected 'not set' error message, got: %s", errMsg)
 					}
-				} else if len(tt.secret) > 0 && len(tt.secret) < 32 {
+				} else if tt.secret != "" && len(tt.secret) < 32 {
 					expectedSubstring := "too short"
 					if !contains(errMsg, expectedSubstring) {
 						t.Errorf("Expected error message to contain '%s', got: %s", expectedSubstring, errMsg)
@@ -149,11 +151,11 @@ func TestValidateSecrets(t *testing.T) {
 	}
 }
 
-// Helper function to check if string contains substring
+// Helper function to check if string contains substring.
 func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(substr) == 0 || 
-		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr || 
-		len(s) > len(substr) && containsMiddle(s, substr))))
+	return len(s) >= len(substr) && (s == substr || substr == "" ||
+		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr ||
+			len(s) > len(substr) && containsMiddle(s, substr))))
 }
 
 func containsMiddle(s, substr string) bool {
@@ -240,10 +242,10 @@ func TestValidateSecretsConcurrency(t *testing.T) {
 	}
 }
 
-func TestHealthCheck(t *testing.T) {
+func TestHealthCheck(_ *testing.T) {
 	// Test the health check functionality
 	err := healthCheck()
-	
+
 	// Health check should succeed when service is not running (returns error)
 	// or when it's running (returns nil)
 	// This is a basic smoke test
@@ -304,7 +306,7 @@ func TestValidateSecretsErrorMessages(t *testing.T) {
 			}
 
 			if !contains(err.Error(), tt.expectedContain) {
-				t.Errorf("Expected error message to contain '%s', got: %s", 
+				t.Errorf("Expected error message to contain '%s', got: %s",
 					tt.expectedContain, err.Error())
 			}
 		})
