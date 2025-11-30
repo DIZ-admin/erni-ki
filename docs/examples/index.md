@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: original
 doc_version: '2025.11'
 last_updated: '2025-11-29'
@@ -267,9 +267,8 @@ To add new examples:
 
 1. Create a new file in this directory
 2. Include usage comments at the top
-3. Add entry to README.md
-4. Update [docs/examples/README.md](./README.md)
-5. Test with actual webhook receiver
+3. Add entry to this documentation file
+4. Test with actual webhook receiver
 
 ---
 

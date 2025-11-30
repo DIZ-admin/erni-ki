@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """
 Comprehensive unit tests for webhook-receiver.py
 Tests alert processing, file operations, recovery scripts, and API endpoints.
@@ -23,7 +24,7 @@ from conf.webhook_receiver import (
 class TestSaveAlertToFile(unittest.TestCase):
     """Test suite for save_alert_to_file function."""
 
-    @patch("conf.webhook_receiver.webhook_receiver.LOG_DIR")
+    @patch("conf.webhook_receiver._impl.LOG_DIR")
     def test_save_alert_creates_file_with_correct_format(self, mock_log_dir):
         """Test that alert is saved with correct filename format."""
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -35,7 +36,7 @@ class TestSaveAlertToFile(unittest.TestCase):
                 save_alert_to_file(alert_data, "critical")
                 mock_file.assert_called_once()
 
-    @patch("conf.webhook_receiver.webhook_receiver.LOG_DIR")
+    @patch("conf.webhook_receiver._impl.LOG_DIR")
     def test_save_alert_handles_encoding(self, mock_log_dir):
         """Test that alert data with non-ASCII characters is saved correctly."""
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -53,7 +54,7 @@ class TestSaveAlertToFile(unittest.TestCase):
                 self.assertIn("encoding", call_args[1])
                 self.assertEqual(call_args[1]["encoding"], "utf-8")
 
-    @patch("conf.webhook_receiver.webhook_receiver.LOG_DIR")
+    @patch("conf.webhook_receiver._impl.LOG_DIR")
     @patch("builtins.open", side_effect=PermissionError("Permission denied"))
     def test_save_alert_handles_permission_error(self, mock_open_func, mock_log_dir):
         """Test that permission errors are handled gracefully."""
@@ -93,7 +94,7 @@ class TestProcessAlert(unittest.TestCase):
             ]
         }
 
-        with patch("conf.webhook_receiver.webhook_receiver.handle_critical_alert") as mock_handle:
+        with patch("conf.webhook_receiver._impl.handle_critical_alert") as mock_handle:
             process_alert(alert_data, "critical")
             mock_handle.assert_called_once()
 
@@ -115,7 +116,7 @@ class TestProcessAlert(unittest.TestCase):
             ]
         }
 
-        with patch("conf.webhook_receiver.webhook_receiver.handle_gpu_alert") as mock_handle:
+        with patch("conf.webhook_receiver._impl.handle_gpu_alert") as mock_handle:
             process_alert(alert_data, "gpu")
             mock_handle.assert_called_once()
 
@@ -137,7 +138,7 @@ class TestProcessAlert(unittest.TestCase):
         """Test that exceptions during alert processing are caught."""
         import contextlib
 
-        with patch("conf.webhook_receiver.webhook_receiver.logger"), contextlib.suppress(Exception):
+        with patch("conf.webhook_receiver._impl.logger"), contextlib.suppress(Exception):
             # Force an exception by passing invalid data
             process_alert({"alerts": [None]}, "test")
 
@@ -157,7 +158,7 @@ class TestHandleCriticalAlert(unittest.TestCase):
             }
         }
 
-        with patch("conf.webhook_receiver.webhook_receiver.run_recovery_script") as mock_recovery:
+        with patch("conf.webhook_receiver._impl.run_recovery_script") as mock_recovery:
             handle_critical_alert(alert)
             mock_recovery.assert_called_once_with("ollama")
 
@@ -168,9 +169,7 @@ class TestHandleCriticalAlert(unittest.TestCase):
         for service in known_services:
             alert = {"labels": {"service": service}}
 
-            with patch(
-                "conf.webhook_receiver.webhook_receiver.run_recovery_script"
-            ) as mock_recovery:
+            with patch("conf.webhook_receiver._impl.run_recovery_script") as mock_recovery:
                 handle_critical_alert(alert)
                 mock_recovery.assert_called_once_with(service)
 
@@ -178,7 +177,7 @@ class TestHandleCriticalAlert(unittest.TestCase):
         """Test that unknown services log a message instead of running recovery."""
         alert = {"labels": {"service": "unknown-service"}}
 
-        with patch("conf.webhook_receiver.webhook_receiver.run_recovery_script") as mock_recovery:
+        with patch("conf.webhook_receiver._impl.run_recovery_script") as mock_recovery:
             handle_critical_alert(alert)
             # Recovery should not be called for unknown services
             mock_recovery.assert_not_called()
@@ -197,7 +196,7 @@ class TestHandleGPUAlert(unittest.TestCase):
             }
         }
 
-        with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
+        with patch("conf.webhook_receiver._impl.logger") as mock_logger:
             handle_gpu_alert(alert)
             # Should log with GPU information
             mock_logger.warning.assert_called()
@@ -212,7 +211,7 @@ class TestHandleGPUAlert(unittest.TestCase):
             }
         }
 
-        with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
+        with patch("conf.webhook_receiver._impl.logger") as mock_logger:
             handle_gpu_alert(alert)
             # Should log temperature warning
             self.assertEqual(mock_logger.warning.call_count, 2)
@@ -221,40 +220,48 @@ class TestHandleGPUAlert(unittest.TestCase):
 class TestRunRecoveryScript(unittest.TestCase):
     """Test suite for run_recovery_script function."""
 
-    @patch("conf.webhook_receiver.webhook_receiver.RECOVERY_DIR")
-    def test_run_recovery_script_checks_existence(self, mock_recovery_dir):
+    @patch("conf.webhook_receiver._impl.RECOVERY_DIR")
+    @patch("conf.webhook_receiver._impl._path_within", return_value=True)
+    def test_run_recovery_script_checks_existence(self, mock_path_within, mock_recovery_dir):
         """Test that recovery script existence is checked."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            mock_recovery_dir.__truediv__ = lambda self, other: Path(tmpdir) / other
+            mock_recovery_dir.__truediv__ = lambda self, other: Path(tmpdir).resolve() / other
+            mock_recovery_dir.resolve.return_value = Path(tmpdir).resolve()
 
             run_recovery_script("nonexistent-service")
             # Should return early if script doesn't exist
 
-    @patch("conf.webhook_receiver.webhook_receiver.RECOVERY_DIR")
-    def test_run_recovery_script_checks_executable(self, mock_recovery_dir):
+    @patch("conf.webhook_receiver._impl.RECOVERY_DIR")
+    @patch("conf.webhook_receiver._impl._path_within", return_value=True)
+    def test_run_recovery_script_checks_executable(self, mock_path_within, mock_recovery_dir):
         """Test that recovery script executable permission is checked."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            script_path = Path(tmpdir) / "test-recovery.sh"
+            script_path = Path(tmpdir).resolve() / "test-recovery.sh"
             script_path.write_text("#!/bin/bash\necho 'test'")
             script_path.chmod(0o644)  # Not executable
 
             mock_recovery_dir.__truediv__ = lambda self, other: script_path
+            mock_recovery_dir.resolve.return_value = Path(tmpdir).resolve()
 
-            with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
-                run_recovery_script("test")
+            with patch("conf.webhook_receiver._impl.logger") as mock_logger:
+                run_recovery_script("ollama")
                 # Should log warning about non-executable script
                 mock_logger.warning.assert_called()
 
-    @patch("conf.webhook_receiver.webhook_receiver.RECOVERY_DIR")
-    @patch("conf.webhook_receiver.webhook_receiver.run")
-    def test_run_recovery_script_executes_successfully(self, mock_run, mock_recovery_dir):
+    @patch("conf.webhook_receiver._impl.RECOVERY_DIR")
+    @patch("conf.webhook_receiver._impl.run")
+    @patch("conf.webhook_receiver._impl._path_within", return_value=True)
+    def test_run_recovery_script_executes_successfully(
+        self, mock_path_within, mock_run, mock_recovery_dir
+    ):
         """Test successful execution of recovery script."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            script_path = Path(tmpdir) / "ollama-recovery.sh"
+            script_path = Path(tmpdir).resolve() / "ollama-recovery.sh"
             script_path.write_text("#!/bin/bash\necho 'Recovery complete'")
             script_path.chmod(0o755)
 
             mock_recovery_dir.__truediv__ = lambda self, other: script_path
+            mock_recovery_dir.resolve.return_value = Path(tmpdir).resolve()
 
             mock_result = MagicMock()
             mock_result.stdout = "Recovery complete"
@@ -264,22 +271,26 @@ class TestRunRecoveryScript(unittest.TestCase):
             run_recovery_script("ollama")
             mock_run.assert_called_once()
 
-    @patch("conf.webhook_receiver.webhook_receiver.RECOVERY_DIR")
-    @patch("conf.webhook_receiver.webhook_receiver.run")
-    def test_run_recovery_script_handles_failure(self, mock_run, mock_recovery_dir):
+    @patch("conf.webhook_receiver._impl.RECOVERY_DIR")
+    @patch("conf.webhook_receiver._impl.run")
+    @patch("conf.webhook_receiver._impl._path_within", return_value=True)
+    def test_run_recovery_script_handles_failure(
+        self, mock_path_within, mock_run, mock_recovery_dir
+    ):
         """Test handling of recovery script failure."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            script_path = Path(tmpdir) / "test-recovery.sh"
+            script_path = Path(tmpdir).resolve() / "test-recovery.sh"
             script_path.write_text("#!/bin/bash\nexit 1")
             script_path.chmod(0o755)
 
             mock_recovery_dir.__truediv__ = lambda self, other: script_path
+            mock_recovery_dir.resolve.return_value = Path(tmpdir).resolve()
 
             from subprocess import CalledProcessError
 
             mock_run.side_effect = CalledProcessError(1, "test-recovery.sh", stderr="Error")
 
-            with patch("conf.webhook_receiver.webhook_receiver.logger") as mock_logger:
+            with patch("conf.webhook_receiver._impl.logger") as mock_logger:
                 run_recovery_script("test")
                 # Should log error
                 mock_logger.error.assert_called()
@@ -304,11 +315,12 @@ class TestWebhookEndpoints(unittest.TestCase):
         self.assertEqual(data["service"], "webhook-receiver")
         self.assertIn("timestamp", data)
 
-    @patch("conf.webhook_receiver.webhook_receiver.save_alert_to_file")
-    @patch("conf.webhook_receiver.webhook_receiver.process_alert")
-    def test_webhook_general_with_valid_json(self, mock_process, mock_save):
+    @patch("conf.webhook_receiver._impl.save_alert_to_file")
+    @patch("conf.webhook_receiver._impl.process_alert")
+    @patch("conf.webhook_receiver._impl.verify_signature", return_value=True)
+    def test_webhook_general_with_valid_json(self, mock_verify, mock_process, mock_save):
         """Test general webhook endpoint with valid JSON."""
-        payload = {"alerts": [{"labels": {"alertname": "Test"}}]}
+        payload = {"alerts": [{"labels": {"alertname": "Test"}, "status": "firing"}]}
 
         response = self.client.post(
             "/webhook",
@@ -322,7 +334,8 @@ class TestWebhookEndpoints(unittest.TestCase):
         mock_save.assert_called_once()
         mock_process.assert_called_once()
 
-    def test_webhook_general_without_json_returns_400(self):
+    @patch("conf.webhook_receiver._impl.verify_signature", return_value=True)
+    def test_webhook_general_without_json_returns_400(self, mock_verify):
         """Test that missing JSON returns 400 error."""
         response = self.client.post("/webhook")
 
@@ -330,11 +343,16 @@ class TestWebhookEndpoints(unittest.TestCase):
         data = json.loads(response.data)
         self.assertIn("error", data)
 
-    @patch("conf.webhook_receiver.webhook_receiver.save_alert_to_file")
-    @patch("conf.webhook_receiver.webhook_receiver.process_alert")
-    def test_webhook_critical_processes_correctly(self, mock_process, mock_save):
+    @patch("conf.webhook_receiver._impl.save_alert_to_file")
+    @patch("conf.webhook_receiver._impl.process_alert")
+    @patch("conf.webhook_receiver._impl.verify_signature", return_value=True)
+    def test_webhook_critical_processes_correctly(self, mock_verify, mock_process, mock_save):
         """Test critical webhook endpoint."""
-        payload = {"alerts": [{"labels": {"alertname": "Critical", "severity": "critical"}}]}
+        payload = {
+            "alerts": [
+                {"labels": {"alertname": "Critical", "severity": "critical"}, "status": "firing"}
+            ]
+        }
 
         response = self.client.post(
             "/webhook/critical",
@@ -344,13 +362,34 @@ class TestWebhookEndpoints(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         # Verify it was saved as critical
-        mock_save.assert_called_once_with(payload, "critical")
+        # Use ANY for fields populated by Pydantic defaults
+        expected_payload = {
+            "alerts": [
+                {
+                    "labels": {
+                        "alertname": "Critical",
+                        "severity": "critical",
+                        "service": None,
+                        "category": None,
+                        "gpu_id": None,
+                        "component": None,
+                    },
+                    "annotations": {},
+                    "status": "firing",
+                }
+            ],
+            "groupLabels": {},
+        }
+        mock_save.assert_called_once_with(expected_payload, "critical")
 
-    @patch("conf.webhook_receiver.webhook_receiver.save_alert_to_file")
-    @patch("conf.webhook_receiver.webhook_receiver.process_alert")
-    def test_webhook_gpu_processes_correctly(self, mock_process, mock_save):
+    @patch("conf.webhook_receiver._impl.save_alert_to_file")
+    @patch("conf.webhook_receiver._impl.process_alert")
+    @patch("conf.webhook_receiver._impl.verify_signature", return_value=True)
+    def test_webhook_gpu_processes_correctly(self, mock_verify, mock_process, mock_save):
         """Test GPU webhook endpoint."""
-        payload = {"alerts": [{"labels": {"alertname": "GPUHigh", "component": "gpu"}}]}
+        payload = {
+            "alerts": [{"labels": {"alertname": "GPUHigh", "component": "gpu"}, "status": "firing"}]
+        }
 
         response = self.client.post(
             "/webhook/gpu",
@@ -359,9 +398,27 @@ class TestWebhookEndpoints(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        mock_save.assert_called_once_with(payload, "gpu")
+        # Use ANY for fields populated by Pydantic defaults
+        expected_payload = {
+            "alerts": [
+                {
+                    "labels": {
+                        "alertname": "GPUHigh",
+                        "component": "gpu",
+                        "severity": None,
+                        "service": None,
+                        "category": None,
+                        "gpu_id": None,
+                    },
+                    "annotations": {},
+                    "status": "firing",
+                }
+            ],
+            "groupLabels": {},
+        }
+        mock_save.assert_called_once_with(expected_payload, "gpu")
 
-    @patch("conf.webhook_receiver.webhook_receiver.LOG_DIR")
+    @patch("conf.webhook_receiver._impl.LOG_DIR")
     def test_list_alerts_endpoint(self, mock_log_dir):
         """Test alerts listing endpoint."""
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -379,12 +436,11 @@ class TestWebhookEndpoints(unittest.TestCase):
             data = json.loads(response.data)
             self.assertIn("alerts", data)
 
-    @patch(
-        "conf.webhook_receiver.webhook_receiver.process_alert", side_effect=Exception("Test error")
-    )
-    def test_webhook_handles_processing_exception(self, mock_process):
+    @patch("conf.webhook_receiver._impl.process_alert", side_effect=Exception("Test error"))
+    @patch("conf.webhook_receiver._impl.verify_signature", return_value=True)
+    def test_webhook_handles_processing_exception(self, mock_verify, mock_process):
         """Test that webhook handles processing exceptions gracefully."""
-        payload = {"alerts": [{"labels": {}}]}
+        payload = {"alerts": [{"labels": {"alertname": "Test"}, "status": "firing"}]}
 
         response = self.client.post(
             "/webhook",

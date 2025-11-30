@@ -480,10 +480,18 @@ ipdb conf/webhook-receiver/webhook-receiver.py
 # Press F5 or add breakpoints and run with debugger
 
 # Node.js debugging
-node --inspect conf/webhook-receiver/webhook-receiver.py
+node --inspect path/to/your-javascript-file.js
 
 # Chrome DevTools
 # Visit chrome://inspect
+
+```
+
+### Python Debugging
+
+```bash
+# For Python files, use:
+python -m debugpy --listen 5678 conf/webhook-receiver/webhook-receiver.py
 
 ```
 
