@@ -21,8 +21,6 @@ last_updated: '2025-11-28'
 - Процедуры резервного копирования и восстановления
 - Управление безопасностью
 
--**[ci-cd-overview.md](core/ci-cd-overview.md)**- Инженерия DevOps и CI/CD
-
 -**[monitoring-guide.md](monitoring/monitoring-guide.md)**- Полная документация
 по мониторингу
 

@@ -73,7 +73,7 @@ Logging**- Fluent Bit + Loki
 
 ```conf
 # conf/redis/redis.conf:26-27
-# requirepass $REDIS_PASSWORD # COMMENTED OUT!
+# requirepass ErniKiRedisSecurePassword2024 # COMMENTED OUT!
 ```
 
 **Impact:**
@@ -101,7 +101,7 @@ redis:
 **Немедленные действия:**
 
 1. Включить requirepass в redis.conf
-2. Ротировать пароль `$REDIS_PASSWORD`
+2. Ротировать пароль `ErniKiRedisSecurePassword2024`
 3. Добавить Docker Secret
 4. Обновить клиентов (LiteLLM, exporters)
 
@@ -145,7 +145,7 @@ docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
 
 **Ротация обязательна для:**
 
-- `$REDIS_PASSWORD` (rotated; placeholder only)
+- `ErniKiRedisSecurePassword2024` (rotated; placeholder only)
 - `sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb`
   (placeholder)
 - `OW_secure_pass_2025!` (placeholder)
@@ -451,7 +451,7 @@ Automation**- validation scripts, pre-commit hooks
 
 - Enable requirepass в redis.conf
 - Add Docker Secret
-- Update clients -**ROTATE:**`$REDIS_PASSWORD`
+- Update clients -**ROTATE:**`ErniKiRedisSecurePassword2024`
 
 **P0-2: Remove Hardcoded Credentials (1 день)**
 
