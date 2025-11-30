@@ -25,10 +25,10 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
     by_name: dict[str, list[Path]] = defaultdict(list)
 
     if search_path:
-        # For testing: scan all files recursively
+        # For testing: scan only top-level files (not recursive)
         if not search_path.exists():
             return by_name
-        for path in search_path.rglob("*"):
+        for path in search_path.iterdir():
             if path.is_file() and path.name not in ALLOWLIST and path.name != ".gitkeep":
                 by_name[path.name].append(path)
         return by_name
@@ -83,11 +83,11 @@ def main() -> None:
     if not duplicates:
         sys.exit(0)
 
-    print("Duplicate basenames detected in scripts/ or conf/:", file=sys.stderr)
+    print("Duplicate basenames detected in scripts/ or conf/:")
     for name, paths in sorted(duplicates.items()):
-        print(f"- {name}", file=sys.stderr)
+        print(f"- {name}")
         for p in paths:
-            print(f"    {p}", file=sys.stderr)
+            print(f"    {p}")
     sys.exit(1)
 
 
