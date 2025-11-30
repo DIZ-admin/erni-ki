@@ -56,6 +56,26 @@ NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
 
 
+def _validate_secrets() -> None:
+    """Validate required secrets are configured on startup."""
+    if not WEBHOOK_SECRET:
+        logger.error(
+            "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET environment variable not set. "
+            "Webhook handler cannot start without it."
+        )
+        raise RuntimeError(
+            "Missing required ALERTMANAGER_WEBHOOK_SECRET environment variable"
+        )
+    if len(WEBHOOK_SECRET) < 16:
+        logger.error(
+            "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET is too short. "
+            "Minimum 16 characters required for security."
+        )
+        raise RuntimeError(
+            "ALERTMANAGER_WEBHOOK_SECRET must be at least 16 characters long"
+        )
+
+
 def verify_signature(body: bytes, signature: str | None) -> bool:
     if not WEBHOOK_SECRET:
         logger.error("WEBHOOK_SECRET not configured; rejecting request")
@@ -332,5 +352,6 @@ def health_check():
 
 
 if __name__ == "__main__":
+    _validate_secrets()
     logger.info("Starting ERNI-KI Webhook Receiver")
     app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container

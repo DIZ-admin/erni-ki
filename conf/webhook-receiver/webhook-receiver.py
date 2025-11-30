@@ -66,6 +66,34 @@ RECOVERY_DIR = Path(os.getenv("RECOVERY_DIR", "/app/scripts/recovery"))
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
 ALLOWED_SERVICES = {"ollama", "openwebui", "searxng"}
 
+# Explicit mapping of services to recovery script filenames
+# This prevents any path traversal attempts through service names
+RECOVERY_SCRIPTS = {
+    "ollama": "ollama-recovery.sh",
+    "openwebui": "openwebui-recovery.sh",
+    "searxng": "searxng-recovery.sh",
+}
+
+
+def _validate_secrets() -> None:
+    """Validate required secrets are configured on startup."""
+    if not WEBHOOK_SECRET:
+        logger.error(
+            "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET environment variable not set. "
+            "Webhook receiver cannot start without it."
+        )
+        raise RuntimeError(
+            "Missing required ALERTMANAGER_WEBHOOK_SECRET environment variable"
+        )
+    if len(WEBHOOK_SECRET) < 16:
+        logger.error(
+            "CRITICAL: ALERTMANAGER_WEBHOOK_SECRET is too short. "
+            "Minimum 16 characters required for security."
+        )
+        raise RuntimeError(
+            "ALERTMANAGER_WEBHOOK_SECRET must be at least 16 characters long"
+        )
+
 
 def _path_within(base: Path, target: Path) -> bool:
     try:
@@ -185,14 +213,17 @@ def handle_gpu_alert(alert):
 
 def run_recovery_script(service: str) -> None:
     """Execute recovery script for a critical service if available."""
-    if service not in ALLOWED_SERVICES:
+    # Use explicit mapping to prevent path traversal attacks
+    if service not in RECOVERY_SCRIPTS:
         logger.error("Invalid service: %s", service)
         return
 
-    script_path = RECOVERY_DIR / f"{service}-recovery.sh"
+    script_filename = RECOVERY_SCRIPTS[service]
+    script_path = RECOVERY_DIR / script_filename
 
+    # Double-check path is within recovery directory
     if not _path_within(RECOVERY_DIR, script_path):
-        logger.error("Path traversal attempt for %s", script_path)
+        logger.error("Path traversal attempt detected for %s", script_path)
         return
 
     if not script_path.exists():
@@ -404,5 +435,6 @@ def list_alerts():
 
 
 if __name__ == "__main__":
+    _validate_secrets()
     logger.info(f"Starting ERNI-KI Webhook Receiver on port {WEBHOOK_PORT}")
     app.run(host="0.0.0.0", port=WEBHOOK_PORT, debug=False)  # noqa: S104 - runs inside container
