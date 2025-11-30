@@ -41,14 +41,12 @@ for job in "${!SLA[@]}"; do
     age=0
   fi
   sla="${SLA[$job]}"
-  printf 'erni_cron_job_success{job="%s"} %s
-' "$job" "$success" >>"$tmp_file"
-  printf 'erni_cron_job_age_seconds{job="%s"} %s
-' "$job" "$age" >>"$tmp_file"
-  printf 'erni_cron_job_sla_seconds{job="%s"} %s
-' "$job" "$sla" >>"$tmp_file"
-  printf 'erni_cron_job_last_run_timestamp{job="%s"} %s
-' "$job" "$last_ts" >>"$tmp_file"
+  {
+    printf 'erni_cron_job_success{job="%s"} %s\n' "$job" "$success"
+    printf 'erni_cron_job_age_seconds{job="%s"} %s\n' "$job" "$age"
+    printf 'erni_cron_job_sla_seconds{job="%s"} %s\n' "$job" "$sla"
+    printf 'erni_cron_job_last_run_timestamp{job="%s"} %s\n' "$job" "$last_ts"
+  } >>"$tmp_file"
 done
 
 mv "$tmp_file" "$METRIC_FILE"
