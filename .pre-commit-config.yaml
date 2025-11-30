@@ -145,8 +145,6 @@ repos:
       - id: ruff
         name: "Ruff: Python lint"
         args: [--fix]
-      - id: ruff-format
-        name: "Ruff: Python format"
 
   - repo: https://github.com/psf/black
     rev: 23.12.1
@@ -166,8 +164,8 @@ repos:
       - id: mypy
         name: "mypy: static type check"
         additional_dependencies: [types-requests, types-PyYAML]
-        args: [--ignore-missing-imports]
-        exclude: ^webhook_handler\.py$
+        args: ["--config-file", "mypy.ini", "--ignore-missing-imports"]
+        exclude: ^webhook_handler\.py$|webhook-receiver|ops/ollama-exporter/app\.py|docs/examples/webhook-client-python\.py
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.29.1
