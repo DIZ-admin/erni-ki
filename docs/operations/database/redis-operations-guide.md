@@ -30,30 +30,30 @@ OpenWebUI и SearXNG. Система полностью мониторится, 
 docker ps | grep redis
 
 # Подключение к Redis CLI
-docker exec -it erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024"
+docker exec -it erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD"
 
 # Проверка доступности
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
 ```
 
 ## Мониторинг
 
 ```bash
 # Информация о памяти
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info memory
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info memory
 
 # Статистика операций
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info stats
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats
 
 # Количество ключей
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" dbsize
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" dbsize
 ```
 
 ## Резервное копирование
 
 ```bash
 # Создание снапшота
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" BGSAVE
 
 # Проверка статуса бэкапа
 ./scripts/redis-backup-metrics.sh status
@@ -98,7 +98,7 @@ ERNI-KI
 
 ```bash
 # Создание снапшота
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" BGSAVE
 
 # Обновление метрик бэкапа
 ./scripts/redis-backup-metrics.sh success
@@ -136,7 +136,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" BGSAVE
 ./scripts/redis-comprehensive-test.sh
 
 # Очистка памяти
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" memory purge
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" memory purge
 ```
 
 ---
@@ -160,26 +160,26 @@ docker logs erni-ki-redis-1 --tail 50
 
 ```bash
 # Проверка использования памяти
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info memory
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info memory
 
 # Принудительная очистка
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" memory purge
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" memory purge
 
 # Анализ ключей
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" --bigkeys
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" --bigkeys
 ```
 
 ## Проблемы с производительностью
 
 ```bash
 # Проверка медленных запросов
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" slowlog get 10
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" slowlog get 10
 
 # Тест производительности
 ./scripts/redis-comprehensive-test.sh
 
 # Анализ статистики
-docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info stats
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats
 ```
 
 ---
@@ -210,7 +210,7 @@ docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info st
 
 ### Аутентификация
 
--**Пароль:**ErniKiRedisSecurePassword2024 -**Доступ:**Только из Docker сети
+-**Пароль:**$REDIS_PASSWORD -**Доступ:**Только из Docker сети
 ERNI-KI -**Порты:**Не экспонированы наружу
 
 ### Рекомендации
