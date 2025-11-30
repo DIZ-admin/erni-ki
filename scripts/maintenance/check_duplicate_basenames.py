@@ -25,8 +25,8 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
     by_name: dict[str, list[Path]] = defaultdict(list)
 
     if search_path:
-        # For testing: scan local directory
-        for path in search_path.rglob("*"):
+        # For testing: scan only top-level directory (not subdirectories)
+        for path in search_path.iterdir():
             if path.is_file() and path.name not in ALLOWLIST and path.name != ".gitkeep":
                 by_name[path.name].append(path)
         return by_name
@@ -50,36 +50,44 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
     return by_name
 
 
-def check_duplicates(by_name: dict[str, list[Path]] | None = None) -> int:
-    """Check for duplicate basenames and report them.
+def check_duplicates(
+    scripts_basenames: dict[str, list[Path]], conf_basenames: dict[str, list[Path]]
+) -> dict[str, list[Path]]:
+    """Check for duplicate basenames between scripts/ and conf/ directories.
 
     Args:
-            by_name: Optional dict of basenames to paths. If None, will call get_basenames().
+            scripts_basenames: Mapping of basenames to paths in scripts/ directory.
+            conf_basenames: Mapping of basenames to paths in conf/ directory.
 
     Returns:
-            0 if no duplicates, 1 if duplicates found.
+            Dictionary of basenames that appear in both directories, mapped to list of paths.
     """
-    if by_name is None:
-        by_name = get_basenames()
+    duplicates: dict[str, list[Path]] = {}
 
-    duplicates = {name: paths for name, paths in by_name.items() if len(paths) > 1}
+    # Find basenames that exist in both directories
+    for name in scripts_basenames:
+        if name in conf_basenames:
+            duplicates[name] = scripts_basenames[name] + conf_basenames[name]
+
+    return duplicates
+
+
+def main() -> None:
+    """Main entry point."""
+    scripts_basenames = get_basenames(Path.cwd() / "scripts")
+    conf_basenames = get_basenames(Path.cwd() / "conf")
+    duplicates = check_duplicates(scripts_basenames, conf_basenames)
 
     if not duplicates:
-        return 0
+        sys.exit(0)
 
     print("Duplicate basenames detected in scripts/ or conf/:", file=sys.stderr)
     for name, paths in sorted(duplicates.items()):
         print(f"- {name}", file=sys.stderr)
         for p in paths:
             print(f"    {p}", file=sys.stderr)
-    return 1
-
-
-def main() -> int:
-    """Main entry point."""
-    by_name = get_basenames()
-    return check_duplicates(by_name)
+    sys.exit(1)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

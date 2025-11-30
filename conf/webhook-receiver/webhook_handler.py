@@ -139,7 +139,7 @@ class AlertProcessor:
 
             logger.info(f"Processing {len(alerts)} alerts")
 
-            results = {"processed": 0, "errors": [], "notifications_sent": []}
+            results = {"processed": 0, "total": len(alerts), "errors": [], "notifications_sent": []}
 
             for alert in alerts:
                 try:
@@ -160,8 +160,10 @@ class AlertProcessor:
             logger.exception(f"Unexpected error processing alerts: {e}")
             return {"error": "Internal server error"}
 
-    def _process_single_alert(self, alert: dict[str, Any], group_labels: dict[str, Any]):
-        """Process a single alert."""
+    def _format_alert_message(
+        self, alert: dict[str, Any], group_labels: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Format alert data into a message structure."""
         labels = alert.get("labels", {})
         annotations = alert.get("annotations", {})
         status = alert.get("status", "unknown")
@@ -172,7 +174,7 @@ class AlertProcessor:
         category = labels.get("category", "general")
 
         # Message creation
-        message_data = {
+        return {
             "alert_name": labels.get("alertname", "Unknown Alert"),
             "severity": severity,
             "service": service,
@@ -184,6 +186,11 @@ class AlertProcessor:
             "timestamp": datetime.now().isoformat(),
             "group_labels": group_labels,
         }
+
+    def _process_single_alert(self, alert: dict[str, Any], group_labels: dict[str, Any]):
+        """Process a single alert."""
+        # Message creation
+        message_data = self._format_alert_message(alert, group_labels)
 
         # Sending notifications
         if DISCORD_WEBHOOK_URL:
