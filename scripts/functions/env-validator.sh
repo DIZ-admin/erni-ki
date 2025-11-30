@@ -112,7 +112,8 @@ validate_database() {
             echo -e "${GREEN}✓ PostgreSQL is reachable${NC}"
             ;;
         redis)
-            local host port password
+
+            # password variable removed as it was unused
             # Simple redis URL parser (basic)
             if ! redis-cli -u "$db_url" ping > /dev/null 2>&1; then
                 echo -e "${YELLOW}⚠️  WARNING: Redis not yet reachable${NC}"
@@ -155,12 +156,14 @@ validate_disk_space() {
     local path=$1
     local min_required=${2:-"1G"}
 
-    local available=$(df "$path" | awk 'NR==2 {print $4}')
-    # Convert to KB for comparison
-    local min_kb=$(echo "$min_required" | numfmt --from=iec)
+    local available
+    available=$(df -k "$path" | awk 'NR==2 {print $4 * 1024}')
+    # Convert to bytes for comparison
+    local min_bytes
+    min_bytes=$(echo "$min_required" | numfmt --from=iec)
 
-    if [[ $available -lt $min_kb ]]; then
-        echo -e "${RED}❌ ERROR: Not enough disk space at $path (required: $min_required, available: $(numfmt --to=iec $available))${NC}"
+    if [[ $available -lt $min_bytes ]]; then
+        echo -e "${RED}❌ ERROR: Not enough disk space at $path (required: $min_required, available: $(numfmt --to=iec "$available"))${NC}"
         return 1
     fi
 
