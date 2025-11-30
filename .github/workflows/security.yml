@@ -127,6 +127,26 @@ jobs:
           path: npm-audit-results.json
           retention-days: 30
 
+      # Scan Python dependencies
+      - name: 🐍 Setup Python
+        if: hashFiles('requirements*.txt') != ''
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 🔍 Run pip-audit for Python dependencies
+        if: hashFiles('requirements*.txt') != ''
+        run: |
+          pip install pip-audit
+          # Scan all requirements files
+          pip-audit || true
+
+      - name: 📤 Check Python security
+        if: hashFiles('requirements*.txt') != ''
+        run: |
+          pip install safety
+          safety check --json || true
+
   # Secret scanning
   secret-scan:
     name: 🔐 Secret Scan
