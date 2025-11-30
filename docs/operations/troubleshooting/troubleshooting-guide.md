@@ -101,7 +101,7 @@ docker compose ps db redis ollama
 docker exec erni-ki-db-1 pg_isready -U postgres
 
 # 4. Проверка Redis
-docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 ```
 
 ## **Решение:**
@@ -201,12 +201,12 @@ docker exec erni-ki-db-1 pg_isready -U postgres
 ```bash
 # Диагностика
 docker compose logs redis --tail=20
-docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 info
+docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD info
 
 # Решение
 docker compose restart redis
 sleep 5
-docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 ```
 
 ## **Мониторинг**

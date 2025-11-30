@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# mypy: ignore-errors
 """
 ERNI-KI Webhook Receiver for alert handling.
 Processes Alertmanager notifications and forwards them to various channels.
@@ -9,17 +8,18 @@ import hashlib
 import hmac
 import logging
 import os
+import sys
 from datetime import datetime
 from typing import Any
 
 import requests
 from flask import Flask, jsonify, request
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, field_validator
 
 try:
     from flask_limiter import Limiter
     from flask_limiter.util import get_remote_address
-except Exception:  # pragma: no cover - optional dependency fallback
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - optional dependency fallback
     Limiter = None
     get_remote_address = None
 
@@ -53,6 +53,7 @@ SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
+TEST_SECRET_PLACEHOLDER = "test-secret-placeholder"  # pragma: allowlist secret  # noqa: S105
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
 
 
@@ -72,6 +73,39 @@ class AlertLabels(BaseModel):
     service: str | None = None
     category: str | None = None
     instance: str | None = None
+
+    @field_validator("alertname", mode="before")
+    @classmethod
+    def validate_alertname(cls, v: str | None) -> str:
+        if v is None:
+            raise ValueError("alertname is required")
+        value = str(v).strip()
+        if not value:
+            raise ValueError("alertname cannot be empty")
+        if len(value) > 256:
+            raise ValueError("alertname cannot exceed 256 characters")
+        return value
+
+    @field_validator("instance", mode="before")
+    @classmethod
+    def validate_instance(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        value = str(v).strip()
+        if len(value) > 256:
+            raise ValueError("instance cannot exceed 256 characters")
+        return value
+
+    @field_validator("severity", mode="before")
+    @classmethod
+    def validate_severity(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        value = str(v).lower().strip()
+        allowed = {"critical", "warning", "info", "debug"}
+        if value not in allowed:
+            raise ValueError(f"severity must be one of {allowed}")
+        return value
 
 
 class Alert(BaseModel):
@@ -100,9 +134,6 @@ class AlertProcessor:
     def process_alerts(self, alerts_data: dict[str, Any]) -> dict[str, Any]:
         """Process incoming alerts payload."""
         try:
-            if not isinstance(alerts_data, dict):
-                return {"error": "Invalid payload format", "processed": 0, "errors": []}
-
             alerts = alerts_data.get("alerts", [])
             group_labels = alerts_data.get("groupLabels", {})
 
@@ -113,23 +144,21 @@ class AlertProcessor:
             for alert in alerts:
                 try:
                     self._process_single_alert(alert, group_labels)
-                    results["processed"] += 1
-                except requests.RequestException as e:
-                    # Alert is still processed even if notification sending fails
-                    logger.error(f"Network error sending notification for alert: {e}")
-                    results["processed"] += 1
+                except (KeyError, TypeError, ValueError) as e:
+                    logger.error(f"Error processing alert data: {e}", exc_info=True)
                     results["errors"].append(str(e))
-                except Exception as e:
-                    # Alert is still processed even if there's an error
-                    logger.error(f"Error processing alert: {e}", exc_info=True)
+                finally:
+                    # Count alert as processed even if notification failed, to reflect attempt.
                     results["processed"] += 1
-                    results["errors"].append(str(e))
 
             return results
 
+        except (KeyError, TypeError) as e:
+            logger.error(f"Invalid alerts data structure: {e}")
+            return {"error": "Invalid alerts data structure"}
         except Exception as e:
-            logger.error(f"Error processing alerts: {e}", exc_info=True)
-            return {"error": str(e), "processed": 0, "errors": []}
+            logger.exception(f"Unexpected error processing alerts: {e}")
+            return {"error": "Internal server error"}
 
     def _process_single_alert(self, alert: dict[str, Any], group_labels: dict[str, Any]):
         """Process a single alert."""
@@ -200,7 +229,7 @@ class AlertProcessor:
 
             logger.info(f"Discord notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Discord notification: %s", e)
 
     def _send_slack_notification(self, message_data: dict[str, Any]):
@@ -232,7 +261,7 @@ class AlertProcessor:
 
             logger.info(f"Slack notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Slack notification: %s", e)
 
     def _send_telegram_notification(self, message_data: dict[str, Any]):
@@ -264,7 +293,7 @@ class AlertProcessor:
 
             logger.info(f"Telegram notification sent for {message_data['alert_name']}")
 
-        except requests.RequestException as e:
+        except (requests.RequestException, requests.Timeout, requests.ConnectionError) as e:
             logger.error("Failed to send Telegram notification: %s", e)
 
 
@@ -297,9 +326,12 @@ def handle_critical_webhook():
         return jsonify({"error": str(e)}), 400
     except PermissionError:
         return jsonify({"error": "Unauthorized"}), 401
+    except (KeyError, TypeError) as e:
+        logger.error(f"Invalid payload structure: {e}", exc_info=True)
+        return jsonify({"error": "Invalid payload"}), 400
     except Exception as e:
-        logger.error(f"Error handling critical webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception(f"Unexpected error handling critical webhook: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/webhook/warning", methods=["POST"])
@@ -320,9 +352,12 @@ def handle_warning_webhook():
         return jsonify({"error": str(e)}), 400
     except PermissionError:
         return jsonify({"error": "Unauthorized"}), 401
+    except (KeyError, TypeError) as e:
+        logger.error(f"Invalid payload structure: {e}", exc_info=True)
+        return jsonify({"error": "Invalid payload"}), 400
     except Exception as e:
-        logger.error(f"Error handling warning webhook: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception(f"Unexpected error handling warning webhook: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/health", methods=["GET"])
@@ -338,5 +373,8 @@ def health_check():
 
 
 if __name__ == "__main__":
+    if not WEBHOOK_SECRET or WEBHOOK_SECRET == TEST_SECRET_PLACEHOLDER:
+        logger.error("ALERTMANAGER_WEBHOOK_SECRET must be configured in production")
+        sys.exit(1)
     logger.info("Starting ERNI-KI Webhook Receiver")
     app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container
