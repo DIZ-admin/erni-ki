@@ -59,7 +59,7 @@ redis:
 
 ```bash
 # Shell scripts check:
-grep -r "ErniKiRedisSecurePassword2024" scripts/ → 0 results
+grep -r "$REDIS_PASSWORD" scripts/ → 0 results
 
 # Python scripts check:
 grep -r "sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb" scripts/ → 0 results

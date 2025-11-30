@@ -40,6 +40,7 @@ def check_archive_readmes() -> list[str]:
 
 
 def check_data_readme() -> list[str]:
+    errors: list[str] = []
     if not DATA_README.exists():
         return [f"{DATA_README} is missing."]
     text = DATA_README.read_text(encoding="utf-8")

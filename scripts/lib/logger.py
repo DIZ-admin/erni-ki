@@ -44,25 +44,6 @@ class ColoredFormatter(logging.Formatter):
         return f"[{timestamp}] [{level}] {record.name} - {message}"
 
 
-class DynamicStreamHandler(logging.StreamHandler):
-    """
-    StreamHandler that rebinds to the current stdout/stderr at emit-time.
-
-    Useful for tests that swap sys.stdout/sys.stderr after the logger
-    has been created (e.g., pytest capturing).
-    """
-
-    def __init__(self, use_stderr: bool):
-        # Initialize with a dummy stream; it will be rebound in emit().
-        super().__init__(stream=sys.stderr if use_stderr else sys.stdout)
-        self.use_stderr = use_stderr
-
-    def emit(self, record: logging.LogRecord) -> None:
-        # Refresh the stream in case sys.stdout/err were replaced after init.
-        self.stream = sys.stderr if self.use_stderr else sys.stdout
-        super().emit(record)
-
-
 class JSONFormatter(logging.Formatter):
     """Format logs as JSON for machine parsing."""
 
@@ -87,6 +68,17 @@ class JSONFormatter(logging.Formatter):
             log_data["exception"] = self.formatException(record.exc_info)
 
         return json.dumps(log_data, ensure_ascii=False, default=str)
+
+
+class DynamicStderrHandler(logging.StreamHandler):
+    """StreamHandler that honors runtime replacements of sys.stderr."""
+
+    def __init__(self) -> None:
+        super().__init__(stream=None)
+
+    def emit(self, record: logging.LogRecord) -> None:  # pragma: no cover - thin shim
+        self.setStream(sys.stderr)
+        super().emit(record)
 
 
 def get_logger(
@@ -122,8 +114,8 @@ def get_logger(
     # Remove existing handlers to avoid duplicates
     logger.handlers = []
 
-    # Console handler: dynamically respects current stderr/stdout (important for test captures)
-    console_handler = DynamicStreamHandler(use_stderr=json_output)
+    # Console handler (stderr) that respects runtime redirection in tests
+    console_handler = DynamicStderrHandler()
     console_handler.setLevel(log_level)
 
     if json_output:

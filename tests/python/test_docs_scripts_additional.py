@@ -51,7 +51,7 @@ def test_normalize_headings_and_insert_toc_respect_frontmatter() -> None:
     joined = "\n".join(toc_lines)
     assert "[TOC]" in joined
     # TOC should appear after frontmatter and heading
-    assert joined.index("[TOC]") > joined.index(normalized[4])
+    assert joined.index("[TOC]") > joined.index("# Second level")
 
 
 def test_check_archive_and_data_readmes_detect_missing_entries() -> None:
