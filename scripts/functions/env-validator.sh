@@ -93,12 +93,12 @@ validate_dir() {
         return 1
     fi
 
-    echo -e "${GREEN}✓ $description found at $dir${NC)"
+    echo -e "${GREEN}✓ $description found at $dir${NC}"
     return 0
 }
 
 # Function to validate database connectivity
-# Usage: validate_database "postgresql" "postgresql://user:pass@host:5432/db"
+# Usage: validate_database "postgresql" "postgresql://<user>:<password>@host:5432/db"
 validate_database() {
     local db_type=$1
     local db_url=$2
@@ -164,7 +164,7 @@ validate_disk_space() {
         return 1
     fi
 
-    echo -e "${GREEN}✓ Sufficient disk space available at $path$(NC)"
+    echo -e "${GREEN}✓ Sufficient disk space available at $path${NC}"
     return 0
 }
 

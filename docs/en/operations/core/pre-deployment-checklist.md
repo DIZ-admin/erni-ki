@@ -19,19 +19,19 @@ See [Emergency Procedures](#emergency-procedures)
 
 ---
 
-## Phase 1: Code Quality & Security ✅
+## Phase 1: Code Quality & Security
 
 **Responsible:** CI/CD Pipeline (automatic) + Manual verification
 
 ### Automated Checks (Must Pass)
 
 - [ ] **CI Pipeline green** — All GitHub Actions passing
-  - ✅ Linting (ESLint + Ruff)
-  - ✅ Type checking (TypeScript)
-  - ✅ Unit tests (81/81 passing)
-  - ✅ E2E tests (playwright mock)
-  - ✅ Security scans (CodeQL + Trivy)
-  - ✅ Gitleaks (no secrets detected)
+  - Linting (ESLint + Ruff)
+  - Type checking (TypeScript)
+  - Unit tests (81/81 passing)
+  - E2E tests (playwright mock)
+  - Security scans (CodeQL + Trivy)
+  - Gitleaks (no secrets detected)
 
 ### Manual Verification
 
@@ -52,7 +52,7 @@ See [Emergency Procedures](#emergency-procedures)
 
 ---
 
-## Phase 2: Pre-Deployment Backup & Snapshots ⚠️
+## Phase 2: Pre-Deployment Backup & Snapshots
 
 **Responsible:** DevOps / SRE **Critical:** These must complete BEFORE
 deployment
@@ -86,6 +86,7 @@ deployment
   - File size > 100KB
 
 - [ ] **Backrest backup completed** (if configured)
+
   ```bash
   docker compose logs backrest | grep -i "backup completed" | tail -1
   ```
@@ -93,6 +94,7 @@ deployment
 ### System Snapshots
 
 - [ ] **Docker volume snapshots** (optional, for critical systems)
+
   ```bash
   # For PostgreSQL
   docker run --rm -v erni-ki_postgres_data:/data alpine tar czf - /data > postgres_snapshot.tar.gz
@@ -100,7 +102,7 @@ deployment
 
 ---
 
-## Phase 3: Staging Environment Validation 🧪
+## Phase 3: Staging Environment Validation
 
 **Responsible:** QA / Release Manager **Environment:** Staging
 (compose-staging.yml or equivalent)
@@ -122,6 +124,7 @@ deployment
   - [ ] Ollama `/api/tags` → 200 OK (models loaded)
 
 - [ ] **Chat functionality works**
+
   ```bash
   # Send test message via OpenWebUI
   curl -X POST http://localhost:8080/api/chat \
@@ -145,6 +148,7 @@ deployment
   - [ ] Alerts not firing (unless expected)
 
 - [ ] **AlertManager rules are correct**
+
   ```bash
   curl -s http://localhost:9093/api/v1/alerts | jq '.data | length'
   # Should be 0 (no active alerts in staging)
@@ -159,6 +163,7 @@ deployment
   ```
 
 - [ ] **No pending migrations**
+
   ```bash
   # If applicable to your stack
   docker compose exec openwebui curl http://localhost:8080/api/migrations/pending
@@ -167,7 +172,7 @@ deployment
 
 ---
 
-## Phase 4: Production Environment Pre-flight 🚀
+## Phase 4: Production Environment Pre-flight
 
 **Responsible:** DevOps / SRE **Timing:** 5-10 minutes before deployment
 
@@ -189,6 +194,7 @@ deployment
   ```
 
 - [ ] **CPU not overloaded**
+
   ```bash
   # Load average should be <2.0
   uptime
@@ -211,6 +217,7 @@ deployment
   ```
 
 - [ ] **GPU drivers initialized** (if GPU enabled)
+
   ```bash
   nvidia-smi
   # GPU should be visible and ready
@@ -226,6 +233,7 @@ deployment
   ```
 
 - [ ] **Monitoring is collecting metrics**
+
   ```bash
   curl -s http://localhost:9090/api/v1/query?query=up | jq '.data.result | length'
   # Should be > 20
@@ -233,7 +241,7 @@ deployment
 
 ---
 
-## Phase 5: Deployment Execution 🔄
+## Phase 5: Deployment Execution
 
 **Responsible:** DevOps / Release Manager **Duration:** 5-15 minutes (depending
 on image size)
@@ -243,7 +251,7 @@ on image size)
 - [ ] **Slack notification sent**
 
   ```
-  🚀 Starting deployment of ERNI-KI v0.6.3 to production
+  Starting deployment of ERNI-KI v0.6.3 to production
   Expected downtime: <2 minutes
   Rollback plan: Available (v0.6.2 snapshot ready)
   ```
@@ -283,6 +291,7 @@ on image size)
   ```
 
 - [ ] **Wait for services to stabilize**
+
   ```bash
   # Give services 30 seconds to reach steady state
   sleep 30
@@ -290,7 +299,7 @@ on image size)
 
 ---
 
-## Phase 6: Post-Deployment Validation ✔️
+## Phase 6: Post-Deployment Validation
 
 **Responsible:** DevOps + On-call Engineer **Duration:** 10-15 minutes
 **Critical:** All items must pass before declaring success
@@ -312,6 +321,7 @@ on image size)
   ```
 
 - [ ] **No error spikes in logs**
+
   ```bash
   docker compose logs --tail 50 | grep -i "error\|exception\|panic"
   # Should be 0 or expected errors only
@@ -334,6 +344,7 @@ on image size)
   ```
 
 - [ ] **Response times normal**
+
   ```bash
   # Check OpenWebUI response
   time curl -s http://localhost:8080/health > /dev/null
@@ -362,6 +373,7 @@ on image size)
   ```
 
 - [ ] **Document processing works** (if available)
+
   ```bash
   # Test Docling endpoint
   curl -s http://localhost:7860/health
@@ -382,7 +394,7 @@ on image size)
 
 ---
 
-## Phase 7: Post-Deployment Communication 📢
+## Phase 7: Post-Deployment Communication
 
 **Responsible:** Release Manager / Product
 
@@ -391,7 +403,7 @@ on image size)
 - [ ] **Slack notification sent**
 
   ```
-  ✅ ERNI-KI v0.6.3 successfully deployed to production
+  ERNI-KI v0.6.3 successfully deployed to production
   - All services healthy (34/34)
   - Zero errors in first 5 minutes
   - Chat functionality verified
@@ -417,7 +429,7 @@ on image size)
 
 ---
 
-## Emergency Procedures 🆘
+## Emergency Procedures
 
 ### Rollback (if issues detected)
 
@@ -456,7 +468,7 @@ docker compose up -d
 **Notification template:**
 
 ```
-🚨 ROLLBACK EXECUTED
+ROLLBACK EXECUTED
 - Rolled back to: v0.6.2
 - Reason: [reason]
 - Timestamp: [ISO 8601]
@@ -515,15 +527,15 @@ docker compose up -d
 
 ## Quick Reference
 
-| Phase           | Duration  | Owner       | Critical?    |
-| --------------- | --------- | ----------- | ------------ |
-| Code Quality    | 5 min     | CI/CD       | ✅ YES       |
-| Backups         | 10 min    | DevOps      | ✅ YES       |
-| Staging Tests   | 10 min    | QA          | ✅ YES       |
-| Pre-flight      | 5 min     | SRE         | ✅ YES       |
-| Deployment      | 5-15 min  | DevOps      | ✅ YES       |
-| Post-deployment | 10-15 min | DevOps      | ✅ YES       |
-| Communication   | 5 min     | Release Mgr | ⚠️ IMPORTANT |
+| Phase           | Duration  | Owner       | Critical? |
+| --------------- | --------- | ----------- | --------- |
+| Code Quality    | 5 min     | CI/CD       | YES       |
+| Backups         | 10 min    | DevOps      | YES       |
+| Staging Tests   | 10 min    | QA          | YES       |
+| Pre-flight      | 5 min     | SRE         | YES       |
+| Deployment      | 5-15 min  | DevOps      | YES       |
+| Post-deployment | 10-15 min | DevOps      | YES       |
+| Communication   | 5 min     | Release Mgr | IMPORTANT |
 
 **Total time:** 50-65 minutes
 

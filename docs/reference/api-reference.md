@@ -378,7 +378,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```json
 {
   "email": "user@example.com",
-  "password": "secure_password"
+  "password": "<password>"
 }
 ```
 
