@@ -6,7 +6,6 @@ added or modified in the diff, including YAML, TOML, and example configs.
 """
 
 import json
-import os
 from pathlib import Path
 
 import pytest
@@ -89,8 +88,9 @@ class TestNvmrc:
         engines_node = package_data.get("engines", {}).get("node", "")
 
         # engines.node typically has >=X.Y.Z format
-        assert nvmrc_version in engines_node or engines_node.startswith(">="), \
+        assert nvmrc_version in engines_node or engines_node.startswith(">="), (
             ".nvmrc version should be compatible with package.json engines.node"
+        )
 
 
 class TestMypyConfig:
@@ -146,8 +146,9 @@ class TestMakefile:
         content = makefile_path.read_text()
 
         assert "help:" in content, "Makefile should have a help target"
-        assert ".DEFAULT_GOAL := help" in content or "default:" in content, \
+        assert ".DEFAULT_GOAL := help" in content or "default:" in content, (
             "Makefile should have a default goal"
+        )
 
     def test_makefile_has_essential_targets(self):
         """Test that Makefile has essential targets."""
@@ -175,8 +176,7 @@ class TestMakefile:
         # Count targets with ## descriptions
         described_targets = [line for line in content.split("\n") if ":" in line and "##" in line]
 
-        assert len(described_targets) > 10, \
-            "Makefile should have descriptions (##) for help system"
+        assert len(described_targets) > 10, "Makefile should have descriptions (##) for help system"
 
 
 class TestAlertmanagerConfig:
@@ -297,21 +297,27 @@ class TestRedisConfig:
 class TestEntrypointScripts:
     """Tests for new entrypoint scripts."""
 
-    @pytest.mark.parametrize("script_name", [
-        "litellm.sh",
-        "openwebui.sh",
-        "searxng.sh",
-    ])
+    @pytest.mark.parametrize(
+        "script_name",
+        [
+            "litellm.sh",
+            "openwebui.sh",
+            "searxng.sh",
+        ],
+    )
     def test_entrypoint_script_exists(self, script_name):
         """Test that entrypoint scripts exist."""
         script_path = Path(f"scripts/entrypoints/{script_name}")
         assert script_path.exists(), f"{script_name} should exist"
 
-    @pytest.mark.parametrize("script_name", [
-        "litellm.sh",
-        "openwebui.sh",
-        "searxng.sh",
-    ])
+    @pytest.mark.parametrize(
+        "script_name",
+        [
+            "litellm.sh",
+            "openwebui.sh",
+            "searxng.sh",
+        ],
+    )
     def test_entrypoint_script_has_shebang(self, script_name):
         """Test that entrypoint scripts have proper shebang."""
         script_path = Path(f"scripts/entrypoints/{script_name}")
@@ -321,19 +327,23 @@ class TestEntrypointScripts:
         assert first_line.startswith("#!"), f"{script_name} should have shebang"
         assert "bash" in first_line or "sh" in first_line
 
-    @pytest.mark.parametrize("script_name", [
-        "litellm.sh",
-        "openwebui.sh",
-        "searxng.sh",
-    ])
+    @pytest.mark.parametrize(
+        "script_name",
+        [
+            "litellm.sh",
+            "openwebui.sh",
+            "searxng.sh",
+        ],
+    )
     def test_entrypoint_script_has_error_handling(self, script_name):
         """Test that entrypoint scripts have error handling."""
         script_path = Path(f"scripts/entrypoints/{script_name}")
         content = script_path.read_text()
 
         # Should have set -e or equivalent
-        assert "set -e" in content or "set -euo pipefail" in content, \
+        assert "set -e" in content or "set -euo pipefail" in content, (
             f"{script_name} should have error handling (set -e)"
+        )
 
 
 class TestEnvValidatorScript:
@@ -358,8 +368,7 @@ class TestEnvValidatorScript:
         content = script_path.read_text()
 
         # Should define functions for validation
-        assert "function" in content or "()" in content, \
-            "env-validator.sh should define functions"
+        assert "function" in content or "()" in content, "env-validator.sh should define functions"
 
 
 class TestSecretsBaseline:
@@ -388,8 +397,9 @@ class TestSecretsBaseline:
             baseline = json.load(f)
 
         generated_at = baseline["generated_at"]
-        assert "2025" in generated_at or "2024" in generated_at, \
+        assert "2025" in generated_at or "2024" in generated_at, (
             ".secrets.baseline should have recent timestamp"
+        )
 
 
 class TestDocumentationMetadata:
