@@ -32,7 +32,7 @@ Redis-exporter и обеспечивает стабильный монитори
 
 -**Название**: Redis-ERNI-KI -**Тип**: redis-datasource -**URL**:
 redis://redis:6379 -**Аутентификация**: requirepass
-(ErniKiRedisSecurePassword2024) -**Режим**: standalone
+($REDIS_PASSWORD) -**Режим**: standalone
 
 ### Автоматическая настройка
 
@@ -106,7 +106,7 @@ CONFIG GET maxmemory
 docker-compose ps redis
 
 # Проверка подключения
-docker-compose exec redis redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker-compose exec redis redis-cli -a $REDIS_PASSWORD ping
 
 # Проверка логов Grafana
 docker-compose logs grafana --tail=20
