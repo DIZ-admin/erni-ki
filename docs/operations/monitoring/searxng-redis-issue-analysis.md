@@ -125,8 +125,8 @@ r.ping() # AuthenticationError: invalid username-password pair or user is disabl
 **Причина**:
 
 - Модуль `valkey-py 6.1.1` имеет баг в методе `from_url()`
-- URL парсится правильно (username='',
-  password='$REDIS_PASSWORD') # pragma: allowlist secret
+- URL парсится правильно (username='', password='$REDIS_PASSWORD') # pragma:
+  allowlist secret
 - Но при аутентификации отправляется неправильная команда AUTH
 - SearXNG использует ТОЛЬКО `from_url()` метод (нет возможности использовать
   прямое подключение)

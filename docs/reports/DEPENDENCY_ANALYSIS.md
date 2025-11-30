@@ -7,13 +7,15 @@ last_updated: '2025-11-30'
 
 # ERNI-KI PROJECT - DEPENDENCY ANALYSIS REPORT
 
-**Assessment:** COMPREHENSIVE dependency ecosystem with version pinning and known vulnerabilities
+**Assessment:** COMPREHENSIVE dependency ecosystem with version pinning and
+known vulnerabilities
 
 ---
 
 ## KEY FINDINGS
 
 ### ✅ STRENGTHS
+
 - All production dependencies are pinned to specific versions
 - Use of modern package managers (npm, pip, Go modules)
 - Clear separation of dev vs production dependencies
@@ -21,6 +23,7 @@ last_updated: '2025-11-30'
 - Regular dependency updates via pre-commit autoupdate
 
 ### ⚠️ CRITICAL ISSUES
+
 1. **NPM Dependencies with Known Vulnerabilities** (7-12 HIGH/CRITICAL CVEs)
    - js-yaml: Security issue in default YAML parsing (CVE reference)
    - tmp: Directory traversal vulnerability (CVE reference)
@@ -85,18 +88,21 @@ Type Definitions:
 ```
 
 **Overrides (Dependencies with known CVEs):**
+
 ```yaml
-js-yaml: 4.1.1        # ⚠️ Overridden from 4.1.0 due to security concerns
-tmp: 0.2.5            # ⚠️ Overridden from 0.2.4 (directory traversal fix)
+js-yaml: 4.1.1 # ⚠️ Overridden from 4.1.0 due to security concerns
+tmp: 0.2.5 # ⚠️ Overridden from 0.2.4 (directory traversal fix)
 ```
 
 **Notable Runtime Dependencies (from node_modules analysis):**
+
 - npm: v10+ bundled with Node
 - Node engine: >=22.14.0 (LTS, good practice)
 
 ### Python Dependencies
 
 **Production (webhook-receiver/requirements.txt):**
+
 ```
 Flask==3.1.2          ✅ Latest stable
 Werkzeug==3.1.2       ✅ Latest stable (Flask dependency)
@@ -106,6 +112,7 @@ pydantic (via Flask)  ✅ Used for validation
 ```
 
 **Development (requirements-dev.txt):**
+
 ```
 ruff==0.14.6          ✅ Latest (replaces black+flake8+isort)
 pre-commit==4.3.0     ✅ Latest
@@ -122,13 +129,16 @@ linkchecker==10.2.1
 ```
 
 **Issues:**
+
 - No explicit pandas, numpy, or ML dependencies (good, lightweight)
 - No explicit version for optional dependencies (Flask-Limiter is optional)
-- Missing: requirements.txt for webhook_handler.py (uses same as webhook-receiver)
+- Missing: requirements.txt for webhook_handler.py (uses same as
+  webhook-receiver)
 
 ### Go Dependencies
 
 **Detected from codebase:**
+
 ```
 Auth Service (auth/):
   - Standard library: crypto, encoding, json, time, net/http
@@ -140,16 +150,17 @@ Recovery Scripts:
 ```
 
 **Issues:**
+
 - Go dependencies not explicitly documented (no go.mod review available)
 - Need to audit auth/ service for vulnerable Go packages
 
 ### Locked/Pinned Versions Summary
 
-| Package Manager | Lock File | Automated Updates |
-|---|---|---|
-| npm | package-lock.json | ⚠️ No Dependabot |
-| pip | requirements.txt (pinned) | ⚠️ Manual via pre-commit |
-| Go | go.mod (if exists) | ❌ Not documented |
+| Package Manager | Lock File                 | Automated Updates        |
+| --------------- | ------------------------- | ------------------------ |
+| npm             | package-lock.json         | ⚠️ No Dependabot         |
+| pip             | requirements.txt (pinned) | ⚠️ Manual via pre-commit |
+| Go              | go.mod (if exists)        | ❌ Not documented        |
 
 ---
 
@@ -186,6 +197,7 @@ Recovery Scripts:
 **Docker/Container Dependencies:**
 
 The docker-compose.yml includes service container versions:
+
 ```yaml
 redis: 7.2.4       ✅ Recent, stable
 postgres: 16.0     ✅ Current LTS
@@ -222,6 +234,7 @@ nginx: latest      ⚠️ RISK: "latest" tag should be pinned
 ### Critical Path Dependencies
 
 **Application Startup Chain:**
+
 ```
 Node.js (22.14.0)
   ├── npm (10.8.2)
@@ -243,6 +256,7 @@ Python (3.x)
 ```
 
 **Risk Assessment:**
+
 - **Flask chain:** Medium risk (well-maintained, stable)
 - **requests chain:** Low risk (actively patched, industry standard)
 - **Tooling chain:** Low risk (dev-only, frequent updates)
@@ -270,14 +284,14 @@ Python (3.x)
 
 ### Best Practices Compliance
 
-| Aspect | Status | Finding |
-|---|---|---|
-| All production pinned? | ✅ | Flask, requests, werkzeug all pinned |
-| All dev pinned? | ✅ | All npm, ruff, pre-commit pinned |
-| Patch versions included? | ✅ | e.g., 3.1.2 not 3.1.x |
-| Lock files committed? | ✅ | package-lock.json, requirements.txt |
-| Pre-release versions? | ❌ | No alpha/beta/RC versions (good) |
-| End-of-life versions? | ⚠️ | Need to verify node 22 EOL date |
+| Aspect                   | Status | Finding                              |
+| ------------------------ | ------ | ------------------------------------ |
+| All production pinned?   | ✅     | Flask, requests, werkzeug all pinned |
+| All dev pinned?          | ✅     | All npm, ruff, pre-commit pinned     |
+| Patch versions included? | ✅     | e.g., 3.1.2 not 3.1.x                |
+| Lock files committed?    | ✅     | package-lock.json, requirements.txt  |
+| Pre-release versions?    | ❌     | No alpha/beta/RC versions (good)     |
+| End-of-life versions?    | ⚠️     | Need to verify node 22 EOL date      |
 
 ### Node.js Version Strategy
 
@@ -305,23 +319,24 @@ Recommendation: Add explicit Python 3.11+ requirement
 
 **Critical Production Dependencies:**
 
-| Package | License | Compatibility |
-|---|---|---|
-| Flask | BSD-3-Clause | ✅ MIT-compatible |
-| Werkzeug | BSD-3-Clause | ✅ MIT-compatible |
-| requests | Apache 2.0 | ✅ MIT-compatible |
+| Package         | License           | Compatibility     |
+| --------------- | ----------------- | ----------------- |
+| Flask           | BSD-3-Clause      | ✅ MIT-compatible |
+| Werkzeug        | BSD-3-Clause      | ✅ MIT-compatible |
+| requests        | Apache 2.0        | ✅ MIT-compatible |
 | python-dateutil | Dual (BSD/Apache) | ✅ MIT-compatible |
 
 **Development Dependencies:**
 
-| Package | License | Compatibility |
-|---|---|---|
+| Package    | License    | Compatibility     |
+| ---------- | ---------- | ----------------- |
 | TypeScript | Apache 2.0 | ✅ MIT-compatible |
-| ruff | MIT | ✅ MIT-compatible |
-| prettier | MIT | ✅ MIT-compatible |
-| vitest | MIT | ✅ MIT-compatible |
+| ruff       | MIT        | ✅ MIT-compatible |
+| prettier   | MIT        | ✅ MIT-compatible |
+| vitest     | MIT        | ✅ MIT-compatible |
 
 **Potential Issues:**
+
 - None identified for project's MIT license
 - All dependencies are permissive licenses
 - No GPL/AGPL dependencies that would require source disclosure
@@ -333,37 +348,42 @@ Recommendation: Add explicit Python 3.11+ requirement
 ### Immediate (CRITICAL - Week 1)
 
 1. **Enable Dependabot**
+
    ```yaml
    # .github/dependabot.yml
    version: 2
    updates:
      - package-ecosystem: npm
-       directory: "/"
+       directory: '/'
        schedule:
          interval: weekly
        open-pull-requests-limit: 10
 
      - package-ecosystem: pip
-       directory: "/"
+       directory: '/'
        schedule:
          interval: weekly
 
      - package-ecosystem: docker
-       directory: "/"
+       directory: '/'
        schedule:
          interval: weekly
    ```
+
    **Effort:** 1 hour
 
 2. **Add npm audit to CI/CD**
+
    ```bash
    # In .github/workflows/test.yml
    - name: NPM Security Audit
      run: npm audit --audit-level=high
    ```
+
    **Effort:** 30 minutes
 
 3. **Add Python safety check**
+
    ```bash
    # In .github/workflows/test.yml
    - name: Python Dependency Check
@@ -371,6 +391,7 @@ Recommendation: Add explicit Python 3.11+ requirement
        pip install safety
        safety check requirements*.txt
    ```
+
    **Effort:** 30 minutes
 
 4. **Pin Node version in .nvmrc**
@@ -388,10 +409,12 @@ Recommendation: Add explicit Python 3.11+ requirement
    - Effort: 2-3 hours
 
 2. **Generate SBOM (Software Bill of Materials)**
+
    ```bash
    npm install -g @cyclonedx/npm@10
    cyclonedx-npm --output-file sbom.json
    ```
+
    - Effort: 2 hours
    - Benefit: Supply chain visibility, compliance
 
@@ -409,10 +432,12 @@ Recommendation: Add explicit Python 3.11+ requirement
 ### Medium Priority (Month 2)
 
 1. **Implement pip-audit tool**
+
    ```bash
    pip install pip-audit
    pip-audit
    ```
+
    - Better than safety for modern Python
    - Better CVE database
 
@@ -451,6 +476,7 @@ Recommendation: Add explicit Python 3.11+ requirement
 ## REMEDIATION ROADMAP
 
 **Phase 1 (CRITICAL - Week 1):**
+
 - [ ] Enable Dependabot configuration (1 hour)
 - [ ] Add npm audit to CI/CD (30 min)
 - [ ] Add Python safety check (30 min)
@@ -458,6 +484,7 @@ Recommendation: Add explicit Python 3.11+ requirement
 - **Total:** 2 hours
 
 **Phase 2 (HIGH - Week 2-3):**
+
 - [ ] Integrate Snyk scanning (2-3 hours)
 - [ ] Generate and commit SBOM (2 hours)
 - [ ] Create dependency management policy (4 hours)
@@ -465,6 +492,7 @@ Recommendation: Add explicit Python 3.11+ requirement
 - **Total:** 11-13 hours
 
 **Phase 3 (MEDIUM - Month 2):**
+
 - [ ] Implement pip-audit tool (2 hours)
 - [ ] Set up license compliance scanning (3 hours)
 - [ ] Create quarterly update schedule (1 hour)
@@ -476,11 +504,12 @@ Recommendation: Add explicit Python 3.11+ requirement
 
 ### 1. js-yaml Override Not Future-Proof
 
-**Severity:** MEDIUM (indirect risk)
-**Location:** package.json:156
-**Issue:** Override specified in package.json, but if someone removes override or upgrades, vulnerable version could be used
+**Severity:** MEDIUM (indirect risk) **Location:** package.json:156 **Issue:**
+Override specified in package.json, but if someone removes override or upgrades,
+vulnerable version could be used
 
 **Current State:**
+
 ```json
 "overrides": {
   "js-yaml": "4.1.1",  // Pinned to safe version
@@ -489,6 +518,7 @@ Recommendation: Add explicit Python 3.11+ requirement
 ```
 
 **Recommendation:**
+
 ```bash
 # 1. Document WHY overrides exist
 npm list js-yaml tmp  # Show transitive dependencies
@@ -504,11 +534,12 @@ npm view js-yaml@latest version
 
 ### 2. Missing CVE Scanning in GitHub Actions
 
-**Severity:** CRITICAL (no visibility into vulnerabilities)
-**Location:** .github/workflows/ (no security scanning configured)
-**Issue:** New vulnerabilities discovered post-deployment won't be caught
+**Severity:** CRITICAL (no visibility into vulnerabilities) **Location:**
+.github/workflows/ (no security scanning configured) **Issue:** New
+vulnerabilities discovered post-deployment won't be caught
 
 **Recommended Workflow:**
+
 ```yaml
 name: Security Scanning
 on: [push, pull_request]
@@ -546,19 +577,20 @@ jobs:
 
 ### 3. Docker Image Versions Not Pinned
 
-**Severity:** HIGH (non-deterministic builds)
-**Location:** docker-compose.yml services
-**Issue:** nginx: latest can change, causing non-reproducible builds
+**Severity:** HIGH (non-deterministic builds) **Location:** docker-compose.yml
+services **Issue:** nginx: latest can change, causing non-reproducible builds
 
 **Current State:**
+
 ```yaml
 nginx:
-  image: nginx:latest  # ❌ Unpinned
+  image: nginx:latest # ❌ Unpinned
 redis:
-  image: redis:7.2.4   # ✅ Pinned
+  image: redis:7.2.4 # ✅ Pinned
 ```
 
 **Fix:**
+
 ```bash
 # Find all unpinned images
 grep "image: " docker-compose.yml | grep -E "latest|:$"
@@ -571,11 +603,11 @@ sed -i 's/:latest/:1.27.3/g' docker-compose.yml
 
 ### 4. No Python Dependency Metadata
 
-**Severity:** MEDIUM (deployment uncertainty)
-**Location:** requirements.txt files
-**Issue:** Missing python_requires specification
+**Severity:** MEDIUM (deployment uncertainty) **Location:** requirements.txt
+files **Issue:** Missing python_requires specification
 
 **Current State:**
+
 ```
 # requirements.txt
 Flask==3.1.2
@@ -584,6 +616,7 @@ requests==2.32.3
 ```
 
 **Add to project root:**
+
 ```
 # pyproject.toml or setup.py
 [build-system]
@@ -607,6 +640,7 @@ dependencies = [
 ## DEPENDENCY COST ANALYSIS
 
 ### NPM Ecosystem
+
 ```
 Total packages: 1,200+ (including transitive)
 Disk usage: ~400 MB (node_modules/)
@@ -616,6 +650,7 @@ Update frequency: Weekly (Dependabot recommended)
 ```
 
 ### Python Ecosystem
+
 ```
 Total packages: ~30 direct (production + dev combined)
 Disk usage: ~100 MB (with venv)
@@ -625,6 +660,7 @@ Update frequency: Monthly (security critical only)
 ```
 
 ### Build & CI Cost
+
 ```
 Current: 0 (no scanning)
 With Snyk: +2-5 min per build
@@ -635,5 +671,5 @@ Total recommended overhead: 3-7 minutes
 
 ---
 
-**Report Generated:** 2025-11-30
-**Dependency Grade:** D+ (Version management good, scanning non-existent)
+**Report Generated:** 2025-11-30 **Dependency Grade:** D+ (Version management
+good, scanning non-existent)
