@@ -104,14 +104,14 @@ docker exec erni-ki-redis-1 redis-cli get test # NOAUTH ошибка
 
 ```bash
 # Проверка подключения с паролем
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping
 
 # Тестирование операций записи/чтения
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" set test_key "test_value"
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" get test_key
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" set test_key "test_value"
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" get test_key
 
 # Проверка версии и статуса
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info server | grep redis_version
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info server | grep redis_version
 ```
 
 **Критерии успеха:**
@@ -443,7 +443,7 @@ echo
 
 # 4. Redis Connection
 echo "4. REDIS CONNECTION TEST:"
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping 2>/dev/null || echo "FAILED"
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" ping 2>/dev/null || echo "FAILED"
 echo
 
 # 5. Docling Health (ИСПРАВЛЕНО: правильный путь через Nginx)
@@ -474,7 +474,7 @@ docker logs erni-ki-openwebui-1 --since=10m | grep -c "litellm" || echo "No Lite
 
 # Тестирование Redis кэширования
 echo "Testing Redis caching:"
-docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats | grep keyspace_hits
+docker exec erni-ki-redis-1 redis-cli -a "ErniKiRedisSecurePassword2024" info stats | grep keyspace_hits
 
 # Проверка GPU использования Ollama
 echo "Testing Ollama GPU usage:"

@@ -320,10 +320,10 @@ disabled" -**Влияние:**Кэширование не работает оп�
 
 ```bash
 # Проверить Redis ACL
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ACL LIST
+docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL LIST
 
 # Создать пользователя для OpenWebUI если нужно
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ACL SETUSER openwebui on >password ~* +@all
+docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ACL SETUSER openwebui on >password ~* +@all
 
 # Обновить env/openwebui.env с правильными credentials
 ```
