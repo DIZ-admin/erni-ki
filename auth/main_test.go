@@ -6,7 +6,7 @@ import (
 )
 
 func TestValidateSecrets(t *testing.T) {
-	longSecret := "this-is-an-extremely-long-secret-key-with-many-characters-to-" +
+	longSecret := "this-is-an-extremely-long-secret-key-with-many-characters-to-" + // pragma: allowlist secret
 		"ensure-maximum-security-12345678901234567890"
 
 	tests := []struct {
@@ -181,12 +181,12 @@ func TestValidateSecretsIntegration(t *testing.T) {
 
 	t.Run("Integration: Multiple validations in sequence", func(t *testing.T) {
 		secrets := []string{
-			"first-valid-secret-key-with-sufficient-length",
-			"second-valid-secret-key-also-long-enough",
-			"third-valid-secret-key-meets-requirements",
+			"first-valid-secret-key-with-sufficient-length", // pragma: allowlist secret
+			"second-valid-secret-key-also-long-enough",      // pragma: allowlist secret
+			"third-valid-secret-key-meets-requirements",     // pragma: allowlist secret
 		}
 
-		for _, secret := range secrets {
+		for _, secret := range secrets { // pragma: allowlist secret
 			os.Setenv("WEBUI_SECRET_KEY", secret)
 			err := validateSecrets()
 			if err != nil {
@@ -204,7 +204,7 @@ func TestValidateSecretsIntegration(t *testing.T) {
 		}
 
 		// Change to valid secret
-		os.Setenv("WEBUI_SECRET_KEY", "now-this-is-a-valid-secret-key-with-length")
+		os.Setenv("WEBUI_SECRET_KEY", "now-this-is-a-valid-secret-key-with-length") // pragma: allowlist secret
 		err = validateSecrets()
 		if err != nil {
 			t.Errorf("Expected validation to succeed after fixing secret: %v", err)
@@ -214,7 +214,7 @@ func TestValidateSecretsIntegration(t *testing.T) {
 
 func TestValidateSecretsConcurrency(t *testing.T) {
 	// Test that validateSecrets is safe to call concurrently
-	os.Setenv("WEBUI_SECRET_KEY", "concurrent-test-secret-key-with-sufficient-length")
+	os.Setenv("WEBUI_SECRET_KEY", "concurrent-test-secret-key-with-sufficient-length") // pragma: allowlist secret
 	defer os.Unsetenv("WEBUI_SECRET_KEY")
 
 	done := make(chan bool)

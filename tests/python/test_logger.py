@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Tests for scripts/lib/logger.py"""
 
 import logging
@@ -10,12 +9,7 @@ from typing import TYPE_CHECKING
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
 import pytest
-from lib.logger import (
-    ColoredFormatter,
-    JSONFormatter,
-    get_logger,
-    log_to_file,
-)
+from lib.logger import ColoredFormatter, JSONFormatter, get_logger, log_to_file
 
 if TYPE_CHECKING:
     pass
