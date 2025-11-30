@@ -7,12 +7,12 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
 # Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 # Thresholds (milliseconds)
 SEARXNG_THRESHOLD=2000  # 2 seconds
@@ -24,9 +24,6 @@ LOG_FILE="logs/rag-health-$(date +%Y%m%d).log"
 mkdir -p logs
 
 # Logging
-log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
-}
 
 # Service status check
 check_status() {
@@ -64,7 +61,7 @@ echo "========================================="
 echo "Date: $(date '+%Y-%m-%d %H:%M:%S')"
 echo ""
 
-log "=== RAG Health Check Started ==="
+log_info "=== RAG Health Check Started ==="
 
 # 1. Service status
 echo -e "${BLUE}1. RAG SERVICES STATUS${NC}"
@@ -94,10 +91,10 @@ http_code=$(echo "$result" | cut -d'|' -f2)
 printf "Response Time: %d ms " "$duration"
 if [ "$duration" -lt "$SEARXNG_THRESHOLD" ]; then
     echo -e "${GREEN}✅ (< ${SEARXNG_THRESHOLD}ms)${NC}"
-    log "SearXNG: ${duration}ms - OK"
+    log_info "SearXNG: ${duration}ms - OK"
 else
     echo -e "${RED}❌ (>= ${SEARXNG_THRESHOLD}ms)${NC}"
-    log "SearXNG: ${duration}ms - SLOW"
+    log_info "SearXNG: ${duration}ms - SLOW"
     all_healthy=false
 fi
 
@@ -123,10 +120,10 @@ if [ -n "$pg_result" ]; then
 
     if [ "$pg_duration" -lt "$PGVECTOR_THRESHOLD" ]; then
         echo -e "${GREEN}✅ (< ${PGVECTOR_THRESHOLD}ms)${NC}"
-        log "pgvector: ${pg_duration}ms - OK"
+        log_info "pgvector: ${pg_duration}ms - OK"
     else
         echo -e "${RED}❌ (>= ${PGVECTOR_THRESHOLD}ms)${NC}"
-        log "pgvector: ${pg_duration}ms - SLOW"
+        log_info "pgvector: ${pg_duration}ms - SLOW"
         all_healthy=false
     fi
 else
@@ -150,10 +147,10 @@ echo "-----------------------------------"
 ollama_models=$(docker exec erni-ki-ollama-1 ollama list 2>/dev/null | grep "nomic-embed" || echo "")
 if [ -n "$ollama_models" ]; then
     echo -e "${GREEN}✅ nomic-embed-text:latest available${NC}"
-    log "Ollama: nomic-embed model available"
+    log_info "Ollama: nomic-embed model available"
 else
     echo -e "${RED}❌ nomic-embed-text:latest not found${NC}"
-    log "Ollama: nomic-embed model missing"
+    log_info "Ollama: nomic-embed model missing"
     all_healthy=false
 fi
 
@@ -179,10 +176,10 @@ echo "Second Request: ${duration2}ms"
 if [ "$duration2" -lt "$duration1" ]; then
     speedup=$((duration1 / duration2))
     echo -e "${GREEN}✅ Caching works (${speedup}x faster)${NC}"
-    log "Nginx caching: ${speedup}x speedup"
+    log_info "Nginx caching: ${speedup}x speedup"
 else
     echo -e "${YELLOW}⚠️  Caching may not be working${NC}"
-    log "Nginx caching: No speedup detected"
+    log_info "Nginx caching: No speedup detected"
 fi
 
 echo ""
@@ -191,10 +188,10 @@ echo ""
 echo "========================================="
 if $all_healthy; then
     echo -e "${GREEN}✅ RAG SYSTEM HEALTHY${NC}"
-    log "=== RAG Health Check: PASSED ==="
+    log_info "=== RAG Health Check: PASSED ==="
     exit 0
 else
     echo -e "${RED}❌ RAG SYSTEM HAS ISSUES${NC}"
-    log "=== RAG Health Check: FAILED ==="
+    log_info "=== RAG Health Check: FAILED ==="
     exit 1
 fi

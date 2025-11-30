@@ -67,6 +67,9 @@ jobs:
       - name: 🎨 Check Prettier formatting
         run: npm run format:check
 
+      - name: 🐍 Check Python formatting
+        run: python3 -m ruff format --check .
+
       - name: 🖼️ Validate docs visuals/links
         run: python3 scripts/docs/visuals_and_links_check.py
 
@@ -125,6 +128,43 @@ jobs:
             auth/coverage.out
             auth/coverage.html
           retention-days: 30
+
+  # Python Unit Tests
+  test-python:
+    name: 🧪 Test Python
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install pytest pytest-cov flask requests pyyaml pydantic
+
+      - name: 🧪 Run pytest
+        run: |
+          export PYTHONPATH=$PYTHONPATH:.
+          export LOG_DIR=/tmp/logs
+          pytest tests/python/ --cov=. --cov-report=xml
+
+      - name: 📤 Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml
+          flags: python
+          name: python-coverage
+          fail_ci_if_error: false
 
   # JS/TS Unit and E2E Tests
   test-js:
@@ -241,6 +281,28 @@ jobs:
         if: always() && hashFiles('trivy-results.sarif') != ''
         with:
           sarif_file: "trivy-results.sarif"
+
+  shellcheck:
+    name: 🐚 ShellCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6
+
+      - name: 🛠️ Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: 🔍 Run ShellCheck
+        run: |
+          find . -name "*.sh" \
+            -not -path "./node_modules/*" \
+            -not -path "./.git/*" \
+            -not -path "./.venv/*" \
+            -not -path "./venv/*" \
+            -print0 | xargs -0 shellcheck --severity=error
 
   # Documentation Link Check
   link-check:

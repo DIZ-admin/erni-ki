@@ -5,12 +5,12 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # Output colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 # Configuration
 NGINX_SSL_DIR="conf/nginx/ssl"
@@ -21,26 +21,22 @@ echo -e "${BLUE}🚀 ERNI-KI NGINX Production Setup${NC}"
 echo "=================================================="
 
 # Logging helpers
-log() {
-    echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] $1${NC}"
-}
+
 
 warn() {
     echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}"
 }
 
-error() {
-    echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}"
-}
+
 
 # Create backup
 create_backup() {
-    log "Creating backup of current configuration..."
+    log_info "Creating backup of current configuration..."
     mkdir -p "$BACKUP_DIR"
 
     if [ -d "$NGINX_CONF_DIR" ]; then
         cp -r "$NGINX_CONF_DIR" "$BACKUP_DIR/"
-        log "Backup created: $BACKUP_DIR"
+        log_info "Backup created: $BACKUP_DIR"
     else
         warn "Nginx configuration directory not found"
     fi
@@ -48,29 +44,29 @@ create_backup() {
 
 # Generate DH params for better security
 generate_dhparam() {
-    log "Checking DH params..."
+    log_info "Checking DH params..."
 
     if [ ! -f "$NGINX_SSL_DIR/dhparam.pem" ]; then
-        log "Generating DH params (this may take a few minutes)..."
+        log_info "Generating DH params (this may take a few minutes)..."
         mkdir -p "$NGINX_SSL_DIR"
         openssl dhparam -out "$NGINX_SSL_DIR/dhparam.pem" 2048
-        log "DH parameters generated: $NGINX_SSL_DIR/dhparam.pem"
+        log_info "DH parameters generated: $NGINX_SSL_DIR/dhparam.pem"
     else
-        log "DH params already exist"
+        log_info "DH params already exist"
     fi
 }
 
 # Check SSL certificates
 check_ssl_certificates() {
-    log "Checking SSL certificates..."
+    log_info "Checking SSL certificates..."
 
     if [ -f "$NGINX_SSL_DIR/nginx.crt" ] && [ -f "$NGINX_SSL_DIR/nginx.key" ]; then
         # Validate certificate
         if openssl x509 -in "$NGINX_SSL_DIR/nginx.crt" -text -noout > /dev/null 2>&1; then
             local expiry=$(openssl x509 -in "$NGINX_SSL_DIR/nginx.crt" -noout -enddate | cut -d= -f2)
-            log "SSL certificate valid until: $expiry"
+            log_info "SSL certificate valid until: $expiry"
         else
-            error "SSL certificate is corrupted"
+            log_error "SSL certificate is corrupted"
             return 1
         fi
     else
@@ -81,13 +77,13 @@ check_ssl_certificates() {
 
 # Test nginx configuration
 test_nginx_config() {
-    log "Testing nginx configuration..."
+    log_info "Testing nginx configuration..."
 
     if docker exec erni-ki-nginx-1 nginx -t 2>/dev/null; then
-        log "Nginx configuration is valid"
+        log_info "Nginx configuration is valid"
         return 0
     else
-        error "Nginx configuration error"
+        log_error "Nginx configuration error"
         docker exec erni-ki-nginx-1 nginx -t
         return 1
     fi
@@ -95,7 +91,7 @@ test_nginx_config() {
 
 # Apply production configuration
 apply_production_config() {
-    log "Applying production configuration..."
+    log_info "Applying production configuration..."
 
     # Backup current config
     if [ -f "$NGINX_CONF_DIR/nginx.conf" ]; then
@@ -105,28 +101,28 @@ apply_production_config() {
     # Copy new config
     if [ -f "$NGINX_CONF_DIR/nginx-production.conf" ]; then
         cp "$NGINX_CONF_DIR/nginx-production.conf" "$NGINX_CONF_DIR/nginx.conf"
-        log "Production nginx configuration applied"
+        log_info "Production nginx configuration applied"
     else
-        error "nginx-production.conf not found"
+        log_error "nginx-production.conf not found"
         return 1
     fi
 }
 
 # Reload nginx
 reload_nginx() {
-    log "Reloading nginx..."
+    log_info "Reloading nginx..."
 
     if docker exec erni-ki-nginx-1 nginx -s reload 2>/dev/null; then
-        log "Nginx reloaded successfully"
+        log_info "Nginx reloaded successfully"
     else
         warn "Reload failed, attempting container restart..."
         docker-compose restart nginx
         sleep 5
 
         if docker ps --filter "name=nginx" --format "{{.Status}}" | grep -q "Up"; then
-            log "Nginx container restarted successfully"
+            log_info "Nginx container restarted successfully"
         else
-            error "Failed to restart nginx"
+            log_error "Failed to restart nginx"
             return 1
         fi
     fi
@@ -134,7 +130,7 @@ reload_nginx() {
 
 # Performance tests
 performance_test() {
-    log "Running performance checks..."
+    log_info "Running performance checks..."
 
     echo "HTTP test:"
     time curl -s -o /dev/null -w "HTTP %{http_code} - %{time_total}s\n" http://localhost:8080/health
@@ -148,7 +144,7 @@ performance_test() {
 
 # Security headers check
 check_security_headers() {
-    log "Checking security headers..."
+    log_info "Checking security headers..."
 
     echo "HTTPS security headers:"
     curl -s -I -k https://localhost:443/health | grep -E "(Strict-Transport|X-Frame|X-Content|X-XSS|Referrer-Policy|Content-Security-Policy)"
@@ -159,11 +155,11 @@ check_security_headers() {
 
 # Main function
 main() {
-    log "Starting nginx production setup"
+    log_info "Starting nginx production setup"
 
     # Ensure we are in project root
     if [ ! -f "compose.production.yml" ]; then
-        error "Script must be run from ERNI-KI project root"
+        log_error "Script must be run from ERNI-KI project root"
         exit 1
     fi
 
@@ -185,18 +181,18 @@ main() {
             echo ""
             check_security_headers
 
-            log "✅ Nginx production setup completed successfully!"
-            log "📊 Backup saved to: $BACKUP_DIR"
-            log "🔒 DH params: $NGINX_SSL_DIR/dhparam.pem"
-            log "⚡ Performance and security optimized"
+            log_info "✅ Nginx production setup completed successfully!"
+            log_info "📊 Backup saved to: $BACKUP_DIR"
+            log_info "🔒 DH params: $NGINX_SSL_DIR/dhparam.pem"
+            log_info "⚡ Performance and security optimized"
         else
-            error "Configuration error, rolling back..."
+            log_error "Configuration error, rolling back..."
             cp "$BACKUP_DIR/nginx.conf.backup" "$NGINX_CONF_DIR/nginx.conf" 2>/dev/null || true
             docker exec erni-ki-nginx-1 nginx -s reload 2>/dev/null || docker-compose restart nginx
         fi
     else
-        log "Configuration application cancelled by user"
-        log "Manual apply: cp $NGINX_CONF_DIR/nginx-production.conf $NGINX_CONF_DIR/nginx.conf"
+        log_info "Configuration application cancelled by user"
+        log_info "Manual apply: cp $NGINX_CONF_DIR/nginx-production.conf $NGINX_CONF_DIR/nginx.conf"
     fi
 }
 

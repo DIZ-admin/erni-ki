@@ -4,30 +4,27 @@
 
 set -e
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # Color definitions for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+
 PURPLE='\033[0;35m'
-NC='\033[0m'
 
 # Logging functions
-log() { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')]${NC} $1"; }
-success() { echo -e "${GREEN}✅ $1${NC}"; }
-warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
-error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
 step() { echo -e "${PURPLE}🔸 $1${NC}"; }
 
 # Quick dependency check
 quick_check() {
     step "Quick system check..."
 
-    command -v docker >/dev/null 2>&1 || error "Docker is not installed"
-    command -v docker compose >/dev/null 2>&1 || error "Docker Compose is not installed"
-    command -v openssl >/dev/null 2>&1 || error "OpenSSL is not installed"
+    command -v docker >/dev/null 2>&1 || log_error "Docker is not installed"
+    command -v docker compose >/dev/null 2>&1 || log_error "Docker Compose is not installed"
+    command -v openssl >/dev/null 2>&1 || log_error "OpenSSL is not installed"
 
-    success "All dependencies found"
+    log_success "All dependencies found"
 }
 
 # Quick setup
@@ -50,7 +47,7 @@ quick_setup() {
     [ ! -f "conf/nginx/nginx.conf" ] && cp conf/nginx/nginx.example conf/nginx/nginx.conf
     [ ! -f "conf/nginx/conf.d/default.conf" ] && cp conf/nginx/conf.d/default.example conf/nginx/conf.d/default.conf
 
-    success "Basic configuration created"
+    log_success "Basic configuration created"
 }
 
 # Quick secret generation
@@ -70,7 +67,7 @@ quick_secrets() {
     sed -i "s/<domain-name>/localhost/g" conf/nginx/conf.d/default.conf
     sed -i "s|WEBUI_URL=https://<domain-name>|WEBUI_URL=http://localhost|g" env/openwebui.env
 
-    success "Secret keys configured for localhost"
+    log_success "Secret keys configured for localhost"
 }
 
 # Quick service start
@@ -78,26 +75,26 @@ quick_start() {
     step "Starting main services..."
 
     # Check configuration
-    docker compose config >/dev/null || error "Error in Docker Compose configuration"
+    docker compose config >/dev/null || log_error "Error in Docker Compose configuration"
 
     # Start in correct order
-    log "Starting base services..."
+    log_info "Starting base services..."
     docker compose up -d watchtower db redis
     sleep 10
 
-    log "Starting auxiliary services..."
+    log_info "Starting auxiliary services..."
     docker compose up -d auth searxng nginx
     sleep 10
 
-    log "Starting Ollama..."
+    log_info "Starting Ollama..."
     docker compose up -d ollama
     sleep 15
 
-    log "Starting OpenWebUI..."
+    log_info "Starting OpenWebUI..."
     docker compose up -d openwebui
     sleep 10
 
-    success "All services started"
+    log_success "All services started"
 }
 
 # Load base model
@@ -105,7 +102,7 @@ quick_model() {
     step "Loading base model..."
 
     # Wait for Ollama readiness
-    log "Waiting for Ollama to be ready..."
+    log_info "Waiting for Ollama to be ready..."
     for i in {1..30}; do
         if docker compose exec -T ollama ollama list >/dev/null 2>&1; then
             break
@@ -116,11 +113,11 @@ quick_model() {
     echo ""
 
     # Load model
-    log "Loading llama3.2:3b (this may take several minutes)..."
+    log_info "Loading llama3.2:3b (this may take several minutes)..."
     if docker compose exec -T ollama ollama pull llama3.2:3b; then
-        success "Model llama3.2:3b loaded"
+        log_success "Model llama3.2:3b loaded"
     else
-        warning "Failed to load model (can be done later)"
+        log_warn "Failed to load model (can be done later)"
     fi
 }
 
@@ -134,9 +131,9 @@ quick_health() {
     for service in "${services[@]}"; do
         status=$(docker compose ps "$service" --format "{{.State}}" 2>/dev/null || echo "not_found")
         if [ "$status" = "running" ]; then
-            success "$service: running"
+            log_success "$service: running"
         else
-            warning "$service: $status"
+            log_warn "$service: $status"
         fi
     done
 
@@ -144,15 +141,15 @@ quick_health() {
     sleep 5
 
     if curl -sf http://localhost >/dev/null 2>&1; then
-        success "Web interface: available at http://localhost"
+        log_success "Web interface: available at http://localhost"
     else
-        warning "Web interface: not yet available (may need more time)"
+        log_warn "Web interface: not yet available (may need more time)"
     fi
 
     if curl -sf http://localhost:11434/api/version >/dev/null 2>&1; then
-        success "Ollama API: available"
+        log_success "Ollama API: available"
     else
-        warning "Ollama API: not yet available"
+        log_warn "Ollama API: not yet available"
     fi
 }
 
@@ -188,7 +185,7 @@ echo "✅ All services stopped"
 EOF
 
     chmod +x scripts/*.sh
-    success "Quick commands created in scripts/"
+    log_success "Quick commands created in scripts/"
 }
 
 # Show next steps

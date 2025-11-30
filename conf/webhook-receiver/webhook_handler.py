@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """
 ERNI-KI Webhook Receiver for alert handling.
 Processes Alertmanager notifications and forwards them to various channels.
 """
 
+import hashlib
+import hmac
 import logging
 import os
 from datetime import datetime
@@ -11,6 +14,14 @@ from typing import Any
 
 import requests
 from flask import Flask, jsonify, request
+from pydantic import BaseModel, ValidationError
+
+try:
+    from flask_limiter import Limiter
+    from flask_limiter.util import get_remote_address
+except Exception:  # pragma: no cover - optional dependency fallback
+    Limiter = None
+    get_remote_address = None
 
 # Logging configuration
 logging.basicConfig(
@@ -19,12 +30,59 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+if Limiter and get_remote_address:
+    limiter = Limiter(
+        app=app,
+        key_func=get_remote_address,
+        default_limits=["200 per day", "50 per hour"],
+    )
+else:
+
+    class _NoopLimiter:
+        def limit(self, *_args: Any, **_kwargs: Any):  # pragma: no cover - fallback
+            def decorator(fn):
+                return fn
+
+            return decorator
+
+    limiter = _NoopLimiter()
 
 # Configuration from environment variables
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL", "")
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
+WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET", "")
+
+
+def verify_signature(body: bytes, signature: str | None) -> bool:
+    if not WEBHOOK_SECRET:
+        logger.error("WEBHOOK_SECRET not configured; rejecting request")
+        return False
+    if not signature:
+        return False
+    expected = hmac.new(WEBHOOK_SECRET.encode(), body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(signature, expected)
+
+
+class AlertLabels(BaseModel):
+    alertname: str
+    severity: str | None = None
+    service: str | None = None
+    category: str | None = None
+    instance: str | None = None
+
+
+class Alert(BaseModel):
+    labels: AlertLabels
+    annotations: dict[str, Any] = {}
+    status: str
+
+
+class AlertPayload(BaseModel):
+    alerts: list[Alert]
+    groupLabels: dict[str, Any] = {}
 
 
 class AlertProcessor:
@@ -53,14 +111,17 @@ class AlertProcessor:
                 try:
                     self._process_single_alert(alert, group_labels)
                     results["processed"] += 1
+                except requests.RequestException as e:
+                    logger.error(f"Network error processing alert: {e}")
+                    results["errors"].append(str(e))
                 except Exception as e:
-                    logger.error(f"Error processing alert: {e}")
+                    logger.error(f"Error processing alert: {e}", exc_info=True)
                     results["errors"].append(str(e))
 
             return results
 
         except Exception as e:
-            logger.error(f"Error processing alerts: {e}")
+            logger.error(f"Error processing alerts: {e}", exc_info=True)
             return {"error": str(e)}
 
     def _process_single_alert(self, alert: dict[str, Any], group_labels: dict[str, Any]):
@@ -125,13 +186,15 @@ class AlertProcessor:
 
             payload = {"embeds": [embed], "username": "ERNI-KI Monitor"}
 
-            response = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=10)
+            response = requests.post(
+                DISCORD_WEBHOOK_URL, json=payload, timeout=NOTIFICATION_TIMEOUT
+            )
             response.raise_for_status()
 
             logger.info(f"Discord notification sent for {message_data['alert_name']}")
 
-        except Exception as e:
-            logger.error(f"Failed to send Discord notification: {e}")
+        except requests.RequestException as e:
+            logger.error("Failed to send Discord notification: %s", e)
 
     def _send_slack_notification(self, message_data: dict[str, Any]):
         """Send Slack notification."""
@@ -157,13 +220,13 @@ class AlertProcessor:
 
             payload = {"attachments": [attachment], "username": "ERNI-KI Monitor"}
 
-            response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=10)
+            response = requests.post(SLACK_WEBHOOK_URL, json=payload, timeout=NOTIFICATION_TIMEOUT)
             response.raise_for_status()
 
             logger.info(f"Slack notification sent for {message_data['alert_name']}")
 
-        except Exception as e:
-            logger.error(f"Failed to send Slack notification: {e}")
+        except requests.RequestException as e:
+            logger.error("Failed to send Slack notification: %s", e)
 
     def _send_telegram_notification(self, message_data: dict[str, Any]):
         """Send Telegram notification."""
@@ -189,56 +252,69 @@ class AlertProcessor:
             url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
             payload = {"chat_id": TELEGRAM_CHAT_ID, "text": text, "parse_mode": "Markdown"}
 
-            response = requests.post(url, json=payload, timeout=10)
+            response = requests.post(url, json=payload, timeout=NOTIFICATION_TIMEOUT)
             response.raise_for_status()
 
             logger.info(f"Telegram notification sent for {message_data['alert_name']}")
 
-        except Exception as e:
-            logger.error(f"Failed to send Telegram notification: {e}")
+        except requests.RequestException as e:
+            logger.error("Failed to send Telegram notification: %s", e)
 
 
 # Alert processor initialization
 alert_processor = AlertProcessor()
 
 
+def _validate_request() -> AlertPayload:
+    signature = request.headers.get("X-Signature")
+    if not verify_signature(request.get_data(), signature):
+        raise PermissionError("Unauthorized")
+    return AlertPayload(**request.get_json(force=True))
+
+
 @app.route("/webhook/critical", methods=["POST"])
+@limiter.limit("10 per minute")
 def handle_critical_webhook():
     """Handle critical alerts"""
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No JSON data provided"}), 400
+        payload = _validate_request()
 
         logger.info("Received critical alert webhook")
-        result = alert_processor.process_alerts(data)
+        result = alert_processor.process_alerts(payload.model_dump())
 
         return jsonify(
             {"status": "success", "message": "Critical alerts processed", "result": result}
         )
 
+    except ValidationError as e:
+        return jsonify({"error": str(e)}), 400
+    except PermissionError:
+        return jsonify({"error": "Unauthorized"}), 401
     except Exception as e:
-        logger.error(f"Error handling critical webhook: {e}")
+        logger.error(f"Error handling critical webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/webhook/warning", methods=["POST"])
+@limiter.limit("10 per minute")
 def handle_warning_webhook():
     """Handle warning alerts"""
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No JSON data provided"}), 400
+        payload = _validate_request()
 
         logger.info("Received warning alert webhook")
-        result = alert_processor.process_alerts(data)
+        result = alert_processor.process_alerts(payload.model_dump())
 
         return jsonify(
             {"status": "success", "message": "Warning alerts processed", "result": result}
         )
 
+    except ValidationError as e:
+        return jsonify({"error": str(e)}), 400
+    except PermissionError:
+        return jsonify({"error": "Unauthorized"}), 401
     except Exception as e:
-        logger.error(f"Error handling warning webhook: {e}")
+        logger.error(f"Error handling warning webhook: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 

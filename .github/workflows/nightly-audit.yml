@@ -1,0 +1,61 @@
+name: 🌙 Nightly Audit
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Run at 2 AM UTC every day
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  audit:
+    name: 🕵️ Nightly Documentation Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs-material mkdocs-static-i18n mkdocs-awesome-pages-plugin mkdocs-include-markdown-plugin mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin
+          pip install requests pyyaml
+
+      - name: 🧩 Validate docs metadata
+        run: python scripts/docs/validate_metadata.py
+
+      - name: 🏗️ Build MkDocs site (Strict Mode)
+        run: mkdocs build --strict
+
+      - name: 🔗 Check links (Lychee)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --max-redirects 5
+            --exclude-link-local
+            --exclude 'localhost'
+            --exclude '127\.0\.0\.1'
+            --exclude 'example\.com'
+            'docs/**/*.md'
+            'README.md'
+          fail: true
+
+      - name: 📢 Report Failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Nightly Audit Failed',
+              body: 'The nightly documentation audit failed. Please check the [action logs](' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId + ') for details.'
+            })

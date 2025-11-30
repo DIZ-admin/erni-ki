@@ -11,13 +11,12 @@ Core operational documentation and runbooks for ERNI-KI.
 
 ## Available Documentation
 
-- [Overview](README.md)
-- [Operations Handbook](operations-handbook.md)
-- [Admin Guide](admin-guide.md)
-- [Status Page](status-page.md)
-- [Runbooks Summary](runbooks-summary.md)
+- [Overview](index.md) - Project overview
+- [Operations Handbook](operations-handbook.md) - Standard operational
+  procedures
 
 ## Note
 
-The Russian version is the primary source. For discrepancies, refer to the
-[Russian version](../../../operations/core/README.md).
+This is a partial English translation. The Russian version is the primary source
+with complete documentation. For missing sections, refer to the
+[Russian version](../../../operations/core/index.md).

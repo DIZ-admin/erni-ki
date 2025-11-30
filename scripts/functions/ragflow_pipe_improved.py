@@ -270,8 +270,7 @@ class Pipe:
             return {"sid": m.group(1), "turns": m.group(2)}
         # Fallback: visible footer form (debug)
         pattern2 = (
-            rf"{re.escape(key)}\s*=\s*([a-zA-Z0-9\-]+)"
-            rf"\s*;\s*{re.escape(tkey)}\s*=\s*(\d+)"
+            rf"{re.escape(key)}\s*=\s*([a-zA-Z0-9\-]+)" rf"\s*;\s*{re.escape(tkey)}\s*=\s*(\d+)"
         )
         m2 = re.search(pattern2, content)
         if m2:

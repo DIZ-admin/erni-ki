@@ -6,6 +6,11 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
@@ -128,7 +133,7 @@ EOF
     add_recommendations "$report_file"
 
     echo "✅ Daily report created: $report_file"
-    cron_status "logging_reports_daily" success "Report $report_file"
+    cron_status "logging_reports_daily" log_success "Report $report_file"
 }
 
 generate_weekly_report() {
@@ -159,7 +164,7 @@ EOF
     add_weekly_recommendations "$report_file"
 
     echo "✅ Weekly report created: $report_file"
-    cron_status "logging_reports_weekly" success "Report $report_file"
+    cron_status "logging_reports_weekly" log_success "Report $report_file"
 }
 
 add_recommendations() {

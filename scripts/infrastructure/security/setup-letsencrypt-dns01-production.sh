@@ -9,12 +9,12 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 CYAN='\033[0;36m'
-NC='\033[0m'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
@@ -30,9 +30,6 @@ CERT_KEYLENGTH=2048
 
 mkdir -p "$(dirname "$LOG_FILE")"
 
-log()      { echo -e "${BLUE}[$(date +'%Y-%m-%d %H:%M:%S')] INFO: $1${NC}" | tee -a "$LOG_FILE"; }
-success()  { echo -e "${GREEN}[$(date +'%Y-%m-%d %H:%M:%S')] SUCCESS: $1${NC}" | tee -a "$LOG_FILE"; }
-warning()  { echo -e "${YELLOW}[$(date +'%Y-%m-%d %H:%M:%S')] WARNING: $1${NC}" | tee -a "$LOG_FILE"; }
 error_out(){ echo -e "${RED}[$(date +'%Y-%m-%d %H:%M:%S')] ERROR: $1${NC}" | tee -a "$LOG_FILE"; exit 1; }
 
 print_header() {
@@ -44,84 +41,84 @@ print_header() {
 }
 
 check_dependencies() {
-    log "Checking dependencies..."
+    log_info "Checking dependencies..."
     local deps=(docker curl openssl dig)
     for dep in "${deps[@]}"; do
         command -v "$dep" >/dev/null 2>&1 || error_out "$dep not installed"
     done
     [[ -d "$SSL_DIR" ]] || error_out "SSL directory not found: $SSL_DIR"
-    success "Dependencies satisfied"
+    log_success "Dependencies satisfied"
 }
 
 check_docker_compose() {
-    log "Checking Docker Compose..."
+    log_info "Checking Docker Compose..."
     (cd "$PROJECT_ROOT" && docker compose version >/dev/null 2>&1) || error_out "Docker Compose unavailable"
-    success "Docker Compose OK"
+    log_success "Docker Compose OK"
 }
 
 request_cloudflare_token() {
-    log "Requesting Cloudflare API token..."
+    log_info "Requesting Cloudflare API token..."
     echo -e "${YELLOW}Follow https://dash.cloudflare.com/profile/api-tokens → Create Token → Edit zone DNS.${NC}"
     echo -e "${GREEN}Paste Cloudflare API Token (input hidden):${NC}"
     read -s CF_Token
     echo
     [[ -n "$CF_Token" ]] || error_out "API token cannot be empty"
     export CF_Token CF_Account_ID=""
-    success "Cloudflare token captured"
+    log_success "Cloudflare token captured"
 }
 
 verify_cloudflare_token() {
-    log "Validating Cloudflare token..."
+    log_info "Validating Cloudflare token..."
     local response
     response=$(curl -s -H "Authorization: Bearer $CF_Token" -H "Content-Type: application/json" \
         "https://api.cloudflare.com/client/v4/user/tokens/verify")
     echo "$response" | grep -q '"success":true' || error_out "Cloudflare token invalid"
-    success "Cloudflare token verified"
+    log_success "Cloudflare token verified"
 }
 
 create_backrest_backup() {
-    log "Creating backrest backup..."
+    log_info "Creating backrest backup..."
     local backup_tag="ssl-letsencrypt-dns01-$(date +%Y%m%d-%H%M%S)"
     if (cd "$PROJECT_ROOT" && docker compose exec -T backrest backrest backup --tag "$backup_tag" >>"$LOG_FILE" 2>&1); then
-        success "Backrest backup created (tag: $backup_tag)"
+        log_success "Backrest backup created (tag: $backup_tag)"
     else
-        warning "Backrest unavailable, falling back to local backup"
+        log_warn "Backrest unavailable, falling back to local backup"
         create_local_backup
     fi
 }
 
 create_local_backup() {
-    log "Creating local backup..."
+    log_info "Creating local backup..."
     mkdir -p "$BACKUP_DIR"
     if ls "$SSL_DIR"/nginx.crt >/dev/null 2>&1; then
         cp "$SSL_DIR"/*.crt "$BACKUP_DIR"/ 2>/dev/null || true
         cp "$SSL_DIR"/*.key "$BACKUP_DIR"/ 2>/dev/null || true
-        success "Local backup stored at $BACKUP_DIR"
+        log_success "Local backup stored at $BACKUP_DIR"
     else
-        warning "No existing certificates to back up"
+        log_warn "No existing certificates to back up"
     fi
 }
 
 install_acme_sh() {
-    log "Installing/Updating acme.sh..."
+    log_info "Installing/Updating acme.sh..."
     if [[ ! -f "$ACME_HOME/acme.sh" ]]; then
         curl -s https://get.acme.sh | sh -s email="$EMAIL" >>"$LOG_FILE" 2>&1 || error_out "acme.sh install failed"
     fi
     "$ACME_HOME/acme.sh" --upgrade >>"$LOG_FILE" 2>&1 || true
-    success "acme.sh ready"
+    log_success "acme.sh ready"
 }
 
 issue_certificate() {
-    log "Requesting certificate via DNS-01..."
+    log_info "Requesting certificate via DNS-01..."
     "$ACME_HOME/acme.sh" --set-default-ca --server letsencrypt >>"$LOG_FILE" 2>&1
     "$ACME_HOME/acme.sh" --issue --dns dns_cf -d "$DOMAIN" -d "$DOMAIN_WWW" \
         --email "$EMAIL" --keylength "$CERT_KEYLENGTH" --force >>"$LOG_FILE" 2>&1 \
         || error_out "Certificate issuance failed"
-    success "Certificate issued"
+    log_success "Certificate issued"
 }
 
 install_certificate() {
-    log "Installing certificate into $SSL_DIR..."
+    log_info "Installing certificate into $SSL_DIR..."
     local temp_dir="/tmp/ssl-install-$(date +%s)"
     mkdir -p "$temp_dir"
     "$ACME_HOME/acme.sh" --install-cert -d "$DOMAIN" \
@@ -134,33 +131,33 @@ install_certificate() {
     chmod 600 "$SSL_DIR"/*.key
     chmod 644 "$SSL_DIR"/*.crt
     rm -rf "$temp_dir"
-    success "Certificate installed"
+    log_success "Certificate installed"
 }
 
 verify_certificate() {
-    log "Validating deployed certificate..."
+    log_info "Validating deployed certificate..."
     [[ -f "$SSL_DIR/nginx.crt" ]] || error_out "nginx.crt missing"
     local expiry=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -enddate | cut -d= -f2)
     local subject=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -subject | sed 's/.*CN=//')
     local issuer=$(openssl x509 -in "$SSL_DIR/nginx.crt" -noout -issuer | sed 's/.*CN=//')
-    log "Expires: $expiry"
-    log "Subject: $subject"
-    log "Issuer: $issuer"
+    log_info "Expires: $expiry"
+    log_info "Subject: $subject"
+    log_info "Issuer: $issuer"
 }
 
 reload_nginx() {
-    log "Reloading nginx..."
+    log_info "Reloading nginx..."
     (cd "$PROJECT_ROOT" && docker compose exec -T nginx nginx -t) || error_out "nginx config invalid"
     if (cd "$PROJECT_ROOT" && docker compose exec -T nginx nginx -s reload); then
-        success "nginx reloaded"
+        log_success "nginx reloaded"
     else
-        warning "Reload failed, restarting container"
+        log_warn "Reload failed, restarting container"
         (cd "$PROJECT_ROOT" && docker compose restart nginx) || error_out "Unable to restart nginx"
     fi
 }
 
 configure_renewal_hook() {
-    log "Configuring renewal hook..."
+    log_info "Configuring renewal hook..."
     local hook_script="$ACME_HOME/nginx-reload-hook.sh"
     cat > "$hook_script" << 'EOF'
 #!/bin/bash
@@ -181,7 +178,7 @@ EOF
         --cert-file "$SSL_DIR/nginx.crt" \
         --ca-file "$SSL_DIR/nginx-ca.crt" \
         --reloadcmd "$hook_script" >>"$LOG_FILE" 2>&1
-    success "Renewal hook configured"
+    log_success "Renewal hook configured"
 }
 
 main() {
@@ -198,13 +195,13 @@ main() {
     reload_nginx
     configure_renewal_hook
 
-    success "Let's Encrypt DNS-01 setup completed!"
+    log_success "Let's Encrypt DNS-01 setup completed!"
     echo "Next steps:"
     echo "  1. Test HTTPS access: https://$DOMAIN"
     echo "  2. Run SSL Labs scan: https://www.ssllabs.com/ssltest/"
     echo "  3. Certificates auto-renew via acme.sh + Cloudflare"
-    log "Backup directory: $BACKUP_DIR"
-    log "Full log: $LOG_FILE"
+    log_info "Backup directory: $BACKUP_DIR"
+    log_info "Full log: $LOG_FILE"
 }
 
 main "$@"

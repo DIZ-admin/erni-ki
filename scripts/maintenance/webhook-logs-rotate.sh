@@ -4,6 +4,11 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../lib/common.sh
+source "${SCRIPT_DIR}/../lib/common.sh"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
@@ -14,12 +19,8 @@ ARCHIVE_RETENTION_DAYS="${WEBHOOK_LOG_ARCHIVE_RETENTION_DAYS:-30}"
 
 mkdir -p "$ARCHIVE_DIR"
 
-log() {
-  printf "[%s] %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$1"
-}
-
 if [[ ! -d "$WEBHOOK_DIR" ]]; then
-  log "Directory $WEBHOOK_DIR not found"
+  log_info "Directory $WEBHOOK_DIR not found"
   exit 0
 fi
 
@@ -49,7 +50,7 @@ for day_dir in "${ARCHIVE_DIR}"/*; do
   archive_file="${ARCHIVE_DIR}/alert-${day}.tar.gz"
   if [[ -n "$(ls -A "$day_dir")" ]]; then
     tar -czf "$archive_file" -C "$day_dir" . && rm -rf "$day_dir"
-    log "Archived webhooks for ${day} → $(basename "$archive_file")"
+    log_info "Archived webhooks for ${day} → $(basename "$archive_file")"
   else
     rmdir "$day_dir"
   fi
@@ -59,4 +60,4 @@ shopt -u nullglob
 # Remove old archives
 find "$ARCHIVE_DIR" -maxdepth 1 -type f -name 'alert-*.tar.gz' -mtime +"$ARCHIVE_RETENTION_DAYS" -print -delete
 
-log "Cleanup complete"
+log_info "Cleanup complete"

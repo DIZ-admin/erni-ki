@@ -5,33 +5,16 @@
 
 set -euo pipefail
 
+# Source common library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../../lib/common.sh
+source "${SCRIPT_DIR}/../../lib/common.sh"
+
 # Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Logging functions
-log() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
 
 # Check service availability
 check_services() {
-    log "Checking service status..."
+    log_info "Checking service status..."
 
     echo "=== Docker Compose Services ==="
     docker-compose ps openwebui searxng nginx cloudflared auth
@@ -40,15 +23,15 @@ check_services() {
 
 # Test SearXNG directly
 test_searxng_direct() {
-    log "Testing SearXNG directly..."
+    log_info "Testing SearXNG directly..."
 
     echo "=== Direct connection to SearXNG ==="
 
     # Test via localhost:8081
     if curl -s -f http://localhost:8081/ >/dev/null; then
-        success "SearXNG available via localhost:8081"
+        log_success "SearXNG available via localhost:8081"
     else
-        error "SearXNG unavailable via localhost:8081"
+        log_error "SearXNG unavailable via localhost:8081"
     fi
 
     # Test search via localhost
@@ -60,10 +43,10 @@ test_searxng_direct() {
         http://localhost:8081/search)
 
     if echo "$search_response" | jq . >/dev/null 2>&1; then
-        success "Search via localhost returns valid JSON"
+        log_success "Search via localhost returns valid JSON"
         echo "Number of results: $(echo "$search_response" | jq '.results | length')"
     else
-        warning "Search via localhost does not return valid JSON"
+        log_warn "Search via localhost does not return valid JSON"
         echo "Response: ${search_response:0:200}..."
     fi
     echo ""
@@ -71,31 +54,31 @@ test_searxng_direct() {
 
 # Test via Nginx proxy
 test_nginx_proxy() {
-    log "Testing via Nginx proxy..."
+    log_info "Testing via Nginx proxy..."
 
     echo "=== Test via Nginx (localhost) ==="
 
     # Test availability via Nginx
     if curl -s -f -H "Host: localhost" http://localhost/searxng/ >/dev/null 2>&1; then
-        success "SearXNG available via Nginx proxy (localhost)"
+        log_success "SearXNG available via Nginx proxy (localhost)"
     else
-        warning "SearXNG unavailable via Nginx proxy (localhost) - authentication might be required"
+        log_warn "SearXNG unavailable via Nginx proxy (localhost) - authentication might be required"
     fi
 
     echo "=== Test via Nginx (diz.zone) ==="
 
     # Test via diz.zone (if available)
     if curl -s -f -k https://diz.zone/searxng/ >/dev/null 2>&1; then
-        success "SearXNG available via diz.zone"
+        log_success "SearXNG available via diz.zone"
     else
-        warning "SearXNG unavailable via diz.zone - authentication might be required"
+        log_warn "SearXNG unavailable via diz.zone - authentication might be required"
     fi
     echo ""
 }
 
 # Analyze OpenWebUI configuration
 analyze_openwebui_config() {
-    log "Analyzing OpenWebUI configuration..."
+    log_info "Analyzing OpenWebUI configuration..."
 
     echo "=== OpenWebUI Environment Variables ==="
     docker-compose exec -T openwebui env | grep -E "(SEARXNG|WEB_SEARCH|WEBUI_URL)" || echo "Variables not found"
@@ -105,9 +88,9 @@ analyze_openwebui_config() {
 
     # Test connection from inside OpenWebUI container
     if docker-compose exec -T openwebui curl -s -f http://searxng:8080/ >/dev/null; then
-        success "OpenWebUI can connect to SearXNG directly"
+        log_success "OpenWebUI can connect to SearXNG directly"
     else
-        error "OpenWebUI cannot connect to SearXNG"
+        log_error "OpenWebUI cannot connect to SearXNG"
     fi
 
     # Test search from inside OpenWebUI
@@ -119,9 +102,9 @@ analyze_openwebui_config() {
         http://searxng:8080/search)
 
     if echo "$internal_search" | jq . >/dev/null 2>&1; then
-        success "Internal search OpenWebUI -> SearXNG works"
+        log_success "Internal search OpenWebUI -> SearXNG works"
     else
-        warning "Internal search OpenWebUI -> SearXNG failed"
+        log_warn "Internal search OpenWebUI -> SearXNG failed"
         echo "Response: ${internal_search:0:200}..."
     fi
     echo ""
@@ -129,13 +112,13 @@ analyze_openwebui_config() {
 
 # Check Nginx configuration
 check_nginx_config() {
-    log "Checking Nginx configuration..."
+    log_info "Checking Nginx configuration..."
 
     echo "=== Nginx Configuration Test ==="
     if docker-compose exec -T nginx nginx -t; then
-        success "Nginx configuration is valid"
+        log_success "Nginx configuration is valid"
     else
-        error "Error in Nginx configuration"
+        log_error "Error in Nginx configuration"
     fi
 
     echo ""
@@ -147,7 +130,7 @@ check_nginx_config() {
 
 # Check logs
 check_logs() {
-    log "Analyzing service logs..."
+    log_info "Analyzing service logs..."
 
     echo "=== OpenWebUI Logs (last 20 lines) ==="
     docker-compose logs --tail=20 openwebui | grep -E "(search|searxng|error)" || echo "No relevant entries found"
@@ -168,7 +151,7 @@ check_logs() {
 
 # Test HTTP headers
 test_http_headers() {
-    log "Analyzing HTTP headers..."
+    log_info "Analyzing HTTP headers..."
 
     echo "=== Headers localhost:8081 (direct connection) ==="
     curl -s -I http://localhost:8081/ | head -10
@@ -185,7 +168,7 @@ test_http_headers() {
 
 # Simulate web search request
 simulate_websearch() {
-    log "Simulating web search request..."
+    log_info "Simulating web search request..."
 
     echo "=== Simulating request via localhost ==="
     local localhost_result
@@ -198,9 +181,9 @@ simulate_websearch() {
     echo "First 200 chars: ${localhost_result:0:200}"
 
     if echo "$localhost_result" | jq . >/dev/null 2>&1; then
-        success "Localhost returns valid JSON"
+        log_success "Localhost returns valid JSON"
     else
-        warning "Localhost does not return valid JSON"
+        log_warn "Localhost does not return valid JSON"
     fi
 
     echo ""
@@ -212,7 +195,7 @@ simulate_websearch() {
 
 # Check network connections
 check_network() {
-    log "Checking network connections..."
+    log_info "Checking network connections..."
 
     echo "=== Docker Networks ==="
     docker network ls | grep erni-ki || echo "Networks not found"
@@ -231,7 +214,7 @@ check_network() {
 
 # Generate report
 generate_report() {
-    log "Generating diagnosis report..."
+    log_info "Generating diagnosis report..."
 
     local report_file="websearch_diagnosis_$(date +%Y%m%d_%H%M%S).txt"
 
@@ -273,16 +256,16 @@ generate_report() {
 
     } > "$report_file"
 
-    success "Report saved to: $report_file"
+    log_success "Report saved to: $report_file"
 }
 
 # Main function
 main() {
-    log "Starting web search issue diagnosis..."
+    log_info "Starting web search issue diagnosis..."
 
     # Check if we are in project root
     if [ ! -f "compose.yml" ] && [ ! -f "docker-compose.yml" ]; then
-        error "compose.yml not found. Run script from project root."
+        log_error "compose.yml not found. Run script from project root."
         exit 1
     fi
 
@@ -299,12 +282,12 @@ main() {
 
     echo ""
     echo ""
-    log "Diagnosis completed. Main issues:"
+    log_info "Diagnosis completed. Main issues:"
     echo "1. /searxng route in Nginx requires authentication"
     echo "2. OpenWebUI makes internal API requests that are blocked"
     echo "3. Need to create a separate route for API without authentication"
     echo ""
-    warning "Recommendation: Run ./scripts/fix-websearch-issue.sh to fix"
+    log_warn "Recommendation: Run ./scripts/fix-websearch-issue.sh to fix"
 }
 
 # Run script

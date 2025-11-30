@@ -1,36 +1,35 @@
 ---
 language: ru
-translation_status: archived
+translation_status: original
 doc_version: '2025.11'
+last_updated: '2025-11-29'
 ---
 
-# Архив аудитов ERNI-KI
+# Архив аудитов
 
-| Файл                                              | Фокус / ключевые выводы                                               |
-| ------------------------------------------------- | --------------------------------------------------------------------- |
-| `documentation-audit-2025-10-24.md`               | Проверка полноты документации, выявлены дубли и пробелы в runbook’ах. |
-| `documentation-cleanup-audit-2025-10-24.md`       | План очистки/структурирования docs, внедрение MkDocs best practices.  |
-| `documentation-cleanup-summary-2025-10-24.md`     | Результат cleanup: 82 файла, упорядочены гайды/handbooks.             |
-| `documentation-audit.md`                          | Базовый аудит документации (сводка без дат), стартовая точка.         |
-| `best-practices-audit-2025-10-20.md`              | Проверка DevOps/MLOps практик (backups, observability, security).     |
-| `comprehensive-audit-2025-10-14.md`               | Полный аудит инфраструктуры и процессов (pre-prod).                   |
-| `comprehensive-project-audit-2025-10-17.md`       | Часть 1 проектного аудита: архитектура, observability, runbooks.      |
-| `comprehensive-project-audit-2025-10-17-part2.md` | Часть 2 проектного аудита: интеграции, SRE процессы.                  |
-| `monitoring-audit.md`                             | Чек наблюдаемости, покрытие метрик/алертов/дашбордов.                 |
-| `ci-health.md`                                    | Проверка CI: линтеры, тесты, покрытие хуков и статуса workflow.       |
-| `code-audit-2025-11-24.md`                        | Аудит кодовой базы: структура, качество, покрытие тестами.            |
-| `documentation-refactoring-audit-2025-11-24.md`   | Быстрый аудит refactoring-плана, выравнивание метаданных.             |
-| `comprehensive-documentation-audit-2025-11-24.md` | Полный аудит документации: метаданные, переводы, TOC, битые ссылки.   |
-| `comprehensive-documentation-audit-2025-11-25.md` | Обновлённый аудит документации: фиксация прогресса и новых пробелов.  |
-| `configuration-audit-report-2025-11-25.md`        | Конфигурационный аудит: параметры окружений, конфигов и секретов.     |
-| `service-version-audit-2025-11-25.md`             | Базовый аудит версий сервисов и целевых обновлений.                   |
-| `service-version-matrix-2025-11-25.md`            | Матрица версий (25.11.2025): текущие/доступные версии, разрывы.       |
-| `service-version-matrix-2025-11-28.md`            | Матрица версий (28.11.2025): обновленные цели после Cloudflared.      |
-| `documentation-cleanup-2025-11-28.md`             | Очистка/структуризация документации после реорганизации.              |
-| `code-audit-2025-11-28.md`                        | Комплексный аудит кода: Go/Python/TS/Shell, логирование, тесты.       |
-| `scripts-reorganization-2025-11-28.md`            | План реорганизации скриптов и стандартизации `set -euo pipefail`.     |
-| `index.md`                                        | Оглавление архива аудитов и навигация по отчётам.                     |
+Полная навигация доступна в `docs/archive/audits/index.md`. Этот файл
+сохраняется для совместимости чеков и указывает на каталог с историческими
+аудитами.
 
-> Используйте эти файлы при оценке регресса документации и подготовке новых
-> аудитов. Ссылки в operations-handbook.md должны вести на краткое summary и
-> конкретный отчёт при необходимости детализации.
+Содержимое каталога:
+
+- best-practices-audit-2025-10-20.md
+- ci-health.md
+- code-audit-2025-11-24.md
+- code-audit-2025-11-28.md
+- comprehensive-audit-2025-10-14.md
+- comprehensive-documentation-audit-2025-11-24.md
+- comprehensive-documentation-audit-2025-11-25.md
+- comprehensive-project-audit-2025-10-17.md
+- configuration-audit-report-2025-11-25.md
+- documentation-audit-2025-10-24.md
+- documentation-audit.md
+- documentation-cleanup-2025-11-28.md
+- documentation-cleanup-audit-2025-10-24.md
+- documentation-cleanup-summary-2025-10-24.md
+- documentation-refactoring-audit-2025-11-24.md
+- monitoring-audit.md
+- scripts-reorganization-2025-11-28.md
+- service-version-audit-2025-11-25.md
+- service-version-matrix-2025-11-25.md
+- service-version-matrix-2025-11-28.md
