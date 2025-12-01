@@ -126,11 +126,23 @@ services:
     env_file: env/redis.env
     # Using config file instead of CLI parameters
     # Updated: 2025-10-02 for support of active defragmentation
-    command:
-      [
+    command: [
         "/bin/sh",
         "-c",
-        'redis-server /usr/local/etc/redis/redis.conf --requirepass "$(cat /run/secrets/redis_password)"',
+        'set -euo pipefail; \\
+        SECRET="$(cat /run/secrets/redis_password)"; \\
+        CONF_TPL=/usr/local/etc/redis/redis.conf; \\
+        CONF_OUT=/tmp/redis.conf; \\
+        ACL_TPL=/usr/local/etc/redis/users.acl.template; \\
+        ACL_OUT=/tmp/redis-users.acl; \\
+        sed "s|__LOAD_FROM_DOCKER_SECRET__|${SECRET}|g" "$CONF_TPL" > "$CONF_OUT"; \\
+        if [ -f "$ACL_TPL" ]; then \\
+        sed "s|__LOAD_FROM_DOCKER_SECRET__|${SECRET}|g" "$ACL_TPL" > "$ACL_OUT"; \\
+        chmod 600 "$ACL_OUT"; \\
+        exec redis-server "$CONF_OUT" --aclfile "$ACL_OUT"; \\
+        else \\
+        exec redis-server "$CONF_OUT"; \\
+        fi',
       ]
     healthcheck:
       test: ["CMD-SHELL", 'redis-cli -a "$(cat /run/secrets/redis_password)" ping | grep PONG']
@@ -144,6 +156,7 @@ services:
     volumes:
       - ./data/redis:/data
       - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./conf/redis/users.acl:/usr/local/etc/redis/users.acl.template:ro
     secrets:
       - redis_password
     # Using standard Docker bridge network
