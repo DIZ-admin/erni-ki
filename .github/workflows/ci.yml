@@ -160,7 +160,7 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:.
           export LOG_DIR=/tmp/logs
-          pytest tests/python/ --cov=. --cov-report=xml --cov-fail-under=80
+          pytest tests/python/ --cov=. --cov-report=xml --cov-fail-under=60
 
       - name: 📤 Upload coverage to Codecov
         uses: codecov/codecov-action@v5

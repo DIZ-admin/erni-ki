@@ -767,6 +767,7 @@ def test_notification_timeout_applied_to_discord(monkeypatch):
     monkeypatch.setattr(requests, "post", mock_post)
     monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.com/webhook/test")
     monkeypatch.setenv("NOTIFICATION_TIMEOUT", "15")
+    monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "x" * 16)
 
     # Reimport to pick up new env var
     import sys

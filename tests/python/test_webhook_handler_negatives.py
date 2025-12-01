@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import importlib.util
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_webhook_handler():
+    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = "x" * 32  # noqa: S105
     module_path = ROOT / "conf" / "webhook-receiver" / "webhook_handler.py"
     spec = importlib.util.spec_from_file_location("webhook_handler_neg", module_path)
     if spec is None or spec.loader is None:
@@ -28,6 +30,7 @@ def test_verify_signature_valid():
     wh = load_webhook_handler()
     body = b"{}"
     secret = "test-secret"  # noqa: S105
+    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
     wh.WEBHOOK_SECRET = secret
     sig = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
     assert wh.verify_signature(body, sig) is True
@@ -36,7 +39,9 @@ def test_verify_signature_valid():
 def test_verify_signature_invalid():
     wh = load_webhook_handler()
     body = b"{}"
-    wh.WEBHOOK_SECRET = "secret"  # noqa: S105
+    secret = "another-secret"  # noqa: S105
+    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
+    wh.WEBHOOK_SECRET = secret
     assert wh.verify_signature(body, "bad") is False
 
 

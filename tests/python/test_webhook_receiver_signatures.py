@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import importlib.util
+import os
 import sys
 from pathlib import Path
 from unittest.mock import patch
@@ -14,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_webhook_receiver():
+    os.environ.setdefault("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-1234567890")  # noqa: S105
     module_path = ROOT / "conf" / "webhook-receiver" / "webhook-receiver.py"
     spec = importlib.util.spec_from_file_location("webhook_receiver_neg", module_path)
     if spec is None or spec.loader is None:
@@ -28,6 +30,7 @@ def test_verify_signature_valid():
     wh = load_webhook_receiver()
     body = b"{}"
     secret = "secret"  # noqa: S105
+    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
     wh.WEBHOOK_SECRET = secret
     sig = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
     assert wh.verify_signature(body, sig) is True
@@ -36,6 +39,7 @@ def test_verify_signature_valid():
 def test_verify_signature_invalid():
     wh = load_webhook_receiver()
     body = b"{}"
+    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = "secret"  # noqa: S105
     wh.WEBHOOK_SECRET = "secret"  # noqa: S105
     assert wh.verify_signature(body, "bad") is False
 
@@ -62,6 +66,7 @@ def test_webhook_critical_with_valid_signature():
     body = {"alerts": [{"labels": {"alertname": "X"}, "status": "firing"}]}
     raw = wh.json.dumps(body).encode()
     secret = "secret"  # noqa: S105
+    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
     wh.WEBHOOK_SECRET = secret
     sig = hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
     with (

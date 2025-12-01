@@ -14,7 +14,7 @@ from prometheus_client import (
     Gauge,
     Histogram,
     generate_latest,
-)
+)  # type: ignore[reportMissingImports]
 
 # Configuration constants
 DEFAULT_RAG_TEST_INTERVAL = 30.0  # seconds
