@@ -14,6 +14,12 @@ edit_uri: "edit/main/docs/"
 # Configuration
 docs_dir: "docs"
 site_dir: "site"
+exclude_docs: |
+  archive/README.md
+  archive/audits/README.md
+  archive/diagnostics/README.md
+  archive/incidents/README.md
+  data/README.md
 
 # Theme
 theme:
@@ -108,6 +114,7 @@ plugins:
             "Academy KI": "Academy KI"
             "Open WebUI Basics": "Open WebUI Basics"
             "Prompting 101": "Prompting 101"
+            "Context Engineering 101": "Context Engineering 101"
             "HowTo": "HowTo"
             "Create JIRA Ticket": "Create JIRA Ticket"
             "Write Customer Email": "Write Customer Email"
@@ -170,6 +177,7 @@ plugins:
             "GitHub Environments": "GitHub environments"
             "MCPO Integration": "MCPO integration"
             "Pre-commit Hooks": "Pre-commit hooks"
+            "Code Standards": "Code standards"
             "Documentation Refactoring Plan": "Documentation refactoring plan"
             "Status Snippet": "Status snippet"
             VERSION: VERSION
@@ -206,6 +214,7 @@ plugins:
             "Academy KI": "Academy KI"
             "Open WebUI Basics": "Open WebUI Grundlagen"
             "Prompting 101": "Prompting 101"
+            "Context Engineering 101": "Context Engineering 101"
             "HowTo": "HowTo"
             "Create JIRA Ticket": "JIRA-Ticket erstellen"
             "Write Customer Email": "Kunden-E-Mail schreiben"
@@ -268,6 +277,7 @@ plugins:
             "GitHub Environments": "GitHub-Umgebungen"
             "MCPO Integration": "MCPO-Integration"
             "Pre-commit Hooks": "Pre-commit-Hooks"
+            "Code Standards": "Code-Standards"
             "Documentation Refactoring Plan": "Dokumentations-Refactoring-Plan"
             "Status Snippet": "Status-Snippet"
             VERSION: VERSION
@@ -386,22 +396,32 @@ nav:
       - "Local DNS": getting-started/local-network-dns-setup.md
       - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
       - "Port Forwarding": getting-started/port-forwarding-setup.md
+  - Deployment:
+      - "Production Checklist": deployment/production-checklist.md
   - Architecture:
       - "Overview (README)": architecture/index.md
       - Overview: architecture/architecture.md
       - "Services": architecture/services-overview.md
       - "Inventory": architecture/service-inventory.md
       - "Nginx configuration": architecture/nginx-configuration.md
-  - "Academy KI":
-      - Overview: academy/index.md
-      - "Open WebUI Basics": academy/openwebui-basics.md
-      - "Prompting 101": academy/prompting-101.md
-      - "HowTo":
-          - Overview: academy/howto/index.md
-          - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
-          - "Write Customer Email": academy/howto/write-customer-email.md
-          - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
-          - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
+  - "Development Guides":
+      - "Setup Guide": development/setup-guide.md
+      - "Testing Guide": development/testing-guide.md
+  - Examples:
+      - "Overview": examples/index.md
+      - "API Usage (REST)": examples/api-usage-rest.md
+      - "Nginx Examples": examples/nginx-examples.md
+      - "Academy KI":
+          - Overview: academy/index.md
+          - "Open WebUI Basics": academy/openwebui-basics.md
+          - "Prompting 101": academy/prompting-101.md
+          - "Context Engineering 101": academy/context-engineering-101.md
+          - "HowTo":
+              - Overview: academy/howto/index.md
+              - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
+              - "Write Customer Email": academy/howto/write-customer-email.md
+              - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
+              - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
       - "News":
           - Feed: academy/news/index.md
           - "2025-01-release-x": academy/news/2025-01-release-x.md
@@ -478,21 +498,26 @@ nav:
       - "Overview": reference/index.md
       - "API Overview": api/index.md
       - "API Reference": reference/api-reference.md
+      - "Webhook API": reference/webhook-api.md
       - Development: reference/development.md
       - "GitHub Environments": reference/github-environments-setup.md
       - "MCPO Integration": reference/mcpo-integration-guide.md
       - "Pre-commit Hooks": reference/pre-commit-hooks.md
       - "Metadata Standards": reference/metadata-standards.md
       - "Style Guide": reference/style-guide.md
+      - "Code Standards": quality/code-standards.md
       - "No Emoji Policy": reference/NO-EMOJI-POLICY.md
       - "Emoji Style Guide": reference/emoji-style-guide.md
       - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
       - "Documentation Maintenance": reference/documentation-maintenance-strategy.md
       - "Non-root Containers Plan": reference/non-root-containers-plan.md
+      - "Service Versions": reference/service-versions.md
       - "Status Snippet": reference/status-snippet.md
       - "Language Policy": reference/language-policy.md
       - VERSION: VERSION.md
       - CHANGELOG: reference/CHANGELOG.md
+  - Troubleshooting:
+      - "Common Issues": troubleshooting/common-issues.md
 
   - "Reports & Archive":
       - "Archive Overview": archive/index.md

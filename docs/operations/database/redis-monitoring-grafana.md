@@ -2,17 +2,16 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-30'
+last_updated: '2025-11-24'
 ---
 
 # Redis Monitoring с Grafana в системе ERNI-KI
 
 ## Обзор
 
-Система ERNI-KI включает полноценный мониторинг Redis через Grafana с
+Система ERNI-KI теперь включает полноценный мониторинг Redis через Grafana с
 использованием Redis Data Source plugin. Это решение заменяет проблемный
-Redis-exporter и обеспечивает стабильный мониторинг Redis 7.0.15-alpine (образ
-закреплён в `compose.yml` из-за несовместимости RDB v12).
+Redis-exporter и обеспечивает стабильный мониторинг Redis 7.4.5 Alpine.
 
 ## Быстрый старт
 

@@ -49,7 +49,8 @@ def fetch_json(path: str) -> dict[str, Any] | None:
         response = requests.get(url, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
         OLLAMA_REQUEST_LATENCY.set(time.perf_counter() - start)
-        return response.json()
+        data = response.json()
+        return data if isinstance(data, dict) else None
     except requests.Timeout:
         LOGGER.warning("Request timeout for %s", url)
         return None

@@ -14,7 +14,7 @@ from prometheus_client import (
     Gauge,
     Histogram,
     generate_latest,
-)
+)  # type: ignore[reportMissingImports]
 
 # Configuration constants
 DEFAULT_RAG_TEST_INTERVAL = 30.0  # seconds
@@ -104,7 +104,8 @@ def main():
     t = threading.Thread(target=probe_loop, daemon=True)
     t.start()
     port = int(os.getenv("PORT", str(DEFAULT_PORT)))
-    app.run(host="0.0.0.0", port=port)  # noqa: S104 - exporter runs inside container
+    # Binding inside container for Prometheus scrape; exposure is controlled by compose.
+    app.run(host="0.0.0.0", port=port)  # noqa: S104  # nosec B104
 
 
 if __name__ == "__main__":

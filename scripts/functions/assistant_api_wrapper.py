@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-OpenAI Assistant API Wrapper for ERNI-KI
-Provides a simple interface to work with OpenAI Assistant via LiteLLM
+OpenAI Assistant API Wrapper for ERNI-KI.
+Provides a simple interface to work with OpenAI Assistant via LiteLLM/OpenAI.
 """
+
+from __future__ import annotations
 
 import os
 import time
+from typing import Any
 
 import requests
 
@@ -15,7 +18,7 @@ class AssistantAPIWrapper:
         self,
         litellm_base_url: str = "http://localhost:4000",
         api_key: str | None = None,
-        assistant_id: str = "asst_C8dUl6EKuR41O9sddVVuhTGn",
+        assistant_id: str = "asst_C8dUl6EKuR41O9sddVVuhTGn",  # noqa: S105
     ):
         self.base_url = litellm_base_url
         self.api_key = api_key or os.environ.get("LITELLM_API_KEY", "")
@@ -66,7 +69,7 @@ class AssistantAPIWrapper:
             print(f"Exception adding message: {e}")
             return None
 
-    def create_run(self, thread_id: str, instructions: str = None) -> str | None:
+    def create_run(self, thread_id: str, instructions: str | None = None) -> str | None:
         """Create a run for the Assistant"""
         try:
             run_data = {"assistant_id": self.assistant_id}
@@ -132,7 +135,7 @@ class AssistantAPIWrapper:
             print(f"Exception waiting for run: {e}")
             return None
 
-    def get_messages(self, thread_id: str) -> list[dict]:
+    def get_messages(self, thread_id: str) -> list[dict[str, Any]]:
         """Get all messages from the thread"""
         try:
             # Direct call to OpenAI API
@@ -159,7 +162,7 @@ class AssistantAPIWrapper:
             print(f"Exception getting messages: {e}")
             return []
 
-    def chat_with_assistant(self, message: str, instructions: str = None) -> str | None:
+    def chat_with_assistant(self, message: str, instructions: str | None = None) -> str | None:
         """Full chat cycle with the Assistant"""
         print(f"💬 Sending message to Assistant: {message[:50]}...")
 

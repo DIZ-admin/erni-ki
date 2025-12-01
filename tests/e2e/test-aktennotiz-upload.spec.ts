@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Automated test for uploading DOCX file "Aktennotiz_Andre Arnold 10.10.2025.docx"
  * through OpenWebUI web interface using Playwright
@@ -6,20 +5,20 @@
  * Goal: Verify end-to-end process of uploading and processing DOCX file through ERNI-KI RAG system
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test, type FileChooser, type Locator, type Page } from '@playwright/test';
 import fs from 'node:fs';
 
 const BASE = process.env.PW_BASE_URL || 'http://localhost:8080';
 const DOCX_FILE = 'tests/fixtures/Aktennotiz_Andre Arnold 10.10.2025.docx';
 
 // Logging with timestamps
-function log(message: string) {
+function log(message: string): void {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] ${message}`);
 }
 
 // Attempt login
-async function tryLogin(page: any) {
+async function tryLogin(page: Page): Promise<boolean> {
   log('🔍 Checking for login form...');
 
   const emailSel = 'input[type="email"], input[name="email"], input#email';
@@ -42,8 +41,8 @@ async function tryLogin(page: any) {
     if (!hasLogin) return false;
   }
 
-  const EMAIL = process.env.E2E_OPENWEBUI_EMAIL || '';
-  const PASS = process.env.E2E_OPENWEBUI_PASSWORD || '';
+  const EMAIL: string = process.env.E2E_OPENWEBUI_EMAIL || '';
+  const PASS: string = process.env.E2E_OPENWEBUI_PASSWORD || '';
   if (!EMAIL || !PASS) {
     log('⚠️ Login form detected but E2E_OPENWEBUI_EMAIL/PASSWORD are not set.');
     return false;
@@ -60,7 +59,7 @@ async function tryLogin(page: any) {
     await page.waitForSelector(chatInput, { timeout: 10_000 });
     log('✅ Login successful - chat input found');
     return true;
-  } catch (e) {
+  } catch (e: unknown) {
     log('❌ Login may have failed - chat input not found');
     return false;
   }
@@ -130,7 +129,9 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
   let uploadMethod = '';
 
   // Method 1: Search for button with paperclip or plus icon
-  const iconButtons = await page.locator('button:has(svg), button:has([class*="icon"])').all();
+  const iconButtons: Locator[] = await page
+    .locator('button:has(svg), button:has([class*="icon"])')
+    .all();
   log(`🔍 Found ${iconButtons.length} buttons with icons`);
 
   for (let i = 0; i < iconButtons.length; i++) {
@@ -156,10 +157,10 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
         log(`🎯 Found potential upload button: ${ariaLabel || title}`);
 
         // Try to click and open file chooser
-        const [fileChooser] = await Promise.all([
-          page.waitForEvent('filechooser', { timeout: 2000 }).catch(() => null),
-          button.click(),
-        ]);
+        const fileChooser = await page
+          .waitForEvent('filechooser', { timeout: 2000 })
+          .catch(() => null as FileChooser | null);
+        await button.click();
 
         if (fileChooser) {
           log(`✅ File chooser opened!`);
@@ -169,8 +170,8 @@ test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
           break;
         }
       }
-    } catch (e: any) {
-      // Continue searching
+    } catch (e: unknown) {
+      // Continue searching when a button is not interactable
     }
   }
 

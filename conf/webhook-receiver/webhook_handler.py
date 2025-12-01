@@ -99,7 +99,9 @@ SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
-TEST_SECRET_PLACEHOLDER = "test-secret-placeholder"  # pragma: allowlist secret  # noqa: S105
+TEST_SECRET_PLACEHOLDER = (
+    "test-secret-placeholder"  # pragma: allowlist secret  # noqa: S105  # nosec B105
+)
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
 
 
@@ -187,7 +189,7 @@ class Alert(BaseModel):
 
 class AlertPayload(BaseModel):
     alerts: list[Alert]
-    groupLabels: dict[str, Any] = {}
+    groupLabels: dict[str, Any] = {}  # noqa: N815
 
 
 class AlertProcessor:
@@ -534,11 +536,11 @@ def health_check():
 if __name__ == "__main__":
     _validate_secrets(exit_on_error=True)
     logger.info("Starting ERNI-KI Webhook Receiver")
-    app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container
+    app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104  # nosec B104
 
 # When executed via exec() (no import spec) or under a foreign __name__, enforce secrets
 if (__name__ != "webhook_handler" or globals().get("__spec__") is None) and (
-    __package__ != "conf.webhook_receiver"
+    __package__ not in {"conf.webhook-receiver", "conf.webhook_receiver"}
 ):
     try:
         _validate_secrets(exit_on_error=True)

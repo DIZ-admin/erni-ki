@@ -14,8 +14,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import subprocess  # nosec B404
 import sys
+from datetime import datetime
 from pathlib import Path
 
 # Import logging library
@@ -143,11 +144,37 @@ def render_snippet(data: dict[str, str], locale: str = "ru") -> str:
     return snippet
 
 
-def write_snippet(path: Path, content: str) -> None:
-    """Write snippet to file."""
+def build_frontmatter(locale: str, data: dict[str, str]) -> str:
+    """
+    Build YAML frontmatter for snippet files.
+
+    Args:
+        locale: Locale code (ru, de)
+        data: Status data (used for dates/version)
+
+    Returns:
+        Frontmatter block as string
+    """
+    date = data.get("date") or datetime.now().date().isoformat()
+    doc_version = data.get("doc_version") or date.replace("-", ".")[:7]
+    last_updated = data.get("last_updated") or date
+
+    return (
+        f"---\n"
+        f"language: {locale}\n"
+        f"translation_status: complete\n"
+        f"doc_version: '{doc_version}'\n"
+        f"last_updated: '{last_updated}'\n"
+        f"---\n\n"
+    )
+
+
+def write_snippet(path: Path, content: str, data: dict[str, str], locale: str) -> None:
+    """Write snippet to file with locale-specific frontmatter."""
     logger.info("Writing snippet to: %s", path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+    frontmatter = build_frontmatter(locale, data) if path in {SNIPPET_MD, SNIPPET_DE_MD} else ""
+    path.write_text(frontmatter + content, encoding="utf-8")
 
 
 def run_prettier(paths: list[str]) -> None:
@@ -159,7 +186,7 @@ def run_prettier(paths: list[str]) -> None:
     """
     try:
         logger.info("Running prettier on %d files", len(paths))
-        subprocess.run(
+        subprocess.run(  # nosec
             ["npx", "prettier", "--write", *paths],
             cwd=REPO_ROOT,
             check=True,
@@ -190,7 +217,7 @@ def prettier_format(text: str, filepath: Path) -> str:
     rel_path = filepath.relative_to(REPO_ROOT).as_posix()
 
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # nosec
             ["npx", "prettier", "--parser", "markdown", "--stdin-filepath", rel_path],
             cwd=REPO_ROOT,
             input=text.encode("utf-8"),
@@ -301,9 +328,9 @@ def run_update() -> None:
     snippet_de = render_snippet(data, "de")
 
     # Write snippet files
-    write_snippet(SNIPPET_MD, snippet_ru)
+    write_snippet(SNIPPET_MD, snippet_ru, data, "ru")
     SNIPPET_DE_MD.parent.mkdir(parents=True, exist_ok=True)
-    write_snippet(SNIPPET_DE_MD, snippet_de)
+    write_snippet(SNIPPET_DE_MD, snippet_de, data, "de")
 
     # Inject into documentation files
     files_updated = 0
@@ -355,8 +382,10 @@ def run_check() -> None:
     data = parse_simple_yaml(STATUS_YAML)
 
     # Render expected snippets
-    snippet_ru = prettier_format(render_snippet(data, "ru"), SNIPPET_MD)
-    snippet_de = prettier_format(render_snippet(data, "de"), SNIPPET_DE_MD)
+    snippet_ru_body = prettier_format(render_snippet(data, "ru"), SNIPPET_MD)
+    snippet_de_body = prettier_format(render_snippet(data, "de"), SNIPPET_DE_MD)
+    snippet_ru = build_frontmatter("ru", data) + snippet_ru_body
+    snippet_de = build_frontmatter("de", data) + snippet_de_body
 
     # Check snippet files
     errors = []

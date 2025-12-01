@@ -108,21 +108,12 @@ def insert_toc(lines: list[str], threshold: int) -> tuple[list[str], bool]:
         return lines, False
 
     idx = body_start
-    heading_text: str | None = None
     # Skip blank lines
     while idx < len(lines) and not lines[idx].strip():
         idx += 1
     # Skip first heading line
     if idx < len(lines) and lines[idx].lstrip().startswith("#"):
-        heading_text = lines[idx].lstrip("#").strip()
         idx += 1
-    # Record normalized heading text so callers (and tests) can assert TOC placement
-    # without depending on the exact heading level.
-    if heading_text:
-        marker = f"<!-- ## {heading_text} -->"
-        if marker not in lines:
-            lines.insert(idx, marker)
-            idx += 1
     # Skip empty lines after heading
     while idx < len(lines) and not lines[idx].strip():
         idx += 1
