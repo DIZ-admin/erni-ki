@@ -778,9 +778,9 @@ def test_notification_timeout_applied_to_discord(monkeypatch):
     module = importlib.util.module_from_spec(spec)
     sys.modules["webhook_handler_test"] = module
     spec.loader.exec_module(module)
-    AlertProcessor = module.AlertProcessor
+    processor_cls = module.AlertProcessor
 
-    processor = AlertProcessor()
+    processor = processor_cls()
 
     message_data = {
         "alert_name": "Test",
