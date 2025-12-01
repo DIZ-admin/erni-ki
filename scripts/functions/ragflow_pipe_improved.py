@@ -148,7 +148,7 @@ class Pipe:
         return url
 
     def _deep_find_first_id(self, obj: Any) -> str | None:
-        KEYS = ("doc_id", "document_id", "id")
+        keys = ("doc_id", "document_id", "id")
         stack = [obj]
         seen = set()
         while stack:
@@ -159,7 +159,7 @@ class Pipe:
             seen.add(oid)
 
             if isinstance(cur, dict):
-                for k in KEYS:
+                for k in keys:
                     v = cur.get(k)
                     if isinstance(v, str) and v.strip():
                         return v.strip()
@@ -504,11 +504,11 @@ class Pipe:
         cmd = (user_question or "").strip().lower()
 
         try:
-            CHAT_ASSISTANT_ID = self.get_chat_assistant_id()
+            chat_assistant_id = self.get_chat_assistant_id()
 
             # 1) Handle manual reset commands
             if any(cmd == c.lower() for c in self.valves.RESET_COMMANDS):
-                return self._handle_reset(CHAT_ASSISTANT_ID, messages)
+                return self._handle_reset(chat_assistant_id, messages)
 
             # 2) Try to reuse existing session from markers
             mk = self._extract_marker(messages)
@@ -526,11 +526,11 @@ class Pipe:
             else:
                 unique_id = str(uuid.uuid4())[:8]
                 session_name = f"OpenWebUI-{unique_id}"
-                self.CHAT_ID = self.create_chat_session(CHAT_ASSISTANT_ID, session_name)
+                self.CHAT_ID = self.create_chat_session(chat_assistant_id, session_name)
                 turns = 0  # new session
 
             # 4) Ask the assistant
-            resp = self.chat_session(CHAT_ASSISTANT_ID, self.CHAT_ID, user_question)
+            resp = self.chat_session(chat_assistant_id, self.CHAT_ID, user_question)
 
             # 5) Compose output
             answer_raw = (resp.get("data") or {}).get("answer", "")

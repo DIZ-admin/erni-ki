@@ -1,4 +1,4 @@
-"""Unit tests for conf/webhook_receiver/webhook_handler.py."""
+"""Unit tests for conf/webhook-receiver/webhook_handler.py."""
 
 import hashlib
 import hmac
@@ -11,8 +11,15 @@ from typing import Any, Protocol, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
-import requests
+
+try:
+    import requests
+except ImportError:  # pragma: no cover
+    pytest.skip("requests not installed", allow_module_level=True)
+
 from pydantic import ValidationError
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class WebhookModule(Protocol):
@@ -36,8 +43,7 @@ class WebhookModule(Protocol):
 
 def load_webhook_handler() -> WebhookModule:
     """Load webhook_handler module from the dashed directory."""
-    root = Path(__file__).resolve().parents[2]
-    module_path = root / "conf" / "webhook-receiver" / "webhook_handler.py"
+    module_path = ROOT / "conf" / "webhook-receiver" / "webhook_handler.py"
     spec = importlib.util.spec_from_file_location("webhook_handler", module_path)
     if spec is None or spec.loader is None:
         raise ImportError(f"Cannot load webhook_handler from {module_path}")
@@ -761,15 +767,21 @@ def test_notification_timeout_applied_to_discord(monkeypatch):
     monkeypatch.setattr(requests, "post", mock_post)
     monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.com/webhook/test")
     monkeypatch.setenv("NOTIFICATION_TIMEOUT", "15")
+    monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "x" * 16)
 
     # Reimport to pick up new env var
     import sys
 
-    if "conf.webhook_receiver.webhook_handler" in sys.modules:
-        del sys.modules["conf.webhook_receiver.webhook_handler"]
-    from conf.webhook_receiver.webhook_handler import AlertProcessor
+    module_path = ROOT / "conf" / "webhook-receiver" / "webhook_handler.py"
+    spec = importlib.util.spec_from_file_location("webhook_handler_test", module_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load webhook_handler from {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules["webhook_handler_test"] = module
+    spec.loader.exec_module(module)
+    processor_cls = module.AlertProcessor
 
-    processor = AlertProcessor()
+    processor = processor_cls()
 
     message_data = {
         "alert_name": "Test",

@@ -86,7 +86,13 @@ Example: Testing HMAC signature verification
 # tests/unit/webhook-receiver.test.py
 import json
 import pytest
-from conf.webhook_receiver import verify_signature
+# Example of direct import via file path
+import importlib.util
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location(
+    "webhook_handler", Path("conf/webhook-receiver/webhook_handler.py")
+)
 
 class TestWebhookSignatures:
  """Test HMAC signature verification"""
@@ -714,7 +720,7 @@ def test_with_mock_ollama(mock_ollama):
 - [Development Setup Guide](./setup-guide.md)
 - [Code Quality Standards](../quality/code-standards.md)
 - [API Reference](../reference/api-reference.md)
-- [Webhook Testing Examples](../examples/README.md)
+- [Webhook Testing Examples](../examples/index.md)
 
 ---
 

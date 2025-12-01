@@ -13,7 +13,9 @@ const ART_DIR = 'playwright-artifacts';
 const NET_LOG = `${ART_DIR}/network.log`;
 try {
   require('node:fs').mkdirSync(ART_DIR, { recursive: true });
-} catch {}
+} catch (e: unknown) {
+  console.warn('Failed to create directory:', e);
+}
 
 // Files up to 10MB: use real test documents from RAG folder
 const fixtures = {
@@ -128,7 +130,9 @@ function attachNetworkLogging(page: Page) {
   const append = (line: string) => {
     try {
       fs.appendFileSync(NET_LOG, line + '\n');
-    } catch {}
+    } catch (e: unknown) {
+      console.warn('Failed to create directory:', e);
+    }
   };
   page.on('request', (req: Request) => {
     const url = req.url();

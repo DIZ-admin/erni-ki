@@ -64,8 +64,8 @@ scrape_configs:
   - job_name: "node-exporter"
     static_configs:
       - targets: ["node-exporter:9100"]
-    scrape_interval: 30s # Reduced from 60s for more frequent metrics collection
-    scrape_timeout: 25s  # Increased from 15s to prevent broken pipe errors
+    scrape_interval: 60s # Reduced load to mitigate broken pipe resets
+    scrape_timeout: 15s  # Default-like timeout to avoid long-lived connections
     metrics_path: /metrics
     # USE metrics:
     # - node_cpu_seconds_total (Utilization)

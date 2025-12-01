@@ -104,4 +104,4 @@ class AlertPayload(BaseModel):
     """Webhook payload containing alerts."""
 
     alerts: list[Alert]
-    groupLabels: dict[str, Any] = {}
+    groupLabels: dict[str, Any] = {}  # noqa: N815

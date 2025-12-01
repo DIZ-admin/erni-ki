@@ -182,12 +182,8 @@ sources) -**Watchtower 1.7.1**: monitor-only (селективный монит�
 - JWT аутентификация для всех API запросов
 - Rate limiting и защита от DDoS атак
 - SSL/TLS шифрование всего трафика
-- Сегментированные сети Docker Compose:
-  - `frontend_net` — Nginx/Cloudflared/Auth (внешний вход)
-  - `backend_net` — OpenWebUI, LiteLLM, Ollama, Docling, Tika
-  - `data_net` — PostgreSQL, Redis, Backrest, экспортеры
-  - `monitoring_net` — Prometheus, Grafана, Alertmanager, Loki
-- Мониторинговые сервисы привязаны к localhost для доступа только через VPN/SSH
+- Текущая сеть: стандартный Docker bridge + localhost bind для мониторинга;
+  сегментация ingress/services/logging/data планируется отдельно
 
 ### **Scalability & Performance**
 

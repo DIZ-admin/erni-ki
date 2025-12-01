@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-import subprocess
+import subprocess  # nosec B404
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -41,7 +41,7 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
         return by_name
 
     try:
-        files = subprocess.check_output(["git", "ls-files"], text=True).strip().splitlines()
+        files = subprocess.check_output(["git", "ls-files"], text=True).strip().splitlines()  # nosec
     except subprocess.CalledProcessError as exc:
         print(f"Failed to list files: {exc}", file=sys.stderr)
         return by_name
@@ -83,11 +83,16 @@ def check_duplicates(
     return duplicates
 
 
-def main() -> None:
-    """Main entry point."""
+def find_duplicates() -> dict[str, list[Path]]:
+    """Convenience helper to find duplicates using repository layout."""
     scripts_basenames = get_basenames(Path.cwd() / "scripts")
     conf_basenames = get_basenames(Path.cwd() / "conf")
-    duplicates = check_duplicates(scripts_basenames, conf_basenames)
+    return check_duplicates(scripts_basenames, conf_basenames)
+
+
+def main() -> None:
+    """Main entry point."""
+    duplicates = find_duplicates()
 
     exit_code = 1 if duplicates else 0
     if duplicates:

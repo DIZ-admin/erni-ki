@@ -1,5 +1,6 @@
 [general]
+# run link checks offline in CI
 offline = true
 max_concurrency = 4
 include_verbatim = true
-exclude_path = ["node_modules", "site"]
+exclude_path = ["node_modules", "logs", ".git"]

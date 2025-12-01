@@ -8,6 +8,7 @@ import hashlib
 import hmac
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -47,6 +48,9 @@ def load_webhook_receiver() -> WebhookModule:
         raise ImportError(f"Cannot load webhook-receiver from {module_path}")
     module = importlib.util.module_from_spec(spec)
     sys.modules["webhook_receiver"] = module
+    # Backward-compatible aliases for previous shim path
+    sys.modules["conf.webhook_receiver.webhook_receiver"] = module
+    sys.modules["conf.webhook_receiver"] = module
     spec.loader.exec_module(module)
     return cast(WebhookModule, module)
 
@@ -514,12 +518,18 @@ class TestSignatureVerification(unittest.TestCase):
 
         # Temporarily override WEBHOOK_SECRET
         original_secret = webhook.WEBHOOK_SECRET
+        original_env = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
         try:
             webhook.WEBHOOK_SECRET = test_secret
+            os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = test_secret
             result = verify_signature(test_body, expected_signature)
             self.assertTrue(result)
         finally:
             webhook.WEBHOOK_SECRET = original_secret
+            if original_env is None:
+                os.environ.pop("ALERTMANAGER_WEBHOOK_SECRET", None)
+            else:
+                os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = original_env
 
     def test_verify_signature_with_invalid_signature(self):
         """Test that invalid signatures are rejected."""
@@ -528,34 +538,50 @@ class TestSignatureVerification(unittest.TestCase):
         invalid_signature = "invalid_signature_that_does_not_match"  # noqa: S105 - test stub
 
         original_secret = webhook.WEBHOOK_SECRET
+        original_env = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
         try:
             webhook.WEBHOOK_SECRET = test_secret
+            os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = test_secret
             result = verify_signature(test_body, invalid_signature)
             self.assertFalse(result)
         finally:
             webhook.WEBHOOK_SECRET = original_secret
+            if original_env is None:
+                os.environ.pop("ALERTMANAGER_WEBHOOK_SECRET", None)
+            else:
+                os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = original_env
 
     def test_verify_signature_with_missing_signature(self):
         """Test that missing signatures are rejected."""
         test_body = b"test alert payload"
 
         original_secret = webhook.WEBHOOK_SECRET
+        original_env = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
         try:
             webhook.WEBHOOK_SECRET = "some_secret"  # noqa: S105  # pragma: allowlist secret
+            os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = "some_secret"  # noqa: S105
             result = verify_signature(test_body, None)
             self.assertFalse(result)
         finally:
             webhook.WEBHOOK_SECRET = original_secret
+            if original_env is None:
+                os.environ.pop("ALERTMANAGER_WEBHOOK_SECRET", None)
+            else:
+                os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = original_env
 
     def test_verify_signature_with_no_secret_configured(self):
         """Test that verification fails when secret is not configured."""
         original_secret = webhook.WEBHOOK_SECRET
+        original_env = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
         try:
             webhook.WEBHOOK_SECRET = ""
+            os.environ.pop("ALERTMANAGER_WEBHOOK_SECRET", None)
             result = verify_signature(b"test", "fake_signature")
             self.assertFalse(result)
         finally:
             webhook.WEBHOOK_SECRET = original_secret
+            if original_env is not None:
+                os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = original_env
 
 
 class TestAlertLabelValidation(unittest.TestCase):
@@ -825,40 +851,35 @@ def test_validate_secrets_missing_env_var(monkeypatch):
     """Test that _validate_secrets raises error when ALERTMANAGER_WEBHOOK_SECRET is missing."""
     monkeypatch.delenv("ALERTMANAGER_WEBHOOK_SECRET", raising=False)
 
-    # Re-import to trigger validation
+    module = load_webhook_receiver()
     with pytest.raises(RuntimeError, match="Missing required ALERTMANAGER_WEBHOOK_SECRET"):
-        from conf.webhook_receiver import webhook_receiver
-
-        webhook_receiver._validate_secrets()
+        module._validate_secrets(exit_on_error=False)
 
 
 def test_validate_secrets_too_short(monkeypatch):
     """Test that _validate_secrets raises error when secret is too short."""
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "short")
 
+    module = load_webhook_receiver()
     with pytest.raises(RuntimeError, match="must be at least 16 characters"):
-        from conf.webhook_receiver import webhook_receiver
-
-        webhook_receiver._validate_secrets()
+        module._validate_secrets(exit_on_error=False)
 
 
 def test_validate_secrets_minimum_length_boundary(monkeypatch):
     """Test secret validation at minimum length boundary (16 chars)."""
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "a" * 16)
 
-    from conf.webhook_receiver import webhook_receiver
-
+    module = load_webhook_receiver()
     # Should not raise
-    webhook_receiver._validate_secrets()
+    module._validate_secrets(exit_on_error=False)
 
 
 def test_validate_secrets_valid_long_secret(monkeypatch):
     """Test secret validation with a sufficiently long secret."""
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "a" * 64)
 
-    from conf.webhook_receiver import webhook_receiver
-
-    webhook_receiver._validate_secrets()
+    module = load_webhook_receiver()
+    module._validate_secrets(exit_on_error=False)
 
 
 # ============================================================================
@@ -954,41 +975,33 @@ def test_alert_labels_validate_component_length():
 
 def test_recovery_scripts_mapping_prevents_traversal(client, monkeypatch):
     """Test that RECOVERY_SCRIPTS mapping prevents path traversal attacks."""
-    from conf.webhook_receiver import webhook_receiver
-
     # Attempt path traversal through service name
     malicious_service = "../../../etc/passwd"
 
     # The service should be rejected before even reaching the script
-    assert malicious_service not in webhook_receiver.RECOVERY_SCRIPTS
-    assert malicious_service not in webhook_receiver.ALLOWED_SERVICES
+    assert malicious_service not in webhook.RECOVERY_SCRIPTS
+    assert malicious_service not in webhook.ALLOWED_SERVICES
 
 
 def test_recovery_scripts_only_allowed_services():
     """Test that only explicitly allowed services have recovery scripts."""
-    from conf.webhook_receiver import webhook_receiver
-
     # Check that RECOVERY_SCRIPTS keys match ALLOWED_SERVICES
-    assert set(webhook_receiver.RECOVERY_SCRIPTS.keys()) == webhook_receiver.ALLOWED_SERVICES
+    assert set(webhook.RECOVERY_SCRIPTS.keys()) == webhook.ALLOWED_SERVICES
 
 
 def test_run_recovery_script_invalid_service(monkeypatch, caplog):
     """Test that run_recovery_script rejects invalid services."""
-    from conf.webhook_receiver import webhook_receiver
-
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
 
-    webhook_receiver.run_recovery_script("invalid_service")
+    webhook.run_recovery_script("invalid_service")
 
     assert "Invalid service: invalid_service" in caplog.text
 
 
 def test_run_recovery_script_path_traversal_attempt(monkeypatch, caplog, tmp_path):
     """Test that path traversal attempts are blocked."""
-    from conf.webhook_receiver import webhook_receiver
-
-    monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    monkeypatch.setattr(webhook_receiver, "RECOVERY_DIR", tmp_path)
+    monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-1234567890")
+    monkeypatch.setattr(webhook, "RECOVERY_DIR", tmp_path)
 
     # Create a recovery script outside the recovery directory
     outside_script = tmp_path.parent / "malicious.sh"
@@ -997,7 +1010,7 @@ def test_run_recovery_script_path_traversal_attempt(monkeypatch, caplog, tmp_pat
 
     # Attempt to execute it (should be blocked)
     # This shouldn't even get to path checking due to RECOVERY_SCRIPTS mapping
-    webhook_receiver.run_recovery_script("../../malicious")
+    webhook.run_recovery_script("../../malicious")
 
     assert "Invalid service" in caplog.text or "Path traversal" in caplog.text
 
@@ -1009,8 +1022,6 @@ def test_run_recovery_script_path_traversal_attempt(monkeypatch, caplog, tmp_pat
 
 def test_webhook_factory_reduces_code_duplication():
     """Test that webhook routes are created using factory pattern."""
-    from conf.webhook_receiver import webhook_receiver
-
     # Verify all expected routes exist
     expected_routes = [
         "/webhook",
@@ -1021,7 +1032,7 @@ def test_webhook_factory_reduces_code_duplication():
         "/webhook/database",
     ]
 
-    app_rules = [rule.rule for rule in webhook_receiver.app.url_map.iter_rules()]
+    app_rules = [rule.rule for rule in webhook.app.url_map.iter_rules()]
 
     for route in expected_routes:
         assert route in app_rules, f"Route {route} not found"
@@ -1084,10 +1095,8 @@ def test_process_alert_network_error_handling(monkeypatch, tmp_path, caplog):
     """Test that network errors in notifications don't prevent alert processing."""
     import requests
 
-    from conf.webhook_receiver import webhook_receiver
-
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    monkeypatch.setattr(webhook_receiver, "ALERTS_DIR", tmp_path)
+    monkeypatch.setattr(webhook, "ALERTS_DIR", tmp_path)
 
     # Mock requests to raise network error
     def mock_post(*args, **kwargs):
@@ -1102,7 +1111,7 @@ def test_process_alert_network_error_handling(monkeypatch, tmp_path, caplog):
     }
 
     # Should not raise, alert should still be processed
-    webhook_receiver.process_alert(payload, "test")
+    webhook.process_alert(payload, "test")
 
     # Check that alert was saved despite notification failure
     alert_files = list(tmp_path.glob("test_*.json"))
@@ -1155,10 +1164,8 @@ def test_run_recovery_script_timeout_handling(monkeypatch, tmp_path, caplog):
     """Test that recovery script timeouts are handled properly."""
     from subprocess import TimeoutExpired
 
-    from conf.webhook_receiver import webhook_receiver
-
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    monkeypatch.setattr(webhook_receiver, "RECOVERY_DIR", tmp_path)
+    monkeypatch.setattr(webhook, "RECOVERY_DIR", tmp_path)
 
     # Create a mock script that would timeout
     script_path = tmp_path / "ollama-recovery.sh"
@@ -1173,24 +1180,22 @@ def test_run_recovery_script_timeout_handling(monkeypatch, tmp_path, caplog):
 
     monkeypatch.setattr(subprocess, "run", mock_run)
 
-    webhook_receiver.run_recovery_script("ollama")
+    webhook.run_recovery_script("ollama")
 
     assert "timed out" in caplog.text.lower()
 
 
 def test_run_recovery_script_permission_denied(monkeypatch, tmp_path, caplog):
     """Test handling of permission denied errors for recovery scripts."""
-    from conf.webhook_receiver import webhook_receiver
-
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    monkeypatch.setattr(webhook_receiver, "RECOVERY_DIR", tmp_path)
+    monkeypatch.setattr(webhook, "RECOVERY_DIR", tmp_path)
 
     # Create a script without execute permissions
     script_path = tmp_path / "searxng-recovery.sh"
     script_path.write_text("#!/bin/bash\necho 'test'\n")
     script_path.chmod(0o644)  # No execute permission
 
-    webhook_receiver.run_recovery_script("searxng")
+    webhook.run_recovery_script("searxng")
 
     assert "permission" in caplog.text.lower() or "failed" in caplog.text.lower()
 
@@ -1245,10 +1250,8 @@ def test_concurrent_webhook_requests(client, monkeypatch):
 
 def test_save_alert_disk_full_simulation(monkeypatch, tmp_path, caplog):
     """Test handling of disk full scenarios when saving alerts."""
-    from conf.webhook_receiver import webhook_receiver
-
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    monkeypatch.setattr(webhook_receiver, "ALERTS_DIR", tmp_path)
+    monkeypatch.setattr(webhook, "ALERTS_DIR", tmp_path)
 
     # Mock open to raise OSError (disk full)
     original_open = open
@@ -1263,7 +1266,7 @@ def test_save_alert_disk_full_simulation(monkeypatch, tmp_path, caplog):
     payload = {"test": "data"}
 
     # Should handle gracefully and log error
-    webhook_receiver.save_alert_to_file(payload, "test")
+    webhook.save_alert_to_file(payload, "test")
 
     assert "error" in caplog.text.lower() or "failed" in caplog.text.lower()
 
@@ -1273,14 +1276,12 @@ def test_save_alert_concurrent_writes(monkeypatch, tmp_path):
     import json
     import threading
 
-    from conf.webhook_receiver import webhook_receiver
-
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
-    monkeypatch.setattr(webhook_receiver, "ALERTS_DIR", tmp_path)
+    monkeypatch.setattr(webhook, "ALERTS_DIR", tmp_path)
 
     def write_alert(alert_id):
         payload = {"alert_id": alert_id, "data": "test"}
-        webhook_receiver.save_alert_to_file(payload, f"test_{alert_id}")
+        webhook.save_alert_to_file(payload, f"test_{alert_id}")
 
     # Create multiple threads writing alerts
     threads = [threading.Thread(target=write_alert, args=(i,)) for i in range(10)]

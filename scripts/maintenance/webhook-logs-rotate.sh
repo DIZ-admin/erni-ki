@@ -29,7 +29,7 @@ cutoff_epochs=$(date -d "-${RETENTION_DAYS} days" +%s)
 # Group files by date from filename (alert_<severity>_YYYYMMDD_HHMMSS.json)
 find "$WEBHOOK_DIR" -maxdepth 1 -type f -name 'alert_*.json' -print0 | while IFS= read -r -d '' file; do
   base="$(basename "$file")"
-  IFS='_' read -r _ _ date_part _ _ <<<"$base"
+  IFS='_' read -r prefix severity date_part time_part rest <<<"$base"
   [[ -z "${date_part:-}" || "${#date_part}" -ne 8 ]] && continue
   if ! file_epoch=$(date -d "$date_part" +%s 2>/dev/null); then
     continue
