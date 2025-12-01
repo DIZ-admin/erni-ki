@@ -146,7 +146,7 @@ class PublicAICustomLLM(CustomLLM):
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: float | httpx.Timeout | None = None,
+        timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
         client=None,
     ) -> ModelResponse:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -184,7 +184,7 @@ class PublicAICustomLLM(CustomLLM):
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: float | httpx.Timeout | None = None,
+        timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
         client=None,
     ) -> ModelResponse:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -222,7 +222,7 @@ class PublicAICustomLLM(CustomLLM):
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: float | httpx.Timeout | None = None,
+        timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
         client=None,
     ) -> Iterator[GenericStreamingChunk]:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -259,7 +259,7 @@ class PublicAICustomLLM(CustomLLM):
         litellm_params=None,
         logger_fn=None,
         headers=None,
-        timeout: float | httpx.Timeout | None = None,
+        timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
         client=None,
     ) -> AsyncIterator[GenericStreamingChunk]:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
@@ -381,7 +381,7 @@ class PublicAICustomLLM(CustomLLM):
         url: str,
         headers: dict[str, str],
         payload: dict[str, Any],
-        timeout: float | httpx.Timeout | None,
+        timeout: float | httpx.Timeout | None,  # noqa: ASYNC109
     ) -> tuple[dict[str, Any], dict[str, str]]:
         start = time.perf_counter()
         try:
@@ -408,7 +408,7 @@ class PublicAICustomLLM(CustomLLM):
         url: str,
         headers: dict[str, str],
         payload: dict[str, Any],
-        timeout: float | httpx.Timeout | None,
+        timeout: float | httpx.Timeout | None,  # noqa: ASYNC109
     ) -> tuple[dict[str, Any], dict[str, str]]:
         start = time.perf_counter()
         try:
@@ -465,7 +465,7 @@ class PublicAICustomLLM(CustomLLM):
         url: str,
         headers: dict[str, str],
         payload: dict[str, Any],
-        timeout: float | httpx.Timeout | None,
+        timeout: float | httpx.Timeout | None,  # noqa: ASYNC109
     ) -> Iterator[GenericStreamingChunk]:
         start = time.perf_counter()
         try:
@@ -488,7 +488,7 @@ class PublicAICustomLLM(CustomLLM):
         url: str,
         headers: dict[str, str],
         payload: dict[str, Any],
-        timeout: float | httpx.Timeout | None,
+        timeout: float | httpx.Timeout | None,  # noqa: ASYNC109
     ) -> AsyncIterator[GenericStreamingChunk]:
         start = time.perf_counter()
         try:
