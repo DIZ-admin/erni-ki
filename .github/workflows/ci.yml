@@ -125,7 +125,7 @@ jobs:
           fail_ci_if_error: true
 
       - name: 📋 Upload coverage artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: go-coverage-report
           path: |
@@ -232,7 +232,7 @@ jobs:
         run: npm run test:e2e:mock
 
       - name: 📋 Upload Playwright artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: playwright-report
