@@ -540,7 +540,7 @@ if __name__ == "__main__":
 
 # When executed via exec() (no import spec) or under a foreign __name__, enforce secrets
 if (__name__ != "webhook_handler" or globals().get("__spec__") is None) and (
-    __package__ != "conf.webhook_receiver"
+    __package__ not in {"conf.webhook-receiver", "conf.webhook_receiver"}
 ):
     try:
         _validate_secrets(exit_on_error=True)
