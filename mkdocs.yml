@@ -401,13 +401,14 @@ nav:
       - "Overview": examples/index.md
       - "API Usage (REST)": examples/api-usage-rest.md
       - "Nginx Examples": examples/nginx-examples.md
-  - "Academy KI":
-      - Overview: academy/index.md
-      - "Open WebUI Basics": academy/openwebui-basics.md
-      - "Prompting 101": academy/prompting-101.md
-      - "HowTo":
-          - Overview: academy/howto/index.md
-          - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
+      - "Academy KI":
+          - Overview: academy/index.md
+          - "Open WebUI Basics": academy/openwebui-basics.md
+          - "Prompting 101": academy/prompting-101.md
+          - "Context Engineering 101": academy/context-engineering-101.md
+          - "HowTo":
+              - Overview: academy/howto/index.md
+              - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
           - "Write Customer Email": academy/howto/write-customer-email.md
           - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
           - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
