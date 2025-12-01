@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-import subprocess
+import subprocess  # nosec B404
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -41,7 +41,13 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
         return by_name
 
     try:
-        files = subprocess.check_output(["git", "ls-files"], text=True).strip().splitlines()
+        files = (
+            subprocess.check_output(  # nosec B603,B607
+                ["git", "ls-files"], text=True
+            )
+            .strip()
+            .splitlines()
+        )
     except subprocess.CalledProcessError as exc:
         print(f"Failed to list files: {exc}", file=sys.stderr)
         return by_name
