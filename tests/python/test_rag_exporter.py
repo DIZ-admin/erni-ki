@@ -38,3 +38,14 @@ def test_metrics_endpoint_returns_content():
         resp = client.get("/metrics")
         assert resp.status_code == 200
         assert resp.data == b"metrics"
+
+
+@patch("conf.rag_exporter._shutdown_event")
+def test_main_graceful_shutdown(mock_evt):
+    """main should start thread and honor shutdown event immediately."""
+    mock_evt.is_set.return_value = True
+    with patch("conf.rag_exporter.threading.Thread") as mock_thread:
+        from conf import rag_exporter
+
+        rag_exporter.main()
+        mock_thread.assert_called_once()
