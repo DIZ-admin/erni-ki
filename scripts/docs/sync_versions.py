@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import NamedTuple
 
@@ -89,7 +90,7 @@ def parse_status_versions() -> dict[str, str]:
 
 
 def find_version_references(
-    docs_dir: Path, exclude_dirs: set[str] = None
+    docs_dir: Path, exclude_dirs: set[str] | None = None
 ) -> list[tuple[Path, int, str]]:
     """Find all version references in documentation.
 
@@ -156,8 +157,6 @@ def validate_versions(check_only: bool = True) -> int:
     print(f"✓ Found {len(refs)} version references in documentation\n")
 
     # Report first 10 files with most references
-    from collections import Counter
-
     file_counts = Counter(ref[0] for ref in refs)
     print("📊 Files with most version references:")
     for file_path, count in file_counts.most_common(10):

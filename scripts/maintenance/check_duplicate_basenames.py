@@ -83,11 +83,16 @@ def check_duplicates(
     return duplicates
 
 
-def main() -> None:
-    """Main entry point."""
+def find_duplicates() -> dict[str, list[Path]]:
+    """Convenience helper to find duplicates using repository layout."""
     scripts_basenames = get_basenames(Path.cwd() / "scripts")
     conf_basenames = get_basenames(Path.cwd() / "conf")
-    duplicates = check_duplicates(scripts_basenames, conf_basenames)
+    return check_duplicates(scripts_basenames, conf_basenames)
+
+
+def main() -> None:
+    """Main entry point."""
+    duplicates = find_duplicates()
 
     exit_code = 1 if duplicates else 0
     if duplicates:
