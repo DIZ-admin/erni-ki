@@ -1,1 +1,1 @@
-user default on >ErniKiRedisSecurePassword2024 ~* &* +@all
+user default on >__LOAD_FROM_DOCKER_SECRET__ ~* &* +@all
