@@ -13,7 +13,8 @@ stay in English; docs live under `docs/`.
 
 ## Docs tooling
 
-- `docs/update_status_snippet.py`, `docs/check_archive_readmes.py`
+- `docs/update_status_snippet_v2.py` (primary), legacy wrapper
+  `docs/update_status_snippet.py`
 
 ## Entrypoints
 
@@ -40,7 +41,7 @@ stay in English; docs live under `docs/`.
 ## Infrastructure
 
 - `infrastructure/postgres-exporter-entrypoint.sh`
-- `setup-monitoring.sh`, `health-monitor.sh`
+- `setup-monitoring.sh`, `health-monitor-v2.sh` (preferred)
 
 ## Utilities
 
@@ -49,5 +50,10 @@ stay in English; docs live under `docs/`.
 - `functions/*.py` (RAG helpers), `rag-health-monitor.sh`,
   `rag-webhook-notify.sh`
 
-Removed legacy wrappers: `update-critical-services.sh`, `critical-alert.sh`,
-`translate_comments.py` (no targets/obsolete).
+## Legacy
+
+- `legacy/health-monitor.sh` — LEGACY, заменён на `health-monitor-v2.sh`
+- `docs/update_status_snippet.py` — LEGACY совместимости; используйте
+  `docs/update_status_snippet_v2.py`
+- Removed wrappers: `update-critical-services.sh`, `critical-alert.sh`,
+  `translate_comments.py` (no targets/obsolete).

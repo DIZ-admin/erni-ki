@@ -50,6 +50,7 @@ venv/
 .env/
 # env/ - УДАЛЕНО: конфликтует с директорией env/ проекта
 __pycache__/
+.pytest_cache/
 *.py[cod]
 *$py.class
 *.so
@@ -122,6 +123,9 @@ docker-data/
 .prettier-cache
 .eslintcache
 .vitest/
+.playwright/
+playwright-artifacts/
+playwright-report/
 .cache/
 cache/
 .pre-commit-cache/

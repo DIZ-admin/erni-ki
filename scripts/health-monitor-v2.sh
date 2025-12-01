@@ -3,7 +3,7 @@
 # ERNI-KI Unified Health Monitor (Refactored)
 # Comprehensive health checking for all services
 #
-# Usage: ./health-monitor.sh [options]
+# Usage: ./health-monitor-v2.sh [options]
 # Options:
 #   -r, --report PATH     Save report to PATH (markdown format)
 #   -f, --format FORMAT   Report format: markdown | text | json
