@@ -11,7 +11,12 @@ from typing import Any, Protocol, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
-import requests
+
+try:
+    import requests
+except ImportError:  # pragma: no cover
+    pytest.skip("requests not installed", allow_module_level=True)
+
 from pydantic import ValidationError
 
 
