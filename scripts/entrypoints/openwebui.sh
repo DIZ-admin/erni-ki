@@ -80,11 +80,21 @@ configure_redis_url() {
   export REDIS_URL="${REDIS_URL:-redis://${host}:${port}/${db}}"
 }
 
+apply_defaults() {
+  # Enforce sane JWT expiry (override any stale defaults)
+  export JWT_EXPIRES_IN=86400
+  export JWT_EXPIRATION=86400
+
+  # Force-enable CUDA when GPU runtime is available
+  export USE_CUDA_DOCKER=true
+}
+
 main() {
   configure_postgres_urls
   configure_webui_secret
   configure_openai_keys
   configure_redis_url
+  apply_defaults
 
   if [[ $# -gt 0 ]]; then
     exec "$@"
