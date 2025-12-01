@@ -124,6 +124,9 @@ services:
   # Redis cache and queues (optimized network configuration)
   redis:
     env_file: env/redis.env
+    environment:
+      # Avoid compose warning when REDIS_PASSWORD env is unset; real secret comes from docker secret redis_password
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
     # Using config file instead of CLI parameters
     # Updated: 2025-10-02 for support of active defragmentation
     command:
