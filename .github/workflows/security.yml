@@ -57,7 +57,7 @@ jobs:
       # Setup Go environment
       - name: 🐹 Setup Go
         if: matrix.language == 'go'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
@@ -96,7 +96,7 @@ jobs:
 
       # Scan Go dependencies
       - name: 🐹 Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
@@ -195,7 +195,7 @@ jobs:
           extra_args: --only-verified
 
       - name: 🐹 Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.24"
           cache: false
