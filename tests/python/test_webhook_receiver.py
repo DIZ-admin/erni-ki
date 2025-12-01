@@ -47,6 +47,9 @@ def load_webhook_receiver() -> WebhookModule:
         raise ImportError(f"Cannot load webhook-receiver from {module_path}")
     module = importlib.util.module_from_spec(spec)
     sys.modules["webhook_receiver"] = module
+    # Backward-compatible aliases for previous shim path
+    sys.modules["conf.webhook_receiver.webhook_receiver"] = module
+    sys.modules["conf.webhook_receiver"] = module
     spec.loader.exec_module(module)
     return cast(WebhookModule, module)
 
@@ -1083,7 +1086,6 @@ def test_health_check_rate_limiting(client):
 def test_process_alert_network_error_handling(monkeypatch, tmp_path, caplog):
     """Test that network errors in notifications don't prevent alert processing."""
     import requests
-
     from conf.webhook_receiver import webhook_receiver
 
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-123456")
