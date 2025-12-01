@@ -69,11 +69,13 @@ configure_redis_url() {
   local password
 
   if password="$(read_secret "redis_password")"; then
+    log "redis secret found, applying REDIS_URL"
     export REDIS_PASSWORD="${REDIS_PASSWORD:-$password}"
-    export REDIS_URL="${REDIS_URL:-redis://:${password}@${host}:${port}/${db}}"
+    export REDIS_URL="redis://:${password}@${host}:${port}/${db}"
     return
   fi
 
+  log "warning: redis_password secret missing; REDIS_URL may be invalid"
   # Fallback: no secret provided, keep existing REDIS_URL (may fail if requirepass is enabled)
   export REDIS_URL="${REDIS_URL:-redis://${host}:${port}/${db}}"
 }
