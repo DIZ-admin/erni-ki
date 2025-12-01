@@ -94,7 +94,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🐹 Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
@@ -125,7 +125,7 @@ jobs:
           fail_ci_if_error: true
 
       - name: 📋 Upload coverage artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: go-coverage-report
           path: |
@@ -232,7 +232,7 @@ jobs:
         run: npm run test:e2e:mock
 
       - name: 📋 Upload Playwright artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: playwright-report
@@ -252,7 +252,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🐹 Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
@@ -278,7 +278,7 @@ jobs:
 
       # Go Code Scanning
       - name: 🐹 Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
