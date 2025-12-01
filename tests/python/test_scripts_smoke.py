@@ -39,6 +39,9 @@ def test_update_status_snippet_prettier_smoke(tmp_path: Path):
         snippet.run_prettier(["foo.md"])  # should not raise
 
     sample_md = "# Title\n\nContent"
+    repo_tmp = snippet.REPO_ROOT / "tmp_snippet_test"
+    repo_tmp.mkdir(exist_ok=True)
+    target = repo_tmp / "foo.md"
     with patch.object(subprocess, "run", side_effect=FileNotFoundError):
-        result = snippet.prettier_format(sample_md, tmp_path / "foo.md")
+        result = snippet.prettier_format(sample_md, target)
         assert "Title" in result  # returns original text on failure

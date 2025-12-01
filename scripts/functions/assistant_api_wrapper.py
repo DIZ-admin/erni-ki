@@ -162,7 +162,7 @@ class AssistantAPIWrapper:
             print(f"Exception getting messages: {e}")
             return []
 
-    def chat_with_assistant(self, message: str, instructions: str = None) -> str | None:
+    def chat_with_assistant(self, message: str, instructions: str | None = None) -> str | None:
         """Full chat cycle with the Assistant"""
         print(f"💬 Sending message to Assistant: {message[:50]}...")
 

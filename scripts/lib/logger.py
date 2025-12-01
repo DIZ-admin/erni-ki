@@ -60,8 +60,9 @@ class JSONFormatter(logging.Formatter):
         }
 
         # Add extra fields if present
-        if hasattr(record, "extra") and isinstance(record.extra, dict):
-            log_data.update(record.extra)
+        extra = getattr(record, "extra", None)
+        if isinstance(extra, dict):
+            log_data.update(extra)
 
         # Add exception info if present
         if record.exc_info:
