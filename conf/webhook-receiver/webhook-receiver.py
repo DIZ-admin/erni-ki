@@ -343,3 +343,4 @@ if __spec__ is None or __name__ == "__main__":  # Executed via `python` or `exec
     if __name__ == "__main__":
         logger.info("Starting ERNI-KI Webhook Receiver on port %s", WEBHOOK_PORT)
         app.run(host="0.0.0.0", port=WEBHOOK_PORT, debug=False)  # noqa: S104  # nosec B104
+# ruff: noqa: N999

@@ -189,7 +189,7 @@ class Alert(BaseModel):
 
 class AlertPayload(BaseModel):
     alerts: list[Alert]
-    groupLabels: dict[str, Any] = {}
+    groupLabels: dict[str, Any] = {}  # noqa: N815
 
 
 class AlertProcessor:
