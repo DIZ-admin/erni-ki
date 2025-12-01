@@ -141,14 +141,14 @@ curl -f http://localhost:3000/api/health && echo "Grafana wiederhergestellt"
 
 ```bash
 # Status prüfen
-docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 
 # Neustart
 docker compose restart redis
 
 # Prüfung nach Neustart
 sleep 5
-docker exec erni-ki-redis-1 redis-cli -a ErniKiRedisSecurePassword2024 ping
+docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 ```
 
 ## **PostgreSQL (Datenbank)**
