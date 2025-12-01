@@ -56,13 +56,13 @@ setup_cron() {
 # Automated system monitoring
 
 # Hourly check
-0 * * * * cd $PROJECT_DIR && ./scripts/health-monitor.sh >> .config-backup/monitoring/cron.log 2>&1
+0 * * * * cd $PROJECT_DIR && ./scripts/health-monitor-v2.sh >> .config-backup/monitoring/cron.log 2>&1
 
 # Daily cleanup of old logs (older than 7 days)
 0 2 * * * find $PROJECT_DIR/.config-backup/monitoring -name "health-report-*.md" -mtime +7 -delete
 
 # Weekly full report (Sunday 03:00)
-0 3 * * 0 cd $PROJECT_DIR && ./scripts/health-monitor.sh > .config-backup/monitoring/weekly-report-\$(date +\%Y\%m\%d).md 2>&1
+0 3 * * 0 cd $PROJECT_DIR && ./scripts/health-monitor-v2.sh > .config-backup/monitoring/weekly-report-\$(date +\%Y\%m\%d).md 2>&1
 EOF
 
     # Install cron jobs
@@ -162,7 +162,7 @@ test_monitoring() {
     cd "$PROJECT_DIR"
 
     # Run test check
-    if ./scripts/health-monitor.sh; then
+    if ./scripts/health-monitor-v2.sh; then
         log_success "Monitoring test passed"
     else
         log_warning "Monitoring test reported issues (expected on first run)"
@@ -208,7 +208,7 @@ main() {
     log_info "  - Alerts: .config-backup/monitoring/critical-alerts.log"
     echo ""
     log_info "🔧 Operations:"
-    log_info "  - Manual check: ./scripts/health-monitor.sh"
+    log_info "  - Manual check: ./scripts/health-monitor-v2.sh"
     log_info "  - View cron: crontab -l | grep erni-ki"
     log_info "  - Cron logs: .config-backup/monitoring/cron.log"
     echo ""
