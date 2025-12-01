@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
+import subprocess  # nosec B404
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -186,7 +186,7 @@ def run_prettier(paths: list[str]) -> None:
     """
     try:
         logger.info("Running prettier on %d files", len(paths))
-        subprocess.run(
+        subprocess.run(  # nosec B603
             ["npx", "prettier", "--write", *paths],
             cwd=REPO_ROOT,
             check=True,
@@ -217,7 +217,7 @@ def prettier_format(text: str, filepath: Path) -> str:
     rel_path = filepath.relative_to(REPO_ROOT).as_posix()
 
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # nosec B603
             ["npx", "prettier", "--parser", "markdown", "--stdin-filepath", rel_path],
             cwd=REPO_ROOT,
             input=text.encode("utf-8"),

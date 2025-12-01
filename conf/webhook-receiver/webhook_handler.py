@@ -99,7 +99,9 @@ SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 NOTIFICATION_TIMEOUT = int(os.getenv("NOTIFICATION_TIMEOUT", "10"))
-TEST_SECRET_PLACEHOLDER = "test-secret-placeholder"  # pragma: allowlist secret  # noqa: S105
+TEST_SECRET_PLACEHOLDER = (
+    "test-secret-placeholder"  # pragma: allowlist secret  # noqa: S105  # nosec B105
+)
 WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
 
 

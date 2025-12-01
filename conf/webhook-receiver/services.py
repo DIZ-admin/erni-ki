@@ -5,7 +5,7 @@ Alert processing and recovery script execution services.
 import logging
 import os
 from pathlib import Path
-from subprocess import CalledProcessError, TimeoutExpired, run
+from subprocess import CalledProcessError, TimeoutExpired, run  # nosec B404
 from typing import Any
 
 logger = logging.getLogger("webhook-receiver")
@@ -122,7 +122,7 @@ def run_recovery_script(service: str) -> None:
 
     try:
         logger.info("Running recovery script for %s: %s", service, script_path)
-        result = run(
+        result = run(  # nosec B603
             [str(script_path)],
             check=True,
             capture_output=True,

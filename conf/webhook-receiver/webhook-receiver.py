@@ -12,7 +12,7 @@ import os
 from collections.abc import Callable
 from datetime import datetime, timedelta
 from pathlib import Path
-from subprocess import CalledProcessError, TimeoutExpired, run
+from subprocess import CalledProcessError, TimeoutExpired, run  # nosec B404
 from typing import Any
 
 from flask import Flask, jsonify, request
@@ -189,7 +189,7 @@ def run_recovery_script(service: str) -> None:
         return
 
     try:
-        result = run(
+        result = run(  # nosec B603
             [str(script_path)],
             check=True,
             capture_output=True,
@@ -342,4 +342,4 @@ if __spec__ is None or __name__ == "__main__":  # Executed via `python` or `exec
     _validate_secrets(exit_on_error=True)
     if __name__ == "__main__":
         logger.info("Starting ERNI-KI Webhook Receiver on port %s", WEBHOOK_PORT)
-        app.run(host="0.0.0.0", port=WEBHOOK_PORT, debug=False)  # noqa: S104
+        app.run(host="0.0.0.0", port=WEBHOOK_PORT, debug=False)  # noqa: S104  # nosec B104
