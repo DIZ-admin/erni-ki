@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
 # Проверка языковых правил перед lint-staged и коммитом
-if [ -z "$SKIP_LANGUAGE_CHECK" ]; then
-  npm run lint:language
-fi
+npm run lint:language
 npx lint-staged

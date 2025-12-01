@@ -344,7 +344,7 @@ repos:
           (?x)^(
             docs/reference/status\.yml|
             docs/reference/status-snippet\.md|
-            docs/de/status-snippet\.md|
+            docs/de/reference/status-snippet\.md|
             docs/de/index\.md|
             docs/(index|overview)\.md|
             README\.md

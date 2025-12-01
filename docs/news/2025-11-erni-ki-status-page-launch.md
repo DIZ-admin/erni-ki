@@ -6,6 +6,7 @@ last_updated: '2025-11-30'
 tags:
   - status-page
   - monitoring
+title: 'Запуск статус-страницы ERNI-KI'
 date: 2025-11-23
 ---
 
