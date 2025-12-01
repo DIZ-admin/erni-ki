@@ -536,7 +536,7 @@ def health_check():
 if __name__ == "__main__":
     _validate_secrets(exit_on_error=True)
     logger.info("Starting ERNI-KI Webhook Receiver")
-    app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104 - runs inside container
+    app.run(host="0.0.0.0", port=9093, debug=False)  # noqa: S104  # nosec B104
 
 # When executed via exec() (no import spec) or under a foreign __name__, enforce secrets
 if (__name__ != "webhook_handler" or globals().get("__spec__") is None) and (

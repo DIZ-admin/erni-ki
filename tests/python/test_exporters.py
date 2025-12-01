@@ -6,6 +6,7 @@ Comprehensive unit tests for RAG and Ollama exporters
 import importlib.util
 import sys
 import time
+import types
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -21,6 +22,30 @@ def load_module(module_name: str, file_path: Path):
     sys.modules[module_name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def stub_prometheus():
+    class DummyGauge:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def set(self, *_args, **_kwargs):
+            return None
+
+        def labels(self, *args, **kwargs):
+            return self
+
+        def observe(self, *_args, **_kwargs):
+            return None
+
+    sys.modules["prometheus_client"] = types.SimpleNamespace(
+        Gauge=DummyGauge,
+        start_http_server=lambda *a, **k: None,
+        Histogram=DummyGauge,
+        CollectorRegistry=DummyGauge,
+        generate_latest=lambda *_: b"",
+        CONTENT_TYPE_LATEST="text/plain",
+    )
 
 
 class TestRAGExporter(unittest.TestCase):
@@ -201,6 +226,7 @@ class TestOllamaExporter(unittest.TestCase):
     @patch("requests.get")
     def test_fetch_json_returns_dict(self, mock_get):
         """fetch_json returns dict when JSON is a mapping"""
+        stub_prometheus()
         app = load_module("ollama_exporter_app", ROOT / "ops" / "ollama-exporter" / "app.py")
 
         mock_resp = MagicMock()
@@ -214,6 +240,7 @@ class TestOllamaExporter(unittest.TestCase):
     @patch("requests.get")
     def test_fetch_json_returns_none_for_non_dict(self, mock_get):
         """fetch_json returns None when JSON is not a mapping"""
+        stub_prometheus()
         app = load_module("ollama_exporter_app", ROOT / "ops" / "ollama-exporter" / "app.py")
 
         mock_resp = MagicMock()
