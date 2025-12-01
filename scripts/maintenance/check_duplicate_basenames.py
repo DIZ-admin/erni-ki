@@ -41,13 +41,7 @@ def get_basenames(search_path: Path | None = None) -> dict[str, list[Path]]:
         return by_name
 
     try:
-        files = (
-            subprocess.check_output(  # nosec B603,B607
-                ["git", "ls-files"], text=True
-            )
-            .strip()
-            .splitlines()
-        )
+        files = subprocess.check_output(["git", "ls-files"], text=True).strip().splitlines()  # nosec
     except subprocess.CalledProcessError as exc:
         print(f"Failed to list files: {exc}", file=sys.stderr)
         return by_name

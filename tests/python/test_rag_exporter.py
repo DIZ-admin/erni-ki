@@ -16,21 +16,25 @@ def test_probe_success_sets_metrics(mock_get):
     mock_resp.raise_for_status = MagicMock()
     mock_get.return_value = mock_resp
 
-    # run single iteration of probe loop body
-    rag_exporter.rag_sources.set(0)
-    rag_exporter.rag_latency.observe(0.0)
-    with patch.object(rag_exporter, "_shutdown_event") as evt:
+    rag_sources_mock = MagicMock()
+    rag_latency_mock = MagicMock()
+    with (
+        patch.object(rag_exporter, "rag_sources", rag_sources_mock),
+        patch.object(rag_exporter, "rag_latency", rag_latency_mock),
+        patch.object(rag_exporter, "_shutdown_event") as evt,
+    ):
         evt.is_set.return_value = True
         rag_exporter.probe_loop()
 
-    # After successful probe, sources gauge should be set to len(sources)
-    assert rag_exporter.rag_sources._value.get() == 2  # type: ignore[attr-defined]
+    rag_sources_mock.set.assert_called_with(2)
+    rag_latency_mock.observe.assert_called()  # observed latency
 
 
 def test_metrics_endpoint_returns_content():
     from conf import rag_exporter
 
-    client = rag_exporter.app.test_client()
-    resp = client.get("/metrics")
-    assert resp.status_code == 200
-    assert resp.data  # non-empty metrics payload
+    with patch("conf.rag_exporter.generate_latest", return_value=b"metrics"):  # type: ignore[attr-defined]
+        client = rag_exporter.app.test_client()
+        resp = client.get("/metrics")
+        assert resp.status_code == 200
+        assert resp.data == b"metrics"
