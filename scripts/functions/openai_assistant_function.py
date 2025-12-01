@@ -8,10 +8,13 @@ license: MIT
 requirements: requests, openai
 """
 
+from __future__ import annotations
+
 import json
 import os
 import time
 from collections.abc import Generator
+from typing import Any
 
 import requests
 from pydantic import BaseModel, Field
@@ -105,7 +108,7 @@ class Pipe:
             print(f"Exception adding message: {e}")
             return None
 
-    def create_run(self, thread_id: str, instructions: str = None) -> str | None:
+    def create_run(self, thread_id: str, instructions: str | None = None) -> str | None:
         """Create a run for the Assistant"""
         try:
             headers = {
@@ -171,7 +174,7 @@ class Pipe:
             print(f"Exception waiting for run: {e}")
             return None
 
-    def get_messages(self, thread_id: str) -> list[dict]:
+    def get_messages(self, thread_id: str) -> list[dict[str, Any]]:
         """Get all messages from the thread"""
         try:
             openai_headers = {
