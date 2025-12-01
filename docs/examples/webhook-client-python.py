@@ -34,7 +34,7 @@ import json
 import sys
 from datetime import datetime
 from json import JSONDecodeError
-from typing import Any
+from typing import Any, cast
 
 import requests
 
@@ -174,7 +174,10 @@ class WebhookClient:
             )
             response.raise_for_status()
             try:
-                return response.json()
+                data = response.json()
+                if isinstance(data, dict):
+                    return cast(dict[str, Any], data)
+                return {"status": "success", "raw_response": data}
             except JSONDecodeError:
                 return {
                     "status": "success",
