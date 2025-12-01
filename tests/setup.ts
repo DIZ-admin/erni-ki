@@ -52,7 +52,9 @@ globalThis.testUtils = testUtils;
 // Configure fetch for tests (mocked)
 global.fetch = vi.fn();
 
-// Setup fake timers for determinism
-vi.useFakeTimers();
+// NOTE: Do not enable fake timers globally.
+// In individual tests that need fake timers:
+// beforeEach(() => { vi.useFakeTimers(); });
+// afterEach(() => { vi.useRealTimers(); });
 
 export {};
