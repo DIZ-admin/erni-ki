@@ -419,9 +419,9 @@ nav:
           - "HowTo":
               - Overview: academy/howto/index.md
               - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
-          - "Write Customer Email": academy/howto/write-customer-email.md
-          - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
-          - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
+              - "Write Customer Email": academy/howto/write-customer-email.md
+              - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
+              - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
       - "News":
           - Feed: academy/news/index.md
           - "2025-01-release-x": academy/news/2025-01-release-x.md

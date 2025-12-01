@@ -118,7 +118,7 @@ jobs:
           files: ./auth/coverage.out
           flags: go-auth-service
           name: auth-service-coverage
-          fail_ci_if_error: false
+          fail_ci_if_error: true
 
       - name: 📋 Upload coverage artifacts
         uses: actions/upload-artifact@v4
@@ -156,7 +156,7 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:.
           export LOG_DIR=/tmp/logs
-          pytest tests/python/ --cov=. --cov-report=xml
+          pytest tests/python/ --cov=. --cov-report=xml --cov-fail-under=80
 
       - name: 📤 Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -164,7 +164,34 @@ jobs:
           files: ./coverage.xml
           flags: python
           name: python-coverage
-          fail_ci_if_error: false
+          fail_ci_if_error: true
+
+  # Python type checking
+  mypy:
+    name: 🧠 Mypy Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: 🔎 Run mypy
+        run: |
+          export PYTHONPATH=$PYTHONPATH:.
+          mypy --config-file mypy.ini .
 
   # JS/TS Unit and E2E Tests
   test-js:
