@@ -280,6 +280,8 @@ AI: Использует Filesystem Server для поиска файлов с �
 
 Файл `conf/mcposerver/config.json`:
 
+<!-- pragma: allowlist secret -->
+
 ```json
 {
   "mcpServers": {
@@ -292,7 +294,7 @@ AI: Использует Filesystem Server для поиска файлов с �
       "args": [
         "-y",
         "@modelcontextprotocol/server-postgres",
-        "postgresql://postgres:postgres@db/openwebui"
+        "postgresql://USER@db/openwebui"
       ]
     }
   }
