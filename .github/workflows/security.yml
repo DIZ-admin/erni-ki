@@ -34,11 +34,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["go", "javascript"]
+        language: ["go", "javascript", "python"]
         include:
           - language: go
             path: "./auth"
           - language: javascript
+            path: "."
+          - language: python
             path: "."
 
     steps:
@@ -65,7 +67,7 @@ jobs:
         if: matrix.language == 'javascript'
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22.14.0"
           cache: "npm"
 
       - name: 📦 Install JS dependencies
@@ -110,7 +112,7 @@ jobs:
         if: hashFiles('package.json') != ''
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22.14.0"
 
       - name: 🔍 Run npm audit (production only)
         if: hashFiles('package.json') != ''
