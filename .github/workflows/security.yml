@@ -121,6 +121,51 @@ jobs:
           npm audit --omit=dev --audit-level=moderate || true
           npm audit --omit=dev --json > npm-audit-results.json || true
 
+  bandit:
+    name: 🐍 Bandit + Ruff security
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v6
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Install security linters
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit ruff
+
+      - name: 🔒 Run Bandit
+        run: |
+          bandit -q -r conf scripts ops docs examples || exit 1
+
+      - name: 🔒 Run Ruff (security rules)
+        run: |
+          ruff check --select S,B,ASYNC,N --ignore S101 .
+
+  trivy:
+    name: 🛡️ Trivy filesystem scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v6
+
+      - name: 🛡️ Run Trivy FS scan (HIGH,CRITICAL)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: fs
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          exit-code: 1
+
       - name: 📤 Upload npm audit results
         if: hashFiles('package.json') != ''
         uses: actions/upload-artifact@v4

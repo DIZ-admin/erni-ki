@@ -3,9 +3,24 @@
 Comprehensive unit tests for RAG and Ollama exporters
 """
 
+import importlib.util
+import sys
 import time
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, patch
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def load_module(module_name: str, file_path: Path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load module from {file_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 class TestRAGExporter(unittest.TestCase):
@@ -182,6 +197,32 @@ class TestOllamaExporter(unittest.TestCase):
             else:
                 count = 0
             self.assertEqual(count, expected)
+
+    @patch("requests.get")
+    def test_fetch_json_returns_dict(self, mock_get):
+        """fetch_json returns dict when JSON is a mapping"""
+        app = load_module("ollama_exporter_app", ROOT / "ops" / "ollama-exporter" / "app.py")
+
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        mock_resp.json.return_value = {"ok": True}
+        mock_get.return_value = mock_resp
+
+        result = app.fetch_json("/api/version")
+        self.assertEqual(result, {"ok": True})
+
+    @patch("requests.get")
+    def test_fetch_json_returns_none_for_non_dict(self, mock_get):
+        """fetch_json returns None when JSON is not a mapping"""
+        app = load_module("ollama_exporter_app", ROOT / "ops" / "ollama-exporter" / "app.py")
+
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        mock_resp.json.return_value = ["not-a-dict"]
+        mock_get.return_value = mock_resp
+
+        result = app.fetch_json("/api/version")
+        self.assertIsNone(result)
 
 
 class TestExporterConfiguration(unittest.TestCase):
