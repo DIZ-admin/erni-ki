@@ -78,7 +78,7 @@ const defaults = { interval: 60, retryInterval: 60, resendInterval: 0, maxretrie
 const socket = io('http://localhost:3001', { transports: ['websocket'], timeout: 5000 });
 socket.on('connect_error', (e) => { console.error(e.message); process.exit(1); });
 socket.on('connect', () => {
-  socket.emit('login', { username: 'admin', password: 'ECRvQ3#2', token: null }, (res) => {
+  socket.emit('login', { username: 'admin', password: '<ADMIN_PASSWORD>', token: null }, (res) => {
     if (!res.ok) { console.error('login failed', res); process.exit(1); }
     let i = 0;
     const addNext = () => {
@@ -102,7 +102,7 @@ const { io } = require('/app/node_modules/socket.io-client');
 const socket = io('http://localhost:3001', { transports: ['websocket'], timeout: 5000 });
 socket.on('connect_error', (e) => { console.error(e.message); process.exit(1); });
 socket.on('connect', () => {
-  socket.emit('login', { username: 'admin', password: 'ECRvQ3#2', token: null }, (res) => {
+  socket.emit('login', { username: 'admin', password: '<ADMIN_PASSWORD>', token: null }, (res) => {
     if (!res.ok) { console.error('login failed', res); process.exit(1); }
     socket.emit('getMonitorList', () => {});
   });

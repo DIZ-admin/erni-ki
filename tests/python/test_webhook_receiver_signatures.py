@@ -29,7 +29,7 @@ def load_webhook_receiver():
 def test_verify_signature_valid():
     wh = load_webhook_receiver()
     body = b"{}"
-    secret = "secret"  # noqa: S105
+    secret = "secret"  # noqa: S105  # pragma: allowlist secret
     os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
     wh.WEBHOOK_SECRET = secret
     sig = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
@@ -39,8 +39,8 @@ def test_verify_signature_valid():
 def test_verify_signature_invalid():
     wh = load_webhook_receiver()
     body = b"{}"
-    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = "secret"  # noqa: S105
-    wh.WEBHOOK_SECRET = "secret"  # noqa: S105
+    os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = "secret"  # noqa: S105  # pragma: allowlist secret
+    wh.WEBHOOK_SECRET = "secret"  # noqa: S105  # pragma: allowlist secret
     assert wh.verify_signature(body, "bad") is False
 
 
@@ -65,7 +65,7 @@ def test_webhook_critical_with_valid_signature():
     client = wh.app.test_client()
     body = {"alerts": [{"labels": {"alertname": "X"}, "status": "firing"}]}
     raw = wh.json.dumps(body).encode()
-    secret = "secret"  # noqa: S105
+    secret = "secret"  # noqa: S105  # pragma: allowlist secret
     os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
     wh.WEBHOOK_SECRET = secret
     sig = hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()

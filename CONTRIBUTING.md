@@ -176,8 +176,8 @@
 
 ### Процесс релиза (кратко)
 
-- Поток: feature/_ → PR в `develop`; hotfix от `main` с back-merge в `develop`;
-  release/_ только при подготовке релиза.
+- Поток: `feature/*` → PR в `develop`; hotfix от `main` с back-merge в
+  `develop`; release/\_ только при подготовке релиза.
 - Перед релизом: все проверки зелёные, покрытие соответствует целевому, Codecov
   статус успешен.
 - После релиза: удалить release/hotfix ветку, убедиться в обратном merge в

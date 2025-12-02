@@ -37,7 +37,7 @@ def test_send_alert_returns_dict(mock_post: MagicMock):
     mock_response.text = "{}"
     mock_post.return_value = mock_response
 
-    test_secret = "test-secret"  # noqa: S105 pragma: allowlist secret
+    test_secret = "test-secret"  # noqa: S105  # pragma: allowlist secret
     client = webhook_client_cls(base_url="http://localhost:9093", webhook_secret=test_secret)
     resp = client.send_alert(
         endpoint="critical",
@@ -73,7 +73,7 @@ def test_send_alert_handles_non_dict_json(mock_post: MagicMock):
     mock_response.text = '["not-a-dict"]'
     mock_post.return_value = mock_response
 
-    test_secret = "test-secret"  # noqa: S105 pragma: allowlist secret
+    test_secret = "test-secret"  # noqa: S105  # pragma: allowlist secret
     client = webhook_client_cls(base_url="http://localhost:9093", webhook_secret=test_secret)
     resp = client.send_alert(
         endpoint="warning",
@@ -102,7 +102,7 @@ def test_send_alert_handles_jsondecode_error(mock_post: MagicMock):
     mock_response.text = "not-json"
     mock_post.return_value = mock_response
 
-    test_secret = "test-secret"  # noqa: S105 pragma: allowlist secret
+    test_secret = "test-secret"  # noqa: S105  # pragma: allowlist secret
     client = webhook_client_cls(base_url="http://localhost:9093", webhook_secret=test_secret)
     resp = client.send_alert(endpoint="generic", alert_name="Test", summary="x")
 
@@ -117,7 +117,7 @@ def test_generate_signature():
     )
     webhook_client_cls = webhook_client.WebhookClient
 
-    test_secret = "test-secret"  # noqa: S105 pragma: allowlist secret
+    test_secret = "test-secret"  # noqa: S105  # pragma: allowlist secret
     client = webhook_client_cls(base_url="http://localhost:9093", webhook_secret=test_secret)
     body = json.dumps({"a": 1}).encode()
     sig1 = client._generate_signature(body)
