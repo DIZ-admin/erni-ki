@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -euo pipefail
 
 # Debug: write to a file to verify script runs
 echo "Script started at $(date)" > /tmp/searxng-entrypoint.log
@@ -40,12 +40,12 @@ configure_redis_url() {
     redis_url="redis://${username}:${password}@${host}:${port}/${db}" # pragma: allowlist secret
     export SEARXNG_REDIS_URL="${redis_url}"
     export SEARXNG_VALKEY_URL="${redis_url}"
-    log "Redis URL configured: ${redis_url}"
+    log "Redis URL configured for user ${username} on ${host}:${port}/${db} (value not logged)"
     # Note: settings.yml already has correct URL with username
     return
   fi
 
-  log "warning: redis_password secret missing; using SEARXNG_REDIS_URL=${SEARXNG_REDIS_URL:-redis://${host}:${port}/${db}} (will fail if requirepass is enabled)" # pragma: allowlist secret
+  log "warning: redis_password secret missing; using host=${host} port=${port} db=${db} (URL value not logged; will fail if requirepass is enabled)"
   export SEARXNG_REDIS_URL="${SEARXNG_REDIS_URL:-redis://${host}:${port}/${db}}" # pragma: allowlist secret
   export SEARXNG_VALKEY_URL="${SEARXNG_VALKEY_URL:-redis://${host}:${port}/${db}}" # pragma: allowlist secret
 }
@@ -54,8 +54,7 @@ main() {
   log "Main function started with $# arguments"
   configure_redis_url
 
-  log "Configured SEARXNG_REDIS_URL=${SEARXNG_REDIS_URL}"
-  log "Configured SEARXNG_VALKEY_URL=${SEARXNG_VALKEY_URL}"
+  log "Configured SEARXNG_REDIS_URL and SEARXNG_VALKEY_URL environment variables (values not logged)"
 
   if [ $# -gt 0 ]; then
     log "Executing: $*"
