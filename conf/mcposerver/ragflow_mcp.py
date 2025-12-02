@@ -18,7 +18,7 @@ Defaults are driven by env vars:
 
 from __future__ import annotations
 
-import contextlib
+import logging
 import os
 import time
 from pathlib import Path
@@ -26,6 +26,8 @@ from typing import Any
 
 import requests
 from mcp.server.fastmcp import FastMCP
+
+logger = logging.getLogger(__name__)
 
 # --------------------------- Configuration ---------------------------
 DEFAULT_DATASET_ID = os.getenv("RAGFLOW_DATASET_ID", "3ade126ccb7811f0b6bca21184c8b456")
@@ -112,7 +114,7 @@ def ensure_user_dataset(user_id: str | None, default_dataset: str | None = None)
 
     name = f"user-{user_id}"
     # try to find existing
-    with contextlib.suppress(Exception):
+    try:
         existing = list_datasets(name=name)
         for ds in existing:
             if ds.get("name") == name:
@@ -120,6 +122,11 @@ def ensure_user_dataset(user_id: str | None, default_dataset: str | None = None)
                 if ds_id:
                     _USER_DATASET_CACHE[user_id] = ds_id
                     return ds_id
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except Exception as e:  # noqa: BLE001
+        logger.exception("Failed to list datasets for user %s: %s", user_id, e)
+        existing = []
 
     ds_id = create_dataset(name)
     _USER_DATASET_CACHE[user_id] = ds_id
