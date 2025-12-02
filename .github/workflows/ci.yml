@@ -153,8 +153,7 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
-          pip install pytest pytest-cov flask requests pyyaml pydantic
+          pip install -r requirements-dev.txt flask requests pyyaml pydantic
 
       - name: 🧪 Run pytest
         run: |
@@ -285,7 +284,7 @@ jobs:
 
       - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
         env:
-          GOTOOLCHAIN: go1.24.4
+          GOTOOLCHAIN: go1.24.10
           GOSEC_VERSION: v2.22.10
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}

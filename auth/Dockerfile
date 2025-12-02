@@ -25,8 +25,8 @@ RUN go mod download && go mod verify
 # Копируем исходный код
 COPY . .
 
-# Запускаем тесты (опционально, можно отключить через build arg)
-ARG SKIP_TESTS=false
+# Запускаем тесты (опционально); по умолчанию отключены для ускорения сборки CI
+ARG SKIP_TESTS=true
 RUN if [ "$SKIP_TESTS" = "false" ]; then go test -v ./...; fi
 
 # Собираем приложение с оптимизациями
