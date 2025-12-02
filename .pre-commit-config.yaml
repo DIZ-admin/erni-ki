@@ -346,7 +346,11 @@ repos:
                 export PATH="$PATH:$GOPATH_BIN/bin"
               fi
             fi
-            goimports -w $(git ls-files "*.go")
+            if ! command -v goimports >/dev/null 2>&1; then
+              go run golang.org/x/tools/cmd/goimports@latest -w $(git ls-files "*.go")
+            else
+              goimports -w $(git ls-files "*.go")
+            fi
 
       # Detect duplicate basenames in scripts/ and conf/
       - id: check-duplicate-basenames
