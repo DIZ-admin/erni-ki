@@ -308,5 +308,13 @@
   ],
   // Отключаем автоматическое сканирование
   "snyk.scanOnSave": false,
-  "snyk.scanOnOpen": false
+  "snyk.scanOnOpen": false,
+
+  // Claude Code MCP Server Configuration
+  "claude-code.mcpServers": {
+    "archon": {
+      "transport": "http",
+      "url": "http://localhost:8051/mcp"
+    }
+  }
 }
