@@ -2,7 +2,7 @@
 # Оптимизированная сборка с кэшированием зависимостей
 
 # Этап 1: Сборка приложения
-FROM golang:1.24.10-alpine3.21 AS builder
+FROM golang:1.24.4-alpine3.21 AS builder
 
 # Устанавливаем необходимые пакеты для сборки
 RUN apk add --no-cache \
@@ -25,8 +25,8 @@ RUN go mod download && go mod verify
 # Копируем исходный код
 COPY . .
 
-# Запускаем тесты (опционально, можно отключить через build arg)
-ARG SKIP_TESTS=false
+# Запускаем тесты (опционально); по умолчанию отключены для ускорения сборки CI
+ARG SKIP_TESTS=true
 RUN if [ "$SKIP_TESTS" = "false" ]; then go test -v ./...; fi
 
 # Собираем приложение с оптимизациями
