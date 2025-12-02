@@ -1,5 +1,5 @@
 user default on >__LOAD_FROM_DOCKER_SECRET__ ~* &* +@all -@dangerous
 user searxng on >__LOAD_FROM_DOCKER_SECRET__ ~* &* +@read +@write +@pubsub +@connection +@string +@hash +@list +@set +@sortedset -@dangerous -@admin
-user openwebui on >__LOAD_FROM_DOCKER_SECRET__ ~open-webui:* &open-webui:* +@read +@write +@pubsub +@connection +@string +@hash -@dangerous -@admin
+user openwebui on >__LOAD_FROM_DOCKER_SECRET__ ~open-webui:* &open-webui:* +@read +@write +@pubsub +@connection +@string +@hash +@transaction -@dangerous -@admin
 user litellm on >__LOAD_FROM_DOCKER_SECRET__ ~litellm:* &* +@read +@write +@connection +@string +@hash -@dangerous -@admin
 user exporter on >__LOAD_FROM_DOCKER_SECRET__ ~* &* +@read +INFO +SLOWLOG +CLIENT|LIST +CONFIG|GET -@write -@dangerous -@admin
