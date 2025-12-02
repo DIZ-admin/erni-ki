@@ -1,22 +1,23 @@
 # ERNI-KI — Production AI Platform
 
-**ERNI-KI** — стэк из 30 сервисов вокруг OpenWebUI v0.6.36 и Ollama 0.12.11, Go
-1.24.10 в CI, с GPU-ускорением, Context7/LiteLLM gateway и полной обсервабилити.
+**ERNI-KI** — A stack of 30 services built around OpenWebUI v0.6.36 and Ollama
+0.12.11, Go 1.24.10 in CI, with GPU acceleration, Context7/LiteLLM gateway, and
+full observability.
 
 <!-- STATUS_SNIPPET_START -->
 
-> **Статус системы (2025-11-23) — Production Ready v0.61.3**
+> **System Status (2025-11-23) — Production Ready v0.61.3**
 >
-> - Контейнеры: 34/34 services healthy
-> - Графана: 5/5 Grafana dashboards (provisioned)
-> - Алерты: 20 Prometheus alert rules active
+> - Containers: 34/34 services healthy
+> - Grafana: 5/5 Grafana dashboards (provisioned)
+> - Alerts: 20 Prometheus alert rules active
 > - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
 > - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
-> - Мониторинг: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
+> - Monitoring: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
 >   v3.1.0, Alertmanager v0.27.0
-> - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
+> - Automation: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
 >   01:30, Watchtower selective updates
-> - Примечание: Versions and dashboard/alert counts synced with compose.yml
+> - Note: Versions and dashboard/alert counts synced with compose.yml
 
 <!-- STATUS_SNIPPET_END -->
 
@@ -28,78 +29,82 @@
 ```bash
 git clone https://github.com/DIZ-admin/erni-ki.git
 cd erni-ki
-cp env/*.example env/ # заполните .env файлы
-# (Рекомендуется) один раз скачать модели Docling
+
+# Create .env files from examples
+# Linux/macOS:
+for f in env/*.example; do cp "$f" "${f%.example}.env"; done
+
+# (Recommended) Download Docling models once
 ./scripts/maintenance/download-docling-models.sh
+
 docker compose up -d
 docker compose ps
 ```
 
-Доступ: локально <http://localhost:8080>, production —
+Access: Locally at <http://localhost:8080>, production —
 `https://ki.erni-gruppe.ch`.
 
-## Branches, CI и политики
+## Branches, CI, and Policies
 
-- Работа ведётся в `develop`, релизы в `main`. Все изменения через PR + review.
-- Обязательные проверки: `ci` (ESLint/Ruff/Vitest/Go), `security`
-  (CodeQL/Trivy), `deploy-environments`. Локально запускайте
-  `pip install -r requirements-dev.txt` (для Ruff/pre-commit), `npm run lint`,
-  `npm run test`, `go test ./auth/...`.
-- Governance, CODEOWNERS и Dependabot — см.
+- Work is done in `develop`, releases in `main`. All changes via PR + review.
+- Mandatory checks: `ci` (ESLint/Ruff/Vitest/Go), `security` (CodeQL/Trivy),
+  `deploy-environments`.
+- Locally run: `pip install -r requirements-dev.txt` (for Ruff/pre-commit),
+  `npm run lint`, `npm run test`, `go test ./auth/...`.
+- Governance, CODEOWNERS, and Dependabot — see
   [`docs/operations/core/github-governance.md`](docs/operations/core/github-governance.md).
-- GitHub Environments (development/staging/production), секреты и журнал
-  проверок описаны в
+- GitHub Environments (development/staging/production), secrets, and audit logs
+  are described in
   [`docs/reference/github-environments-setup.md`](docs/reference/github-environments-setup.md).
-- Инциденты CI/GitHub Actions фиксируются в
+- CI/GitHub Actions incidents are recorded in
   [`docs/archive/audits/ci-health.md`](docs/archive/audits/ci-health.md).
 
-## Архитектура (коротко)
+## Architecture (Brief)
 
-- **AI слой:** OpenWebUI + Ollama (GPU), LiteLLM gateway, MCP Server, Docling,
-  Tika, EdgeTTS, RAG через SearXNG. Детали — `docs/ai/` и
+- **AI Layer:** OpenWebUI + Ollama (GPU), LiteLLM gateway, MCP Server, Docling,
+  Tika, EdgeTTS, RAG via SearXNG. Details — `docs/ai/` and
   `docs/reference/api-reference.md`.
-- **Данные:** PostgreSQL 17 + pgvector, Redis 7, Backrest, persistent volumes.
-  Руководства — `docs/data/`.
-- **Обсервабилити:** Prometheus, Grafana, Alertmanager, Loki, Fluent Bit, 8
-  exporters. Схемы/alarms — `docs/operations/monitoring/monitoring-guide.md`.
+- **Data:** PostgreSQL 17 + pgvector, Redis 7, Backrest, persistent volumes.
+  Guides — `docs/data/`.
+- **Observability:** Prometheus, Grafana, Alertmanager, Loki, Fluent Bit, 8
+  exporters. Schemas/alarms — `docs/operations/monitoring/monitoring-guide.md`.
 - **Security & Networking:** Cloudflare Zero Trust, Nginx WAF, TLS 1.2/1.3,
-  Docker Secrets, JWT-auth service. Инструкции —
-  `scripts/infrastructure/security` и `docs/security/`.
+  Docker Secrets, JWT-auth service. Instructions —
+  `scripts/infrastructure/security` and `docs/security/`.
 
-## Документация
+## Documentation
 
-> **Версия документации:** см. [docs/VERSION.md](docs/VERSION.md) для текущего
-> номера версии, даты и правил обновления.
+> **Documentation Version:** See [docs/VERSION.md](docs/VERSION.md) for the
+> current version number, date, and update rules.
 
-| Тема                   | Где искать                                                                                                             |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Архитектура и обзор    | `docs/architecture/`, `docs/overview.md`                                                                               |
-| Мониторинг/операции    | `docs/operations/monitoring/monitoring-guide.md`, `docs/archive/audits/monitoring-audit.md`                            |
-| GitHub/CI Governance   | `docs/operations/core/github-governance.md`, `.github/`                                                                |
-| Environments & секреты | `docs/reference/github-environments-setup.md` + `scripts/infrastructure/security/`                                     |
-| Инциденты/аудиты       | `docs/archive/incidents/`, `docs/archive/audits/`                                                                      |
-| Academy / Пользователи | `docs/academy/README.md`, `docs/index.md`, `docs/en/index.md`, `docs/de/index.md`                                      |
-| HowTo / сценарии       | `docs/howto/`, `docs/en/academy/howto/`                                                                                |
-| Статус системы         | `docs/operations/core/status-page.md`, `docs/system/status.md`, `docs/en/system/status.md`, `docs/de/system/status.md` |
-| Аудит документации     | `docs/archive/audits/documentation-audit.md`                                                                           |
+| Topic                   | Where to find                                                                                                          |
+| :---------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| Architecture & Overview | `docs/architecture/`, `docs/overview.md`                                                                               |
+| Monitoring/Operations   | `docs/operations/monitoring/monitoring-guide.md`, `docs/archive/audits/monitoring-audit.md`                            |
+| GitHub/CI Governance    | `docs/operations/core/github-governance.md`, `.github/`                                                                |
+| Environments & Secrets  | `docs/reference/github-environments-setup.md` + `scripts/infrastructure/security/`                                     |
+| Incidents/Audits        | `docs/archive/incidents/`, `docs/archive/audits/`                                                                      |
+| Academy / Users         | `docs/academy/README.md`, `docs/index.md`, `docs/en/index.md`, `docs/de/index.md`                                      |
+| HowTo / Scenarios       | `docs/howto/`, `docs/en/academy/howto/`                                                                                |
+| System Status           | `docs/operations/core/status-page.md`, `docs/system/status.md`, `docs/en/system/status.md`, `docs/de/system/status.md` |
+| Documentation Audit     | `docs/archive/audits/documentation-audit.md`                                                                           |
 
-## Academy KI и пользовательские сценарии
+## Academy KI and User Scenarios
 
-- **Портал для пользователей:** заходите в `docs/index.md` (каноничный русский
-  портал) или локализации `docs/en/index.md` / `docs/de/index.md`. или
-  локализации `docs/en/index.md` / `docs/de/index.md`.
-- **Быстрый старт:** используйте `docs/training/openwebui-basics.md` и чек-листы
+- **User Portal:** Visit `docs/index.md` (canonical Russian portal) or
+  localizations `docs/en/index.md` / `docs/de/index.md`.
+- **Quick Start:** Use `docs/training/openwebui-basics.md` and checklists
   `docs/training/prompting-101.md`.
-- **Практика:** готовые шаблоны и сценарии — в `docs/howto/` и переводах в
-  `docs/en/academy/howto/`.
-- **Статус сервисов:** перед обращением проверяйте
-  `docs/operations/core/status-page.md` или локализованные страницы статуса
+- **Practice:** Ready-made templates and scenarios — in `docs/howto/` and
+  translations in `docs/en/academy/howto/`.
+- **Service Status:** Before reporting issues, check
+  `docs/operations/core/status-page.md` or localized status pages
   (`docs/*/system/status.md`).
 
-## Участие
+## Contribution
 
-1. Создайте issue (шаблоны в `.github/ISSUE_TEMPLATE/`).
-2. Фичи — из `develop`, фиксы в PR -> `develop` -> `main`.
-3. Убедитесь, что CI зелёный и документы обновлены.
+1. Create an issue (templates in `.github/ISSUE_TEMPLATE/`).
+2. Features — from `develop`, fixes in PR -> `develop` -> `main`.
+3. Ensure CI is green and documents are updated.
 
 License: MIT.

@@ -167,7 +167,8 @@ services:
       # Allow auto-updates for Redis
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=cache-services"
-    mem_limit: 1g
+    mem_limit: 4g # Increased from 1g: 2x maxmemory for AOF rewrite (2025-12-02)
+    mem_reservation: 2g # Reserved memory
     cpus: "1.0"
 
   # LiteLLM Context Engineering Gateway (optimized network configuration)
@@ -400,6 +401,8 @@ services:
       redis:
         condition: service_healthy
     env_file: env/searxng.env
+    entrypoint:
+      - /opt/erni/bin/searxng-entrypoint.sh
     healthcheck:
       test:
         [
@@ -414,7 +417,7 @@ services:
     logging: *important-logging
     restart: unless-stopped
     volumes:
-      - ./conf/searxng/settings.yml:/etc/searxng/settings.yml:ro
+      - ./conf/searxng/settings.yml:/etc/searxng/settings.yml
       - ./conf/searxng/uwsgi.ini:/etc/searxng/uwsgi.ini:ro
       - ./conf/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
       - ./conf/searxng/favicons.toml:/etc/searxng/favicons.toml:ro
@@ -442,7 +445,7 @@ services:
       - CUDA_VISIBLE_DEVICES=${OLLAMA_CUDA_VISIBLE_DEVICES:-0}
       - OLLAMA_NUM_PARALLEL=1
       - OLLAMA_MAX_LOADED_MODELS=1
-      - OLLAMA_NUM_CTX=4096
+      - OLLAMA_NUM_CTX=2048
       # Flash attention occasionally breaks some models; disable for stability
       - OLLAMA_FLASH_ATTENTION=0
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
