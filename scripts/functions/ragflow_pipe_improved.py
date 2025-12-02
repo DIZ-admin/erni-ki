@@ -19,7 +19,7 @@ class Pipe:
     class Valves(BaseModel):
         # --- Connection ---
         RAGFLOW_API_BASE_URL: str = Field(
-            default="http://192.168.62.140:8090",
+            default="http://192.168.62.153:19090",
             description="Base URL to your RAGFlow instance. With or without '/api' suffix.",
         )
         RAGFLOW_API_KEY: str = Field(
