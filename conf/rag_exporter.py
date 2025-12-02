@@ -8,13 +8,13 @@ from typing import Any
 
 import requests
 from flask import Flask, Response
-from prometheus_client import (
+from prometheus_client import (  # type: ignore[reportMissingImports]
     CONTENT_TYPE_LATEST,
     CollectorRegistry,
     Gauge,
     Histogram,
     generate_latest,
-)  # type: ignore[reportMissingImports]
+)
 
 # Configuration constants
 DEFAULT_RAG_TEST_INTERVAL = 30.0  # seconds

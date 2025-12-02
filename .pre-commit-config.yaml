@@ -336,14 +336,17 @@ repos:
               echo "go toolchain is required for goimports" >&2
               exit 1
             fi
-            if ! command -v goimports >/dev/null 2>&1; then
-              go install golang.org/x/tools/cmd/goimports@latest
-            fi
             GOPATH_BIN=$(go env GOPATH 2>/dev/null || true)
             if [[ -n "$GOPATH_BIN" ]]; then
-              PATH=\"$PATH:$GOPATH_BIN/bin\"
+              export PATH="$PATH:$GOPATH_BIN/bin"
             fi
-            goimports -w $(git ls-files \"*.go\")
+            if ! command -v goimports >/dev/null 2>&1; then
+              go install golang.org/x/tools/cmd/goimports@latest
+              if [[ -n "$GOPATH_BIN" ]]; then
+                export PATH="$PATH:$GOPATH_BIN/bin"
+              fi
+            fi
+            goimports -w $(git ls-files "*.go")
 
       # Detect duplicate basenames in scripts/ and conf/
       - id: check-duplicate-basenames

@@ -1,7 +1,7 @@
 ---
 language: ru
 translation_status: draft
-doc_version: '2025.12'
+doc_version: '2025.11'
 last_updated: '2025-12-01'
 ---
 
@@ -11,11 +11,11 @@ last_updated: '2025-12-01'
 
 - `scripts/health-monitor.sh` перемещён в `scripts/legacy/health-monitor.sh` и
   помечен как LEGACY; основной скрипт — `scripts/health-monitor-v2.sh`.
-- `scripts/health-monitor.sh` в корне теперь тонкая обёртка, которая вызывает
-  v2 и предупреждает о депрекации.
+- `scripts/health-monitor.sh` в корне теперь тонкая обёртка, которая вызывает v2
+  и предупреждает о депрекации.
 - Cron-настройки в `scripts/setup-monitoring.sh` и совместимые входные точки
-  (`scripts/erni-ki-health-check.sh`, `scripts/core/diagnostics/health-check.sh`)
-  переключены на v2.
+  (`scripts/erni-ki-health-check.sh`,
+  `scripts/core/diagnostics/health-check.sh`) переключены на v2.
 - `docs/update_status_snippet.py` остаётся только как совместимая оболочка к
   `docs/update_status_snippet_v2.py`.
 
@@ -41,4 +41,5 @@ last_updated: '2025-12-01'
   отчёт без ошибок.
 - `./scripts/erni-ki-health-check.sh` — генерирует markdown-репорт, используя
   v2.
-- `crontab -l | grep health-monitor-v2.sh` — убедитесь, что расписание обновлено.
+- `crontab -l | grep health-monitor-v2.sh` — убедитесь, что расписание
+  обновлено.
