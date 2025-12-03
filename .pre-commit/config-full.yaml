@@ -214,10 +214,9 @@ repos:
     hooks:
       - id: detect-secrets
         name: "Detect Secrets: find secrets in code"
-        args:
-          [
+        args: [
             "--baseline",
-            ".secrets.baseline",
+            ".secrets.baseline", # pragma: allowlist secret
             "--exclude-files",
             "scripts/redis-performance-optimization.sh|\\.pre-commit-config\\.yaml|conf/watchtower/notifications-examples\\.env",
           ]

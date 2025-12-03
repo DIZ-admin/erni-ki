@@ -255,8 +255,7 @@ SKIP=visuals-and-links-check,typescript-type-check git commit
 - [Conventional Commits](https://www.conventionalcommits.org/) - Commit message
   format
 - [Commitlint](https://commitlint.js.org/) - Commit message linting
-- [lint-staged](https://github.com/okonet/lint-staged) - Run linters on staged
-  files
+- lint-staged (removed) - Husky now runs `pre-commit` directly files
 
 ### Tool Documentation
 
@@ -343,18 +342,18 @@ pre-commit install
 
 ### Configuration Files
 
-| File                      | Purpose                     | Language |
-| ------------------------- | --------------------------- | -------- |
-| `.pre-commit-config.yaml` | Python pre-commit hooks     | YAML     |
-| `.husky/pre-commit`       | Husky pre-commit script     | Shell    |
-| `.husky/commit-msg`       | Husky commit-msg script     | Shell    |
-| `commitlint.config.cjs`   | Commit message validation   | JS       |
-| `package.json`            | lint-staged configuration   | JSON     |
-| `eslint.config.js`        | ESLint configuration        | JS       |
-| `ruff.toml`               | Ruff configuration (Python) | TOML     |
-| `mypy.ini`                | mypy configuration (Python) | INI      |
-| `.secrets.baseline`       | detect-secrets baseline     | JSON     |
-| `.gitleaksignore`         | Gitleaks ignore patterns    | Text     |
+| File                      | Purpose                             | Language |
+| ------------------------- | ----------------------------------- | -------- |
+| `.pre-commit-config.yaml` | Python pre-commit hooks             | YAML     |
+| `.husky/pre-commit`       | Husky pre-commit script             | Shell    |
+| `.husky/commit-msg`       | Husky commit-msg script             | Shell    |
+| `commitlint.config.cjs`   | Commit message validation           | JS       |
+| `package.json`            | pre-commit scripts (fast/full/perf) | JSON     |
+| `eslint.config.js`        | ESLint configuration                | JS       |
+| `ruff.toml`               | Ruff configuration (Python)         | TOML     |
+| `mypy.ini`                | mypy configuration (Python)         | INI      |
+| `.secrets.baseline`       | detect-secrets baseline             | JSON     |
+| `.gitleaksignore`         | Gitleaks ignore patterns            | Text     |
 
 ### Scripts
 

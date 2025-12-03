@@ -44,15 +44,29 @@ last_updated: '2025-12-03'
 # Add to package.json
 {
  "scripts": {
- "commit:fast": "SKIP=visuals-and-links-check,typescript-type-check git commit",
- "commit:full": "git commit"
- }
+  "commit:fast": "SKIP=visuals-and-links-check,typescript-type-check git commit",
+  "commit:full": "git commit",
+  "pre-commit:fast": "pre-commit run --config .pre-commit/config-fast.yaml --all-files",
+  "pre-commit:full": "pre-commit run --config .pre-commit-config.yaml --all-files",
+  "pre-commit:perf": "bash scripts/pre-commit/monitor-performance.sh"
+}
 }
 
 # Use it
 bun run commit:fast -m "feat: quick fix"
 # 60-70% faster commits immediately!
+
+# Run fast/full profiles directly
+bun run pre-commit:fast
+bun run pre-commit:full
+
+# Measure hook timings
+bun run pre-commit:perf
 ```
+
+**Architecture update:** Husky now only wraps `pre-commit`; lint-staged is
+removed. Use profiles (`config-fast`, `config-full`, `config-docs`,
+`config-security`) via `--config` when needed.
 
 ### For Technical Leads / Architects
 

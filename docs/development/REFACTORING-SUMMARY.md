@@ -200,6 +200,10 @@ Week 3: Developer Experience
  Day 5: Training + celebration
 ```
 
+**Current status:** lint-staged removed (Husky calls only pre-commit), profiles
+added (`config-fast`, `config-full`, `config-docs`, `config-security`), new
+commands `pre-commit:fast|full|perf` for local workflows.
+
 ---
 
 ## Next Steps
