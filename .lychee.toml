@@ -6,7 +6,7 @@ max_concurrency = 4
 include_verbatim = true
 
 # Ignore generated/build/cache paths
-exclude_path = ["node_modules", "logs", ".git"]
+exclude_path = ["node_modules", "logs", ".git", "docs/en/archive/audits"]
 
 # Ignore endpoints that are environment/local-only or placeholders
 exclude = [

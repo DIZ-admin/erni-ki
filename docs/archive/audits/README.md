@@ -17,4 +17,5 @@ last_updated: '2025-12-03'
 - documentation-audit.md
 - monitoring-audit.md
 - comprehensive-investor-audit-2025-12-03.md
+- pre-commit-refactoring-audit-2025-12-03.md
 - legacy (removed): service-version-matrix-2025-11-28.md

@@ -34,7 +34,7 @@ pytest-watch tests/
 ## Test Structure
 
 ```
-erni-ki-1/
+erni-ki/
  tests/
  unit/
  webhook-receiver.test.py
