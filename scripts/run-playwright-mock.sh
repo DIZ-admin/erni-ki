@@ -15,7 +15,7 @@ export E2E_MOCK_MODE=${E2E_MOCK_MODE:-true}
 export PW_BASE_URL=${PW_BASE_URL:-"http://${MOCK_OPENWEBUI_HOST}:${MOCK_OPENWEBUI_PORT}"}
 
 echo "🚀 Starting mock OpenWebUI on ${PW_BASE_URL}"
-node "${REPO_ROOT}/tests/mocks/mock-openwebui-server.mjs" &
+bun run "${REPO_ROOT}/tests/mocks/mock-openwebui-server.mjs" &
 MOCK_PID=$!
 
 cleanup() {
@@ -28,4 +28,4 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 echo "🧪 Running Playwright against mock server..."
-npx playwright test "$@"
+bunx playwright test "$@"

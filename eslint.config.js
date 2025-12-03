@@ -15,6 +15,7 @@ export default [
   {
     ignores: [
       'node_modules/**',
+      'node_modules.backup/**',
       'vendor/**',
       'dist/**',
       'build/**',
@@ -50,6 +51,7 @@ export default [
       'playwright-artifacts/**',
       'test-results/**',
       'tests/e2e/**', // E2E tests use Playwright, not ESLint
+      'test-bun-*.ts',
     ],
   },
 

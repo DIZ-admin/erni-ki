@@ -317,7 +317,7 @@ rate(nginx_http_requests_total{location="/api/v1/files/", status="400"}[5m])
 ### Документация
 
 - [Nginx HTTP/2 Module](https://nginx.org/en/docs/http/ngx_http_v2_module.html)
-- [OpenWebUI File Upload API](https://docs.openwebui.com/api/files)
+- [OpenWebUI File Upload API](https://docs.openwebui.com/api/file-management/)
 - [Firefox HTTP/2 Implementation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Connection_management_in_HTTP_1.x)
 
 ### Известные проблемы

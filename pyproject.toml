@@ -7,14 +7,6 @@ authors = ["ERNI-KI Team"]
 [tool.poetry.dependencies]
 python = "^3.11"
 
-[tool.poetry.group.dev.dependencies]
-ruff = ">=0.14.6,<0.15.0"
-black = ">=24.10,<25.0"
-isort = ">=5.13,<6.0"
-mypy = ">=1.11,<1.12"
-pytest = ">=9.0,<9.1"
-pre-commit = ">=4.3,<4.4"
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

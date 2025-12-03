@@ -395,7 +395,7 @@ For version-related questions:
 1. Check GitHub Releases: https://github.com/erni-gruppe/erni-ki-1/releases
 2. Review Changelog:
    [CHANGELOG.md](https://github.com/DIZ-admin/erni-ki/blob/develop/CHANGELOG.md)
-3. Check Issues: https://github.com/erni-gruppe/erni-ki-1/issues
+3. Check Issues: https://github.com/erni-gruppe/erni-ki/issues
 4. Contact: support@erni-gruppe.ch
 
 ---

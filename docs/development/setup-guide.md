@@ -19,7 +19,7 @@ you'll be able to run the entire system locally and contribute code changes.
 - **Git:** 2.25+
 - **Docker Desktop:** 4.20+ (with Docker Compose v2)
 - **Python:** 3.11+
-- **Node.js:** 18.17+ with npm 9+
+- **Bun:** 1.3.3+ (replaces npm)
 
 ### macOS
 
@@ -28,7 +28,7 @@ you'll be able to run the entire system locally and contribute code changes.
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install dependencies
-brew install git python@3.11 node docker
+brew install git python@3.11 docker bun
 brew install --cask docker
 
 # Start Docker Desktop
@@ -43,7 +43,8 @@ open /Applications/Docker.app
 sudo apt-get update && sudo apt-get upgrade -y
 
 # Install dependencies
-sudo apt-get install -y git curl wget python3.11 python3-pip nodejs npm
+sudo apt-get install -y git curl wget python3.11 python3-pip
+curl -fsSL https://bun.sh/install | bash
 
 # Install Docker
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -59,7 +60,8 @@ sudo usermod -aG docker $USER
 ```bash
 # In WSL2 terminal
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install -y git curl python3.11 python3-pip nodejs npm docker-ce
+sudo apt-get install -y git curl python3.11 python3-pip docker-ce
+curl -fsSL https://bun.sh/install | bash
 
 # Install Docker Desktop for Windows
 # Download from https://www.docker.com/products/docker-desktop
@@ -152,24 +154,24 @@ source .venv/bin/activate # On Windows: .venv\Scripts\activate
 # Install dependencies
 pip install -r requirements-dev.txt
 
+# Dev dependencies source of truth
+# requirements-dev.txt — единственный источник dev-зависимостей; pyproject.toml содержит только базовую метаинформацию. При необходимости генерации из pyproject (или наоборот) добавьте отдельный sync-скрипт/процедуру в будущем.
+
 # Verify installation
 python --version
 pip list | head -10
 
 ```
 
-### 5. Set Up Node.js Development Environment
+### 5. Set Up Bun Development Environment
 
 ```bash
-# Install Node.js dependencies
-npm install
-
-# Install development tools
-npm install -D @types/node typescript eslint prettier
+# Install JS/TS dependencies with Bun
+bun install
 
 # Verify installation
-node --version
-npm --version
+bun --version
+which bun
 
 ```
 
@@ -238,7 +240,7 @@ python conf/rag_exporter.py &
 python ops/ollama-exporter/app.py &
 
 # In another terminal, run Node.js services
-npm run dev
+bun run dev
 
 # Stop background processes
 pkill -f webhook-receiver
@@ -261,7 +263,7 @@ source .venv/bin/activate
 python conf/webhook-receiver/webhook-receiver.py
 
 # Terminal 4: Node/OpenWebUI
-npm run dev
+bun run dev
 
 ```
 
@@ -340,15 +342,15 @@ git checkout -b feature/my-feature
 3. **Run tests:**
 
 ```bash
-npm run test
+bun run test
 pytest tests/
 ```
 
 4. **Run linting:**
 
 ```bash
-npm run lint
-npm run lint:py
+bun run lint
+bun run lint:py
 ```
 
 5. **Commit changes:**
@@ -372,14 +374,14 @@ git push origin feature/my-feature
 pytest tests/ -v
 
 # JavaScript/TypeScript tests
-npm run test
+bun run test
 
 # With coverage
-npm run test:coverage
+bun run test:coverage
 pytest tests/ --cov
 
 # Watch mode (for development)
-npm run test -- --watch
+bun run test -- --watch
 pytest-watch tests/
 
 ```
@@ -388,19 +390,19 @@ pytest-watch tests/
 
 ```bash
 # ESLint (JavaScript/TypeScript)
-npm run lint
-npm run lint -- --fix # Auto-fix issues
+bun run lint
+bun run lint -- --fix # Auto-fix issues
 
 # Ruff (Python)
 ruff check .
 ruff format .
 
 # Type checking
-npx tsc --noEmit
+bun run type-check
 mypy . --ignore-missing-imports
 
 # All checks
-npm run lint:all
+bun run lint && bun run lint:py && bun run type-check
 
 ```
 
