@@ -309,9 +309,9 @@ PostgreSQL: 15.3
 
 ### Release Notes
 
-- [October Release](https://github.com/erni-gruppe/erni-ki-1/releases/tag/v2.0.0-oct)
-- [September Release](https://github.com/erni-gruppe/erni-ki-1/releases/tag/v1.9.0)
-- [All Releases](https://github.com/erni-gruppe/erni-ki-1/releases)
+- [October Release](https://github.com/DIZ-admin/erni-ki/releases/tag/v2.0.0-oct)
+- [September Release](https://github.com/DIZ-admin/erni-ki/releases/tag/v1.9.0)
+- [All Releases](https://github.com/DIZ-admin/erni-ki/releases)
 
 ## Service Health Checks
 
@@ -392,10 +392,10 @@ docker inspect ollama:latest | grep RepoTags
 
 For version-related questions:
 
-1. Check GitHub Releases: https://github.com/erni-gruppe/erni-ki-1/releases
+1. Check GitHub Releases: https://github.com/DIZ-admin/erni-ki/releases
 2. Review Changelog:
    [CHANGELOG.md](https://github.com/DIZ-admin/erni-ki/blob/develop/CHANGELOG.md)
-3. Check Issues: https://github.com/erni-gruppe/erni-ki/issues
+3. Check Issues: https://github.com/DIZ-admin/erni-ki/issues
 4. Contact: support@erni-gruppe.ch
 
 ---
