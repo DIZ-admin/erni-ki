@@ -61,7 +61,7 @@ class Pipe:
         return self._post("/upload_md_to_owui_tool", payload)
 
     # ------------------------------------------------------------------ main
-    def pipe(self, body: dict[str, Any], __user__: dict[str, Any]):
+    def pipe(self, body: dict[str, Any], __user__: dict[str, Any]) -> str:
         files: list[dict[str, Any]] = body.get("files") or []
         if not files:
             return "No attached files; skipping ragflow loader."

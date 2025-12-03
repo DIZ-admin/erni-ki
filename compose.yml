@@ -413,11 +413,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: searxng/searxng:latest # refreshed tag (digest 2025-11-28)
+    image: searxng/searxng:2025.11.21-b876d0bed # pinned to avoid surprises from :latest
     logging: *important-logging
     restart: unless-stopped
     volumes:
-      - ./conf/searxng/settings.yml:/etc/searxng/settings.yml
+      - ./conf/searxng/settings.yml:/etc/searxng/settings.yml:ro
       - ./conf/searxng/uwsgi.ini:/etc/searxng/uwsgi.ini:ro
       - ./conf/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
       - ./conf/searxng/favicons.toml:/etc/searxng/favicons.toml:ro
@@ -533,9 +533,6 @@ services:
       - NVIDIA_VISIBLE_DEVICES=${OPENWEBUI_GPU_VISIBLE_DEVICES:-0}
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - CUDA_VISIBLE_DEVICES=${OPENWEBUI_CUDA_VISIBLE_DEVICES:-0}
-      - USE_CUDA_DOCKER=true
-      - JWT_EXPIRES_IN=86400
-      - JWT_EXPIRATION=86400
     env_file: env/openwebui.env
     entrypoint:
       - /bin/bash
@@ -874,7 +871,7 @@ services:
     cpus: "0.2"
     logging: *monitoring-logging
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 9100 || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9100/metrics >/dev/null"]
       interval: 30s
       timeout: 10s
       retries: 3

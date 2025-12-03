@@ -1,4 +1,3 @@
-import contextlib
 import logging
 import os
 import signal
@@ -51,7 +50,7 @@ RAG_TEST_INTERVAL = float(os.getenv("RAG_TEST_INTERVAL", str(DEFAULT_RAG_TEST_IN
 _shutdown_event = threading.Event()
 
 
-def probe_loop():
+def probe_loop() -> None:
     """Probe RAG endpoint at regular intervals and update metrics."""
     while not _shutdown_event.is_set():
         start = time.time()
@@ -65,7 +64,7 @@ def probe_loop():
             # If an application endpoint returns JSON with sources, extract it here.
             # For now, we default to 0 when not present.
             if r.headers.get("content-type", "").startswith("application/json"):
-                with contextlib.suppress(Exception):
+                try:
                     data = r.json()
                     if (
                         isinstance(data, dict)
@@ -73,6 +72,8 @@ def probe_loop():
                         and isinstance(data["sources"], list)
                     ):
                         sources_count = len(data["sources"])
+                except (ValueError, TypeError, KeyError):
+                    pass
             r.raise_for_status()
             elapsed = time.time() - start
             rag_latency.observe(elapsed)
@@ -87,11 +88,11 @@ def probe_loop():
 
 
 @app.route("/metrics")
-def metrics():
+def metrics() -> Response:
     return Response(generate_latest(registry), mimetype=CONTENT_TYPE_LATEST)
 
 
-def main():
+def main() -> None:
     """Start RAG exporter with metrics server."""
 
     def _handle_signal(signum: int, _frame: Any) -> None:

@@ -83,12 +83,12 @@ configure_redis_url() {
 }
 
 apply_defaults() {
-  # Enforce sane JWT expiry (override any stale defaults)
-  export JWT_EXPIRES_IN=86400
-  export JWT_EXPIRATION=86400
+  # Enforce sane JWT expiry while allowing overrides from environment
+  export JWT_EXPIRES_IN="${JWT_EXPIRES_IN:-86400}"
+  export JWT_EXPIRATION="${JWT_EXPIRATION:-86400}"
 
   # Force-enable CUDA when GPU runtime is available
-  export USE_CUDA_DOCKER=true
+  export USE_CUDA_DOCKER="${USE_CUDA_DOCKER:-true}"
 }
 
 main() {
