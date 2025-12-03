@@ -1,13 +1,13 @@
-# Bun Migration - Execution Checklist ✓
+# Bun Migration - Execution Checklist
 
 **Total Time:** 2-3 hours | **Date:** 2025-12-03
 
-📖 **Full Details:**
+**Full Details:**
 [.claude/plans/bun-migration-plan.md](.claude/plans/bun-migration-plan.md)
 
 ---
 
-## Pre-Flight Checks ✈️
+## Pre-Flight Checks
 
 ```bash
 # Create backup
@@ -17,7 +17,7 @@ cp package-lock.json package-lock.json.backup
 tar -czf .husky-backup.tar.gz .husky/
 
 # Verify Bun
-bun --version  # Should show 1.3.3+
+bun --version # Should show 1.3.3+
 
 # Clean working directory
 git status
@@ -31,7 +31,7 @@ git status
 
 ---
 
-## Phase 1: Core Migration ⚙️ (15-20 min)
+## Phase 1: Core Migration (15-20 min)
 
 ```bash
 # Remove npm artifacts
@@ -71,7 +71,7 @@ bun run type-check
 
 ---
 
-## Phase 2: Script Updates 📝 (25-30 min)
+## Phase 2: Script Updates (25-30 min)
 
 **Edit `package.json` scripts section (lines 42-81):**
 
@@ -151,12 +151,12 @@ echo "test: sample commit" | bunx commitlint
 
 ---
 
-## Phase 4: Testing & Validation ✅ (30-40 min)
+## Phase 4: Testing & Validation (30-40 min)
 
 ```bash
 # Unit tests
 bun run test:unit
-# Expected: ✓ 81 tests passed
+# Expected: 81 tests passed
 
 # E2E tests
 bun run test:e2e:mock
@@ -179,17 +179,17 @@ bun run test:unit
 
 **Checklist:**
 
-- [ ] ✅ 81/81 unit tests pass
-- [ ] ✅ E2E tests pass
-- [ ] ✅ Linting passes
-- [ ] ✅ Formatting OK
-- [ ] ✅ Type check passes
-- [ ] ✅ Git hooks work
-- [ ] ✅ Clean install works
+- [ ] 81/81 unit tests pass
+- [ ] E2E tests pass
+- [ ] Linting passes
+- [ ] Formatting OK
+- [ ] Type check passes
+- [ ] Git hooks work
+- [ ] Clean install works
 
 ---
 
-## Phase 5: Cleanup 🧹 (15-20 min)
+## Phase 5: Cleanup (15-20 min)
 
 ```bash
 # Remove backups (only after all tests pass!)
@@ -233,7 +233,7 @@ bun run format:check
 
 ---
 
-## Phase 6: Final Validation & Commit 🚀 (20-25 min)
+## Phase 6: Final Validation & Commit (20-25 min)
 
 ```bash
 # Complete test suite
@@ -275,38 +275,38 @@ git diff HEAD~1 --name-status
 **Expected files changed:**
 
 ```
-M  .gitignore
-M  .husky/commit-msg
-M  .husky/pre-commit
-M  .prettierignore
-D  .nvmrc
-M  bunfig.toml
-A  bun.lock
-D  package-lock.json
-M  package.json
-M  scripts/prettier-run.sh
-M  scripts/run-playwright-mock.sh
-M  docs/development/setup-guide.md
-A  docs/development/bun-migration.md
+M .gitignore
+M .husky/commit-msg
+M .husky/pre-commit
+M .prettierignore
+D .nvmrc
+M bunfig.toml
+A bun.lock
+D package-lock.json
+M package.json
+M scripts/prettier-run.sh
+M scripts/run-playwright-mock.sh
+M docs/development/setup-guide.md
+A docs/development/bun-migration.md
 ```
 
-- [ ] ✅ All tests pass
-- [ ] ✅ Clean install works
-- [ ] ✅ Commit created
-- [ ] ✅ Expected files changed
+- [ ] All tests pass
+- [ ] Clean install works
+- [ ] Commit created
+- [ ] Expected files changed
 
 ---
 
-## 🎉 Migration Complete!
+## Migration Complete!
 
 **Success Criteria:**
 
-- ✅ All 81 unit tests pass
-- ✅ All E2E tests pass
-- ✅ No linting errors
-- ✅ Git hooks functional
-- ✅ 3-4x faster installs
-- ✅ Documentation updated
+- All 81 unit tests pass
+- All E2E tests pass
+- No linting errors
+- Git hooks functional
+- 3-4x faster installs
+- Documentation updated
 
 ---
 
@@ -332,7 +332,7 @@ npm run test
 
 ---
 
-## Post-Migration Tasks 📋
+## Post-Migration Tasks
 
 **Week 1:**
 
