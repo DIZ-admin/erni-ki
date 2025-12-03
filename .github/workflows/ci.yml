@@ -111,18 +111,6 @@ jobs:
       - name: 📊 Generate coverage report
         run: go tool cover -html=coverage.out -o coverage.html
 
-      - name: 📤 Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        if: ${{ env.CODECOV_TOKEN != '' }}
-        with:
-          files: ./auth/coverage.out
-          flags: go-auth-service
-          name: auth-service-coverage
-          token: ${{ env.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-
       - name: 📋 Upload coverage artifacts
         uses: actions/upload-artifact@v5
         with:
@@ -159,18 +147,6 @@ jobs:
           export PYTHONPATH=$PYTHONPATH:.
           export LOG_DIR=/tmp/logs
           pytest tests/python/ --cov=. --cov-report=xml --cov-fail-under=60
-
-      - name: 📤 Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        if: ${{ env.CODECOV_TOKEN != '' }}
-        with:
-          files: ./coverage.xml
-          flags: python
-          name: python-coverage
-          token: ${{ env.CODECOV_TOKEN }}
-          fail_ci_if_error: true
 
   # Python type checking
   mypy:
