@@ -23,6 +23,7 @@ full observability.
 
 [![CI](https://github.com/DIZ-admin/erni-ki/actions/workflows/ci.yml/badge.svg)](https://github.com/DIZ-admin/erni-ki/actions/workflows/ci.yml)
 [![Security](https://github.com/DIZ-admin/erni-ki/actions/workflows/security.yml/badge.svg)](https://github.com/DIZ-admin/erni-ki/actions/workflows/security.yml)
+[![Coverage](https://img.shields.io/badge/coverage-vitest%20v8-blue)](#testing)
 
 ## Quick Start
 
