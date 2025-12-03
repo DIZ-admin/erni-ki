@@ -588,7 +588,7 @@ docker system prune -a
 
 - Check [troubleshooting guide](../troubleshooting/common-issues.md)
 - Review service logs: `docker-compose logs <service>`
-- Check GitHub issues: https://github.com/erni-gruppe/erni-ki-1/issues
+- Check GitHub issues: https://github.com/DIZ-admin/erni-ki/issues
 - Join community discussions
 
 ---

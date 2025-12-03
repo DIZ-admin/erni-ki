@@ -497,7 +497,7 @@ Tests run automatically on:
 - Pull requests
 - Scheduled nightly runs
 
-View results: https://github.com/erni-gruppe/erni-ki-1/actions
+View results: https://github.com/DIZ-admin/erni-ki/actions
 
 ## Test Databases
 

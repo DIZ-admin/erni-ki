@@ -679,7 +679,7 @@ For deployment questions or issues:
 
 1. Check [Troubleshooting Guide](../troubleshooting/common-issues.md)
 2. Review deployment logs
-3. Check GitHub issues: https://github.com/erni-gruppe/erni-ki/issues
+3. Check GitHub issues: https://github.com/DIZ-admin/erni-ki/issues
 4. Contact: deployments@erni-gruppe.ch
 
 ---
