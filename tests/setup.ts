@@ -5,12 +5,9 @@ import testUtils from './utils/test-utils';
 
 // Polyfill process/env for Bun runtime
 if (!globalThis.process) {
-  // Minimal shape to satisfy tests
-
-  // @ts-ignore
-  globalThis.process = { env: {} };
+  globalThis.process = { env: {} as NodeJS.ProcessEnv } as unknown as NodeJS.Process;
 } else if (!globalThis.process.env) {
-  globalThis.process.env = {};
+  globalThis.process.env = {} as NodeJS.ProcessEnv;
 }
 
 // Keep original console methods

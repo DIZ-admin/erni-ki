@@ -1,7 +1,7 @@
 ---
 language: ru
 translation_status: original
-doc_version: '2025.12'
+doc_version: '2025.11'
 last_updated: '2025-12-03'
 title: 'ERNI-KI - Executive Summary для инвесторов'
 ---
@@ -12,7 +12,7 @@ title: 'ERNI-KI - Executive Summary для инвесторов'
 
 ---
 
-## 🎯 Что такое ERNI-KI?
+## Что такое ERNI-KI?
 
 **Корпоративная AI-платформа на базе OpenWebUI с полной автоматизацией и
 observability**
@@ -22,21 +22,21 @@ Enterprise-grade решение для развертывания LLM модел
 
 ---
 
-## 📊 Ключевые метрики
+## Ключевые метрики
 
 ```
-🚀 34 Production Microservices
-📚 330+ Pages Documentation (RU/DE/EN)
-🔄 7 Automated CI/CD Pipelines
-🔒 5 Security Scanners (CodeQL, Trivy, Gosec, Gitleaks, Snyk)
-📈 Full Observability Stack (Prometheus, Grafana, Loki)
-💻 661 Commits (last 3 months)
-🤖 GPU-Accelerated AI (Ollama + LiteLLM)
+ 34 Production Microservices
+ 330+ Pages Documentation (RU/DE/EN)
+ 7 Automated CI/CD Pipelines
+ 5 Security Scanners (CodeQL, Trivy, Gosec, Gitleaks, Snyk)
+ Full Observability Stack (Prometheus, Grafana, Loki)
+ 661 Commits (last 3 months)
+ GPU-Accelerated AI (Ollama + LiteLLM)
 ```
 
 ---
 
-## 🏆 Конкурентные преимущества
+## Конкурентные преимущества
 
 ### 1. **Исключительная документация** (Best-in-class)
 
@@ -68,7 +68,7 @@ Enterprise-grade решение для развертывания LLM модел
 
 ---
 
-## 💡 Технологический стек
+## Технологический стек
 
 ### Backend
 
@@ -101,7 +101,7 @@ Enterprise-grade решение для развертывания LLM модел
 
 ---
 
-## 📈 Market Opportunity
+## Market Opportunity
 
 ### Target Market
 
@@ -128,7 +128,7 @@ Enterprise-grade решение для развертывания LLM модел
 
 ---
 
-## 🎬 Демо-сценарий (15 минут)
+## Демо-сценарий (15 минут)
 
 ### Часть 1: Live Platform Demo (5 мин)
 
@@ -153,46 +153,47 @@ Enterprise-grade решение для развертывания LLM модел
 
 ---
 
-## 🎯 Оценка готовности: **8.5/10 - INVESTOR READY**
+## Оценка готовности: **8.5/10 - INVESTOR READY**
 
-### ✅ Сильные стороны
+### Сильные стороны
 
-| Категория        | Оценка | Комментарий                             |
-| ---------------- | ------ | --------------------------------------- |
-| 📚 Documentation | 10/10  | Exceptional - лучшая в классе           |
-| 🏗️ Architecture  | 9/10   | Production-ready, microservices         |
-| 🔒 Security      | 9/10   | Multiple scanners, automated audits     |
-| 🔄 DevOps        | 9/10   | Full CI/CD, automation                  |
-| 📈 Observability | 10/10  | Complete stack (metrics/logs/alerts)    |
-| 💻 Code Quality  | 8/10   | Clean, well-organized, linted           |
-| 🧪 Testing       | 7/10   | Unit + E2E + Integration (minor issues) |
-| 🚀 Scalability   | 8/10   | Docker Compose → Kubernetes path        |
+| Категория     | Оценка | Комментарий                             |
+| ------------- | ------ | --------------------------------------- |
+| Documentation | 10/10  | Exceptional - лучшая в классе           |
+| Architecture  | 9/10   | Production-ready, microservices         |
+| Security      | 9/10   | Multiple scanners, automated audits     |
+| DevOps        | 9/10   | Full CI/CD, automation                  |
+| Observability | 10/10  | Complete stack (metrics/logs/alerts)    |
+| Code Quality  | 8/10   | Clean, well-organized, linted           |
+| Testing       | 7/10   | Unit + E2E + Integration (minor issues) |
+| Scalability   | 8/10   | Docker Compose → Kubernetes path        |
 
-### 🟢 Green Flags для инвестора
+### [OK] Green Flags для инвестора
 
-1. ✅ **Технически звучная архитектура**
-2. ✅ **Исключительная документация** (конкурентное преимущество)
-3. ✅ **Strong DevOps practices**
-4. ✅ **Security-conscious team**
-5. ✅ **Active development** (661 commits за 3 месяца)
-6. ✅ **Production-ready code**
-7. ✅ **Open-source foundation** (OpenWebUI, Ollama)
-8. ✅ **Privacy-first approach** (on-premise deployment)
+1. **Технически звучная архитектура**
+2. **Исключительная документация** (конкурентное преимущество)
+3. **Strong DevOps practices**
+4. **Security-conscious team**
+5. **Active development** (661 commits за 3 месяца)
+6. **Production-ready code**
+7. **Open-source foundation** (OpenWebUI, Ollama)
+8. **Privacy-first approach** (on-premise deployment)
 
-### 🟡 Yellow Flags (manageable)
+### [WARNING] Yellow Flags (manageable)
 
-1. 🟡 **Small team** - risk масштабирования (решается наймом)
-2. 🟡 **No Kubernetes yet** - только Docker Compose (roadmap есть)
-3. 🟡 **Test coverage gaps** - minor Bun compatibility issues (2-4 часа fix)
-4. 🟡 **No customers yet** - unproven market fit (нужны pilots)
+1. [WARNING] **Small team** - risk масштабирования (решается наймом)
+2. [WARNING] **No Kubernetes yet** - только Docker Compose (roadmap есть)
+3. [WARNING] **Test coverage gaps** - minor Bun compatibility issues (2-4 часа
+   fix)
+4. [WARNING] **No customers yet** - unproven market fit (нужны pilots)
 
-### 🔴 Red Flags
+### Red Flags
 
-**Нет критических проблем** ✅
+**Нет критических проблем**
 
 ---
 
-## 💰 Investment Thesis
+## Investment Thesis
 
 ### РЕКОМЕНДАЦИЯ: **INVEST**
 
@@ -209,15 +210,15 @@ Enterprise-grade решение для развертывания LLM модел
 
 **Conditions:**
 
-- ✅ Fix test failures (2-4 hours)
-- ✅ Complete Kubernetes roadmap (3-6 months)
-- ✅ Secure first pilot customers (3-6 months)
-- ✅ Define go-to-market strategy
-- ✅ Team expansion plan
+- Fix test failures (2-4 hours)
+- Complete Kubernetes roadmap (3-6 months)
+- Secure first pilot customers (3-6 months)
+- Define go-to-market strategy
+- Team expansion plan
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
 ### Immediate (48 hours)
 
@@ -242,7 +243,7 @@ Enterprise-grade решение для развертывания LLM модел
 
 ---
 
-## 📞 Contact Information
+## Contact Information
 
 **Project:** ERNI-KI **Website:** https://github.com/DIZ-admin/erni-ki **Live
 Demo:** https://ki.erni-gruppe.ch **Documentation:**
@@ -256,7 +257,7 @@ https://github.com/DIZ-admin/erni-ki/tree/main/docs
 
 ---
 
-## 📎 Приложения
+## Приложения
 
 ### Key Documents
 
@@ -289,7 +290,7 @@ License: MIT
 
 ---
 
-## 🎯 TL;DR для занятого инвестора
+## TL;DR для занятого инвестора
 
 **ERNI-KI - это production-ready enterprise AI платформа с лучшей-в-классе
 документацией, полной автоматизацией и security-first подходом. Технически

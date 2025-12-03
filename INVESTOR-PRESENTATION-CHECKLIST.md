@@ -1,13 +1,13 @@
-# 📋 ERNI-KI - Investor Presentation Checklist
+# ERNI-KI - Investor Presentation Checklist
 
 **Target Date:** [УКАЖИТЕ ДАТУ ПРЕЗЕНТАЦИИ] **Preparation Time Required:** 16-24
 hours total work
 
 ---
 
-## 🚨 КРИТИЧЕСКИЕ ЗАДАЧИ (Must-Have - 48 часов до презентации)
+## КРИТИЧЕСКИЕ ЗАДАЧИ (Must-Have - 48 часов до презентации)
 
-### 1. Исправить test failures ⚠️
+### 1. Исправить test failures
 
 **Priority:** CRITICAL | **Time:** 2-4 hours | **Owner:** [НАЗНАЧЬТЕ]
 
@@ -26,14 +26,14 @@ Error: process.env is not defined
 - [ ] Add proper environment mocking
 - [ ] Verify CI uses Node.js fallback if needed
 - [ ] Run full test suite: `bun test`
-- [ ] Ensure all tests pass ✅
+- [ ] Ensure all tests pass
 
 **Acceptance Criteria:**
 
 ```bash
-✅ bun test → 0 failures
-✅ bun run test:unit → All passing
-✅ bun run test:e2e → All passing
+ bun test → 0 failures
+ bun run test:unit → All passing
+ bun run test:e2e → All passing
 ```
 
 **Files to modify:**
@@ -44,85 +44,95 @@ Error: process.env is not defined
 
 ---
 
-### 2. Подготовить presentation slides 🎨
+### 2. Подготовить presentation slides
 
 **Priority:** CRITICAL | **Time:** 4-6 hours | **Owner:** [НАЗНАЧЬТЕ]
 
 **Slides Structure (10-12 slides):**
 
 1. **Title Slide**
-   - ERNI-KI logo
-   - Tagline: "Enterprise AI Platform for On-Premise Deployment"
-   - Date, presenters
+
+- ERNI-KI logo
+- Tagline: "Enterprise AI Platform for On-Premise Deployment"
+- Date, presenters
 
 2. **Problem Statement**
-   - Cloud AI privacy concerns
-   - GDPR compliance challenges
-   - Vendor lock-in risks
-   - Total Cost of Ownership
+
+- Cloud AI privacy concerns
+- GDPR compliance challenges
+- Vendor lock-in risks
+- Total Cost of Ownership
 
 3. **Solution: ERNI-KI Platform**
-   - On-premise LLM hosting
-   - Full observability included
-   - Security-first architecture
-   - Open-source foundation
+
+- On-premise LLM hosting
+- Full observability included
+- Security-first architecture
+- Open-source foundation
 
 4. **Product Demo Screenshot**
-   - OpenWebUI interface
-   - Grafana dashboard
-   - Architecture diagram
+
+- OpenWebUI interface
+- Grafana dashboard
+- Architecture diagram
 
 5. **Technology Stack**
 
-   ```
-   34 Microservices
-   - OpenWebUI + Ollama (GPU)
-   - PostgreSQL + pgvector
-   - Prometheus + Grafana
-   - Full CI/CD automation
-   ```
+```
+34 Microservices
+- OpenWebUI + Ollama (GPU)
+- PostgreSQL + pgvector
+- Prometheus + Grafana
+- Full CI/CD automation
+```
 
 6. **Key Metrics**
 
-   ```
-   📚 330+ Documentation Pages
-   🔄 7 CI/CD Pipelines
-   🔒 5 Security Scanners
-   💻 661 Commits (3 months)
-   ```
+```
+330+ Documentation Pages
+7 CI/CD Pipelines
+5 Security Scanners
+661 Commits (3 months)
+```
 
 7. **Competitive Advantages**
-   - Best-in-class documentation
-   - Production-ready из коробки
-   - Security-first approach
-   - DevOps excellence
+
+- Best-in-class documentation
+- Production-ready из коробки
+- Security-first approach
+- DevOps excellence
 
 8. **Market Opportunity**
-   - $150B+ Enterprise AI by 2027
-   - Growing on-premise segment
-   - Regulatory tailwinds (GDPR)
+
+- $150B+ Enterprise AI by 2027
+- Growing on-premise segment
+- Regulatory tailwinds (GDPR)
 
 9. **Go-to-Market Strategy**
-   - Target segments
-   - Sales channels
-   - Pricing model
+
+- Target segments
+- Sales channels
+- Pricing model
 
 10. **Roadmap**
-    - Q1 2026: Kubernetes support
-    - Q2 2026: Enterprise features
-    - Q3 2026: Marketplace launch
+
+- Q1 2026: Kubernetes support
+- Q2 2026: Enterprise features
+- Q3 2026: Marketplace launch
 
 11. **Team & Traction**
-    - Core team
-    - Advisors
-    - Current status
-    - Pilot customers (if any)
+
+- Core team
+- Advisors
+- Current status
+- Pilot customers (if any)
 
 12. **The Ask**
-    - Funding amount
-    - Use of funds
-    - Milestones
-    - Contact info
+
+- Funding amount
+- Use of funds
+- Milestones
+- Contact info
 
 **Deliverables:**
 
@@ -141,7 +151,7 @@ Error: process.env is not defined
 
 ---
 
-### 3. Deploy fresh demo environment 🚀
+### 3. Deploy fresh demo environment
 
 **Priority:** CRITICAL | **Time:** 2-3 hours | **Owner:** [НАЗНАЧЬТЕ]
 
@@ -149,62 +159,63 @@ Error: process.env is not defined
 
 - [ ] **Infrastructure Setup**
 
-  ```bash
-  # Fresh deployment
-  docker compose down -v
-  docker compose pull
-  docker compose up -d
+```bash
+# Fresh deployment
+docker compose down -v
+docker compose pull
+docker compose up -d
 
-  # Verify all services
-  docker compose ps
-  # Expected: 34/34 services running
-  ```
+# Verify all services
+docker compose ps
+# Expected: 34/34 services running
+```
 
 - [ ] **Pre-load AI Models**
 
-  ```bash
-  # Download models before demo
-  docker exec ollama ollama pull llama3.2
-  docker exec ollama ollama pull codellama
-  docker exec ollama ollama pull mistral
+```bash
+# Download models before demo
+docker exec ollama ollama pull llama3.2
+docker exec ollama ollama pull codellama
+docker exec ollama ollama pull mistral
 
-  # Verify
-  docker exec ollama ollama list
-  ```
+# Verify
+docker exec ollama ollama list
+```
 
 - [ ] **Seed Demo Data**
-  - Create demo user account
-  - Pre-populate chat history (5-10 conversations)
-  - Configure LiteLLM with demo API keys
-  - Set up sample documents for RAG
+- Create demo user account
+- Pre-populate chat history (5-10 conversations)
+- Configure LiteLLM with demo API keys
+- Set up sample documents for RAG
 
 - [ ] **Test All Dashboards**
-  - OpenWebUI: http://localhost:8080 ✅
-  - Grafana: http://localhost:3000 ✅
-  - Prometheus: http://localhost:9090 ✅
-  - Alertmanager: http://localhost:9093 ✅
+- OpenWebUI: http://localhost:8080
+- Grafana: http://localhost:3000
+- Prometheus: http://localhost:9090
+- Alertmanager: http://localhost:9093
 
 - [ ] **Verify Services**
 
-  ```bash
-  # Run health check
-  ./scripts/health-monitor-v2.sh --report
+```bash
+# Run health check
+./scripts/health-monitor-v2.sh --report
 
-  # Expected: All services healthy
-  ```
+# Expected: All services healthy
+```
 
 - [ ] **Test Demo Scenarios**
-  1. AI chat with local LLM
-  2. View real-time metrics
-  3. Trigger test alert
-  4. Show logs in Loki
-  5. Demonstrate backup system
+
+1.  AI chat with local LLM
+2.  View real-time metrics
+3.  Trigger test alert
+4.  Show logs in Loki
+5.  Demonstrate backup system
 
 - [ ] **Performance Check**
-  - CPU usage < 80%
-  - Memory usage < 80%
-  - Disk space > 20% free
-  - Response time < 2s
+- CPU usage < 80%
+- Memory usage < 80%
+- Disk space > 20% free
+- Response time < 2s
 
 **Demo Environment Specs:**
 
@@ -224,7 +235,7 @@ Recommended:
 
 ---
 
-### 4. Создать elevator pitch document 📄
+### 4. Создать elevator pitch document
 
 **Priority:** HIGH | **Time:** 1-2 hours | **Owner:** [НАЗНАЧЬТЕ]
 
@@ -296,9 +307,9 @@ team@erni-ki.local https://ki.erni-gruppe.ch
 
 ---
 
-## ⚡ HIGH PRIORITY (1 неделя до презентации)
+## HIGH PRIORITY (1 неделя до презентации)
 
-### 5. Add code coverage badges 📊
+### 5. Add code coverage badges
 
 **Priority:** HIGH | **Time:** 1 hour | **Owner:** [НАЗНАЧЬТЕ]
 
@@ -327,7 +338,7 @@ bun run test:coverage
 
 ---
 
-### 6. Create video demo (backup) 🎥
+### 6. Create video demo (backup)
 
 **Priority:** HIGH | **Time:** 2-3 hours | **Owner:** [НАЗНАЧЬТЕ]
 
@@ -382,7 +393,7 @@ bun run test:coverage
 
 ---
 
-### 7. Financial projections slide 💰
+### 7. Financial projections slide
 
 **Priority:** HIGH | **Time:** 3-4 hours | **Owner:** [НАЗНАЧЬТЕ]
 
@@ -392,10 +403,10 @@ bun run test:coverage
 
 ```
 Pricing Tiers:
-├── Starter: $99/month (< 10 users, community support)
-├── Professional: $499/month (< 50 users, email support)
-├── Enterprise: $2,999/month (unlimited, 24/7 support)
-└── Custom: Quote-based (on-premise, SLA, training)
+ Starter: $99/month (< 10 users, community support)
+ Professional: $499/month (< 50 users, email support)
+ Enterprise: $2,999/month (unlimited, 24/7 support)
+ Custom: Quote-based (on-premise, SLA, training)
 ```
 
 **Unit Economics:**
@@ -441,10 +452,10 @@ SOM (Serviceable Obtainable Market): $150M
 
 ```
 Seed Round: $[AMOUNT]
-├── Engineering (50%): $[X]
-├── Sales & Marketing (30%): $[Y]
-├── Operations (15%): $[Z]
-└── Runway: 18-24 months
+ Engineering (50%): $[X]
+ Sales & Marketing (30%): $[Y]
+ Operations (15%): $[Z]
+ Runway: 18-24 months
 ```
 
 **Deliverable:**
@@ -455,9 +466,9 @@ Seed Round: $[AMOUNT]
 
 ---
 
-## 🔵 MEDIUM PRIORITY (Nice-to-Have)
+## MEDIUM PRIORITY (Nice-to-Have)
 
-### 8. Run full security audit ✅
+### 8. Run full security audit
 
 **Priority:** MEDIUM | **Time:** 2-3 hours
 
@@ -478,7 +489,7 @@ cd auth && gosec ./...
 
 ---
 
-### 9. Performance benchmarks 📈
+### 9. Performance benchmarks
 
 **Priority:** MEDIUM | **Time:** 3-4 hours
 
@@ -487,14 +498,14 @@ cd auth && gosec ./...
 ```bash
 # Response time benchmark
 for i in {1..100}; do
-  curl -w "%{time_total}\n" -o /dev/null -s http://localhost:8080
+ curl -w "%{time_total}\n" -o /dev/null -s http://localhost:8080
 done | awk '{sum+=$1} END {print "Avg:", sum/NR "s"}'
 
 # Concurrent users (k6)
 k6 run load-test.js
 
 # Database queries
-pgbench -c 10 -j 2 -t 1000 postgres://user:pass@localhost/db
+pgbench -c 10 -j 2 -t 1000 postgres://<user>:<password>@localhost/db
 ```
 
 **Metrics to capture:**
@@ -508,7 +519,7 @@ pgbench -c 10 -j 2 -t 1000 postgres://user:pass@localhost/db
 
 ---
 
-### 10. Customer testimonials 💬
+### 10. Customer testimonials
 
 **Priority:** MEDIUM | **Time:** Variable
 
@@ -527,7 +538,7 @@ pgbench -c 10 -j 2 -t 1000 postgres://user:pass@localhost/db
 
 ---
 
-### 11. Competitive analysis matrix 🔍
+### 11. Competitive analysis matrix
 
 **Priority:** MEDIUM | **Time:** 2-3 hours
 
@@ -542,15 +553,15 @@ pgbench -c 10 -j 2 -t 1000 postgres://user:pass@localhost/db
 
 **Comparison Matrix:**
 
-| Feature       | ERNI-KI    | OpenAI Ent | AWS Bedrock | Azure  | Self-hosted |
-| ------------- | ---------- | ---------- | ----------- | ------ | ----------- |
-| On-premise    | ✅         | ❌         | ❌          | ❌     | ✅          |
-| GDPR Ready    | ✅         | ⚠️         | ⚠️          | ⚠️     | ✅          |
-| GPU Support   | ✅         | N/A        | ✅          | ✅     | ✅          |
-| Observability | ✅         | ❌         | ⚠️          | ⚠️     | ❌          |
-| Price ($/mo)  | $99-2999   | $$$$       | $$$$        | $$$$   | Free        |
-| Support       | 24/7       | 24/7       | 24/7        | 24/7   | Community   |
-| Documentation | ⭐⭐⭐⭐⭐ | ⭐⭐⭐     | ⭐⭐⭐      | ⭐⭐⭐ | ⭐⭐        |
+| Feature       | ERNI-KI  | OpenAI Ent | AWS Bedrock | Azure | Self-hosted |
+| ------------- | -------- | ---------- | ----------- | ----- | ----------- |
+| On-premise    |          |            |             |       |             |
+| GDPR Ready    |          |            |             |       |             |
+| GPU Support   |          | N/A        |             |       |             |
+| Observability |          |            |             |       |             |
+| Price ($/mo)  | $99-2999 | $$$$       | $$$$        | $$$$  | Free        |
+| Support       | 24/7     | 24/7       | 24/7        | 24/7  | Community   |
+| Documentation |          |            |             |       |             |
 
 **Deliverable:**
 
@@ -560,7 +571,7 @@ pgbench -c 10 -j 2 -t 1000 postgres://user:pass@localhost/db
 
 ---
 
-## 📝 Documentation Updates
+## Documentation Updates
 
 ### 12. Update main README.md
 
@@ -576,7 +587,7 @@ pgbench -c 10 -j 2 -t 1000 postgres://user:pass@localhost/db
 **Example:**
 
 ```markdown
-## For Investors 💰
+## For Investors
 
 See our [Investor Pitch Summary](docs/INVESTOR-PITCH-SUMMARY.md) for:
 
@@ -624,7 +635,7 @@ See our [Investor Pitch Summary](docs/INVESTOR-PITCH-SUMMARY.md) for:
 
 ---
 
-## 🎭 Presentation Day Checklist
+## Presentation Day Checklist
 
 ### Morning of Presentation
 
@@ -649,10 +660,10 @@ See our [Investor Pitch Summary](docs/INVESTOR-PITCH-SUMMARY.md) for:
 - [ ] Final demo test
 - [ ] All services green: `docker compose ps`
 - [ ] Open all necessary tabs:
-  - OpenWebUI
-  - Grafana
-  - GitHub Actions
-  - Documentation site
+- OpenWebUI
+- Grafana
+- GitHub Actions
+- Documentation site
 - [ ] Silence phone notifications
 - [ ] Close unnecessary applications
 
@@ -661,37 +672,30 @@ See our [Investor Pitch Summary](docs/INVESTOR-PITCH-SUMMARY.md) for:
 - [ ] Deep breath, relax
 - [ ] Review key metrics
 - [ ] Mental rehearsal
-- [ ] Ready to wow! 🚀
+- [ ] Ready to wow!
 
 ---
 
-## 📞 Emergency Contacts
+## Emergency Contacts
 
-**Technical Support:**
+**Technical Support:** Name — Phone/Email; Name — Phone/Email
 
-- [Name]: [Phone/Email]
-- [Name]: [Phone/Email]
+**Business Lead:** Name — Phone/Email
 
-**Business Lead:**
-
-- [Name]: [Phone/Email]
-
-**Backup Presenter:**
-
-- [Name]: [Phone/Email]
+**Backup Presenter:** Name — Phone/Email
 
 ---
 
-## 🎯 Success Criteria
+## Success Criteria
 
 **Presentation is successful if:**
 
-- ✅ All demos work without issues
-- ✅ Key metrics communicated clearly
-- ✅ Competitive advantages highlighted
-- ✅ Q&A handled confidently
-- ✅ Follow-up meeting scheduled
-- ✅ Investor contact info collected
+- All demos work without issues
+- Key metrics communicated clearly
+- Competitive advantages highlighted
+- Q&A handled confidently
+- Follow-up meeting scheduled
+- Investor contact info collected
 
 **Must-Have Outcomes:**
 
@@ -709,7 +713,7 @@ See our [Investor Pitch Summary](docs/INVESTOR-PITCH-SUMMARY.md) for:
 
 ---
 
-## 📊 Progress Tracking
+## Progress Tracking
 
 **Overall Completion:** [___________] 0%
 
@@ -734,7 +738,7 @@ See our [Investor Pitch Summary](docs/INVESTOR-PITCH-SUMMARY.md) for:
 
 ---
 
-## 📅 Timeline Template
+## Timeline Template
 
 **T-14 days:**
 
@@ -763,11 +767,11 @@ See our [Investor Pitch Summary](docs/INVESTOR-PITCH-SUMMARY.md) for:
 
 - Execute checklist above
 - Deliver amazing presentation
-- Close the deal! 🎉
+- Close the deal!
 
 ---
 
 **Last Updated:** 2025-12-03 **Document Owner:** [НАЗНАЧЬТЕ] **Status:** DRAFT -
 Customize as needed
 
-**Good luck! You've got this! 🚀💪**
+**Good luck! You've got this!**
