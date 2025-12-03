@@ -44,11 +44,11 @@ _USER_DATASET_CACHE: dict[str, str] = {}
 
 def _api_base() -> str:
     base = RAGFLOW_BASE_URL.rstrip("/")
-    if not base.endswith("/api") and "/api/" not in base:
-        base = base + "/api/v1"
-    elif (base.endswith("/api") or "/api/" in base) and not base.rstrip("/").endswith("api/v1"):
-        base = base.rstrip("/") + "/v1"
-    return base
+    if base.endswith("/api/v1"):
+        return base
+    if base.endswith("/api"):
+        return base + "/v1"
+    return base + "/api/v1"
 
 
 def _headers() -> dict[str, str]:
@@ -157,7 +157,7 @@ def trigger_parse(dataset_id: str, doc_id: str) -> None:
     if resp.status_code != 200:
         raise RuntimeError(f"Parse trigger failed ({resp.status_code}): {resp.text}")
     data = resp.json()
-    if data.get("code") not in (0, None):
+    if data.get("code") != 0:
         raise RuntimeError(f"Parse trigger returned error: {data}")
 
 
