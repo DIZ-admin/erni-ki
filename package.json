@@ -36,12 +36,11 @@
     }
   ],
   "engines": {
-    "node": ">=22.14.0",
-    "npm": ">=10.8.2"
+    "bun": ">=1.3.0"
   },
   "scripts": {
     "dev": "vitest",
-    "test": "npm run test:unit && npm run test:e2e:mock",
+    "test": "bun run test:unit && bun run test:e2e:mock",
     "test:unit": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:mock": "./scripts/run-playwright-mock.sh",
@@ -49,25 +48,25 @@
     "e2e:report": "playwright show-report",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
-    "lint": "npm run lint:js && npm run lint:py",
+    "lint": "bun run lint:js && bun run lint:py",
     "lint:js": "eslint . --ext .js,.ts,.jsx,.tsx",
     "lint:js:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
     "lint:py": "bash -c 'if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python3 -m ruff check .; else python3 -m ruff check . || echo \"Warning: Ruff not found. Install with: pip install ruff\"; fi'",
     "lint:py:fix": "bash -c 'if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python3 -m ruff check . --fix; else python3 -m ruff check . --fix || echo \"Warning: Ruff not found. Install with: pip install ruff\"; fi'",
-    "lint:fix": "npm run lint:js:fix && npm run lint:py:fix",
+    "lint:fix": "bun run lint:js:fix && bun run lint:py:fix",
     "format": "./scripts/prettier-run.sh write",
     "format:check": "./scripts/prettier-run.sh check",
     "format:py": "bash -c 'if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python3 -m ruff format .; else python3 -m ruff format . || echo \"Warning: Ruff not found. Install with: pip install ruff\"; fi'",
     "type-check": "tsc --noEmit",
-    "lint:language": "node scripts/language-check.cjs",
-    "lint:language:all": "node scripts/language-check.cjs --all",
+    "lint:language": "bun run scripts/language-check.cjs",
+    "lint:language:all": "bun run scripts/language-check.cjs --all",
     "build": "tsc",
     "clean": "rm -rf dist coverage node_modules/.cache",
     "docker:build": "docker build -t erni-ki-auth:dev ./auth",
     "docker:run": "docker compose up -d",
     "docker:stop": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "security:scan": "npm audit --audit-level=high && docker run --rm -v $(pwd)/auth:/src -w /src securecodewarrior/docker-gosec ./...",
+    "security:scan": "bun audit --audit-level=high && docker run --rm -v $(pwd)/auth:/src -w /src securecodewarrior/docker-gosec ./...",
     "docs:lint": "python3 scripts/docs/content_lint.py --fix-headings --add-toc",
     "docs:translations": "python3 scripts/docs/translation_report.py",
     "docs:report": "python3 scripts/docs/content_lint.py",
@@ -75,7 +74,7 @@
     "commit": "git-cz",
     "release": "semantic-release",
     "precommit": "lint-staged",
-    "postinstall": "npm run prepare",
+    "postinstall": "bun run prepare",
     "pre-commit:install": "source .venv/bin/activate && pre-commit install && pre-commit install --hook-type commit-msg",
     "pre-commit:run": "source .venv/bin/activate && pre-commit run --all-files",
     "pre-commit:update": "source .venv/bin/activate && pre-commit autoupdate"
@@ -118,7 +117,10 @@
     ],
     "*.{json,yaml,yml,md}": [
       "prettier --write --log-level=warn",
-      "npm run lint:language -- --all"
+      "bun run lint:language -- --all"
+    ],
+    "*.toml": [
+      "bun run lint:language -- --all"
     ],
     "*.go": [
       "gofmt -w",
@@ -159,9 +161,5 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.52.5"
   },
-  "volta": {
-    "node": "22.14.0",
-    "npm": "10.8.2"
-  },
-  "packageManager": "npm@11.6.4+sha512.1118cab46a05a50aee6bff5b1b4fa1df18afff89d57465620a3518035026955db87c5bdf9d207b07b7487d99f2490d450cb774655ad63ec2cba7bf1d0ad25d45"
+  "packageManager": "bun@1.3.3"
 }

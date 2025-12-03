@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 
 # Проверка языковых правил перед lint-staged и коммитом
-npm run lint:language
-npx lint-staged
+bun run lint:language
+bunx lint-staged
