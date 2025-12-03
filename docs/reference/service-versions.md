@@ -309,8 +309,8 @@ PostgreSQL: 15.3
 
 ### Release Notes
 
-- [October Release](https://github.com/DIZ-admin/erni-ki/releases/tag/v2.0.0-oct)
-- [September Release](https://github.com/DIZ-admin/erni-ki/releases/tag/v1.9.0)
+- [October Release](https://github.com/DIZ-admin/erni-ki/releases)
+- [September Release](https://github.com/DIZ-admin/erni-ki/releases)
 - [All Releases](https://github.com/DIZ-admin/erni-ki/releases)
 
 ## Service Health Checks

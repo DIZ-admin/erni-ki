@@ -271,7 +271,7 @@ docker compose restart litellm
 
 - `../../../conf/litellm/config.yaml`
 - `../database/redis-operations-guide.md`
-- [LiteLLM Official Docs](https://docs.litellm.ai/docs/caching)
+- [LiteLLM Official Docs](https://docs.litellm.ai/)
 
 ## История изменений
 

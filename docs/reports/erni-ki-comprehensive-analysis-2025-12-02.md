@@ -65,12 +65,11 @@ brew install gitleaks # macOS
 
 # or
 
-curl -sSfL
-https://raw.githubusercontent.com/gitleaks/gitleaks/master/scripts/install.sh |
-sh Add to CI/CD if not already present. Medium Priority Issues 8. Missing Test
-Configuration Files Severity: Medium No pytest.ini or .coveragerc in project
-root (only in pre-commit cache). Recommendation: Create project-level Python
-test configuration:
+curl -sSfL https://github.com/gitleaks/gitleaks/releases | sh Add to CI/CD if
+not already present. Medium Priority Issues 8. Missing Test Configuration Files
+Severity: Medium No pytest.ini or .coveragerc in project root (only in
+pre-commit cache). Recommendation: Create project-level Python test
+configuration:
 
 # pytest.ini
 
