@@ -17,7 +17,7 @@ to ensure a safe, secure, and reliable deployment.
 
 ### Code Quality Gate
 
-- [ ] All tests passing (`bun run test` and `pytest tests/`)
+- [ ] All tests passing (`bun run test` for JS/TS; `pytest tests/` for Python)
 - [ ] No critical security issues in security scan
 - [ ] Code coverage >85% (check `coverage report`)
 - [ ] All linting checks pass (`bun run lint` and `bun run lint:py`)

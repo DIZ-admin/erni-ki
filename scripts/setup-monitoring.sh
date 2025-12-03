@@ -134,6 +134,7 @@ setup_alerts() {
     cat > "$PROJECT_DIR/scripts/critical-alert.sh" << 'EOF'
 #!/bin/bash
 # Critical alert sender
+set -euo pipefail
 
 ALERT_TYPE="$1"
 MESSAGE="$2"

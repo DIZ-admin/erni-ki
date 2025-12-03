@@ -342,14 +342,11 @@ repos:
             fi
             if ! command -v goimports >/dev/null 2>&1; then
               go install golang.org/x/tools/cmd/goimports@latest
-              if [[ -n "$GOPATH_BIN" ]]; then
-                export PATH="$PATH:$GOPATH_BIN/bin"
-              fi
             fi
             if ! command -v goimports >/dev/null 2>&1; then
-              go run golang.org/x/tools/cmd/goimports@latest -w $(git ls-files "*.go")
+              git ls-files "*.go" | xargs -r go run golang.org/x/tools/cmd/goimports@latest -w
             else
-              goimports -w $(git ls-files "*.go")
+              git ls-files "*.go" | xargs -r goimports -w
             fi
 
       # Detect duplicate basenames in scripts/ and conf/

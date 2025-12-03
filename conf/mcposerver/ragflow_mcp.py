@@ -23,6 +23,7 @@ import os
 import time
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 import requests
 from mcp.server.fastmcp import FastMCP
@@ -126,7 +127,6 @@ def ensure_user_dataset(user_id: str | None, default_dataset: str | None = None)
         raise
     except Exception as e:  # noqa: BLE001
         logger.exception("Failed to list datasets for user %s: %s", user_id, e)
-        existing = []
 
     ds_id = create_dataset(name)
     _USER_DATASET_CACHE[user_id] = ds_id
@@ -228,7 +228,7 @@ def chunks_to_markdown(chunks: list[dict[str, Any]]) -> str:
         page = ch.get("page_no") or ch.get("page") or ch.get("page_number")
         try:
             page = int(page) if page is not None else None
-        except Exception:
+        except (ValueError, TypeError):
             page = None
         content = (ch.get("content") or "").strip()
         link = f"{RAGFLOW_BASE_URL.rstrip('/')}/document/{doc_id}"
@@ -342,8 +342,6 @@ def upload_md_to_owui_tool(
         raise RuntimeError("OWUI token is required (set OWUI_API_TOKEN or pass owui_token)")
     if unique_suffix:
         stem, dot, ext = filename.partition(".")
-        from uuid import uuid4
-
         filename = f"{stem}_{uuid4().hex}{dot}{ext}" if dot else f"{stem}_{uuid4().hex}"
     resp = upload_md_to_openwebui(md, filename, base, token)
     return {"uploaded": True, "response": resp}

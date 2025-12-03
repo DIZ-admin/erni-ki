@@ -1,48 +1,59 @@
-Goal Description Conduct a comprehensive professional audit of the
-DIZ-admin/erni-ki project to identify areas for improvement in code quality,
-security, infrastructure, and maintainability. The goal is to produce a
-prioritized list of actionable recommendations to elevate the project to
-industry best practices.
+# Goal
 
-User Review Required IMPORTANT
+Conduct a comprehensive professional audit of the DIZ-admin/erni-ki project to
+identify areas for improvement in code quality, security, infrastructure, and
+maintainability. Produce a prioritized list of actionable recommendations to
+reach industry best practices.
 
-This plan outlines the audit process itself. The result of this audit will be a
-separate "Audit Report" with specific remediation tasks.
+> **User Review Required (IMPORTANT)**  
+> Этот документ описывает процесс аудита. Итоговый результат — отдельный Audit
+> Report с конкретными задачами на исправление.
 
-Proposed Audit Areas
+# Proposed Audit Areas
 
-1. Codebase Hygiene & Standards Linting & Formatting: Verify consistent
-   application of eslint, prettier, ruff, and shellcheck across all relevant
-   files. Dead Code Analysis: Identify unused scripts (e.g., health-monitor.sh
-   vs v2), deprecated config files, and orphaned assets. Project Structure:
-   Evaluate the organization of scripts/ , conf/, and docs/ for logical grouping
-   and discoverability. Language Compliance: Ensure strict adherence to
-   English-only comments and documentation (except localized docs).
-2. Security Posture Secret Scanning: Verify effectiveness of .gitleaks.toml and
-   check for any committed secrets in history. Dependency Auditing: Check
-   package.json , poetry.lock , and go.mod for outdated or vulnerable
-   dependencies using npm audit, snyk , or dependabot alerts. Container
-   Security: Audit compose.yml and Dockerfiles (if any) for best practices
-   (non-root users, pinned versions, minimal base images). Permissions: Review
-   file permissions in scripts/ and CI/CD token scopes.
-3. Infrastructure & DevOps CI/CD Pipelines: Analyze .github/workflows for
-   efficiency, redundancy, and missing checks (e.g., are we running tests on
-   every PR?). Docker Configuration: Review compose.yml for resource limits,
-   network isolation, and volume management. Environment Management: Check
-   .env.example vs actual usage; ensure config parity between dev and prod
-   environments.
-4. Testing & Quality Assurance Test Coverage: Assess coverage for Python
-   (pytest) and Node.js components. E2E Testing: Evaluate Playwright test
-   scenarios in tests/e2e for critical user flows. Test Reliability: Identify
-   flaky tests and review test execution times.
-5. Documentation & Onboarding Completeness: Verify README.md, CONTRIBUTING.md,
-   and docs/ cover setup, architecture, and troubleshooting. Accuracy: Check if
-   documentation matches the current codebase state (e.g., do setup steps still
-   work?). Localization: Review the status of German translations in
-   docs/locales/de/. Verification Plan This is an audit plan, so "verification"
-   means completing the audit steps.
+## 1) Codebase Hygiene & Standards
 
-Manual Verification Run npm run lint and ruff check . to baseline current
-linting status. Run gitleaks detect to check for secrets. Review scripts/
-directory manually to list redundant scripts. Inspect GitHub Actions run history
-for failure patterns.
+- Linting & formatting: eslint, prettier, ruff, shellcheck применены везде.
+- Dead code: выявить устаревшие скрипты (например, health-monitor.sh vs v2),
+  депрекейтнутые конфиги, «осиротевшие» ассеты.
+- Project structure: логичная группировка в `scripts/`, `conf/`, `docs/`.
+- Language compliance: англ. комментарии и доки (кроме локализованных файлов).
+
+## 2) Security Posture
+
+- Secret scanning: проверить `.gitleaks.toml`, историю коммитов на секреты.
+- Dependency auditing: `package.json`, `poetry.lock`, `go.mod` на устаревшие или
+  уязвимые версии (npm audit / snyk / dependabot).
+- Container security: `compose.yml`, Dockerfile — non-root, pinned версии,
+  минимальные базы.
+- Permissions: права на файлы в `scripts/`, токены/permissions в CI/CD.
+
+## 3) Infrastructure & DevOps
+
+- CI/CD: анализ `.github/workflows` на эффективность и полноту проверок.
+- Docker config: лимиты ресурсов, изоляция сетей, volume management.
+- Environment management: соответствие `.env.example` и фактических переменных
+  между dev/prod.
+
+## 4) Testing & QA
+
+- Coverage: покрытие pytest и JS/TS.
+- E2E: сценарии Playwright в `tests/e2e` для ключевых пользовательских потоков.
+- Reliability: flaky тесты, длительность прогонов.
+
+## 5) Documentation & Onboarding
+
+- Completeness: README, CONTRIBUTING, docs/ — сетап, архитектура, троблшутинг.
+- Accuracy: соответствие текущему состоянию кода (шаги установки работают?).
+- Localization: состояние переводов (например, `docs/locales/de/`).
+
+# Verification Plan
+
+Это план аудита; верификация означает выполнение шагов выше.
+
+## Manual Checks
+
+- `bun run lint` и `ruff check .` — базовая проверка.
+- `gitleaks detect` — отсутствие секретов.
+- Ручной обзор `scripts/` на дубликаты/устаревшие части.
+- История GitHub Actions — паттерны падений и пропусков проверок.
