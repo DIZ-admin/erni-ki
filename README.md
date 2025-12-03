@@ -45,6 +45,13 @@ docker compose ps
 Access: Locally at <http://localhost:8080>, production —
 `https://ki.erni-gruppe.ch`.
 
+## Testing
+
+- Unit: `bun run test:unit` (Vitest, coverage in `coverage/`)
+- Mock E2E: `bun run test:e2e:mock` (Playwright mock server)
+- Go: `cd auth && go test ./...`
+- Full pipeline: see `.github/workflows/ci.yml`
+
 ## Branches, CI, and Policies
 
 - Work is done in `develop`, releases in `main`. All changes via PR + review.
