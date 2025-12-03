@@ -110,12 +110,17 @@ kubectl apply --dry-run=client -f k8s/
 
 ```
 
-- [ ] Docker images built and scanned
+- [ ] Docker images built and scanned (compose-driven, без root Dockerfile)
 
 ```bash
-docker build -t erni-ki:vX.Y.Z .
-trivy image erni-ki:vX.Y.Z
+# Build all compose services locally
+docker compose build
 
+# Build/auth image explicitly (example)
+docker build -t erni-ki-auth:dev ./auth
+
+# Scan images
+trivy image erni-ki-auth:dev
 ```
 
 - [ ] Database backups tested (restore verification)

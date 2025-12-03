@@ -1,3 +1,9 @@
+---
+title: 'Комплексный аудит проекта ERNI-KI перед презентацией инвесторам'
+date: '2025-12-03'
+language: 'ru'
+---
+
 # Комплексный аудит проекта ERNI-KI перед презентацией инвесторам
 
 **Дата аудита:** 2025-12-03 **Версия проекта:** v0.6.3 **Аудитор:** Technical
@@ -776,14 +782,14 @@ Impact: CI/локальные прогонки стабильны.
 Priority: HIGH (выполнено)
 ```
 
-**2. Missing Dockerfile в корне — ⏳ В работе (документация)** _(вместо root
-Dockerfile)_
+**2. Missing Dockerfile в корне — ✅ Закрыто (документация + checklist)**
+_(вместо root Dockerfile)_
 
 ```
 Decision: Проект собирается из сервисных Dockerfile (например, auth/Dockerfile)
           через docker compose; единый root-образ не предусмотрен.
 Action:
-  - Документировать стратегию сборки (compose, сервисные Dockerfile).
+  - Документировано в docs/deployment/production-checklist.md (build через docker compose + отдельный build auth/Dockerfile).
   - Убедиться, что docker:build/CI скрипты ссылаются на сервисные образы.
 Priority: MEDIUM
 ```
