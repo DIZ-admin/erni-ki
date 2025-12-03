@@ -1,3 +1,11 @@
+---
+language: ru
+translation_status: original
+doc_version: '2025.12'
+last_updated: '2025-12-03'
+title: 'TODO/FIXME Triage'
+---
+
 # TODO/FIXME Triage — 2025-12-03
 
 Пробег по репозиторию `rg "(TODO|FIXME)"` (prod-ветка). Категоризация:
