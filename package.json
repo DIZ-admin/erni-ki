@@ -119,6 +119,9 @@
       "prettier --write --log-level=warn",
       "bun run lint:language -- --all"
     ],
+    "*.toml": [
+      "bun run lint:language -- --all"
+    ],
     "*.go": [
       "gofmt -w",
       "bash -lc 'PATH=\"$PATH:$HOME/go/bin:/Users/kostas/go/bin\" goimports -w \"$@\"' --"
