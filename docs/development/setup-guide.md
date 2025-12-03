@@ -154,6 +154,9 @@ source .venv/bin/activate # On Windows: .venv\Scripts\activate
 # Install dependencies
 pip install -r requirements-dev.txt
 
+# Dev dependencies source of truth
+# requirements-dev.txt — единственный источник dev-зависимостей; pyproject.toml содержит только базовую метаинформацию. При необходимости генерации из pyproject (или наоборот) добавьте отдельный sync-скрипт/процедуру в будущем.
+
 # Verify installation
 python --version
 pip list | head -10
