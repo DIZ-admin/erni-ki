@@ -90,8 +90,10 @@ class Pipe:
                 upload_res = self._upload_md_to_owui(md, md_name)
                 owui_path = upload_res.get("path") or upload_res.get("file") or "uploaded"
 
-                results.append(f"OK {name}: ds={dataset_id}, doc={document_id}, md={owui_path}")
+                results.append(
+                    f"✅ {name}: dataset={dataset_id}, doc={document_id}, md={owui_path}"
+                )
             except Exception as e:  # noqa: BLE001
-                results.append(f"FAIL {name}: {e}")
+                results.append(f"❌ {name}: {e}")
 
         return "\n".join(results)
