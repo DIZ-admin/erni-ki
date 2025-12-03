@@ -119,6 +119,14 @@ jobs:
           bun audit --severity moderate || true
           bun audit --json > bun-audit-results.json || true
 
+      - name: 📤 Upload bun audit results
+        if: hashFiles('package.json') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: bun-audit-results
+          path: bun-audit-results.json
+          retention-days: 30
+
   bandit:
     name: 🐍 Bandit + Ruff security
     runs-on: ubuntu-latest
@@ -163,14 +171,6 @@ jobs:
           ignore-unfixed: true
           severity: HIGH,CRITICAL
           exit-code: 1
-
-      - name: 📤 Upload bun audit results
-        if: hashFiles('package.json') != ''
-        uses: actions/upload-artifact@v5
-        with:
-          name: bun-audit-results
-          path: bun-audit-results.json
-          retention-days: 30
 
   # Secret scanning
   secret-scan:
