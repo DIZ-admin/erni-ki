@@ -291,6 +291,8 @@ def upload_and_parse(
         raise FileNotFoundError(f"{path} not found")
     doc = upload_document(ds_id, path)
     doc_id = doc.get("id")
+    if not doc_id:
+        raise RuntimeError(f"Upload succeeded but document has no id: {doc}")
     trigger_parse(ds_id, doc_id)
     final = poll_until_done(ds_id, doc_id, timeout=wait_seconds, interval=poll_interval)
     return {"dataset_id": ds_id, "document_id": doc_id, "status": final.get("run"), "meta": final}
