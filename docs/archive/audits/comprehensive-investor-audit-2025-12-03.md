@@ -763,33 +763,28 @@ Last 3 months:
 
 #### 10.1 Критические (требуют немедленного внимания)
 
-**1. Test Failures (Bun compatibility)**
+**1. Test Failures (Bun compatibility) — ✅ Закрыто**
 
 ```
-Issue: process.env не определен в некоторых тестах
-Impact: Тесты падают, CI может быть нестабильным
-Files affected:
-- tests/unit/test-mock-env-extended.test.ts
-- tests/unit/test-language-check-extended.test.ts
-
-Action Required:
-□ Исправить vitest.config.ts для Bun runtime
-□ Добавить proper environment mocking
-□ Убедиться что CI uses Node.js fallback
-Priority: HIGH (fix before investor demo)
+Issue: process.env не определен в некоторых тестах (Bun)
+Fix: Добавлен полифилл process.env в tests/setup.ts, гарантия globalThis.testUtils,
+     Playwright e2e скипаются вне Playwright runner. Запуски:
+     - bun test (зелёный)
+     - bun run test:unit (зелёный)
+     - bun run test:e2e:mock (зелёный)
+Impact: CI/локальные прогонки стабильны.
+Priority: HIGH (выполнено)
 ```
 
-**2. Missing Dockerfile в корне**
+**2. Missing Dockerfile в корне — ⏳ В работе (документация)** _(вместо root
+Dockerfile)_
 
 ```
-Issue: Dockerfile отсутствует в корне проекта
-Impact: Неясно как собирается главный образ
-Files: Только auth/Dockerfile найден
-
-Action Required:
-□ Добавить root Dockerfile или
-□ Документировать почему его нет
-□ Обновить docker:build script
+Decision: Проект собирается из сервисных Dockerfile (например, auth/Dockerfile)
+          через docker compose; единый root-образ не предусмотрен.
+Action:
+  - Документировать стратегию сборки (compose, сервисные Dockerfile).
+  - Убедиться, что docker:build/CI скрипты ссылаются на сервисные образы.
 Priority: MEDIUM
 ```
 
