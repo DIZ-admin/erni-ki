@@ -708,7 +708,7 @@ slos:
 
 ## Ссылки
 
-- [Comprehensive System Audit](../reports/comprehensive-system-audit-2025-11-27.md)
+- [ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 - [Security Policy](../security/security-policy.md)
 - [Runbooks](core/runbooks-summary.md)
 
