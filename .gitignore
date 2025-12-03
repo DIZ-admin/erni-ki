@@ -41,6 +41,10 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Bun
+bun.lockb
+.bun/
+package-lock.json
 
 # ===================================================================
 # PYTHON / ВИРТУАЛЬНЫЕ ОКРУЖЕНИЯ

@@ -52,4 +52,4 @@ else
   CMD_ARGS=("prettier" "--write" "${CMD_ARGS[@]}")
 fi
 
-xargs -0 npx "${CMD_ARGS[@]}" <"$tmpfile"
+xargs -0 bunx "${CMD_ARGS[@]}" <"$tmpfile"
