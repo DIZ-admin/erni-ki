@@ -51,46 +51,29 @@ class TestLycheeConfig:
             assert field in config["general"], f"Missing required field: {field}"
 
 
-class TestNvmrc:
-    """Tests for .nvmrc configuration."""
+class TestRuntimeConfig:
+    """Tests for runtime configuration (.nvmrc removed, Bun required)."""
 
-    def test_nvmrc_exists(self):
-        """Test that .nvmrc exists."""
-        nvmrc_path = Path(".nvmrc")
-        assert nvmrc_path.exists(), ".nvmrc should exist"
-
-    def test_nvmrc_contains_valid_version(self):
-        """Test that .nvmrc contains a valid Node.js version."""
-        nvmrc_path = Path(".nvmrc")
-        content = nvmrc_path.read_text().strip()
-
-        # Should be semantic version format
-        assert content, ".nvmrc should not be empty"
-        parts = content.split(".")
-        assert len(parts) == 3, "Version should be in format X.Y.Z"
-
-        for part in parts:
-            assert part.isdigit(), f"Version part '{part}' should be numeric"
-
-    def test_nvmrc_matches_package_json(self):
-        """Test that .nvmrc version matches package.json engines.node."""
-        nvmrc_path = Path(".nvmrc")
+    def test_package_json_defines_bun_engine(self):
+        """package.json must declare bun engine since Bun is primary runtime."""
         package_json_path = Path("package.json")
+        assert package_json_path.exists(), "package.json should exist"
 
-        if not package_json_path.exists():
-            pytest.skip("package.json not found")
-
-        nvmrc_version = nvmrc_path.read_text().strip()
-
-        with open(package_json_path) as f:
+        with package_json_path.open() as f:
             package_data = json.load(f)
 
-        engines_node = package_data.get("engines", {}).get("node", "")
+        engines = package_data.get("engines", {})
+        assert "bun" in engines, "engines.bun must be defined"
+        assert engines["bun"].startswith(">="), "engines.bun should be a semver range (>=x.y.z)"
 
-        # engines.node typically has >=X.Y.Z format
-        assert nvmrc_version in engines_node or engines_node.startswith(">="), (
-            ".nvmrc version should be compatible with package.json engines.node"
-        )
+    def test_package_manager_is_bun(self):
+        """packageManager field should pin bun version."""
+        package_json_path = Path("package.json")
+        with package_json_path.open() as f:
+            package_data = json.load(f)
+
+        package_manager = package_data.get("packageManager", "")
+        assert package_manager.startswith("bun@"), "packageManager should be bun@<version>"
 
 
 class TestMypyConfig:

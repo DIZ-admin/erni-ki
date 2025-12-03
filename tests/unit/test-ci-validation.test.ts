@@ -23,9 +23,10 @@ describe('CI Pipeline Configuration Validation', () => {
     expect(content).toContain('timeout-minutes');
   });
 
-  it('CI workflow uses Node.js', () => {
+  it('CI workflow uses Bun', () => {
     const content = fs.readFileSync(ciPath, 'utf8');
-    expect(content).toContain('node-version');
+    expect(content).toContain('oven-sh/setup-bun');
+    expect(content).toContain('bun-version');
   });
 
   it('CI workflow uses Go', () => {
