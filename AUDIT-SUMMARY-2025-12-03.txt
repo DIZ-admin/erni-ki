@@ -73,9 +73,9 @@ Priority: HIGH | Timeline: before demo
    - Added process.env polyfill in tests/setup.ts, ensured global test utils.
    - bun test / bun run test:unit / bun run test:e2e:mock all green.
 
-2. Missing Dockerfile in root — ⏳ Decide/document
-   - Strategy: compose-driven build from per-service Dockerfile.
-   - Action: document build strategy (no root image) and align docker:build/CI.
+2. Missing Dockerfile in root — ✅ Documented (compose-driven)
+   - Strategy: compose-driven build from per-service Dockerfile; no root image.
+   - Documented in docs/deployment/production-checklist.md (compose build + auth image build).
 
 COMPETITIVE ADVANTAGES
 ----------------------
