@@ -41,6 +41,10 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Bun
+bun.lockb
+.bun/
+package-lock.json
 
 # ===================================================================
 # PYTHON / ВИРТУАЛЬНЫЕ ОКРУЖЕНИЯ
@@ -50,6 +54,7 @@ venv/
 .env/
 # env/ - УДАЛЕНО: конфликтует с директорией env/ проекта
 __pycache__/
+.pytest_cache/
 *.py[cod]
 *$py.class
 *.so
@@ -122,6 +127,9 @@ docker-data/
 .prettier-cache
 .eslintcache
 .vitest/
+.playwright/
+playwright-artifacts/
+playwright-report/
 .cache/
 cache/
 .pre-commit-cache/

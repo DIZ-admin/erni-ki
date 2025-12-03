@@ -130,11 +130,24 @@ services:
     # Using config file instead of CLI parameters
     # Updated: 2025-10-02 for support of active defragmentation
     command:
-      [
-        "/bin/sh",
-        "-c",
-        'redis-server /usr/local/etc/redis/redis.conf --requirepass "$(cat /run/secrets/redis_password)"',
-      ]
+      - /bin/sh
+      - -c
+      - >
+        set -euo pipefail;
+        SECRET="$$(cat /run/secrets/redis_password)";
+        CONF_TPL=/usr/local/etc/redis/redis.conf;
+        CONF_OUT=/tmp/redis.conf;
+        ACL_TPL=/usr/local/etc/redis/users.acl.template;
+        ACL_OUT=/tmp/redis-users.acl;
+        export REDIS_PASSWORD="$${SECRET}";
+        envsubst < "$${CONF_TPL}" > "$${CONF_OUT}";
+        if [ -f "$${ACL_TPL}" ]; then
+          envsubst < "$${ACL_TPL}" > "$${ACL_OUT}";
+          chmod 600 "$${ACL_OUT}";
+          exec redis-server "$${CONF_OUT}" --aclfile "$${ACL_OUT}";
+        else
+          exec redis-server "$${CONF_OUT}";
+        fi
     healthcheck:
       test: ["CMD-SHELL", 'redis-cli -a "$(cat /run/secrets/redis_password)" ping | grep PONG']
       interval: 30s
@@ -147,6 +160,7 @@ services:
     volumes:
       - ./data/redis:/data
       - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./conf/redis/users.acl:/usr/local/etc/redis/users.acl.template:ro
     secrets:
       - redis_password
     # Using standard Docker bridge network
@@ -154,7 +168,8 @@ services:
       # Allow auto-updates for Redis
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=cache-services"
-    mem_limit: 1g
+    mem_limit: 4g # Increased from 1g: 2x maxmemory for AOF rewrite (2025-12-02)
+    mem_reservation: 2g # Reserved memory
     cpus: "1.0"
 
   # LiteLLM Context Engineering Gateway (optimized network configuration)
@@ -387,6 +402,8 @@ services:
       redis:
         condition: service_healthy
     env_file: env/searxng.env
+    entrypoint:
+      - /opt/erni/bin/searxng-entrypoint.sh
     healthcheck:
       test:
         [
@@ -397,7 +414,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    image: searxng/searxng:latest # refreshed tag (digest 2025-11-28)
+    image: searxng/searxng:2025.11.21-b876d0bed # pinned to avoid surprises from :latest
     logging: *important-logging
     restart: unless-stopped
     volumes:
@@ -427,6 +444,11 @@ services:
       - NVIDIA_VISIBLE_DEVICES=${OLLAMA_GPU_VISIBLE_DEVICES:-0}
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - CUDA_VISIBLE_DEVICES=${OLLAMA_CUDA_VISIBLE_DEVICES:-0}
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_NUM_CTX=2048
+      # Flash attention occasionally breaks some models; disable for stability
+      - OLLAMA_FLASH_ATTENTION=0
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
     env_file: env/ollama.env
     # GPU memory limits optimized for RTX 5000 (16GB VRAM)
@@ -850,11 +872,7 @@ services:
     cpus: "0.2"
     logging: *monitoring-logging
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "wget --no-verbose --tries=1 --spider http://localhost:9100/metrics || exit 1",
-        ]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9100/metrics >/dev/null"]
       interval: 30s
       timeout: 10s
       retries: 3

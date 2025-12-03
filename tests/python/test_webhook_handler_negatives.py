@@ -29,7 +29,7 @@ def load_webhook_handler():
 def test_verify_signature_valid():
     wh = load_webhook_handler()
     body = b"{}"
-    secret = "test-secret"  # noqa: S105
+    secret = "test-secret"  # noqa: S105  # pragma: allowlist secret
     os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
     wh.WEBHOOK_SECRET = secret
     sig = hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
@@ -39,7 +39,7 @@ def test_verify_signature_valid():
 def test_verify_signature_invalid():
     wh = load_webhook_handler()
     body = b"{}"
-    secret = "another-secret"  # noqa: S105
+    secret = "another-secret"  # noqa: S105  # pragma: allowlist secret
     os.environ["ALERTMANAGER_WEBHOOK_SECRET"] = secret
     wh.WEBHOOK_SECRET = secret
     assert wh.verify_signature(body, "bad") is False
@@ -60,7 +60,7 @@ def test_validate_request_missing_signature(monkeypatch):
             return {"alerts": []}
 
     monkeypatch.setattr(wh, "request", DummyReq())
-    wh.WEBHOOK_SECRET = "secret"  # noqa: S105
+    wh.WEBHOOK_SECRET = "secret"  # noqa: S105  # pragma: allowlist secret
     try:
         wh._validate_request()
         raised = False

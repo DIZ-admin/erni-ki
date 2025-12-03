@@ -5,6 +5,9 @@ on:
     - cron: "0 2 * * *" # Run at 2 AM UTC every day
   workflow_dispatch: # Allow manual trigger
 
+permissions:
+  contents: read
+
 jobs:
   audit:
     name: 🕵️ Nightly Documentation Audit

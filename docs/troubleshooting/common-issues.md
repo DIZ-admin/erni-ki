@@ -1047,7 +1047,7 @@ tar -czf debug-bundle.tar.gz \
 
 ### Report Issues
 
-1. **Check existing issues:** https://github.com/erni-gruppe/erni-ki-1/issues
+1. **Check existing issues:** https://github.com/DIZ-admin/erni-ki/issues
 2. **Search for similar issues**
 3. **Create new issue with:**
 

@@ -17,16 +17,16 @@ to ensure a safe, secure, and reliable deployment.
 
 ### Code Quality Gate
 
-- [ ] All tests passing (`npm run test` and `pytest tests/`)
+- [ ] All tests passing (`bun run test` for JS/TS; `pytest tests/` for Python)
 - [ ] No critical security issues in security scan
 - [ ] Code coverage >85% (check `coverage report`)
-- [ ] All linting checks pass (`npm run lint` and `npm run lint:py`)
-- [ ] TypeScript compilation successful (`npx tsc --noEmit`)
+- [ ] All linting checks pass (`bun run lint` and `bun run lint:py`)
+- [ ] TypeScript compilation successful (`bun run type-check`)
 - [ ] Python type checking passes (`mypy .`)
 - [ ] Zero CRITICAL or HIGH severity vulnerabilities
 
 ```bash
-npm audit --audit-level=moderate
+bun audit --severity moderate
 safety check
 
 ```
@@ -46,7 +46,7 @@ safety check
 
 ```bash
 pytest tests/unit/ -v --tb=short
-npm run test -- tests/unit
+bun run test -- tests/unit
 
 ```
 
@@ -54,21 +54,21 @@ npm run test -- tests/unit
 
 ```bash
 pytest tests/integration/ -v
-npm run test:integration
+bun run test:integration
 
 ```
 
 - [ ] E2E tests: 100% pass rate on staging environment
 
 ```bash
-npm run test:e2e
+bun run test:e2e
 
 ```
 
 - [ ] Performance tests: Baseline established
 
 ```bash
-npm run test:performance
+bun run test:performance
 
 ```
 
@@ -679,7 +679,7 @@ For deployment questions or issues:
 
 1. Check [Troubleshooting Guide](../troubleshooting/common-issues.md)
 2. Review deployment logs
-3. Check GitHub issues: https://github.com/erni-gruppe/erni-ki-1/issues
+3. Check GitHub issues: https://github.com/DIZ-admin/erni-ki/issues
 4. Contact: deployments@erni-gruppe.ch
 
 ---

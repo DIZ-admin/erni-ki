@@ -1,0 +1,42 @@
+# Bun configuration for ERNI-KI project
+# Documentation: https://bun.sh/docs/runtime/bunfig
+
+[runtime]
+# Logging level: "debug" | "warn" | "error"
+logLevel = "warn"
+
+# Disable telemetry
+telemetry = false
+
+# Memory-efficient mode (use less RAM)
+smol = false
+
+[install]
+# Enable lockfile generation
+lockfile = true
+
+# Cache installed packages
+cache = true
+
+# Install production dependencies only (false = include dev deps)
+production = false
+
+# Registry configuration
+registry = "https://registry.npmjs.org"
+
+[test]
+# Enable code coverage
+coverage = true
+
+# Coverage threshold (0.0 - 1.0)
+coverageThreshold = 0.8
+
+# Preload scripts before running tests
+# preload = ["./tests/setup.ts"]
+
+[run]
+# Use Bun's built-in shell instead of system shell
+# shell = "bun"
+
+# Suppress output for run commands
+silent = false

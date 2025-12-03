@@ -2,6 +2,35 @@
 
 # CHANGELOG - ERNI-KI System Updates
 
+## [2025-12-01] - Legacy monitoring scripts cleanup
+
+### Summary
+
+- `scripts/health-monitor.sh` вынесен в `scripts/legacy/` и помечен LEGACY;
+  основной путь — `scripts/health-monitor-v2.sh`. Обёртка в корне осталась для
+  обратной совместимости.
+- Cron/setup/diagnostics (`scripts/setup-monitoring.sh`,
+  `scripts/erni-ki-health-check.sh`, `scripts/core/diagnostics/health-check.sh`)
+  обновлены на v2, добавлен migration guide
+  `docs/operations/monitoring/legacy-monitoring-scripts-migration.md`.
+- `.gitignore` теперь закрывает `.pytest_cache/`, Playwright артефакты и
+  служебную `.playwright/`; проверено, что `node_modules/`, `.pytest_cache/`,
+  `__pycache__/`, `playwright-artifacts/` не в отслеживаемых файлах (`git ls-files ...`).
+
+### Реализация
+
+1. Перенёс оригинальный `health-monitor.sh` в `scripts/legacy/` с LEGACY-комментарием
+   и создал тонкую обёртку, вызывающую v2 (подавление предупреждения через
+   `SUPPRESS_HEALTH_MONITOR_LEGACY_NOTICE=1`).
+2. Переключил cron-настройки и сервисные обёртки на `health-monitor-v2.sh`,
+   обновил sample `env/health-monitor.env.example` и README по scripts/.
+3. Создал migration guide для перехода и обновил мониторинговый индекс, чтобы
+   новые ссылки были видимы.
+
+### Проверки
+
+- Статическая проверка tracked файлов: `git ls-files node_modules .pytest_cache __pycache__ playwright-artifacts | wc -l` → 0.
+
 ## [2025-11-18] - LiteLLM v1.80.0.rc.1 + Ollama 0.12.11 Refresh
 
 ### Summary
