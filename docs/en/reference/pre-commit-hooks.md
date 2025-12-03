@@ -19,7 +19,7 @@ Pre-commit hooks автоматически проверяют качество 
 ### Автоматическая установка
 
 ```bash
-npm run pre-commit:install
+bun run pre-commit:install
 ```
 
 ### Ручная установка
@@ -133,7 +133,7 @@ Pre-commit hooks запускаются автоматически при вып
 
 ```bash
 # Запуск всех проверок
-npm run pre-commit:run
+bun run pre-commit:run
 
 # Или через виртуальное окружение
 source .venv/bin/activate
@@ -147,7 +147,7 @@ pre-commit run eslint --all-files
 ## Обновление hooks
 
 ```bash
-npm run pre-commit:update
+bun run pre-commit:update
 
 # Или
 source .venv/bin/activate
@@ -175,9 +175,9 @@ Pre-commit hooks интегрированы с:
 
 ```bash
 # Автоматическое исправление
-npm run format
-npm run format:py
-npm run lint:fix
+bun run format
+bun run format:py
+bun run lint:fix
 ```
 
 ## Проблемы с секретами

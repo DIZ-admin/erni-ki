@@ -21,7 +21,7 @@ oder separaten JSON/YAML-Dateien – nicht im Quellcode.
 
 # Automatische Prüfung
 
-- Lokal: `npm run lint:language` für staged Files.
+- Lokal: `bun run lint:language` für staged Files.
 - Vollständig: `node scripts/language-check.cjs --all`.
 - CI (`.github/workflows/ci.yml`) blockiert PRs bei Verstößen.
 
@@ -41,4 +41,4 @@ Nach Übersetzung den Eintrag entfernen und
 
 1. Alle Kommentare/Meldungen in `.ts/.js/.sh/.py/.yml` auf Englisch.
 2. Lokalisierte Texte in `docs/` oder JSON/YAML ausgelagert.
-3. `npm run lint:language -- --all` erfolgreich.
+3. `bun run lint:language -- --all` erfolgreich.
