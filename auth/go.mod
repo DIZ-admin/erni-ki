@@ -1,8 +1,8 @@
 module github.com/DIZ-admin/erni-ki/auth
 
-go 1.24.0
+go 1.24.11
 
-toolchain go1.24.10
+toolchain go1.24.11
 
 require (
 	github.com/gin-gonic/gin v1.11.0
