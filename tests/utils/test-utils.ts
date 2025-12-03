@@ -29,7 +29,7 @@ const createMockResponse = <TBody = unknown>(
 ): MockResponse<TBody> => {
   const response = {
     statusCode: options.statusCode ?? 200,
-    status: vi.fn<(code: number) => MockResponse<TBody>>().mockImplementation(code => {
+    status: vi.fn<(code: number) => MockResponse<TBody>>().mockImplementation((code: number) => {
       response.statusCode = code;
       return response;
     }),
