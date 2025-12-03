@@ -18,7 +18,6 @@ last_updated: '2025-12-03'
 - [Архитектура pre-commit системы](#архитектура-pre-commit-системы)
 - [Установка и настройка](#установка-и-настройка)
 - [Все хуки проекта](#все-хуки-проекта)
-- [Lint-staged конфигурация](#lint-staged-конфигурация)
 - [Commitlint правила](#commitlint-правила)
 - [Быстрые команды](#быстрые-команды)
 - [Пропуск хуков](#пропуск-хуков)
@@ -32,9 +31,9 @@ ERNI-KI использует **многоуровневую систему pre-c
 качества кода:
 
 1. **Python pre-commit framework** - основной механизм валидации
-2. **Husky** - Git hooks менеджер для Node.js окружения
-3. **Lint-staged** - быстрая проверка только изменённых файлов
-4. **Commitlint** - валидация commit messages
+2. **Husky** - Git hooks менеджер для Node.js окружения (теперь вызывает только
+   pre-commit)
+3. **Commitlint** - валидация commit messages
 
 ### Философия проекта
 
@@ -43,10 +42,12 @@ ERNI-KI использует **многоуровневую систему pre-c
 **Принципы:**
 
 1. **Fail Fast** - ошибки блокируют коммит
-2. **Incremental Checks** - только изменённые файлы (lint-staged)
-3. **Comprehensive Validation** - покрытие всех типов файлов
-4. **Security First** - обязательная проверка секретов
-5. **Zero TODO/FIXME** - все задачи трекаются в GitHub Issues
+2. **Comprehensive Validation** - покрытие всех типов файлов
+3. **Security First** - обязательная проверка секретов
+4. **Zero TODO/FIXME** - все задачи трекаются в GitHub Issues
+
+> Примечание: lint-staged удалён; Husky вызывает pre-commit, профили доступны
+> через `--config` (например, `.pre-commit/config-fast.yaml`).
 
 ---
 
@@ -56,65 +57,25 @@ ERNI-KI использует **многоуровневую систему pre-c
 
 ```
 
- GIT COMMIT
+GIT COMMIT
 
+  Husky pre-commit hook
+    - exec pre-commit run (profiles via --config)
 
+  Python pre-commit (.pre-commit-config.yaml)
+    - Basic checks (whitespace, EOF, large files)
+    - YAML/JSON/TOML validation
+    - Prettier formatting
+    - Python (ruff lint/format, mypy)
+    - Security (gitleaks, detect-secrets, secret perms)
+    - Shellcheck
+    - ESLint
+    - Local hooks (TS type-check, Docker compose validate, docs checks, no emoji, etc.)
 
+  Husky commit-msg hook
+    - bunx commitlint (validate message format)
 
- Husky pre-commit hook
- (.husky/pre-commit)
-
-
- bun run lint:language (language policy)
-
- bunx lint-staged
-
- *.{js,ts} → eslint + prettier
- *.py → ruff check + format
- *.{json,yaml,md} → prettier + language check
- *.go → gofmt + goimports
- *.toml → language check
-
-
-
- Python pre-commit
- (.pre-commit-config.yaml)
-
-
- Basic File Checks (whitespace, EOF, large files)
- YAML/JSON/TOML validation
- Prettier formatting
- Python (ruff, black, isort, mypy)
- Security (gitleaks, detect-secrets)
- Shellcheck
- ESLint
- Local Hooks:
- TypeScript type check
- Docker Compose validation
- TODO/FIXME check (blocks commit!)
- Go formatting
- Duplicate basenames check
- Status snippet validation
- Archive README coverage
- Markdownlint
- Visuals/links check
- Temporary files check
- Docs metadata validation
- Forbid numbered copies
- No emoji validation
- Secret permissions check
-
-
-
- Husky commit-msg hook
- (.husky/commit-msg)
-
-
- bunx commitlint (validate message format)
-
-
-
- COMMIT SUCCESS
+COMMIT SUCCESS
 
 ```
 
@@ -783,77 +744,20 @@ chmod 600 .env*
 
 ## Lint-staged конфигурация
 
-**Источник:** `package.json` → `lint-staged` section
+Lint-staged более не используется. Husky вызывает `pre-commit` напрямую. Для
+быстрых сценариев используйте профили:
 
-**Цель:** Быстрая проверка **только изменённых** файлов перед коммитом
+- `.pre-commit/config-fast.yaml` — быстрые проверки
+- `.pre-commit/config-docs.yaml` — документация
+- `.pre-commit/config-security.yaml` — безопасность
 
-### Правила по типам файлов
+Команды:
 
-#### JavaScript/TypeScript
-
-```json
-"*.{js,jsx,ts,tsx}": [
- "eslint --fix",
- "prettier --write"
-]
+```bash
+bun run pre-commit:fast   # быстрый профиль
+bun run pre-commit:full   # полный профиль
+bun run pre-commit:perf   # измерить время хуков
 ```
-
-**Что делает:**
-
-1. ESLint проверка + автоисправление
-2. Prettier форматирование
-
-#### Python
-
-```json
-"*.py": [
- "ruff check --fix",
- "ruff format"
-]
-```
-
-**Что делает:**
-
-1. Ruff linting + автоисправление
-2. Ruff форматирование (Black-compatible)
-
-#### JSON/YAML/Markdown
-
-```json
-"*.{json,yaml,yml,md}": [
- "prettier --write --log-level=warn",
- "bun run lint:language -- --all"
-]
-```
-
-**Что делает:**
-
-1. Prettier форматирование
-2. Language policy check (English in code, localized docs)
-
-#### TOML
-
-```json
-"*.toml": [
- "bun run lint:language -- --all"
-]
-```
-
-**Что делает:** Language policy check
-
-#### Go
-
-```json
-"*.go": [
- "gofmt -w",
- "bash -lc 'PATH=\"$PATH:$HOME/go/bin:/Users/kostas/go/bin\" goimports -w \"$@\"' --"
-]
-```
-
-**Что делает:**
-
-1. gofmt форматирование
-2. goimports организация imports
 
 ---
 
@@ -1326,14 +1230,23 @@ SKIP="visuals-and-links-check,typescript-type-check" \
  pre-commit run --files docs/my-file.md
 ```
 
-### 3. Используйте lint-staged
+### 3. Профили pre-commit (fast/docs/security)
 
 ```bash
-# Lint-staged проверяет только staged файлы
-# Намного быстрее чем --all-files
-git add path/to/file.ts
-git commit -m "feat: add feature"
-# Автоматически запустит только для staged файлов
+# Быстрый профиль
+bun run pre-commit:fast
+
+# Полный профиль
+bun run pre-commit:full
+
+# Только документация
+pre-commit run --config .pre-commit/config-docs.yaml --all-files
+
+# Только безопасность
+pre-commit run --config .pre-commit/config-security.yaml --all-files
+
+# Измерение времени хуков
+bun run pre-commit:perf
 ```
 
 ### 4. Кэш pre-commit
@@ -1437,7 +1350,6 @@ def messy_function():
 - [Pre-commit framework docs](https://pre-commit.com/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Husky docs](https://typicode.github.io/husky/)
-- [Lint-staged docs](https://github.com/okonet/lint-staged)
 
 ---
 

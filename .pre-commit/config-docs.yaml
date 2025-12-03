@@ -1,0 +1,95 @@
+# Documentation-focused profile
+# Use with: pre-commit run --config .pre-commit/config-docs.yaml --all-files
+
+minimum_pre_commit_version: "3.5.0"
+
+default_language_version:
+  python: python3.11
+  node: "22.14.0"
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-json
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        name: "Prettier: docs/config formatting"
+        files: \.(md|yml|yaml|json)$
+        additional_dependencies:
+          - prettier@3.6.2
+
+  - repo: local
+    hooks:
+      - id: language-check
+        name: "Language: validate language policy"
+        entry: bun run lint:language -- --all
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: markdownlint-cli2
+        name: "Docs: markdownlint"
+        entry: npx markdownlint-cli2
+        language: node
+        files: \.(md|markdown)$
+        additional_dependencies:
+          - markdownlint-cli2@0.19.1
+
+      - id: visuals-and-links-check
+        name: "Docs: visuals/TOC/link check"
+        entry: python3 scripts/docs/visuals_and_links_check.py
+        language: system
+        pass_filenames: false
+
+      - id: validate-docs-metadata
+        name: "Docs: validate metadata"
+        entry: python3 scripts/docs/validate_metadata.py
+        language: system
+        pass_filenames: false
+        files: ^docs/.*\.md$
+
+      - id: archive-readme-check
+        name: "Docs: archive/data README coverage"
+        entry: python3 scripts/docs/check_archive_readmes.py
+        language: system
+        pass_filenames: false
+
+      - id: forbid-numbered-copies
+        name: "Docs: forbid numbered filename copies"
+        entry: bash
+        language: system
+        files: ^docs/.*$
+        args:
+          - -c
+          - |
+            status=0
+            for f in "$@"; do
+              base="${f##*/}"
+              if [[ "$base" =~ [[:space:]][0-9]+(\.|$) ]]; then
+                echo "Duplicate-style filename detected: $f"
+                status=1
+              fi
+            done
+            exit $status
+
+      - id: no-emoji-in-files
+        name: "Docs: validate no emoji"
+        entry: python3 scripts/validate-no-emoji.py
+        language: system
+        files: \.(md|txt)$
+        exclude: |
+          (?x)^(
+            node_modules/.*|
+            \.venv/.*|
+            site/.*|
+            data/.*|
+            \.config-backup/.*
+          )$
