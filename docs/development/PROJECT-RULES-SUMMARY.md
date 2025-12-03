@@ -509,7 +509,7 @@ bunx commitlint --help
 ### Issues
 
 - **GitHub Issues:** https://github.com/DIZ-admin/erni-ki/issues
-- **Discussions:** https://github.com/DIZ-admin/erni-ki/discussions
+- **Repository:** https://github.com/DIZ-admin/erni-ki
 
 ---
 
