@@ -376,26 +376,20 @@ strategies to ensure platform stability during the update process.
 
 ### A. Complete Version Matrix
 
-Refer to
-[version_matrix.md](file:///home/konstantin/.gemini/antigravity/brain/947170a1-b73e-4d0c-a8ba-f3030378f230/version_matrix.md)
-for quick reference table.
+Refer to the version matrix in the audit bundle (see repository
+docs/data/version-matrix) for quick reference.
 
 ### B. Detailed Implementation Plan
 
-Refer to
-[implementation_plan.md](file:///home/konstantin/.gemini/antigravity/brain/947170a1-b73e-4d0c-a8ba-f3030378f230/implementation_plan.md)
+Refer to the implementation plan in docs/archive/audits/implementation-plan.md
 for step-by-step update procedures with file locations and code diffs.
 
 ### C. References
 
-- Docker Compose:
-  [compose.yml](file:///home/konstantin/Documents/augment-projects/erni-ki/compose.yml)
-- Node.js Dependencies:
-  [package.json](file:///home/konstantin/Documents/augment-projects/erni-ki/package.json)
-- Go Dependencies:
-  [auth/go.mod](file:///home/konstantin/Documents/augment-projects/erni-ki/auth/go.mod)
-- Python Dependencies:
-  [conf/webhook-receiver/requirements.txt](file:///home/konstantin/Documents/augment-projects/erni-ki/conf/webhook-receiver/requirements.txt)
+- Docker Compose: `compose.yml` (repo root)
+- Node.js Dependencies: `package.json` (repo root)
+- Go Dependencies: `auth/go.mod`
+- Python Dependencies: `conf/webhook-receiver/requirements.txt`
 
 ---
 

@@ -27,7 +27,8 @@ def load_client():
 def test_generate_signature_and_payload():
     client = load_client()
 
-    cli = client.WebhookClient(base_url="http://localhost:9093", webhook_secret="secret")  # noqa: S106
+    test_secret = "secret"  # noqa: S105  # pragma: allowlist secret
+    cli = client.WebhookClient(base_url="http://localhost:9093", webhook_secret=test_secret)
     body = b"{}"
     sig = cli._generate_signature(body)
     assert sig == hmac.new(b"secret", body, hashlib.sha256).hexdigest()
@@ -40,7 +41,8 @@ def test_generate_signature_and_payload():
 def test_send_alert_timeout_returns_error():
     client = load_client()
 
-    cli = client.WebhookClient(base_url="http://localhost:9093", webhook_secret="secret")  # noqa: S106
+    test_secret = "secret"  # noqa: S105  # pragma: allowlist secret
+    cli = client.WebhookClient(base_url="http://localhost:9093", webhook_secret=test_secret)
 
     with patch.object(client.requests, "post", side_effect=client.requests.Timeout):
         result = cli.send_alert(endpoint="generic", alert_name="Test")
@@ -51,7 +53,8 @@ def test_send_alert_timeout_returns_error():
 def test_send_alert_success_parses_dict():
     client = load_client()
 
-    cli = client.WebhookClient(base_url="http://localhost:9093", webhook_secret="secret")  # noqa: S106
+    test_secret = "secret"  # noqa: S105  # pragma: allowlist secret
+    cli = client.WebhookClient(base_url="http://localhost:9093", webhook_secret=test_secret)
     fake_resp = MagicMock()
     fake_resp.raise_for_status = MagicMock()
     fake_resp.json.return_value = {"status": "ok"}

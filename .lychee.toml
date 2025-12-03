@@ -4,3 +4,13 @@ offline = true
 max_concurrency = 4
 include_verbatim = true
 exclude_path = ["node_modules", "logs", ".git"]
+exclude = [
+  "http://nginx:*",
+  "http://openwebui:*",
+  "http://searxng:*",
+  "https://your-domain*",
+  "https://ki.erni-gruppe.ch*",
+  "https://prometheus.ki.erni-gruppe.ch*",
+  "https://status.ki.erni-gruppe.ch*",
+  "https://dash.cloudflare.com*"
+]

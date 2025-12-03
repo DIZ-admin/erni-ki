@@ -26,9 +26,9 @@ npm test
 
 # Линтинг и форматирование (ESLint + Ruff + Prettier)
 python -m pip install -r requirements-dev.txt
-npm run lint
+bun run lint
 # Автоформат Python при необходимости
-npm run format:py
+bun run format:py
 ```
 
 ## Локальный запуск сервисов

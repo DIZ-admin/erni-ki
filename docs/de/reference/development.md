@@ -9,10 +9,10 @@ last_updated: '2025-11-24'
 
 ## Setup & Installation
 
-1.**Node & npm**
+1.**Bun**
 
-- Node LTS installieren (20.x)
-- `npm ci` im Repo ausführen
+- Bun 1.3.3+ installieren
+- `bun install` im Repo ausführen
 
   2.**Python-Tools**(für Lint/Docs)
 
@@ -21,7 +21,7 @@ last_updated: '2025-11-24'
 
   3.**Hooks**
 
-- `npm run pre-commit:install`
+- `bun run pre-commit:install`
 
   4.**Environment**
 
@@ -30,9 +30,9 @@ last_updated: '2025-11-24'
 
 ## Commands
 
--**Tests (Unit)**: `npm run test:unit` -**Lint (TS/JS)**:
-`npm run lint` -**Format**: `npm run format` -**Pre-commit (alle Checks)**:
-`npm run pre-commit:run` -**Docs Build**: `.venv/bin/mkdocs build`
+-**Tests (Unit)**: `bun run test:unit` -**Lint (TS/JS)**:
+`bun run lint` -**Format**: `bun run format` -**Pre-commit (alle Checks)**:
+`bun run pre-commit:run` -**Docs Build**: `.venv/bin/mkdocs build`
 
 ## Projektstruktur (Auszug)
 

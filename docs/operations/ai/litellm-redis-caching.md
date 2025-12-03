@@ -11,17 +11,19 @@ last_updated: '2025-11-24'
 
 ## Текущий статус
 
-**Версия LiteLLM:**v1.80.0.rc.1**Redis Caching:**ОТКЛЮЧЕН**Текущий тип
-кеширования:**Local (in-memory)**Причина отключения Redis:**Баг в LiteLLM
-v1.80.0.rc.1
+**Версия LiteLLM:** v1.80.0-stable.1 (фиксирует таймауты из RC)  
+**Redis Caching:** ОТКЛЮЧЕН по умолчанию (используем локальный кеш)  
+**Причина текущего статуса:** сохраняем локальный кеш как безопасное значение по
+умолчанию; при необходимости Redis можно включить (см. ниже).
 
 ## Известные проблемы
 
-### Bug в LiteLLM v1.80.0.rc.1
+### Bug в LiteLLM v1.80.0.rc.1 (исправлен в stable)
 
-LiteLLM v1.80.0.rc.1 содержит баг с жестко закодированным `socket_timeout: 5.0`
-для Redis соединений, что приводит к проблемам со стабильностью при
-использовании Redis caching.
+LiteLLM v1.80.0.rc.1 содержал баг с жестко закодированным `socket_timeout: 5.0`
+для Redis соединений, что приводило к проблемам со стабильностью при
+использовании Redis caching. В образе v1.80.0-stable.1 это поведение исправлено
+и `socket_timeout` можно настраивать через `cache_params`.
 
 **Проблема:**
 
@@ -29,8 +31,8 @@ LiteLLM v1.80.0.rc.1 содержит баг с жестко закодиров�
 - Приводит к частым timeout ошибкам при высокой нагрузке
 - Невозможно переопределить через конфигурацию
 
-**Workaround:**Использование локального (in-memory) кеширования вместо Redis до
-исправления бага в следующих версиях LiteLLM.
+**Workaround:** Использовать локальный (in-memory) кеш (активно сейчас). Для
+Redis задайте `socket_timeout` и включите секцию cache_params (см. примеры).
 
 ## Текущая конфигурация
 
@@ -42,7 +44,7 @@ LiteLLM v1.80.0.rc.1 содержит баг с жестко закодиров�
 litellm_settings:
  cache: true # Enable caching
  cache_params:
- type: 'local' # Use in-memory caching
+ type: 'local' # Use in-memory caching (до фикса Redis)
  ttl: 1800 # Cache TTL in seconds (30 minutes)
  supported_call_types:
  ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
@@ -142,10 +144,10 @@ docker compose restart litellm
 docker logs erni-ki-litellm-1 --tail 100 | grep -i redis
 
 # Проверьте Redis connections
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD CLIENT LIST
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" CLIENT LIST
 
 # Проверьте кеш в Redis
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD -n 1 KEYS "*"
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" -n 1 KEYS "*"
 ```
 
 ## Как вернуться на Local caching
@@ -256,7 +258,7 @@ docker exec erni-ki-litellm-1 ping redis
 
 ```bash
 # Очистить все ключи в DB 1 (cache DB)
-docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD -n 1 FLUSHDB
+docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" -n 1 FLUSHDB
 ```
 
 **Решение для Local:**
@@ -270,7 +272,7 @@ docker compose restart litellm
 
 - `../../../conf/litellm/config.yaml`
 - `../database/redis-operations-guide.md`
-- [LiteLLM Official Docs](https://docs.litellm.ai/docs/caching)
+- [LiteLLM Official Docs](https://docs.litellm.ai/)
 
 ## История изменений
 
@@ -281,4 +283,5 @@ docker compose restart litellm
 
 ---
 
-**Последнее обновление:**2025-11-24**Версия документа:**1.0
+**Последнее обновление:** 2025-11-24  
+**Версия документа:** 1.0

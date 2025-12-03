@@ -1,4 +1,4 @@
-# Overrides for scripts/health-monitor.sh
+# Overrides for scripts/health-monitor-v2.sh (legacy copy kept at scripts/legacy/health-monitor.sh)
 # Uncomment and adjust to point cron/monitoring jobs to a docker socket that is accessible
 # DOCKER_HOST=unix:///var/run/docker.sock
 # HEALTH_MONITOR_COMPOSE_BIN="docker compose"

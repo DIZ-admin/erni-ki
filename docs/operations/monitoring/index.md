@@ -20,6 +20,9 @@ last_updated: '2025-11-24'
   алертинга и связь с Alertmanager.
 - [prometheus-queries-reference.md](prometheus-queries-reference.md) —
   справочник полезных Prometheus-запросов.
+- [legacy-monitoring-scripts-migration.md](legacy-monitoring-scripts-migration.md)
+  — быстрый план перехода на `health-monitor-v2.sh` и другие обновлённые
+  утилиты.
 - [rag-monitoring.md](rag-monitoring.md) и
   [searxng-redis-issue-analysis.md](searxng-redis-issue-analysis.md) — узкие
   случаи и playbooks.

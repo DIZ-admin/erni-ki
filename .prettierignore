@@ -52,6 +52,8 @@ conf/performance/**
 conf/monitoring/**
 
 # Автогенерированные файлы
+bun.lock
+bun.lockb
 package-lock.json
 yarn.lock
 go.sum
