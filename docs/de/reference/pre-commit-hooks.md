@@ -19,7 +19,7 @@ Pre-commit Hooks prüfen Codequalität vor jedem Commit und verhindern попа�
 ### Automatisch
 
 ```bash
-npm run pre-commit:install
+bun run pre-commit:install
 ```
 
 ### Manuell
@@ -92,7 +92,7 @@ Vorschau: `CLEAN_DRY_RUN=1 scripts/utilities/git-clean-safe.sh`.
 ### Manuell
 
 ```bash
-npm run pre-commit:run
+bun run pre-commit:run
 # oder
 source .venv/bin/activate
 pre-commit run --all-files
@@ -104,7 +104,7 @@ pre-commit run eslint --all-files
 ## Update
 
 ```bash
-npm run pre-commit:update
+bun run pre-commit:update
 # oder
 source .venv/bin/activate
 pre-commit autoupdate

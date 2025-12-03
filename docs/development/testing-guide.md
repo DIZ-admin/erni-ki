@@ -16,17 +16,17 @@ This guide covers running, writing, and maintaining tests in ERNI-KI.
 
 ```bash
 # Run all tests
-npm run test
+bun run test
 
 # Run Python tests
 pytest tests/ -v
 
 # Run tests with coverage
-npm run test:coverage
+bun run test:coverage
 pytest tests/ --cov
 
 # Watch mode (automatically rerun on changes)
-npm run test -- --watch
+bun run test -- --watch
 pytest-watch tests/
 
 ```
@@ -62,7 +62,7 @@ erni-ki-1/
 pytest tests/unit/ -v
 
 # JavaScript unit tests
-npm run test -- tests/unit
+bun run test -- tests/unit
 
 # Specific test file
 pytest tests/unit/webhook-receiver.test.py -v
@@ -213,7 +213,7 @@ docker-compose up -d db redis ollama
 pytest tests/integration/ -v --tb=short
 
 # JavaScript integration tests
-npm run test:integration
+bun run test:integration
 
 # With specific service
 docker-compose up -d webhook-receiver
@@ -325,16 +325,16 @@ docker-compose up -d
 sleep 30
 
 # Run Playwright E2E tests
-npm run test:e2e
+bun run test:e2e
 
 # Run specific test file
-npm run test:e2e -- webhook.spec.ts
+bun run test:e2e -- webhook.spec.ts
 
 # Run in headed mode (see browser)
-npm run test:e2e -- --headed
+bun run test:e2e -- --headed
 
 # Debug mode
-npm run test:e2e -- --debug
+bun run test:e2e -- --debug
 
 ```
 
@@ -443,7 +443,7 @@ function generateSignature(body: string): string {
 
 ```bash
 # Generate coverage report
-npm run test:coverage
+bun run test:coverage
 pytest tests/ --cov --cov-report=html
 
 # View HTML report
@@ -482,9 +482,9 @@ coverage html
 
 ```bash
 # Run all quality checks locally
-npm run lint
-npm run test
-npm run test:coverage
+bun run lint
+bun run test
+bun run test:coverage
 mypy .
 
 ```
@@ -569,13 +569,13 @@ pytest -s
 
 ```bash
 # Debug mode with breakpoints
-npm run test -- --debug
+bun run test -- --debug
 
 # Use Chrome DevTools
 # Paste chrome://inspect in browser
 
 # Pause on failure
-npm run test -- --pause-on-failure
+bun run test -- --pause-on-failure
 
 ```
 

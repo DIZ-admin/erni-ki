@@ -22,9 +22,9 @@ summary: 'Правила использования языков в коде и 
 
 # Автоматическая проверка
 
-- Локально: `npm run lint:language` для проверок staged-файлов.
+- Локально: `bun run lint:language` для проверок staged-файлов.
 - Полная проверка: `node scripts/language-check.cjs --all`.
-- CI (`.github/workflows/ci.yml`) запускает `npm run lint:language -- --all` и
+- CI (`.github/workflows/ci.yml`) запускает `bun run lint:language -- --all` и
   блокирует PR при нарушении правила.
 
 # Baseline
@@ -45,4 +45,4 @@ summary: 'Правила использования языков в коде и 
 1. Переведены все комментарии/сообщения в изменённых `.ts/.js/.sh/.py/.yml`.
 2. Тексты, которые должны оставаться локализованными, вынесены в `docs/` или
    отдельные JSON/YAML файлы.
-3. Выполнено `npm run lint:language -- --all` и проверка прошла без ошибок.
+3. Выполнено `bun run lint:language -- --all` и проверка прошла без ошибок.
