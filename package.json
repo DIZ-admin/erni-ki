@@ -79,6 +79,8 @@
     "postinstall": "bun run prepare",
     "pre-commit:install": "source .venv/bin/activate && pre-commit install && pre-commit install --hook-type commit-msg",
     "pre-commit:run": "source .venv/bin/activate && pre-commit run --all-files",
+    "pre-commit:fast": "source .venv/bin/activate && pre-commit run --config .pre-commit/config-fast.yaml --all-files",
+    "pre-commit:full": "source .venv/bin/activate && pre-commit run --config .pre-commit-config.yaml --all-files",
     "pre-commit:update": "source .venv/bin/activate && pre-commit autoupdate"
   },
   "devDependencies": {
