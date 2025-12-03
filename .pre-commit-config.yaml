@@ -10,12 +10,22 @@ default_language_version:
 
 default_stages: [pre-commit]
 
+x-versions:
+  pre-commit-hooks: &pre-commit-hooks-version v6.0.0
+  ruff: &ruff-version v0.14.6
+  prettier: &prettier-version v4.0.0-alpha.8
+  eslint: &eslint-version v10.0.0-alpha.0
+  detect-secrets: &detect-secrets-version v1.5.0
+  gitleaks: &gitleaks-version v8.29.1
+  shellcheck: &shellcheck-version v0.9.0
+  mypy: &mypy-version v1.8.0
+
 repos:
   # ===================================================================
   # BASIC FILE CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: *pre-commit-hooks-version
     hooks:
       # Check trailing whitespace
       - id: trailing-whitespace
@@ -130,7 +140,7 @@ repos:
   # PRETTIER FORMATTING
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+    rev: *prettier-version
     hooks:
       - id: prettier
         name: "Prettier: code formatting"
@@ -142,7 +152,7 @@ repos:
   # PYTHON LINTING/FORMATTING (RUFF)
   # ===================================================================
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.6
+    rev: *ruff-version
     hooks:
       - id: ruff
         name: "Ruff: Python lint"
@@ -152,7 +162,7 @@ repos:
         name: "Ruff: Python format"
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: *mypy-version
     hooks:
       - id: mypy
         name: "mypy: static type check"
@@ -161,7 +171,7 @@ repos:
         exclude: ^webhook_handler\.py$|webhook-receiver|ops/ollama-exporter/app\.py|docs/examples/webhook-client-python\.py
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.29.1
+    rev: *gitleaks-version
     hooks:
       - id: gitleaks
 
@@ -169,7 +179,7 @@ repos:
   # SHELLCHECK
   # ===================================================================
   - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.9.0
+    rev: *shellcheck-version
     hooks:
       - id: shellcheck
         args: ["--severity=error", "-e", "SC1091"]
@@ -179,7 +189,7 @@ repos:
   # ESLINT CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v10.0.0-alpha.0
+    rev: *eslint-version
     hooks:
       - id: eslint
         name: "ESLint: TypeScript/JavaScript validation"
@@ -210,7 +220,7 @@ repos:
   # SECURITY AND SECRETS
   # ===================================================================
   - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.5.0
+    rev: *detect-secrets-version
     hooks:
       - id: detect-secrets
         name: "Detect Secrets: find secrets in code"
