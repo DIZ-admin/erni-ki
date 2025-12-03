@@ -1,3 +1,11 @@
+---
+language: ru
+translation_status: original
+doc_version: '2025.12'
+last_updated: '2025-12-03'
+title: 'ERNI-KI - Executive Summary для инвесторов'
+---
+
 # ERNI-KI - Executive Summary для инвесторов
 
 **Дата:** 2025-12-03 | **Версия:** v0.6.3 | **Статус:** Production Ready
