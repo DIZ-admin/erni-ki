@@ -2,14 +2,14 @@
 language: ru
 translation_status: original
 doc_version: '2025.11'
-last_updated: '2025-11-27'
+last_updated: '2025-12-03'
 ---
 
 # Security Action Plan - ERNI-KI
 
-**Дата создания:**2025-11-27**Статус:**ACTIVE**Приоритет:**CRITICAL
+**Дата создания:**2025-12-03**Статус:**ACTIVE**Приоритет:**CRITICAL
 **Основание:**
-[Comprehensive System Audit 2025-11-27](../reports/comprehensive-system-audit-2025-11-27.md)
+[ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 
 ---
 
