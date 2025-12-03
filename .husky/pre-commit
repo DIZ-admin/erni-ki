@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 
-# Проверка языковых правил перед lint-staged и коммитом
-bun run lint:language
-bunx lint-staged
+# Run Python pre-commit framework as the single source of truth.
+# Husky is kept only as a thin wrapper to invoke pre-commit.
+
+if ! command -v pre-commit >/dev/null 2>&1; then
+  echo "Error: pre-commit is not installed. Install with: pip install pre-commit" >&2
+  exit 1
+fi
+
+exec pre-commit run --hook-stage pre-commit "$@"

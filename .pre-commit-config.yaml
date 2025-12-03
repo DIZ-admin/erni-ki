@@ -148,17 +148,8 @@ repos:
         name: "Ruff: Python lint"
         args: [--fix]
 
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
-    hooks:
-      - id: black
-        language_version: python3.11
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        name: "isort: organize imports"
+      - id: ruff-format
+        name: "Ruff: Python format"
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.8.0
@@ -274,6 +265,14 @@ repos:
   # ===================================================================
   - repo: local
     hooks:
+      # Language policy validation (moved from Husky/lint-staged)
+      - id: language-check
+        name: "Language: validate language policy"
+        entry: bun run lint:language -- --all
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
       # TypeScript type check (fast, no emit)
       - id: ts-type-check
         name: "TypeScript: type check"
