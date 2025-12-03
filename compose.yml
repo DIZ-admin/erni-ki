@@ -139,9 +139,10 @@ services:
         CONF_OUT=/tmp/redis.conf;
         ACL_TPL=/usr/local/etc/redis/users.acl.template;
         ACL_OUT=/tmp/redis-users.acl;
-        sed "s|__LOAD_FROM_DOCKER_SECRET__|$${SECRET}|g" "$${CONF_TPL}" > "$${CONF_OUT}";
+        export REDIS_PASSWORD="$${SECRET}";
+        envsubst < "$${CONF_TPL}" > "$${CONF_OUT}";
         if [ -f "$${ACL_TPL}" ]; then
-          sed "s|__LOAD_FROM_DOCKER_SECRET__|$${SECRET}|g" "$${ACL_TPL}" > "$${ACL_OUT}";
+          envsubst < "$${ACL_TPL}" > "$${ACL_OUT}";
           chmod 600 "$${ACL_OUT}";
           exec redis-server "$${CONF_OUT}" --aclfile "$${ACL_OUT}";
         else
