@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { test } from '@playwright/test';
 import fs from 'node:fs';
+import path from 'node:path';
 
 const BASE = process.env.PW_BASE_URL || 'https://localhost';
 
@@ -59,12 +60,21 @@ if (!isPlaywrightRunner) {
   }
 
   test('Upload file via icon buttons', async ({ page }) => {
-    const path = 'tests/fixtures/sample.md';
+    const filePath = 'tests/fixtures/sample.md';
+    const fixturesDir = path.dirname(filePath);
 
-    // Create test file if it doesn't exist
-    if (!fs.existsSync(path)) {
-      fs.mkdirSync('tests/fixtures', { recursive: true });
-      fs.writeFileSync(path, '# Test Document\n\nThis is a test markdown file for upload testing.');
+    // Create test file if it doesn't exist (race-safe)
+    fs.mkdirSync(fixturesDir, { recursive: true });
+    try {
+      fs.writeFileSync(
+        filePath,
+        '# Test Document\n\nThis is a test markdown file for upload testing.',
+        {
+          flag: 'wx',
+        },
+      );
+    } catch (error: any) {
+      if (error.code !== 'EEXIST') throw error;
     }
 
     await page.goto(BASE);
@@ -122,7 +132,7 @@ if (!isPlaywrightRunner) {
       }
     }
 
-    console.log(`📁 Attempting to upload file: ${path}`);
+    console.log(`📁 Attempting to upload file: ${filePath}`);
 
     let uploadSuccess = false;
 
@@ -152,7 +162,7 @@ if (!isPlaywrightRunner) {
           .catch(() => false);
         if (fileInput) {
           console.log(`✅ Found file input after clicking icon button ${i + 1}`);
-          await page.setInputFiles('input[type="file"]', path);
+          await page.setInputFiles('input[type="file"]', filePath);
           uploadSuccess = true;
           break;
         }
@@ -163,7 +173,7 @@ if (!isPlaywrightRunner) {
           const fileChooser = await fileChooserPromise;
           if (fileChooser) {
             console.log(`✅ File chooser opened after clicking icon button ${i + 1}`);
-            await fileChooser.setFiles(path);
+            await fileChooser.setFiles(filePath);
             uploadSuccess = true;
             break;
           }
