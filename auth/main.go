@@ -37,6 +37,11 @@ func run(args []string, serve func(*http.Server) error) int {
 		return 0
 	}
 
+	if err := validateSecrets(); err != nil {
+		log.Printf("secret validation failed: %v", err)
+		return 1
+	}
+
 	router := setupRouter()
 	server := newServer(router)
 

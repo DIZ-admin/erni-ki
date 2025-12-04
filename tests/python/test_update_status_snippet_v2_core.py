@@ -89,6 +89,13 @@ def test_render_and_write_snippet(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
     assert "34/34 services healthy" in written
 
 
+def test_parse_simple_yaml_missing(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    _configure_paths(tmp_path, monkeypatch)
+    missing = tmp_path / "repo" / "docs" / "reference" / "absent.yml"
+    with pytest.raises(FileNotFoundError):
+        uss.parse_simple_yaml(missing)
+
+
 def test_build_frontmatter_defaults(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     _configure_paths(tmp_path, monkeypatch)
     fm = uss.build_frontmatter("de", {"date": "2025-12-04"})

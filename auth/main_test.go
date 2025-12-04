@@ -14,8 +14,20 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-//nolint:gochecknoglobals // shared fixture key for JWT tests
-var tokenKey = strings.Repeat("x", 48)
+const tokenKey = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+func setValidSecrets(t *testing.T) {
+	t.Helper()
+	prevSecret := os.Getenv("WEBUI_SECRET_KEY")
+	os.Setenv("WEBUI_SECRET_KEY", strings.Repeat("s", 48))
+	t.Cleanup(func() {
+		if prevSecret == "" {
+			os.Unsetenv("WEBUI_SECRET_KEY")
+			return
+		}
+		os.Setenv("WEBUI_SECRET_KEY", prevSecret)
+	})
+}
 
 func makeSignedToken(secret, issuer, subject string, expires time.Time) string {
 	tkn := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
@@ -317,6 +329,7 @@ func TestHealthCheckFailure(t *testing.T) {
 
 func TestRunHealthCheckPath(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	setValidSecrets(t)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -333,6 +346,7 @@ func TestRunHealthCheckPath(t *testing.T) {
 
 func TestRunServerInjectedServe(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	setValidSecrets(t)
 	called := false
 	exitCode := run([]string{"cmd"}, func(s *http.Server) error {
 		if s == nil || s.Addr != "0.0.0.0:9090" {
@@ -352,6 +366,7 @@ func TestRunServerInjectedServe(t *testing.T) {
 
 func TestRunServerInjectedServeFailure(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	setValidSecrets(t)
 	exitCode := run([]string{"cmd"}, func(*http.Server) error {
 		return fmt.Errorf("boom")
 	})
@@ -362,6 +377,7 @@ func TestRunServerInjectedServeFailure(t *testing.T) {
 
 func TestRunDefaultServerPath(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	setValidSecrets(t)
 	orig := listenAndServe
 	defer func() { listenAndServe = orig }()
 
@@ -384,6 +400,7 @@ func TestRunDefaultServerPath(t *testing.T) {
 
 func TestMainWrapsRun(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	setValidSecrets(t)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))

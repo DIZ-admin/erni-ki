@@ -22,7 +22,6 @@ def _setup_temp_docs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[P
 
 def test_validate_file_success(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     root, targets_file = _setup_temp_docs(tmp_path, monkeypatch)
-    (root / "docs").mkdir(exist_ok=True)
 
     content = """\
 # Title
