@@ -116,7 +116,6 @@ jobs:
           go tool cover -func=coverage.out | tee coverage-summary.txt
           python - <<'PY'
             import re, sys
-
             text = open("coverage-summary.txt").read()
             m = re.search(r"total:\s+\(statements\)\s+([\d.]+)%", text)
             if not m:

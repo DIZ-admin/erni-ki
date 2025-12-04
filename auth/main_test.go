@@ -95,7 +95,10 @@ func TestVerifyToken(t *testing.T) {
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		})
-		signed, _ := token.SignedString([]byte(tokenKey))
+		signed, signErr := token.SignedString([]byte(tokenKey))
+		if signErr != nil {
+			t.Fatalf("sign token: %v", signErr)
+		}
 
 		valid, err := verifyToken(signed)
 		if err == nil || valid {
@@ -109,7 +112,10 @@ func TestVerifyToken(t *testing.T) {
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(-1 * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now().Add(-2 * time.Minute)),
 		})
-		signed, _ := token.SignedString([]byte(tokenKey))
+		signed, signErr := token.SignedString([]byte(tokenKey))
+		if signErr != nil {
+			t.Fatalf("sign token: %v", signErr)
+		}
 
 		valid, err := verifyToken(signed)
 		if err == nil || valid {
@@ -173,7 +179,7 @@ func TestRequestHelpers(t *testing.T) {
 		respondJSON(c, http.StatusOK, gin.H{"message": "ok"})
 	})
 
-	req := httptest.NewRequest(http.MethodGet, "/echo", nil)
+	req := httptest.NewRequest(http.MethodGet, "/echo", http.NoBody)
 	req.Header.Set("X-Request-ID", "abc-123")
 	w := httptest.NewRecorder()
 
@@ -228,7 +234,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 
 	t.Run("root route", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
 		router.ServeHTTP(w, req)
 
 		if w.Code != http.StatusOK {
@@ -241,7 +247,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 
 	t.Run("validate without token", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/validate", nil)
+		req := httptest.NewRequest(http.MethodGet, "/validate", http.NoBody)
 		router.ServeHTTP(w, req)
 
 		if w.Code != http.StatusUnauthorized {
@@ -254,7 +260,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 		defer os.Unsetenv("WEBUI_SECRET_KEY")
 
 		token := makeSignedToken(tokenKey, "erni-ki", "user-42", time.Now().Add(2*time.Minute))
-		req := httptest.NewRequest(http.MethodGet, "/validate", nil)
+		req := httptest.NewRequest(http.MethodGet, "/validate", http.NoBody)
 		req.AddCookie(&http.Cookie{Name: "token", Value: token})
 
 		w := httptest.NewRecorder()
@@ -267,7 +273,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 
 	t.Run("generates request id when missing", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/", nil)
+		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
 		router.ServeHTTP(w, req)
 
 		if got := w.Header().Get("X-Request-ID"); got == "" {
@@ -279,7 +285,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 func TestHealthCheckCustomURL(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer srv.Close()
@@ -295,7 +301,7 @@ func TestHealthCheckCustomURL(t *testing.T) {
 func TestHealthCheckFailure(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}))
 	defer srv.Close()
@@ -310,7 +316,7 @@ func TestHealthCheckFailure(t *testing.T) {
 
 func TestRunHealthCheckPath(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer srv.Close()
@@ -377,7 +383,7 @@ func TestRunDefaultServerPath(t *testing.T) {
 
 func TestMainWrapsRun(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer srv.Close()

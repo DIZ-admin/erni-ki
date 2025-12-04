@@ -15,8 +15,8 @@ import (
 	"github.com/google/uuid"
 )
 
-var osExit = os.Exit
-var listenAndServe = func(server *http.Server) error {
+var osExit = os.Exit                                   //nolint:gochecknoglobals // injected in tests
+var listenAndServe = func(server *http.Server) error { //nolint:gochecknoglobals
 	return server.ListenAndServe()
 }
 
@@ -275,7 +275,7 @@ func validateSecrets() error {
 	return nil
 }
 
-func getEnvOrFile(key string) string {
+func getEnvOrFile(key string) string { //nolint:unparam // keep flexible signature
 	if val := os.Getenv(key); val != "" {
 		return val
 	}

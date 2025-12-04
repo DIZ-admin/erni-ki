@@ -13,12 +13,7 @@ export default defineConfig({
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
       // Include source scripts and unit tests that exercise them
-      include: [
-        'tests/utils/**/*.{ts,js}',
-        'types/**/*.ts',
-        'tests/unit/**/*.{ts,js}',
-        'tests/integration/**/*.{ts,js}',
-      ],
+      include: ['tests/utils/**/*.{ts,js}', 'types/**/*.ts'],
       exclude: [
         'node_modules/**',
         'dist/**',
