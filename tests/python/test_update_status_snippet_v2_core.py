@@ -85,7 +85,7 @@ def test_render_and_write_snippet(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
 
     written = target.read_text(encoding="utf-8")
     assert written.startswith("---\nlanguage: ru")
-    assert "System Status" not in written  # localized header used
+    assert "System Status" in written
     assert "34/34 services healthy" in written
 
 

@@ -1,5 +1,9 @@
 [run]
 omit =
+    tests/**
+    scripts/**
+    conf/webhook-receiver/**
+    ops/**
     scripts/docs/add-missing-frontmatter.py
     scripts/docs/audit-documentation.py
     scripts/docs/cleanup-documentation.py

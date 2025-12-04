@@ -250,7 +250,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 	})
 
 	t.Run("validate with token cookie", func(t *testing.T) {
-		os.Setenv("WEBUI_SECRET_KEY", longSecret)
+		os.Setenv("WEBUI_SECRET_KEY", tokenKey)
 		defer os.Unsetenv("WEBUI_SECRET_KEY")
 
 		token := makeSignedToken(tokenKey, "erni-ki", "user-42", time.Now().Add(2*time.Minute))

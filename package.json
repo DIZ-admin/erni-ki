@@ -41,7 +41,7 @@
   "scripts": {
     "dev": "vitest",
     "test": "bun run test:unit && bun run test:e2e:mock",
-    "test:unit": "vitest run --coverage",
+    "test:unit": "node --experimental-vm-modules ./node_modules/vitest/vitest.mjs run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:mock": "./scripts/run-playwright-mock.sh",
     "e2e:headed": "PW_BASE_URL=https://localhost playwright test --headed --project=chromium",
