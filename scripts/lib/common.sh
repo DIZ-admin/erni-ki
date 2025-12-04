@@ -22,6 +22,13 @@ log_success() {
   printf "[SUCCESS] %s\n" "$*"
 }
 
+log_debug() {
+  # Enable with LOG_DEBUG=1
+  if [[ "${LOG_DEBUG:-0}" != "0" ]]; then
+    printf "[DEBUG] %s\n" "$*"
+  fi
+}
+
 log_fatal() {
   local msg="$1"
   local code="${2:-1}"
