@@ -1,64 +1,64 @@
-# Multi-stage Dockerfile для auth сервиса проекта erni-ki
-# Оптимизированная сборка с кэшированием зависимостей
+# Multi-stage Dockerfile for erni-ki auth service
+# Optimized build with dependency caching
 
-# Этап 1: Сборка приложения
+# Stage 1: Application Build
 FROM golang:1.24.11-alpine3.21 AS builder
 
-# Устанавливаем необходимые пакеты для сборки
+# Install necessary build packages
 RUN apk add --no-cache \
   git \
   ca-certificates \
   tzdata
 
-# Создаем пользователя для безопасности
+# Create user for security
 RUN adduser -D -s /bin/sh -u 1001 appuser
 
-# Устанавливаем рабочую директорию
+# Set working directory
 WORKDIR /build
 
-# Копируем файлы зависимостей для кэширования слоев
+# Copy dependency files for layer caching
 COPY go.mod go.sum ./
 
-# Загружаем зависимости (кэшируется при неизменных go.mod/go.sum)
+# Download dependencies (cached if go.mod/go.sum unchanged)
 RUN go mod download && go mod verify
 
-# Копируем исходный код
+# Copy source code
 COPY . .
 
-# Запускаем тесты (опционально); по умолчанию отключены для ускорения сборки CI
+# Run tests (optional); disabled by default to speed up CI build
 ARG SKIP_TESTS=true
 RUN if [ "$SKIP_TESTS" = "false" ]; then go test -v ./...; fi
 
-# Собираем приложение с оптимизациями
+# Build application with optimizations
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
   -ldflags='-w -s -extldflags "-static"' \
   -a -installsuffix cgo \
   -o main .
 
-# Этап 2: Финальный образ
+# Stage 2: Final Image
 FROM gcr.io/distroless/static-debian12:nonroot
 
-# Копируем сертификаты для HTTPS запросов
+# Copy certificates for HTTPS requests
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-# Копируем информацию о временных зонах
+# Copy timezone info
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 
-# Копируем скомпилированное приложение
+# Copy compiled application
 COPY --from=builder /build/main /app/main
 
-# Distroless образ уже использует непривилегированного пользователя nonroot
+# Distroless image already uses unprivileged nonroot user
 # Note: Health checks should be configured at orchestration layer (K8s/Docker Compose)
 
-# Открываем порт
+# Expose port
 EXPOSE 9090
 
-# Метаданные образа
+# Image metadata
 LABEL maintainer="erni-ki-team" \
   version="1.0.0" \
   description="JWT Authentication service for erni-ki project" \
   org.opencontainers.image.source="https://github.com/DIZ-admin/erni-ki" \
   org.opencontainers.image.documentation="https://github.com/DIZ-admin/erni-ki/blob/main/README.md"
 
-# Запускаем приложение
+# Run application
 ENTRYPOINT ["/app/main"]

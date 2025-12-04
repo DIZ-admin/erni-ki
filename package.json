@@ -75,7 +75,7 @@
     "commit:full": "git commit",
     "commit": "git-cz",
     "release": "semantic-release",
-    "postinstall": "bun run prepare",
+    "postinstall": "npm run prepare",
     "pre-commit:install": "source .venv/bin/activate && pre-commit install && pre-commit install --hook-type commit-msg",
     "pre-commit:run": "source .venv/bin/activate && pre-commit run --all-files",
     "pre-commit:fast": "source .venv/bin/activate && pre-commit run --config .pre-commit/config-fast.yaml --all-files",

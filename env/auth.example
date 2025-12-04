@@ -1,15 +1,7 @@
-# Auth Service Configuration for ERNI-KI
-# Authentication and authorization service settings
-
-# === Mode ===
-# Gin framework mode (release for prod, debug for dev)
-GIN_MODE=release
-
-# === JWT ===
-# JWT secret key for signing tokens
-# ⚠️ MUST change before production; generate via: openssl rand -hex 32
-JWT_SECRET=CHANGE_THIS_JWT_SECRET_BEFORE_PRODUCTION
-
-# === Database ===
-# PostgreSQL connection URL (pulled from db.env)
-# DATABASE_URL=postgresql://postgres:password@db:5432/openwebui
+# JWT Authentication Service Configuration
+AUTH_PORT=9090
+# Secrets are injected from Docker secrets:
+# WEBUI_SECRET_KEY is read from openwebui_secret_key by entrypoint
+AUTH_JWT_SECRET=
+AUTH_ALGORITHM=HS256
+AUTH_TOKEN_EXPIRY=3600
