@@ -1,16 +1,35 @@
-[general]
-# run link checks offline in CI
+# Lychee configuration (compatible with >=0.21)
+
+# Run in offline mode: only check local file links, skip HTTP requests
 offline = true
 max_concurrency = 4
 include_verbatim = true
-exclude_path = ["node_modules", "logs", ".git"]
+
+# Ignore generated/build/cache paths
+exclude_path = ["node_modules", "logs", ".git", "docs/en/archive/audits"]
+
+# Ignore endpoints that are environment/local-only or placeholders
 exclude = [
+  "http://localhost*",
+  "https://localhost*",
+  "http://127.0.0.1*",
+  "http://192.168.*",
+  "https://192.168.*",
   "http://nginx:*",
   "http://openwebui:*",
   "http://searxng:*",
+  "http://ragflow:*",
+  "http://redis:*",
+  "redis://*",
+  "http://localhost:PORT*",
+  "http:/localhost:PORT*",
+  "http://localhost:PORT/*",
   "https://your-domain*",
+  "https://dash.cloudflare.com*",
   "https://ki.erni-gruppe.ch*",
+  "https://grafana.ki.erni-gruppe.ch*",
   "https://prometheus.ki.erni-gruppe.ch*",
   "https://status.ki.erni-gruppe.ch*",
-  "https://dash.cloudflare.com*"
+  "https://docs.erni-ki.ch*",
+  "security@erni-ki.local"
 ]

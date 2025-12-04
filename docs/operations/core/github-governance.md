@@ -51,6 +51,20 @@ gh api repos/:owner/:repo/branches/develop/protection -X PUT --input protect-dev
 - Следите, чтобы `develop` присутствовала в списке веток в каждом workflow
   (обновлено в коде)
 
+## 3.1 Гигиена веток
+
+- Авто-удаление merged branches включить в настройках репозитория.
+- Регулярно очищать локальные ссылки на удалённые ветки:
+
+```bash
+git fetch --prune
+git branch -r --merged origin/main   # убедиться, что нет лишних active веток
+```
+
+- Разрешённые типы веток: `feature/*`, `fix/*`, `docs/*`, `ci/*`, `hotfix/*`.
+- Срок жизни ветки ≤ 4 недели; перед продлением требуется согласование в PR.
+- История merge: `squash` по умолчанию; `rebase` допускается для мелких правок.
+
 ## 4. Secrets & Environments
 
 См. `docs/reference/github-environments-setup.md`. Выполнить скрипты:
@@ -75,3 +89,5 @@ gh api repos/:owner/:repo/branches/develop/protection -X PUT --input protect-dev
 2. Подтвердить статус GitHub Environments и секретов, заполнить журнал.
 3. Добавить required status checks для `main`/`develop` согласно списку в
    `docs/archive/audits/ci-health.md`.
+4. Поддерживать чистоту веток (последняя чистка: 2025-12-04, удалены устаревшие
+   `audit/*`, `chore/*`, `fix/*`, `dependabot/*` и `update`).

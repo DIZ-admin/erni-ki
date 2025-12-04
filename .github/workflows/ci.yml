@@ -204,6 +204,14 @@ jobs:
       - name: 🎭 Run Playwright in mock mode
         run: bun run test:e2e:mock
 
+      - name: 📤 Upload JS coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: js-coverage
+          path: coverage
+          retention-days: 7
+
       - name: 📋 Upload Playwright artifacts
         uses: actions/upload-artifact@v5
         if: always()

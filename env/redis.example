@@ -1,2 +1,5 @@
-# REDIS_ARGS="--requirepass sider"
-RI_PROXY_PATH=redis
+# Redis Cache Configuration
+REDIS_PORT=6379
+REDIS_MAXMEMORY=2gb
+REDIS_MAXMEMORY_POLICY=allkeys-lru
+# Secrets are injected via Docker secrets (redis_password); no inline passwords.

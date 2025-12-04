@@ -57,7 +57,7 @@
     "format": "./scripts/prettier-run.sh write",
     "format:check": "./scripts/prettier-run.sh check",
     "format:py": "bash -c 'if [ -f .venv/bin/activate ]; then source .venv/bin/activate && python3 -m ruff format .; else python3 -m ruff format . || echo \"Warning: Ruff not found. Install with: pip install ruff\"; fi'",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit --incremental --tsBuildInfoFile .tsbuildinfo",
     "lint:language": "bun run scripts/language-check.cjs",
     "lint:language:all": "bun run scripts/language-check.cjs --all",
     "build": "tsc",
@@ -71,12 +71,16 @@
     "docs:translations": "python3 scripts/docs/translation_report.py",
     "docs:report": "python3 scripts/docs/content_lint.py",
     "prepare": "husky install",
+    "commit:fast": "SKIP=visuals-and-links-check,typescript-type-check,docker-compose-check git commit",
+    "commit:full": "git commit",
     "commit": "git-cz",
     "release": "semantic-release",
-    "precommit": "lint-staged",
-    "postinstall": "bun run prepare",
+    "postinstall": "npm run prepare",
     "pre-commit:install": "source .venv/bin/activate && pre-commit install && pre-commit install --hook-type commit-msg",
     "pre-commit:run": "source .venv/bin/activate && pre-commit run --all-files",
+    "pre-commit:fast": "source .venv/bin/activate && pre-commit run --config .pre-commit/config-fast.yaml --all-files",
+    "pre-commit:full": "source .venv/bin/activate && pre-commit run --config .pre-commit-config.yaml --all-files",
+    "pre-commit:perf": "bash scripts/pre-commit/monitor-performance.sh",
     "pre-commit:update": "source .venv/bin/activate && pre-commit autoupdate"
   },
   "devDependencies": {
@@ -99,33 +103,11 @@
     "eslint-plugin-promise": "^7.1.0",
     "eslint-plugin-security": "^3.0.1",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
     "prettier": "^3.6.2",
     "rollup": "^4.52.5",
     "semantic-release": "^21.1.2",
     "typescript": "^5.7.2",
     "vitest": "^4.0.6"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.py": [
-      "ruff check --fix",
-      "ruff format"
-    ],
-    "*.{json,yaml,yml,md}": [
-      "prettier --write --log-level=warn",
-      "bun run lint:language -- --all"
-    ],
-    "*.toml": [
-      "bun run lint:language -- --all"
-    ],
-    "*.go": [
-      "gofmt -w",
-      "bash -lc 'PATH=\"$PATH:$HOME/go/bin:/Users/kostas/go/bin\" goimports -w \"$@\"' --"
-    ]
   },
   "config": {
     "commitizen": {

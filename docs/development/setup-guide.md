@@ -74,8 +74,8 @@ curl -fsSL https://bun.sh/install | bash
 
 ```bash
 # Clone the repository
-git clone https://github.com/erni-gruppe/erni-ki-1.git
-cd erni-ki-1
+git clone https://github.com/DIZ-admin/erni-ki.git
+cd erni-ki
 
 # Switch to develop branch (if needed)
 git checkout develop
@@ -99,7 +99,7 @@ nano .env
 
 ```bash
 # Core Settings
-PROJECT_ROOT=/path/to/erni-ki-1
+PROJECT_ROOT=/path/to/erni-ki
 ENVIRONMENT=development
 LOG_LEVEL=DEBUG
 

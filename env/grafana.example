@@ -11,11 +11,11 @@ GF_INSTALL_PLUGINS_CHECK_FOR_UPDATES=false
 
 # === Security ===
 # Secret key for signing cookies (unique)
-GF_SECURITY_SECRET_KEY=your-grafana-secret-key-here
+GF_SECURITY_SECRET_KEY=
 # Admin user
 GF_SECURITY_ADMIN_USER=admin
 # Admin password (set a strong one)
-GF_SECURITY_ADMIN_PASSWORD=your-admin-password-here
+GF_SECURITY_ADMIN_PASSWORD=
 # Disable new user signups
 GF_USERS_ALLOW_SIGN_UP=false
 # Disable anonymous access

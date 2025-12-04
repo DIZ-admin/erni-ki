@@ -2,8 +2,8 @@
 # PostgreSQL metrics exporter for Prometheus
 
 # === Database connection ===
-# PostgreSQL connection URL
-DATA_SOURCE_NAME=postgresql://postgres:your-password-here@db:5432/openwebui?sslmode=disable
+# PostgreSQL connection URL (injected from Docker secret postgres_exporter_dsn)
+DATA_SOURCE_NAME=
 # Database to monitor
 PG_EXPORTER_DATABASE=openwebui
 # Connection user

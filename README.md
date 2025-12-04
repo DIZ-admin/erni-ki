@@ -23,6 +23,7 @@ full observability.
 
 [![CI](https://github.com/DIZ-admin/erni-ki/actions/workflows/ci.yml/badge.svg)](https://github.com/DIZ-admin/erni-ki/actions/workflows/ci.yml)
 [![Security](https://github.com/DIZ-admin/erni-ki/actions/workflows/security.yml/badge.svg)](https://github.com/DIZ-admin/erni-ki/actions/workflows/security.yml)
+[![Coverage](https://img.shields.io/badge/coverage-vitest%20v8-blue)](#testing)
 
 ## Quick Start
 
@@ -43,6 +44,13 @@ docker compose ps
 
 Access: Locally at <http://localhost:8080>, production —
 `https://ki.erni-gruppe.ch`.
+
+## Testing
+
+- Unit: `bun run test:unit` (Vitest, coverage in `coverage/`)
+- Mock E2E: `bun run test:e2e:mock` (Playwright mock server)
+- Go: `cd auth && go test ./...`
+- Full pipeline: see `.github/workflows/ci.yml`
 
 ## Branches, CI, and Policies
 

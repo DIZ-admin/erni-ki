@@ -562,18 +562,18 @@ nav:
           - "System repair (2025-10-16)": archive/incidents/system-repair-2025-10-16.md
       - "Archive":
           - "Audits":
-              - "Code Audit (2025-11-28)": archive/audits/code-audit-2025-11-28.md
-              - "Documentation Cleanup (2025-11-28)": archive/audits/documentation-cleanup-2025-11-28.md
-              - "Scripts Reorganization (2025-11-28)": archive/audits/scripts-reorganization-2025-11-28.md
-              - "Service Version Audit (2025-11-25)": archive/audits/service-version-audit-2025-11-25.md
-              - "Service Version Matrix (2025-11-25)": archive/audits/service-version-matrix-2025-11-25.md
+              - "Comprehensive Code Audit (2025-12-04)": archive/audits/comprehensive-code-audit-2025-12-04.md
+              - "Comprehensive Investor Audit (2025-12-03)": archive/audits/comprehensive-investor-audit-2025-12-03.md
+              - "Pre-commit Refactoring Audit (2025-12-03)": archive/audits/pre-commit-refactoring-audit-2025-12-03.md
+              - "CI Health": archive/audits/ci-health.md
+              - "Documentation Audit": archive/audits/documentation-audit.md
+              - "Monitoring Audit": archive/audits/monitoring-audit.md
               - "Service Version Matrix (2025-11-28)": archive/audits/service-version-matrix-2025-11-28.md
           - "Migrations":
               - "Index": archive/migrations/index.md
               - "Documentation Refactoring Plans": archive/migrations/documentation-refactoring-plans/index.md
           - "News":
               - "Index": archive/news/index.md
-              - "Status Page Launch": news/2025-11-erni-ki-status-page-launch.md
           - "Training": archive/training/index.md
           - "HowTo": archive/howto/index.md
       - "Reports":
