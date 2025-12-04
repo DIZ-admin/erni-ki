@@ -448,15 +448,19 @@ repos:
           - -c
           - |
             status=0
-            find -E . \
-              -path './.git' -prune -o \
-              -path './node_modules' -prune -o \
-              -path './.venv' -prune -o \
-              -path './site' -prune -o \
-              -regex '.* [0-9]+(\.[^/]+)?' -print | while read -r f; do
-                echo "Duplicate-style filename detected: $f"
-                status=1
-              done
+            while IFS= read -r f; do
+              echo "Duplicate-style filename detected: $f"
+              status=1
+            done < <(
+              find . \
+                -path './.git' -prune -o \
+                -path './node_modules' -prune -o \
+                -path './.venv' -prune -o \
+                -path './site' -prune -o \
+                -type f \
+                -name '* [0-9]*' \
+                -print
+            )
             exit $status
 
       # Validate no emoji in project files
