@@ -9,6 +9,18 @@ coverage:
         target: 0.8
         threshold: 0.02
 
+flags:
+  python:
+    paths:
+      - scripts/
+      - tests/python/
+  golang:
+    paths:
+      - auth/
+  typescript:
+    paths:
+      - tests/
+
 comment:
   layout: "reach, diff, flags, files"
   behavior: default
