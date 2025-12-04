@@ -1,26 +1,73 @@
 version: 2
 updates:
+  # NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "DIZ-admin/erni-ki-core"
+    labels:
+      - "dependencies"
+      - "npm"
+    allow:
+      - dependency-type: "all"
+
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:30"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "DIZ-admin/erni-ki-core"
+    labels:
+      - "dependencies"
+      - "python"
+
+  # Go dependencies (auth service)
+  - package-ecosystem: "gomod"
+    directory: "/auth"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "DIZ-admin/erni-ki-core"
+    labels:
+      - "dependencies"
+      - "go"
+
+  # Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:30"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "DIZ-admin/devops-team"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "05:00"
-      timezone: "UTC"
-    labels: ["dependencies", "ci"]
-    reviewers: ["DIZ-admin"]
-
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    labels: ["dependencies", "javascript"]
-    reviewers: ["DIZ-admin"]
-
-  - package-ecosystem: "gomod"
-    directory: "/auth"
-    schedule:
-      interval: "weekly"
-    labels: ["dependencies", "go"]
-    reviewers: ["DIZ-admin"]
+    open-pull-requests-limit: 3
+    reviewers:
+      - "DIZ-admin/devops-team"
+    labels:
+      - "dependencies"
+      - "ci-cd"

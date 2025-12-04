@@ -55,7 +55,7 @@ ALERTMANAGER_SMTP_REQUIRE_TLS=true
 # SMTP user
 ALERTMANAGER_SMTP_AUTH_USERNAME=your-smtp-username
 # SMTP password
-ALERTMANAGER_SMTP_AUTH_PASSWORD=your-smtp-password
+ALERTMANAGER_SMTP_AUTH_PASSWORD=
 
 # === Security ===
 # Отключить аутентификацию для внутренней сети
