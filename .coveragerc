@@ -1,0 +1,11 @@
+[run]
+omit =
+    scripts/docs/add-missing-frontmatter.py
+    scripts/docs/audit-documentation.py
+    scripts/docs/cleanup-documentation.py
+    scripts/docs/fix-broken-links.py
+    scripts/docs/validate-documentation.py
+    docs/examples/*
+
+[report]
+precision = 2
