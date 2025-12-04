@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -161,7 +162,7 @@ func healthCheck() error {
 }
 
 func verifyToken(tokenString string) (bool, error) {
-	jwtSecret := os.Getenv("WEBUI_SECRET_KEY")
+	jwtSecret := getEnvOrFile("WEBUI_SECRET_KEY")
 
 	if jwtSecret == "" {
 		return false, fmt.Errorf("WEBUI_SECRET_KEY env variable missing")
@@ -225,7 +226,7 @@ func verifyToken(tokenString string) (bool, error) {
 // validateSecrets ensures WEBUI_SECRET_KEY is present and sufficiently long.
 // Minimum length chosen to discourage weak secrets used for JWT signing.
 func validateSecrets() error {
-	secret := os.Getenv("WEBUI_SECRET_KEY")
+	secret := getEnvOrFile("WEBUI_SECRET_KEY")
 	if secret == "" {
 		return fmt.Errorf("CRITICAL: WEBUI_SECRET_KEY environment variable not set")
 	}
@@ -235,4 +236,28 @@ func validateSecrets() error {
 	}
 
 	return nil
+}
+
+func getEnvOrFile(key string) string {
+	if val := os.Getenv(key); val != "" {
+		return val
+	}
+
+	filePath := os.Getenv(key + "_FILE")
+	if filePath == "" {
+		return ""
+	}
+
+	data, err := os.Open(filePath)
+	if err != nil {
+		return ""
+	}
+	defer data.Close()
+
+	content, err := io.ReadAll(data)
+	if err != nil {
+		return ""
+	}
+
+	return strings.TrimSpace(string(content))
 }
