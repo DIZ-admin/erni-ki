@@ -7,6 +7,13 @@ describe('test utils bootstrap', () => {
     if (!globalThis.testUtils) {
       globalThis.testUtils = testUtils;
     }
+
+    // Ensure baseline env for runners that skip setup files
+    process.env.NODE_ENV ||= 'test';
+    process.env.JWT_SECRET ||= 'test-jwt-secret'; // pragma: allowlist secret
+    process.env.WEBUI_SECRET_KEY ||= 'test-webui-secret'; // pragma: allowlist secret
+    process.env.DATABASE_URL ||= 'postgresql://test:test@localhost:5432/test_db'; // pragma: allowlist secret
+    process.env.REDIS_URL ||= 'redis://localhost:6379/1'; // pragma: allowlist secret
     expect(globalThis.testUtils).toBeDefined();
     const req = globalThis.testUtils.createMockRequest({ method: 'POST', url: '/mock' });
     const res = globalThis.testUtils.createMockResponse();
