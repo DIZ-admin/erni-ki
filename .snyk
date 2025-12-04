@@ -4,41 +4,14 @@
 # Configuration version
 version: v1.25.0
 
-# Disable Infrastructure as Code scanning to avoid permission issues
-# IaC scanning disabled due to Docker containers with limited permissions
-
-# Scan exclusions (commented out as IaC is disabled)
-# exclude:
-#   - "data"
-#   - "data/**"
-#   - "cache"
-#   - "cache/**"
-
-# All exclusions commented out as IaC scanning is disabled
-# - data/postgres/**
-# - data/redis/**
-# - data/ollama/**
-# - data/openwebui/**
-# - data/grafana/**
-# - data/loki/**
-# - cache/backrest/restic/**
-# - .git/**
-
-# All exclusions commented out
-# - logs/**
-# - tmp/**
-# - temp/**
-# - backup/**
-# - backups/**
-# - .config-backup/**
-# - env/**
-# - secrets/**
-# - node_modules/**
-# - vendor/**
-# - dist/**
-# - build/**
-# - out/**
-# - lib/**
+exclude:
+  - "data/**"
+  - "logs/**"
+  - "cache/**"
+  - "tmp/**"
+  - ".config-backup/**"
+  - "node_modules/**"
+  - ".git/**"
 
 # Ignored vulnerabilities (with justification)
 ignore:
