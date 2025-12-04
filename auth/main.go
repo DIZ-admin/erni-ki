@@ -15,10 +15,13 @@ import (
 	"github.com/google/uuid"
 )
 
-var osExit = os.Exit                                   //nolint:gochecknoglobals // injected in tests
-var listenAndServe = func(server *http.Server) error { //nolint:gochecknoglobals
-	return server.ListenAndServe()
-}
+//nolint:gochecknoglobals // injected in tests
+var (
+	osExit         = os.Exit
+	listenAndServe = func(server *http.Server) error {
+		return server.ListenAndServe()
+	}
+)
 
 func main() {
 	osExit(run(os.Args, nil))

@@ -14,6 +14,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+//nolint:gochecknoglobals // shared fixture key for JWT tests
 var tokenKey = strings.Repeat("x", 48)
 
 func makeSignedToken(secret, issuer, subject string, expires time.Time) string {
