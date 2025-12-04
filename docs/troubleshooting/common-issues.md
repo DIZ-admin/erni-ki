@@ -1061,7 +1061,8 @@ tar -czf debug-bundle.tar.gz \
 
 - **Slack:** #erni-ki-support
 - **Email:** support@erni-gruppe.ch
-- **Docs:** https://docs.erni-ki.ch
+- **Docs:** локальная документация в репозитории (внешний портал временно
+  недоступен)
 
 ---
 

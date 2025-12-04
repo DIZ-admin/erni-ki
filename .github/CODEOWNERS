@@ -1,7 +1,52 @@
-# Global ownership defaults to the core maintainers.
-* @DIZ-admin
+# ERNI-KI Code Owners
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
-# CI/CD and automation changes require explicit review.
-.github/workflows/* @DIZ-admin @Codex
-scripts/infrastructure/security/* @DIZ-admin @Codex
-docs/reference/github-environments-setup.md @DIZ-admin @Codex
+# Default owners
+* @DIZ-admin/erni-ki-core
+
+# Core infrastructure
+/compose.yml @DIZ-admin/devops-team
+/Dockerfile* @DIZ-admin/devops-team
+/auth/ @DIZ-admin/backend-team
+/auth/Dockerfile @DIZ-admin/devops-team
+
+# Configuration
+/conf/ @DIZ-admin/devops-team
+/conf/nginx/ @DIZ-admin/security-team
+/conf/grafana/ @DIZ-admin/devops-team
+/conf/prometheus/ @DIZ-admin/devops-team
+
+# Scripts
+/scripts/ @DIZ-admin/devops-team
+/scripts/infrastructure/security/ @DIZ-admin/security-team
+/scripts/core/deployment/ @DIZ-admin/devops-team
+/scripts/core/diagnostics/ @DIZ-admin/devops-team
+/scripts/maintenance/ @DIZ-admin/devops-team
+
+# CI/CD
+/.github/workflows/ @DIZ-admin/devops-team
+/.github/dependabot.yml @DIZ-admin/devops-team
+/.pre-commit-config.yaml @DIZ-admin/devops-team
+
+# Documentation
+/docs/ @DIZ-admin/docs-team
+/README.md @DIZ-admin/erni-ki-core
+/CONTRIBUTING.md @DIZ-admin/erni-ki-core
+/SECURITY.md @DIZ-admin/security-team
+
+# Tests
+/tests/ @DIZ-admin/qa-team
+/tests/unit/ @DIZ-admin/qa-team
+/tests/e2e/ @DIZ-admin/qa-team
+/tests/integration/ @DIZ-admin/qa-team
+
+# Environment and secrets
+/.gitignore @DIZ-admin/devops-team
+/.env.example @DIZ-admin/devops-team
+/env/ @DIZ-admin/devops-team
+/secrets/ @DIZ-admin/security-team
+
+# Root configuration
+/.gitleaks.toml @DIZ-admin/security-team
+/package.json @DIZ-admin/erni-ki-core
+/tsconfig.json @DIZ-admin/frontend-team

@@ -1,2 +1,4 @@
-# https://containrrr.dev/shoutrrr/v0.8/services/discord/
-WATCHTOWER_NOTIFICATION_URL="discord://<token>@<webhookid>"
+# Watchtower Container Update Manager Configuration
+WATCHTOWER_SCHEDULE=0 2 * * *
+WATCHTOWER_CLEANUP=true
+# HTTP API token is injected from Docker secret watchtower_api_token

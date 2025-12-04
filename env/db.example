@@ -1,44 +1,9 @@
-# PostgreSQL Configuration for ERNI-KI
-# Database with vector extension for AI/RAG operations
+# PostgreSQL Database Configuration
+# Copy to env/db.env and configure per environment
 
-# === Basics ===
-# Database name for OpenWebUI
-POSTGRES_DB=openwebui
-# PostgreSQL user
-POSTGRES_USER=postgres
-# Password (set a strong value)
-POSTGRES_PASSWORD=your-secure-password-here
-
-# === Performance & memory ===
-# Shared buffers (256MB recommended)
-POSTGRES_SHARED_BUFFERS=256MB
-# Effective cache size (1GB if RAM allows)
-POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
-# Maintenance work mem (VACUUM, CREATE INDEX)
-POSTGRES_MAINTENANCE_WORK_MEM=64MB
-# Work mem for sort/hash
-POSTGRES_WORK_MEM=4MB
-# WAL buffers
-POSTGRES_WAL_BUFFERS=16MB
-
-# === Connections ===
-# Max concurrent connections
-POSTGRES_MAX_CONNECTIONS=200
-
-# === Autovacuum ===
-# Worker count
-POSTGRES_AUTOVACUUM_MAX_WORKERS=3
-# Interval between runs
-POSTGRES_AUTOVACUUM_NAPTIME=20s
-
-# === Checkpoint ===
-# Target completion time (90%)
-POSTGRES_CHECKPOINT_COMPLETION_TARGET=0.9
-
-# === Logging ===
-# Log queries longer than 1s
-POSTGRES_LOG_MIN_DURATION_STATEMENT=1000
-
-# === Расширения ===
-# Предзагружаемые библиотеки (статистика + векторное расширение для RAG)
-POSTGRES_SHARED_PRELOAD_LIBRARIES=pg_stat_statements,vector
+POSTGRES_USER=erni_user
+POSTGRES_DB=erni_ki
+POSTGRES_INITDB_ARGS=-c log_statement=all -c shared_preload_libraries=pg_stat_statements,pgvector
+PGDATA=/var/lib/postgresql/data/pgdata
+# Secrets are injected via Docker secrets:
+# POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password

@@ -1,41 +1,4 @@
-# Apache Tika Environment Configuration for ERNI-KI
-# Copy to env/tika.env and adjust values
-# Updated: 2025-09-19 | Status: Production Ready (document parser for RAG)
-
-# === Standard logging ===
-LOG_LEVEL=warn
-LOG_FORMAT=json
-
-# === Core Apache Tika settings ===
-# Tika server log level
+# Apache Tika Content Extraction Configuration
+TIKA_SERVER_PORT=9998
 TIKA_LOG_LEVEL=INFO
-
-# === RAG integration ===
-# Tika extracts text for RAG; integrates with OpenWebUI uploads
-# Supported formats: PDF, DOC/X, TXT, HTML, XML, many more
-
-# === Performance ===
-# Max file size (bytes) for processing (100MB)
-TIKA_MAX_FILE_SIZE=104857600
-
-# Processing timeout (seconds)
-TIKA_TIMEOUT=300
-
-# Max concurrent requests
-TIKA_MAX_CONCURRENT_REQUESTS=10
-
-# === Security ===
-# Disable potentially unsafe parsers
-TIKA_DISABLE_EXTERNAL_ENTITIES=true
-TIKA_DISABLE_DTD_PROCESSING=true
-
-# === Monitoring integration ===
-PROMETHEUS_METRICS_ENABLED=true
-GRAFANA_DASHBOARD_INTEGRATION=true
-
-# === Pre-production checklist ===
-# ⚠️ Ensure Tika is reachable from OpenWebUI
-# ⚠️ Adjust file-size limits to available resources
-# ⚠️ Validate parsing across key document formats
-# ⚠️ Enable performance monitoring via Prometheus
-# ⚠️ Verify integration with the RAG pipeline
+TIKA_JVM_MEMORY=-Xms512m -Xmx2g

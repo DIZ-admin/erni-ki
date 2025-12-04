@@ -54,9 +54,9 @@ services:
   watchtower:
     # Startup command with optimized parameters (schedule via env)
     command: --cleanup --label-enable --http-api-update --http-api-metrics
+    entrypoint: ["/opt/erni/bin/watchtower-entrypoint.sh"]
     env_file: env/watchtower.env
     environment:
-      WATCHTOWER_HTTP_API_TOKEN: /run/secrets/watchtower_api_token
       DOCKER_API_VERSION: "1.44"
     healthcheck:
       test: ["CMD", "/watchtower", "--health-check"]
@@ -80,6 +80,7 @@ services:
       - "127.0.0.1:8091:8080" # Localhost-only access for HTTP API
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./scripts/entrypoints/watchtower.sh:/opt/erni/bin/watchtower-entrypoint.sh:ro
     secrets:
       - watchtower_api_token
     labels:
@@ -134,7 +135,8 @@ services:
       - -c
       - >
         set -euo pipefail;
-        SECRET="$$(cat /run/secrets/redis_password)";
+        apk add --no-cache gettext >/dev/null;
+        SECRET="$$(tr -d '\r\n' < /run/secrets/redis_password)";
         CONF_TPL=/usr/local/etc/redis/redis.conf;
         CONF_OUT=/tmp/redis.conf;
         ACL_TPL=/usr/local/etc/redis/users.acl.template;
@@ -149,7 +151,11 @@ services:
           exec redis-server "$${CONF_OUT}";
         fi
     healthcheck:
-      test: ["CMD-SHELL", 'redis-cli -a "$(cat /run/secrets/redis_password)" ping | grep PONG']
+      test:
+        [
+          "CMD-SHELL",
+          "pw=$(tr -d '\r\n' < /run/secrets/redis_password); redis-cli -a \"$$pw\" ping | grep PONG",
+        ]
       interval: 30s
       timeout: 3s
       retries: 5
@@ -280,6 +286,10 @@ services:
       # Allow auto-updates for Auth service
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=auth-services"
+    environment:
+      - WEBUI_SECRET_KEY_FILE=/run/secrets/openwebui_secret_key
+    secrets:
+      - openwebui_secret_key
 
   # Cloudflare tunnel for external access
   cloudflared:
@@ -425,6 +435,7 @@ services:
       - ./scripts/entrypoints/searxng.sh:/opt/erni/bin/searxng-entrypoint.sh:ro
     secrets:
       - redis_password
+      - searxng_secret_key
     # Using standard Docker bridge network
     labels:
       # Allow auto-updates for SearXNG
@@ -1375,6 +1386,8 @@ secrets:
     file: ./secrets/litellm_ui_password.txt
   openai_api_key:
     file: ./secrets/openai_api_key.txt
+  searxng_secret_key:
+    file: ./secrets/searxng_secret_key.txt
   slack_alert_webhook:
     file: ./secrets/slack_alert_webhook.txt
   pagerduty_routing_key:

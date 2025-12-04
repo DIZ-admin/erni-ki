@@ -50,8 +50,18 @@ configure_redis_url() {
   export SEARXNG_VALKEY_URL="${SEARXNG_VALKEY_URL:-redis://${host}:${port}/${db}}" # pragma: allowlist secret
 }
 
+configure_searxng_secret() {
+  if secret="$(read_secret "searxng_secret_key")"; then
+    export SEARXNG_SECRET="${secret}"
+    log "Applied SEARXNG_SECRET from docker secret (value not logged)"
+  else
+    log "warning: searxng_secret_key secret missing; SEARXNG_SECRET not set"
+  fi
+}
+
 main() {
   log "Main function started with $# arguments"
+  configure_searxng_secret
   configure_redis_url
 
   log "Configured SEARXNG_REDIS_URL and SEARXNG_VALKEY_URL environment variables (values not logged)"

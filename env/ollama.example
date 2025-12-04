@@ -1,44 +1,5 @@
-# Ollama Configuration for ERNI-KI
-# AI server with GPU acceleration
-
-# === Basics ===
-# API host/port
+# Ollama LLM Runtime Configuration
 OLLAMA_HOST=0.0.0.0:11434
-# Allowed CORS origins
-OLLAMA_ORIGINS=*
-
-# === GPU ===
-# Use all GPU layers (-1 = auto)
-OLLAMA_GPU_LAYERS=-1
-# Max VRAM fraction (0.8 = 80%)
-OLLAMA_MAX_VRAM=0.8
-# CUDA device (0 = first GPU)
-CUDA_VISIBLE_DEVICES=0
-
-# === Performance ===
-# Enable Flash Attention
-OLLAMA_FLASH_ATTENTION=1
-# Parallel requests
-OLLAMA_NUM_PARALLEL=4
-# Max loaded models in memory
-OLLAMA_MAX_LOADED_MODELS=2
-# Model keepalive after last use
 OLLAMA_KEEP_ALIVE=5m
-# Threads (0 = auto)
-OLLAMA_NUM_THREAD=0
-
-# === Logging/debug ===
-# Disable debug in production
-OLLAMA_DEBUG=0
-# Log level
-OLLAMA_LOG_LEVEL=INFO
-
-# === Cache/memory ===
-# KV cache type (f16 saves memory)
-OLLAMA_KV_CACHE_TYPE=f16
-
-# === NVIDIA Container Runtime ===
-# Видимые NVIDIA устройства
-NVIDIA_VISIBLE_DEVICES=all
-# Возможности драйвера
-NVIDIA_DRIVER_CAPABILITIES=compute,utility
+OLLAMA_GPU_VISIBLE_DEVICES=0
+OLLAMA_MAX_LOADED_MODELS=3

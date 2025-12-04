@@ -1,5 +1,4 @@
-# Uptime Kuma configuration
-# Adjust the port if 3001 conflicts locally
+# Uptime Kuma Monitoring Configuration
 UPTIME_KUMA_PORT=3001
-# Optional: set a custom base path when served behind a reverse proxy (e.g., /status)
-UPTIME_KUMA_BASE_PATH=/
+UPTIME_KUMA_ADMIN_USERNAME=admin
+UPTIME_KUMA_ADMIN_PASSWORD=change-me-securely
