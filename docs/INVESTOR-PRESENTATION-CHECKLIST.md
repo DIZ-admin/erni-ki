@@ -1,3 +1,10 @@
+---
+language: ru
+translation_status: original
+doc_version: '2025.11'
+last_updated: '2025-12-04'
+---
+
 # ERNI-KI - Investor Presentation Checklist
 
 **Target Date:** [УКАЖИТЕ ДАТУ ПРЕЗЕНТАЦИИ] **Preparation Time Required:** 16-24

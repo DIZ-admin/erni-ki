@@ -1,8 +1,9 @@
 ---
 title: 'Pre-commit Refactoring - Quick Access Index'
-language: en
-doc_version: '2025.12'
+language: ru
+doc_version: '2025.11'
 last_updated: '2025-12-03'
+translation_status: complete
 ---
 
 # Pre-commit Refactoring - Quick Access Index

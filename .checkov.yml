@@ -9,7 +9,3 @@ skip-check:
   # CKV_DOCKER_2: HEALTHCHECK not required for all containers
   # Some containers (exporters, sidecars) don't need health checks
   - CKV_DOCKER_2 # HEALTHCHECK will be added where appropriate
-
-  # CKV_DOCKER_3: Non-root user requirement
-  # Will be addressed in Dockerfiles, but suppressing for initial deployment
-  - CKV_DOCKER_3 # Non-root user configuration in progress
