@@ -7,8 +7,8 @@
 x-critical-logging: &critical-logging
   driver: "json-file"
   options:
-    max-size: "10m"
-    max-file: "5"
+    max-size: "50m"
+    max-file: "10"
     labels: "service,version,environment,level=critical"
     tag: "critical.{{.Name}}"
 
@@ -907,6 +907,7 @@ services:
     # Rollback to prometheuscommunity image 2025-11-07: wrouesnel lacks wget/curl for healthcheck
     image: prometheuscommunity/postgres-exporter:v0.18.1
     container_name: erni-ki-postgres-exporter
+    user: "65534:65534"
     environment:
       - PG_EXPORTER_DISABLE_DEFAULT_METRICS=false
       - PG_EXPORTER_DISABLE_SETTINGS_METRICS=true
