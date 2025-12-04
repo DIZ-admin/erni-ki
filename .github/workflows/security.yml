@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
 
       - name: 🔍 Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -91,7 +91,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
 
       # Scan Go dependencies
       - name: 🐹 Setup Go
@@ -134,7 +134,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
 
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
@@ -162,7 +162,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
 
       - name: 🛡️ Run Trivy FS scan (HIGH,CRITICAL)
         uses: aquasecurity/trivy-action@0.33.1
@@ -180,7 +180,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
 
@@ -212,7 +212,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
 
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -268,7 +268,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
 
       - name: 🔍 Run Checkov
         uses: bridgecrewio/checkov-action@v12.2961.0
@@ -325,7 +325,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
 
       - name: 🔍 Test environment secrets availability
         run: |
