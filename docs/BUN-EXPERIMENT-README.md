@@ -21,11 +21,9 @@ Bun runtime for the ERNI-KI project.
 
 ## Documentation
 
-1. **[.claude/bun.md](.claude/bun.md)** - Complete Bun overview (23KB)
-2. **[.claude/bun-experiment-results.md](.claude/bun-experiment-results.md)** -
-   Detailed results
-3. Official docs: <https://bun.sh/docs>
-4. GitHub: <https://github.com/oven-sh/bun>
+1. Internal summaries archived; see repository README for the latest guidance
+2. Official docs: <https://bun.sh/docs>
+3. GitHub: <https://github.com/oven-sh/bun>
 
 ## Experiment Meta
 
