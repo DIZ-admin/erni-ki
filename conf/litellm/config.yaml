@@ -180,7 +180,6 @@ litellm_settings:
   # === PERFORMANCE OPTIMIZATION ===
   # Caching settings for production
   # Enabled: 2025-10-02 using in-memory caching
-  # Redis caching has a bug in LiteLLM v1.80.0.rc.1 (socket_timeout: 5.0 hardcoded)
   cache_params:
     type: "local" # Use in-memory caching
     ttl: 1800 # Cache TTL in seconds (30 minutes)
