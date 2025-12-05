@@ -223,7 +223,7 @@ func TestRequestIDMiddlewareAndRespondJSON(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodGet, "/test", nil)
+	c.Request = httptest.NewRequest(http.MethodGet, "/test", http.NoBody)
 
 	mw := requestIDMiddleware()
 	mw(c)
@@ -270,7 +270,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 
 	// Root
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
 	router.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
 		t.Fatalf("root expected 200, got %d", w.Code)
@@ -281,7 +281,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 
 	// Health
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodGet, "/health", nil)
+	req = httptest.NewRequest(http.MethodGet, "/health", http.NoBody)
 	router.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
 		t.Fatalf("health expected 200, got %d", w.Code)
@@ -289,7 +289,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 
 	// Validate missing token
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodGet, "/validate", nil)
+	req = httptest.NewRequest(http.MethodGet, "/validate", http.NoBody)
 	router.ServeHTTP(w, req)
 	if w.Code != http.StatusUnauthorized {
 		t.Fatalf("validate missing token expected 401, got %d", w.Code)
@@ -297,7 +297,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 
 	// Validate invalid token
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodGet, "/validate", nil)
+	req = httptest.NewRequest(http.MethodGet, "/validate", http.NoBody)
 	req.AddCookie(&http.Cookie{Name: "token", Value: "invalid"})
 	router.ServeHTTP(w, req)
 	if w.Code != http.StatusUnauthorized {
@@ -318,7 +318,7 @@ func TestSetupRouterRoutes(t *testing.T) {
 	}
 
 	w = httptest.NewRecorder()
-	req = httptest.NewRequest(http.MethodGet, "/validate", nil)
+	req = httptest.NewRequest(http.MethodGet, "/validate", http.NoBody)
 	req.AddCookie(&http.Cookie{Name: "token", Value: tokenString})
 	router.ServeHTTP(w, req)
 	if w.Code != http.StatusOK {
@@ -386,7 +386,10 @@ func TestVerifyTokenFailures(t *testing.T) {
 					ExpiresAt: jwt.NewNumericDate(now.Add(-1 * time.Hour)),
 				}
 				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-				s, _ := token.SignedString([]byte(secret))
+				s, err := token.SignedString([]byte(secret))
+				if err != nil {
+					t.Fatalf("failed to sign token: %v", err)
+				}
 				return s
 			},
 			expectErr: "token is expired",
@@ -404,7 +407,10 @@ func TestVerifyTokenFailures(t *testing.T) {
 				}
 				os.Setenv("WEBUI_JWT_ISSUER", "expected")
 				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-				s, _ := token.SignedString([]byte(secret))
+				s, err := token.SignedString([]byte(secret))
+				if err != nil {
+					t.Fatalf("failed to sign token: %v", err)
+				}
 				return s
 			},
 			expectErr: "issuer mismatch",
@@ -420,7 +426,10 @@ func TestVerifyTokenFailures(t *testing.T) {
 					ExpiresAt: jwt.NewNumericDate(now.Add(1 * time.Hour)),
 				}
 				token := jwt.NewWithClaims(jwt.SigningMethodHS384, claims)
-				s, _ := token.SignedString([]byte(secret))
+				s, err := token.SignedString([]byte(secret))
+				if err != nil {
+					t.Fatalf("failed to sign token: %v", err)
+				}
 				return s
 			},
 			expectErr: "signing method HS384 is invalid",
@@ -485,7 +494,10 @@ func TestHealthCheck(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/health" {
 			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte(`{"status":"ok"}`))
+			if _, err := w.Write([]byte(`{"status":"ok"}`)); err != nil {
+				// Best effort in test server; log to stderr
+				_, _ = w.Write([]byte(err.Error()))
+			}
 			return
 		}
 		w.WriteHeader(http.StatusNotFound)
@@ -557,7 +569,7 @@ func TestRunSkipServer(t *testing.T) {
 }
 
 func TestRunHealthCheckArg(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	t.Cleanup(ts.Close)
@@ -570,7 +582,7 @@ func TestRunHealthCheckArg(t *testing.T) {
 	}
 }
 
-func TestMainEntryPoint(t *testing.T) {
+func TestMainEntryPoint(_ *testing.T) {
 	os.Setenv("SKIP_SERVER_START", "1")
 	os.Setenv("WEBUI_SECRET_KEY", "this-is-a-sufficiently-long-secret-key-12345678")
 	origArgs := os.Args
