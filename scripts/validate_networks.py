@@ -4,17 +4,42 @@ Network Segmentation Validation Script
 Analyzes compose.yml to verify all services have correct network assignments
 """
 
+import argparse
 import sys
 from pathlib import Path
 
 import yaml
 
 
-def main():
-    compose_file = Path("/home/konstantin/Documents/augment-projects/erni-ki/compose.yml")
+def parse_args() -> argparse.Namespace:
+    repo_root = Path(__file__).resolve().parents[1]
+    default_compose = repo_root / "compose.yml"
+    parser = argparse.ArgumentParser(
+        description="Validate network segmentation for docker compose services."
+    )
+    parser.add_argument(
+        "--compose-file",
+        type=Path,
+        default=default_compose,
+        help=f"Path to compose.yml (default: {default_compose})",
+    )
+    return parser.parse_args()
 
-    with open(compose_file) as f:
-        config = yaml.safe_load(f)
+
+def main() -> int:
+    args = parse_args()
+    compose_file: Path = args.compose_file
+
+    if not compose_file.exists():
+        print(f"Error: compose file not found at {compose_file}")
+        return 1
+
+    try:
+        with open(compose_file, encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        print(f"Error parsing YAML in {compose_file}: {e}")
+        return 1
 
     services = config.get("services", {})
     networks_def = config.get("networks", {})

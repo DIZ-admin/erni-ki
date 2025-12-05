@@ -73,6 +73,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     oom_score_adj: 500
+    security_opt:
+      - no-new-privileges:true
     # Run as root to guarantee access to docker.sock on hosts where docker group GID differs
     user: "0:0"
     group_add:
@@ -81,7 +83,7 @@ services:
     ports:
       - "127.0.0.1:8091:8080" # Localhost-only access for HTTP API
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./scripts/entrypoints/watchtower.sh:/watchtower-entrypoint.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
@@ -280,9 +282,8 @@ services:
       openwebui:
         condition: service_healthy
     env_file: env/cloudflared.env
-    environment:
-      # Explicit origin cert path (place cert.pem alongside config.yml/credentials-file)
-      TUNNEL_ORIGIN_CERT: /home/nonroot/.cloudflared/cert.pem
+    # TUNNEL_ORIGIN_CERT is not required for token-based (remote-managed) tunnels
+    # The certificate is only needed for locally-managed tunnels
     healthcheck:
       test: ["CMD", "cloudflared", "version"]
       interval: 60s
@@ -300,7 +301,10 @@ services:
       - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
-      - cloudflared_tunnel_token
+      - source: cloudflared_tunnel_token
+        uid: "65532"
+        gid: "65532"
+        mode: 0444 # allow read for healthcheck/entrypoint even if uid mapping differs
     networks:
       - frontend
       - backend
@@ -442,6 +446,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=search-services"
     mem_limit: 1g
+    mem_reservation: 512m
     cpus: "1.0"
 
   ollama:
@@ -501,6 +506,7 @@ services:
       - "443:443"
       - "8080:8080"
     restart: unless-stopped
+    mem_reservation: 384m
     volumes:
       - ./conf/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
       - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -520,6 +526,8 @@ services:
       - "com.centurylinklabs.watchtower.scope=critical-proxy"
     mem_limit: 512m
     cpus: "1.0"
+    security_opt:
+      - no-new-privileges:true
 
   openwebui:
     depends_on:
@@ -752,7 +760,7 @@ services:
     image: louislam/uptime-kuma:2.0.2
     container_name: erni-ki-uptime-kuma
     env_file: env/uptime-kuma.env
-    restart: always
+    restart: unless-stopped
     logging: *monitoring-logging
     ports:
       - "127.0.0.1:3001:3001" # Localhost-only
@@ -889,6 +897,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:9100/metrics >/dev/null"]
       interval: 30s
@@ -929,6 +939,8 @@ services:
       - --config.file=/etc/postgres_exporter.yml
       - --no-collector.stat_bgwriter
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1"]
       interval: 30s
@@ -992,6 +1004,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "bash -c ': < /dev/tcp/localhost/9445'"]
       interval: 30s
@@ -1019,6 +1033,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test:
         [
@@ -1057,6 +1073,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test:
         [
@@ -1136,6 +1154,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD", "/usr/bin/nginx-prometheus-exporter", "--version"]
       interval: 30s
@@ -1171,6 +1191,8 @@ services:
     mem_reservation: 256m
     cpus: "0.5"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test:
         [

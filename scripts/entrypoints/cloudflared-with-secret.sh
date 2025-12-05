@@ -1,7 +1,15 @@
 #!/bin/sh
-set -euo pipefail
-if [ -f /run/secrets/cloudflared_tunnel_token ]; then
-  export TUNNEL_TOKEN="$(/opt/erni/bin/busybox cat /run/secrets/cloudflared_tunnel_token)"
+set -eu
+
+TOKEN_PATH="/run/secrets/cloudflared_tunnel_token"
+
+if [ -f "$TOKEN_PATH" ]; then
+  if ! token="$(/opt/erni/bin/busybox cat "$TOKEN_PATH" 2>/dev/null)"; then
+    echo "cloudflared: unable to read tunnel token from $TOKEN_PATH" >&2
+    exit 1
+  fi
+  TUNNEL_TOKEN="$token"
+  export TUNNEL_TOKEN
 fi
 
 # optional debug: dump env and exit
