@@ -304,7 +304,7 @@ services:
       - source: cloudflared_tunnel_token
         uid: "65532"
         gid: "65532"
-        mode: 0400
+        mode: 0444 # allow read for healthcheck/entrypoint even if uid mapping differs
     networks:
       - frontend
       - backend
