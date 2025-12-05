@@ -2,6 +2,9 @@ FROM python:3.11-slim
 WORKDIR /app
 RUN pip install --no-cache-dir flask prometheus_client requests
 COPY rag_exporter.py /app/rag_exporter.py
+# Create non-root user and adjust ownership
+RUN useradd -m -u 1001 -s /usr/sbin/nologin appuser && chown -R appuser:appuser /app
+USER appuser
 ENV PORT=9808
 EXPOSE 9808
 CMD ["python", "-u", "/app/rag_exporter.py"]

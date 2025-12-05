@@ -135,10 +135,9 @@ last_updated: '2025-12-04'
 
 ### Для технических инвесторов:
 
-1. Прочитайте [INVESTOR-PITCH-SUMMARY.md](docs/INVESTOR-PITCH-SUMMARY.md) (10
-   мин)
+1. Прочитайте [INVESTOR-PITCH-SUMMARY.md](./INVESTOR-PITCH-SUMMARY.md) (10 мин)
 2. При необходимости детального dive →
-   [comprehensive-investor-audit-2025-12-03.md](docs/archive/audits/comprehensive-investor-audit-2025-12-03.md)
+   [comprehensive-investor-audit-2025-12-03.md](./archive/audits/comprehensive-investor-audit-2025-12-03.md)
 
 ### Для бизнес-инвесторов:
 
@@ -148,7 +147,7 @@ last_updated: '2025-12-04'
 - Конкурентные преимущества
 - Market Opportunity
 - Investment Thesis в файле
-  [INVESTOR-PITCH-SUMMARY.md](docs/INVESTOR-PITCH-SUMMARY.md)
+  [INVESTOR-PITCH-SUMMARY.md](./INVESTOR-PITCH-SUMMARY.md)
 
 ### Для команды (подготовка к презентации):
 

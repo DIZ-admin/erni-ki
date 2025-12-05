@@ -496,7 +496,9 @@ func TestHealthCheck(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			if _, err := w.Write([]byte(`{"status":"ok"}`)); err != nil {
 				// Best effort in test server; log to stderr
-				_, _ = w.Write([]byte(err.Error()))
+				if _, logErr := w.Write([]byte(err.Error())); logErr != nil {
+					t.Logf("health handler write error: %v", logErr)
+				}
 			}
 			return
 		}

@@ -93,6 +93,7 @@ build/
 out/
 lib/
 coverage/
+bin/
 .nyc_output/
 *.tsbuildinfo
 .tscache/
