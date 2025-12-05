@@ -31,6 +31,10 @@ func run(args []string) error {
 		return nil
 	}
 
+	if err := validateSecrets(); err != nil {
+		return fmt.Errorf("secret validation failed: %w", err)
+	}
+
 	r := setupRouter()
 
 	server := &http.Server{
@@ -54,6 +58,7 @@ func run(args []string) error {
 }
 
 func setupRouter() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 
 	r.Use(requestIDMiddleware())
@@ -154,9 +159,12 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 
 // healthCheck performs service health check for Docker.
 func healthCheck() error {
-	targetURL := os.Getenv("HEALTHCHECK_URL")
-	if targetURL == "" {
-		targetURL = "http://localhost:9090/health"
+	target := os.Getenv("HEALTHCHECK_URL")
+	if target == "" {
+		target = os.Getenv("AUTH_HEALTH_URL")
+	}
+	if target == "" {
+		target = "http://localhost:9090/health"
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -165,7 +173,7 @@ func healthCheck() error {
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		targetURL,
+		target,
 		http.NoBody,
 	)
 	if err != nil {
@@ -267,7 +275,7 @@ func validateSecrets() error {
 	return nil
 }
 
-func getEnvOrFile(key string) string {
+func getEnvOrFile(key string) string { //nolint:unparam // keep flexible signature
 	if val := os.Getenv(key); val != "" {
 		return val
 	}

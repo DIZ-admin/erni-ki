@@ -19,6 +19,11 @@ from unittest.mock import MagicMock, mock_open, patch
 import pytest
 from pydantic import ValidationError
 
+try:
+    import flask  # noqa: F401
+except ImportError:
+    pytest.skip("flask not installed", allow_module_level=True)
+
 
 class WebhookModule(Protocol):
     """Protocol for webhook-receiver module."""
