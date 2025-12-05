@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -euo pipefail
 # populate sensitive envs from docker secrets if present (trim CR/LF)
 trim() { /opt/erni/bin/busybox tr -d '\r\n' < "$1"; }
 [ -f /run/secrets/postgres_password ] && export POSTGRES_PASSWORD="$(trim /run/secrets/postgres_password)"

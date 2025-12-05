@@ -1,5 +1,5 @@
 #!/bin/sh
-set -eu
+set -euo pipefail
 if [ -f /run/secrets/cloudflared_tunnel_token ]; then
   export TUNNEL_TOKEN="$(/opt/erni/bin/busybox cat /run/secrets/cloudflared_tunnel_token)"
 fi
