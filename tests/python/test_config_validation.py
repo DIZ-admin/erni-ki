@@ -129,9 +129,9 @@ class TestMakefile:
         content = makefile_path.read_text()
 
         assert "help:" in content, "Makefile should have a help target"
-        assert (
-            ".DEFAULT_GOAL := help" in content or "default:" in content
-        ), "Makefile should have a default goal"
+        assert ".DEFAULT_GOAL := help" in content or "default:" in content, (
+            "Makefile should have a default goal"
+        )
 
     def test_makefile_has_essential_targets(self):
         """Test that Makefile has essential targets."""
@@ -324,9 +324,9 @@ class TestEntrypointScripts:
         content = script_path.read_text()
 
         # Should have set -e or equivalent
-        assert (
-            "set -e" in content or "set -euo pipefail" in content
-        ), f"{script_name} should have error handling (set -e)"
+        assert "set -e" in content or "set -euo pipefail" in content, (
+            f"{script_name} should have error handling (set -e)"
+        )
 
 
 class TestEnvValidatorScript:
@@ -380,9 +380,9 @@ class TestSecretsBaseline:
             baseline = json.load(f)
 
         generated_at = baseline["generated_at"]
-        assert (
-            "2025" in generated_at or "2024" in generated_at
-        ), ".secrets.baseline should have recent timestamp"
+        assert "2025" in generated_at or "2024" in generated_at, (
+            ".secrets.baseline should have recent timestamp"
+        )
 
 
 class TestDocumentationMetadata:

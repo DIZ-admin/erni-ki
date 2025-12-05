@@ -143,7 +143,7 @@ repos:
   # PYTHON LINTING/FORMATTING (RUFF)
   # ===================================================================
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.4
+    rev: v0.14.7
     hooks:
       - id: ruff
         name: "Ruff: Python lint"
