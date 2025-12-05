@@ -412,7 +412,6 @@ roles: ['role1', 'role2']
 language: ru|en|de
 translation_status: complete
 doc_version: '2025.11'
-translation_status: original
 ---
 
 # Название сценария
@@ -1073,6 +1072,55 @@ created) **Questions:** GitHub Discussions or Issues
 
 **Document Version:** 1.0 **Last Updated:** 2025-12-04 **Next Review:** After
 Phase 1 completion **Status:** READY FOR APPROVAL
+
+---
+
+## P2: Технический рефакторинг (структура/обслуживаемость)
+
+**Цель:** унифицировать инструменты разработки, стабилизировать тестовую
+архитектуру, улучшить CI/CD-отчётность и добавить автоматические проверки
+конфигов (nginx/compose/logging).
+
+### Pre-commit консолидация
+
+- [ ] Перенести все хуки в pre-commit (убрать зависимость Husky/lint-staged; npm
+      `prepare` только ставит pre-commit при необходимости).
+- [ ] Профили: `commit:fast` (SKIP тяжёлых хуков: docs/lychee/ts-type-check),
+      `commit:full` (всё) — задокументировать в README/scripts.
+- [ ] Кэшировать doc-хуки (markdownlint, visuals) и запускать форматтеры
+      параллельно (ruff fmt, prettier, gofmt/goimports).
+- [ ] TS-check в pre-commit: лёгкий `bun run tsc --noEmit`; полный чек — только
+      в CI/all-files.
+
+### Архитектура тестов
+
+- [ ] Структура: `tests/unit`, `tests/integration`, `tests/e2e`; общие фикстуры
+      — `tests/fixtures`.
+- [ ] Контрактные тесты API (OpenAPI для auth/gateway) — позитив/негатив,
+      проверка схем/типов.
+- [ ] Лёгкий load-smoke (k6/vegeta) на ключевые endpoints (auth validate, RAG
+      query).
+- [ ] Playwright: моки/фикстуры, кеш браузеров, единый config для mock/live.
+- [ ] Единый coverage merge (Go+Py+JS) и публикация в CI.
+
+### CI/CD артефакты и права
+
+- [ ] Сбор SARIF (gosec/trivy/grype/checkov) в единый upload.
+- [ ] Coverage merge и артефакты (lcov/xml/go cover) + summary в
+      `GITHUB_STEP_SUMMARY`.
+- [ ] Матрицы LTS: Go (1.24.x/1.23.x), Node/bun (LTS+current), Python
+      (3.11/3.12) для lint/test.
+- [ ] Минимизировать права токена (contents/actions read; security-events write
+      только для security job).
+
+### Observability проверки
+
+- [ ] Nginx lint: `nginx -t` в контейнере с безопасными env.
+- [ ] Docker Compose lint: `docker compose config -q` без реального деплоя.
+- [ ] Promtool: `promtool check rules` / `check config` для
+      prometheus/alertmanager правил.
+- [ ] Promtail/Fluent Bit: линт пайплайнов (dry-run/--config-check) на примерных
+      events.
 
 ---
 

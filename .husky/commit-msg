@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-
-# Валидация commit message с помощью commitlint
-bunx --bun commitlint --edit "$1"

@@ -1,6 +1,6 @@
 ---
-title: 'Academy KI для Erni Gruppe'
-language: ru
+title: 'Academy KI für Erni Gruppe'
+language: de
 doc_version: '2025.11'
 translation_status: original
 last_updated: '2025-12-04'

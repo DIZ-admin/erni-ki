@@ -36,7 +36,7 @@ doc_status: completed
 - 3 варианта внедрения
 - Ready for Management Decision
 
-3. [academy/ERNI-GRUPPE-ADAPTATION.md](academy/ERNI-GRUPPE-ADAPTATION.md)
+3. [de/academy/ERNI-GRUPPE-ADAPTATION.md](de/academy/ERNI-GRUPPE-ADAPTATION.md)
 
 - Детальная адаптация под Erni Gruppe
 - Роли: Planer, Bauleiter, Produktion, etc.
@@ -57,7 +57,7 @@ doc_status: completed
 - Mobile использование
 - Экономия времени: 50-60%
 
-6.  [academy/by-industry/construction/angebot-erstellen.md](academy/by-industry/construction/angebot-erstellen.md)
+6.  [de/academy/by-industry/construction/angebot-erstellen.md](de/academy/by-industry/construction/angebot-erstellen.md)
 
 - 15 мин сценарий
 - Einfamilienhaus, Aufstockung, Landwirtschaftsbau
@@ -66,7 +66,7 @@ doc_status: completed
 
 #### Index-страницы:
 
-7. [academy/by-industry/index.md](academy/by-industry/index.md)
+7. [de/academy/by-industry/index.md](de/academy/by-industry/index.md)
 
 - Главная страница отраслевых сценариев
 - Статистика и обзор

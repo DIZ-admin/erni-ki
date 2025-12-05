@@ -13,9 +13,8 @@ on:
 # Permissions for GitHub token
 permissions:
   contents: read
-  security-events: write
   actions: read
-  packages: read
+  security-events: write
 
 # Environment variables
 env:
@@ -56,6 +55,12 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.3.3"
+
+      - name: ♻️ Cache bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bun
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: 📦 Install JS/TS dependencies
         run: bun install --frozen-lockfile
@@ -176,6 +181,13 @@ jobs:
           export LOG_DIR=/tmp/logs
           pytest tests/python/ --cov=. --cov-config=.coveragerc --cov-report=xml --cov-fail-under=80
 
+      - name: 📦 Upload Python coverage artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: python-coverage
+          path: coverage.xml
+          retention-days: 7
+
       - name: 📤 Upload coverage to Codecov (Python)
         uses: codecov/codecov-action@v4
         with:
@@ -227,6 +239,12 @@ jobs:
         with:
           bun-version: "1.3.3"
 
+      - name: ♻️ Cache bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bun
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+
       - name: 📦 Install dependencies
         run: bun install --frozen-lockfile
 
@@ -242,6 +260,12 @@ jobs:
 
       - name: 🧰 Install Playwright browser
         run: bunx playwright install --with-deps chromium
+
+      - name: ♻️ Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-chromium-${{ hashFiles('package.json', 'bun.lock') }}
 
       - name: 🎭 Run Playwright in mock mode
         run: bun run test:e2e:mock
@@ -262,13 +286,180 @@ jobs:
           path: playwright-report
           retention-days: 7
 
+  contract-tests:
+    name: 📜 Contract Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🟣 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.3"
+
+      - name: ♻️ Cache bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bun
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🧪 Run contract tests (skip runtime if no base URL)
+        env:
+          CONTRACT_BASE_URL: ${{ secrets.CONTRACT_BASE_URL }}
+          CONTRACT_BEARER_TOKEN: ${{ secrets.CONTRACT_BEARER_TOKEN }}
+        run: bun run test:contracts
+
+  load-smoke:
+    name: 🔥 Load Smoke (k6)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🏃 Run k6 smoke (skips if SMOKE_BASE_URL not set)
+        env:
+          SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
+          SMOKE_AUTH_TOKEN: ${{ secrets.SMOKE_AUTH_TOKEN }}
+          SMOKE_AUTH_PATH: ${{ secrets.SMOKE_AUTH_PATH }}
+          SMOKE_RAG_PATH: ${{ secrets.SMOKE_RAG_PATH }}
+          SMOKE_VUS: ${{ secrets.SMOKE_VUS }}
+          SMOKE_DURATION: ${{ secrets.SMOKE_DURATION }}
+        run: |
+          if [ -z "${SMOKE_BASE_URL:-}" ]; then
+            echo "SMOKE_BASE_URL not set; skipping k6 smoke test."
+            exit 0
+          fi
+          docker run --rm \
+            -e SMOKE_BASE_URL \
+            -e SMOKE_AUTH_TOKEN \
+            -e SMOKE_AUTH_PATH \
+            -e SMOKE_RAG_PATH \
+            -e SMOKE_VUS \
+            -e SMOKE_DURATION \
+            -v "$PWD/tests/load:/scripts" \
+            grafana/k6 run /scripts/smoke-auth-rag.js
+
+  observability-configs:
+    name: 📡 Observability Config Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🐳 Docker Compose lint
+        run: |
+          if [ -f "compose.yml" ]; then
+            docker compose -f compose.yml config -q
+          else
+            echo "compose.yml not found, skipping"
+          fi
+
+      - name: 🌐 Nginx config test (containerized)
+        run: |
+          if [ -f "conf/nginx/nginx.conf" ]; then
+            docker run --rm \
+              -v "$PWD/conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro" \
+              -v "$PWD/conf/nginx/conf.d:/etc/nginx/conf.d:ro" \
+              -v "$PWD/conf/nginx/includes:/etc/nginx/includes:ro" \
+              nginx:alpine nginx -t -c /etc/nginx/nginx.conf
+          else
+            echo "Nginx config missing, skipping"
+          fi
+
+      - name: 📜 Prometheus rules check (promtool)
+        run: |
+          if [ -f "ops/prometheus/blackbox-noise.rules.yml" ]; then
+            docker run --rm -v "$PWD/ops/prometheus:/etc/prometheus:ro" prom/prometheus:v2.55.1 \
+              promtool check rules /etc/prometheus/blackbox-noise.rules.yml
+          else
+            echo "Prometheus rules not found, skipping"
+          fi
+
+      - name: 🚨 Alertmanager config check
+        run: |
+          if [ -f "conf/alertmanager/alertmanager.yml" ]; then
+            docker run --rm -v "$PWD/conf/alertmanager:/etc/alertmanager:ro" prom/alertmanager:v0.27.0 \
+              promtool check config /etc/alertmanager/alertmanager.yml
+          else
+            echo "alertmanager.yml not found, skipping"
+          fi
+
+      - name: 📄 Promtail config verify
+        run: |
+          if [ -f "conf/promtail/promtail-config.yaml" ]; then
+            docker run --rm -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" grafana/promtail:3.0.0 \
+              -config.file=/etc/promtail/config.yaml --verify-config
+          else
+            echo "promtail config not found, skipping"
+          fi
+
+      - name: 📑 Fluent Bit config check
+        run: |
+          if [ -f "conf/fluent-bit/fluent-bit.conf" ]; then
+            docker run --rm -v "$PWD/conf/fluent-bit:/fluent-bit:ro" fluent/fluent-bit:3.0 \
+              -c /fluent-bit/fluent-bit.conf -t
+          else
+            echo "fluent-bit.conf not found, skipping"
+          fi
+
+  coverage-merge:
+    name: 📈 Merge Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [test-go, test-python, test-js]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 📥 Download Go coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: go-coverage-report
+          path: artifacts/go
+
+      - name: 📥 Download JS coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: js-coverage
+          path: artifacts/js
+
+      - name: 📥 Download Python coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: python-coverage
+          path: artifacts/py
+
+      - name: 📤 Upload merged coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: |
+            artifacts/go/auth/coverage.out
+            artifacts/js/coverage/lcov.info
+            artifacts/py/coverage.xml
+          flags: combined
+          fail_ci_if_error: false
+
   # Go lint (auth service)
   go-lint:
     name: 🧹 Go Lint (golangci-lint)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      GOTOOLCHAIN: go1.24.10
+      GOTOOLCHAIN: go1.24.11
 
     steps:
       - name: 📥 Checkout code
@@ -308,7 +499,7 @@ jobs:
 
       - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
         env:
-          GOTOOLCHAIN: go1.24.10
+          GOTOOLCHAIN: go1.24.11
           GOSEC_VERSION: v2.22.10
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
@@ -396,7 +587,6 @@ jobs:
             'docs/**/*.md'
             'README.md'
           fail: true
-        continue-on-error: true
 
       - name: 📊 Create link check summary
         if: always()
@@ -563,7 +753,7 @@ jobs:
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
-    needs: [lint, go-lint, test-go, test-js, security, link-check, docker-build]
+    needs: [lint, go-lint, test-go, test-js, security, link-check, docker-build, contract-tests, load-smoke, coverage-merge]
     if: always() && github.ref == 'refs/heads/main'
 
     steps:
@@ -574,6 +764,7 @@ jobs:
           echo "golint=${{ needs['go-lint'].result }}" >> $GITHUB_OUTPUT
           echo "test_go=${{ needs['test-go'].result }}" >> $GITHUB_OUTPUT
           echo "test_ts=${{ needs['test-js'].result }}" >> $GITHUB_OUTPUT
+          echo "coverage_merge=${{ needs['coverage-merge'].result }}" >> $GITHUB_OUTPUT
           echo "security=${{ needs.security.result }}" >> $GITHUB_OUTPUT
           echo "docker=${{ needs['docker-build'].result }}" >> $GITHUB_OUTPUT
 
@@ -586,5 +777,6 @@ jobs:
           echo "| Go Lint | ${{ steps.results.outputs.golint == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Go Tests | ${{ steps.results.outputs.test_go == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| TS Tests | ${{ steps.results.outputs.test_ts == 'success' && '✅' || steps.results.outputs.test_ts == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage Merge | ${{ steps.results.outputs.coverage_merge == 'success' && '✅' || steps.results.outputs.coverage_merge == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security | ${{ steps.results.outputs.security == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Docker | ${{ steps.results.outputs.docker == 'success' && '✅' || steps.results.outputs.docker == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY

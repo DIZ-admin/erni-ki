@@ -255,7 +255,7 @@ SKIP=visuals-and-links-check,typescript-type-check git commit
 - [Conventional Commits](https://www.conventionalcommits.org/) - Commit message
   format
 - [Commitlint](https://commitlint.js.org/) - Commit message linting
-- lint-staged (removed) - Husky now runs `pre-commit` directly files
+- Husky removed — pre-commit is the single source of truth for hooks
 
 ### Tool Documentation
 
@@ -345,8 +345,8 @@ pre-commit install
 | File                      | Purpose                             | Language |
 | ------------------------- | ----------------------------------- | -------- |
 | `.pre-commit-config.yaml` | Python pre-commit hooks             | YAML     |
-| `.husky/pre-commit`       | Husky pre-commit script             | Shell    |
-| `.husky/commit-msg`       | Husky commit-msg script             | Shell    |
+| `.git/hooks/pre-commit`   | Installed by pre-commit             | Shell    |
+| `.git/hooks/commit-msg`   | Installed by pre-commit             | Shell    |
 | `commitlint.config.cjs`   | Commit message validation           | JS       |
 | `package.json`            | pre-commit scripts (fast/full/perf) | JSON     |
 | `eslint.config.js`        | ESLint configuration                | JS       |

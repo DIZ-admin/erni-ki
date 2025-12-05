@@ -74,7 +74,7 @@ Mitarbeiter + 21 Lehrlinge, Erni Gruppe Schongau
 - Variantenvergleiche
 - Risiko-Kommunikation
 
-**[Implementation Plan](ERNI-GRUPPE-ADAPTATION.md)**
+**[Implementation Plan](../de/academy/ERNI-GRUPPE-ADAPTATION.md)**
 
 - Vollständige Anpassungsstrategie
 - Rollen-spezifische Lernpfade

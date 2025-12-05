@@ -1,7 +1,7 @@
 ---
 title: 'Branchen-spezifische KI-Szenarien'
 category: industry
-language: ru
+language: de
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-12-04'

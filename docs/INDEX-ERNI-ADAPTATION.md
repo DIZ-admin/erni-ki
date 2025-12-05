@@ -73,7 +73,8 @@ doc_status: completed
 
 ### 4. План адаптации
 
-**→ [academy/ERNI-GRUPPE-ADAPTATION.md](academy/ERNI-GRUPPE-ADAPTATION.md)**
+**→
+[de/academy/ERNI-GRUPPE-ADAPTATION.md](de/academy/ERNI-GRUPPE-ADAPTATION.md)**
 
 **Что внутри:**
 
@@ -131,7 +132,7 @@ doc_status: completed
 ### 7. Angebot erstellen (Создание предложений)
 
 **→
-[academy/by-industry/construction/angebot-erstellen.md](academy/by-industry/construction/angebot-erstellen.md)**
+[de/academy/by-industry/construction/angebot-erstellen.md](de/academy/by-industry/construction/angebot-erstellen.md)**
 
 **Что внутри:**
 
@@ -151,7 +152,7 @@ doc_status: completed
 
 ### 8. Industry Index (отраслевые сценарии)
 
-**→ [academy/by-industry/index.md](academy/by-industry/index.md)**
+**→ [de/academy/by-industry/index.md](de/academy/by-industry/index.md)**
 
 **Что внутри:**
 
