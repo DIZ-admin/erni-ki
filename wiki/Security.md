@@ -29,6 +29,7 @@
 - WebSocket rate limiting для Nginx — задача в работе (отдельный лимит req).
 - Read-only stateless (nginx cache, searxng cache, redis/postgres exporters,
   auth) — задача в работе.
+- Диаграмма периметра и контролей: [[Diagrams#security--perimeter]]
 
 ## Хардненинг контейнеров
 

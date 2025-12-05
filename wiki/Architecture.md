@@ -32,3 +32,5 @@
 - Справочник сервисов: `docs/architecture/service-inventory.md`.
 - Обзор/архитектура: `docs/architecture/` и `docs/overview.md`.
 - API/интеграции: `docs/reference/api-reference.md`.
+- Диаграммы: [[Diagrams#high-level-architecture]] и
+  [[Diagrams#request--data-flow]]

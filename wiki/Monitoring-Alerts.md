@@ -34,5 +34,6 @@
 - Проверка целостности таргетов: `prometheus/targets` (через прокси).
 - Blackbox-пробы для внешних endpoint (HTTP/TCP).
 - Экспортер GPU: `nvidia-exporter` (локальный порт 9445).
+- Диаграмма наблюдаемости: [[Diagrams#observability-pipeline]]
 - SearXNG API ограничен ACL (RFC1918/localhost); для внешнего доступа обновите
   allowlist в `conf/nginx/conf.d/default.conf`.
