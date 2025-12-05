@@ -257,6 +257,19 @@ func verifyToken(tokenString string) (bool, error) {
 		}
 	}
 
+	if expectedAud := os.Getenv("WEBUI_JWT_AUDIENCE"); expectedAud != "" {
+		audMatch := false
+		for _, aud := range claims.Audience {
+			if aud == expectedAud {
+				audMatch = true
+				break
+			}
+		}
+		if !audMatch {
+			return false, fmt.Errorf("audience mismatch")
+		}
+	}
+
 	return true, nil
 }
 
