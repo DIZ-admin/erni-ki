@@ -14,6 +14,7 @@
 - [[FAQ]] — частые вопросы
 - [[Governance]] — кто и как обновляет wiki/конфиги
 - [[Diagrams]] — визуальные схемы (архитектура, потоки, наблюдаемость, периметр)
+- [[Automations]] — cron, CI/CD, watchtower, pre-commit, pending automation
 
 Полный каталог документов в репозитории: `docs/index.md`, `docs/en/index.md`,
 `docs/de/index.md`.
