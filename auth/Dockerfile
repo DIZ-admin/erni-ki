@@ -60,5 +60,8 @@ LABEL maintainer="erni-ki-team" \
   org.opencontainers.image.source="https://github.com/DIZ-admin/erni-ki" \
   org.opencontainers.image.documentation="https://github.com/DIZ-admin/erni-ki/blob/main/README.md"
 
+# Enforce non-root user (distroless nonroot provides this user)
+USER nonroot
+
 # Run application
 ENTRYPOINT ["/app/main"]

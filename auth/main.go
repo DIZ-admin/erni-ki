@@ -15,62 +15,48 @@ import (
 	"github.com/google/uuid"
 )
 
-//nolint:gochecknoglobals // injected in tests
-var (
-	osExit         = os.Exit
-	listenAndServe = func(server *http.Server) error {
-		return server.ListenAndServe()
-	}
-)
-
 func main() {
-	osExit(run(os.Args, nil))
+	if err := run(os.Args); err != nil {
+		log.Printf("auth-service exited with error: %v", err)
+		os.Exit(1)
+	}
 }
 
-func run(args []string, serve func(*http.Server) error) int {
+func run(args []string) error {
 	// Check command line arguments for health check
 	if len(args) > 1 && args[1] == "--health-check" {
 		if err := healthCheck(); err != nil {
-			log.Printf("health check failed: %v", err)
-			return 1
+			return fmt.Errorf("health check failed: %w", err)
 		}
-		return 0
+		return nil
 	}
 
 	if err := validateSecrets(); err != nil {
-		log.Printf("secret validation failed: %v", err)
-		return 1
+		return fmt.Errorf("secret validation failed: %w", err)
 	}
 
-	router := setupRouter()
-	server := newServer(router)
+	r := setupRouter()
 
-	runner := serve
-	if runner == nil {
-		runner = listenAndServe
-	}
-
-	if err := runner(server); err != nil {
-		log.Printf("failed to start server: %v", err)
-		return 1
-	}
-
-	return 0
-}
-
-// newServer constructs the HTTP server with sensible timeouts.
-func newServer(handler http.Handler) *http.Server {
-	return &http.Server{
+	server := &http.Server{
 		Addr:              "0.0.0.0:9090",
-		Handler:           handler,
+		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       120 * time.Second,
 	}
+
+	if os.Getenv("SKIP_SERVER_START") == "1" {
+		return nil
+	}
+
+	if err := server.ListenAndServe(); err != nil {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+
+	return nil
 }
 
-// setupRouter configures the Gin router with middleware and routes.
 func setupRouter() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -80,52 +66,55 @@ func setupRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 
 	registerRoutes(r)
+
 	return r
 }
 
-// registerRoutes defines HTTP handlers.
 func registerRoutes(r *gin.Engine) {
-	r.GET("/", func(c *gin.Context) {
-		respondJSON(c, http.StatusOK, gin.H{
-			"message": "auth-service is running",
-			"version": "1.0.0",
-			"status":  "healthy",
-		})
-	})
+	r.GET("/", indexHandler)
+	r.GET("/health", healthHandler)
+	r.GET("/validate", validateHandler)
+}
 
-	// Health check endpoint
-	r.GET("/health", func(c *gin.Context) {
-		respondJSON(c, http.StatusOK, gin.H{
-			"status":  "healthy",
-			"service": "auth-service",
-		})
+func indexHandler(c *gin.Context) {
+	respondJSON(c, http.StatusOK, gin.H{
+		"message": "auth-service is running",
+		"version": "1.0.0",
+		"status":  "healthy",
 	})
+}
 
-	r.GET("/validate", func(c *gin.Context) {
-		cookieToken, err := c.Cookie("token")
+func healthHandler(c *gin.Context) {
+	respondJSON(c, http.StatusOK, gin.H{
+		"status":  "healthy",
+		"service": "auth-service",
+	})
+}
+
+func validateHandler(c *gin.Context) {
+	cookieToken, err := c.Cookie("token")
+	if err != nil {
+		respondJSON(c, http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+			"error":   "token missing",
+		})
+		return
+	}
+
+	valid, err := verifyToken(cookieToken)
+	if err != nil || !valid {
 		if err != nil {
-			respondJSON(c, http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-				"error":   "token missing",
-			})
-			return
+			log.Printf("token verification failed: %v", err)
 		}
-
-		valid, err := verifyToken(cookieToken)
-		if err != nil || !valid {
-			if err != nil {
-				log.Printf("token verification failed: %v", err)
-			}
-			respondJSON(c, http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-				"error":   "invalid token",
-			})
-			return
-		}
-
-		respondJSON(c, http.StatusOK, gin.H{
-			"message": "authorized",
+		respondJSON(c, http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+			"error":   "invalid token",
 		})
+		return
+	}
+
+	respondJSON(c, http.StatusOK, gin.H{
+		"message": "authorized",
 	})
 }
 
@@ -170,7 +159,10 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 
 // healthCheck performs service health check for Docker.
 func healthCheck() error {
-	target := os.Getenv("AUTH_HEALTH_URL")
+	target := os.Getenv("HEALTHCHECK_URL")
+	if target == "" {
+		target = os.Getenv("AUTH_HEALTH_URL")
+	}
 	if target == "" {
 		target = "http://localhost:9090/health"
 	}

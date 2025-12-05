@@ -1,28 +1,18 @@
 # SearXNG Rate Limiter Configuration
-# Optimized configuration for OpenWebUI integration
+# Minimal configuration to suppress warnings in logs
 
 [botdetection.ip_limit]
-# Soft limits to avoid search engine blocks
+# Disable all limits
 filter_link_local = false
 link_token = false
 
 [botdetection.ip_lists]
-# Allow all requests from internal networks and external via Cloudflare
+# Allow all requests without logging
 pass_searxng_org = true
 pass_ip = [
-    "127.0.0.0/8",
-    "10.0.0.0/8",
-    "172.16.0.0/12",
-    "192.168.0.0/16",
-    # Temporarily allow all external IPs for testing
     "0.0.0.0/0"
 ]
 
-[botdetection]
-# Trusted proxies to obtain the real IP
-trusted_proxies = [
-    "127.0.0.0/8",
-    "10.0.0.0/8",
-    "172.16.0.0/12",
-    "192.168.0.0/16"
-]
+[real_ip]
+# Real IP settings via proxy
+x_for = 1

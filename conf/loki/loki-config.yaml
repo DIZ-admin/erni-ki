@@ -1,12 +1,10 @@
 # Loki configuration for ERNI-KI (simplified for v3.4.1)
-auth_enabled: true
+# Auth disabled to align with unauthenticated Fluent Bit pipeline
+auth_enabled: false
 
 server:
   http_listen_port: 3100
   grpc_listen_port: 9096
-  http_tls_config:
-    cert_file: /etc/loki/tls/loki.crt
-    key_file: /etc/loki/tls/loki.key
 
 common:
   path_prefix: /loki

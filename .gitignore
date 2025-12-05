@@ -8,6 +8,15 @@
 # ===================================================================
 .env
 .env.local
+secrets/letsencrypt/
+
+# Legacy placements of ACME state (kept ignored to prevent re-introducing sensitive data)
+conf/nginx/ssl/live/
+conf/nginx/ssl/archive/
+conf/nginx/ssl/accounts/
+conf/nginx/ssl/renewal/
+conf/nginx/ssl/renewal-hooks/
+conf/nginx/ssl/cloudflare.ini
 .env.*.local
 env/*.env
 !env/*.example
@@ -84,6 +93,7 @@ build/
 out/
 lib/
 coverage/
+bin/
 .nyc_output/
 *.tsbuildinfo
 .tscache/
