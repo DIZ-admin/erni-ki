@@ -73,8 +73,15 @@ jobs:
         if: matrix.language == 'javascript' && hashFiles('package.json') != ''
         run: bun install --frozen-lockfile
 
-      # Autobuild
+      # Build for CodeQL
+      - name: 🏗️ Build (Go)
+        if: matrix.language == 'go'
+        working-directory: ./auth
+        run: |
+          go build ./...
+
       - name: 🏗️ Autobuild
+        if: matrix.language != 'go'
         uses: github/codeql-action/autobuild@v4
 
       # Perform CodeQL analysis
