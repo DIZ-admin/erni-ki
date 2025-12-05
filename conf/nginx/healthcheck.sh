@@ -156,10 +156,7 @@ main() {
         ((failed_checks++))
     fi
 
-    # PostgreSQL - critical database
-    if ! check_upstream_server "db" 5432 "PostgreSQL"; then
-        ((failed_checks++))
-    fi
+    # PostgreSQL check removed to respect data-network isolation
 
     # 3. Proxy functionality
     log "🔄 Checking proxy functionality"
