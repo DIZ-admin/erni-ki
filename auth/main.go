@@ -200,77 +200,91 @@ func healthCheck() error {
 
 func verifyToken(tokenString string) (bool, error) {
 	jwtSecret := getEnvOrFile("WEBUI_SECRET_KEY")
-
 	if jwtSecret == "" {
 		return false, fmt.Errorf("WEBUI_SECRET_KEY env variable missing")
 	}
 
-	const (
-		maxTokenLength    = 4096
-		requiredAlgorithm = "HS256"
-	)
-
-	if strings.TrimSpace(tokenString) == "" {
-		return false, fmt.Errorf("token missing")
-	}
-
-	if len(tokenString) > maxTokenLength {
-		return false, fmt.Errorf("token too long")
-	}
-
-	mySigningKey := []byte(jwtSecret)
-
-	parser := jwt.NewParser(jwt.WithValidMethods([]string{requiredAlgorithm}))
-	claims := &jwt.RegisteredClaims{}
-
-	token, err := parser.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
-		if method := token.Method.Alg(); method != requiredAlgorithm {
-			return nil, fmt.Errorf("unexpected signing algorithm: %s", method)
-		}
-		return mySigningKey, nil
-	})
-	if err != nil {
+	if err := validateTokenString(tokenString, 4096); err != nil {
 		return false, err
 	}
 
+	claims := &jwt.RegisteredClaims{}
+	token, err := parseAndVerifySignature(tokenString, []byte(jwtSecret), claims)
+	if err != nil {
+		return false, err
+	}
 	if !token.Valid {
 		return false, fmt.Errorf("token invalid")
 	}
 
-	now := time.Now()
-
-	if claims.ExpiresAt == nil || now.After(claims.ExpiresAt.Time) {
-		return false, fmt.Errorf("exp claim invalid or expired")
+	if err := validateClaims(claims, time.Now()); err != nil {
+		return false, err
 	}
-
-	if claims.IssuedAt == nil || claims.IssuedAt.Time.After(now) {
-		return false, fmt.Errorf("iat claim invalid")
+	if err := validateIssuer(claims, os.Getenv("WEBUI_JWT_ISSUER")); err != nil {
+		return false, err
 	}
-
-	if strings.TrimSpace(claims.Subject) == "" {
-		return false, fmt.Errorf("sub claim missing or empty")
-	}
-
-	if expectedIssuer := os.Getenv("WEBUI_JWT_ISSUER"); expectedIssuer != "" {
-		if claims.Issuer != expectedIssuer {
-			return false, fmt.Errorf("issuer mismatch")
-		}
-	}
-
-	if expectedAud := os.Getenv("WEBUI_JWT_AUDIENCE"); expectedAud != "" {
-		audMatch := false
-		for _, aud := range claims.Audience {
-			if aud == expectedAud {
-				audMatch = true
-				break
-			}
-		}
-		if !audMatch {
-			return false, fmt.Errorf("audience mismatch")
-		}
+	if err := validateAudience(claims, os.Getenv("WEBUI_JWT_AUDIENCE")); err != nil {
+		return false, err
 	}
 
 	return true, nil
+}
+
+func validateTokenString(tokenString string, maxTokenLength int) error {
+	if strings.TrimSpace(tokenString) == "" {
+		return fmt.Errorf("token missing")
+	}
+	if len(tokenString) > maxTokenLength {
+		return fmt.Errorf("token too long")
+	}
+	return nil
+}
+
+func parseAndVerifySignature(tokenString string, signingKey []byte, claims *jwt.RegisteredClaims) (*jwt.Token, error) {
+	const requiredAlgorithm = "HS256"
+
+	parser := jwt.NewParser(jwt.WithValidMethods([]string{requiredAlgorithm}))
+	return parser.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
+		if method := token.Method.Alg(); method != requiredAlgorithm {
+			return nil, fmt.Errorf("unexpected signing algorithm: %s", method)
+		}
+		return signingKey, nil
+	})
+}
+
+func validateClaims(claims *jwt.RegisteredClaims, now time.Time) error {
+	if claims.ExpiresAt == nil || now.After(claims.ExpiresAt.Time) {
+		return fmt.Errorf("exp claim invalid or expired")
+	}
+	if claims.IssuedAt == nil || claims.IssuedAt.Time.After(now) {
+		return fmt.Errorf("iat claim invalid")
+	}
+	if strings.TrimSpace(claims.Subject) == "" {
+		return fmt.Errorf("sub claim missing or empty")
+	}
+	return nil
+}
+
+func validateIssuer(claims *jwt.RegisteredClaims, expectedIssuer string) error {
+	if expectedIssuer == "" {
+		return nil
+	}
+	if claims.Issuer != expectedIssuer {
+		return fmt.Errorf("issuer mismatch")
+	}
+	return nil
+}
+
+func validateAudience(claims *jwt.RegisteredClaims, expectedAud string) error {
+	if expectedAud == "" {
+		return nil
+	}
+	for _, aud := range claims.Audience {
+		if aud == expectedAud {
+			return nil
+		}
+	}
+	return fmt.Errorf("audience mismatch")
 }
 
 // validateSecrets ensures WEBUI_SECRET_KEY is present and sufficiently long.
