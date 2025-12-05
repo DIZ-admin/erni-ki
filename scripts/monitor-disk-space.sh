@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ERNI-KI disk space monitoring
 # Portable: uses repo root by default; override with PROJECT_DIR env
 # Intended for cron (e.g., daily at 01:00)
+
+set -euo pipefail
+IFS=$'\n\t'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="${PROJECT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
@@ -36,9 +39,9 @@ LOGS_SIZE=$(du -sh "$PROJECT_DIR/logs" 2>/dev/null | awk '{print $1}')
 echo "$(date '+%Y-%m-%d %H:%M:%S') - data/: $DATA_SIZE, .config-backup/: $BACKUP_SIZE, logs/: $LOGS_SIZE" >> "$LOG_FILE"
 
 # Docker statistics
-DOCKER_IMAGES=$(docker images -q | wc -l)
-DOCKER_CONTAINERS=$(docker ps -q | wc -l)
-DOCKER_VOLUMES=$(docker volume ls -q | wc -l)
+DOCKER_IMAGES=$(docker images -q | wc -l || echo 0)
+DOCKER_CONTAINERS=$(docker ps -q | wc -l || echo 0)
+DOCKER_VOLUMES=$(docker volume ls -q | wc -l || echo 0)
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Docker: $DOCKER_IMAGES images, $DOCKER_CONTAINERS containers, $DOCKER_VOLUMES volumes" >> "$LOG_FILE"
 echo "---" >> "$LOG_FILE"

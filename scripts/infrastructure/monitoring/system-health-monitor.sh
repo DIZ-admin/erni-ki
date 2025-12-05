@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ERNI-KI health monitoring
 # Comprehensive service health checks with alerts and metrics
 
-set -e
+set -euo pipefail
+IFS=$'\n\t'
 
 # Colors for output
 RED='\033[0;31m'
@@ -56,7 +57,7 @@ send_alert() {
 
     # Send webhook if configured
     if [[ -n "$ALERT_WEBHOOK" ]]; then
-        curl -s -X POST "$ALERT_WEBHOOK" \
+        curl -s --max-time 5 --connect-timeout 3 -X POST "$ALERT_WEBHOOK" \
             -H "Content-Type: application/json" \
             -d "{\"timestamp\":\"$timestamp\",\"severity\":\"$severity\",\"message\":\"$message\",\"service\":\"erni-ki\"}" \
             || warning "Failed to send webhook alert"
@@ -186,7 +187,7 @@ check_network_connectivity() {
         local endpoint=$(echo "$endpoint_info" | cut -d: -f1)
         local service=$(echo "$endpoint_info" | cut -d: -f2)
 
-        if curl -s --max-time 10 "$endpoint" > /dev/null 2>&1; then
+        if curl -s --max-time 10 --connect-timeout 3 "$endpoint" > /dev/null 2>&1; then
             success "✅ $service: reachable"
             ((successful_checks++))
         else
