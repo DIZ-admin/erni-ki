@@ -1,7 +1,7 @@
 ---
 title: 'Pre-commit Refactoring Documentation - Audit Report'
 language: ru
-doc_version: '2025.12'
+doc_version: '2025.11'
 last_updated: '2025-12-03'
 audit_type: 'documentation_quality'
 ---
