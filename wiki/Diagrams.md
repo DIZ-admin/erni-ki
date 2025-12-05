@@ -6,7 +6,7 @@
 flowchart LR
   U[Users/Browser] --> CF[Cloudflare Tunnel]
   CF --> NG[Nginx]
-  NG --> AU[Auth (JWT)]
+  NG --> AU[Auth JWT]
   NG --> OW[OpenWebUI]
   OW --> LL[LiteLLM]
   LL --> OL[Ollama GPU]
@@ -26,12 +26,12 @@ flowchart LR
     PR --> EX[Exporters]
   end
 
-  NG -.-> EX
-  DB -.-> EX
-  RD -.-> EX
-  OL -.-> EX
-  LL -.-> FB
-  OW -.-> FB
+  NG --> EX
+  DB --> EX
+  RD --> EX
+  OL --> EX
+  LL --> FB
+  OW --> FB
 ```
 
 ## Request & Data Flow
@@ -117,7 +117,7 @@ flowchart TD
     CORS[CORS allowlist reflect]:::ctrl
     ACLN[ACL for SearXNG API]:::ctrl
     JWT[JWT audience support]:::ctrl
-    RO[Read-only stateless (in progress)]:::ctrl
+    RO[Read-only stateless pending]:::ctrl
   end
 
   NG -.-> CSP
