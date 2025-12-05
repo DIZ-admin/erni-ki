@@ -363,7 +363,8 @@ jobs:
         run: |
           if [ -d "env" ]; then
             for f in env/*.example; do
-              target="${f%.example}"
+              base="$(basename "$f" .example)"
+              target="env/${base}.env"
               if [ ! -f "$target" ]; then
                 cp "$f" "$target"
               fi
