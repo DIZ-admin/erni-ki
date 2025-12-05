@@ -1,5 +1,6 @@
 # Lychee configuration (compatible with >=0.21)
 
+[general]
 # Run in offline mode: only check local file links, skip HTTP requests
 offline = true
 max_concurrency = 4

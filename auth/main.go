@@ -15,22 +15,76 @@ import (
 	"github.com/google/uuid"
 )
 
+//nolint:gochecknoglobals // injected in tests
+var (
+	osExit         = os.Exit
+	listenAndServe = func(server *http.Server) error {
+		return server.ListenAndServe()
+	}
+)
+
 func main() {
+	osExit(run(os.Args, nil))
+}
+
+func run(args []string, serve func(*http.Server) error) int {
 	// Check command line arguments for health check
-	if len(os.Args) > 1 && os.Args[1] == "--health-check" {
+	if len(args) > 1 && args[1] == "--health-check" {
 		if err := healthCheck(); err != nil {
 			log.Printf("health check failed: %v", err)
-			os.Exit(1)
+			return 1
 		}
-		os.Exit(0)
+		return 0
 	}
 
+	if err := validateSecrets(); err != nil {
+		log.Printf("secret validation failed: %v", err)
+		return 1
+	}
+
+	router := setupRouter()
+	server := newServer(router)
+
+	runner := serve
+	if runner == nil {
+		runner = listenAndServe
+	}
+
+	if err := runner(server); err != nil {
+		log.Printf("failed to start server: %v", err)
+		return 1
+	}
+
+	return 0
+}
+
+// newServer constructs the HTTP server with sensible timeouts.
+func newServer(handler http.Handler) *http.Server {
+	return &http.Server{
+		Addr:              "0.0.0.0:9090",
+		Handler:           handler,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
+}
+
+// setupRouter configures the Gin router with middleware and routes.
+func setupRouter() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 
 	r.Use(requestIDMiddleware())
 	r.Use(gin.LoggerWithFormatter(requestLogger))
 	r.Use(gin.Recovery())
 
+	registerRoutes(r)
+	return r
+}
+
+// registerRoutes defines HTTP handlers.
+func registerRoutes(r *gin.Engine) {
 	r.GET("/", func(c *gin.Context) {
 		respondJSON(c, http.StatusOK, gin.H{
 			"message": "auth-service is running",
@@ -73,20 +127,6 @@ func main() {
 			"message": "authorized",
 		})
 	})
-
-	server := &http.Server{
-		Addr:              "0.0.0.0:9090",
-		Handler:           r,
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       120 * time.Second,
-	}
-
-	if err := server.ListenAndServe(); err != nil {
-		log.Printf("failed to start server: %v", err)
-		os.Exit(1)
-	}
 }
 
 func requestIDMiddleware() gin.HandlerFunc {
@@ -130,13 +170,18 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 
 // healthCheck performs service health check for Docker.
 func healthCheck() error {
+	target := os.Getenv("AUTH_HEALTH_URL")
+	if target == "" {
+		target = "http://localhost:9090/health"
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		"http://localhost:9090/health",
+		target,
 		http.NoBody,
 	)
 	if err != nil {
@@ -238,7 +283,7 @@ func validateSecrets() error {
 	return nil
 }
 
-func getEnvOrFile(key string) string {
+func getEnvOrFile(key string) string { //nolint:unparam // keep flexible signature
 	if val := os.Getenv(key); val != "" {
 		return val
 	}

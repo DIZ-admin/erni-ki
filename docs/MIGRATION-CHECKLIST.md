@@ -9,8 +9,8 @@ last_updated: '2025-12-04'
 
 **Total Time:** 2-3 hours | **Date:** 2025-12-03
 
-**Full Details:**
-[.claude/plans/bun-migration-plan.md](.claude/plans/bun-migration-plan.md)
+**Full Details:** see
+[development/bun-migration.md](./development/bun-migration.md)
 
 ---
 
@@ -365,4 +365,4 @@ npm run test
 **Ready to execute?** Start with Phase 1!
 
 **Need help?** See
-[.claude/plans/bun-migration-plan.md](.claude/plans/bun-migration-plan.md)
+[development/bun-migration.md](./development/bun-migration.md)

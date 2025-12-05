@@ -20,7 +20,7 @@ translation_status: complete
 
 - [REFACTORING-SUMMARY.txt](./REFACTORING-SUMMARY.txt) - Plain text executive
   summary (5 min)
-- [docs/development/REFACTORING-SUMMARY.md](./docs/development/REFACTORING-SUMMARY.md) -
+- [development/REFACTORING-SUMMARY.md](./development/REFACTORING-SUMMARY.md) -
   Formatted executive summary (10 min)
 
 **Key questions answered:**
@@ -34,9 +34,9 @@ translation_status: complete
 
 **Start here:**
 
-- [docs/development/PHASE1-QUICK-WINS.md](./docs/development/PHASE1-QUICK-WINS.md) -
+- [development/PHASE1-QUICK-WINS.md](./development/PHASE1-QUICK-WINS.md) -
   **START TODAY** (2-4 hours)
-- [docs/development/PRE-COMMIT-INDEX.md](./docs/development/PRE-COMMIT-INDEX.md) -
+- [development/PRE-COMMIT-INDEX.md](./development/PRE-COMMIT-INDEX.md) -
   Complete navigation guide
 
 **Quick win (5 minutes):**
@@ -73,10 +73,10 @@ removed. Use profiles (`config-fast`, `config-full`, `config-docs`,
 
 **Deep dive:**
 
-- [docs/development/PRE-COMMIT-REFACTORING-PLAN.md](./docs/development/PRE-COMMIT-REFACTORING-PLAN.md) -
+- [development/PRE-COMMIT-REFACTORING-PLAN.md](./development/PRE-COMMIT-REFACTORING-PLAN.md) -
   Complete technical specification (60 min)
-- [docs/development/pre-commit-guide.md](./docs/development/pre-commit-guide.md) -
-  Current system documentation (30 min)
+- [development/pre-commit-guide.md](./development/pre-commit-guide.md) - Current
+  system documentation (30 min)
 
 **Key sections:**
 
@@ -91,26 +91,26 @@ removed. Use profiles (`config-fast`, `config-full`, `config-docs`,
 
 ### Executive Summaries
 
-| Document                                                                             | Audience        | Time   | Purpose                       |
-| ------------------------------------------------------------------------------------ | --------------- | ------ | ----------------------------- |
-| [REFACTORING-SUMMARY.txt](./REFACTORING-SUMMARY.txt)                                 | Decision makers | 5 min  | Plain text quick overview     |
-| [docs/development/REFACTORING-SUMMARY.md](./docs/development/REFACTORING-SUMMARY.md) | Team leads      | 10 min | Executive summary (formatted) |
+| Document                                                                   | Audience        | Time   | Purpose                       |
+| -------------------------------------------------------------------------- | --------------- | ------ | ----------------------------- |
+| [REFACTORING-SUMMARY.txt](./REFACTORING-SUMMARY.txt)                       | Decision makers | 5 min  | Plain text quick overview     |
+| [development/REFACTORING-SUMMARY.md](./development/REFACTORING-SUMMARY.md) | Team leads      | 10 min | Executive summary (formatted) |
 
 ### Implementation Guides
 
-| Document                                                                                             | Audience   | Time      | Purpose                      |
-| ---------------------------------------------------------------------------------------------------- | ---------- | --------- | ---------------------------- |
-| [docs/development/PHASE1-QUICK-WINS.md](./docs/development/PHASE1-QUICK-WINS.md)                     | Developers | 2-4 hours | Immediate 30-50% improvement |
-| [docs/development/PRE-COMMIT-REFACTORING-PLAN.md](./docs/development/PRE-COMMIT-REFACTORING-PLAN.md) | Tech leads | 60 min    | Complete technical plan      |
+| Document                                                                                   | Audience   | Time      | Purpose                      |
+| ------------------------------------------------------------------------------------------ | ---------- | --------- | ---------------------------- |
+| [development/PHASE1-QUICK-WINS.md](./development/PHASE1-QUICK-WINS.md)                     | Developers | 2-4 hours | Immediate 30-50% improvement |
+| [development/PRE-COMMIT-REFACTORING-PLAN.md](./development/PRE-COMMIT-REFACTORING-PLAN.md) | Tech leads | 60 min    | Complete technical plan      |
 
 ### Navigation & Reference
 
-| Document                                                                                 | Audience       | Time   | Purpose                            |
-| ---------------------------------------------------------------------------------------- | -------------- | ------ | ---------------------------------- |
-| [docs/development/PRE-COMMIT-INDEX.md](./docs/development/PRE-COMMIT-INDEX.md)           | All developers | 15 min | Navigation for all pre-commit docs |
-| [docs/development/pre-commit-guide.md](./docs/development/pre-commit-guide.md)           | All developers | 30 min | Current system documentation       |
-| [docs/development/PROJECT-RULES-SUMMARY.md](./docs/development/PROJECT-RULES-SUMMARY.md) | All developers | 10 min | Quick reference for rules          |
-| [docs/development/RULES-FLOWCHART.md](./docs/development/RULES-FLOWCHART.md)             | All developers | 15 min | Visual workflows                   |
+| Document                                                                       | Audience       | Time   | Purpose                            |
+| ------------------------------------------------------------------------------ | -------------- | ------ | ---------------------------------- |
+| [development/PRE-COMMIT-INDEX.md](./development/PRE-COMMIT-INDEX.md)           | All developers | 15 min | Navigation for all pre-commit docs |
+| [development/pre-commit-guide.md](./development/pre-commit-guide.md)           | All developers | 30 min | Current system documentation       |
+| [development/PROJECT-RULES-SUMMARY.md](./development/PROJECT-RULES-SUMMARY.md) | All developers | 10 min | Quick reference for rules          |
+| [development/RULES-FLOWCHART.md](./development/RULES-FLOWCHART.md)             | All developers | 15 min | Visual workflows                   |
 
 ---
 
@@ -119,8 +119,8 @@ removed. Use profiles (`config-fast`, `config-full`, `config-docs`,
 ### Path 1: "I need faster commits NOW" (5 minutes)
 
 1. **Read:**
-   [docs/development/PHASE1-QUICK-WINS.md](./docs/development/PHASE1-QUICK-WINS.md)
-   → "Quick Win #1"
+   [development/PHASE1-QUICK-WINS.md](./development/PHASE1-QUICK-WINS.md) →
+   "Quick Win #1"
 2. **Do:**
 
 ```bash
@@ -143,8 +143,8 @@ bun run commit:fast -m "feat: quick improvement"
 ### Path 2: "I want to implement all quick wins" (2-4 hours)
 
 1. **Read:**
-   [docs/development/PHASE1-QUICK-WINS.md](./docs/development/PHASE1-QUICK-WINS.md)
-   (30 min)
+   [development/PHASE1-QUICK-WINS.md](./development/PHASE1-QUICK-WINS.md) (30
+   min)
 2. **Implement:** 7 quick wins following checklist (2-3 hours)
 3. **Test:** Verify improvements (30 min)
 4. **Share:** Communicate to team (15 min)
@@ -154,7 +154,7 @@ bun run commit:fast -m "feat: quick improvement"
 ### Path 3: "I need to approve the full refactoring plan" (20 minutes)
 
 1. **Read:** [REFACTORING-SUMMARY.txt](./REFACTORING-SUMMARY.txt) or
-   [docs/development/REFACTORING-SUMMARY.md](./docs/development/REFACTORING-SUMMARY.md)
+   [development/REFACTORING-SUMMARY.md](./development/REFACTORING-SUMMARY.md)
    (10 min)
 2. **Review:** Benefits, costs, risks (5 min)
 3. **Decide:** Approve or request changes (5 min)
@@ -164,7 +164,7 @@ bun run commit:fast -m "feat: quick improvement"
 ### Path 4: "I need to implement the complete refactoring" (3 weeks)
 
 1. **Read:**
-   [docs/development/PRE-COMMIT-REFACTORING-PLAN.md](./docs/development/PRE-COMMIT-REFACTORING-PLAN.md)
+   [development/PRE-COMMIT-REFACTORING-PLAN.md](./development/PRE-COMMIT-REFACTORING-PLAN.md)
    (60 min)
 2. **Week 1:** Phase 1 - Performance optimization
 3. **Week 2:** Phase 2 - Architecture simplification
@@ -307,13 +307,13 @@ time bun run commit:fast -m "test: optimized"
 ### Documentation
 
 - **Navigation:**
-  [docs/development/PRE-COMMIT-INDEX.md](./docs/development/PRE-COMMIT-INDEX.md)
+  [development/PRE-COMMIT-INDEX.md](./development/PRE-COMMIT-INDEX.md)
 - **Technical details:**
-  [docs/development/PRE-COMMIT-REFACTORING-PLAN.md](./docs/development/PRE-COMMIT-REFACTORING-PLAN.md)
+  [development/PRE-COMMIT-REFACTORING-PLAN.md](./development/PRE-COMMIT-REFACTORING-PLAN.md)
 - **Quick start:**
-  [docs/development/PHASE1-QUICK-WINS.md](./docs/development/PHASE1-QUICK-WINS.md)
+  [development/PHASE1-QUICK-WINS.md](./development/PHASE1-QUICK-WINS.md)
 - **Current system:**
-  [docs/development/pre-commit-guide.md](./docs/development/pre-commit-guide.md)
+  [development/pre-commit-guide.md](./development/pre-commit-guide.md)
 
 ### Support
 

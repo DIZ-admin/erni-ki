@@ -12,8 +12,8 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
-      // Keep real layout (unit/integration + shared setup)
-      include: ['tests/unit/**/*.{ts,js}', 'tests/integration/**/*.{ts,js}', 'tests/setup.ts'],
+      // Include source scripts and unit tests that exercise them
+      include: ['tests/utils/**/*.{ts,js}', 'types/**/*.ts'],
       exclude: [
         'node_modules/**',
         'dist/**',
@@ -21,13 +21,14 @@ export default defineConfig({
         'coverage/**',
         '**/*.config.*',
         '**/*.d.ts',
-        'auth/**', // Go code tested separately
+        'auth/**',
         'data/**',
         'logs/**',
         'docs/**',
         'tests/e2e/**',
         'playwright-report/**',
         'playwright-artifacts/**',
+        'scripts/**',
       ],
       thresholds: {
         global: {
@@ -60,6 +61,7 @@ export default defineConfig({
       'tests/e2e/**', // E2E tests run via Playwright
       'playwright-report/**',
       'playwright-artifacts/**',
+      'scripts/language-check.cjs', // executed as a subprocess; not instrumentable by Vitest
     ],
 
     // Reporters

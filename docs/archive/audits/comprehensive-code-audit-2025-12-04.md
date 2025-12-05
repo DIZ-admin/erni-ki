@@ -784,8 +784,7 @@ graph TD
 
 **Recommendation:**
 
-Create
-[docs/security/SECRET-ROTATION-POLICY.md](../../security/SECRET-ROTATION-POLICY.md):
+Create [docs/security/security-policy.md](../../security/security-policy.md):
 
 ```markdown
 # Secret Rotation Policy
@@ -982,8 +981,8 @@ incrementally.
   performance improvements
 - [PROJECT-RULES-SUMMARY.md](../../development/PROJECT-RULES-SUMMARY.md) -
   Critical project rules
-- [PRE-COMMIT-AUDIT-SUMMARY.txt](../../../PRE-COMMIT-AUDIT-SUMMARY.txt) -
-  Previous audit results
+- [PRE-COMMIT-AUDIT-SUMMARY.txt](../../PRE-COMMIT-AUDIT-SUMMARY.txt) - Previous
+  audit results
 
 ### 12.2 Audit Checklist
 

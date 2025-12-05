@@ -111,6 +111,27 @@ jobs:
       - name: 📊 Generate coverage report
         run: go tool cover -html=coverage.out -o coverage.html
 
+      - name: ✅ Enforce Go coverage >= 80%
+        run: |
+          go tool cover -func=coverage.out | tee coverage-summary.txt
+          python - <<'PY'
+            import re, sys
+            from pathlib import Path
+
+            cov_file = Path("coverage-summary.txt")
+            if not cov_file.exists() or cov_file.stat().st_size == 0:
+                sys.exit("coverage-summary.txt is missing or empty")
+
+            text = cov_file.read_text()
+            m = re.search(r"total:\s+\(statements\)\s+([\d.]+)%", text)
+            if not m:
+                sys.exit("could not parse coverage")
+            val = float(m.group(1))
+            print(f"Go coverage: {val}%")
+            if val < 80:
+                sys.exit("coverage below 80% threshold")
+          PY
+
       - name: 📋 Upload coverage artifacts
         uses: actions/upload-artifact@v5
         with:
@@ -119,6 +140,13 @@ jobs:
             auth/coverage.out
             auth/coverage.html
           retention-days: 30
+
+      - name: 📤 Upload coverage to Codecov (Go)
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./auth/coverage.out
+          flags: go
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   # Python Unit Tests
   test-python:
@@ -146,7 +174,14 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:.
           export LOG_DIR=/tmp/logs
-          pytest tests/python/ --cov=. --cov-report=xml --cov-fail-under=60
+          pytest tests/python/ --cov=. --cov-config=.coveragerc --cov-report=xml --cov-fail-under=80
+
+      - name: 📤 Upload coverage to Codecov (Python)
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: python
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   # Python type checking
   mypy:
@@ -197,6 +232,13 @@ jobs:
 
       - name: 🧪 Run Vitest suite
         run: bun run test:unit
+
+      - name: 📤 Upload coverage to Codecov (JS/TS)
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/lcov.info
+          flags: js
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: 🧰 Install Playwright browser
         run: bunx playwright install --with-deps chromium
