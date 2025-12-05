@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Quick start ERNI-KI in 5 minutes
 # Author: Alteon Schulz (Tech Lead)
 
-set -e
+set -euo pipefail
+IFS=$'\n\t'
 
 # Source common library
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,9 +21,9 @@ step() { echo -e "${PURPLE}🔸 $1${NC}"; }
 quick_check() {
     step "Quick system check..."
 
-    command -v docker >/dev/null 2>&1 || log_error "Docker is not installed"
-    command -v docker compose >/dev/null 2>&1 || log_error "Docker Compose is not installed"
-    command -v openssl >/dev/null 2>&1 || log_error "OpenSSL is not installed"
+    command -v docker >/dev/null 2>&1 || { log_error "Docker is not installed"; exit 1; }
+    command -v docker compose >/dev/null 2>&1 || { log_error "Docker Compose is not installed"; exit 1; }
+    command -v openssl >/dev/null 2>&1 || { log_error "OpenSSL is not installed"; exit 1; }
 
     log_success "All dependencies found"
 }
@@ -40,7 +41,9 @@ quick_setup() {
 
     # Main env files
     for env in auth db openwebui searxng; do
-        [ ! -f "env/${env}.env" ] && cp "env/${env}.example" "env/${env}.env"
+        if [ ! -f "env/${env}.env" ]; then
+            cp "env/${env}.example" "env/${env}.env"
+        fi
     done
 
     # Main configurations

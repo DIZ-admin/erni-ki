@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Automated setup script for ERNI-KI
 # Author: Alteon Schulz (Tech Lead)
 
-set -e
+set -euo pipefail
+IFS=$'\n\t'
 
 # Source common library
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -17,15 +18,18 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 check_dependencies() {
     log_info "Checking system dependencies..."
 
+    local missing=0
     # Docker
     if ! command -v docker &> /dev/null; then
         log_error "Docker is not installed. Install Docker: https://docs.docker.com/get-docker/"
+        missing=1
     fi
     log_success "Docker found: $(docker --version)"
 
     # Docker Compose
     if ! command -v docker compose &> /dev/null; then
         log_error "Docker Compose is not installed"
+        missing=1
     fi
     log_success "Docker Compose found: $(docker compose version)"
 
@@ -46,8 +50,13 @@ check_dependencies() {
     # OpenSSL for key generation
     if ! command -v openssl &> /dev/null; then
         log_error "OpenSSL is not installed (required for secret generation)"
+        missing=1
     fi
     log_success "OpenSSL found"
+
+    if [[ $missing -ne 0 ]]; then
+        exit 1
+    fi
 }
 
 # Create directories
