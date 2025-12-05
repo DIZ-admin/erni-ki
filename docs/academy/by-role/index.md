@@ -324,7 +324,7 @@ last_updated: '2025-12-04'
 
 - Email: academy@erni.com
 - Slack: #ai-academy
-- GitHub Issues: [Submit feedback](https://github.com/your-repo/issues)
+- GitHub: [Submit feedback](https://github.com/DIZ-admin/erni-ki)
 
 ---
 

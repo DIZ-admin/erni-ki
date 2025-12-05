@@ -243,10 +243,10 @@ Ongoing: Phase 4 Maintenance (CRITICAL)
 
 После запуска tracking, metrics будут доступны здесь:
 
-- **Content Creation:** [GitHub Project Board](TBD)
-- **Translation Status:** [Translation Dashboard](TBD)
-- **User Analytics:** [Google Analytics](TBD)
-- **Feedback:** [GitHub Discussions](TBD)
+- **Content Creation:** GitHub Project Board — TBD
+- **Translation Status:** Translation Dashboard — TBD
+- **User Analytics:** Analytics Dashboard — TBD
+- **Feedback:** GitHub Discussions — TBD
 
 ---
 
@@ -276,9 +276,8 @@ Ongoing: Phase 4 Maintenance (CRITICAL)
 
 ## Support & Questions
 
-**GitHub Issues:**
-[Create new issue](https://github.com/DIZ-admin/erni-ki/issues/new) **GitHub
-Discussions:**
+**GitHub Issues:** [Create new issue](https://github.com/DIZ-admin/erni-ki)
+**GitHub Discussions:**
 [Start a discussion](https://github.com/DIZ-admin/erni-ki/discussions)
 
 **Documentation Team:**

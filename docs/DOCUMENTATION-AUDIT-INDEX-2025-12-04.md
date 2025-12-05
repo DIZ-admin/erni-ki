@@ -359,8 +359,7 @@ docs/
 
 **Вопросы по аудиту:**
 
-- GitHub Issues:
-  [Create new issue](https://github.com/DIZ-admin/erni-ki/issues/new)
+- GitHub Issues: [Create new issue](https://github.com/DIZ-admin/erni-ki)
 - GitHub Discussions:
   [Start a discussion](https://github.com/DIZ-admin/erni-ki/discussions)
 

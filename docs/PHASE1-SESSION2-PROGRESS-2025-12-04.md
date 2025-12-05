@@ -24,7 +24,7 @@ session: 2
 
 #### Created:
 
-**1. [fundamentals/index.md](docs/academy/fundamentals/index.md)**
+**1. [fundamentals/index.md](academy/fundamentals/index.md)**
 
 - Complete overview of Fundamentals
 - 3 learning tracks defined
@@ -33,7 +33,7 @@ session: 2
 - **Status:** Production-ready
 
 **2.
-[fundamentals/prompting-fundamentals.md](docs/academy/fundamentals/prompting-fundamentals.md)**
+[fundamentals/prompting-fundamentals.md](academy/fundamentals/prompting-fundamentals.md)**
 
 - Duration: 25 min
 - 4-element prompt anatomy (Role, Task, Context, Format)
@@ -44,7 +44,7 @@ session: 2
 - **Status:** Comprehensive, ready for users
 
 **3.
-[fundamentals/context-management.md](docs/academy/fundamentals/context-management.md)**
+[fundamentals/context-management.md](academy/fundamentals/context-management.md)**
 
 - Duration: 20 min
 - Context window explained
@@ -66,7 +66,7 @@ session: 2
 #### Created:
 
 **1.
-[by-role/general-users/write-professional-email.md](docs/academy/by-role/general-users/write-professional-email.md)**
+[by-role/general-users/write-professional-email.md](academy/by-role/general-users/write-professional-email.md)**
 
 - Duration: 10 min
 - Difficulty: Easy
@@ -77,7 +77,7 @@ session: 2
 - **Status:** Immediately useful
 
 **2.
-[by-role/developers/debug-code.md](docs/academy/by-role/developers/debug-code.md)**
+[by-role/developers/debug-code.md](academy/by-role/developers/debug-code.md)**
 
 - Duration: 15 min
 - Difficulty: Medium
@@ -408,7 +408,7 @@ Priority order for next session:
 ## Files Created This Session
 
 ```
-docs/academy/
+academy/
  fundamentals/
  index.md NEW
  prompting-fundamentals.md NEW

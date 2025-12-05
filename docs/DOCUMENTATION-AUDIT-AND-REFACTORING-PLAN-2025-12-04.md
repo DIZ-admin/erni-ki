@@ -70,7 +70,7 @@ COMPLETED - РЕКОМЕНДАЦИИ ГОТОВЫ **Оценка текущег�
 **Существующая структура:**
 
 ```
-docs/academy/
+academy/
  index.md # Главная страница (RU)
  openwebui-basics.md # Основы Open WebUI
  prompting-101.md # Базовый промптинг
@@ -169,7 +169,7 @@ docs/academy/
 
 #### Обучающие материалы
 
-**1. [openwebui-basics.md](docs/academy/openwebui-basics.md)** (RU) - 53 строки
+**1. [openwebui-basics.md](academy/openwebui-basics.md)** (RU) - 53 строки
 
 - Как открыть Open WebUI
 - Как выбрать модель
@@ -179,8 +179,7 @@ docs/academy/
 
 **Оценка:** 7/10 - Хороший базовый контент, но нужно больше деталей и скриншотов
 
-**2. [prompting-101.md](docs/academy/prompting-101.md)** (RU) - Не полностью
-заполнен
+**2. [prompting-101.md](academy/prompting-101.md)** (RU) - Не полностью заполнен
 
 - Базовые концепции промптинга
 - Нужно добавить примеры
@@ -188,8 +187,7 @@ docs/academy/
 
 **Оценка:** 6/10 - Требуется существенное расширение
 
-**3. [context-engineering-101.md](docs/academy/context-engineering-101.md)**
-(RU)
+**3. [context-engineering-101.md](academy/context-engineering-101.md)** (RU)
 
 - Минимальный контент
 - Требуется полное наполнение
@@ -321,7 +319,7 @@ docs/academy/
 1. **Создать чёткую иерархию уровней**
 
 ```
-docs/academy/
+academy/
 getting-started/ # Уровень 1: Новички
 index.md
 what-is-ai.md
@@ -999,7 +997,7 @@ etc.) **Sustainability** - maintenance processes, not just creation
 **Существующие материалы (для reference):**
 
 - [docs/archive/audits/documentation-audit.md](docs/archive/audits/documentation-audit.md)
-- [docs/academy/](docs/academy/)
+- [academy/](academy/)
 - [docs/en/academy/](docs/en/academy/)
 - [docs/de/academy/](docs/de/academy/)
 
@@ -1067,7 +1065,7 @@ created) **Questions:** GitHub Discussions or Issues
 **Ссылки:**
 
 - [MkDocs Material Documentation](https://squidfunk.github.io/mkdocs-material/)
-- [Current Academy Portal](docs/academy/)
+- [Current Academy Portal](academy/)
 - [Previous Documentation Audit](docs/archive/audits/documentation-audit.md)
 - [Comprehensive Code Audit](docs/COMPREHENSIVE-AUDIT-SUMMARY.txt)
 

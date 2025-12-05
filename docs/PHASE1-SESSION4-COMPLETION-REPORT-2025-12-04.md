@@ -27,7 +27,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 **Created this session:**
 
 **5.
-[fundamentals/effective-prompts.md](docs/academy/fundamentals/effective-prompts.md)**
+[fundamentals/effective-prompts.md](academy/fundamentals/effective-prompts.md)**
 
 - Duration: 20 min advanced guide
 - 10 продвинутых техник промптинга
@@ -55,7 +55,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 **Created this session (4 new scenarios):**
 
 **8.
-[by-role/managers/analyze-metrics.md](docs/academy/by-role/managers/analyze-metrics.md)**
+[by-role/managers/analyze-metrics.md](academy/by-role/managers/analyze-metrics.md)**
 
 - Duration: 15 min
 - Difficulty: Medium
@@ -66,7 +66,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 - **Status:** Comprehensive metrics guide
 
 **9.
-[by-role/support/create-knowledge-base-article.md](docs/academy/by-role/support/create-knowledge-base-article.md)**
+[by-role/support/create-knowledge-base-article.md](academy/by-role/support/create-knowledge-base-article.md)**
 
 - Duration: 10 min
 - Difficulty: Easy
@@ -77,7 +77,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 - **Status:** Complete KB creation guide
 
 **10.
-[by-role/general-users/translate-document.md](docs/academy/by-role/general-users/translate-document.md)**
+[by-role/general-users/translate-document.md](academy/by-role/general-users/translate-document.md)**
 
 - Duration: 10 min
 - Difficulty: Easy
@@ -88,7 +88,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 - **Status:** Professional translation guide
 
 **11.
-[by-role/general-users/prepare-presentation.md](docs/academy/by-role/general-users/prepare-presentation.md)**
+[by-role/general-users/prepare-presentation.md](academy/by-role/general-users/prepare-presentation.md)**
 
 - Duration: 15 min
 - Difficulty: Easy
@@ -119,7 +119,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 
 **Created this session (5 new index pages):**
 
-**2. [by-role/index.md](docs/academy/by-role/index.md)**
+**2. [by-role/index.md](academy/by-role/index.md)**
 
 - Main hub for all role-based scenarios
 - Overview of 4 role categories
@@ -128,7 +128,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 - Progress tracking checklists
 - **Status:** Complete navigation hub
 
-**3. [by-role/developers/index.md](docs/academy/by-role/developers/index.md)**
+**3. [by-role/developers/index.md](academy/by-role/developers/index.md)**
 
 - Developer scenarios overview (3 scenarios)
 - Recommended learning tracks (3 tracks)
@@ -138,7 +138,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 - Best practices, metrics
 - **Status:** Comprehensive dev guide
 
-**4. [by-role/managers/index.md](docs/academy/by-role/managers/index.md)**
+**4. [by-role/managers/index.md](academy/by-role/managers/index.md)**
 
 - Manager scenarios overview (2 scenarios)
 - Learning tracks (Reporting, Data-Driven, Complete)
@@ -147,7 +147,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 - Report types, template library
 - **Status:** Complete management guide
 
-**5. [by-role/support/index.md](docs/academy/by-role/support/index.md)**
+**5. [by-role/support/index.md](academy/by-role/support/index.md)**
 
 - Support scenarios overview (2 scenarios)
 - Workflows (Ticket Resolution, KB Maintenance, Escalation)
@@ -156,8 +156,7 @@ Phase 1 time:** ~9.5 hours **Final status:** ALL TARGETS MET
 - Template library, best practices
 - **Status:** Full support guide
 
-**6.
-[by-role/general-users/index.md](docs/academy/by-role/general-users/index.md)**
+**6. [by-role/general-users/index.md](academy/by-role/general-users/index.md)**
 
 - Universal scenarios overview (3 scenarios)
 - Communication workflows

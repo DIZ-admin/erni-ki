@@ -44,7 +44,7 @@ Created comprehensive audit documentation:
 Created new folder hierarchy:
 
 ```
-docs/academy/
+academy/
  getting-started/ CREATED
  fundamentals/ CREATED
  advanced/ CREATED
@@ -64,7 +64,7 @@ docs/academy/
 
 #### Created Materials:
 
-**1. [getting-started/index.md](docs/academy/getting-started/index.md)**
+**1. [getting-started/index.md](academy/getting-started/index.md)**
 
 - Overview of Academy KI
 - Learning tracks (Beginner / Quick Start)
@@ -72,8 +72,7 @@ docs/academy/
 - Navigation to next steps
 - **Status:** Complete, ready for review
 
-**2.
-[getting-started/what-is-ai.md](docs/academy/getting-started/what-is-ai.md)**
+**2. [getting-started/what-is-ai.md](academy/getting-started/what-is-ai.md)**
 
 - Duration: 15 min
 - What is AI and LLM
@@ -83,8 +82,7 @@ docs/academy/
 - Use cases and safety
 - **Status:** Complete, comprehensive
 
-**3.
-[getting-started/first-steps.md](docs/academy/getting-started/first-steps.md)**
+**3. [getting-started/first-steps.md](academy/getting-started/first-steps.md)**
 
 - Duration: 20 min
 - How to login to Open WebUI
@@ -95,7 +93,7 @@ docs/academy/
 - **Status:** Complete, includes UI diagram
 
 **4.
-[getting-started/model-comparison.md](docs/academy/getting-started/model-comparison.md)**
+[getting-started/model-comparison.md](academy/getting-started/model-comparison.md)**
 
 - Duration: 20 min
 - GPT-4o vs Claude vs Llama
@@ -105,7 +103,7 @@ docs/academy/
 - **Status:** Complete, detailed
 
 **5.
-[getting-started/safety-and-ethics.md](docs/academy/getting-started/safety-and-ethics.md)**
+[getting-started/safety-and-ethics.md](academy/getting-started/safety-and-ethics.md)**
 
 - Duration: 15 min
 - Data security principles
@@ -115,7 +113,7 @@ docs/academy/
 - GDPR considerations
 - **Status:** Complete, critical content
 
-**6. [getting-started/faq.md](docs/academy/getting-started/faq.md)**
+**6. [getting-started/faq.md](academy/getting-started/faq.md)**
 
 - Duration: 10 min
 - 30+ frequently asked questions
@@ -132,7 +130,7 @@ docs/academy/
 #### Created for Developers:
 
 **1.
-[by-role/developers/code-review-with-ai.md](docs/academy/by-role/developers/code-review-with-ai.md)**
+[by-role/developers/code-review-with-ai.md](academy/by-role/developers/code-review-with-ai.md)**
 
 - Duration: 15 min
 - Complete code review workflow

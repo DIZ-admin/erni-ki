@@ -35,7 +35,7 @@ Started) **After Session 2:** 55% (+ Fundamentals foundation) **After Session
 
 #### Completed this session:
 
-**4. [fundamentals/rag-basics.md](docs/academy/fundamentals/rag-basics.md)**
+**4. [fundamentals/rag-basics.md](academy/fundamentals/rag-basics.md)**
 
 - Duration: 20 min comprehensive guide
 - How RAG works (4-step process explained)
@@ -58,7 +58,7 @@ Started) **After Session 2:** 55% (+ Fundamentals foundation) **After Session
 #### Completed this session:
 
 **4.
-[by-role/developers/write-unit-tests.md](docs/academy/by-role/developers/write-unit-tests.md)**
+[by-role/developers/write-unit-tests.md](academy/by-role/developers/write-unit-tests.md)**
 
 - Duration: 15 min
 - Difficulty: Medium
@@ -68,7 +68,7 @@ Started) **After Session 2:** 55% (+ Fundamentals foundation) **After Session
 - **Status:** High-value for developers
 
 **5.
-[by-role/managers/create-project-report.md](docs/academy/by-role/managers/create-project-report.md)**
+[by-role/managers/create-project-report.md](academy/by-role/managers/create-project-report.md)**
 
 - Duration: 10 min
 - Difficulty: Easy
@@ -78,7 +78,7 @@ Started) **After Session 2:** 55% (+ Fundamentals foundation) **After Session
 - **Status:** Immediately useful for PMs
 
 **6.
-[by-role/support/troubleshoot-user-issue.md](docs/academy/by-role/support/troubleshoot-user-issue.md)**
+[by-role/support/troubleshoot-user-issue.md](academy/by-role/support/troubleshoot-user-issue.md)**
 
 - Duration: 10 min
 - Difficulty: Medium
@@ -624,7 +624,7 @@ Effort: ~10-12 hours
 ### Session 3 Output:
 
 ```
-docs/academy/
+academy/
  fundamentals/
  rag-basics.md NEW
  by-role/
