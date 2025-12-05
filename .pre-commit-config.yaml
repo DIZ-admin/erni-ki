@@ -61,6 +61,7 @@ repos:
             logs/.*|
             \.config-backup/.*|
             node_modules/.*|
+            scripts/entrypoints/busybox|
             .*\.pdf|
             .*\.zip|
             .*\.tar\.gz

@@ -294,7 +294,8 @@ services:
 
   # Cloudflare tunnel for external access
   cloudflared:
-    command: tunnel --no-autoupdate run
+    entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/cloudflared-with-secret.sh"]
+    command: ["tunnel", "--no-autoupdate", "run"]
     depends_on:
       nginx:
         condition: service_healthy
@@ -318,6 +319,10 @@ services:
     cpus: "0.25"
     volumes:
       - ./conf/cloudflare/config:/home/nonroot/.cloudflared
+      - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
+      - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
+    secrets:
+      - cloudflared_tunnel_token
     # Using standard Docker bridge network
     labels:
       # Allow auto-updates for Cloudflared
@@ -343,6 +348,8 @@ services:
     ports:
       - "127.0.0.1:5050:5050"
     restart: unless-stopped
+    secrets:
+      - edgetts_api_key
     mem_limit: 1g
     mem_reservation: 512m
     cpus: "0.5"
@@ -375,6 +382,7 @@ services:
 
   # MCPO server for request processing
   mcposerver:
+    entrypoint: ["/opt/erni/bin/mcposerver-with-secrets.sh"]
     command: ["--config", "/app/conf/config.json"]
     depends_on:
       db:
@@ -401,6 +409,11 @@ services:
     volumes:
       - ./conf/mcposerver:/app/conf:ro
       - ./data:/app/data
+      - ./scripts/entrypoints/mcposerver-with-secrets.sh:/opt/erni/bin/mcposerver-with-secrets.sh:ro
+    secrets:
+      - postgres_password
+      - context7_api_key
+      - ragflow_api_key
     # Using standard Docker bridge network
     labels:
       # Allow auto-updates for MCP Server
@@ -587,6 +600,8 @@ services:
       redis:
         condition: service_healthy
     runtime: nvidia
+    secrets:
+      - docling_picture_api
     mem_limit: 12g
     mem_reservation: 8g
     cpus: "8.0"
@@ -907,7 +922,7 @@ services:
     # Rollback to prometheuscommunity image 2025-11-07: wrouesnel lacks wget/curl for healthcheck
     image: prometheuscommunity/postgres-exporter:v0.18.1
     container_name: erni-ki-postgres-exporter
-    user: "65534:65534"
+    user: "0:0"
     environment:
       - PG_EXPORTER_DISABLE_DEFAULT_METRICS=false
       - PG_EXPORTER_DISABLE_SETTINGS_METRICS=true
@@ -966,11 +981,17 @@ services:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     healthcheck:
-      test: ["CMD-SHELL", "pgrep socat"]
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/erni/bin/busybox wget -q --tries=1 --spider http://127.0.0.1:9188/metrics || exit 1",
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
+    volumes:
+      - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
 
   # NVIDIA GPU Exporter - GPU monitoring
   nvidia-exporter:
@@ -1037,12 +1058,15 @@ services:
     # Updated: 2025-10-02 from v1.55.0 to v1.62.0 (stable version without v1.77.0 issues)
     image: oliver006/redis_exporter:v1.80.1 # updated from v1.62.0
     container_name: erni-ki-redis-exporter
+    user: "0:0"
     # Fixed: 2025-11-07 using full URL with password (format redis://:password@host:port)
+    entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/redis-exporter-with-secret.sh"]
     environment:
       - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
       - REDIS_EXPORTER_LOG_FORMAT=txt
       - REDIS_EXPORTER_DEBUG=true
-      - REDIS_ADDR=redis://:${REDIS_PASSWORD}@redis:6379
+      - REDIS_USER=default
+      - REDIS_ADDR=redis://redis:6379
     ports:
       - "127.0.0.1:9121:9121"
     restart: unless-stopped
@@ -1051,7 +1075,16 @@ services:
     cpus: "0.2"
     logging: *monitoring-logging
     healthcheck:
-      test: ["CMD", "/redis_exporter", "--version"]
+      test:
+        [
+          "CMD",
+          "/opt/erni/bin/busybox",
+          "wget",
+          "-q",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9121/metrics",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -1063,6 +1096,11 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     # Using standard Docker bridge network
+    secrets:
+      - redis_password
+    volumes:
+      - ./scripts/entrypoints/redis-exporter-with-secret.sh:/opt/erni/bin/redis-exporter-with-secret.sh:ro
+      - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
 
   # Ollama Exporter - AI services monitoring
   ollama-exporter:
@@ -1373,6 +1411,10 @@ secrets:
   redis_exporter_url:
     file: ./secrets/redis_exporter_url.txt
 
+  # Cloudflare tunnel token
+  cloudflared_tunnel_token:
+    file: ./secrets/cloudflared_tunnel_token.txt
+
   # Redis password (used by Redis requirepass and clients)
   redis_password:
     file: ./secrets/redis_password.txt
@@ -1403,3 +1445,15 @@ secrets:
   # PublicAI API key for external models
   publicai_api_key:
     file: ./secrets/publicai_api_key.txt
+
+  # Ragflow API key (MCP)
+  ragflow_api_key:
+    file: ./secrets/ragflow_api_key.txt
+
+  # EdgeTTS API key (optional)
+  edgetts_api_key:
+    file: ./secrets/edgetts_api_key.txt
+
+  # Docling picture description API config (optional)
+  docling_picture_api:
+    file: ./secrets/docling_picture_api.txt
