@@ -282,9 +282,8 @@ services:
       openwebui:
         condition: service_healthy
     env_file: env/cloudflared.env
-    environment:
-      # Explicit origin cert path (place cert.pem alongside config.yml/credentials-file)
-      TUNNEL_ORIGIN_CERT: /home/nonroot/.cloudflared/cert.pem
+    # TUNNEL_ORIGIN_CERT is not required for token-based (remote-managed) tunnels
+    # The certificate is only needed for locally-managed tunnels
     healthcheck:
       test: ["CMD", "cloudflared", "version"]
       interval: 60s
@@ -302,7 +301,10 @@ services:
       - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
-      - cloudflared_tunnel_token
+      - source: cloudflared_tunnel_token
+        uid: "65532"
+        gid: "65532"
+        mode: 0400
     networks:
       - frontend
       - backend

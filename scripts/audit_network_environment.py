@@ -12,7 +12,7 @@ from collections import defaultdict
 def run_cmd(cmd):
     """Run command (list of args) and return stdout; capture stderr for diagnostics."""
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603 - fixed argv list, no untrusted shell
             cmd,
             capture_output=True,
             text=True,
@@ -35,6 +35,7 @@ def main():
 
     containers = []
     healthy = []
+    actual = set()
 
     ps_output = run_cmd(["docker", "compose", "ps", "--format", "json"])
     if ps_output and not ps_output.startswith("Error"):
