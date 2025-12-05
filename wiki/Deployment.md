@@ -31,6 +31,8 @@ docker compose up -d
 - Обновление digest для образов с `latest` — чеклист в
   `docs/operations/maintenance/image-upgrade-checklist.md`.
 - Redis pinned на `redis:7.0.15-alpine` (не обновлять до RDB v12 без плана).
+- LiteLLM/OpenWebUI логирование ужесточено (raw prompts off); Auth поддерживает
+  audience через `WEBUI_JWT_AUDIENCE`.
 
 ## Полезные документы
 

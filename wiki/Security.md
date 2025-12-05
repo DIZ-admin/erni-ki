@@ -27,6 +27,8 @@
 - JWT Auth сервис защищает внутренние API.
 - SearXNG API ограничен ACL (RFC1918/localhost); расширяйте адреса вручную.
 - WebSocket rate limiting для Nginx — задача в работе (отдельный лимит req).
+- Read-only stateless (nginx cache, searxng cache, redis/postgres exporters,
+  auth) — задача в работе.
 
 ## Хардненинг контейнеров
 

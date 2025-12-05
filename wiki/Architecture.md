@@ -12,7 +12,7 @@
 - **Observability:** Prometheus, Grafana, Loki, Fluent Bit, Alertmanager,
   exporters.
 - **Automation:** Watchtower (выборочное автообновление), cron задачи (VACUUM,
-  cleanup), pre-commit/CI.
+  cleanup), pre-commit/CI (фазы рефактора в работе).
 
 ## GPU/ресурсы
 
@@ -25,7 +25,7 @@
 - Пользователи: `https://ki.erni-gruppe.ch` (или `localhost:8080` через Nginx).
 - Внутренние API: Auth (`9092`), LiteLLM (`4000`), Docling (`5001`), Tika
   (`9998`), EdgeTTS (`5050`); обычно доступны через docker-сеть/Nginx.
-- SearXNG API: ограничен ACL на RFC1918/localhost.
+- SearXNG API: ограничен ACL на RFC1918/localhost (см. Nginx).
 
 ## Документы
 
