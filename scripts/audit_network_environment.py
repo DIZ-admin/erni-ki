@@ -5,19 +5,22 @@ Analyzes the current running state of Docker networks and containers
 """
 
 import json
-import subprocess
+import subprocess  # nosec B404
 from collections import defaultdict
 
 
 def run_cmd(cmd):
-    """Run shell command and return output"""
+    """Run command (list of args) and return stdout; capture stderr for diagnostics."""
     try:
-        result = subprocess.run(  # noqa: S602
-            cmd, shell=True, capture_output=True, text=True, check=True
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True,
         )
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
-        return f"Error: {e.stderr}"
+        return f"Error: {e.stderr.strip()}"
 
 
 def main():
@@ -30,7 +33,10 @@ def main():
     print("1. CONTAINER STATUS")
     print("-" * 80)
 
-    ps_output = run_cmd("docker compose ps --format json 2>/dev/null")
+    containers = []
+    healthy = []
+
+    ps_output = run_cmd(["docker", "compose", "ps", "--format", "json"])
     if ps_output and not ps_output.startswith("Error"):
         containers = [json.loads(line) for line in ps_output.strip().split("\n") if line]
 
@@ -65,7 +71,9 @@ def main():
     print("2. ACTIVE DOCKER NETWORKS")
     print("-" * 80)
 
-    networks_output = run_cmd("docker network ls --filter name=erni-ki --format json 2>/dev/null")
+    networks_output = run_cmd(
+        ["docker", "network", "ls", "--filter", "name=erni-ki", "--format", "json"]
+    )
     if networks_output and not networks_output.startswith("Error"):
         networks = [json.loads(line) for line in networks_output.strip().split("\n") if line]
 
@@ -76,7 +84,7 @@ def main():
             print(f"  {name:30} (driver={driver}, scope={scope})")
 
             # Get network details
-            inspect_cmd = f'docker network inspect {name} --format "{{{{.Internal}}}}" 2>/dev/null'
+            inspect_cmd = ["docker", "network", "inspect", name, "--format", "{{.Internal}}"]
             internal = run_cmd(inspect_cmd)
             if internal == "true":
                 print("    Internal: YES (isolated from external network)")
@@ -84,9 +92,14 @@ def main():
                 print("    Internal: NO (can access external network)")
 
             # Count containers
-            containers_cmd = (
-                f'docker network inspect {name} --format "{{{{len .Containers}}}}" 2>/dev/null'
-            )
+            containers_cmd = [
+                "docker",
+                "network",
+                "inspect",
+                name,
+                "--format",
+                "{{len .Containers}}",
+            ]
             container_count = run_cmd(containers_cmd)
             print(f"    Connected containers: {container_count}")
 
@@ -117,11 +130,13 @@ def main():
 
     for svc in key_services:
         container_name = f"erni-ki-{svc}-1"
-        inspect_cmd = (
-            "docker inspect "
-            f"{container_name}"
-            ' --format "{{{{json .NetworkSettings.Networks}}}}" 2>/dev/null'
-        )
+        inspect_cmd = [
+            "docker",
+            "inspect",
+            container_name,
+            "--format",
+            "{{json .NetworkSettings.Networks}}",
+        ]
         networks_json = run_cmd(inspect_cmd)
 
         if networks_json and not networks_json.startswith("Error"):
@@ -144,7 +159,7 @@ def main():
     print("-" * 80)
 
     ports_output = run_cmd(
-        'docker ps --filter "name=erni-ki" --format "{{.Names}}\t{{.Ports}}" 2>/dev/null'
+        ["docker", "ps", "--filter", "name=erni-ki", "--format", "{{.Names}}\t{{.Ports}}"]
     )
     if ports_output and not ports_output.startswith("Error"):
         lines = ports_output.strip().split("\n")
@@ -216,9 +231,7 @@ def main():
 
     for src, dst, test_cmd in tests:
         src_container = f"erni-ki-{src}-1"
-        result = run_cmd(
-            f'docker exec {src_container} sh -c "{test_cmd}" 2>&1 || echo "EXEC_ERROR"'
-        )
+        result = run_cmd(["docker", "exec", src_container, "sh", "-c", test_cmd])
         status = "✓" if "OK" in result else "✗"
         print(f"  {status} {src:15} → {dst:15} : {result}")
 
