@@ -9,6 +9,8 @@
   03:00, docker cleanup 04:00).
 - **Download Docling models:**
   `./scripts/maintenance/download-docling-models.sh`.
+- **Стейтлес read-only режим** (в работе): планируется tmpfs/ro для nginx cache,
+  searxng cache, redis/postgres exporters, auth.
 
 ## Бэкапы
 
@@ -23,6 +25,8 @@
 - Лейблы watchtower управляют автообновлением; критичные сервисы обновлять
   вручную по чеклисту `docs/operations/maintenance/image-upgrade-checklist.md`.
 - Перед релизом — чеклист [[Checklists]].
+- Интеграционные тесты docker-compose (smoke) — в планах добавить
+  `docker-compose.test.yml` и запуск в CI.
 
 ## Инциденты
 

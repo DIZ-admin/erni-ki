@@ -17,9 +17,11 @@ docker compose up -d
 - Домен: `https://ki.erni-gruppe.ch` (Nginx + Cloudflare Tunnel).
 - Образы закреплены на версиях/digest (см. `compose.yml`).
 - Обязательные секреты хранятся в Docker secrets (пароли БД, ключи
-  LiteLLM/OpenWebUI и др.).
+  LiteLLM/OpenWebUI и др.). Grafana переводится на secrets (задача в работе).
 - GPU включается через `.env` (`OLLAMA_GPU_*`, `OPENWEBUI_GPU_*`,
   `DOCLING_GPU_*`).
+- Auth: поддержка audience в `WEBUI_JWT_AUDIENCE` (опционально), секрет —
+  `WEBUI_SECRET_KEY` (secret file).
 
 ## Обновления образов
 
@@ -28,6 +30,7 @@ docker compose up -d
   `document-processing`, `auth-services`, `cache-services`.
 - Обновление digest для образов с `latest` — чеклист в
   `docs/operations/maintenance/image-upgrade-checklist.md`.
+- Redis pinned на `redis:7.0.15-alpine` (не обновлять до RDB v12 без плана).
 
 ## Полезные документы
 

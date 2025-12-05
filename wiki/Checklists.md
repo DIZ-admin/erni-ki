@@ -6,6 +6,9 @@
 - Обновить версии/статус в `README.md` и `docs/system/status.md`.
 - Проверить лимиты ресурсов в `compose.yml` и актуальность digest.
 - Обновить дашборды/алерты при изменении метрик.
+- Убедиться, что открытые задачи не блокируют релиз (read-only stateless,
+  Grafana secrets → secrets, WebSocket rate limit, Redis pin, logging stack,
+  backup verification, integration tests, pre-commit refactor).
 
 ## Обновление образов
 
@@ -28,3 +31,4 @@
 - Обновить блокировки зависимостей (npm, Python, Go) и прогнать security сканеры
   (CodeQL, Trivy, Gosec, Grype, Checkov).
 - Верифицировать Cloudflare tunnel токены и TLS.
+- Проверить, что CORS/CSP/ACL остаются актуальными после изменений доменов.
