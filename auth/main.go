@@ -275,7 +275,7 @@ func validateSecrets() error {
 	return nil
 }
 
-func getEnvOrFile(key string) string { //nolint:unparam // keep flexible signature
+func getEnvOrFile(key string) string {
 	if val := os.Getenv(key); val != "" {
 		return val
 	}
