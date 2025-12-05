@@ -47,20 +47,20 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v6.0.1
 
-      - name: 🔍 Initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: ${{ matrix.language }}
-          queries: +security-and-quality
-          source-root: ${{ matrix.path }}
-
-      # Setup Go environment
+      # Setup Go before CodeQL init so tracing uses the configured toolchain
       - name: 🐹 Setup Go
         if: matrix.language == 'go'
         uses: actions/setup-go@v6
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
+
+      - name: 🔍 Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: +security-and-quality
+          source-root: ${{ matrix.path }}
 
       # Setup JavaScript/TypeScript environment
       - name: 🟣 Setup Bun
