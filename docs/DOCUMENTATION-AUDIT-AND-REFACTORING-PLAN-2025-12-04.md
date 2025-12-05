@@ -996,10 +996,10 @@ etc.) **Sustainability** - maintenance processes, not just creation
 
 **Существующие материалы (для reference):**
 
-- [docs/archive/audits/documentation-audit.md](docs/archive/audits/documentation-audit.md)
+- [archive/audits/documentation-audit.md](archive/audits/documentation-audit.md)
 - [academy/](academy/)
-- [docs/en/academy/](docs/en/academy/)
-- [docs/de/academy/](docs/de/academy/)
+- [en/academy/](en/academy/)
+- [de/academy/](de/academy/)
 
 ### Приложение C: Best Practices
 
@@ -1066,8 +1066,8 @@ created) **Questions:** GitHub Discussions or Issues
 
 - [MkDocs Material Documentation](https://squidfunk.github.io/mkdocs-material/)
 - [Current Academy Portal](academy/)
-- [Previous Documentation Audit](docs/archive/audits/documentation-audit.md)
-- [Comprehensive Code Audit](docs/COMPREHENSIVE-AUDIT-SUMMARY.txt)
+- [Previous Documentation Audit](archive/audits/documentation-audit.md)
+- [Comprehensive Code Audit](COMPREHENSIVE-AUDIT-SUMMARY.txt)
 
 ---
 
