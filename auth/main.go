@@ -16,63 +16,22 @@ import (
 )
 
 func main() {
+	if err := run(os.Args); err != nil {
+		log.Printf("auth-service exited with error: %v", err)
+		os.Exit(1)
+	}
+}
+
+func run(args []string) error {
 	// Check command line arguments for health check
-	if len(os.Args) > 1 && os.Args[1] == "--health-check" {
+	if len(args) > 1 && args[1] == "--health-check" {
 		if err := healthCheck(); err != nil {
-			log.Printf("health check failed: %v", err)
-			os.Exit(1)
+			return fmt.Errorf("health check failed: %w", err)
 		}
-		os.Exit(0)
+		return nil
 	}
 
-	r := gin.New()
-
-	r.Use(requestIDMiddleware())
-	r.Use(gin.LoggerWithFormatter(requestLogger))
-	r.Use(gin.Recovery())
-
-	r.GET("/", func(c *gin.Context) {
-		respondJSON(c, http.StatusOK, gin.H{
-			"message": "auth-service is running",
-			"version": "1.0.0",
-			"status":  "healthy",
-		})
-	})
-
-	// Health check endpoint
-	r.GET("/health", func(c *gin.Context) {
-		respondJSON(c, http.StatusOK, gin.H{
-			"status":  "healthy",
-			"service": "auth-service",
-		})
-	})
-
-	r.GET("/validate", func(c *gin.Context) {
-		cookieToken, err := c.Cookie("token")
-		if err != nil {
-			respondJSON(c, http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-				"error":   "token missing",
-			})
-			return
-		}
-
-		valid, err := verifyToken(cookieToken)
-		if err != nil || !valid {
-			if err != nil {
-				log.Printf("token verification failed: %v", err)
-			}
-			respondJSON(c, http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-				"error":   "invalid token",
-			})
-			return
-		}
-
-		respondJSON(c, http.StatusOK, gin.H{
-			"message": "authorized",
-		})
-	})
+	r := setupRouter()
 
 	server := &http.Server{
 		Addr:              "0.0.0.0:9090",
@@ -83,10 +42,75 @@ func main() {
 		IdleTimeout:       120 * time.Second,
 	}
 
-	if err := server.ListenAndServe(); err != nil {
-		log.Printf("failed to start server: %v", err)
-		os.Exit(1)
+	if os.Getenv("SKIP_SERVER_START") == "1" {
+		return nil
 	}
+
+	if err := server.ListenAndServe(); err != nil {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+
+	return nil
+}
+
+func setupRouter() *gin.Engine {
+	r := gin.New()
+
+	r.Use(requestIDMiddleware())
+	r.Use(gin.LoggerWithFormatter(requestLogger))
+	r.Use(gin.Recovery())
+
+	registerRoutes(r)
+
+	return r
+}
+
+func registerRoutes(r *gin.Engine) {
+	r.GET("/", indexHandler)
+	r.GET("/health", healthHandler)
+	r.GET("/validate", validateHandler)
+}
+
+func indexHandler(c *gin.Context) {
+	respondJSON(c, http.StatusOK, gin.H{
+		"message": "auth-service is running",
+		"version": "1.0.0",
+		"status":  "healthy",
+	})
+}
+
+func healthHandler(c *gin.Context) {
+	respondJSON(c, http.StatusOK, gin.H{
+		"status":  "healthy",
+		"service": "auth-service",
+	})
+}
+
+func validateHandler(c *gin.Context) {
+	cookieToken, err := c.Cookie("token")
+	if err != nil {
+		respondJSON(c, http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+			"error":   "token missing",
+		})
+		return
+	}
+
+	valid, err := verifyToken(cookieToken)
+	if err != nil || !valid {
+		if err != nil {
+			log.Printf("token verification failed: %v", err)
+		}
+		respondJSON(c, http.StatusUnauthorized, gin.H{
+			"message": "unauthorized",
+			"error":   "invalid token",
+		})
+		return
+	}
+
+	respondJSON(c, http.StatusOK, gin.H{
+		"message": "authorized",
+	})
 }
 
 func requestIDMiddleware() gin.HandlerFunc {
@@ -130,13 +154,18 @@ func respondJSON(c *gin.Context, status int, payload gin.H) {
 
 // healthCheck performs service health check for Docker.
 func healthCheck() error {
+	targetURL := os.Getenv("HEALTHCHECK_URL")
+	if targetURL == "" {
+		targetURL = "http://localhost:9090/health"
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodGet,
-		"http://localhost:9090/health",
+		targetURL,
 		http.NoBody,
 	)
 	if err != nil {

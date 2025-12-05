@@ -1,8 +1,15 @@
 package main
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func TestValidateSecrets(t *testing.T) {
@@ -212,6 +219,287 @@ func TestValidateSecretsIntegration(t *testing.T) {
 	})
 }
 
+func TestRequestIDMiddlewareAndRespondJSON(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodGet, "/test", nil)
+
+	mw := requestIDMiddleware()
+	mw(c)
+
+	if got := c.Writer.Header().Get("X-Request-ID"); got == "" {
+		t.Fatalf("expected X-Request-ID header to be set")
+	}
+
+	// ensure respondJSON adds request_id to payload
+	respondJSON(c, http.StatusOK, gin.H{"foo": "bar"})
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, w.Code)
+	}
+	if body := w.Body.String(); !strings.Contains(body, "request_id") {
+		t.Fatalf("expected response to include request_id, got: %s", body)
+	}
+}
+
+func TestRequestLogger(t *testing.T) {
+	now := time.Now()
+	params := gin.LogFormatterParams{
+		TimeStamp:    now,
+		StatusCode:   http.StatusOK,
+		Latency:      150 * time.Millisecond,
+		ClientIP:     "127.0.0.1",
+		Method:       http.MethodGet,
+		Path:         "/health",
+		Keys:         map[any]any{"request_id": "req-123"},
+		ErrorMessage: "",
+	}
+	line := requestLogger(params)
+	if !strings.Contains(line, "\"status\":200") || !strings.Contains(line, "\"request_id\":\"req-123\"") {
+		t.Fatalf("unexpected log line: %s", line)
+	}
+}
+
+func TestSetupRouterRoutes(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	secret := "this-is-a-sufficiently-long-secret-key-12345678" // pragma: allowlist secret
+	os.Setenv("WEBUI_SECRET_KEY", secret)
+	t.Cleanup(func() { os.Unsetenv("WEBUI_SECRET_KEY") })
+
+	router := setupRouter()
+
+	// Root
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	router.ServeHTTP(w, req)
+	if w.Code != http.StatusOK {
+		t.Fatalf("root expected 200, got %d", w.Code)
+	}
+	if !strings.Contains(w.Body.String(), "auth-service is running") {
+		t.Fatalf("root body unexpected: %s", w.Body.String())
+	}
+
+	// Health
+	w = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/health", nil)
+	router.ServeHTTP(w, req)
+	if w.Code != http.StatusOK {
+		t.Fatalf("health expected 200, got %d", w.Code)
+	}
+
+	// Validate missing token
+	w = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/validate", nil)
+	router.ServeHTTP(w, req)
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("validate missing token expected 401, got %d", w.Code)
+	}
+
+	// Validate invalid token
+	w = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/validate", nil)
+	req.AddCookie(&http.Cookie{Name: "token", Value: "invalid"})
+	router.ServeHTTP(w, req)
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("validate invalid token expected 401, got %d", w.Code)
+	}
+
+	// Validate success
+	now := time.Now()
+	claims := jwt.RegisteredClaims{
+		Subject:   "user-123",
+		IssuedAt:  jwt.NewNumericDate(now.Add(-time.Minute)),
+		ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour)),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		t.Fatalf("failed to sign token: %v", err)
+	}
+
+	w = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/validate", nil)
+	req.AddCookie(&http.Cookie{Name: "token", Value: tokenString})
+	router.ServeHTTP(w, req)
+	if w.Code != http.StatusOK {
+		t.Fatalf("validate success expected 200, got %d", w.Code)
+	}
+	if !strings.Contains(w.Body.String(), "authorized") {
+		t.Fatalf("validate body unexpected: %s", w.Body.String())
+	}
+}
+
+func TestVerifyToken(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	secret := "this-is-a-sufficiently-long-secret-key-12345678" // pragma: allowlist secret
+	os.Setenv("WEBUI_SECRET_KEY", secret)
+	t.Cleanup(func() { os.Unsetenv("WEBUI_SECRET_KEY") })
+
+	now := time.Now()
+	claims := jwt.RegisteredClaims{
+		Subject:   "user-123",
+		IssuedAt:  jwt.NewNumericDate(now.Add(-1 * time.Minute)),
+		ExpiresAt: jwt.NewNumericDate(now.Add(10 * time.Minute)),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		t.Fatalf("failed to sign token: %v", err)
+	}
+
+	valid, err := verifyToken(tokenString)
+	if err != nil || !valid {
+		t.Fatalf("expected valid token, got err=%v valid=%v", err, valid)
+	}
+}
+
+func TestVerifyTokenFailures(t *testing.T) {
+	cases := []struct {
+		name       string
+		secret     string
+		tokenGen   func(secret string) string
+		expectErr  string
+		expectBool bool
+	}{
+		{
+			name:      "missing secret",
+			secret:    "",
+			tokenGen:  func(string) string { return "dummy" },
+			expectErr: "WEBUI_SECRET_KEY env variable missing",
+		},
+		{
+			name:   "missing token",
+			secret: "this-is-a-sufficiently-long-secret-key-12345678",
+			tokenGen: func(string) string {
+				return ""
+			},
+			expectErr: "token missing",
+		},
+		{
+			name:   "expired token",
+			secret: "this-is-a-sufficiently-long-secret-key-12345678",
+			tokenGen: func(secret string) string {
+				now := time.Now()
+				claims := jwt.RegisteredClaims{
+					Subject:   "user-123",
+					IssuedAt:  jwt.NewNumericDate(now.Add(-2 * time.Hour)),
+					ExpiresAt: jwt.NewNumericDate(now.Add(-1 * time.Hour)),
+				}
+				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+				s, _ := token.SignedString([]byte(secret))
+				return s
+			},
+			expectErr: "token is expired",
+		},
+		{
+			name:   "issuer mismatch",
+			secret: "this-is-a-sufficiently-long-secret-key-12345678",
+			tokenGen: func(secret string) string {
+				now := time.Now()
+				claims := jwt.RegisteredClaims{
+					Subject:   "user-123",
+					IssuedAt:  jwt.NewNumericDate(now.Add(-1 * time.Minute)),
+					ExpiresAt: jwt.NewNumericDate(now.Add(1 * time.Hour)),
+					Issuer:    "other",
+				}
+				os.Setenv("WEBUI_JWT_ISSUER", "expected")
+				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+				s, _ := token.SignedString([]byte(secret))
+				return s
+			},
+			expectErr: "issuer mismatch",
+		},
+		{
+			name:   "wrong algorithm",
+			secret: "this-is-a-sufficiently-long-secret-key-12345678",
+			tokenGen: func(secret string) string {
+				now := time.Now()
+				claims := jwt.RegisteredClaims{
+					Subject:   "user-123",
+					IssuedAt:  jwt.NewNumericDate(now.Add(-1 * time.Minute)),
+					ExpiresAt: jwt.NewNumericDate(now.Add(1 * time.Hour)),
+				}
+				token := jwt.NewWithClaims(jwt.SigningMethodHS384, claims)
+				s, _ := token.SignedString([]byte(secret))
+				return s
+			},
+			expectErr: "signing method HS384 is invalid",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Cleanup(func() {
+				os.Unsetenv("WEBUI_SECRET_KEY")
+				os.Unsetenv("WEBUI_JWT_ISSUER")
+			})
+			if tc.secret != "" {
+				os.Setenv("WEBUI_SECRET_KEY", tc.secret)
+			}
+			token := tc.tokenGen(tc.secret)
+			ok, err := verifyToken(token)
+			if tc.expectErr == "" && err != nil {
+				t.Fatalf("expected no error, got %v", err)
+			}
+			if tc.expectErr != "" {
+				if err == nil || !strings.Contains(err.Error(), tc.expectErr) {
+					t.Fatalf("expected error containing %q, got %v", tc.expectErr, err)
+				}
+			}
+			if ok && tc.expectErr != "" {
+				t.Fatalf("expected validation failure, got ok=true")
+			}
+		})
+	}
+}
+
+func TestGetEnvOrFile(t *testing.T) {
+	t.Cleanup(func() { os.Unsetenv("TEST_ENV_FILE") })
+
+	// env value wins
+	os.Setenv("TEST_ENV_FILE", "from-env")
+	if got := getEnvOrFile("TEST_ENV_FILE"); got != "from-env" {
+		t.Fatalf("expected env value, got %q", got)
+	}
+
+	// file fallback
+	os.Unsetenv("TEST_ENV_FILE")
+	tmp, err := os.CreateTemp("", "secret-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmp.Name())
+	if _, err := tmp.WriteString("from-file"); err != nil {
+		t.Fatal(err)
+	}
+	tmp.Close()
+
+	os.Setenv("TEST_ENV_FILE_FILE", tmp.Name())
+	if got := getEnvOrFile("TEST_ENV_FILE"); got != "from-file" {
+		t.Fatalf("expected file value, got %q", got)
+	}
+}
+
+func TestHealthCheck(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/health" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"status":"ok"}`))
+			return
+		}
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	t.Cleanup(ts.Close)
+
+	os.Setenv("HEALTHCHECK_URL", ts.URL+"/health")
+	t.Cleanup(func() { os.Unsetenv("HEALTHCHECK_URL") })
+
+	if err := healthCheck(); err != nil {
+		t.Fatalf("healthCheck should succeed, got %v", err)
+	}
+}
+
 func TestValidateSecretsConcurrency(t *testing.T) {
 	// Test that validateSecrets is safe to call concurrently
 	os.Setenv("WEBUI_SECRET_KEY", "concurrent-test-secret-key-with-sufficient-length") // pragma: allowlist secret
@@ -243,16 +531,6 @@ func TestValidateSecretsConcurrency(t *testing.T) {
 	}
 }
 
-func TestHealthCheck(_ *testing.T) {
-	// Test the health check functionality
-	err := healthCheck()
-
-	// Health check should succeed when service is not running (returns error)
-	// or when it's running (returns nil)
-	// This is a basic smoke test
-	_ = err // Health check behavior depends on whether server is running
-}
-
 func BenchmarkValidateSecrets(b *testing.B) {
 	os.Setenv("WEBUI_SECRET_KEY", "benchmark-secret-key-with-sufficient-length")
 	defer os.Unsetenv("WEBUI_SECRET_KEY")
@@ -263,6 +541,47 @@ func BenchmarkValidateSecrets(b *testing.B) {
 			b.Fatal(err)
 		}
 	}
+}
+
+func TestRunSkipServer(t *testing.T) {
+	os.Setenv("SKIP_SERVER_START", "1")
+	os.Setenv("WEBUI_SECRET_KEY", "this-is-a-sufficiently-long-secret-key-12345678") // pragma: allowlist secret
+	t.Cleanup(func() {
+		os.Unsetenv("SKIP_SERVER_START")
+		os.Unsetenv("WEBUI_SECRET_KEY")
+	})
+
+	if err := run([]string{"cmd"}); err != nil {
+		t.Fatalf("expected run to succeed with SKIP_SERVER_START, got %v", err)
+	}
+}
+
+func TestRunHealthCheckArg(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	t.Cleanup(ts.Close)
+
+	os.Setenv("HEALTHCHECK_URL", ts.URL)
+	t.Cleanup(func() { os.Unsetenv("HEALTHCHECK_URL") })
+
+	if err := run([]string{"cmd", "--health-check"}); err != nil {
+		t.Fatalf("expected health-check arg to succeed, got %v", err)
+	}
+}
+
+func TestMainEntryPoint(t *testing.T) {
+	os.Setenv("SKIP_SERVER_START", "1")
+	os.Setenv("WEBUI_SECRET_KEY", "this-is-a-sufficiently-long-secret-key-12345678")
+	origArgs := os.Args
+	os.Args = []string{"cmd"}
+	defer func() {
+		os.Args = origArgs
+		os.Unsetenv("SKIP_SERVER_START")
+		os.Unsetenv("WEBUI_SECRET_KEY")
+	}()
+
+	main()
 }
 
 func TestValidateSecretsErrorMessages(t *testing.T) {
