@@ -16,14 +16,16 @@ Spezialisierte KI-Anwendungen für verschiedene Branchen und Fachbereiche.
 
 ## Baubranche & Holzbau
 
-### [Holzbau-spezifische Szenarien →](holzbau/index.md)
+### [Holzbau-spezifische Szenarien →](../../academy/by-industry/holzbau/index.md)
 
 Für Mitarbeiter in Holzbau, Planung, Bauleitung und verwandten Bereichen.
 
 **Verfügbare Szenarien:**
 
-- [Bautagebuch erstellen](holzbau/bautagebuch-erstellen.md) — 10 min
-- [Angebot erstellen](holzbau/angebot-erstellen.md) — 15 min
+- [Bautagebuch erstellen](../../academy/by-industry/holzbau/bautagebuch-erstellen.md)
+  — 10 min
+- [Angebot erstellen](../../academy/by-industry/holzbau/angebot-erstellen.md) —
+  15 min
 - Mängelliste dokumentieren — 10 min (geplant)
 - SIA-Normen recherchieren — 15 min (geplant)
 - U-Wert Berechnung — 10 min (geplant)
@@ -38,7 +40,7 @@ Für Mitarbeiter in Holzbau, Planung, Bauleitung und verwandten Bereichen.
 - Mehrsprachig (DE/FR/IT)
 - Praxisnah für Baustelle
 
-[→ Zu den Holzbau-Szenarien](holzbau/index.md)
+[→ Zu den Holzbau-Szenarien](../../academy/by-industry/holzbau/index.md)
 
 ---
 
@@ -50,9 +52,9 @@ Für Mitarbeiter in Holzbau, Planung, Bauleitung und verwandten Bereichen.
 
 Verfügbar in Universal Academy:
 
-- [Code Review](../by-role/developers/code-review-with-ai.md)
-- [Debug Code](../by-role/developers/debug-code.md)
-- [Unit Tests schreiben](../by-role/developers/write-unit-tests.md)
+- [Code Review](../../academy/by-role/developers/code-review-with-ai.md)
+- [Debug Code](../../academy/by-role/developers/debug-code.md)
+- [Unit Tests schreiben](../../academy/by-role/developers/write-unit-tests.md)
 
 ### Projektmanagement
 
@@ -60,8 +62,8 @@ Verfügbar in Universal Academy:
 
 Verfügbar in Universal Academy:
 
-- [Projektberichte erstellen](../by-role/managers/create-project-report.md)
-- [Metriken analysieren](../by-role/managers/analyze-metrics.md)
+- [Projektberichte erstellen](../../academy/by-role/managers/create-project-report.md)
+- [Metriken analysieren](../../academy/by-role/managers/analyze-metrics.md)
 
 ### Support & Service
 
@@ -69,8 +71,8 @@ Verfügbar in Universal Academy:
 
 Verfügbar in Universal Academy:
 
-- [Probleme diagnostizieren](../by-role/support/troubleshoot-user-issue.md)
-- [KB-Artikel erstellen](../by-role/support/create-knowledge-base-article.md)
+- [Probleme diagnostizieren](../../academy/by-role/support/troubleshoot-user-issue.md)
+- [KB-Artikel erstellen](../../academy/by-role/support/create-knowledge-base-article.md)
 
 ---
 

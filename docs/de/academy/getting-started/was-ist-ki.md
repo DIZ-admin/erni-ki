@@ -24,7 +24,8 @@ last_updated: '2025-12-05'
 
 ## Was ist Künstliche Intelligenz?
 
-**Künstliche Intelligenz (KI)** sind Computersysteme, die Aufgaben ausführen können, die normalerweise menschliche Intelligenz erfordern:
+**Künstliche Intelligenz (KI)** sind Computersysteme, die Aufgaben ausführen
+können, die normalerweise menschliche Intelligenz erfordern:
 
 - Verstehen von Text und Sprache
 - Problemlösung
@@ -47,12 +48,14 @@ last_updated: '2025-12-05'
 
 ## Was sind Large Language Models (LLM)?
 
-**Large Language Models (LLM)** sind ein KI-Typ, der sich auf Textverarbeitung spezialisiert:
+**Large Language Models (LLM)** sind ein KI-Typ, der sich auf Textverarbeitung
+spezialisiert:
 
 - **Trainiert auf riesigen Textmengen** aus dem Internet, Büchern, Artikeln
 - **Verstehen Kontext** und Bedeutung des Geschriebenen
 - **Generieren Text**, der natürlich wirkt
-- **Multitasking**: können schreiben, übersetzen, Fragen beantworten, Code schreiben
+- **Multitasking**: können schreiben, übersetzen, Fragen beantworten, Code
+  schreiben
 
 ### Wie funktioniert ein LLM?
 
@@ -177,15 +180,15 @@ Stellen Sie sich ein LLM wie eine sehr belesene Person vor:
 
 ## Einfacher Vergleich: KI vs Mensch
 
-| Aspekt                   | LLM         | Mensch       |
-| ------------------------ | ----------- | ------------ |
-| Geschwindigkeit          | Sehr schnell| Langsamer    |
-| Verarbeitungsvolumen     | Riesig      | Begrenzt     |
-| Kreativität              | Gut         | Ausgezeichnet|
-| Kontextverständnis       | Grundlegend | Tiefgehend   |
-| Kritisches Denken        | Nein        | Ja           |
-| Emotionale Intelligenz   | Nein        | Ja           |
-| Ethisches Urteilsvermögen| Begrenzt    | Entwickelt   |
+| Aspekt                    | LLM          | Mensch        |
+| ------------------------- | ------------ | ------------- |
+| Geschwindigkeit           | Sehr schnell | Langsamer     |
+| Verarbeitungsvolumen      | Riesig       | Begrenzt      |
+| Kreativität               | Gut          | Ausgezeichnet |
+| Kontextverständnis        | Grundlegend  | Tiefgehend    |
+| Kritisches Denken         | Nein         | Ja            |
+| Emotionale Intelligenz    | Nein         | Ja            |
+| Ethisches Urteilsvermögen | Begrenzt     | Entwickelt    |
 
 ## Verständnischeck
 
@@ -216,17 +219,22 @@ Entwürfe schreiben, Texte verbessern, Code-Hilfe, Informationszusammenfassung, 
 
 Jetzt, da Sie die KI-Grundlagen verstehen, gehen Sie weiter zu:
 
-- [Erste Schritte in Open WebUI](erste-schritte.md) — beginnen Sie mit dem System zu arbeiten
-- [Modellvergleich](modell-vergleich.md) — wählen Sie das passende Modell
-- [Sicherheit und Ethik](sicherheit-ethik.md) — verwenden Sie KI verantwortungsvoll
+- [Erste Schritte in Open WebUI](../../academy/getting-started/first-steps.md) —
+  beginnen Sie mit dem System zu arbeiten
+- [Modellvergleich](../../academy/getting-started/model-comparison.md) — wählen
+  Sie das passende Modell
+- [Sicherheit und Ethik](../../academy/getting-started/safety-and-ethics.md) —
+  verwenden Sie KI verantwortungsvoll
 
 ---
 
 ## Schlüsselbegriffe
 
-**KI (Künstliche Intelligenz)** — Computersysteme, die Aufgaben ausführen, die Intelligenz erfordern
+**KI (Künstliche Intelligenz)** — Computersysteme, die Aufgaben ausführen, die
+Intelligenz erfordern
 
-**LLM (Large Language Model)** — Großes Sprachmodell, ein KI-Typ für Textverarbeitung
+**LLM (Large Language Model)** — Großes Sprachmodell, ein KI-Typ für
+Textverarbeitung
 
 **Prompt** — Anfrage oder Anweisung, die Sie der KI geben
 
@@ -236,4 +244,5 @@ Jetzt, da Sie die KI-Grundlagen verstehen, gehen Sie weiter zu:
 
 ---
 
-**Nächster Schritt:** [Erste Schritte in Open WebUI →](erste-schritte.md)
+**Nächster Schritt:**
+[Erste Schritte in Open WebUI →](../../academy/getting-started/first-steps.md)

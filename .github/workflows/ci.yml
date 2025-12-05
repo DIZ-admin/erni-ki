@@ -753,7 +753,19 @@ jobs:
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
-    needs: [lint, go-lint, test-go, test-js, security, link-check, docker-build, contract-tests, load-smoke, coverage-merge]
+    needs:
+      [
+        lint,
+        go-lint,
+        test-go,
+        test-js,
+        security,
+        link-check,
+        docker-build,
+        contract-tests,
+        load-smoke,
+        coverage-merge,
+      ]
     if: always() && github.ref == 'refs/heads/main'
 
     steps:

@@ -59,7 +59,7 @@ erstellen.
 
 ### Kalkulation & Verkauf
 
-#### [Angebot erstellen](angebot-erstellen.md)
+#### [Angebot erstellen](../../../de/academy/by-industry/construction/angebot-erstellen.md)
 
 **Dauer:** 15 Minuten | **Schwierigkeit:** Mittel
 
