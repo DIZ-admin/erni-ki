@@ -3,13 +3,13 @@
 ## High-level Architecture
 
 ```mermaid
-graph LR
+flowchart LR
   U[Users/Browser] --> CF[Cloudflare Tunnel]
   CF --> NG[Nginx]
   NG --> AU[Auth (JWT)]
   NG --> OW[OpenWebUI]
   OW --> LL[LiteLLM]
-  LL --> OL[Ollama (GPU)]
+  LL --> OL[Ollama GPU]
   LL --> DL[Docling]
   DL --> TK[Tika]
   LL --> ET[EdgeTTS]
@@ -19,17 +19,19 @@ graph LR
   LL --> RD[(Redis)]
   OW --> RD
   NG --> SX[SearXNG]
+
   subgraph Observability
     PR[Prometheus] --> AM[Alertmanager]
     FB[Fluent Bit] --> LK[Loki]
     PR --> EX[Exporters]
   end
-  NG -. metrics .-> EX
-  DB -. metrics .-> EX
-  RD -. metrics .-> EX
-  OL -. metrics .-> EX
-  LL -. logs .-> FB
-  OW -. logs .-> FB
+
+  NG -.-> EX
+  DB -.-> EX
+  RD -.-> EX
+  OL -.-> EX
+  LL -.-> FB
+  OW -.-> FB
 ```
 
 ## Request & Data Flow
@@ -93,7 +95,7 @@ flowchart LR
   EX --> PR[Prometheus]
   PR --> AM[Alertmanager]
   AM --> WH[Webhook Receiver]
-  WH --> NT[Notifications (Slack/PagerDuty)]
+  WH --> NT[Notifications Slack/PagerDuty]
 
   classDef svc fill:#e8f1ff,stroke:#3b6cb7;
   classDef data fill:#fcefe3,stroke:#c27b36;
@@ -108,24 +110,24 @@ flowchart TD
   NG -->|ACL RFC1918/localhost| SX[SearXNG API]
   NG --> OW[OpenWebUI]
   NG --> LL[LiteLLM API]
-  NG --> AU[Auth /validate]
+  NG --> AU[Auth validate]
 
   subgraph Controls
-    CSP[CSP hardened (no inline/eval)]:::ctrl
+    CSP[CSP hardened]:::ctrl
     CORS[CORS allowlist reflect]:::ctrl
-    ACL[ACL for SearXNG API]:::ctrl
+    ACLN[ACL for SearXNG API]:::ctrl
     JWT[JWT audience support]:::ctrl
     RO[Read-only stateless (in progress)]:::ctrl
   end
 
-  NG -.enforces.-> CSP
-  NG -.enforces.-> CORS
-  NG -.enforces.-> ACL
-  AU -.validates.-> JWT
-  NG -.pending.-> RO
+  NG -.-> CSP
+  NG -.-> CORS
+  NG -.-> ACLN
+  AU -.-> JWT
+  NG -.-> RO
 
   subgraph Secrets
-    DS[Docker secrets: DB, LiteLLM, OpenWebUI, Grafana(pending)]:::secret
+    DS[Docker secrets: DB, LiteLLM, OpenWebUI, Grafana pending]:::secret
   end
 
   DS --> OW
