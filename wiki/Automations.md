@@ -40,7 +40,8 @@
 
 ## Logging & Metrics Automation
 
-- Logs: Fluent Bit → Loki (json-file drivers per tier).
+- Logs: Fluent Bit → Loki (json-file drivers per tier); Promtail tails container
+  logs to Loki (`conf/promtail/`).
 - Metrics: exporters → Prometheus; Alertmanager routes to Webhook receiver
   (Slack/PagerDuty).
 - Dashboards provisioned in `conf/grafana/provisioning/`.

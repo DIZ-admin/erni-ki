@@ -23,11 +23,9 @@
 
 ## Логи
 
-- Loki + Fluent Bit (`conf/fluent-bit/`), заголовок многотенантности
-  `X-Scope-OrgID: erni-ki`.
+- Loki + Fluent Bit + Promtail (`conf/fluent-bit/`, `conf/promtail/`), заголовок
+  многотенантности `X-Scope-OrgID: erni-ki`.
 - Очистка логов выполнялась 2025-11-12 (см. проектные заметки).
-- Централизованный лог-стек (Loki/Promtail) — в работе; обновить раздел после
-  внедрения.
 
 ## Диагностика
 
