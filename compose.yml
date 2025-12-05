@@ -410,6 +410,7 @@ services:
       - ./conf/mcposerver:/app/conf:ro
       - ./data:/app/data
       - ./scripts/entrypoints/mcposerver-with-secrets.sh:/opt/erni/bin/mcposerver-with-secrets.sh:ro
+      - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
       - postgres_password
       - context7_api_key
