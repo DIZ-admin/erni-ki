@@ -39,9 +39,6 @@ x-monitoring-logging: &monitoring-logging
     max-file: "5"
     labels: "service,version,level=monitoring"
 
-# Legacy logging configuration - backward compatibility only
-# Migration: new services must use tier-based logging critical/important/auxiliary/monitoring
-# Deprecation: Q2 2025 (after all legacy services migrated)
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -50,11 +47,16 @@ x-logging: &default-logging
     labels: "service,version"
 
 services:
-  # Infrastructure services
   watchtower:
-    # Startup command with optimized parameters (schedule via env)
-    command: --cleanup --label-enable --http-api-update --http-api-metrics
-    entrypoint: ["/opt/erni/bin/watchtower-entrypoint.sh"]
+    command:
+      - --cleanup
+      - --label-enable
+      - --http-api-update
+      - --http-api-metrics
+    entrypoint:
+      - /opt/erni/bin/busybox
+      - sh
+      - /watchtower-entrypoint.sh
     env_file: env/watchtower.env
     environment:
       DOCKER_API_VERSION: "1.44"
@@ -71,6 +73,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     oom_score_adj: 500
+    security_opt:
+      - no-new-privileges:true
     # Run as root to guarantee access to docker.sock on hosts where docker group GID differs
     user: "0:0"
     group_add:
@@ -79,20 +83,21 @@ services:
     ports:
       - "127.0.0.1:8091:8080" # Localhost-only access for HTTP API
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./scripts/entrypoints/watchtower.sh:/opt/erni/bin/watchtower-entrypoint.sh:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./scripts/entrypoints/watchtower.sh:/watchtower-entrypoint.sh:ro
+      - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
       - watchtower_api_token
+    networks:
+      - monitoring
     labels:
       # Exclude Watchtower from self-monitoring
       - "com.centurylinklabs.watchtower.enable=false"
       # Label for log identification
       - "com.centurylinklabs.watchtower.scope=infrastructure"
 
-  # PostgreSQL database with vector extension (optimized network configuration)
   db:
     env_file: env/db.env
-    # Added: 2025-10-30 - Docker Secrets for secure password storage
     secrets:
       - postgres_password
     environment:
@@ -109,11 +114,13 @@ services:
     restart: unless-stopped
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-      # Custom PostgreSQL config with pg_stat_statements (added: 2025-11-04)
       - ./conf/postgres-enhanced/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./secrets/postgres-ssl/server.crt:/etc/ssl/postgres/server.crt:ro
+      - ./secrets/postgres-ssl/server.key:/etc/ssl/postgres/server.key:ro
     # Using custom configuration
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
-    # Using standard Docker bridge network
+    networks:
+      - data
     labels:
       # CRITICAL: Disable database auto-updates
       - "com.centurylinklabs.watchtower.enable=false"
@@ -123,29 +130,23 @@ services:
     mem_reservation: 2g
     cpus: "2.0"
 
-  # Redis cache and queues (optimized network configuration)
   redis:
     env_file: env/redis.env
     environment:
-      # Avoid compose warning when REDIS_PASSWORD env is unset; real secret comes from docker secret redis_password
       REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
-    # Using config file instead of CLI parameters
-    # Updated: 2025-10-02 for support of active defragmentation
     command:
       - /bin/sh
       - -c
       - >
         set -euo pipefail;
-        apk add --no-cache gettext >/dev/null;
         SECRET="$$(tr -d '\r\n' < /run/secrets/redis_password)";
         CONF_TPL=/usr/local/etc/redis/redis.conf;
         CONF_OUT=/tmp/redis.conf;
         ACL_TPL=/usr/local/etc/redis/users.acl.template;
         ACL_OUT=/tmp/redis-users.acl;
-        export REDIS_PASSWORD="$${SECRET}";
-        envsubst < "$${CONF_TPL}" > "$${CONF_OUT}";
+        sed "s/\$${REDIS_PASSWORD}/$${SECRET}/g" "$${CONF_TPL}" > "$${CONF_OUT}";
         if [ -f "$${ACL_TPL}" ]; then
-          envsubst < "$${ACL_TPL}" > "$${ACL_OUT}";
+          sed "s/\$${REDIS_PASSWORD}/$${SECRET}/g" "$${ACL_TPL}" > "$${ACL_OUT}";
           chmod 600 "$${ACL_OUT}";
           exec redis-server "$${CONF_OUT}" --aclfile "$${ACL_OUT}";
         else
@@ -170,49 +171,37 @@ services:
       - ./conf/redis/users.acl:/usr/local/etc/redis/users.acl.template:ro
     secrets:
       - redis_password
-    # Using standard Docker bridge network
+    networks:
+      - data
     labels:
       # Allow auto-updates for Redis
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=cache-services"
-    mem_limit: 4g # Increased from 1g: 2x maxmemory for AOF rewrite (2025-12-02)
-    mem_reservation: 2g # Reserved memory
+    mem_limit: 4g
+    mem_reservation: 2g
     cpus: "1.0"
 
-  # LiteLLM Context Engineering Gateway (optimized network configuration)
   litellm:
-    # Using latest LiteLLM version with thinking tokens support
-    # Updated: 2025-11-18 to v1.80.0.rc.1 (routing fixes + security patches)
     image: ghcr.io/berriai/litellm:v1.80.0-stable.1
     container_name: erni-ki-litellm
 
-    # Dependencies - start after critical services
     depends_on:
       db:
         condition: service_healthy
       ollama:
         condition: service_healthy
-
-    # Environment file with configuration
     env_file: env/litellm.env
     entrypoint:
       - /bin/bash
       - /opt/erni/bin/litellm-entrypoint.sh
 
-    # API port (internal Docker network)
     ports:
-      - "127.0.0.1:4000:4000" # LiteLLM Proxy API (localhost only)
+      - "127.0.0.1:4000:4000"
     expose:
-      - "9109" # Prometheus metrics for PublicAI provider
-
-    # Production restart policy
+      - "9109"
     restart: unless-stopped
-
-    # Logging configuration
     logging: *auxiliary-logging
-
-    # Health check for status monitoring (HTTP endpoint check)
-    # Using Python urllib instead of curl (not installed in container) LiteLLM
+    # Health check: using Python urllib (curl not installed in LiteLLM container)
     healthcheck:
       test:
         [
@@ -222,31 +211,23 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s # Initialization time
-
-    # Volume mounts for configuration
+      start_period: 30s
     volumes:
-      - ./conf/litellm/config.yaml:/app/config.yaml:ro # Model configuration
-      - ./data/litellm:/app/data # Logs and temporary files
-      - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro # Secrets wrapper
-      - ./conf/litellm/custom_providers:/app/custom_providers:ro # Custom providers LiteLLM
-
-    # Command with basic settings
+      - ./conf/litellm/config.yaml:/app/config.yaml:ro
+      - ./data/litellm:/app/data
+      - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro
+      - ./conf/litellm/custom_providers:/app/custom_providers:ro
     command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
-
-    # Extra hosts for Ollama host connection
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-    # Resource limits for stability (critical memory increase)
-    mem_limit: 12g # Memory limit (increased to prevent OOM; was 8G)
-    mem_reservation: 6g # Memory reservation (increased from 4G to 6G for buffer)
-    cpus: "1.0" # CPU limit
-    oom_score_adj: -300 # Protect proxy from aggressive OOM-killer
-
-    # Using standard Docker bridge network
-
-    # Monitoring labels
+    mem_limit: 12g
+    mem_reservation: 6g
+    cpus: "1.0"
+    oom_score_adj: -300
+    networks:
+      - backend
+      - data
     labels:
       - "com.erni-ki.service=litellm"
       - "com.erni-ki.version=main-stable"
@@ -264,15 +245,15 @@ services:
       - publicai_api_key
       - redis_password
 
-  # JWT authentication service
   auth:
     build:
       context: ./auth
       dockerfile: Dockerfile
     env_file: env/auth.env
     logging: *important-logging
-    ports:
-      - "127.0.0.1:9092:9090" # Port changed to avoid conflict, localhost-only
+    networks:
+      - backend
+      - data
     restart: unless-stopped
     mem_limit: 512m
     mem_reservation: 256m
@@ -292,7 +273,6 @@ services:
     secrets:
       - openwebui_secret_key
 
-  # Cloudflare tunnel for external access
   cloudflared:
     entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/cloudflared-with-secret.sh"]
     command: ["tunnel", "--no-autoupdate", "run"]
@@ -302,9 +282,8 @@ services:
       openwebui:
         condition: service_healthy
     env_file: env/cloudflared.env
-    environment:
-      # Explicit origin cert path (place cert.pem alongside config.yml/credentials-file)
-      TUNNEL_ORIGIN_CERT: /home/nonroot/.cloudflared/cert.pem
+    # TUNNEL_ORIGIN_CERT is not required for token-based (remote-managed) tunnels
+    # The certificate is only needed for locally-managed tunnels
     healthcheck:
       test: ["CMD", "cloudflared", "version"]
       interval: 60s
@@ -322,15 +301,18 @@ services:
       - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
-      - cloudflared_tunnel_token
-    # Using standard Docker bridge network
+      - source: cloudflared_tunnel_token
+        uid: "65532"
+        gid: "65532"
+        mode: 0444 # allow read for healthcheck/entrypoint even if uid mapping differs
+    networks:
+      - frontend
+      - backend
     labels:
       # Allow auto-updates for Cloudflared
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=tunnel-services"
 
-  # Document extraction service
-  # Text-to-speech service
   edgetts:
     env_file: env/edgetts.env
     healthcheck:
@@ -345,8 +327,8 @@ services:
       start_period: 30s
     image: travisvn/openai-edge-tts@sha256:4e7e2773350a3296f301b5f66e361daad243bdc4b799eec32613fddcee849040 # updated: digest compatible with schema2
     logging: *auxiliary-logging
-    ports:
-      - "127.0.0.1:5050:5050"
+    networks:
+      - backend
     restart: unless-stopped
     secrets:
       - edgetts_api_key
@@ -358,7 +340,6 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=text-to-speech"
 
-  # Apache Tika file processing service
   tika:
     env_file: env/tika.env
     healthcheck:
@@ -369,8 +350,8 @@ services:
       start_period: 30s
     image: apache/tika:3.2.3.0-full # updated tag (was digest)
     logging: *auxiliary-logging
-    ports:
-      - "127.0.0.1:9998:9998"
+    networks:
+      - backend
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 512m
@@ -380,10 +361,17 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=document-processing"
 
-  # MCPO server for request processing
   mcposerver:
     entrypoint: ["/opt/erni/bin/mcposerver-with-secrets.sh"]
-    command: ["--config", "/app/conf/config.json"]
+    command:
+      - --config
+      - /app/conf/config.json
+      - --server-type
+      - http
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
     depends_on:
       db:
         condition: service_healthy
@@ -400,8 +388,9 @@ services:
       start_period: 20s
     image: ghcr.io/open-webui/mcpo:git-91e8f94 # v0.0.19 tag not available in registry; keep stable commit
     logging: *auxiliary-logging
-    ports:
-      - "127.0.0.1:8000:8000"
+    networks:
+      - backend
+      - data
     restart: unless-stopped
     mem_limit: 512m
     mem_reservation: 256m
@@ -415,13 +404,11 @@ services:
       - postgres_password
       - context7_api_key
       - ragflow_api_key
-    # Using standard Docker bridge network
     labels:
       # Allow auto-updates for MCP Server
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=ai-services"
 
-  # SearXNG search engine (optimized network configuration)
   searxng:
     depends_on:
       redis:
@@ -451,15 +438,17 @@ services:
     secrets:
       - redis_password
       - searxng_secret_key
-    # Using standard Docker bridge network
+    networks:
+      - backend
+      - data
     labels:
       # Allow auto-updates for SearXNG
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=search-services"
     mem_limit: 1g
+    mem_reservation: 512m
     cpus: "1.0"
 
-  # Ollama LLM server with GPU acceleration (optimized network configuration)
   ollama:
     runtime: nvidia
     mem_limit: 24g
@@ -487,19 +476,17 @@ services:
       start_period: 10s
     image: ollama/ollama:0.13.0 # Updated to 0.13.0 (GPU/Vulkan improvements)
     logging: *critical-logging
-    ports:
-      - "127.0.0.1:11434:11434"
+    networks:
+      - backend
     restart: unless-stopped
     volumes:
       - ./data/ollama:/root/.ollama
-    # Using standard Docker bridge network
     labels:
       # CRITICAL: Disable Ollama auto-updates (GPU)
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=critical-ai-gpu"
 
-  # Nginx reverse proxy (optimized network configuration)
   nginx:
     depends_on:
       auth:
@@ -512,7 +499,6 @@ services:
       timeout: 30s
       retries: 3
       start_period: 30s
-    # Updated: 2025-11-04 from 1.28.0 to 1.29.3 (mainline with performance improvements)
     image: nginx:1.29.3
     logging: *critical-logging
     ports:
@@ -520,6 +506,7 @@ services:
       - "443:443"
       - "8080:8080"
     restart: unless-stopped
+    mem_reservation: 384m
     volumes:
       - ./conf/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
       - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -528,7 +515,10 @@ services:
       - ./conf/nginx/healthcheck.sh:/etc/nginx/healthcheck.sh:ro
       - ./data/nginx/webroot:/var/www/html
       - ./data/nginx/logs:/var/log/nginx
-    # Using standard Docker bridge network
+    networks:
+      - frontend
+      - backend
+      - monitoring
     labels:
       # CRITICAL: Disable Nginx auto-updates (critical proxy server)
       - "com.centurylinklabs.watchtower.enable=false"
@@ -536,8 +526,9 @@ services:
       - "com.centurylinklabs.watchtower.scope=critical-proxy"
     mem_limit: 512m
     cpus: "1.0"
+    security_opt:
+      - no-new-privileges:true
 
-  # OpenWebUI main interface with GPU acceleration (optimized network configuration)
   openwebui:
     depends_on:
       auth:
@@ -576,25 +567,23 @@ services:
       - ./data/openwebui:/app/backend/data
       - ./data/docling/shared:/app/backend/data/docling-shared
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
-      # Shared volume for file transfer to Docling (default mount for exchange)
-      # Entry-point wrapper injects secrets from Docker secrets
     secrets:
       - postgres_password
       - litellm_api_key
       - openwebui_secret_key
       - redis_password
-    # Using standard Docker bridge network
+    networks:
+      - backend
+      - data
     labels:
       # Allow auto-updates for OpenWebUI
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.monitor-only=true"
       - "com.centurylinklabs.watchtower.scope=web-interface"
 
-  # Docling OCR/ingestion pipeline (GPU aware)
   docling:
-    # Official Docling Serve GPU image (CUDA 12.6)
     # Override DOCLING_IMAGE in .env with pinned digest/tag
-    image: ${DOCLING_IMAGE:-ghcr.io/docling-project/docling-serve-cu126:main}
+    image: ${DOCLING_IMAGE:-ghcr.io/docling-project/docling-serve-cu126@sha256:2db21d1dfe3788fa13af51adc5dd2e650ca66277800ce55bbee3e36dc2533171}
     depends_on:
       ollama:
         condition: service_healthy
@@ -627,6 +616,9 @@ services:
       - ./data/docling/docling-models:/opt/app-root/src/.cache/docling
       - ./data/docling/docling-models:/docling-artifacts
       - ./data/docling/shared:/docling-shared
+    networks:
+      - backend
+      - data
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=document-processing"
@@ -645,11 +637,10 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    # Updated: 2025-10-02 from v1.4.0 to v1.10.1 (latest stable with fixes)
     image: garethgeorge/backrest:v1.10.1
     logging: *important-logging
-    ports:
-      - "127.0.0.1:9898:9898"
+    networks:
+      - data
     restart: unless-stopped
     mem_limit: 512m
     mem_reservation: 256m
@@ -675,7 +666,6 @@ services:
   # MONITORING AND LOGGING
   # ============================================================================
 
-  # Prometheus - metrics collection
   prometheus:
     image: prom/prometheus:v3.7.3 # Updated from v3.0.0
     container_name: erni-ki-prometheus
@@ -693,9 +683,9 @@ services:
     volumes:
       - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./conf/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
-      - ./conf/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro # ADDED 2025-10-24: System alerts
+      - ./conf/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
       - ./conf/prometheus/rules:/etc/prometheus/rules:ro
-      - ./conf/prometheus/alerts:/etc/prometheus/alerts:ro # Added: 2025-10-02 for litellm-memory.yml
+      - ./conf/prometheus/alerts:/etc/prometheus/alerts:ro
       - ./data/prometheus:/prometheus
     ports:
       - "127.0.0.1:9091:9090"
@@ -718,27 +708,28 @@ services:
       # Allow auto-updates for Prometheus
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
 
-  # Grafana - dashboard and visualization
   grafana:
     depends_on:
       prometheus:
         condition: service_healthy
-    # Updated: 2025-10-02 from 10.2.0 to 11.6.6 (latest stable 11.x version)
-    image: grafana/grafana:12.3.0 # Updated from 11.6.8 (12.x evaluation)
+    image: grafana/grafana:12.3.0
     container_name: erni-ki-grafana
     user: "472:472"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/grafana_admin_password
-      - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_SERVER_ROOT_URL=http://grafana.erni-ki.local
-      - GF_SERVER_SERVE_FROM_SUB_PATH=true
-      - GF_ANALYTICS_REPORTING_ENABLED=false
-      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      GF_PATHS_DATA: "/var/lib/grafana"
+      GF_PATHS_LOGS: "/var/log/grafana"
+      GF_PATHS_PLUGINS: "/var/lib/grafana/plugins"
+      GF_PATHS_PROVISIONING: "/etc/grafana/provisioning"
+      GF_SERVER_ROOT_URL: "http://grafana.erni-ki.local"
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_ANALYTICS_REPORTING_ENABLED: false
+      GF_ANALYTICS_CHECK_FOR_UPDATES: false
     volumes:
       - ./data/grafana:/var/lib/grafana
-      # Updated paths for optimized configurations
       - ./conf/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./conf/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
@@ -762,14 +753,14 @@ services:
       - source: grafana_admin_password
         target: grafana_admin_password
         mode: 0444
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
 
-  # Uptime Kuma - visual ERNI-KI status
   uptime-kuma:
     image: louislam/uptime-kuma:2.0.2
     container_name: erni-ki-uptime-kuma
     env_file: env/uptime-kuma.env
-    restart: always
+    restart: unless-stopped
     logging: *monitoring-logging
     ports:
       - "127.0.0.1:3001:3001" # Localhost-only
@@ -789,11 +780,13 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     networks:
-      default:
+      monitoring:
+        aliases:
+          - uptime-kuma
+      frontend:
         aliases:
           - uptime-kuma
 
-  # Loki - modern logging system (Elasticsearch replacement)
   loki:
     image: grafana/loki:3.6.2 # Updated from 3.0.0
     container_name: erni-ki-loki
@@ -821,8 +814,9 @@ services:
       # Allow auto-updates for Loki
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=logging-stack"
+    networks:
+      - monitoring
 
-  # Alertmanager - alert management
   alertmanager:
     image: prom/alertmanager:v0.29.0 # updated from v0.27.0
     container_name: erni-ki-alertmanager
@@ -869,9 +863,9 @@ services:
       - source: pagerduty_routing_key
         target: pagerduty_routing_key
         mode: 0444
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
 
-  # Node Exporter - system metrics
   node-exporter:
     image: prom/node-exporter:v1.10.2 # updated from v1.8.2
     container_name: erni-ki-node-exporter
@@ -903,6 +897,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:9100/metrics >/dev/null"]
       interval: 30s
@@ -913,14 +909,13 @@ services:
       # Allow auto-updates for Node Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
 
-  # Postgres Exporter - PostgreSQL monitoring
   postgres-exporter:
     depends_on:
       db:
         condition: service_healthy
-    # Rollback to prometheuscommunity image 2025-11-07: wrouesnel lacks wget/curl for healthcheck
     image: prometheuscommunity/postgres-exporter:v0.18.1
     container_name: erni-ki-postgres-exporter
     user: "0:0"
@@ -932,7 +927,6 @@ services:
     volumes:
       - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
       - ./conf/postgres-exporter/config.yml:/etc/postgres_exporter.yml:ro
-    # Publish port 9188 for socat proxy (2025-11-07)
     ports:
       - "127.0.0.1:9188:9188"
     restart: unless-stopped
@@ -945,6 +939,8 @@ services:
       - --config.file=/etc/postgres_exporter.yml
       - --no-collector.stat_bgwriter
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:9187/metrics || exit 1"]
       interval: 30s
@@ -959,11 +955,11 @@ services:
       - source: postgres_exporter_dsn
         target: /etc/postgres_exporter_dsn.txt
         mode: 0444
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
+      - data
 
-  # Socat Proxy - IPv4 to IPv6 proxy for Postgres Exporter
-  # Solution: Postgres Exporter listens only on IPv6, but Prometheus connects via IPv4
-  # Using network_mode: service for localhost exporter access (2025-11-07)
+  # Socat Proxy: Postgres Exporter listens on IPv6, Prometheus connects via IPv4
   postgres-exporter-proxy:
     depends_on:
       postgres-exporter:
@@ -1008,6 +1004,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD-SHELL", "bash -c ': < /dev/tcp/localhost/9445'"]
       interval: 30s
@@ -1020,9 +1018,9 @@ services:
       # Allow auto-updates for NVIDIA Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
 
-  # Blackbox Exporter - availability monitoring
   blackbox-exporter:
     image: prom/blackbox-exporter:v0.27.0 # updated from v0.25.0
     container_name: erni-ki-blackbox-exporter
@@ -1035,6 +1033,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test:
         [
@@ -1045,22 +1045,20 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
+      - frontend
     labels:
-      # Allow auto-updates for Blackbox Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
 
-  # Redis Exporter - Redis monitoring
   redis-exporter:
     depends_on:
       redis:
         condition: service_healthy
-    # Updated: 2025-10-02 from v1.55.0 to v1.62.0 (stable version without v1.77.0 issues)
-    image: oliver006/redis_exporter:v1.80.1 # updated from v1.62.0
+    image: oliver006/redis_exporter:v1.80.1
     container_name: erni-ki-redis-exporter
     user: "0:0"
-    # Fixed: 2025-11-07 using full URL with password (format redis://:password@host:port)
     entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/redis-exporter-with-secret.sh"]
     environment:
       - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
@@ -1075,6 +1073,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test:
         [
@@ -1090,20 +1090,18 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-    # Health check disabled: minimal image lacks wget/curl/nc
-    # Service monitored via Prometheus scrape success
     labels:
-      # Allow auto-updates for Redis Exporter
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
+      - data
     secrets:
       - redis_password
     volumes:
       - ./scripts/entrypoints/redis-exporter-with-secret.sh:/opt/erni/bin/redis-exporter-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
 
-  # Ollama Exporter - AI services monitoring
   ollama-exporter:
     depends_on:
       ollama:
@@ -1136,17 +1134,18 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
+    networks:
+      - monitoring
+      - backend
 
-  # Nginx Exporter - web server monitoring
   nginx-exporter:
     depends_on:
       nginx:
         condition: service_healthy
-    # Updated: 2025-10-02 from 1.1.0 to 1.4.2 (latest stable version)
-    image: nginx/nginx-prometheus-exporter:1.5.1 # updated from 1.1.0
+    image: nginx/nginx-prometheus-exporter:1.5.1
     container_name: erni-ki-nginx-exporter
     command:
-      - "--nginx.scrape-uri=http://nginx:80/nginx_status" # Fixed port from 8080 to 80
+      - "--nginx.scrape-uri=http://nginx:80/nginx_status"
       - "--web.listen-address=:9113"
     ports:
       - "127.0.0.1:9113:9113"
@@ -1155,6 +1154,8 @@ services:
     mem_reservation: 128m
     cpus: "0.2"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: ["CMD", "/usr/bin/nginx-prometheus-exporter", "--version"]
       interval: 30s
@@ -1164,11 +1165,13 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
+    networks:
+      - monitoring
+      - frontend
+      - backend
 
-  # cAdvisor - container monitoring
   cadvisor:
-    # Updated: 2025-10-02 from v0.47.2 to v0.52.1 (latest available version)
-    image: gcr.io/cadvisor/cadvisor:v0.52.1 # keep stable tag (v0.53.0 not available)
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
     container_name: erni-ki-cadvisor
     command:
       - "--housekeeping_interval=10s"
@@ -1188,6 +1191,8 @@ services:
     mem_reservation: 256m
     cpus: "0.5"
     logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test:
         [
@@ -1199,14 +1204,13 @@ services:
       retries: 3
       start_period: 30s
     labels:
-      # Allow auto-updates for cAdvisor
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
-    # Using standard Docker bridge network
+    networks:
+      - monitoring
 
   # === CENTRALIZED LOGGING ===
 
-  # Fluent Bit - log collector and processor
   fluent-bit:
     depends_on:
       loki:
@@ -1263,7 +1267,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=logging-stack"
     networks:
-      default:
+      monitoring:
         aliases:
           - fluent-bit
 
@@ -1299,6 +1303,9 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
+    networks:
+      - monitoring
+      - backend
 
   # Webhook Receiver - Alertmanager alert processing
   webhook-receiver:
@@ -1340,6 +1347,9 @@ services:
       # Allow auto-updates for Webhook Receiver
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
+    networks:
+      - backend
+      - monitoring
 # Using standard Docker bridge network (docker0)
 
 # ============================================================================
@@ -1458,3 +1468,25 @@ secrets:
   # Docling picture description API config (optional)
   docling_picture_api:
     file: ./secrets/docling_picture_api.txt
+
+# ============================================================================
+# NETWORKS - INFRA-3a Segmentation
+# ============================================================================
+networks:
+  # Public-facing ingress (Nginx, Cloudflared)
+  frontend:
+    driver: bridge
+
+  # Application logic (OpenWebUI, APIs)
+  # Needs outbound internet access for AI APIs
+  backend:
+    driver: bridge
+
+  # Stateful services (DB, Redis) - Strictly internal
+  data:
+    driver: bridge
+    internal: true
+
+  # Observability stack
+  monitoring:
+    driver: bridge

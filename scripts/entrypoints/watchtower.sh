@@ -1,10 +1,13 @@
 #!/usr/bin/env sh
-set -euo pipefail
+set -eu
 
 # Load HTTP API token from Docker secret and execute Watchtower with the
 # original arguments passed via compose `command`.
+BUSYBOX=${BUSYBOX:-/opt/erni/bin/busybox}
+
 if [ -f /run/secrets/watchtower_api_token ]; then
-  WATCHTOWER_HTTP_API_TOKEN="$(tr -d '\r\n' </run/secrets/watchtower_api_token)"
+  token="$($BUSYBOX tr -d '\r\n' < /run/secrets/watchtower_api_token)"
+  WATCHTOWER_HTTP_API_TOKEN="$token"
   export WATCHTOWER_HTTP_API_TOKEN
 fi
 

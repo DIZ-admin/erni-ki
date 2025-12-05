@@ -1,5 +1,5 @@
 #!/bin/sh
-set -euo pipefail
+set -eu
 # populate sensitive envs from docker secrets if present (trim CR/LF)
 trim() { /opt/erni/bin/busybox tr -d '\r\n' < "$1"; }
 [ -f /run/secrets/postgres_password ] && export POSTGRES_PASSWORD="$(trim /run/secrets/postgres_password)"
@@ -12,8 +12,5 @@ if [ "${ENV_DUMP:-0}" != "0" ]; then
   exit 0
 fi
 
-# fall back to default entrypoint if available, else run module
-if [ -x /docker-entrypoint.sh ]; then
-  exec /docker-entrypoint.sh "$@"
-fi
-exec python -m mcpo "$@"
+# Run mcpo CLI directly (image Entrypoint defaults to mcpo)
+exec mcpo "$@"
