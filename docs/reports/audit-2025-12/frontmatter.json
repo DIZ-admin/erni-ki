@@ -1,0 +1,3043 @@
+{
+  "total_files": 412,
+  "files_with_frontmatter": 410,
+  "files_without_frontmatter": 2,
+  "valid_files": 8,
+  "invalid_files": 404,
+  "errors": [
+    {
+      "file": "INDEX-ERNI-ADAPTATION.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "overview.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "BUN-EXPERIMENT-README.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "PHASE1-PROGRESS-REPORT-2025-12-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "DOCUMENTATION-AUDIT-EXECUTIVE-SUMMARY.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "PRE-COMMIT-REFACTORING-INDEX.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "AUDIT-README.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "GLOSSARY.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "AUDIT-FILES-INDEX.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "INVESTOR-PITCH-SUMMARY.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "VERSION.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "DOCUMENTATION-STRATEGY-ERNI-GRUPPE-2025-12-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "PHASE1-SESSION4-COMPLETION-REPORT-2025-12-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "PHASE1-SESSION3-FINAL-REPORT-2025-12-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "PHASE1-SESSION2-PROGRESS-2025-12-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "ACADEMY-KI-ERNI-GRUPPE-EXECUTIVE-SUMMARY.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "FINAL-SUMMARY-ERNI-ADAPTATION-2025-12-04.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "INVESTOR-PRESENTATION-CHECKLIST.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "MIGRATION-CHECKLIST.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "DOCUMENTATION-AUDIT-INDEX-2025-12-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "DOCUMENTATION-AUDIT-AND-REFACTORING-PLAN-2025-12-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "budget-analysis.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/legacy-academy-index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/news-overview.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/README.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "archive/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/legacy-index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "quality/code-standards.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "security/authentication.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "security/security-policy.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "security/security-best-practices.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "security/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "security/ssl-tls-setup.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "security/log-audit.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "security/secrets-audit-2025-11-27.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/PRE-COMMIT-INDEX.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/bun-migration.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "development/pre-commit-guide.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/PRE-COMMIT-REFACTORING-PLAN.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/REFACTORING-SUMMARY.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/setup-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "development/RULES-FLOWCHART.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/PROJECT-RULES-SUMMARY.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/PHASE1-QUICK-WINS.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "development/testing-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "troubleshooting/common-issues.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/security-action-plan.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "operations/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/backup-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/prompting-101.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/ERNI-GRUPPE-IMPLEMENTATION-SUMMARY.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "academy/context-engineering-101.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/openwebui-basics.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "system/status.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "system/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/architecture.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/service-inventory.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/nginx-configuration.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/services-overview.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "getting-started/port-forwarding-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "getting-started/local-network-dns-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "getting-started/user-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "getting-started/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "getting-started/configuration-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "getting-started/dnsmasq-setup-instructions.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "getting-started/installation.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "getting-started/external-access-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "news/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "news/2025-11-erni-ki-status-page-launch.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "deployment/production-checklist.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "examples/nginx-examples.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "examples/api-usage-rest.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "examples/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "api/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/overview.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/GLOSSARY.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/VERSION.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/budget-analysis.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/overview.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/GLOSSARY.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/VERSION.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/budget-analysis.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "data/README.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "data/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/non-root-containers-plan.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/NO-EMOJI-POLICY.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/pre-commit-hooks.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/CHANGELOG.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/mcpo-integration-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/documentation-maintenance-strategy.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/github-environments-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/emoji-style-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/documentation-refactoring-plan.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/webhook-api.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/service-versions.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/language-policy.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/development.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/style-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/status-snippet.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/api-reference.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reference/metadata-standards.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "reports/erni-ki-comprehensive-analysis-2025-12-02.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "reports/redis-comprehensive-analysis-2025-12-02.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "reports/todo-fixme-triage-2025-12-03.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "reports/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/security/security-policy.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/security/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/development/setup-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/operations/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/prompting-101.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/context-engineering-101.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/openwebui-basics.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/system/status.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/system/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/architecture/architecture.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/architecture/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/getting-started/port-forwarding-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/getting-started/local-network-dns-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/getting-started/user-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/getting-started/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/getting-started/configuration-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/getting-started/dnsmasq-setup-instructions.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/getting-started/installation.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/getting-started/external-access-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/deployment/production-checklist.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/examples/nginx-examples.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/examples/api-usage-rest.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/examples/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/data/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/reference/non-root-containers-plan.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/NO-EMOJI-POLICY.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/pre-commit-hooks.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/CHANGELOG.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/mcpo-integration-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/documentation-maintenance-strategy.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/github-environments-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/emoji-style-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/documentation-refactoring-plan.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/webhook-api.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/service-versions.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/language-policy.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/development.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/style-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/status-snippet.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/api-reference.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/reference/metadata-standards.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/news/2025-01-release-x.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/news/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/howto/write-customer-email.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/howto/summarize-meeting-notes.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/howto/create-jira-ticket-with-ai.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/academy/howto/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/operations/core/operations-handbook.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/operations/core/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/operations/maintenance/image-upgrade-checklist.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/operations/monitoring/grafana-dashboards-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/operations/monitoring/monitoring-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/operations/monitoring/prometheus-queries-reference.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "en/archive/audits/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "en/archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/security/authentication.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/security/security-policy.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/security/security-best-practices.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/security/ssl-tls-setup.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/security/log-audit.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/backup-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/prompting-101.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/ERNI-GRUPPE-ADAPTATION.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "de/academy/context-engineering-101.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/openwebui-basics.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/system/status.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/system/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/architecture/architecture.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/architecture/service-inventory.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/architecture/nginx-configuration.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/architecture/services-overview.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/port-forwarding-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/local-network-dns-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/user-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/configuration-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/dnsmasq-setup-instructions.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/installation.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/getting-started/external-access-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/news/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/news/2025-11-erni-ki-status-page-launch.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/pre-commit-hooks.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/CHANGELOG.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/mcpo-integration-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/github-environments-setup.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/emoji-style-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/documentation-refactoring-plan.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/language-policy.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/development.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "de/reference/style-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/status-snippet.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/api-reference.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/reference/metadata-standards.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/getting-started/first-steps.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/getting-started/model-comparison.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/getting-started/was-ist-ki.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'translated_from_ru', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/getting-started/safety-and-ethics.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/news/2025-01-release-x.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/news/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-industry/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/howto/write-customer-email.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/howto/summarize-meeting-notes.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/howto/create-jira-ticket.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/howto/create-jira-ticket-with-ai.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/howto/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-industry/holzbau/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-industry/holzbau/bautagebuch-erstellen.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-industry/holzbau/angebot-erstellen.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-industry/construction/angebot-erstellen.md",
+      "errors": [
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/managers/create-project-report.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/managers/analyze-metrics.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/support/create-knowledge-base-article.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/support/troubleshoot-user-issue.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/general-users/write-professional-email.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/general-users/prepare-presentation.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/developers/debug-code.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/developers/write-unit-tests.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/academy/by-role/developers/code-review-with-ai.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'placeholder', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/database/redis-monitoring-grafana.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/database/database-troubleshooting.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/database/redis-operations-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/database/vllm-resource-optimization.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/database/database-monitoring-plan.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/database/database-production-optimizations.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/core/runbooks-summary.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/core/github-governance.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/core/admin-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'pending', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/core/operations-handbook.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/core/configuration-change-process.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/core/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'partial', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/core/status-page.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/troubleshooting/troubleshooting-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/diagnostics/erni-ki-diagnostic-methodology.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/maintenance/image-upgrade-checklist.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/maintenance/service-restart-procedures.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/maintenance/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/maintenance/docling-shared-volume.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/maintenance/backup-restore-procedures.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/automation/automated-maintenance-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/automation/docker-cleanup-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/automation/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/prometheus-alerts-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/rag-monitoring.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/access-log-sync-and-fluentbit.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/grafana-dashboards-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/monitoring-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/alertmanager-noise-reduction.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/prometheus-queries-reference.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/operations/monitoring/searxng-redis-issue-analysis.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/archive/migrations/documentation-refactoring-plans/code-audit-summary-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-v2-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "de/archive/migrations/documentation-refactoring-plans/documentation-update-plan-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/diagrams/deployment-diagram.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/diagrams/network-topology.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/diagrams/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/diagrams/data-flow.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "architecture/diagrams/architecture-overview.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/advanced/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/advanced/custom-workflows.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/advanced/api-integration.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/fundamentals/rag-basics.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/fundamentals/prompting-fundamentals.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/fundamentals/model-selection-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/fundamentals/context-management.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/fundamentals/effective-prompts.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/fundamentals/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/resources/glossar-holzbau.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/resources/sia-normen-uebersicht.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/resources/glossar.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/resources/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/getting-started/first-steps.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/getting-started/model-comparison.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/getting-started/what-is-ai.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/getting-started/faq.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/getting-started/safety-and-ethics.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/getting-started/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/news/2025-01-release-x.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/news/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-industry/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'redirect', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/howto/write-customer-email.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/howto/summarize-meeting-notes.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/howto/create-jira-ticket.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/howto/create-jira-ticket-with-ai.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/howto/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-industry/holzbau/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-industry/holzbau/bautagebuch-erstellen.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-industry/holzbau/angebot-erstellen.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-industry/construction/maengelliste.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-industry/construction/bautagebuch-erstellen.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/managers/create-project-report.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/managers/analyze-metrics.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/managers/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/support/create-knowledge-base-article.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/support/troubleshoot-user-issue.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/support/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/general-users/write-professional-email.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/general-users/summarize-meeting-notes.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/general-users/create-jira-ticket.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/general-users/prepare-presentation.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/general-users/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/general-users/translate-document.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/developers/debug-code.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/developers/write-unit-tests.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/developers/generate-documentation.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/developers/code-review-with-ai.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/by-role/developers/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/resources/prompt-bibliothek/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/resources/templates/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "academy/resources/cheat-sheets/index.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/database/redis-monitoring-grafana.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/database/database-troubleshooting.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/database/redis-operations-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/database/vllm-resource-optimization.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/database/database-monitoring-plan.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/database/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/database/database-production-optimizations.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/core/runbooks-summary.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/core/github-governance.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/core/admin-guide.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/core/operations-handbook.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/core/configuration-change-process.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/core/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/core/status-page.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/troubleshooting/troubleshooting-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/troubleshooting/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/ai/litellm-redis-caching.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/diagnostics/erni-ki-diagnostic-methodology.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/diagnostics/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/maintenance/image-upgrade-checklist.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/maintenance/service-restart-procedures.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/maintenance/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/maintenance/docling-shared-volume.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/maintenance/backup-restore-procedures.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/automation/automated-maintenance-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/automation/docker-log-rotation.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/automation/docker-cleanup-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/automation/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/prometheus-alerts-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/rag-monitoring.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/access-log-sync-and-fluentbit.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/grafana-dashboards-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/monitoring-guide.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/alertmanager-noise-reduction.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/prometheus-queries-reference.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/legacy-monitoring-scripts-migration.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'draft', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "operations/monitoring/searxng-redis-issue-analysis.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/migrations/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/audits/ci-health.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/audits/service-version-matrix-2025-11-28.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "archive/audits/documentation-audit.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/audits/monitoring-audit.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/audits/pre-commit-refactoring-audit-2025-12-03.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Missing required field: translation_status"
+      ]
+    },
+    {
+      "file": "archive/audits/README.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "archive/audits/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/audits/comprehensive-investor-audit-2025-12-03.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Missing required field: doc_version",
+        "Missing required field: translation_status"
+      ]
+    },
+    {
+      "file": "archive/audits/comprehensive-code-audit-2025-12-04.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Missing required field: translation_status"
+      ]
+    },
+    {
+      "file": "archive/training/prompting-101.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/training/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/training/openwebui-basics.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/news/2025.md",
+      "errors": [
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/news/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/diagnostics/system-diagnostics-2025-11-18.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/diagnostics/rag-system-diagnostic-report-20251030.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/diagnostics/full-server-diagnostics-2025-11-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/diagnostics/README.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "archive/diagnostics/log-analysis-correction-2025-11-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/diagnostics/rag-vector-search-test-report-20251030.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/diagnostics/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/howto/summarize-meeting-notes.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/howto/write-customer-email-with-openwebui.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/howto/create-jira-description-with-ai.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/howto/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/incidents/project-audit-report-20251030.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/incidents/docx-upload-fix-20251030.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/incidents/phase1-critical-fixes-report-20251030.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/incidents/system-repair-2025-10-16.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/incidents/README.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id"
+      ]
+    },
+    {
+      "file": "archive/incidents/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/incidents/phase-2-completion-2025-11-04.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'archived', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/migrations/documentation-refactoring-plans/code-audit-summary-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/migrations/documentation-refactoring-plans/index.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-v2-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    },
+    {
+      "file": "archive/migrations/documentation-refactoring-plans/documentation-update-plan-2025-11-24.md",
+      "errors": [
+        "Missing required field: title",
+        "Missing required field: page_id",
+        "Invalid translation_status 'complete', must be one of ['original', 'translated', 'outdated', 'in_progress']"
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "file": "archive/security/security-fixes-2025-12-06.md",
+      "warning": "No frontmatter found"
+    },
+    {
+      "file": "archive/refactoring/phase-2.1-modular-compose-summary.md",
+      "warning": "No frontmatter found"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+======================================================================================================
+STALE DOCUMENTATION CHECK
+======================================================================================================
+
+Configuration:
+  Documentation directory: docs
+  Stale threshold: 90 days
+  Excluded patterns: archive node_modules .venv site
+
+Searching for stale documentation files...
+
+======================================================================================================
+SUMMARY
+======================================================================================================
+
+Total documentation files: 361
+Stale files (>90 days): [1;33m0[0m (0.0%)
+
+[0;32m✅ No stale files found![0m
+
+All documentation has been updated within the last 90 days.
+
+======================================================================================================
