@@ -415,8 +415,10 @@ jobs:
       - name: 📄 Promtail config verify
         run: |
           if [ -f "conf/promtail/promtail-config.yaml" ]; then
-            docker run --rm -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" grafana/promtail:3.0.0 \
-              -config.file=/etc/promtail/config.yaml --verify-config
+            docker run --rm \
+              -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" \
+              --entrypoint /bin/sh grafana/promtail:3.0.0 \
+              -c "promtail -config.file=/etc/promtail/config.yaml -dry-run"
           else
             echo "promtail config not found, skipping"
           fi
