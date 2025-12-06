@@ -1,0 +1,134 @@
+# ============================================================================
+# ERNI-KI Data Layer
+# ============================================================================
+# PostgreSQL (pgvector) and Redis services with their configurations.
+#
+# Dependencies: base.yml (networks, logging anchors)
+#
+# Usage:
+#   docker compose -f compose/base.yml -f compose/data.yml up -d
+#
+# Author: ERNI-KI Team
+# Version: 1.0.0
+# ============================================================================
+
+# Logging anchors (duplicated from base.yml for YAML anchor compatibility)
+x-critical-logging: &critical-logging
+  driver: 'json-file'
+  options:
+    max-size: '50m'
+    max-file: '10'
+    labels: 'service,version,environment,level=critical'
+    tag: 'critical.{{.Name}}'
+
+x-important-logging: &important-logging
+  driver: 'json-file'
+  options:
+    max-size: '10m'
+    max-file: '5'
+    labels: 'service,version,environment,level=important'
+
+services:
+  # ==========================================================================
+  # PostgreSQL 17 with pgvector extension
+  # ==========================================================================
+  db:
+    env_file: ../env/db.env
+    secrets:
+      - postgres_password
+    environment:
+      # Override POSTGRES_PASSWORD from env file to use secret
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}']
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    image: pgvector/pgvector:pg17
+    logging: *critical-logging
+    restart: unless-stopped
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./conf/postgres-enhanced/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./secrets/postgres-ssl/server.crt:/etc/ssl/postgres/server.crt:ro
+      - ./secrets/postgres-ssl/server.key:/etc/ssl/postgres/server.key:ro
+    # Using custom configuration
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    networks:
+      - data
+    labels:
+      # CRITICAL: Disable database auto-updates
+      - 'com.centurylinklabs.watchtower.enable=false'
+      - 'com.centurylinklabs.watchtower.monitor-only=true'
+      - 'com.centurylinklabs.watchtower.scope=critical-database'
+    mem_limit: 4g
+    mem_reservation: 2g
+    cpus: '2.0'
+
+  # ==========================================================================
+  # Redis 7.0.15 with ACL support
+  # ==========================================================================
+  redis:
+    env_file: ../env/redis.env
+    environment:
+      REDIS_PASSWORD: '${REDIS_PASSWORD:-}'
+    command:
+      - /bin/sh
+      - -c
+      - >
+        set -euo pipefail;
+        SECRET="$$(tr -d '\r\n' < /run/secrets/redis_password)";
+        CONF_TPL=/usr/local/etc/redis/redis.conf;
+        CONF_OUT=/tmp/redis.conf;
+        ACL_TPL=/usr/local/etc/redis/users.acl.template;
+        ACL_OUT=/tmp/redis-users.acl;
+        sed "s/\$${REDIS_PASSWORD}/$${SECRET}/g" "$${CONF_TPL}" > "$${CONF_OUT}";
+        if [ -f "$${ACL_TPL}" ]; then
+          sed "s/\$${REDIS_PASSWORD}/$${SECRET}/g" "$${ACL_TPL}" > "$${ACL_OUT}";
+          chmod 600 "$${ACL_OUT}";
+          exec redis-server "$${CONF_OUT}" --aclfile "$${ACL_OUT}";
+        else
+          exec redis-server "$${CONF_OUT}";
+        fi
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "pw=$(tr -d '\r\n' < /run/secrets/redis_password); redis-cli -a \"$$pw\" ping | grep PONG",
+        ]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+    image: redis:7.0.15-alpine # Pinned: avoid floating latest; 7.2 RDB format incompatible
+    logging: *important-logging
+    restart: unless-stopped
+    volumes:
+      - ./data/redis:/data
+      - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./conf/redis/users.acl:/usr/local/etc/redis/users.acl.template:ro
+    secrets:
+      - redis_password
+    networks:
+      - data
+    labels:
+      # Allow auto-updates for Redis
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=cache-services'
+    mem_limit: 4g
+    mem_reservation: 2g
+    cpus: '1.0'
+
+# ============================================================================
+# SECRETS
+# ============================================================================
+
+secrets:
+  # PostgreSQL password (used by: db, postgres-exporter)
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+
+  # Redis password (used by Redis requirepass and clients)
+  redis_password:
+    file: ./secrets/redis_password.txt

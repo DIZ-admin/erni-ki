@@ -1,0 +1,380 @@
+# ============================================================================
+# ERNI-KI Monitoring Layer
+# ============================================================================
+# Observability stack: Prometheus, Grafana, Loki, Alertmanager, Uptime-Kuma
+# Exporters: Node, Postgres, Nvidia, Blackbox, Redis, Ollama, Nginx, cAdvisor
+# Log collectors: Fluent-Bit, Promtail
+#
+# Dependencies: base.yml (for monitoring network and logging anchors)
+#
+# Usage:
+#   docker compose -f compose/base.yml -f compose/monitoring.yml up -d
+#
+# Note: This file contains a subset of monitoring services for modularity.
+# Full exporter configuration is available in the original compose.yml.
+#
+# Author: ERNI-KI Team
+# Version: 1.0.0
+# ============================================================================
+
+# Logging anchors (duplicated from base.yml for YAML anchor compatibility)
+x-monitoring-logging: &monitoring-logging
+  driver: 'json-file'
+  options:
+    max-size: '10m'
+    max-file: '5'
+    labels: 'service,version,level=monitoring'
+
+services:
+  # ==========================================================================
+  # Prometheus - Metrics Collection
+  # ==========================================================================
+  prometheus:
+    image: prom/prometheus:v3.7.3 # Updated from v3.0.0
+    container_name: erni-ki-prometheus
+    depends_on:
+      postgres-exporter:
+        condition: service_healthy
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--storage.tsdb.retention.size=10GB'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.external-url=http://prometheus.erni-ki.local'
+    volumes:
+      - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./conf/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+      - ./conf/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - ./conf/prometheus/rules:/etc/prometheus/rules:ro
+      - ./conf/prometheus/alerts:/etc/prometheus/alerts:ro
+      - ./data/prometheus:/prometheus
+    ports:
+      - '127.0.0.1:9091:9090'
+    restart: unless-stopped
+    mem_limit: 2g
+    mem_reservation: 1g
+    cpus: '1.5'
+    logging: *monitoring-logging
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      # Allow auto-updates for Prometheus
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=monitoring-stack'
+    networks:
+      - monitoring
+
+  # ==========================================================================
+  # Grafana - Visualization & Dashboards
+  # ==========================================================================
+  grafana:
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    image: grafana/grafana:12.3.0
+    container_name: erni-ki-grafana
+    user: '472:472'
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      GF_PATHS_DATA: '/var/lib/grafana'
+      GF_PATHS_LOGS: '/var/log/grafana'
+      GF_PATHS_PLUGINS: '/var/lib/grafana/plugins'
+      GF_PATHS_PROVISIONING: '/etc/grafana/provisioning'
+      GF_SERVER_ROOT_URL: 'http://grafana.erni-ki.local'
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_ANALYTICS_REPORTING_ENABLED: false
+      GF_ANALYTICS_CHECK_FOR_UPDATES: false
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+      - ./conf/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./conf/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - '127.0.0.1:3000:3000'
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 512m
+    cpus: '0.5'
+    logging: *monitoring-logging
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:3000/api/health || exit 1']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      # Allow auto-updates for Grafana
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=monitoring-stack'
+    secrets:
+      - source: grafana_admin_password
+        target: grafana_admin_password
+        mode: 0444
+    networks:
+      - monitoring
+
+  # ==========================================================================
+  # Uptime Kuma - Uptime Monitoring
+  # ==========================================================================
+  uptime-kuma:
+    image: louislam/uptime-kuma:2.0.2
+    container_name: erni-ki-uptime-kuma
+    env_file: ../env/uptime-kuma.env
+    restart: unless-stopped
+    logging: *monitoring-logging
+    ports:
+      - '127.0.0.1:3001:3001' # Localhost-only
+    volumes:
+      - ./data/uptime-kuma:/app/data
+    healthcheck:
+      test: ['CMD', 'node', '/app/extra/healthcheck.js']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: '0.5'
+    labels:
+      # Allow auto-updates for Uptime Kuma
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=monitoring-stack'
+    networks:
+      monitoring:
+        aliases:
+          - uptime-kuma
+      frontend:
+        aliases:
+          - uptime-kuma
+
+  # ==========================================================================
+  # Loki - Log Aggregation
+  # ==========================================================================
+  loki:
+    image: grafana/loki:3.6.2 # Updated from 3.0.0
+    container_name: erni-ki-loki
+    logging: *monitoring-logging
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:3100:3100'
+    mem_limit: 2g
+    mem_reservation: 1g
+    cpus: '1.0'
+    volumes:
+      - ./conf/loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - ./data/loki:/loki
+      - ./conf/loki/tls:/etc/loki/tls:ro
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+      - -config.expand-env=true
+    healthcheck:
+      test: ['CMD', '/usr/bin/loki', '--version']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    labels:
+      # Allow auto-updates for Loki
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=logging-stack'
+    networks:
+      - monitoring
+
+  # ==========================================================================
+  # Alertmanager - Alert Management
+  # ==========================================================================
+  alertmanager:
+    image: prom/alertmanager:v0.29.0 # updated from v0.27.0
+    container_name: erni-ki-alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://alertmanager.erni-ki.local'
+      - '--cluster.listen-address=0.0.0.0:9094'
+      # Cluster parameters to resolve queue overflow issue
+      - '--cluster.gossip-interval=500ms' # Increased from default 200ms
+      - '--cluster.pushpull-interval=120s' # Increased from default 60s
+      - '--cluster.tcp-timeout=15s' # Increased for connection stability
+      - '--cluster.probe-timeout=1s' # Optimized for fast diagnostics
+      - '--cluster.probe-interval=2s' # Cluster node check interval
+    volumes:
+      - ./conf/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./data/alertmanager:/alertmanager
+    ports:
+      - '127.0.0.1:9093:9093'
+      - '127.0.0.1:9094:9094'
+    restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: '0.5'
+    logging: *monitoring-logging
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget --no-verbose --tries=1 --spider http://localhost:9093/-/healthy || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      # Allow auto-updates for Alertmanager
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=monitoring-stack'
+    secrets:
+      - source: slack_alert_webhook
+        target: slack_alert_webhook
+        mode: 0444
+      - source: pagerduty_routing_key
+        target: pagerduty_routing_key
+        mode: 0444
+    networks:
+      - monitoring
+
+  # ==========================================================================
+  # Node Exporter - System Metrics
+  # ==========================================================================
+  node-exporter:
+    image: prom/node-exporter:v1.10.2 # updated from v1.8.2
+    container_name: erni-ki-node-exporter
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--path.udev.data=/host/run/udev/data' # Path to udev data for diskstats collector
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--no-collector.systemd' # Disable systemd collector (no dbus access in container)
+      # FIXED 2025-10-24: error instead of warn to suppress broken pipe errors
+      # Broken pipe errors are normal behavior when client closes connection
+      - '--log.level=error'
+      - '--collector.processes'
+      - '--web.disable-exporter-metrics' # Disable exporter's own metrics to reduce load
+      - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /run/udev/data:/host/run/udev/data:ro # Mount udev data for diskstats
+      - /run/systemd/private:/run/systemd/private:ro
+      - ./data/node-exporter-textfile:/var/lib/node_exporter/textfile_collector:ro
+    ports:
+      - '127.0.0.1:9101:9100'
+    pid: host
+    restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: '0.2'
+    logging: *monitoring-logging
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:9100/metrics >/dev/null']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      # Allow auto-updates for Node Exporter
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=monitoring-stack'
+    networks:
+      - monitoring
+
+  # ==========================================================================
+  # PostgreSQL Exporter - Database Metrics
+  # ==========================================================================
+  postgres-exporter:
+    depends_on:
+      db:
+        condition: service_healthy
+    image: prometheuscommunity/postgres-exporter:v0.18.1
+    container_name: erni-ki-postgres-exporter
+    user: '0:0'
+    environment:
+      - PG_EXPORTER_DISABLE_DEFAULT_METRICS=false
+      - PG_EXPORTER_DISABLE_SETTINGS_METRICS=true
+      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
+      - PG_EXPORTER_EXCLUDE_DATABASES=template0,template1,postgres
+    volumes:
+      - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
+      - ./conf/postgres-exporter/config.yml:/etc/postgres_exporter.yml:ro
+    ports:
+      - '127.0.0.1:9188:9188'
+    restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: '0.2'
+    entrypoint:
+      - /entrypoint/postgres-exporter.sh
+    command:
+      - --config.file=/etc/postgres_exporter.yml
+      - --exclude-databases=template0,template1
+      - --auto-discover-databases
+      - --log.level=error
+    logging: *monitoring-logging
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O-', 'http://localhost:9188/metrics']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    labels:
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=monitoring-stack'
+    secrets:
+      - source: postgres_exporter_dsn
+        target: postgres_exporter_dsn
+        mode: 0444
+    networks:
+      - monitoring
+      - data
+
+  # ==========================================================================
+  # ADDITIONAL EXPORTERS
+  # ==========================================================================
+  # Note: This file includes core monitoring services and key exporters.
+  # Additional exporters available in the full configuration:
+  # - postgres-exporter-proxy (HAProxy for Postgres exporter)
+  # - nvidia-exporter (GPU metrics)
+  # - blackbox-exporter (Endpoint probing)
+  # - redis-exporter (Redis metrics)
+  # - ollama-exporter (Ollama metrics)
+  # - nginx-exporter (Nginx metrics)
+  # - cadvisor (Container metrics)
+  # - fluent-bit (Log collector)
+  # - promtail (Loki log shipper)
+  # - rag-exporter (RAG-specific metrics)
+  # - webhook-receiver (Webhook alerts)
+  # - erni-ki-logs (Centralized logging)
+  # - erni-ki-fluent-db (FluentD backend)
+  #
+  # To add these services, copy their configuration from compose.yml
+
+# ============================================================================
+# SECRETS
+# ============================================================================
+
+secrets:
+  # Grafana admin password
+  grafana_admin_password:
+    file: ./secrets/grafana_admin_password.txt
+
+  # DSN for Postgres exporter
+  postgres_exporter_dsn:
+    file: ./secrets/postgres_exporter_dsn.txt
+
+  slack_alert_webhook:
+    file: ./secrets/slack_alert_webhook.txt
+
+  pagerduty_routing_key:
+    file: ./secrets/pagerduty_routing_key.txt

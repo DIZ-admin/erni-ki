@@ -1,0 +1,481 @@
+# ============================================================================
+# ERNI-KI AI Layer
+# ============================================================================
+# AI services: Ollama, LiteLLM, OpenWebUI, Docling
+# Support services: Auth, SearXNG, EdgeTTS, Tika, MCP Server
+#
+# Dependencies: base.yml, data.yml
+#
+# Usage:
+#   docker compose -f compose/base.yml -f compose/data.yml -f compose/ai.yml up -d
+#
+# Author: ERNI-KI Team
+# Version: 1.0.0
+# ============================================================================
+
+# Logging anchors (duplicated from base.yml for YAML anchor compatibility)
+x-critical-logging: &critical-logging
+  driver: 'json-file'
+  options:
+    max-size: '50m'
+    max-file: '10'
+    labels: 'service,version,environment,level=critical'
+    tag: 'critical.{{.Name}}'
+
+x-important-logging: &important-logging
+  driver: 'json-file'
+  options:
+    max-size: '10m'
+    max-file: '5'
+    labels: 'service,version,environment,level=important'
+
+x-auxiliary-logging: &auxiliary-logging
+  driver: 'json-file'
+  options:
+    max-size: '10m'
+    max-file: '5'
+    labels: 'service,version,level=auxiliary'
+
+services:
+  # ==========================================================================
+  # Ollama - Local LLM Engine
+  # ==========================================================================
+  ollama:
+    runtime: nvidia
+    mem_limit: 24g
+    mem_reservation: 12g
+    cpus: '12.0'
+    oom_score_adj: -900
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=\${OLLAMA_GPU_VISIBLE_DEVICES:-0}
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - CUDA_VISIBLE_DEVICES=\${OLLAMA_CUDA_VISIBLE_DEVICES:-0}
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+      - OLLAMA_NUM_CTX=2048
+      # Flash attention occasionally breaks some models; disable for stability
+      - OLLAMA_FLASH_ATTENTION=0
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+    env_file: ../env/ollama.env
+    # GPU memory limits optimized for RTX 5000 (16GB VRAM)
+    # Ollama gets GPU priority (VRAM management via OLLAMA_MAX_VRAM=0.75)
+    healthcheck:
+      test: ['CMD', 'ollama', 'list']
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    image: ollama/ollama:0.13.0 # Updated to 0.13.0 (GPU/Vulkan improvements)
+    logging: *critical-logging
+    networks:
+      - backend
+    restart: unless-stopped
+    volumes:
+      - ./data/ollama:/root/.ollama
+    labels:
+      # CRITICAL: Disable Ollama auto-updates (GPU)
+      - 'com.centurylinklabs.watchtower.enable=false'
+      - 'com.centurylinklabs.watchtower.monitor-only=true'
+      - 'com.centurylinklabs.watchtower.scope=critical-ai-gpu'
+
+  # ==========================================================================
+  # LiteLLM - AI Router / Gateway
+  # ==========================================================================
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.80.0-stable.1
+    container_name: erni-ki-litellm
+
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    env_file: ../env/litellm.env
+    entrypoint:
+      - /bin/bash
+      - /opt/erni/bin/litellm-entrypoint.sh
+
+    ports:
+      - '127.0.0.1:4000:4000'
+    expose:
+      - '9109'
+    restart: unless-stopped
+    logging: *auxiliary-logging
+    # Health check: using Python urllib (curl not installed in LiteLLM container)
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'python3 -c "import urllib.request; urllib.request.urlopen(''http://localhost:4000/health/liveliness'', timeout=5).read()" || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - ./conf/litellm/config.yaml:/app/config.yaml:ro
+      - ./data/litellm:/app/data
+      - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro
+      - ./conf/litellm/custom_providers:/app/custom_providers:ro
+    command: ['--config', '/app/config.yaml', '--port', '4000', '--host', '0.0.0.0']
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+    mem_limit: 12g
+    mem_reservation: 6g
+    cpus: '1.0'
+    oom_score_adj: -300
+    networks:
+      - backend
+      - data
+    labels:
+      - 'com.erni-ki.service=litellm'
+      - 'com.erni-ki.version=main-stable'
+      - 'com.erni-ki.description=Context Engineering Gateway'
+      - 'com.centurylinklabs.watchtower.enable=false'
+      - 'com.centurylinklabs.watchtower.monitor-only=true'
+      - 'com.centurylinklabs.watchtower.scope=ai-services'
+    secrets:
+      - litellm_db_password
+      - litellm_api_key
+      - litellm_master_key
+      - litellm_salt_key
+      - litellm_ui_password
+      - openai_api_key
+      - publicai_api_key
+      - redis_password
+
+  # ==========================================================================
+  # OpenWebUI - Main User Interface
+  # ==========================================================================
+  openwebui:
+    depends_on:
+      auth:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    image: ghcr.io/open-webui/open-webui:v0.6.40 # Updated: 2025-11-28 to v0.6.40 (latest stable patch)
+    runtime: nvidia
+    mem_limit: 8g
+    mem_reservation: 4g
+    cpus: '4.0'
+    oom_score_adj: -600
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=\${OPENWEBUI_GPU_VISIBLE_DEVICES:-0}
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - CUDA_VISIBLE_DEVICES=\${OPENWEBUI_CUDA_VISIBLE_DEVICES:-0}
+    env_file: ../env/openwebui.env
+    entrypoint:
+      - /bin/bash
+      - /opt/erni/bin/openwebui-entrypoint.sh
+    healthcheck:
+      test: ['CMD-SHELL', 'curl --fail http://localhost:8080/health || exit 1']
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    logging: *critical-logging
+    restart: unless-stopped
+    volumes:
+      - ./data/openwebui:/app/backend/data
+      - ./data/docling/shared:/app/backend/data/docling-shared
+      - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
+    secrets:
+      - postgres_password
+      - litellm_api_key
+      - openwebui_secret_key
+      - redis_password
+    networks:
+      - backend
+      - data
+    labels:
+      # Allow auto-updates for OpenWebUI
+      - 'com.centurylinklabs.watchtower.enable=false'
+      - 'com.centurylinklabs.watchtower.monitor-only=true'
+      - 'com.centurylinklabs.watchtower.scope=web-interface'
+
+  # ==========================================================================
+  # Docling - Document Processing with GPU acceleration
+  # ==========================================================================
+  docling:
+    # Override DOCLING_IMAGE in .env with pinned digest/tag
+    image: \${DOCLING_IMAGE:-ghcr.io/docling-project/docling-serve-cu126@sha256:2db21d1dfe3788fa13af51adc5dd2e650ca66277800ce55bbee3e36dc2533171}
+    depends_on:
+      ollama:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    runtime: nvidia
+    secrets:
+      - docling_picture_api
+    mem_limit: 12g
+    mem_reservation: 8g
+    cpus: '8.0'
+    oom_score_adj: -500
+    env_file: ../env/docling.env
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=\${DOCLING_GPU_VISIBLE_DEVICES:-0}
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - CUDA_VISIBLE_DEVICES=\${DOCLING_CUDA_VISIBLE_DEVICES:-0}
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+    healthcheck:
+      test: ['CMD-SHELL', 'curl --fail http://localhost:5001/health || exit 1']
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging: *auxiliary-logging
+    restart: unless-stopped
+    volumes:
+      - ./data/docling/models:/opt/app-root/src/.cache/huggingface
+      - ./data/docling/easyocr:/opt/app-root/src/.EasyOCR
+      - ./data/docling/docling-models:/opt/app-root/src/.cache/docling
+      - ./data/docling/docling-models:/docling-artifacts
+      - ./data/docling/shared:/docling-shared
+    networks:
+      - backend
+      - data
+    labels:
+      - 'com.centurylinklabs.watchtower.enable=false'
+      - 'com.centurylinklabs.watchtower.scope=document-processing'
+      - 'com.erni-ki.service=docling'
+
+  # ==========================================================================
+  # Auth - JWT Authentication Service
+  # ==========================================================================
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    env_file: ../env/auth.env
+    logging: *important-logging
+    networks:
+      - backend
+      - data
+    restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: '0.5'
+    healthcheck:
+      test: ['CMD', '/app/main', '--health-check']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    labels:
+      # Allow auto-updates for Auth service
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=auth-services'
+    environment:
+      - WEBUI_SECRET_KEY_FILE=/run/secrets/openwebui_secret_key
+    secrets:
+      - openwebui_secret_key
+
+  # ==========================================================================
+  # SearXNG - Metasearch Engine
+  # ==========================================================================
+  searxng:
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file: ../env/searxng.env
+    entrypoint:
+      - /opt/erni/bin/searxng-entrypoint.sh
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget -q --spider --header="User-Agent: OpenWebUI-HealthCheck/1.0" --header="X-Real-IP: 127.0.0.1" --header="X-Forwarded-For: 127.0.0.1" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" --header="Accept-Language: en-US,en;q=0.5" http://localhost:8080/ || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    image: searxng/searxng:2025.11.21-b876d0bed # pinned to avoid surprises from :latest
+    logging: *important-logging
+    restart: unless-stopped
+    volumes:
+      - ./conf/searxng/settings.yml:/etc/searxng/settings.yml:ro
+      - ./conf/searxng/uwsgi.ini:/etc/searxng/uwsgi.ini:ro
+      - ./conf/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
+      - ./conf/searxng/favicons.toml:/etc/searxng/favicons.toml:ro
+      - ./scripts/entrypoints/searxng.sh:/opt/erni/bin/searxng-entrypoint.sh:ro
+    secrets:
+      - redis_password
+      - searxng_secret_key
+    networks:
+      - backend
+      - data
+    labels:
+      # Allow auto-updates for SearXNG
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=search-services'
+    mem_limit: 1g
+    mem_reservation: 512m
+    cpus: '1.0'
+
+  # ==========================================================================
+  # EdgeTTS - Text-to-Speech Service
+  # ==========================================================================
+  edgetts:
+    env_file: ../env/edgetts.env
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'python3 -c "import socket; s=socket.socket(); s.settimeout(5); s.connect((\"localhost\", 5050)); s.close()" || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    image: travisvn/openai-edge-tts@sha256:4e7e2773350a3296f301b5f66e361daad243bdc4b799eec32613fddcee849040 # updated: digest compatible with schema2
+    logging: *auxiliary-logging
+    networks:
+      - backend
+    restart: unless-stopped
+    secrets:
+      - edgetts_api_key
+    mem_limit: 1g
+    mem_reservation: 512m
+    cpus: '0.5'
+    labels:
+      # Allow auto-updates for EdgeTTS
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=text-to-speech'
+
+  # ==========================================================================
+  # Apache Tika - Document Extraction
+  # ==========================================================================
+  tika:
+    env_file: ../env/tika.env
+    healthcheck:
+      test: ['CMD-SHELL', "timeout 5 bash -c '</dev/tcp/localhost/9998' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    image: apache/tika:3.2.3.0-full # updated tag (was digest)
+    logging: *auxiliary-logging
+    networks:
+      - backend
+    restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 512m
+    cpus: '0.5'
+    labels:
+      # Allow auto-updates for Tika
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=document-processing'
+
+  # ==========================================================================
+  # MCP Server - Model Context Protocol
+  # ==========================================================================
+  mcposerver:
+    entrypoint: ['/opt/erni/bin/mcposerver-with-secrets.sh']
+    command:
+      - --config
+      - /app/conf/config.json
+      - --server-type
+      - http
+      - --host
+      - 0.0.0.0
+      - --port
+      - '8000'
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: ../env/mcposerver.env
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'python3 -c "import urllib.request; urllib.request.urlopen(''http://localhost:8000/docs'', timeout=5).read()" || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    image: ghcr.io/open-webui/mcpo:git-91e8f94 # v0.0.19 tag not available in registry; keep stable commit
+    logging: *auxiliary-logging
+    networks:
+      - backend
+      - data
+    restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: '0.5'
+    volumes:
+      - ./conf/mcposerver:/app/conf:ro
+      - ./data:/app/data
+      - ./scripts/entrypoints/mcposerver-with-secrets.sh:/opt/erni/bin/mcposerver-with-secrets.sh:ro
+      - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
+    secrets:
+      - postgres_password
+      - context7_api_key
+      - ragflow_api_key
+    labels:
+      # Allow auto-updates for MCP Server
+      - 'com.centurylinklabs.watchtower.enable=true'
+      - 'com.centurylinklabs.watchtower.scope=ai-services'
+
+# ============================================================================
+# SECRETS
+# ============================================================================
+
+secrets:
+  # LiteLLM database password
+  litellm_db_password:
+    file: ./secrets/litellm_db_password.txt
+
+  # LiteLLM API key (used by: openwebui, litellm)
+  litellm_api_key:
+    file: ./secrets/litellm_api_key.txt
+
+  # Context7 API key (used by: mcposerver)
+  context7_api_key:
+    file: ./secrets/context7_api_key.txt
+
+  # OpenWebUI secret key (FastAPI SECRET_KEY)
+  openwebui_secret_key:
+    file: ./secrets/openwebui_secret_key.txt
+
+  # LiteLLM master key for admin access
+  litellm_master_key:
+    file: ./secrets/litellm_master_key.txt
+
+  # LiteLLM salt key for API key encryption
+  litellm_salt_key:
+    file: ./secrets/litellm_salt_key.txt
+
+  # LiteLLM UI password
+  litellm_ui_password:
+    file: ./secrets/litellm_ui_password.txt
+
+  openai_api_key:
+    file: ./secrets/openai_api_key.txt
+
+  searxng_secret_key:
+    file: ./secrets/searxng_secret_key.txt
+
+  # PublicAI API key for external models
+  publicai_api_key:
+    file: ./secrets/publicai_api_key.txt
+
+  # Ragflow API key (MCP)
+  ragflow_api_key:
+    file: ./secrets/ragflow_api_key.txt
+
+  # EdgeTTS API key (optional)
+  edgetts_api_key:
+    file: ./secrets/edgetts_api_key.txt
+
+  # Docling picture description API config (optional)
+  docling_picture_api:
+    file: ./secrets/docling_picture_api.txt
