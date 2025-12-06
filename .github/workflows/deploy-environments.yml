@@ -9,23 +9,23 @@ on:
   push:
     branches: [main, develop]
     paths-ignore:
-      - "docs/**"
-      - "*.md"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/security.yml"
+      - 'docs/**'
+      - '*.md'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/security.yml'
   workflow_dispatch:
     inputs:
       environment:
-        description: "Target environment for deployment"
+        description: 'Target environment for deployment'
         required: true
-        default: "development"
+        default: 'development'
         type: choice
         options:
           - development
           - staging
           - production
       force_deploy:
-        description: "Force deployment (skip some checks)"
+        description: 'Force deployment (skip some checks)'
         required: false
         default: false
         type: boolean

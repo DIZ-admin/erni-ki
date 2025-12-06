@@ -542,10 +542,7 @@ const payload = {
 const body = JSON.stringify(payload);
 
 // Generate HMAC-SHA256 signature
-const signature = crypto
-  .createHmac('sha256', WEBHOOK_SECRET)
-  .update(body)
-  .digest('hex');
+const signature = crypto.createHmac('sha256', WEBHOOK_SECRET).update(body).digest('hex');
 
 // Send request
 const options = {

@@ -157,12 +157,12 @@ LITELLM_MCP_API_KEY=${MCP_API_KEY}
 
 ## Troubleshooting
 
-| Problem                     | Ursache                   | Lösung                                        |
-| --------------------------- | ------------------------- | --------------------------------------------- |
-| `401 Unauthorized`          | Token/Headers fehlen      | `MCP_API_KEY` prüfen                          |
-| `504 Timeout`               | Netzwerk/Firewall         | Tunnel/Proxy testen                           |
+| Problem                     | Ursache                  | Lösung                                        |
+| --------------------------- | ------------------------ | --------------------------------------------- |
+| `401 Unauthorized`          | Token/Headers fehlen     | `MCP_API_KEY` prüfen                          |
+| `504 Timeout`               | Netzwerk/Firewall        | Tunnel/Proxy testen                           |
 | `context deadline exceeded` | LiteLLM ↔ MCP zu langsam | `scripts/test-network-performance.sh` starten |
-| `500 Internal Server Error` | Traceback im MCP-Log      | `docker compose logs mcp-server` prüfen       |
+| `500 Internal Server Error` | Traceback im MCP-Log     | `docker compose logs mcp-server` prüfen       |
 
 ### Health-Skripte
 

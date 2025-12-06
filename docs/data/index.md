@@ -1,7 +1,7 @@
 ---
 language: ru
 translation_status: complete
-doc_version: "2025.11"
+doc_version: '2025.11'
 last_updated: 2025-11-29
 ---
 
@@ -16,6 +16,6 @@ descriptions, schemas, and data pipeline notes as needed.
 
 ## State
 
-| status | notes |
-| ------ | ----- |
+| status | notes    |
+| ------ | -------- |
 | active | index.md |
