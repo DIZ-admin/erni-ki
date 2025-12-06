@@ -539,28 +539,30 @@ if __name__== '__main__':
 
 Интеграция с Grafana для отслеживания:
 
-```yaml
-# conf/grafana/dashboards/documentation-metrics.json
+```json
 {
-  'dashboard':
-    {
-      'title': 'Documentation Quality',
-      'panels':
-        [
+  "dashboard": {
+    "title": "Documentation Quality",
+    "panels": [
+      {
+        "title": "Documentation Freshness",
+        "targets": [{ "expr": "docs_age_days", "legendFormat": "{{file}}" }]
+      },
+      {
+        "title": "Coverage by Language",
+        "targets": [
           {
-            'title': 'Documentation Freshness',
-            'targets': [{ 'expr': 'docs_age_days', 'legendFormat': '{{file}}' }],
+            "expr": "docs_coverage_percent{lang='en'}",
+            "legendFormat": "English"
           },
           {
-            'title': 'Coverage by Language',
-            'targets':
-              [
-                { 'expr': "docs_coverage_percent{lang='en'}", 'legendFormat': 'English' },
-                { 'expr': "docs_coverage_percent{lang='de'}", 'legendFormat': 'Deutsch' },
-              ],
-          },
-        ],
-    },
+            "expr": "docs_coverage_percent{lang='de'}",
+            "legendFormat": "Deutsch"
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
