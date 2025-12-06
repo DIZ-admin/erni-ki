@@ -167,8 +167,10 @@ webhook receiver)
 - CVE-2025-66221: <https://avd.aquasec.com/nvd/cve-2025-66221>
 - Werkzeug Security Advisory:
   <https://github.com/pallets/werkzeug/security/advisories>
-- OWASP Information Exposure:
-  <https://owasp.org/www-community/vulnerabilities/Information_exposure_through_an_exception>
+- OWASP Improper Error Handling:
+  <https://owasp.org/www-community/Improper_Error_Handling>
+- CWE-209 Information Exposure Through Error Messages:
+  <https://cwe.mitre.org/data/definitions/209.html>
 
 ---
 
