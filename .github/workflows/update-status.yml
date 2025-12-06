@@ -14,6 +14,7 @@ permissions:
 jobs:
   update-snippets:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.1
@@ -21,7 +22,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Update status snippets
         run: python scripts/docs/update_status_snippet.py
@@ -29,4 +30,4 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: "docs: auto-update status snippets"
+          commit_message: 'docs: auto-update status snippets'
