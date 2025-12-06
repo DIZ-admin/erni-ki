@@ -32,5 +32,6 @@ exclude = [
   "https://prometheus.ki.erni-gruppe.ch*",
   "https://status.ki.erni-gruppe.ch*",
   "https://docs.erni-ki.ch*",
+  "https://commitlint.js.org*",
   "security@erni-ki.local"
 ]
