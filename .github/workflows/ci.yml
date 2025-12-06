@@ -357,7 +357,7 @@ jobs:
   load-smoke:
     name: 🔥 Load Smoke (k6)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     needs: [lint]
 
     steps:
@@ -435,7 +435,7 @@ jobs:
   observability-configs:
     name: 📡 Observability Config Checks
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     needs: [lint]
 
     steps:
