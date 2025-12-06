@@ -750,13 +750,28 @@ func TestRespondJSONError(t *testing.T) {
 // Test main() error path.
 func TestMainEntryPointError(t *testing.T) {
 	// This test validates error path in run()
+	origSecret := os.Getenv("WEBUI_SECRET_KEY")
+	origSkip := os.Getenv("SKIP_SERVER_START")
+
 	os.Unsetenv("WEBUI_SECRET_KEY")
 	os.Unsetenv("SKIP_SERVER_START")
-	defer os.Setenv("WEBUI_SECRET_KEY", "this-is-a-sufficiently-long-secret-key-12345678")
+
+	defer func() {
+		if origSecret != "" {
+			os.Setenv("WEBUI_SECRET_KEY", origSecret)
+		} else {
+			os.Unsetenv("WEBUI_SECRET_KEY")
+		}
+		if origSkip != "" {
+			os.Setenv("SKIP_SERVER_START", origSkip)
+		} else {
+			os.Unsetenv("SKIP_SERVER_START")
+		}
+	}()
 
 	err := run([]string{"cmd"})
 	if err == nil {
-		t.Error("Expected run() to return error when WEBUI_SECRET_KEY is missing")
+		t.Fatalf("Expected run() to return error when WEBUI_SECRET_KEY is missing")
 	}
 	if !strings.Contains(err.Error(), "secret validation failed") {
 		t.Errorf("Expected secret validation error, got: %v", err)
