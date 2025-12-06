@@ -72,12 +72,14 @@ Tests run automatically on pre-commit:
 ```yaml
 - id: pytest-check
   name: 'Python: run pytest tests'
-  entry: bash -c 'source .venv/bin/activate && python -m pytest tests/python/ -q --tb=short'
+  entry: bash -c 'source .venv/bin/activate && python -m pytest tests/python/ -q
+    --tb=short'
 ```
 
 ## Coverage Notes
 
-Due to dynamic module imports in tests (using `sys.path` manipulation), traditional line coverage tracking is limited. Instead, we track:
+Due to dynamic module imports in tests (using `sys.path` manipulation),
+traditional line coverage tracking is limited. Instead, we track:
 
 - **Test Count**: 332 passing tests
 - **Test Files**: 23 comprehensive test modules

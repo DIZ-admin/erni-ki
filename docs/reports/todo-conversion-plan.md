@@ -8,8 +8,7 @@ translation_status: original
 
 # TODO/FIXME to GitHub Issues Conversion Plan
 
-**Date**: 2025-12-06
-**Status**: In Progress
+**Date**: 2025-12-06 **Status**: In Progress
 
 ## Summary
 
@@ -49,7 +48,8 @@ Once real TODOs are identified:
 - Priority: `P0`, `P1`, `P2`
 - Area: `devx`, `security`, `documentation`, etc.
 
-3. Link issues back to code (replace `TODO: description` with `TODO(#123): description`)
+3. Link issues back to code (replace `TODO: description` with
+   `TODO(#123): description`)
 
 ## Current TODO Categories
 
@@ -139,8 +139,10 @@ def process_data():
 
 1. [DONE] Create extraction script - `scripts/maintenance/extract_todos.py`
 2. [DONE] Generate analysis report - `docs/reports/todo-analysis.md`
-3. [DONE] Update pre-commit hook - Already configured in `.pre-commit-config.yaml`
-4. [PENDING] Manual review - Identify real actionable TODOs (requires human judgment)
+3. [DONE] Update pre-commit hook - Already configured in
+   `.pre-commit-config.yaml`
+4. [PENDING] Manual review - Identify real actionable TODOs (requires human
+   judgment)
 5. [PENDING] Create GitHub issues - Batch create for validated TODOs
 6. [PENDING] Update code - Replace TODOs with issue references
 

@@ -2,15 +2,17 @@
 
 ## Summary
 
-Fixed critical security alerts identified by CodeQL scanning and updated dependencies with known vulnerabilities.
+Fixed critical security alerts identified by CodeQL scanning and updated
+dependencies with known vulnerabilities.
 
 ## Critical Issues Fixed (ERROR Severity)
 
 ### 1. Alert #132: Potentially Uninitialized Local Variable
 
-**File:** `tests/python/test_config_validation.py`
-**Issue:** Local variable 'tomli' could be used before initialization
-**Fix:** Changed from try/except pattern to `pytest.importorskip()` which guarantees the module is available or skips the test
+**File:** `tests/python/test_config_validation.py` **Issue:** Local variable
+'tomli' could be used before initialization **Fix:** Changed from try/except
+pattern to `pytest.importorskip()` which guarantees the module is available or
+skips the test
 
 **Before:**
 
@@ -31,10 +33,10 @@ config = tomli.load(f)  # tomli is guaranteed to be defined
 
 ### 2. Alert #125: Information Exposure Through Exception
 
-**File:** `conf/webhook-receiver/webhook_handler.py:506`
-**Issue:** Exception details exposed to external users via API response
-**Risk:** Could leak stack traces, file paths, or implementation details
-**Fix:** Return generic error message instead of exception details; log full error server-side
+**File:** `conf/webhook-receiver/webhook_handler.py:506` **Issue:** Exception
+details exposed to external users via API response **Risk:** Could leak stack
+traces, file paths, or implementation details **Fix:** Return generic error
+message instead of exception details; log full error server-side
 
 **Before:**
 
@@ -51,17 +53,16 @@ except (ValidationError, ValueError) as e:
     return jsonify({"error": "Invalid request payload"}), 400
 ```
 
-**Security Impact:** Prevents information disclosure attacks where attackers craft malicious inputs to reveal system internals.
+**Security Impact:** Prevents information disclosure attacks where attackers
+craft malicious inputs to reveal system internals.
 
 ## High Priority Warnings Fixed
 
 ### 3. Alert #159: Werkzeug CVE-2025-66221
 
-**File:** `conf/webhook-receiver/requirements.txt`
-**Vulnerability:** Werkzeug safe_join() allows Windows special device names
-**CVE:** CVE-2025-66221
-**Severity:** MEDIUM
-**Fix:** Updated Werkzeug from 3.1.2 to 3.1.4
+**File:** `conf/webhook-receiver/requirements.txt` **Vulnerability:** Werkzeug
+safe_join() allows Windows special device names **CVE:** CVE-2025-66221
+**Severity:** MEDIUM **Fix:** Updated Werkzeug from 3.1.2 to 3.1.4
 
 **Details:**
 
@@ -72,9 +73,8 @@ except (ValidationError, ValueError) as e:
 
 ### 4. Alert #139, #138: File Not Always Closed
 
-**File:** `tests/python/test_webhook_handler.py:812, 824`
-**Issue:** File handles opened without proper cleanup
-**Risk:** Resource leak in test suite
+**File:** `tests/python/test_webhook_handler.py:812, 824` **Issue:** File
+handles opened without proper cleanup **Risk:** Resource leak in test suite
 **Fix:** Used context managers (`with` statement) to ensure proper file cleanup
 
 **Before:**
@@ -136,9 +136,9 @@ $ pytest tests/python/test_config_validation.py tests/python/test_webhook_handle
 
 ## Impact Assessment
 
-**Risk Level:** MEDIUM
-**User Impact:** None (fixes are in test code and error handling)
-**Deployment Required:** Yes (Werkzeug update needs redeploy of webhook receiver)
+**Risk Level:** MEDIUM **User Impact:** None (fixes are in test code and error
+handling) **Deployment Required:** Yes (Werkzeug update needs redeploy of
+webhook receiver)
 
 ## Recommendations
 
@@ -165,12 +165,12 @@ $ pytest tests/python/test_config_validation.py tests/python/test_webhook_handle
 ## References
 
 - CVE-2025-66221: <https://avd.aquasec.com/nvd/cve-2025-66221>
-- Werkzeug Security Advisory: <https://github.com/pallets/werkzeug/security/advisories>
-- OWASP Information Exposure: <https://owasp.org/www-community/vulnerabilities/Information_exposure_through_an_exception>
+- Werkzeug Security Advisory:
+  <https://github.com/pallets/werkzeug/security/advisories>
+- OWASP Information Exposure:
+  <https://owasp.org/www-community/vulnerabilities/Information_exposure_through_an_exception>
 
 ---
 
-**Fixed by:** Claude Code
-**Date:** 2025-12-06
-**PR:** [To be created]
+**Fixed by:** Claude Code **Date:** 2025-12-06 **PR:** [To be created]
 **Approved by:** [Pending review]
