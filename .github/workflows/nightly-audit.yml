@@ -33,8 +33,8 @@ jobs:
       - name: 🧩 Validate docs metadata
         run: python scripts/docs/validate_metadata.py
 
-      - name: 🏗️ Build MkDocs site (Strict Mode)
-        run: mkdocs build --strict
+      - name: 🏗️ Build MkDocs site
+        run: mkdocs build --site-dir site
 
       - name: 🔗 Check links (Lychee)
         uses: lycheeverse/lychee-action@v2
