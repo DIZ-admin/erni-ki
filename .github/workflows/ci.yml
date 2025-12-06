@@ -367,6 +367,9 @@ jobs:
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: 📁 Create cache directory
+        run: mkdir -p /tmp/k6-image
+
       - name: 💾 Cache k6 Docker image
         id: cache-k6
         uses: actions/cache@v4
@@ -386,7 +389,6 @@ jobs:
       - name: 📥 Pull and cache k6 image
         if: steps.cache-k6.outputs.cache-hit != 'true'
         run: |
-          mkdir -p /tmp/k6-image
           docker pull grafana/k6
           docker save grafana/k6 -o /tmp/k6-image/grafana-k6.tar
 
@@ -443,6 +445,9 @@ jobs:
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: 📁 Create cache directory
+        run: mkdir -p /tmp/docker-images
+
       - name: 💾 Cache Docker images
         id: cache-docker
         uses: actions/cache@v4
@@ -464,7 +469,6 @@ jobs:
       - name: 📥 Pull and cache Docker images
         if: steps.cache-docker.outputs.cache-hit != 'true'
         run: |
-          mkdir -p /tmp/docker-images
           images=(
             "prom/prometheus:v2.55.1"
             "prom/alertmanager:v0.27.0"
