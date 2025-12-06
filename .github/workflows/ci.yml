@@ -417,8 +417,10 @@ jobs:
           if [ -f "conf/promtail/promtail-config.yaml" ]; then
             docker run --rm \
               -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" \
-              --entrypoint /bin/sh grafana/promtail:3.0.0 \
-              -c "promtail -config.file=/etc/promtail/config.yaml -dry-run"
+              --entrypoint promtail grafana/promtail:3.0.0 \
+              --config.file=/etc/promtail/config.yaml \
+              --dry-run \
+              --log.level=warn
           else
             echo "promtail config not found, skipping"
           fi
@@ -770,6 +772,7 @@ jobs:
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs:
       [
         lint,
