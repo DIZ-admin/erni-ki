@@ -435,7 +435,7 @@ jobs:
   observability-configs:
     name: 📡 Observability Config Checks
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45 # Increased: first run pulls 4 large images (~20-30min)
     needs: [lint]
 
     steps:
@@ -475,9 +475,32 @@ jobs:
             "grafana/promtail:3.0.0"
             "fluent/fluent-bit:3.0"
           )
+
+          # Pull all images in parallel for faster execution
+          echo "Pulling images in parallel..."
+          pids=()
           for img in "${images[@]}"; do
-            docker pull "$img"
-            # Save image to cache directory
+            echo "Starting pull: $img"
+            timeout 900 docker pull "$img" &
+            pids+=($!)
+          done
+
+          # Wait for all pulls to complete
+          failed=0
+          for pid in "${pids[@]}"; do
+            if ! wait "$pid"; then
+              failed=1
+            fi
+          done
+
+          if [ $failed -eq 1 ]; then
+            echo "One or more image pulls failed"
+            exit 1
+          fi
+
+          # Save images to cache after all pulls complete
+          echo "Saving images to cache..."
+          for img in "${images[@]}"; do
             safe_name=$(echo "$img" | tr ':/' '--')
             docker save "$img" -o "/tmp/docker-images/${safe_name}.tar"
           done
