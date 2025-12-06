@@ -1250,9 +1250,12 @@ bun run pre-commit:perf
 
 **Практика выбора профиля**
 
-- Fast: Go форматирование/импорты (gofmt + goimports@v0.28.0), Ruff, быстрый TS check `bun run tsc --noEmit`. Используйте для мелких правок.
-- Full: полный набор док-хуков/линтов; перед пушем в main/develop прогоняйте `bun run pre-commit` или `bun run commit:full`.
-- Docs/Security: точечные профили для работы с документацией или проверками безопасности.
+- Fast: Go форматирование/импорты (gofmt + goimports@v0.28.0), Ruff, быстрый TS
+  check `bun run tsc --noEmit`. Используйте для мелких правок.
+- Full: полный набор док-хуков/линтов; перед пушем в main/develop прогоняйте
+  `bun run pre-commit` или `bun run commit:full`.
+- Docs/Security: точечные профили для работы с документацией или проверками
+  безопасности.
 
 ### 4. Кэш pre-commit
 
