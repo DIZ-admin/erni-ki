@@ -128,6 +128,26 @@ repos:
           )$
 
   # ===================================================================
+  # YAML LINTING
+  # ===================================================================
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: "yamllint: YAML style validation"
+        args: [-c=.yamllint]
+        exclude: |
+          (?x)^(
+            \.env.*|
+            mkdocs\.yml|
+            conf/litellm/config\.yaml|
+            data/.*|
+            logs/.*|
+            \.config-backup/.*|
+            \.pre-commit/.*
+          )$
+
+  # ===================================================================
   # PRETTIER FORMATTING
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-prettier
