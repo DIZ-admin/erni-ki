@@ -260,3 +260,6 @@ snyk-*.json
 snyk-*.html
 .snyk.d/
 ErniKiRedisSecurePassword2024
+.coverage
+coverage.json
+htmlcov/
