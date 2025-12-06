@@ -53,7 +53,7 @@ def test_send_alert_returns_dict(mock_post: MagicMock):
     assert call_kwargs["headers"]["X-Signature"]
     assert call_kwargs["headers"]["Content-Type"] == "application/json"
     body = call_kwargs["data"]
-    assert isinstance(body, (bytes, bytearray))
+    assert isinstance(body, bytes | bytearray)
     # Ensure compact JSON (no indentation/newlines)
     assert b"\n" not in body
 

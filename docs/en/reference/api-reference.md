@@ -695,10 +695,7 @@ class ERNIKIClient {
 }
 
 // Использование
-const client = new ERNIKIClient(
-  'https://ki.erni-gruppe.ch/api/v1',
-  'your-token',
-);
+const client = new ERNIKIClient('https://ki.erni-gruppe.ch/api/v1', 'your-token');
 const response = await client.sendMessage('chat-id', 'Привет!');
 ```
 

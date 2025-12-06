@@ -260,12 +260,7 @@ async function sendMessage(token, chatId, content, model) {
 }
 
 // Usage
-const response = await sendMessage(
-  token,
-  chatId,
-  'Hello, what is 2+2?',
-  'llama2:latest',
-);
+const response = await sendMessage(token, chatId, 'Hello, what is 2+2?', 'llama2:latest');
 console.log(`Assistant: ${response.message.content}`);
 ```
 
@@ -502,7 +497,7 @@ def request_with_retry(url, **kwargs):
             return response
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 429:
-                wait_time = 2 ** attempt  # Exponential backoff
+                wait_time = 2** attempt  # Exponential backoff
                 print(f"Rate limited, waiting {wait_time}s...")
                 time.sleep(wait_time)
             else:

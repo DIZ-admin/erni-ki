@@ -164,7 +164,7 @@ class Pipe:
                     if isinstance(v, str) and v.strip():
                         return v.strip()
                 stack.extend(cur.values())
-            elif isinstance(cur, (list, tuple)):
+            elif isinstance(cur, list | tuple):
                 stack.extend(cur)
         return None
 

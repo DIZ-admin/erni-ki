@@ -416,6 +416,27 @@ func TestVerifyTokenFailures(t *testing.T) {
 			expectErr: "issuer mismatch",
 		},
 		{
+			name:   "audience mismatch",
+			secret: "this-is-a-sufficiently-long-secret-key-12345678",
+			tokenGen: func(secret string) string {
+				now := time.Now()
+				claims := jwt.RegisteredClaims{
+					Subject:   "user-123",
+					IssuedAt:  jwt.NewNumericDate(now.Add(-1 * time.Minute)),
+					ExpiresAt: jwt.NewNumericDate(now.Add(1 * time.Hour)),
+					Audience:  []string{"other"},
+				}
+				os.Setenv("WEBUI_JWT_AUDIENCE", "expected-aud")
+				token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+				s, err := token.SignedString([]byte(secret))
+				if err != nil {
+					t.Fatalf("failed to sign token: %v", err)
+				}
+				return s
+			},
+			expectErr: "audience mismatch",
+		},
+		{
 			name:   "wrong algorithm",
 			secret: "this-is-a-sufficiently-long-secret-key-12345678",
 			tokenGen: func(secret string) string {
@@ -441,6 +462,7 @@ func TestVerifyTokenFailures(t *testing.T) {
 			t.Cleanup(func() {
 				os.Unsetenv("WEBUI_SECRET_KEY")
 				os.Unsetenv("WEBUI_JWT_ISSUER")
+				os.Unsetenv("WEBUI_JWT_AUDIENCE")
 			})
 			if tc.secret != "" {
 				os.Setenv("WEBUI_SECRET_KEY", tc.secret)

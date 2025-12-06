@@ -10,7 +10,7 @@ on:
     branches: [main, develop]
   schedule:
     # Default severity level2:00 UTC
-    - cron: "0 2 * * *"
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 # Permissions for security events
@@ -34,18 +34,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ["go", "javascript", "python"]
+        language: ['go', 'javascript', 'python']
         include:
           - language: go
-            path: "./auth"
+            path: './auth'
           - language: javascript
-            path: "."
+            path: '.'
           - language: python
-            path: "."
+            path: '.'
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v6.0.1
+
+      # Setup Go before CodeQL init so tracing uses the configured toolchain
+      - name: 🐹 Setup Go
+        if: matrix.language == 'go'
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: auth/go.mod
+          cache-dependency-path: auth/go.sum
 
       - name: 🔍 Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -54,20 +62,12 @@ jobs:
           queries: +security-and-quality
           source-root: ${{ matrix.path }}
 
-      # Setup Go environment
-      - name: 🐹 Setup Go
-        if: matrix.language == 'go'
-        uses: actions/setup-go@v6
-        with:
-          go-version-file: auth/go.mod
-          cache-dependency-path: auth/go.sum
-
       # Setup JavaScript/TypeScript environment
       - name: 🟣 Setup Bun
         if: matrix.language == 'javascript'
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@v2.0.2
         with:
-          bun-version: "1.3.3"
+          bun-version: '1.3.3'
 
       - name: 📦 Install JS dependencies
         if: matrix.language == 'javascript' && hashFiles('package.json') != ''
@@ -88,7 +88,7 @@ jobs:
       - name: 🔍 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:${{ matrix.language }}"
+          category: '/language:${{ matrix.language }}'
 
   # Dependency scanning
   dependency-scan:
@@ -110,21 +110,21 @@ jobs:
       - name: 🔍 Run Go vulnerability check
         working-directory: ./auth
         run: |
-          go install golang.org/x/vuln/cmd/govulncheck@latest
+          go install golang.org/x/vuln/cmd/govulncheck@v1.1.1
           govulncheck ./...
 
       # Scan npm dependencies (if any)
       - name: 🟣 Setup Bun
         if: hashFiles('package.json') != ''
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@v2.0.2
         with:
-          bun-version: "1.3.3"
+          bun-version: '1.3.3'
 
-      - name: 🔍 Run bun audit (production only)
+      - name: 🔍 Run bun audit (production severity)
         if: hashFiles('package.json') != ''
         run: |
-          bun audit --severity moderate || true
-          bun audit --json > bun-audit-results.json || true
+          bun audit --severity high
+          bun audit --json --severity high > bun-audit-results.json
 
       - name: 📤 Upload bun audit results
         if: hashFiles('package.json') != ''
@@ -146,13 +146,13 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
+          cache: 'pip'
 
       - name: 📦 Install security linters
         run: |
           python -m pip install --upgrade pip
-          pip install bandit ruff
+          pip install bandit==1.7.10 ruff==0.5.7
 
       - name: 🔒 Run Bandit
         run: |
@@ -179,6 +179,13 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: 1
 
+      - name: 📦 Upload Trivy FS SARIF
+        if: always() && hashFiles('trivy-results.sarif') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: sarif-trivy-fs
+          path: trivy-results.sarif
+
   # Secret scanning
   secret-scan:
     name: 🔐 Secret Scan
@@ -192,7 +199,7 @@ jobs:
           fetch-depth: 0
 
       - name: 🔐 Run TruffleHog
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@v3.88.10
         with:
           path: ./
           base: ${{ github.event.before || 'HEAD~1' }}
@@ -202,7 +209,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.24.10"
+          go-version: '1.24.11'
           cache: false
 
       - name: 🔐 Run Gitleaks
@@ -210,6 +217,13 @@ jobs:
           go install github.com/zricethezav/gitleaks/v8@v8.29.1
           gitleaks detect --redact --source=. -c .gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
         continue-on-error: true
+
+      - name: 📦 Upload Gitleaks SARIF
+        if: always() && hashFiles('gitleaks-results.sarif') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: sarif-gitleaks
+          path: gitleaks-results.sarif
 
   # Docker image scanning
   container-scan:
@@ -237,35 +251,37 @@ jobs:
       - name: 🔍 Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          image-ref: "erni-ki-auth:security-scan"
-          format: "sarif"
-          output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH"
-          scanners: "vuln"
+          image-ref: 'erni-ki-auth:security-scan'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          scanners: 'vuln'
           ignore-unfixed: true
           exit-code: 0
-          trivyignores: ".github/trivy.ignore"
+          trivyignores: '.github/trivy.ignore'
 
       - name: 📤 Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4
         if: always()
+        uses: actions/upload-artifact@v5
         with:
-          sarif_file: "trivy-results.sarif"
+          name: sarif-trivy-image
+          path: trivy-results.sarif
 
       - name: 🔍 Run Grype vulnerability scanner
         uses: anchore/scan-action@v4
         id: grype-scan
         with:
-          image: "erni-ki-auth:security-scan"
+          image: 'erni-ki-auth:security-scan'
           fail-build: false
           severity-cutoff: high
           output-format: sarif
 
       - name: 📤 Upload Grype results
-        uses: github/codeql-action/upload-sarif@v4
         if: always()
+        uses: actions/upload-artifact@v5
         with:
-          sarif_file: ${{ steps['grype-scan'].outputs.sarif }}
+          name: sarif-grype
+          path: ${{ steps['grype-scan'].outputs.sarif }}
 
   # Configuration analysis
   config-scan:
@@ -289,10 +305,11 @@ jobs:
           soft_fail: true
 
       - name: 📤 Upload Checkov results
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()
+        if: always() && hashFiles('checkov-results.sarif') != ''
+        uses: actions/upload-artifact@v5
         with:
-          sarif_file: checkov-results.sarif
+          name: sarif-checkov
+          path: checkov-results.sarif
 
       # Validate Docker Compose configuration
       - name: 🐳 Validate Docker Compose
@@ -374,7 +391,6 @@ jobs:
     needs:
       [codeql, dependency-scan, secret-scan, container-scan, config-scan, test-environment-secrets]
     if: always()
-
     steps:
       - name: 📊 Generate security summary
         run: |
@@ -399,3 +415,25 @@ jobs:
           echo "❌ Critical security checks failed!"
           echo "Please review the security findings before proceeding."
           exit 1
+
+  sarif-aggregate:
+    name: 🗂️ Aggregate SARIF
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [trivy, secret-scan, container-scan, config-scan]
+    if: always()
+
+    steps:
+      - name: 📥 Download SARIF artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: sarif
+
+      - name: 🧹 List SARIF files
+        run: |
+          find sarif -name '*.sarif' -maxdepth 3 -type f || true
+
+      - name: 📤 Upload merged SARIF to Security
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: sarif

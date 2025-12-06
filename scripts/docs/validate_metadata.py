@@ -33,6 +33,20 @@ ALLOWED_FIELDS = [
     "audit_type",
     "audit_scope",
     "auditor",
+    # Academy KI specific fields
+    "category",
+    "difficulty",
+    "duration",
+    "roles",
+    "industry",
+    "company",
+    "level",
+    "prerequisites",
+    "document_type",
+    "phase",
+    "session",
+    "report_type",
+    "scope",
 ]
 DEPRECATED_FIELDS = [
     "author",

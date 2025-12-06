@@ -256,7 +256,7 @@ docker-compose logs webhook-receiver | grep "TestAlert"
 ```bash
 # Use exponential backoff
 for i in {1..3}; do
-  python webhook-client-python.py ... || sleep $((2 ** i))
+  python webhook-client-python.py ... || sleep $((2** i))
 done
 
 ```

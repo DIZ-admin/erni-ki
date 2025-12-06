@@ -55,17 +55,14 @@ general_settings:
   # Persist all request data
   store_audit_logs_in_db: true
   # Disable sensitive data filtering for debugging
-  redact_user_api_key_info: false
+  redact_user_api_key_info: true
   # Additional prompt logging settings
-  disable_spend_logs: false
+  disable_spend_logs: true
   disable_error_logs: false
-  # === DETAILED LOGGING SETTINGS ===
-  # Enable detailed request/response logging
-  detailed_debug: true
-  # Log all request parameters
-  log_raw_request: true
-  # Log full responses
-  log_raw_response: true
+  # === DETAILED LOGGING SETTINGS (hardened for prod) ===
+  detailed_debug: false
+  log_raw_request: false
+  log_raw_response: false
   # === SECURITY SETTINGS ===
   # Enforce auth for all /v1/* endpoints (disabled for OpenWebUI compatibility)
   enforce_user_param: false
@@ -102,8 +99,7 @@ openai_route_config:
   fallbacks: false
 
 litellm_settings:
-  drop_params: false  # Do not drop params; keep detailed logging
-  # set_verbose: true   # Deprecated; use LITELLM_LOG=DEBUG in env
+  drop_params: false  # Keep params but avoid raw bodies
   num_retries: 3
   request_timeout: 300
   max_parallel_requests: 20  # Limit concurrent requests to reduce memory peaks
@@ -120,11 +116,10 @@ litellm_settings:
   # Default context window size (32K for most models)
   max_context_window: 32768
   # === DETAILED LOGGING SETTINGS ===
-  # Enable detailed logging of requests/responses
-  log_raw_request: true
-  log_raw_response: true
+  log_raw_request: false
+  log_raw_response: false
   # Store prompts in logs
-  store_prompts_in_logs: true
+  store_prompts_in_logs: false
   # Alias map for external models to keep friendly names in OpenWebUI.
   model_alias_map:
     apertus-70b-instruct: "publicai/apertus-70b-instruct"
@@ -185,7 +180,6 @@ litellm_settings:
   # === PERFORMANCE OPTIMIZATION ===
   # Caching settings for production
   # Enabled: 2025-10-02 using in-memory caching
-  # Redis caching has a bug in LiteLLM v1.80.0.rc.1 (socket_timeout: 5.0 hardcoded)
   cache_params:
     type: "local" # Use in-memory caching
     ttl: 1800 # Cache TTL in seconds (30 minutes)

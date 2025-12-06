@@ -13,13 +13,13 @@ branches:
       required_status_checks:
         strict: true
         contexts:
-          - "🔍 Code Quality"
-          - "🧹 Go Lint (golangci-lint)"
-          - "🧪 Test Go Service"
-          - "🧪 Test JS/TS Stack"
-          - "🔒 Security Scan"
-          - "🔗 Check Documentation Links"
-          - "🐳 Docker Build"
+          - '🔍 Code Quality'
+          - '🧹 Go Lint (golangci-lint)'
+          - '🧪 Test Go Service'
+          - '🧪 Test JS/TS Stack'
+          - '🔒 Security Scan'
+          - '🔗 Check Documentation Links'
+          - '🐳 Docker Build'
       enforce_admins: true
       required_conversation_resolution: true
       required_pull_request_reviews:
@@ -37,12 +37,12 @@ branches:
       required_status_checks:
         strict: true
         contexts:
-          - "🔍 Code Quality"
-          - "🧹 Go Lint (golangci-lint)"
-          - "🧪 Test Go Service"
-          - "🧪 Test JS/TS Stack"
-          - "🔒 Security Scan"
-          - "🔗 Check Documentation Links"
+          - '🔍 Code Quality'
+          - '🧹 Go Lint (golangci-lint)'
+          - '🧪 Test Go Service'
+          - '🧪 Test JS/TS Stack'
+          - '🔒 Security Scan'
+          - '🔗 Check Documentation Links'
       enforce_admins: true
       required_conversation_resolution: true
       required_pull_request_reviews:
