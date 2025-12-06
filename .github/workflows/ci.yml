@@ -88,10 +88,6 @@ jobs:
     name: 🧪 Test Go Service
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        go: ['1.24.11', '1.23.11']
 
     defaults:
       run:
@@ -104,7 +100,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: ${{ matrix.go }}
+          go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
 
       - name: 📦 Download dependencies
@@ -141,8 +137,7 @@ jobs:
               sys.exit("coverage below 80% threshold")
           PY
 
-      - name: 📋 Upload coverage artifacts (primary Go)
-        if: matrix.go == '1.24.11'
+      - name: 📋 Upload coverage artifacts
         uses: actions/upload-artifact@v5
         with:
           name: go-coverage-report
@@ -152,7 +147,6 @@ jobs:
           retention-days: 30
 
       - name: 📤 Upload coverage to Codecov (Go)
-        if: matrix.go == '1.24.11'
         uses: codecov/codecov-action@v4
         with:
           files: ./auth/coverage.out
