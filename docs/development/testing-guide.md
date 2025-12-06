@@ -31,6 +31,12 @@ pytest-watch tests/
 
 ```
 
+## CI Secrets & Matrices
+
+- Контракты: `CONTRACT_BASE_URL` и `CONTRACT_BEARER_TOKEN` обязательны на ветках `main/develop`; при их отсутствии job `contract-tests` упадёт. На других ветках шаг пропускается, если URL не задан.
+- Нагрузочный smoke (k6): требует `SMOKE_BASE_URL` (и при необходимости `SMOKE_AUTH_TOKEN`, пути). На `main/develop` отсутствие URL приводит к падению job `load-smoke`. При включении выгружается артефакт `k6-smoke-summary`.
+- Матрицы: CI прогоняет Go `1.24.x/1.23.x`, Python `3.12/3.11`, Bun `1.3.x/1.2.x`. Покрытие собирается только на первичных версиях (Go 1.24.x, Py 3.12, Bun 1.3.x), чтобы не дублировать merge.
+
 ## Test Structure
 
 ```
