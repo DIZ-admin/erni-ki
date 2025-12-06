@@ -359,6 +359,32 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v6.0.1
 
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 💾 Cache k6 Docker image
+        id: cache-k6
+        uses: actions/cache@v4
+        with:
+          path: /tmp/k6-image
+          key: docker-k6-${{ hashFiles('tests/load/**') }}
+          restore-keys: |
+            docker-k6-
+
+      - name: 📥 Load cached k6 image
+        if: steps.cache-k6.outputs.cache-hit == 'true'
+        run: |
+          if [ -f "/tmp/k6-image/grafana-k6.tar" ]; then
+            docker load -i /tmp/k6-image/grafana-k6.tar
+          fi
+
+      - name: 📥 Pull and cache k6 image
+        if: steps.cache-k6.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/k6-image
+          docker pull grafana/k6
+          docker save grafana/k6 -o /tmp/k6-image/grafana-k6.tar
+
       - name: 🏃 Run k6 smoke (skips if SMOKE_BASE_URL not set)
         env:
           SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
@@ -408,6 +434,44 @@ jobs:
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v6.0.1
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 💾 Cache Docker images
+        id: cache-docker
+        uses: actions/cache@v4
+        with:
+          path: /tmp/docker-images
+          key: docker-observability-${{ hashFiles('conf/**', 'ops/prometheus/**') }}
+          restore-keys: |
+            docker-observability-
+
+      - name: 📥 Load cached Docker images
+        if: steps.cache-docker.outputs.cache-hit == 'true'
+        run: |
+          if [ -d "/tmp/docker-images" ] && [ "$(ls -A /tmp/docker-images 2>/dev/null)" ]; then
+            for image in /tmp/docker-images/*.tar; do
+              [ -f "$image" ] && docker load -i "$image"
+            done
+          fi
+
+      - name: 📥 Pull and cache Docker images
+        if: steps.cache-docker.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/docker-images
+          images=(
+            "prom/prometheus:v2.55.1"
+            "prom/alertmanager:v0.27.0"
+            "grafana/promtail:3.0.0"
+            "fluent/fluent-bit:3.0"
+          )
+          for img in "${images[@]}"; do
+            docker pull "$img"
+            # Save image to cache directory
+            safe_name=$(echo "$img" | tr ':/' '--')
+            docker save "$img" -o "/tmp/docker-images/${safe_name}.tar"
+          done
 
       - name: 🗂️ Prepare env defaults for compose lint
         run: |
