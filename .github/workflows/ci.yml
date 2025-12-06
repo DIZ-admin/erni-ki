@@ -663,6 +663,7 @@ jobs:
             --exclude 'docs\.openwebui\.com/api'
             --exclude 'github\.com/nginx/nginx/issues'
             --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
+            --exclude 'docs\.litellm\.ai'
             'docs/**/*.md'
             'README.md'
           fail: true
