@@ -2,7 +2,7 @@ name: 🌙 Nightly Audit
 
 on:
   schedule:
-    - cron: '0 2 * * *' # Run at 2 AM UTC every day
+    - cron: "0 2 * * *" # Run at 2 AM UTC every day
   workflow_dispatch: # Allow manual trigger
 
 permissions:
@@ -21,8 +21,8 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: 📦 Install dependencies
         run: |

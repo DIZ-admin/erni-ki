@@ -549,14 +549,21 @@ if __name__== '__main__':
         [
           {
             'title': 'Documentation Freshness',
-            'targets': [{ 'expr': 'docs_age_days', 'legendFormat': '{{file}}' }],
+            'targets':
+              [{ 'expr': 'docs_age_days', 'legendFormat': '{{file}}' }],
           },
           {
             'title': 'Coverage by Language',
             'targets':
               [
-                { 'expr': "docs_coverage_percent{lang='en'}", 'legendFormat': 'English' },
-                { 'expr': "docs_coverage_percent{lang='de'}", 'legendFormat': 'Deutsch' },
+                {
+                  'expr': "docs_coverage_percent{lang='en'}",
+                  'legendFormat': 'English',
+                },
+                {
+                  'expr': "docs_coverage_percent{lang='de'}",
+                  'legendFormat': 'Deutsch',
+                },
               ],
           },
         ],

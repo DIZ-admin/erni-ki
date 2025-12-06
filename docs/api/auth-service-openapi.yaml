@@ -34,7 +34,7 @@ paths:
       description: Returns basic information about the auth service including version and status
       operationId: getServiceInfo
       responses:
-        '200':
+        "200":
           description: Service information retrieved successfully
           headers:
             X-Request-ID:
@@ -45,7 +45,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInfo'
+                $ref: "#/components/schemas/ServiceInfo"
               example:
                 message: auth-service is running
                 version: 1.0.0
@@ -60,7 +60,7 @@ paths:
       description: Returns the health status of the auth service
       operationId: healthCheck
       responses:
-        '200':
+        "200":
           description: Service is healthy
           headers:
             X-Request-ID:
@@ -71,7 +71,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HealthResponse'
+                $ref: "#/components/schemas/HealthResponse"
               example:
                 status: healthy
                 service: auth-service
@@ -98,7 +98,7 @@ paths:
             format: jwt
           example: demo.jwt.token.example # pragma: allowlist secret
       responses:
-        '200':
+        "200":
           description: Token is valid, user is authorized
           headers:
             X-Request-ID:
@@ -109,11 +109,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthorizedResponse'
+                $ref: "#/components/schemas/AuthorizedResponse"
               example:
                 message: authorized
                 request_id: 550e8400-e29b-41d4-a716-446655440000
-        '401':
+        "401":
           description: Token is missing or invalid
           headers:
             X-Request-ID:
@@ -124,7 +124,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnauthorizedResponse'
+                $ref: "#/components/schemas/UnauthorizedResponse"
               examples:
                 missing:
                   summary: Token missing
