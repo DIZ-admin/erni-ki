@@ -8,8 +8,7 @@ last_updated: '2025-11-29'
 # Service Versions Reference
 
 > **Document Version:** 1.0 **Last Updated:** 2025-11-29 **Services:** 34 total
-> **Source of Truth:**
-> [compose.yml (GitHub)](https://github.com/DIZ-admin/erni-ki/blob/main/compose.yml)
+> **Source of Truth:** > [compose.yml (GitHub)](https://github.com/DIZ-admin/erni-ki/blob/main/compose.yml)
 
 This document is the single source of truth for all service versions in ERNI-KI.
 It's automatically synchronized from `docker-compose.yml`.

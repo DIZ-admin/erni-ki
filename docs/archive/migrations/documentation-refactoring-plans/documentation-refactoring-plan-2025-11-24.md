@@ -7,10 +7,8 @@ last_updated: '2025-11-24'
 
 # План рефакторинга документации ERNI-KI (2025-11-24)
 
-> **Полный аудит:**
-> `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`**Полный
-> аудит:**`../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
-> [TOC]
+> **Полный аудит:** > `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`**Полный
+> аудит:**`../archive/audits/comprehensive-documentation-audit-2025-11-24.md` > [TOC]
 
 ## Краткое резюме аудита
 

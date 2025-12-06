@@ -52,4 +52,5 @@ else
   CMD_ARGS=("prettier" "--write" "${CMD_ARGS[@]}")
 fi
 
-xargs -0 bunx "${CMD_ARGS[@]}" <"$tmpfile"
+PRETTIER_VERSION="${PRETTIER_VERSION:-4.0.0-alpha.8}"
+xargs -0 bunx "prettier@${PRETTIER_VERSION}" "${CMD_ARGS[@]}" <"$tmpfile"

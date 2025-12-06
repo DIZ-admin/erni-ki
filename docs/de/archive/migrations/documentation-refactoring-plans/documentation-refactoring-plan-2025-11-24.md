@@ -7,8 +7,7 @@ last_updated: '2025-11-25'
 
 # Refactoring-Plan für die ERNI-KI-Dokumentation (2025-11-24)
 
-> **Vollständiger Audit:**
-> `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
+> **Vollständiger Audit:** > `../archive/audits/comprehensive-documentation-audit-2025-11-24.md`
 
 [TOC]
 
