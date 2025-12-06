@@ -15,26 +15,26 @@
 
 # Logging anchors (duplicated from base.yml for YAML anchor compatibility)
 x-critical-logging: &critical-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '50m'
-    max-file: '10'
-    labels: 'service,version,environment,level=critical'
-    tag: 'critical.{{.Name}}'
+    max-size: "50m"
+    max-file: "10"
+    labels: "service,version,environment,level=critical"
+    tag: "critical.{{.Name}}"
 
 x-important-logging: &important-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '10m'
-    max-file: '5'
-    labels: 'service,version,environment,level=important'
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version,environment,level=important"
 
 x-auxiliary-logging: &auxiliary-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '10m'
-    max-file: '5'
-    labels: 'service,version,level=auxiliary'
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version,level=auxiliary"
 
 services:
   # ==========================================================================
@@ -44,7 +44,7 @@ services:
     runtime: nvidia
     mem_limit: 24g
     mem_reservation: 12g
-    cpus: '12.0'
+    cpus: "12.0"
     oom_score_adj: -900
     environment:
       - NVIDIA_VISIBLE_DEVICES=\${OLLAMA_GPU_VISIBLE_DEVICES:-0}
@@ -60,7 +60,7 @@ services:
     # GPU memory limits optimized for RTX 5000 (16GB VRAM)
     # Ollama gets GPU priority (VRAM management via OLLAMA_MAX_VRAM=0.75)
     healthcheck:
-      test: ['CMD', 'ollama', 'list']
+      test: ["CMD", "ollama", "list"]
       interval: 30s
       timeout: 3s
       retries: 5
@@ -74,9 +74,9 @@ services:
       - ./data/ollama:/root/.ollama
     labels:
       # CRITICAL: Disable Ollama auto-updates (GPU)
-      - 'com.centurylinklabs.watchtower.enable=false'
-      - 'com.centurylinklabs.watchtower.monitor-only=true'
-      - 'com.centurylinklabs.watchtower.scope=critical-ai-gpu'
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+      - "com.centurylinklabs.watchtower.scope=critical-ai-gpu"
 
   # ==========================================================================
   # LiteLLM - AI Router / Gateway
@@ -96,16 +96,16 @@ services:
       - /opt/erni/bin/litellm-entrypoint.sh
 
     ports:
-      - '127.0.0.1:4000:4000'
+      - "127.0.0.1:4000:4000"
     expose:
-      - '9109'
+      - "9109"
     restart: unless-stopped
     logging: *auxiliary-logging
     # Health check: using Python urllib (curl not installed in LiteLLM container)
     healthcheck:
       test:
         [
-          'CMD-SHELL',
+          "CMD-SHELL",
           'python3 -c "import urllib.request; urllib.request.urlopen(''http://localhost:4000/health/liveliness'', timeout=5).read()" || exit 1',
         ]
       interval: 30s
@@ -117,24 +117,24 @@ services:
       - ./data/litellm:/app/data
       - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro
       - ./conf/litellm/custom_providers:/app/custom_providers:ro
-    command: ['--config', '/app/config.yaml', '--port', '4000', '--host', '0.0.0.0']
+    command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
     extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - "host.docker.internal:host-gateway"
 
     mem_limit: 12g
     mem_reservation: 6g
-    cpus: '1.0'
+    cpus: "1.0"
     oom_score_adj: -300
     networks:
       - backend
       - data
     labels:
-      - 'com.erni-ki.service=litellm'
-      - 'com.erni-ki.version=main-stable'
-      - 'com.erni-ki.description=Context Engineering Gateway'
-      - 'com.centurylinklabs.watchtower.enable=false'
-      - 'com.centurylinklabs.watchtower.monitor-only=true'
-      - 'com.centurylinklabs.watchtower.scope=ai-services'
+      - "com.erni-ki.service=litellm"
+      - "com.erni-ki.version=main-stable"
+      - "com.erni-ki.description=Context Engineering Gateway"
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+      - "com.centurylinklabs.watchtower.scope=ai-services"
     secrets:
       - litellm_db_password
       - litellm_api_key
@@ -164,7 +164,7 @@ services:
     runtime: nvidia
     mem_limit: 8g
     mem_reservation: 4g
-    cpus: '4.0'
+    cpus: "4.0"
     oom_score_adj: -600
     environment:
       - NVIDIA_VISIBLE_DEVICES=\${OPENWEBUI_GPU_VISIBLE_DEVICES:-0}
@@ -175,7 +175,7 @@ services:
       - /bin/bash
       - /opt/erni/bin/openwebui-entrypoint.sh
     healthcheck:
-      test: ['CMD-SHELL', 'curl --fail http://localhost:8080/health || exit 1']
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
       interval: 30s
       timeout: 3s
       retries: 5
@@ -196,9 +196,9 @@ services:
       - data
     labels:
       # Allow auto-updates for OpenWebUI
-      - 'com.centurylinklabs.watchtower.enable=false'
-      - 'com.centurylinklabs.watchtower.monitor-only=true'
-      - 'com.centurylinklabs.watchtower.scope=web-interface'
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+      - "com.centurylinklabs.watchtower.scope=web-interface"
 
   # ==========================================================================
   # Docling - Document Processing with GPU acceleration
@@ -216,7 +216,7 @@ services:
       - docling_picture_api
     mem_limit: 12g
     mem_reservation: 8g
-    cpus: '8.0'
+    cpus: "8.0"
     oom_score_adj: -500
     env_file: ../env/docling.env
     environment:
@@ -225,7 +225,7 @@ services:
       - CUDA_VISIBLE_DEVICES=\${DOCLING_CUDA_VISIBLE_DEVICES:-0}
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
     healthcheck:
-      test: ['CMD-SHELL', 'curl --fail http://localhost:5001/health || exit 1']
+      test: ["CMD-SHELL", "curl --fail http://localhost:5001/health || exit 1"]
       interval: 60s
       timeout: 10s
       retries: 3
@@ -242,9 +242,9 @@ services:
       - backend
       - data
     labels:
-      - 'com.centurylinklabs.watchtower.enable=false'
-      - 'com.centurylinklabs.watchtower.scope=document-processing'
-      - 'com.erni-ki.service=docling'
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.scope=document-processing"
+      - "com.erni-ki.service=docling"
 
   # ==========================================================================
   # Auth - JWT Authentication Service
@@ -261,17 +261,17 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     mem_reservation: 256m
-    cpus: '0.5'
+    cpus: "0.5"
     healthcheck:
-      test: ['CMD', '/app/main', '--health-check']
+      test: ["CMD", "/app/main", "--health-check"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 5s
     labels:
       # Allow auto-updates for Auth service
-      - 'com.centurylinklabs.watchtower.enable=true'
-      - 'com.centurylinklabs.watchtower.scope=auth-services'
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=auth-services"
     environment:
       - WEBUI_SECRET_KEY_FILE=/run/secrets/openwebui_secret_key
     secrets:
@@ -290,7 +290,7 @@ services:
     healthcheck:
       test:
         [
-          'CMD-SHELL',
+          "CMD-SHELL",
           'wget -q --spider --header="User-Agent: OpenWebUI-HealthCheck/1.0" --header="X-Real-IP: 127.0.0.1" --header="X-Forwarded-For: 127.0.0.1" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" --header="Accept-Language: en-US,en;q=0.5" http://localhost:8080/ || exit 1',
         ]
       interval: 30s
@@ -314,11 +314,11 @@ services:
       - data
     labels:
       # Allow auto-updates for SearXNG
-      - 'com.centurylinklabs.watchtower.enable=true'
-      - 'com.centurylinklabs.watchtower.scope=search-services'
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=search-services"
     mem_limit: 1g
     mem_reservation: 512m
-    cpus: '1.0'
+    cpus: "1.0"
 
   # ==========================================================================
   # EdgeTTS - Text-to-Speech Service
@@ -328,7 +328,7 @@ services:
     healthcheck:
       test:
         [
-          'CMD-SHELL',
+          "CMD-SHELL",
           'python3 -c "import socket; s=socket.socket(); s.settimeout(5); s.connect((\"localhost\", 5050)); s.close()" || exit 1',
         ]
       interval: 30s
@@ -344,11 +344,11 @@ services:
       - edgetts_api_key
     mem_limit: 1g
     mem_reservation: 512m
-    cpus: '0.5'
+    cpus: "0.5"
     labels:
       # Allow auto-updates for EdgeTTS
-      - 'com.centurylinklabs.watchtower.enable=true'
-      - 'com.centurylinklabs.watchtower.scope=text-to-speech'
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=text-to-speech"
 
   # ==========================================================================
   # Apache Tika - Document Extraction
@@ -356,7 +356,7 @@ services:
   tika:
     env_file: ../env/tika.env
     healthcheck:
-      test: ['CMD-SHELL', "timeout 5 bash -c '</dev/tcp/localhost/9998' || exit 1"]
+      test: ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/localhost/9998' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -368,17 +368,17 @@ services:
     restart: unless-stopped
     mem_limit: 1g
     mem_reservation: 512m
-    cpus: '0.5'
+    cpus: "0.5"
     labels:
       # Allow auto-updates for Tika
-      - 'com.centurylinklabs.watchtower.enable=true'
-      - 'com.centurylinklabs.watchtower.scope=document-processing'
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=document-processing"
 
   # ==========================================================================
   # MCP Server - Model Context Protocol
   # ==========================================================================
   mcposerver:
-    entrypoint: ['/opt/erni/bin/mcposerver-with-secrets.sh']
+    entrypoint: ["/opt/erni/bin/mcposerver-with-secrets.sh"]
     command:
       - --config
       - /app/conf/config.json
@@ -387,7 +387,7 @@ services:
       - --host
       - 0.0.0.0
       - --port
-      - '8000'
+      - "8000"
     depends_on:
       db:
         condition: service_healthy
@@ -395,7 +395,7 @@ services:
     healthcheck:
       test:
         [
-          'CMD-SHELL',
+          "CMD-SHELL",
           'python3 -c "import urllib.request; urllib.request.urlopen(''http://localhost:8000/docs'', timeout=5).read()" || exit 1',
         ]
       interval: 30s
@@ -410,7 +410,7 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     mem_reservation: 256m
-    cpus: '0.5'
+    cpus: "0.5"
     volumes:
       - ./conf/mcposerver:/app/conf:ro
       - ./data:/app/data
@@ -422,8 +422,8 @@ services:
       - ragflow_api_key
     labels:
       # Allow auto-updates for MCP Server
-      - 'com.centurylinklabs.watchtower.enable=true'
-      - 'com.centurylinklabs.watchtower.scope=ai-services'
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=ai-services"
 
 # ============================================================================
 # SECRETS

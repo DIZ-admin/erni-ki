@@ -15,19 +15,19 @@
 
 # Logging anchors (duplicated from base.yml for YAML anchor compatibility)
 x-critical-logging: &critical-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '50m'
-    max-file: '10'
-    labels: 'service,version,environment,level=critical'
-    tag: 'critical.{{.Name}}'
+    max-size: "50m"
+    max-file: "10"
+    labels: "service,version,environment,level=critical"
+    tag: "critical.{{.Name}}"
 
 x-important-logging: &important-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '10m'
-    max-file: '5'
-    labels: 'service,version,environment,level=important'
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version,environment,level=important"
 
 services:
   # ==========================================================================
@@ -40,7 +40,7 @@ services:
       openwebui:
         condition: service_healthy
     healthcheck:
-      test: ['CMD-SHELL', '/etc/nginx/healthcheck.sh']
+      test: ["CMD-SHELL", "/etc/nginx/healthcheck.sh"]
       interval: 60s
       timeout: 30s
       retries: 3
@@ -48,9 +48,9 @@ services:
     image: nginx:1.29.3
     logging: *critical-logging
     ports:
-      - '80:80'
-      - '443:443'
-      - '8080:8080'
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
     restart: unless-stopped
     mem_reservation: 384m
     volumes:
@@ -67,11 +67,11 @@ services:
       - monitoring
     labels:
       # CRITICAL: Disable Nginx auto-updates (critical proxy server)
-      - 'com.centurylinklabs.watchtower.enable=false'
-      - 'com.centurylinklabs.watchtower.monitor-only=true'
-      - 'com.centurylinklabs.watchtower.scope=critical-proxy'
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+      - "com.centurylinklabs.watchtower.scope=critical-proxy"
     mem_limit: 512m
-    cpus: '1.0'
+    cpus: "1.0"
     security_opt:
       - no-new-privileges:true
 
@@ -79,8 +79,8 @@ services:
   # Cloudflared - Cloudflare Tunnel
   # ==========================================================================
   cloudflared:
-    entrypoint: ['/opt/erni/bin/busybox', 'sh', '/opt/erni/bin/cloudflared-with-secret.sh']
-    command: ['tunnel', '--no-autoupdate', 'run']
+    entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/cloudflared-with-secret.sh"]
+    command: ["tunnel", "--no-autoupdate", "run"]
     depends_on:
       nginx:
         condition: service_healthy
@@ -90,7 +90,7 @@ services:
     # TUNNEL_ORIGIN_CERT is not required for token-based (remote-managed) tunnels
     # The certificate is only needed for locally-managed tunnels
     healthcheck:
-      test: ['CMD', 'cloudflared', 'version']
+      test: ["CMD", "cloudflared", "version"]
       interval: 60s
       timeout: 15s
       retries: 3
@@ -100,23 +100,23 @@ services:
     restart: unless-stopped
     mem_limit: 256m
     mem_reservation: 128m
-    cpus: '0.25'
+    cpus: "0.25"
     volumes:
       - ./conf/cloudflare/config:/home/nonroot/.cloudflared
       - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
       - source: cloudflared_tunnel_token
-        uid: '65532'
-        gid: '65532'
+        uid: "65532"
+        gid: "65532"
         mode: 0444 # allow read for healthcheck/entrypoint even if uid mapping differs
     networks:
       - frontend
       - backend
     labels:
       # Allow auto-updates for Cloudflared
-      - 'com.centurylinklabs.watchtower.enable=true'
-      - 'com.centurylinklabs.watchtower.scope=tunnel-services'
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=tunnel-services"
 
   # ==========================================================================
   # Backrest - Backup Management
@@ -129,7 +129,7 @@ services:
     environment:
       RESTIC_PASSWORD_FILE: /run/secrets/restic_password
     healthcheck:
-      test: ['CMD-SHELL', 'curl -s http://localhost:9898/ >/dev/null || exit 1']
+      test: ["CMD-SHELL", "curl -s http://localhost:9898/ >/dev/null || exit 1"]
       interval: 60s
       timeout: 10s
       retries: 3
@@ -141,7 +141,7 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     mem_reservation: 256m
-    cpus: '0.5'
+    cpus: "0.5"
     volumes:
       - ./data/backrest:/data
       - ./conf/backrest:/config
@@ -156,8 +156,8 @@ services:
       - restic_password
     labels:
       # Allow auto-updates for Backrest
-      - 'com.centurylinklabs.watchtower.enable=true'
-      - 'com.centurylinklabs.watchtower.scope=backup-services'
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=backup-services"
 
 # ============================================================================
 # SECRETS
