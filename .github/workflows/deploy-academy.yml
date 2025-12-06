@@ -1,5 +1,6 @@
-# Deploy Academy KI to GitHub Pages
-name: Deploy Academy KI
+# CI/CD Pipeline for Academy KI
+# Build validation on PRs, deploy to GitHub Pages on main
+name: Academy KI CI/CD
 
 on:
   push:
@@ -8,50 +9,225 @@ on:
       - "docs/academy/**"
       - "mkdocs-academy.yml"
       - ".github/workflows/deploy-academy.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "docs/academy/**"
+      - "mkdocs-academy.yml"
+      - ".github/workflows/deploy-academy.yml"
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy to GitHub Pages"
+        required: false
+        default: "false"
+        type: boolean
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  pull-requests: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: academy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.11"
 
 jobs:
+  # Validate Academy documentation
+  validate:
+    name: Validate Academy Docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Validate metadata
+        run: |
+          python scripts/docs/validate_metadata.py --path docs/academy
+
+      - name: Check for broken internal links
+        run: |
+          echo "Checking for common broken link patterns..."
+          # Check for broken anchor patterns
+          if grep -rE '\(#[a-z-]+\)' docs/academy/*.md docs/academy/**/*.md 2>/dev/null | grep -v '(#[a-z-]*-[a-z])' | head -20; then
+            echo "::warning::Found potential broken anchors (review manually)"
+          fi
+
+  # Build Academy site
   build:
     name: Build Academy Site
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: [validate]
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
+
+      - name: Cache MkDocs build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            site-academy
+          key: mkdocs-academy-${{ hashFiles('mkdocs-academy.yml', 'docs/academy/**') }}
+          restore-keys: |
+            mkdocs-academy-
 
       - name: Install dependencies
         run: |
           pip install mkdocs-material mkdocs-minify-plugin
 
-      - name: Build site
+      - name: Build site (strict mode)
         run: |
           mkdocs build -f mkdocs-academy.yml --strict
 
-      - name: Upload artifact
+      - name: Check build output
+        run: |
+          echo "Build completed. Site statistics:"
+          find site-academy -name "*.html" | wc -l | xargs echo "HTML pages:"
+          du -sh site-academy | cut -f1 | xargs echo "Total size:"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: academy-site
+          path: site-academy
+          retention-days: 7
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site-academy
 
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
+  # Link check on built site
+  link-check:
+    name: Check Links
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: [build]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: academy-site
+          path: site-academy
+
+      - name: Check internal links with lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --offline
+            --no-progress
+            --max-redirects 5
+            --exclude 'localhost'
+            --exclude '127\.0\.0\.1'
+            --exclude 'example\.com'
+            --exclude 'ki\.erni-gruppe\.ch'
+            --exclude 'status\.erni-ki\.ch'
+            --exclude '192\.168\.\d+\.\d+'
+            'site-academy/**/*.html'
+          fail: false
+
+      - name: Link check summary
+        if: always()
+        run: |
+          echo "## Link Check Results" >> $GITHUB_STEP_SUMMARY
+          if [ -f lychee/out.md ]; then
+            cat lychee/out.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No broken links found!" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # PR comment with build status
+  pr-comment:
+    name: PR Build Status
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [validate, build, link-check]
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Academy KI Build')
+            );
+
+            const body = `## Academy KI Build Status
+
+            | Check | Status |
+            |-------|--------|
+            | Validation | ${{ needs.validate.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+            | Build | ${{ needs.build.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+            | Link Check | ${{ needs.link-check.result == 'success' && '✅ Passed' || '⚠️ Warnings' }} |
+
+            Build artifact available for 7 days.
+
+            _Last updated: ${new Date().toISOString()}_`;
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body
+              });
+            }
+
+  # Deploy to GitHub Pages (only on main)
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [build, link-check]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true')
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -60,3 +236,12 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Deployment summary
+        run: |
+          echo "## Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Academy KI deployed to: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Triggered by: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
