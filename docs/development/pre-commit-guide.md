@@ -30,10 +30,8 @@ last_updated: '2025-12-03'
 ERNI-KI использует **многоуровневую систему pre-commit хуков** для обеспечения
 качества кода:
 
-1. **Python pre-commit framework** - основной механизм валидации
-2. **Husky** - Git hooks менеджер для Node.js окружения (теперь вызывает только
-   pre-commit)
-3. **Commitlint** - валидация commit messages
+1. **Python pre-commit framework** — основной и единственный механизм валидации
+2. **Commitlint** — валидация commit messages
 
 ### Философия проекта
 
@@ -46,8 +44,9 @@ ERNI-KI использует **многоуровневую систему pre-c
 3. **Security First** - обязательная проверка секретов
 4. **Zero TODO/FIXME** - все задачи трекаются в GitHub Issues
 
-> Примечание: lint-staged удалён; Husky вызывает pre-commit, профили доступны
-> через `--config` (например, `.pre-commit/config-fast.yaml`).
+> Примечание: Husky и lint-staged удалены; pre-commit — единственный источник
+> хуков. Профили доступны через `--config` (например,
+> `.pre-commit/config-fast.yaml`).
 
 ---
 
@@ -1248,6 +1247,12 @@ pre-commit run --config .pre-commit/config-security.yaml --all-files
 # Измерение времени хуков
 bun run pre-commit:perf
 ```
+
+**Практика выбора профиля**
+
+- Fast: Go форматирование/импорты (gofmt + goimports@v0.28.0), Ruff, быстрый TS check `bun run tsc --noEmit`. Используйте для мелких правок.
+- Full: полный набор док-хуков/линтов; перед пушем в main/develop прогоняйте `bun run pre-commit` или `bun run commit:full`.
+- Docs/Security: точечные профили для работы с документацией или проверками безопасности.
 
 ### 4. Кэш pre-commit
 

@@ -1,6 +1,6 @@
 ---
-title: 'Academy KI для Erni Gruppe'
-language: ru
+title: 'Academy KI für Erni Gruppe'
+language: de
 doc_version: '2025.11'
 translation_status: original
 last_updated: '2025-12-04'
@@ -147,13 +147,13 @@ Lehrling-Onboarding, Weiterbildung
 - Qualitätsmängel dokumentieren
 - Lösungen dokumentieren
 
-2. [Wissensdatenbank-Artikel](by-role/support/create-knowledge-base-article.md)
+2. [Wissensdatenbank-Artikel](../../academy/by-role/support/create-knowledge-base-article.md)
 
 - Fertigungsanleitungen
 - Best Practices
 - Fehlerbehandlung
 
-3. [Dokumente übersetzen](by-role/general-users/translate-document.md)
+3. [Dokumente übersetzen](../../academy/by-role/general-users/translate-document.md)
 
 - Technische Datenblätter
 - Lieferanteninfos (oft auf Deutsch/Französisch/Italienisch)
@@ -166,17 +166,17 @@ Lehrling-Onboarding, Weiterbildung
 
 **Spezieller Lernpfad:**
 
-1. [Erste Schritte](getting-started/first-steps.md)
+1. [Erste Schritte](../../academy/getting-started/first-steps.md)
 
 - Grundlagen verstehen
 - Open WebUI nutzen
 
-2. [Professionelle E-Mails](by-role/general-users/write-professional-email.md)
+2. [Professionelle E-Mails](../../academy/by-role/general-users/write-professional-email.md)
 
 - Geschäftskorrespondenz lernen
 - Ton und Stil
 
-3. [Wissensdatenbank nutzen](fundamentals/rag-basics.md)
+3. [Wissensdatenbank nutzen](../../academy/fundamentals/rag-basics.md)
 
 - Technische Infos finden
 - Lernen effizienter
@@ -190,19 +190,19 @@ professionellere Kommunikation
 
 **Prioritäts-Szenarien:**
 
-1. [E-Mail-Kommunikation](by-role/general-users/write-professional-email.md)
+1. [E-Mail-Kommunikation](../../academy/by-role/general-users/write-professional-email.md)
 
 - Kundenanfragen
 - Angebotsbegleitung
 - Allgemeine Korrespondenz
 
-2. [Dokumente übersetzen](by-role/general-users/translate-document.md)
+2. [Dokumente übersetzen](../../academy/by-role/general-users/translate-document.md)
 
 - DE ↔ FR ↔ IT (wichtig in der Schweiz!)
 - Kundeninfos
 - Marketing-Material
 
-3. [Präsentationen](by-role/general-users/prepare-presentation.md)
+3. [Präsentationen](../../academy/by-role/general-users/prepare-presentation.md)
 
 - Firmenpräsentationen
 - Lehrlingsveranstaltungen

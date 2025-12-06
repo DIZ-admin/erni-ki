@@ -48,7 +48,11 @@ export default defineConfig({
     teardownTimeout: 5000,
 
     // Test discovery patterns
-    include: ['tests/unit/**/*.{test,spec}.{ts,js}', 'tests/integration/**/*.{test,spec}.{ts,js}'],
+    include: [
+      'tests/unit/**/*.{test,spec}.{ts,js}',
+      'tests/integration/**/*.{test,spec}.{ts,js}',
+      'tests/contracts/**/*.{test,spec}.{ts,js}',
+    ],
 
     // Exclude E2E tests (run via Playwright)
     exclude: [

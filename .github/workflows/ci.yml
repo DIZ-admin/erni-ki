@@ -13,9 +13,8 @@ on:
 # Permissions for GitHub token
 permissions:
   contents: read
-  security-events: write
   actions: read
-  packages: read
+  security-events: write
 
 # Environment variables
 env:
@@ -43,8 +42,8 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
+          cache: 'pip'
           cache-dependency-path: requirements-dev.txt
 
       - name: 📦 Install Python tooling
@@ -55,7 +54,13 @@ jobs:
       - name: 🟣 Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.3.3"
+          bun-version: '1.3.3'
+
+      - name: ♻️ Cache bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bun
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
       - name: 📦 Install JS/TS dependencies
         run: bun install --frozen-lockfile
@@ -83,6 +88,10 @@ jobs:
     name: 🧪 Test Go Service
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.24.11', '1.22.11']
 
     defaults:
       run:
@@ -95,7 +104,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version-file: auth/go.mod
+          go-version: ${{ matrix.go }}
           cache-dependency-path: auth/go.sum
 
       - name: 📦 Download dependencies
@@ -132,7 +141,8 @@ jobs:
               sys.exit("coverage below 80% threshold")
           PY
 
-      - name: 📋 Upload coverage artifacts
+      - name: 📋 Upload coverage artifacts (primary Go)
+        if: matrix.go == '1.24.11'
         uses: actions/upload-artifact@v5
         with:
           name: go-coverage-report
@@ -142,6 +152,7 @@ jobs:
           retention-days: 30
 
       - name: 📤 Upload coverage to Codecov (Go)
+        if: matrix.go == '1.24.11'
         uses: codecov/codecov-action@v4
         with:
           files: ./auth/coverage.out
@@ -154,6 +165,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [lint]
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12', '3.11']
 
     steps:
       - name: 📥 Checkout code
@@ -162,8 +177,8 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: ${{ matrix.python }}
+          cache: 'pip'
 
       - name: 📦 Install dependencies
         run: |
@@ -176,7 +191,16 @@ jobs:
           export LOG_DIR=/tmp/logs
           pytest tests/python/ --cov=. --cov-config=.coveragerc --cov-report=xml --cov-fail-under=80
 
+      - name: 📦 Upload Python coverage artifact
+        if: matrix.python == '3.12'
+        uses: actions/upload-artifact@v5
+        with:
+          name: python-coverage
+          path: coverage.xml
+          retention-days: 7
+
       - name: 📤 Upload coverage to Codecov (Python)
+        if: matrix.python == '3.12'
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml
@@ -197,8 +221,8 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
+          cache: 'pip'
 
       - name: 📦 Install dependencies
         run: |
@@ -217,6 +241,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: [lint]
+    strategy:
+      fail-fast: false
+      matrix:
+        bun: ['1.3.3', '1.2.2']
 
     steps:
       - name: 📥 Checkout code
@@ -225,7 +253,13 @@ jobs:
       - name: 🟣 Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.3.3"
+          bun-version: ${{ matrix.bun }}
+
+      - name: ♻️ Cache bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bun
+          key: bun-cache-${{ runner.os }}-${{ matrix.bun }}-${{ hashFiles('bun.lock') }}
 
       - name: 📦 Install dependencies
         run: bun install --frozen-lockfile
@@ -234,11 +268,18 @@ jobs:
         run: bun run test:unit
 
       - name: 📤 Upload coverage to Codecov (JS/TS)
+        if: matrix.bun == '1.3.3'
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/lcov.info
           flags: js
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: ♻️ Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-chromium-${{ hashFiles('package.json', 'bun.lock') }}
 
       - name: 🧰 Install Playwright browser
         run: bunx playwright install --with-deps chromium
@@ -262,13 +303,242 @@ jobs:
           path: playwright-report
           retention-days: 7
 
+  contract-tests:
+    name: 📜 Contract Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🟣 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.3'
+
+      - name: ♻️ Cache bun
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/bun
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+
+      - name: 📦 Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: 🧪 Run contract tests (fail on main/develop if secrets missing)
+        env:
+          CONTRACT_BASE_URL: ${{ secrets.CONTRACT_BASE_URL }}
+          CONTRACT_BEARER_TOKEN: ${{ secrets.CONTRACT_BEARER_TOKEN }}
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+            if [ -z "${CONTRACT_BASE_URL}" ] || [ -z "${CONTRACT_BEARER_TOKEN}" ]; then
+              echo "Contract tests require CONTRACT_BASE_URL and CONTRACT_BEARER_TOKEN on main/develop" >&2
+              exit 1
+            fi
+          else
+            if [ -z "${CONTRACT_BASE_URL}" ]; then
+              echo "CONTRACT_BASE_URL not set; skipping contract tests on this branch/PR."
+              exit 0
+            fi
+          fi
+          bun run test:contracts
+
+  load-smoke:
+    name: 🔥 Load Smoke (k6)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🏃 Run k6 smoke (skips if SMOKE_BASE_URL not set)
+        env:
+          SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
+          SMOKE_AUTH_TOKEN: ${{ secrets.SMOKE_AUTH_TOKEN }}
+          SMOKE_AUTH_PATH: ${{ secrets.SMOKE_AUTH_PATH }}
+          SMOKE_RAG_PATH: ${{ secrets.SMOKE_RAG_PATH }}
+          SMOKE_VUS: ${{ secrets.SMOKE_VUS }}
+          SMOKE_DURATION: ${{ secrets.SMOKE_DURATION }}
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+            if [ -z "${SMOKE_BASE_URL:-}" ]; then
+              echo "SMOKE_BASE_URL is required on main/develop for load smoke." >&2
+              exit 1
+            fi
+          else
+            if [ -z "${SMOKE_BASE_URL:-}" ]; then
+              echo "SMOKE_BASE_URL not set; skipping k6 smoke test."
+              exit 0
+            fi
+          fi
+          mkdir -p artifacts/k6
+          docker run --rm \
+            -e SMOKE_BASE_URL \
+            -e SMOKE_AUTH_TOKEN \
+            -e SMOKE_AUTH_PATH \
+            -e SMOKE_RAG_PATH \
+            -e SMOKE_VUS \
+            -e SMOKE_DURATION \
+            -v "$PWD/tests/load:/scripts" \
+            -v "$PWD/artifacts/k6:/tmp/k6" \
+            grafana/k6 run /scripts/smoke-auth-rag.js --summary-export=/tmp/k6/summary.json
+
+      - name: 📤 Upload k6 smoke summary
+        if: always() && hashFiles('artifacts/k6/summary.json') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: k6-smoke-summary
+          path: artifacts/k6/summary.json
+
+  observability-configs:
+    name: 📡 Observability Config Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🗂️ Prepare env defaults for compose lint
+        run: |
+          if [ -d "env" ]; then
+            for f in env/*.example; do
+              base="$(basename "$f" .example)"
+              target="env/${base}.env"
+              if [ ! -f "$target" ]; then
+                cp "$f" "$target"
+              fi
+            done
+            # Fail early if placeholders remain on protected branches
+            if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+              bad=$(grep -RIl "CHANGE_ME\\|CHANGEME\\|changeme" env || true)
+              if [ -n "$bad" ]; then
+                echo "Placeholder values found in env files:" >&2
+                echo "$bad" >&2
+                exit 1
+              fi
+              empty=$(grep -RIl "^[A-Za-z0-9_]+=\\s*$" env || true)
+              if [ -n "$empty" ]; then
+                echo "Empty env values found in env files:" >&2
+                echo "$empty" >&2
+                exit 1
+              fi
+            fi
+          fi
+
+      - name: 🐳 Docker Compose lint
+        run: |
+          if [ -f "compose.yml" ]; then
+            docker compose -f compose.yml config -q
+          else
+            echo "compose.yml not found, skipping"
+          fi
+
+      - name: 🌐 Nginx config test (containerized)
+        run: |
+          if [ -f "conf/nginx/nginx.conf" ]; then
+            docker run --rm \
+              -v "$PWD/conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro" \
+              -v "$PWD/conf/nginx/conf.d:/etc/nginx/conf.d:ro" \
+              -v "$PWD/conf/nginx/includes:/etc/nginx/includes:ro" \
+              -v /dev/null:/etc/nginx/conf.d/default.conf:ro \
+              nginx:alpine nginx -t -c /etc/nginx/nginx.conf
+          else
+            echo "Nginx config missing, skipping"
+          fi
+
+      - name: 📜 Prometheus rules check (promtool)
+        run: |
+          if [ -f "ops/prometheus/blackbox-noise.rules.yml" ]; then
+            docker run --rm \
+              -v "$PWD/ops/prometheus:/etc/prometheus:ro" \
+              --entrypoint /bin/sh prom/prometheus:v2.55.1 \
+              -c "promtool check rules /etc/prometheus/blackbox-noise.rules.yml"
+          else
+            echo "Prometheus rules not found, skipping"
+          fi
+
+      - name: 🚨 Alertmanager config check
+        run: |
+          if [ -f "conf/alertmanager/alertmanager.yml" ]; then
+            docker run --rm -v "$PWD/conf/alertmanager:/etc/alertmanager:ro" prom/alertmanager:v0.27.0 \
+              promtool check config /etc/alertmanager/alertmanager.yml
+          else
+            echo "alertmanager.yml not found, skipping"
+          fi
+
+      - name: 📄 Promtail config verify
+        run: |
+          if [ -f "conf/promtail/promtail-config.yaml" ]; then
+            docker run --rm \
+              -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" \
+              --entrypoint promtail grafana/promtail:3.0.0 \
+              --config.file=/etc/promtail/config.yaml \
+              --dry-run \
+              --log.level=warn
+          else
+            echo "promtail config not found, skipping"
+          fi
+
+      - name: 📑 Fluent Bit config check
+        run: |
+          if [ -f "conf/fluent-bit/fluent-bit.conf" ]; then
+            docker run --rm -v "$PWD/conf/fluent-bit:/fluent-bit:ro" fluent/fluent-bit:3.0 \
+              -c /fluent-bit/fluent-bit.conf -t
+          else
+            echo "fluent-bit.conf not found, skipping"
+          fi
+
+  coverage-merge:
+    name: 📈 Merge Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [test-go, test-python, test-js]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 📥 Download Go coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: go-coverage-report
+          path: artifacts/go
+
+      - name: 📥 Download JS coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: js-coverage
+          path: artifacts/js
+
+      - name: 📥 Download Python coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: python-coverage
+          path: artifacts/py
+
+      - name: 📤 Upload merged coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: |
+            artifacts/go/auth/coverage.out
+            artifacts/js/coverage/lcov.info
+            artifacts/py/coverage.xml
+          flags: combined
+          fail_ci_if_error: false
+
   # Go lint (auth service)
   go-lint:
     name: 🧹 Go Lint (golangci-lint)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      GOTOOLCHAIN: go1.24.10
+      GOTOOLCHAIN: go1.24.11
 
     steps:
       - name: 📥 Checkout code
@@ -308,7 +578,7 @@ jobs:
 
       - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
         env:
-          GOTOOLCHAIN: go1.24.10
+          GOTOOLCHAIN: go1.24.11
           GOSEC_VERSION: v2.22.10
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
@@ -324,22 +594,22 @@ jobs:
       - name: 🔍 Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.33.1
         with:
-          scan-type: "fs"
-          scan-ref: "."
-          format: "sarif"
-          output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH"
-          scanners: "vuln"
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          scanners: 'vuln'
           ignore-unfixed: true
-          skip-dirs: "node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs"
-          skip-files: "package-lock.json,package.json"
-          exit-code: "0"
+          skip-dirs: 'node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs'
+          skip-files: 'package-lock.json,package.json'
+          exit-code: '0'
 
       - name: 📤 Upload Trivy results
         uses: github/codeql-action/upload-sarif@v4
         if: always() && hashFiles('trivy-results.sarif') != ''
         with:
-          sarif_file: "trivy-results.sarif"
+          sarif_file: 'trivy-results.sarif'
 
   shellcheck:
     name: 🐚 ShellCheck
@@ -396,7 +666,6 @@ jobs:
             'docs/**/*.md'
             'README.md'
           fail: true
-        continue-on-error: true
 
       - name: 📊 Create link check summary
         if: always()
@@ -416,7 +685,7 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: 📦 Install dependencies
         run: pip install pyyaml
@@ -439,7 +708,7 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: '3.11'
           cache: pip
           cache-dependency-path: requirements-dev.txt
 
@@ -546,24 +815,37 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         with:
           image-ref: ${{ steps.trivy-image.outputs.trivy_image_ref }}
-          format: "sarif"
-          output: "docker-trivy-results.sarif"
-          severity: "CRITICAL,HIGH"
-          scanners: "vuln"
+          format: 'sarif'
+          output: 'docker-trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          scanners: 'vuln'
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: '0'
 
       - name: 📤 Upload Docker Trivy results
         uses: github/codeql-action/upload-sarif@v4
         if: always() && hashFiles('docker-trivy-results.sarif') != ''
         with:
-          sarif_file: "docker-trivy-results.sarif"
+          sarif_file: 'docker-trivy-results.sarif'
 
   # Result Notifications
   notify:
     name: 📢 Notify Results
     runs-on: ubuntu-latest
-    needs: [lint, go-lint, test-go, test-js, security, link-check, docker-build]
+    timeout-minutes: 10
+    needs:
+      [
+        lint,
+        go-lint,
+        test-go,
+        test-js,
+        security,
+        link-check,
+        docker-build,
+        contract-tests,
+        load-smoke,
+        coverage-merge,
+      ]
     if: always() && github.ref == 'refs/heads/main'
 
     steps:
@@ -574,6 +856,7 @@ jobs:
           echo "golint=${{ needs['go-lint'].result }}" >> $GITHUB_OUTPUT
           echo "test_go=${{ needs['test-go'].result }}" >> $GITHUB_OUTPUT
           echo "test_ts=${{ needs['test-js'].result }}" >> $GITHUB_OUTPUT
+          echo "coverage_merge=${{ needs['coverage-merge'].result }}" >> $GITHUB_OUTPUT
           echo "security=${{ needs.security.result }}" >> $GITHUB_OUTPUT
           echo "docker=${{ needs['docker-build'].result }}" >> $GITHUB_OUTPUT
 
@@ -586,5 +869,6 @@ jobs:
           echo "| Go Lint | ${{ steps.results.outputs.golint == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Go Tests | ${{ steps.results.outputs.test_go == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| TS Tests | ${{ steps.results.outputs.test_ts == 'success' && '✅' || steps.results.outputs.test_ts == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage Merge | ${{ steps.results.outputs.coverage_merge == 'success' && '✅' || steps.results.outputs.coverage_merge == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security | ${{ steps.results.outputs.security == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Docker | ${{ steps.results.outputs.docker == 'success' && '✅' || steps.results.outputs.docker == 'skipped' && '⏭️' || '❌' }} |" >> $GITHUB_STEP_SUMMARY

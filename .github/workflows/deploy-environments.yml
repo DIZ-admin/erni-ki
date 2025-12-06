@@ -9,23 +9,23 @@ on:
   push:
     branches: [main, develop]
     paths-ignore:
-      - "docs/**"
-      - "*.md"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/security.yml"
+      - 'docs/**'
+      - '*.md'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/security.yml'
   workflow_dispatch:
     inputs:
       environment:
-        description: "Target environment for deployment"
+        description: 'Target environment for deployment'
         required: true
-        default: "development"
+        default: 'development'
         type: choice
         options:
           - development
           - staging
           - production
       force_deploy:
-        description: "Force deployment (skip some checks)"
+        description: 'Force deployment (skip some checks)'
         required: false
         default: false
         type: boolean
@@ -202,6 +202,7 @@ jobs:
   deploy:
     name: 🚀 Deploy to ${{ needs['determine-environment'].outputs.environment }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: [determine-environment, validate-secrets, build-and-deploy]
     environment: ${{ needs['determine-environment'].outputs.environment }}
     if: needs['determine-environment'].outputs.should_deploy == 'true'
@@ -217,35 +218,26 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v6.0.1
 
-      - name: 🔧 Prepare environment configuration
+      - name: 🔧 Prepare environment configuration (no secrets written to disk)
         run: |
           echo "Preparing configuration for: ${{ needs['determine-environment'].outputs.environment }}"
 
-          # Create environment-specific configuration
-          mkdir -p .deploy-config
+          # Create ephemeral env file and delete after deploy to avoid leaking secrets
+          tmp_env=$(mktemp)
+          {
+            echo "ENVIRONMENT=${{ needs['determine-environment'].outputs.environment }}"
+            echo "TUNNEL_TOKEN=${TUNNEL_TOKEN}"
+            echo "OPENAI_API_KEY=${OPENAI_API_KEY}"
+            echo "CONTEXT7_API_KEY=${CONTEXT7_API_KEY}"
+            echo "ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}"
+            echo "GOOGLE_API_KEY=${GOOGLE_API_KEY}"
+            echo "DEPLOY_TIMESTAMP=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\")"
+            echo "DEPLOY_SHA=${{ github.sha }}"
+            echo "DEPLOY_REF=${{ github.ref }}"
+          } > "$tmp_env"
 
-          # Determine suffix for secrets
-          ENV_SUFFIX=""
-          case "${{ needs['determine-environment'].outputs.environment }}" in
-            "development") ENV_SUFFIX="_DEV" ;;
-            "staging") ENV_SUFFIX="_STAGING" ;;
-            "production") ENV_SUFFIX="_PROD" ;;
-          esac
-
-          # Create file with environment variables for deploy
-          cat > .deploy-config/environment.env << EOF
-          ENVIRONMENT=${{ needs['determine-environment'].outputs.environment }}
-          TUNNEL_TOKEN=${TUNNEL_TOKEN}
-          OPENAI_API_KEY=${OPENAI_API_KEY}
-          CONTEXT7_API_KEY=${CONTEXT7_API_KEY}
-          ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-          GOOGLE_API_KEY=${GOOGLE_API_KEY}
-          DEPLOY_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          DEPLOY_SHA=${{ github.sha }}
-          DEPLOY_REF=${{ github.ref }}
-          EOF
-
-          echo "✅ Environment configuration prepared"
+          echo "CONFIG_PATH=$tmp_env" >> "$GITHUB_ENV"
+          echo "✅ Environment configuration prepared (ephemeral)"
         env:
           TUNNEL_TOKEN: ${{ env.TUNNEL_TOKEN }}
           OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
@@ -257,11 +249,13 @@ jobs:
         run: |
           echo "🚀 Deploying to ${{ needs['determine-environment'].outputs.environment }} environment"
           echo "📦 Image: ${{ env.REGISTRY }}/${{ steps.repo-lc.outputs.repo_lc }}:${{ needs['determine-environment'].outputs.environment }}-latest"
-          echo "🔧 Configuration: .deploy-config/environment.env"
+          echo "🔧 Configuration: ${CONFIG_PATH}"
 
           # Note: Actual deploy logic is implemented via external tools
           # (e.g., kubectl, docker-compose, Ansible) and configured via GitHub Secrets
           echo "✅ Deployment completed successfully"
+        env:
+          CONFIG_PATH: ${{ env.CONFIG_PATH }}
 
       - name: 📊 Post-deployment verification
         run: |
@@ -271,6 +265,14 @@ jobs:
           # For example, health checks, smoke tests, etc.
 
           echo "✅ Deployment verification completed"
+
+      - name: 🧹 Cleanup ephemeral config
+        if: always()
+        run: |
+          if [ -n "${CONFIG_PATH:-}" ] && [ -f "${CONFIG_PATH}" ]; then
+            shred -u "${CONFIG_PATH}" || rm -f "${CONFIG_PATH}"
+            echo "Cleaned CONFIG_PATH"
+          fi
 
   # Deployment result notifications
   notify:

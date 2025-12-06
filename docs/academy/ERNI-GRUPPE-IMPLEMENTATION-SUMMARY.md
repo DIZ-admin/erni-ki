@@ -62,7 +62,7 @@ Mitarbeiter + 21 Lehrlinge, Erni Gruppe Schongau
 - Wochen-Zusammenfassungen
 - Mobile Nutzung
 
-**[Angebot erstellen](by-industry/construction/angebot-erstellen.md)**
+**[Angebot erstellen](../de/academy/by-industry/construction/angebot-erstellen.md)**
 
 - Dauer: 15 min
 - Für: Kalkulation, Planer, Verkauf
@@ -74,7 +74,7 @@ Mitarbeiter + 21 Lehrlinge, Erni Gruppe Schongau
 - Variantenvergleiche
 - Risiko-Kommunikation
 
-**[Implementation Plan](ERNI-GRUPPE-ADAPTATION.md)**
+**[Implementation Plan](../de/academy/ERNI-GRUPPE-ADAPTATION.md)**
 
 - Vollständige Anpassungsstrategie
 - Rollen-spezifische Lernpfade

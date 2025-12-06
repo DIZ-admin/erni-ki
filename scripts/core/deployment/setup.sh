@@ -20,18 +20,21 @@ check_dependencies() {
 
     local missing=0
     # Docker
+    # Docker
     if ! command -v docker &> /dev/null; then
         log_error "Docker is not installed. Install Docker: https://docs.docker.com/get-docker/"
         missing=1
+    else
+        log_success "Docker found: $(docker --version)"
     fi
-    log_success "Docker found: $(docker --version)"
 
     # Docker Compose
     if ! command -v docker compose &> /dev/null; then
         log_error "Docker Compose is not installed"
         missing=1
+    else
+        log_success "Docker Compose found: $(docker compose version)"
     fi
-    log_success "Docker Compose found: $(docker compose version)"
 
     # Node.js (optional)
     if command -v node &> /dev/null; then

@@ -137,13 +137,13 @@ repos:
         name: "Prettier: code formatting"
         files: \.(md|yml|yaml|json|js|jsx|ts|tsx)$
         additional_dependencies:
-          - prettier@3.6.2
+          - prettier@4.0.0-alpha.8
 
   # ===================================================================
   # PYTHON LINTING/FORMATTING (RUFF)
   # ===================================================================
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.6
+    rev: v0.14.7
     hooks:
       - id: ruff
         name: "Ruff: Python lint"
@@ -153,7 +153,7 @@ repos:
         name: "Ruff: Python format"
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.13.0
     hooks:
       - id: mypy
         name: "mypy: static type check"
@@ -180,7 +180,7 @@ repos:
   # ESLINT CHECKS
   # ===================================================================
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v10.0.0-alpha.0
+    rev: v9.14.0
     hooks:
       - id: eslint
         name: "ESLint: TypeScript/JavaScript validation"
@@ -278,7 +278,7 @@ repos:
       # TypeScript type check (fast, no emit)
       - id: ts-type-check
         name: "TypeScript: type check"
-        entry: npm run type-check
+        entry: bun run tsc -- --noEmit --incremental false --pretty false
         language: system
         pass_filenames: false
         stages: [pre-commit]
@@ -342,13 +342,9 @@ repos:
               export PATH="$PATH:$GOPATH_BIN/bin"
             fi
             if ! command -v goimports >/dev/null 2>&1; then
-              go install golang.org/x/tools/cmd/goimports@latest
+              go install golang.org/x/tools/cmd/goimports@v0.28.0
             fi
-            if ! command -v goimports >/dev/null 2>&1; then
-              git ls-files "*.go" | xargs -r go run golang.org/x/tools/cmd/goimports@latest -w
-            else
-              git ls-files "*.go" | xargs -r goimports -w
-            fi
+            git ls-files "*.go" | xargs -r goimports -w
 
       # Detect duplicate basenames in scripts/ and conf/
       - id: check-duplicate-basenames
