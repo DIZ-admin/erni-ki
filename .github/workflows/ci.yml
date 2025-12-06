@@ -505,19 +505,19 @@ jobs:
         uses: actions/checkout@v6.0.1
 
       - name: 📥 Download Go coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: go-coverage-report
           path: artifacts/go
 
       - name: 📥 Download JS coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: js-coverage
           path: artifacts/js
 
       - name: 📥 Download Python coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: python-coverage
           path: artifacts/py
