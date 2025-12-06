@@ -480,12 +480,10 @@ jobs:
       - name: 📄 Promtail config verify
         run: |
           if [ -f "conf/promtail/promtail-config.yaml" ]; then
-            docker run --rm \
+            timeout 90 docker run --rm \
               -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" \
-              --entrypoint promtail grafana/promtail:3.0.0 \
-              --config.file=/etc/promtail/config.yaml \
-              --dry-run \
-              --log.level=warn
+              --entrypoint /bin/sh grafana/promtail:3.0.0 \
+              -c "promtail --config.file=/etc/promtail/config.yaml --log.level=warn --print-config-stderr >/dev/null"
           else
             echo "promtail config not found, skipping"
           fi
