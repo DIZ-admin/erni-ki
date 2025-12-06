@@ -263,3 +263,6 @@ ErniKiRedisSecurePassword2024
 .coverage
 coverage.json
 htmlcov/
+
+# Academy build output
+site-academy/

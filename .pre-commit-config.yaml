@@ -97,6 +97,7 @@ repos:
           (?x)^(
             \.env.*|
             mkdocs\.yml|
+            mkdocs-academy\.yml|
             conf/litellm/config\.yaml|
             conf/.*\.yml|
             conf/.*\.yaml|
@@ -140,6 +141,7 @@ repos:
           (?x)^(
             \.env.*|
             mkdocs\.yml|
+            mkdocs-academy\.yml|
             conf/litellm/config\.yaml|
             data/.*|
             logs/.*|
