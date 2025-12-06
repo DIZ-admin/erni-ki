@@ -94,12 +94,18 @@ def determine_area(file_path: str, content: str) -> str:
     return "general"
 
 
-def is_real_todo(line: str, file_path: str) -> bool:  # pragma: allowlist todo
+def is_real_todo(  # pragma: allowlist todo
+    line: str,
+    file_path: str,
+    all_lines: list[str] | None = None,
+    line_num: int = 0,
+) -> bool:
     """Determine if this is a real TODO/FIXME or just a mention."""  # pragma: allowlist todo
     line_lower = line.lower()
 
     # Skip documentation about TODO/FIXME  # pragma: allowlist todo
-    false_positives = [  # pragma: allowlist todo
+    false_positive_patterns = [  # pragma: allowlist todo
+        # Meta-documentation about TODOs  # pragma: allowlist todo
         "todo/fixme",  # pragma: allowlist todo
         "todo or fixme",  # pragma: allowlist todo
         "todo` in",  # pragma: allowlist todo
@@ -113,25 +119,99 @@ def is_real_todo(line: str, file_path: str) -> bool:  # pragma: allowlist todo
         "check-todo",  # pragma: allowlist todo
         "allowlist todo",  # pragma: allowlist todo
         "pragma: allowlist",
-        "# todo:",  # Section headers  # pragma: allowlist todo
+        # Section headers  # pragma: allowlist todo
+        "# todo:",  # pragma: allowlist todo
         "## todo",  # pragma: allowlist todo
         "### todo",  # pragma: allowlist todo
+        # Task status flows (Archon/Kanban)
+        "todo`→",
+        "→`todo",
+        '"todo"',
+        "'todo'",
+        "`todo`",
+        "status: todo",  # pragma: allowlist todo
+        'filter_value="todo',  # pragma: allowlist todo
+        'status="todo',  # pragma: allowlist todo
+        # Code examples in docs
+        "grep.*todo",  # pragma: allowlist todo
+        "rg.*todo",  # pragma: allowlist todo
+        "|todo|",  # pragma: allowlist todo
+        # Regex patterns containing TODO  # pragma: allowlist todo
+        r"\btodo\b",  # pragma: allowlist todo
+        r"todo\\b",  # pragma: allowlist todo
+        "re.match.*todo",  # pragma: allowlist todo
+        "re.search.*todo",  # pragma: allowlist todo
+        "todo_pattern",  # pragma: allowlist todo
+        "todoitem",  # pragma: allowlist todo
+        "todowrite",  # pragma: allowlist todo
+        # Meta references (recommendations to avoid TODOs)  # pragma: allowlist todo
+        "instead of todo",  # pragma: allowlist todo
+        "rather than todo",  # pragma: allowlist todo
+        "avoid todo",  # pragma: allowlist todo
+        "github issue",  # Recommendation to use issues  # pragma: allowlist todo
+        "create.*issue",  # pragma: allowlist todo
     ]
 
-    for pattern in false_positives:
+    for pattern in false_positive_patterns:
         if pattern in line_lower:
             return False
 
-    # Skip if it's in an audit/report file
-    if any(
-        keyword in file_path.lower()
-        for keyword in ["audit", "report", "summary", "progress", "session", "completion"]
-    ):
+    # Skip if it's in an audit/report/analysis file
+    skip_file_patterns = [
+        "audit",
+        "report",
+        "summary",
+        "progress",
+        "session",
+        "completion",
+        "analysis",
+        "todo-",
+        "changelog",
+    ]
+    if any(keyword in file_path.lower() for keyword in skip_file_patterns):
+        return False
+
+    # Skip agent instruction files (CLAUDE.md, AGENTS.md, etc.)
+    agent_files = ["claude.md", "agents.md", "agent-rules.md", "cursor.md"]
+    if any(file_path.lower().endswith(f) for f in agent_files):
+        return False
+
+    # Skip this script itself (contains TODO in variable names)  # pragma: allowlist todo
+    if "extract_todos.py" in file_path:  # pragma: allowlist todo
+        return False
+
+    # Skip pre-commit configs (contain grep patterns for TODO)  # pragma: allowlist todo
+    if file_path.endswith((".pre-commit-config.yaml", "config-fast.yaml", "config-full.yaml")):
         return False
 
     # Skip table rows or bullet points that just mention TODO  # pragma: allowlist todo
-    # Return negated condition directly
-    return not re.match(r"^\s*[\|\-\*]\s*.*TODO.*\|", line, re.IGNORECASE)  # pragma: allowlist todo
+    if re.match(r"^\s*[\|\-\*]\s*.*TODO.*\|", line, re.IGNORECASE):  # pragma: allowlist todo
+        return False
+
+    # Skip if inside markdown code block (``` ... ```)
+    if all_lines and line_num > 0:
+        in_code_block = False
+        for i in range(line_num - 1):
+            if all_lines[i].strip().startswith("```"):
+                in_code_block = not in_code_block
+        if in_code_block:
+            return False
+
+    # Skip lines that are showing command examples
+    if re.match(r"^\s*[$#>]", line):  # Shell prompt indicators
+        return False
+
+    # Skip YAML/config examples with todo as a value  # pragma: allowlist todo
+    if re.match(r"^\s*[\w-]+:\s*['\"]?todo['\"]?\s*$", line_lower):  # pragma: allowlist todo
+        return False
+
+    # Skip lines showing inline code examples with backticks
+    if "`TODO" in line or "`FIXME" in line:  # pragma: allowlist todo
+        return False
+
+    # Skip lines that are clearly documentation examples (indented code in md)
+    is_md_code_example = file_path.endswith(".md") and re.match(r"^\s{4,}", line)
+    return not is_md_code_example
 
 
 def extract_todos(root_dir: Path) -> list[TodoItem]:  # pragma: allowlist todo
@@ -166,7 +246,8 @@ def extract_todos(root_dir: Path) -> list[TodoItem]:  # pragma: allowlist todo
 
             for line_num, line in enumerate(lines, 1):
                 match = todo_pattern.search(line)  # pragma: allowlist todo
-                if match and is_real_todo(line, relative_path):  # pragma: allowlist todo
+                # pragma: allowlist todo
+                if match and is_real_todo(line, relative_path, lines, line_num):
                     todo_type = match.group(1).upper()
                     content = match.group(2).strip()
 
@@ -199,7 +280,20 @@ def extract_todos(root_dir: Path) -> list[TodoItem]:  # pragma: allowlist todo
 
 def generate_markdown_report(todos: list[TodoItem]) -> str:  # pragma: allowlist todo
     """Generate markdown report grouped by category and priority."""  # pragma: allowlist todo
-    report = ["# TODO/FIXME Analysis Report\n"]  # pragma: allowlist todo
+    from datetime import datetime
+
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    # pragma: allowlist todo
+    frontmatter = f"""---
+title: Task Marker Analysis Report
+language: ru
+page_id: todo-analysis-{date_str}
+doc_version: '2025.11'
+translation_status: original
+---
+
+"""
+    report = [frontmatter + "# Task Marker Analysis Report\n"]
     report.append(f"**Total Items**: {len(todos)}\n")
 
     # Group by category
@@ -248,7 +342,7 @@ def generate_markdown_report(todos: list[TodoItem]) -> str:  # pragma: allowlist
                 report.append(f"  - ... and {len(area_items) - 10} more\n")
 
     # Files with most TODOs  # pragma: allowlist todo
-    report.append("\n## Files with Most TODOs\n")  # pragma: allowlist todo
+    report.append("\n## Files with Most Task Markers\n")
     file_counts: dict[str, int] = defaultdict(int)
     for todo in todos:  # pragma: allowlist todo
         file_counts[todo.file_path] += 1

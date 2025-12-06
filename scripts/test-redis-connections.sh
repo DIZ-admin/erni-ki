@@ -59,10 +59,11 @@ fi
 
 # Measure execution time
 measure_time() {
-    local start_time=$(date +%s%N)
+    local start_time end_time duration
+    start_time=$(date +%s%N)
     "$@"
-    local end_time=$(date +%s%N)
-    local duration=$(( (end_time - start_time) / 1000000 )) # ms
+    end_time=$(date +%s%N)
+    duration=$(( (end_time - start_time) / 1000000 )) # ms
     echo "${duration}ms"
 }
 
@@ -132,7 +133,7 @@ echo -e "\n${BLUE}=== 5. Usage stats ===${NC}"
 
 # Redis Main stats
 info "Redis Main stats:"
-docker exec erni-ki-redis-1 redis-cli -a "${REDIS_PASSWORD}" info stats 2>/dev/null | grep -E "(connected_clients|total_commands_processed|keyspace_hits|keyspace_misses)" | while read line; do
+docker exec erni-ki-redis-1 redis-cli -a "${REDIS_PASSWORD}" info stats 2>/dev/null | grep -E "(connected_clients|total_commands_processed|keyspace_hits|keyspace_misses)" | while read -r line; do
     echo "  $line"
 done
 

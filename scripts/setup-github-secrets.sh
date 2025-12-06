@@ -55,7 +55,7 @@ set_secret() {
         echo -e "${YELLOW}Optional${NC}"
     fi
 
-    read -p "Enter value (or press Enter to skip): " value
+    read -r -p "Enter value (or press Enter to skip): " value
 
     if [ -z "$value" ]; then
         echo -e "${YELLOW}Skipped${NC}"

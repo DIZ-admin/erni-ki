@@ -51,9 +51,10 @@ fi
 
 # Backup
 log_info "Creating configuration backup..."
-mkdir -p .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)
-cp compose.yml .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)/
-cp -r env/ .config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)/ 2>/dev/null || true
+BACKUP_DIR=".config-backup/redis-performance-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+cp compose.yml "$BACKUP_DIR/"
+cp -r env/ "$BACKUP_DIR/" 2>/dev/null || true
 
 # 1. Optimize Redis Main settings
 log_info "Optimizing Redis Main settings..."
