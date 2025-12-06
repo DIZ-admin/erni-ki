@@ -31,16 +31,21 @@ testpaths = [
 ]
 
 [tool.coverage.run]
-source = ["scripts"]
+# Note: Coverage reporting is limited due to dynamic imports in tests
+# Tests use sys.path manipulation which coverage.py cannot track effectively
+# Current approach: Track test count (332 tests) instead of line coverage
+source = ["scripts", "conf"]
 omit = [
-    "*/tests/*",
-    "*/test_*",
+    "tests/*",
+    "test_*",
     "*/__pycache__/*",
-    "*/node_modules/*",
-    "*/.venv/*",
-    "*/venv/*",
+    "node_modules/*",
+    ".venv/*",
+    "venv/*",
     "scripts/entrypoints/*",
     "scripts/archon/*",
+    "**/site-packages/*",
+    ".git/*",
 ]
 
 [tool.coverage.report]
