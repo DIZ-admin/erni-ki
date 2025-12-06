@@ -40,6 +40,8 @@ trap 'rm -f "$tmpfile"' EXIT
 
 git ls-files -z -- "${PATTERNS[@]}" >"$tmpfile"
 
+PRETTIER_VERSION=${PRETTIER_VERSION:-"3.6.2"}
+
 if [[ ! -s "$tmpfile" ]]; then
   echo "No files matched for Prettier."
   exit 0
@@ -47,9 +49,9 @@ fi
 
 CMD_ARGS=("--log-level" "warn" "--ignore-unknown")
 if [[ "$MODE" == "check" ]]; then
-  CMD_ARGS=("prettier" "--check" "--cache" "${CMD_ARGS[@]}")
+  CMD_ARGS=("prettier@${PRETTIER_VERSION}" "--check" "--cache" "${CMD_ARGS[@]}")
 else
-  CMD_ARGS=("prettier" "--write" "${CMD_ARGS[@]}")
+  CMD_ARGS=("prettier@${PRETTIER_VERSION}" "--write" "${CMD_ARGS[@]}")
 fi
 
 xargs -0 bunx "${CMD_ARGS[@]}" <"$tmpfile"

@@ -2,11 +2,11 @@
 # Automated code quality checks before commits
 # https://pre-commit.com/
 
-minimum_pre_commit_version: '3.5.0'
+minimum_pre_commit_version: "3.5.0"
 
 default_language_version:
   python: python3.11
-  node: '22.14.0'
+  node: "22.14.0"
 
 default_stages: [pre-commit]
 
@@ -54,7 +54,7 @@ repos:
 
       # Check large files (>500KB)
       - id: check-added-large-files
-        args: ['--maxkb=500']
+        args: ["--maxkb=500"]
         exclude: |
           (?x)^(
             data/.*|
@@ -134,7 +134,7 @@ repos:
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
-        name: 'Prettier: code formatting'
+        name: "Prettier: code formatting"
         files: \.(md|yml|yaml|json|js|jsx|ts|tsx)$
         additional_dependencies:
           - prettier@3.6.2
@@ -146,19 +146,19 @@ repos:
     rev: v0.14.6
     hooks:
       - id: ruff
-        name: 'Ruff: Python lint'
+        name: "Ruff: Python lint"
         args: [--fix]
 
       - id: ruff-format
-        name: 'Ruff: Python format'
+        name: "Ruff: Python format"
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.8.0
     hooks:
       - id: mypy
-        name: 'mypy: static type check'
+        name: "mypy: static type check"
         additional_dependencies: [types-requests, types-PyYAML]
-        args: ['--config-file', 'mypy.ini', '--ignore-missing-imports']
+        args: ["--config-file", "mypy.ini", "--ignore-missing-imports"]
         exclude: ^webhook_handler\.py$|webhook-receiver|ops/ollama-exporter/app\.py|docs/examples/webhook-client-python\.py
 
   - repo: https://github.com/gitleaks/gitleaks
@@ -173,7 +173,7 @@ repos:
     rev: v0.9.0
     hooks:
       - id: shellcheck
-        args: ['--severity=error', '-e', 'SC1091']
+        args: ["--severity=error", "-e", "SC1091"]
         files: "\\.sh$"
 
   # ===================================================================
@@ -183,7 +183,7 @@ repos:
     rev: v10.0.0-alpha.0
     hooks:
       - id: eslint
-        name: 'ESLint: TypeScript/JavaScript validation'
+        name: "ESLint: TypeScript/JavaScript validation"
         files: \.(js|jsx|ts|tsx)$
         exclude: |
           (?x)^(
@@ -200,8 +200,8 @@ repos:
           )$
         additional_dependencies:
           - eslint@9.15.0
-          - '@typescript-eslint/eslint-plugin@8.47.0'
-          - '@typescript-eslint/parser@8.47.0'
+          - "@typescript-eslint/eslint-plugin@8.47.0"
+          - "@typescript-eslint/parser@8.47.0"
           - eslint-plugin-security@3.0.1
           - eslint-plugin-n@17.13.2
           - eslint-plugin-promise@7.1.0
@@ -214,11 +214,11 @@ repos:
     rev: v1.5.0
     hooks:
       - id: detect-secrets
-        name: 'Detect Secrets: find secrets in code'
+        name: "Detect Secrets: find secrets in code"
         args: [
-            '--baseline',
-            '.secrets.baseline', # pragma: allowlist secret
-            '--exclude-files',
+            "--baseline",
+            ".secrets.baseline", # pragma: allowlist secret
+            "--exclude-files",
             "scripts/redis-performance-optimization.sh|\\.pre-commit-config\\.yaml|conf/watchtower/notifications-examples\\.env",
           ]
         exclude: |
@@ -268,7 +268,7 @@ repos:
     hooks:
       # Language policy validation (moved from Husky/lint-staged)
       - id: language-check
-        name: 'Language: validate language policy'
+        name: "Language: validate language policy"
         entry: bun run lint:language -- --all
         language: system
         pass_filenames: false
@@ -276,7 +276,7 @@ repos:
 
       # TypeScript type check (fast, no emit)
       - id: ts-type-check
-        name: 'TypeScript: type check'
+        name: "TypeScript: type check"
         entry: npm run type-check
         language: system
         pass_filenames: false
@@ -285,7 +285,7 @@ repos:
 
       # Docker Compose file validation
       - id: docker-compose-check
-        name: 'Docker Compose: configuration validation'
+        name: "Docker Compose: configuration validation"
         entry: docker compose config -q
         language: system
         files: ^compose\.yml$
@@ -293,7 +293,7 @@ repos:
       # Check for inline work markers
       # Blocks commits with untracked work; create an Issue first
       - id: check-todo-fixme
-        name: 'Code Quality: no inline task markers'
+        name: "Code Quality: no inline task markers"
         entry: bash
         language: system
         types: [text]
@@ -316,7 +316,7 @@ repos:
 
       # Go code formatting
       - id: gofmt
-        name: 'Go: code formatting'
+        name: "Go: code formatting"
         entry: gofmt
         language: system
         files: \.go$
@@ -324,7 +324,7 @@ repos:
 
       # Go imports organization
       - id: goimports
-        name: 'Go: organize imports'
+        name: "Go: organize imports"
         entry: bash
         language: system
         pass_filenames: false
@@ -351,14 +351,14 @@ repos:
 
       # Detect duplicate basenames in scripts/ and conf/
       - id: check-duplicate-basenames
-        name: 'Dupes: scripts/conf basenames'
+        name: "Dupes: scripts/conf basenames"
         entry: python3 scripts/maintenance/check_duplicate_basenames.py
         language: system
         pass_filenames: false
 
       # Validate status snippet is up-to-date
       - id: status-snippet-check
-        name: 'Docs: validate status snippets'
+        name: "Docs: validate status snippets"
         entry: python3 scripts/docs/update_status_snippet.py --check
         language: system
         pass_filenames: false
@@ -374,13 +374,13 @@ repos:
 
       # Check archive/data README coverage
       - id: archive-readme-check
-        name: 'Docs: archive/data README coverage'
+        name: "Docs: archive/data README coverage"
         entry: python3 scripts/docs/check_archive_readmes.py
         language: system
         pass_filenames: false
 
       - id: markdownlint-cli2
-        name: 'Docs: markdownlint'
+        name: "Docs: markdownlint"
         entry: npx markdownlint-cli2
         language: node
         files: \.(md|markdown)$
@@ -388,14 +388,14 @@ repos:
           - markdownlint-cli2@0.19.1
 
       - id: visuals-and-links-check
-        name: 'Docs: visuals/TOC/link check'
+        name: "Docs: visuals/TOC/link check"
         entry: python3 scripts/docs/visuals_and_links_check.py
         language: system
         pass_filenames: false
 
       # Check for temporary files
       - id: check-temporary-files
-        name: 'Cleanup: prevent .tmp and temporary files from being committed'
+        name: "Cleanup: prevent .tmp and temporary files from being committed"
         entry: bash
         language: system
         types: [text]
@@ -414,7 +414,7 @@ repos:
 
       # Validate documentation metadata
       - id: validate-docs-metadata
-        name: 'Docs: validate metadata'
+        name: "Docs: validate metadata"
         entry: python3 scripts/docs/validate_metadata.py
         language: system
         pass_filenames: false
@@ -422,7 +422,7 @@ repos:
 
       # Prevent accidental Finder/OS duplicates like "file 2.md"
       - id: forbid-numbered-copies
-        name: 'Docs: forbid numbered filename copies'
+        name: "Docs: forbid numbered filename copies"
         entry: bash
         language: system
         files: ^docs/.*$
@@ -441,7 +441,7 @@ repos:
 
       # Forbid Finder-style duplicate filenames anywhere in repo (except ignored dirs)
       - id: forbid-numbered-copies-any
-        name: 'Repo: forbid numbered filename copies'
+        name: "Repo: forbid numbered filename copies"
         entry: bash
         language: system
         pass_filenames: false
@@ -466,7 +466,7 @@ repos:
 
       # Validate no emoji in project files
       - id: no-emoji-in-files
-        name: 'Docs: validate no emoji'
+        name: "Docs: validate no emoji"
         entry: python3 scripts/validate-no-emoji.py
         language: system
         files: \.(md|txt)$
@@ -481,7 +481,7 @@ repos:
 
       # Check secret file permissions (security)
       - id: check-secret-permissions
-        name: 'Security: check secret file permissions'
+        name: "Security: check secret file permissions"
         entry: scripts/security/check-secret-permissions.sh
         language: script
         pass_filenames: false

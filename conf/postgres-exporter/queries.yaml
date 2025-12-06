@@ -3,15 +3,15 @@
 
 # General performance metrics
 pg_database_size:
-  query: 'SELECT pg_database.datname, pg_database_size(pg_database.datname) as size FROM pg_database'
+  query: "SELECT pg_database.datname, pg_database_size(pg_database.datname) as size FROM pg_database"
   master: true
   metrics:
     - datname:
-        usage: 'LABEL'
-        description: 'Name of the database'
+        usage: "LABEL"
+        description: "Name of the database"
     - size:
-        usage: 'GAUGE'
-        description: 'Disk space used by the database'
+        usage: "GAUGE"
+        description: "Disk space used by the database"
 
 # Connection metrics
 pg_stat_database:
@@ -19,62 +19,62 @@ pg_stat_database:
   master: true
   metrics:
     - datname:
-        usage: 'LABEL'
-        description: 'Database name'
+        usage: "LABEL"
+        description: "Database name"
     - numbackends:
-        usage: 'GAUGE'
-        description: 'Number of backends currently connected to this database'
+        usage: "GAUGE"
+        description: "Number of backends currently connected to this database"
     - xact_commit:
-        usage: 'COUNTER'
-        description: 'Number of transactions in this database that have been committed'
+        usage: "COUNTER"
+        description: "Number of transactions in this database that have been committed"
     - xact_rollback:
-        usage: 'COUNTER'
-        description: 'Number of transactions in this database that have been rolled back'
+        usage: "COUNTER"
+        description: "Number of transactions in this database that have been rolled back"
     - blks_read:
-        usage: 'COUNTER'
-        description: 'Number of disk blocks read in this database'
+        usage: "COUNTER"
+        description: "Number of disk blocks read in this database"
     - blks_hit:
-        usage: 'COUNTER'
-        description: 'Number of times disk blocks were found already in the buffer cache'
+        usage: "COUNTER"
+        description: "Number of times disk blocks were found already in the buffer cache"
     - tup_returned:
-        usage: 'COUNTER'
-        description: 'Number of rows returned by queries in this database'
+        usage: "COUNTER"
+        description: "Number of rows returned by queries in this database"
     - tup_fetched:
-        usage: 'COUNTER'
-        description: 'Number of rows fetched by queries in this database'
+        usage: "COUNTER"
+        description: "Number of rows fetched by queries in this database"
     - tup_inserted:
-        usage: 'COUNTER'
-        description: 'Number of rows inserted by queries in this database'
+        usage: "COUNTER"
+        description: "Number of rows inserted by queries in this database"
     - tup_updated:
-        usage: 'COUNTER'
-        description: 'Number of rows updated by queries in this database'
+        usage: "COUNTER"
+        description: "Number of rows updated by queries in this database"
     - tup_deleted:
-        usage: 'COUNTER'
-        description: 'Number of rows deleted by queries in this database'
+        usage: "COUNTER"
+        description: "Number of rows deleted by queries in this database"
 
 # Activity metrics
 pg_stat_activity:
-  query: 'SELECT state, count(*) as count FROM pg_stat_activity WHERE state IS NOT NULL GROUP BY state'
+  query: "SELECT state, count(*) as count FROM pg_stat_activity WHERE state IS NOT NULL GROUP BY state"
   master: true
   metrics:
     - state:
-        usage: 'LABEL'
-        description: 'Connection state'
+        usage: "LABEL"
+        description: "Connection state"
     - count:
-        usage: 'GAUGE'
-        description: 'Number of connections in this state'
+        usage: "GAUGE"
+        description: "Number of connections in this state"
 
 # Lock metrics
 pg_locks:
-  query: 'SELECT mode, count(*) as count FROM pg_locks GROUP BY mode'
+  query: "SELECT mode, count(*) as count FROM pg_locks GROUP BY mode"
   master: true
   metrics:
     - mode:
-        usage: 'LABEL'
-        description: 'Lock mode'
+        usage: "LABEL"
+        description: "Lock mode"
     - count:
-        usage: 'GAUGE'
-        description: 'Number of locks in this mode'
+        usage: "GAUGE"
+        description: "Number of locks in this mode"
 
 # Table size metrics (for LiteLLM and OpenWebUI)
 pg_table_size:
@@ -82,66 +82,66 @@ pg_table_size:
   master: true
   metrics:
     - schemaname:
-        usage: 'LABEL'
-        description: 'Schema name'
+        usage: "LABEL"
+        description: "Schema name"
     - tablename:
-        usage: 'LABEL'
-        description: 'Table name'
+        usage: "LABEL"
+        description: "Table name"
     - size:
-        usage: 'GAUGE'
-        description: 'Total size of the table including indexes'
+        usage: "GAUGE"
+        description: "Total size of the table including indexes"
 
 # Index metrics
 pg_stat_user_indexes:
-  query: 'SELECT schemaname, tablename, indexrelname, idx_scan, idx_tup_read, idx_tup_fetch FROM pg_stat_user_indexes'
+  query: "SELECT schemaname, tablename, indexrelname, idx_scan, idx_tup_read, idx_tup_fetch FROM pg_stat_user_indexes"
   master: true
   metrics:
     - schemaname:
-        usage: 'LABEL'
-        description: 'Schema name'
+        usage: "LABEL"
+        description: "Schema name"
     - tablename:
-        usage: 'LABEL'
-        description: 'Table name'
+        usage: "LABEL"
+        description: "Table name"
     - indexrelname:
-        usage: 'LABEL'
-        description: 'Index name'
+        usage: "LABEL"
+        description: "Index name"
     - idx_scan:
-        usage: 'COUNTER'
-        description: 'Number of index scans initiated on this index'
+        usage: "COUNTER"
+        description: "Number of index scans initiated on this index"
     - idx_tup_read:
-        usage: 'COUNTER'
-        description: 'Number of index entries returned by scans on this index'
+        usage: "COUNTER"
+        description: "Number of index entries returned by scans on this index"
     - idx_tup_fetch:
-        usage: 'COUNTER'
-        description: 'Number of live table rows fetched by simple index scans using this index'
+        usage: "COUNTER"
+        description: "Number of live table rows fetched by simple index scans using this index"
 
 # WAL metrics
 pg_stat_wal:
-  query: 'SELECT wal_records, wal_fpi, wal_bytes, wal_buffers_full, wal_write, wal_sync, wal_write_time, wal_sync_time FROM pg_stat_wal'
+  query: "SELECT wal_records, wal_fpi, wal_bytes, wal_buffers_full, wal_write, wal_sync, wal_write_time, wal_sync_time FROM pg_stat_wal"
   master: true
   cache_seconds: 30
   metrics:
     - wal_records:
-        usage: 'COUNTER'
-        description: 'Total number of WAL records generated'
+        usage: "COUNTER"
+        description: "Total number of WAL records generated"
     - wal_fpi:
-        usage: 'COUNTER'
-        description: 'Total number of WAL full page images generated'
+        usage: "COUNTER"
+        description: "Total number of WAL full page images generated"
     - wal_bytes:
-        usage: 'COUNTER'
-        description: 'Total amount of WAL generated in bytes'
+        usage: "COUNTER"
+        description: "Total amount of WAL generated in bytes"
     - wal_buffers_full:
-        usage: 'COUNTER'
-        description: 'Number of times WAL data was written to disk because WAL buffers became full'
+        usage: "COUNTER"
+        description: "Number of times WAL data was written to disk because WAL buffers became full"
     - wal_write:
-        usage: 'COUNTER'
-        description: 'Number of times WAL buffers were written out to disk'
+        usage: "COUNTER"
+        description: "Number of times WAL buffers were written out to disk"
     - wal_sync:
-        usage: 'COUNTER'
-        description: 'Number of times WAL files were synced to disk'
+        usage: "COUNTER"
+        description: "Number of times WAL files were synced to disk"
     - wal_write_time:
-        usage: 'COUNTER'
-        description: 'Total amount of time spent writing WAL buffers to disk'
+        usage: "COUNTER"
+        description: "Total amount of time spent writing WAL buffers to disk"
     - wal_sync_time:
-        usage: 'COUNTER'
-        description: 'Total amount of time spent syncing WAL files to disk'
+        usage: "COUNTER"
+        description: "Total amount of time spent syncing WAL files to disk"

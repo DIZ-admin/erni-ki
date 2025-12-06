@@ -408,29 +408,32 @@ test.describe('Webhook Alert Processing', () => {
 
   test('should process critical alert with recovery', async ({ page }) => {
     // Send critical alert with recovery
-    const response = await page.request.post('http://localhost:5001/webhook/critical', {
-      data: {
-        alerts: [
-          {
-            status: 'firing',
-            labels: {
-              alertname: 'ServiceDown',
-              service: 'ollama',
+    const response = await page.request.post(
+      'http://localhost:5001/webhook/critical',
+      {
+        data: {
+          alerts: [
+            {
+              status: 'firing',
+              labels: {
+                alertname: 'ServiceDown',
+                service: 'ollama',
+              },
+              annotations: {
+                summary: 'Service is down',
+                recovery: 'auto',
+              },
             },
-            annotations: {
-              summary: 'Service is down',
-              recovery: 'auto',
-            },
-          },
-        ],
-        groupLabels: {},
-        commonLabels: {},
-        commonAnnotations: {},
-        externalURL: 'http://alertmanager:9093',
-        version: '4',
-        groupKey: '{}',
+          ],
+          groupLabels: {},
+          commonLabels: {},
+          commonAnnotations: {},
+          externalURL: 'http://alertmanager:9093',
+          version: '4',
+          groupKey: '{}',
+        },
       },
-    });
+    );
 
     expect(response.ok()).toBeTruthy();
 

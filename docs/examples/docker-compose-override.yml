@@ -1,8 +1,8 @@
 ---
 language: en
 translation_status: complete
-doc_version: '2025.11'
-last_updated: '2025-11-30'
+doc_version: "2025.11"
+last_updated: "2025-11-30"
 ---
 # ERNI-KI Docker Compose Override Examples
 #
