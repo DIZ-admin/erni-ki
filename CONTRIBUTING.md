@@ -53,6 +53,16 @@
 - Написание unit и integration тестов
 - Тестирование на различных платформах
 - Нагрузочное тестирование
+- Секреты для CI-тестов:
+  - Контракты требуют `CONTRACT_BASE_URL` и `CONTRACT_BEARER_TOKEN` (job
+    `contract-tests` падает на `main/develop` при отсутствии).
+  - Нагрузочный smoke (k6) требует `SMOKE_BASE_URL` (job `load-smoke` падает на
+    `main/develop` при отсутствии; артефакт `k6-smoke-summary` при наличии
+    секретов).
+- Быстрые подсказки по фейлам CI:
+  - Контракты — job `contract-tests`
+  - Нагрузка — job `load-smoke`
+  - Observability конфиги/env — job `observability-configs`
 
 ## Быстрые команды pre-commit
 
