@@ -35,12 +35,14 @@ export default function () {
   });
 
   check(authRes, {
-    'auth responds': r => r.status < 500,
+    'auth responds (no 5xx)': r => r.status > 0 && r.status < 500,
+    'auth latency <2s': r => r.timings.duration < 2000,
   });
 
   const ragRes = http.get(`${baseUrl}${ragPath}`);
   check(ragRes, {
-    'rag responds': r => r.status < 500,
+    'rag responds (no 5xx)': r => r.status > 0 && r.status < 500,
+    'rag latency <2s': r => r.timings.duration < 2000,
   });
 
   sleep(1);

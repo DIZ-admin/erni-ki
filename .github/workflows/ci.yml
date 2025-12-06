@@ -358,6 +358,7 @@ jobs:
               exit 0
             fi
           fi
+          mkdir -p artifacts/k6
           docker run --rm \
             -e SMOKE_BASE_URL \
             -e SMOKE_AUTH_TOKEN \
@@ -366,7 +367,15 @@ jobs:
             -e SMOKE_VUS \
             -e SMOKE_DURATION \
             -v "$PWD/tests/load:/scripts" \
-            grafana/k6 run /scripts/smoke-auth-rag.js
+            -v "$PWD/artifacts/k6:/tmp/k6" \
+            grafana/k6 run /scripts/smoke-auth-rag.js --summary-export=/tmp/k6/summary.json
+
+      - name: 📤 Upload k6 smoke summary
+        if: always() && hashFiles('artifacts/k6/summary.json') != ''
+        uses: actions/upload-artifact@v5
+        with:
+          name: k6-smoke-summary
+          path: artifacts/k6/summary.json
 
   observability-configs:
     name: 📡 Observability Config Checks
@@ -388,6 +397,15 @@ jobs:
                 cp "$f" "$target"
               fi
             done
+            # Fail early if placeholders remain on protected branches
+            if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+              bad=$(grep -RIl "CHANGE_ME\\|CHANGEME\\|changeme" env || true)
+              if [ -n "$bad" ]; then
+                echo "Placeholder values found in env files:" >&2
+                echo "$bad" >&2
+                exit 1
+              fi
+            fi
           fi
 
       - name: 🐳 Docker Compose lint

@@ -43,6 +43,35 @@ repos:
         stages: [pre-commit]
         files: \.(ts|tsx)$
 
+      - id: gofmt
+        name: 'Go: code formatting (fast)'
+        entry: gofmt
+        language: system
+        files: \.go$
+        args: [-w]
+
+      - id: goimports
+        name: 'Go: organize imports (fast)'
+        entry: bash
+        language: system
+        pass_filenames: false
+        args:
+          - -c
+          - |
+            set -euo pipefail
+            if ! command -v go >/dev/null 2>&1; then
+              echo "go toolchain is required for goimports" >&2
+              exit 1
+            fi
+            GOPATH_BIN=$(go env GOPATH 2>/dev/null || true)
+            if [[ -n "$GOPATH_BIN" ]]; then
+              export PATH="$PATH:$GOPATH_BIN/bin"
+            fi
+            if ! command -v goimports >/dev/null 2>&1; then
+              go install golang.org/x/tools/cmd/goimports@v0.28.0
+            fi
+            git ls-files "*.go" | xargs -r goimports -w
+
       - id: check-todo-fixme
         name: 'Code Quality: no inline task markers'
         entry: bash
