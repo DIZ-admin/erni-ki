@@ -209,7 +209,7 @@ jobs:
       - name: 🐹 Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.24.11"
+          go-version: "1.24"
           cache: false
 
       - name: 🔐 Run Gitleaks
@@ -388,6 +388,7 @@ jobs:
   security-report:
     name: 📊 Security Report
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs:
       [codeql, dependency-scan, secret-scan, container-scan, config-scan, test-environment-secrets]
     if: always()

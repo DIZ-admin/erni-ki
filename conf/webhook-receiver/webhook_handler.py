@@ -503,7 +503,8 @@ def _make_simple_handler(name: str):
                 {"status": "success", "message": f"{name} alerts processed", "result": result}
             )
         except (ValidationError, ValueError) as e:
-            return jsonify({"error": str(e)}), 400
+            logger.warning("Validation error in %s webhook: %s", name, str(e))
+            return jsonify({"error": "Invalid request payload"}), 400
         except PermissionError:
             return jsonify({"error": "Unauthorized"}), 401
         except Exception as e:

@@ -49,7 +49,7 @@ check_memory() {
 
     # Extract memory percent
     local memory_percent
-    memory_percent=$(echo "$stats" | sed 's/%//')
+    memory_percent="${stats//%/}"
 
     # Validate numeric
     if ! [[ "$memory_percent" =~ ^[0-9]+\.?[0-9]*$ ]]; then

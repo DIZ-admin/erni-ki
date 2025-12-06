@@ -85,7 +85,7 @@ start_time=$(date +%s.%N)
 rag_result=$(timeout 10s curl -s "http://localhost:8080/searxng/search?q=test&format=json" 2>/dev/null | jq '.number_of_results' 2>/dev/null)
 end_time=$(date +%s.%N)
 
-if [ $? -eq 0 ] && [ ! -z "$rag_result" ]; then
+if [ -n "$rag_result" ]; then
     response_time=$(echo "$end_time - $start_time" | bc 2>/dev/null || echo "N/A")
     if (( $(echo "$response_time < 2.0" | bc -l 2>/dev/null || echo 0) )); then
         print_status "SUCCESS" "RAG response: ${response_time}s, results: $rag_result"

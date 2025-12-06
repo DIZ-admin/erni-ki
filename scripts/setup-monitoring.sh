@@ -89,7 +89,8 @@ setup_logging_levels() {
     cd "$PROJECT_DIR"
 
     # Create configuration backup
-    local backup_dir=".config-backup/logging-backup-$(date +%Y%m%d-%H%M%S)"
+    local backup_dir
+    backup_dir=".config-backup/logging-backup-$(date +%Y%m%d-%H%M%S)"
     mkdir -p "$backup_dir"
 
     # Backup key configs

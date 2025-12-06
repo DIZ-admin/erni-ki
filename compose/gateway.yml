@@ -1,0 +1,173 @@
+# ============================================================================
+# ERNI-KI Gateway Layer
+# ============================================================================
+# Reverse proxy, CDN tunnel, and backup services.
+#
+# Dependencies: base.yml, data.yml, ai.yml
+#
+# Usage:
+#   docker compose -f compose/base.yml -f compose/data.yml -f compose/ai.yml \
+#                  -f compose/gateway.yml up -d
+#
+# Author: ERNI-KI Team
+# Version: 1.0.0
+# ============================================================================
+
+# Logging anchors (duplicated from base.yml for YAML anchor compatibility)
+x-critical-logging: &critical-logging
+  driver: "json-file"
+  options:
+    max-size: "50m"
+    max-file: "10"
+    labels: "service,version,environment,level=critical"
+    tag: "critical.{{.Name}}"
+
+x-important-logging: &important-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version,environment,level=important"
+
+services:
+  # ==========================================================================
+  # Nginx - Reverse Proxy / Load Balancer
+  # ==========================================================================
+  nginx:
+    depends_on:
+      auth:
+        condition: service_healthy
+      openwebui:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "/etc/nginx/healthcheck.sh"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+    image: nginx:1.29.3
+    logging: *critical-logging
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    restart: unless-stopped
+    mem_reservation: 384m
+    volumes:
+      - ./conf/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./conf/nginx/ssl:/etc/nginx/ssl
+      - ./conf/nginx/includes:/etc/nginx/includes
+      - ./conf/nginx/healthcheck.sh:/etc/nginx/healthcheck.sh:ro
+      - ./data/nginx/webroot:/var/www/html
+      - ./data/nginx/logs:/var/log/nginx
+    networks:
+      - frontend
+      - backend
+      - monitoring
+    labels:
+      # CRITICAL: Disable Nginx auto-updates (critical proxy server)
+      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.monitor-only=true"
+      - "com.centurylinklabs.watchtower.scope=critical-proxy"
+    mem_limit: 512m
+    cpus: "1.0"
+    security_opt:
+      - no-new-privileges:true
+
+  # ==========================================================================
+  # Cloudflared - Cloudflare Tunnel
+  # ==========================================================================
+  cloudflared:
+    entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/cloudflared-with-secret.sh"]
+    command: ["tunnel", "--no-autoupdate", "run"]
+    depends_on:
+      nginx:
+        condition: service_healthy
+      openwebui:
+        condition: service_healthy
+    env_file: ../env/cloudflared.env
+    # TUNNEL_ORIGIN_CERT is not required for token-based (remote-managed) tunnels
+    # The certificate is only needed for locally-managed tunnels
+    healthcheck:
+      test: ["CMD", "cloudflared", "version"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 30s
+    image: cloudflare/cloudflared:2025.11.1 # Updated: 2025-11-27 to 2025.11.1
+    logging: *important-logging
+    restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: "0.25"
+    volumes:
+      - ./conf/cloudflare/config:/home/nonroot/.cloudflared
+      - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
+      - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
+    secrets:
+      - source: cloudflared_tunnel_token
+        uid: "65532"
+        gid: "65532"
+        mode: 0444 # allow read for healthcheck/entrypoint even if uid mapping differs
+    networks:
+      - frontend
+      - backend
+    labels:
+      # Allow auto-updates for Cloudflared
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=tunnel-services"
+
+  # ==========================================================================
+  # Backrest - Backup Management
+  # ==========================================================================
+  backrest:
+    depends_on:
+      - db
+      - redis
+    env_file: ../env/backrest.env
+    environment:
+      RESTIC_PASSWORD_FILE: /run/secrets/restic_password
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9898/ >/dev/null || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    image: garethgeorge/backrest:v1.10.1
+    logging: *important-logging
+    networks:
+      - data
+    restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 256m
+    cpus: "0.5"
+    volumes:
+      - ./data/backrest:/data
+      - ./conf/backrest:/config
+      - ./cache/backrest:/cache
+      - ./tmp/backrest:/tmp
+      - ./data:/backup-sources/data:ro
+      - ./conf:/backup-sources/conf:ro
+      - ./env:/backup-sources/env:ro
+      - ./.config-backup:/backup-sources/.config-backup
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    secrets:
+      - restic_password
+    labels:
+      # Allow auto-updates for Backrest
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "com.centurylinklabs.watchtower.scope=backup-services"
+
+# ============================================================================
+# SECRETS
+# ============================================================================
+
+secrets:
+  # Cloudflare tunnel token
+  cloudflared_tunnel_token:
+    file: ./secrets/cloudflared_tunnel_token.txt
+
+  # Restic repository password (Backrest)
+  restic_password:
+    file: ./secrets/restic_password.txt

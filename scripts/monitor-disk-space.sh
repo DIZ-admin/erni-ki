@@ -47,7 +47,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Docker: $DOCKER_IMAGES images, $DOCKER_CONT
 echo "---" >> "$LOG_FILE"
 
 # Rotate log (keep last 1000 lines)
-if [ $(wc -l < "$LOG_FILE") -gt 1000 ]; then
+if [ "$(wc -l < "$LOG_FILE")" -gt 1000 ]; then
   tail -n 1000 "$LOG_FILE" > "$LOG_FILE.tmp"
   mv "$LOG_FILE.tmp" "$LOG_FILE"
 fi

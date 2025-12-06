@@ -10,6 +10,12 @@ root_str = str(ROOT)
 if root_str not in sys.path:
     sys.path.insert(0, root_str)
 
+# Add scripts directory to sys.path for coverage tracking
+SCRIPTS_DIR = ROOT / "scripts"
+scripts_str = str(SCRIPTS_DIR)
+if scripts_str not in sys.path:
+    sys.path.insert(0, scripts_str)
+
 
 @pytest.fixture
 def client():

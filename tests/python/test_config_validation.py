@@ -22,10 +22,7 @@ class TestLycheeConfig:
 
     def test_lychee_toml_valid_toml(self):
         """Test that .lychee.toml is valid TOML."""
-        try:
-            import tomli
-        except ImportError:
-            pytest.skip("tomli not installed")
+        tomli = pytest.importorskip("tomli", reason="tomli not installed")
 
         config_path = Path(".lychee.toml")
         with open(config_path, "rb") as f:
@@ -37,10 +34,7 @@ class TestLycheeConfig:
 
     def test_lychee_config_has_required_fields(self):
         """Test that lychee config has all required fields."""
-        try:
-            import tomli
-        except ImportError:
-            pytest.skip("tomli not installed")
+        tomli = pytest.importorskip("tomli", reason="tomli not installed")
 
         config_path = Path(".lychee.toml")
         with open(config_path, "rb") as f:

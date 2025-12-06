@@ -190,7 +190,7 @@ check_service_logs() {
 
             # Check for errors
             local errors
-            errors=$(echo "$logs" | grep -iE "error|fatal|exception" | wc -l)
+            errors=$(echo "$logs" | grep -ciE "error|fatal|exception" || echo 0)
 
             if [[ $errors -gt 0 ]]; then
                 error_count=$((error_count + errors))

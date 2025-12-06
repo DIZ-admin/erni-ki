@@ -1,0 +1,65 @@
+---
+# yamllint configuration for Docker Compose files
+# See: https://yamllint.readthedocs.io/en/stable/configuration.html
+
+extends: default
+
+rules:
+  # Line length - allow longer lines for compose files with env vars
+  line-length:
+    max: 120
+    level: warning
+
+  # Indentation - Docker Compose standard is 2 spaces
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  # Comments - require space after #
+  comments:
+    min-spaces-from-content: 1
+
+  # Brackets - prefer flow style for short arrays
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+  # Braces - consistent spacing
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+  # Quoted strings - prefer double quotes, but don't enforce strictly
+  # Prettier handles quote standardization, yamllint just validates syntax
+  # We quote numeric values (cpus: "0.5") to preserve precision
+  quoted-strings: disable
+
+  # Truthy values - allow yes/no, true/false, on/off
+  truthy:
+    allowed-values: ["true", "false", "yes", "no", "on", "off"]
+    check-keys: false
+
+  # Empty values - allow null
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: false
+
+  # Document start - not required for compose files
+  document-start: disable
+
+  # Key duplicates - error on duplicates
+  key-duplicates: enable
+
+  # Trailing spaces - no trailing spaces
+  trailing-spaces: enable
+
+  # New line at end of file
+  new-line-at-end-of-file: enable
+
+# Ignore patterns
+ignore: |
+  .git/
+  node_modules/
+  .venv/
+  venv/
+  **/*.min.yml

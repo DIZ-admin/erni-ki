@@ -1,0 +1,175 @@
+# MkDocs configuration for Academy KI (GitHub Pages)
+# Public-facing AI training documentation
+
+site_name: Academy KI
+site_description: "KI-Training und Best Practices für ERNI Gruppe"
+site_author: "ERNI Gruppe"
+site_url: "https://diz-admin.github.io/erni-ki/"
+
+# Repository
+repo_name: "DIZ-admin/erni-ki"
+repo_url: "https://github.com/DIZ-admin/erni-ki"
+edit_uri: "edit/main/docs/academy/"
+
+# Configuration
+docs_dir: "docs/academy"
+site_dir: "site-academy"
+
+# Theme
+theme:
+  name: "material"
+  language: "de"
+
+  palette:
+    - scheme: default
+      primary: "indigo"
+      accent: "amber"
+      toggle:
+        icon: material/brightness-7
+        name: Dunkelmodus aktivieren
+    - scheme: slate
+      primary: "indigo"
+      accent: "amber"
+      toggle:
+        icon: material/brightness-4
+        name: Hellmodus aktivieren
+
+  font:
+    text: "Inter"
+    code: "JetBrains Mono"
+
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/school
+
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+
+# Plugins
+plugins:
+  - search:
+      lang:
+        - de
+        - en
+  - minify:
+      minify_html: true
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg # Navigation
+
+
+nav:
+  - Home: index.md
+  - "Erste Schritte":
+      - "Uebersicht": getting-started/index.md
+      - "Was ist KI?": getting-started/what-is-ai.md
+      - "Erste Schritte": getting-started/first-steps.md
+      - "Modellvergleich": getting-started/model-comparison.md
+      - "Sicherheit & Ethik": getting-started/safety-and-ethics.md
+      - "FAQ": getting-started/faq.md
+  - "Grundlagen":
+      - "Uebersicht": fundamentals/index.md
+      - "Prompting Grundlagen": fundamentals/prompting-fundamentals.md
+      - "Effektive Prompts": fundamentals/effective-prompts.md
+      - "Kontext-Management": fundamentals/context-management.md
+      - "RAG Basics": fundamentals/rag-basics.md
+      - "Modellauswahl": fundamentals/model-selection-guide.md
+  - "HowTo Anleitungen":
+      - "Uebersicht": howto/index.md
+      - "JIRA Ticket erstellen": howto/create-jira-ticket.md
+      - "JIRA mit KI": howto/create-jira-ticket-with-ai.md
+      - "Kunden-E-Mail schreiben": howto/write-customer-email.md
+      - "Meeting zusammenfassen": howto/summarize-meeting-notes.md
+  - "Nach Rolle":
+      - "Uebersicht": by-role/index.md
+      - "Entwickler":
+          - "Uebersicht": by-role/developers/index.md
+          - "Code Review": by-role/developers/code-review-with-ai.md
+          - "Debugging": by-role/developers/debug-code.md
+          - "Unit Tests": by-role/developers/write-unit-tests.md
+          - "Dokumentation": by-role/developers/generate-documentation.md
+      - "Manager":
+          - "Uebersicht": by-role/managers/index.md
+          - "Projektberichte": by-role/managers/create-project-report.md
+          - "Metriken analysieren": by-role/managers/analyze-metrics.md
+      - "Support":
+          - "Uebersicht": by-role/support/index.md
+          - "KB Artikel": by-role/support/create-knowledge-base-article.md
+          - "Troubleshooting": by-role/support/troubleshoot-user-issue.md
+      - "Allgemeine Nutzer":
+          - "Uebersicht": by-role/general-users/index.md
+          - "E-Mails schreiben": by-role/general-users/write-professional-email.md
+          - "Praesentationen": by-role/general-users/prepare-presentation.md
+          - "Dokumente uebersetzen": by-role/general-users/translate-document.md
+          - "JIRA Tickets": by-role/general-users/create-jira-ticket.md
+          - "Meeting-Notizen": by-role/general-users/summarize-meeting-notes.md
+  - "Nach Branche":
+      - "Uebersicht": by-industry/index.md
+      - "Holzbau":
+          - "Uebersicht": by-industry/holzbau/index.md
+          - "Angebot erstellen": by-industry/holzbau/angebot-erstellen.md
+          - "Bautagebuch": by-industry/holzbau/bautagebuch-erstellen.md
+      - "Bauwesen":
+          - "Bautagebuch": by-industry/construction/bautagebuch-erstellen.md
+          - "Maengelliste": by-industry/construction/maengelliste.md
+  - "Fortgeschritten":
+      - "Uebersicht": advanced/index.md
+      - "API Integration": advanced/api-integration.md
+      - "Custom Workflows": advanced/custom-workflows.md
+  - "Ressourcen":
+      - "Uebersicht": resources/index.md
+      - "Glossar": resources/glossar.md
+      - "Holzbau Glossar": resources/glossar-holzbau.md
+      - "SIA Normen": resources/sia-normen-uebersicht.md
+      - "Cheat Sheets": resources/cheat-sheets/index.md
+      - "Prompt Bibliothek": resources/prompt-bibliothek/index.md
+      - "Templates": resources/templates/index.md
+  - "News":
+      - "Feed": news/index.md
+      - "2025-01 Release": news/2025-01-release-x.md
+  - "Open WebUI": openwebui-basics.md
+  - "Prompting 101": prompting-101.md
+  - "Context Engineering": context-engineering-101.md
+
+# Extra
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/DIZ-admin/erni-ki
+  generator: false
+  analytics:
+    provider: null
+
+extra_css:
+  - stylesheets/extra.css
+
+copyright: "&copy; 2025 ERNI Gruppe - Academy KI"

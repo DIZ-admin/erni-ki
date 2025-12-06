@@ -807,9 +807,12 @@ def test_production_secret_validation_on_startup(monkeypatch):
     # Test with missing secret
     monkeypatch.delenv("ALERTMANAGER_WEBHOOK_SECRET", raising=False)
 
-    with pytest.raises(SystemExit) as exc_info:
+    with (
+        pytest.raises(SystemExit) as exc_info,
+        open("conf/webhook-receiver/webhook_handler.py") as handler_file,
+    ):
         # Simulate __main__ execution
-        exec(open("conf/webhook-receiver/webhook_handler.py").read())  # noqa: S102,SIM115
+        exec(handler_file.read())  # noqa: S102
 
     assert exc_info.value.code == 1
 
@@ -820,8 +823,11 @@ def test_production_secret_validation_test_placeholder(monkeypatch, caplog):
     monkeypatch.setenv("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-placeholder")
 
     # Should log error and exit
-    with pytest.raises(SystemExit):
-        exec(open("conf/webhook-receiver/webhook_handler.py").read())  # noqa: S102,SIM115
+    with (
+        pytest.raises(SystemExit),
+        open("conf/webhook-receiver/webhook_handler.py") as handler_file,
+    ):
+        exec(handler_file.read())  # noqa: S102
 
 
 # ============================================================================

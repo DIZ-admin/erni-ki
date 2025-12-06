@@ -17,18 +17,14 @@ source "${SCRIPT_DIR}/lib/common.sh"
 # Thresholds (milliseconds)
 SEARXNG_THRESHOLD=2000  # 2 seconds
 PGVECTOR_THRESHOLD=100  # 100 ms
-OLLAMA_THRESHOLD=2000   # 2 seconds
 
-# Log file
-LOG_FILE="logs/rag-health-$(date +%Y%m%d).log"
 mkdir -p logs
-
-# Logging
 
 # Service status check
 check_status() {
     local service=$1
-    local status=$(docker ps --filter "name=$service" --format "{{.Status}}" 2>/dev/null || echo "not found")
+    local status
+    status=$(docker ps --filter "name=$service" --format "{{.Status}}" 2>/dev/null || echo "not found")
 
     if echo "$status" | grep -q "healthy"; then
         echo -e "${GREEN}✅ healthy${NC}"
@@ -45,10 +41,11 @@ check_status() {
 # Response time measurement
 measure_response_time() {
     local url=$1
-    local start=$(date +%s%3N)
-    local response=$(curl -s -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
-    local end=$(date +%s%3N)
-    local duration=$((end - start))
+    local start end response duration
+    start=$(date +%s%3N)
+    response=$(curl -s -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+    end=$(date +%s%3N)
+    duration=$((end - start))
 
     echo "$duration|$response"
 }
