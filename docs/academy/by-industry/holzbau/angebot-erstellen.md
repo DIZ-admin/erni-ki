@@ -14,5 +14,5 @@ company: erni-gruppe
 
 # Angebot erstellen (Holzbau)
 
-Этот сценарий готовится. Временно используйте общий Leitfaden
-[Angebot erstellen](#de-version) и адаптируйте примеры под Holzbau.
+Этот сценарий готовится. Временно используйте общий Leitfaden из раздела
+[Holzbau](index.md) и адаптируйте примеры под ваши нужды.

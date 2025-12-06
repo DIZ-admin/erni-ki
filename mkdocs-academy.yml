@@ -153,6 +153,7 @@ nav:
       - "Cheat Sheets": resources/cheat-sheets/index.md
       - "Prompt Bibliothek": resources/prompt-bibliothek/index.md
       - "Templates": resources/templates/index.md
+      - "ERNI Implementation": ERNI-GRUPPE-IMPLEMENTATION-SUMMARY.md
   - "News":
       - "Feed": news/index.md
       - "2025-01 Release": news/2025-01-release-x.md

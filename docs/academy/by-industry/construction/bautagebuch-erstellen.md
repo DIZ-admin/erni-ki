@@ -486,6 +486,6 @@ Spart Zeit und sichert Konsistenz!"
 
 ---
 
-**Nächstes Szenario:** [Angebot erstellen →](#de-version)
+**Nächstes Szenario:** [Angebot erstellen →](../holzbau/angebot-erstellen.md)
 
 **Fragen?** Kontakt: bauleitung@erni-gruppe.ch

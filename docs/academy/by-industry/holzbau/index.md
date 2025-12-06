@@ -59,7 +59,7 @@ erstellen.
 
 ### Kalkulation & Verkauf
 
-#### [Angebot erstellen](#de-version)
+#### [Angebot erstellen](angebot-erstellen.md)
 
 **Dauer:** 15 Minuten | **Schwierigkeit:** Mittel
 
