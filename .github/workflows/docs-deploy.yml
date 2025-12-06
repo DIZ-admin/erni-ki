@@ -4,9 +4,9 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
-      - '.github/workflows/docs-deploy.yml'
+      - "docs/**"
+      - "mkdocs.yml"
+      - ".github/workflows/docs-deploy.yml"
   workflow_dispatch:
 
 permissions:
@@ -31,8 +31,8 @@ jobs:
       - name: 🐍 Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: 📦 Install MkDocs dependencies
         run: |

@@ -1,8 +1,8 @@
 ---
 language: en
 translation_status: complete
-doc_version: '2025.11'
-last_updated: '2025-11-30'
+doc_version: "2025.11"
+last_updated: "2025-11-30"
 ---
 # ERNI-KI LiteLLM Gateway Configuration Examples
 #
@@ -198,41 +198,41 @@ router_settings:
 model_list:
   - model_name: gpt-4
     litellm_params:
-      model: 'gpt-4'
-      api_key: '${OPENAI_API_KEY}'
+      model: "gpt-4"
+      api_key: "${OPENAI_API_KEY}"
       timeout: 120
     tpm_limit: 10000
     rpm_limit: 200
     max_cost_per_day: 100
     priority: 1
-    fallback_to: ['claude-3-opus', 'ollama/neural-chat']
+    fallback_to: ["claude-3-opus", "ollama/neural-chat"]
 
   - model_name: claude-3-opus
     litellm_params:
-      model: 'claude-3-opus'
-      api_key: '${ANTHROPIC_API_KEY}'
+      model: "claude-3-opus"
+      api_key: "${ANTHROPIC_API_KEY}"
       timeout: 120
     tpm_limit: 10000
     rpm_limit: 200
     max_cost_per_day: 80
     priority: 2
-    fallback_to: ['gpt-4', 'ollama/mistral']
+    fallback_to: ["gpt-4", "ollama/mistral"]
 
   - model_name: gpt-3.5-turbo
     litellm_params:
-      model: 'gpt-3.5-turbo'
-      api_key: '${OPENAI_API_KEY}'
+      model: "gpt-3.5-turbo"
+      api_key: "${OPENAI_API_KEY}"
       timeout: 60
     tpm_limit: 50000
     rpm_limit: 500
     max_cost_per_day: 30
     priority: 3
-    fallback_to: ['command', 'ollama/llama2']
+    fallback_to: ["command", "ollama/llama2"]
 
   - model_name: neural-chat
     litellm_params:
-      model: 'ollama/neural-chat'
-      api_base: 'http://ollama:11434'
+      model: "ollama/neural-chat"
+      api_base: "http://ollama:11434"
       timeout: 180
     tpm_limit: 100000
     rpm_limit: 1000
@@ -241,8 +241,8 @@ model_list:
 
   - model_name: mistral
     litellm_params:
-      model: 'ollama/mistral'
-      api_base: 'http://ollama:11434'
+      model: "ollama/mistral"
+      api_base: "http://ollama:11434"
       timeout: 180
     tpm_limit: 100000
     rpm_limit: 1000

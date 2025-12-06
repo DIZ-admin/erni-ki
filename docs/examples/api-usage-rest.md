@@ -260,7 +260,12 @@ async function sendMessage(token, chatId, content, model) {
 }
 
 // Usage
-const response = await sendMessage(token, chatId, 'Hello, what is 2+2?', 'llama2:latest');
+const response = await sendMessage(
+  token,
+  chatId,
+  'Hello, what is 2+2?',
+  'llama2:latest',
+);
 console.log(`Assistant: ${response.message.content}`);
 ```
 

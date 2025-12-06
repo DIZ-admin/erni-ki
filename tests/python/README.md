@@ -72,7 +72,8 @@ Tests run automatically on pre-commit:
 ```yaml
 - id: pytest-check
   name: 'Python: run pytest tests'
-  entry: bash -c 'source .venv/bin/activate && python -m pytest tests/python/ -q
+  entry:
+    bash -c 'source .venv/bin/activate && python -m pytest tests/python/ -q
     --tb=short'
 ```
 

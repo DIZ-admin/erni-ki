@@ -519,11 +519,13 @@ Scheduled Tasks:
 
 ```yaml
 Services: 32 containers
-Orchestration: Health checks (all services) Resource limits (mem_limit, cpus) OOM score
+Orchestration:
+  Health checks (all services) Resource limits (mem_limit, cpus) OOM score
   adjustment Restart policies (unless-stopped) Network isolation Volume
   management
 
-Volumes: ollama-models (AI models) postgres-data (persistent DB) redis-data (cache)
+Volumes:
+  ollama-models (AI models) postgres-data (persistent DB) redis-data (cache)
   grafana-data (dashboards) prometheus-data (metrics) backup-data (Backrest)
 ```
 
@@ -1276,7 +1278,7 @@ Content: Revenue model, TAM/SAM/SOM, Unit economics
 ### Appendix A: Service Inventory
 
 ```yaml
-Production Services (34 total):
+? Production Services (34 total)
 
 AI Layer:
   - openwebui:0.6.36

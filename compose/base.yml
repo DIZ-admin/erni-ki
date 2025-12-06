@@ -18,46 +18,46 @@
 # TIER 1: Critical Services (OpenWebUI, Ollama, PostgreSQL, Nginx)
 # Dual logging: fluentd + json-file backup, maximum reliability
 x-critical-logging: &critical-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '50m'
-    max-file: '10'
-    labels: 'service,version,environment,level=critical'
-    tag: 'critical.{{.Name}}'
+    max-size: "50m"
+    max-file: "10"
+    labels: "service,version,environment,level=critical"
+    tag: "critical.{{.Name}}"
 
 # TIER 2: Important Services (SearXNG, Redis, Backrest, Auth, Cloudflared)
 # Fluentd with buffering, standard reliability
 x-important-logging: &important-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '10m'
-    max-file: '5'
-    labels: 'service,version,environment,level=important'
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version,environment,level=important"
 
 # TIER 3: Auxiliary Services (Docling, EdgeTTS, Tika, MCP)
 # Fluentd with separate tags + tail fallback
 x-auxiliary-logging: &auxiliary-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '10m'
-    max-file: '5'
-    labels: 'service,version,level=auxiliary'
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version,level=auxiliary"
 
 # TIER 4: Monitoring Services (Prometheus, Grafana, Exporters)
 # Minimal Fluentd logging with aggressive filtering
 x-monitoring-logging: &monitoring-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '10m'
-    max-file: '5'
-    labels: 'service,version,level=monitoring'
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version,level=monitoring"
 
 x-logging: &default-logging
-  driver: 'json-file'
+  driver: "json-file"
   options:
-    max-size: '10m'
-    max-file: '5'
-    labels: 'service,version'
+    max-size: "10m"
+    max-file: "5"
+    labels: "service,version"
 
 # ============================================================================
 # INFRASTRUCTURE SERVICES
@@ -76,9 +76,9 @@ services:
       - /watchtower-entrypoint.sh
     env_file: ../env/watchtower.env
     environment:
-      DOCKER_API_VERSION: '1.44'
+      DOCKER_API_VERSION: "1.44"
     healthcheck:
-      test: ['CMD', '/watchtower', '--health-check']
+      test: ["CMD", "/watchtower", "--health-check"]
       interval: 60s
       timeout: 10s
       retries: 3
@@ -88,17 +88,17 @@ services:
     restart: unless-stopped
     mem_limit: 256m
     mem_reservation: 128m
-    cpus: '0.2'
+    cpus: "0.2"
     oom_score_adj: 500
     security_opt:
       - no-new-privileges:true
     # Run as root to guarantee access to docker.sock on hosts where docker group GID differs
-    user: '0:0'
+    user: "0:0"
     group_add:
-      - '125'
+      - "125"
     # Port for HTTP API
     ports:
-      - '127.0.0.1:8091:8080' # Localhost-only access for HTTP API
+      - "127.0.0.1:8091:8080" # Localhost-only access for HTTP API
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./scripts/entrypoints/watchtower.sh:/watchtower-entrypoint.sh:ro
@@ -109,9 +109,9 @@ services:
       - monitoring
     labels:
       # Exclude Watchtower from self-monitoring
-      - 'com.centurylinklabs.watchtower.enable=false'
+      - "com.centurylinklabs.watchtower.enable=false"
       # Label for log identification
-      - 'com.centurylinklabs.watchtower.scope=infrastructure'
+      - "com.centurylinklabs.watchtower.scope=infrastructure"
 
 # ============================================================================
 # SECRETS
