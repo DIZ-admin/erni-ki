@@ -671,7 +671,7 @@ func TestValidateSecretsErrorMessages(t *testing.T) {
 	}
 }
 
-// Test requestLogger with different status codes and error messages
+// Test requestLogger with different status codes and error messages.
 func TestRequestLoggerVariants(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -724,7 +724,7 @@ func TestRequestLoggerVariants(t *testing.T) {
 	}
 }
 
-// Test respondJSON error case
+// Test respondJSON error case.
 func TestRespondJSONError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
@@ -737,7 +737,7 @@ func TestRespondJSONError(t *testing.T) {
 	}
 }
 
-// Test main() error path
+// Test main() error path.
 func TestMainEntryPointError(t *testing.T) {
 	// This test validates error path in run()
 	os.Unsetenv("WEBUI_SECRET_KEY")

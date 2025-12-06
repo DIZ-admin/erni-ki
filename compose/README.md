@@ -1,10 +1,12 @@
 # ERNI-KI Modular Docker Compose
 
-This directory contains the modularized Docker Compose configuration for ERNI-KI, split into logical layers for better maintainability and flexibility.
+This directory contains the modularized Docker Compose configuration for
+ERNI-KI, split into logical layers for better maintainability and flexibility.
 
 ## Architecture
 
-The original monolithic `compose.yml` (1519 lines) has been refactored into 5 modular files organized by layer:
+The original monolithic `compose.yml` (1519 lines) has been refactored into 5
+modular files organized by layer:
 
 ```
 compose/
@@ -163,7 +165,9 @@ conf/
 
 ## YAML Anchor Compatibility
 
-**Note:** YAML anchors (e.g., `*critical-logging`) don't work across multiple compose files. Each modular file duplicates the necessary logging anchors to maintain compatibility.
+**Note:** YAML anchors (e.g., `*critical-logging`) don't work across multiple
+compose files. Each modular file duplicates the necessary logging anchors to
+maintain compatibility.
 
 ## Benefits of Modular Architecture
 
@@ -197,7 +201,9 @@ To see the full merged configuration:
 
 ## Additional Services
 
-Some optional exporters from the original configuration are not included in the modular files. To add them, copy their configuration from the original `compose.yml`:
+Some optional exporters from the original configuration are not included in the
+modular files. To add them, copy their configuration from the original
+`compose.yml`:
 
 - postgres-exporter-proxy (HAProxy for Postgres exporter)
 - nvidia-exporter (GPU metrics)
@@ -213,6 +219,4 @@ Some optional exporters from the original configuration are not included in the 
 
 ---
 
-**Version:** 1.0.0
-**Author:** ERNI-KI Team
-**Last Updated:** 2024-12-06
+**Version:** 1.0.0 **Author:** ERNI-KI Team **Last Updated:** 2024-12-06
