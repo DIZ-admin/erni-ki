@@ -566,7 +566,7 @@ jobs:
               -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" \
               -v /tmp/promtail-ci:/var/log/promtail \
               --entrypoint /bin/sh grafana/promtail:3.0.0 \
-              -c "mkdir -p /var/log/promtail && promtail --config.file=/etc/promtail/config.yaml --positions.file=/var/log/promtail/positions.yaml --log.level=warn --print-config-stderr >/dev/null"
+              -c "mkdir -p /var/log/promtail && promtail --config.file=/etc/promtail/config.yaml --positions.file=/var/log/promtail/positions.yaml --log.level=error -config.expand-env=false -dry-run 2>&1 | head -5"
           else
             echo "promtail config not found, skipping"
           fi
