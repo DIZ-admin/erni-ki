@@ -764,6 +764,7 @@ jobs:
             --exclude 'github\.com/nginx/nginx/issues'
             --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
             --exclude 'docs\.litellm\.ai'
+            --exclude 'www\.conventionalcommits\.org'
             'docs/**/*.md'
             'README.md'
           fail: true
