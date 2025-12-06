@@ -199,7 +199,7 @@ jobs:
           fetch-depth: 0
 
       - name: 🔐 Run TruffleHog
-        uses: trufflesecurity/trufflehog@v3.88.10
+        uses: trufflesecurity/trufflehog@v3.91.2
         with:
           path: ./
           base: ${{ github.event.before || 'HEAD~1' }}
