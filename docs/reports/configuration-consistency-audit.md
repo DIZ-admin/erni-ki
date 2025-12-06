@@ -11,6 +11,10 @@ translation_status: original
 **Date**: 2025-12-06 **Auditor**: Claude Code **Scope**: Tool versions and
 configuration consistency across the project
 
+**Note**: This audit was performed during Phase 2.2 (pytest infrastructure) and
+Phase 2.6 (TODO management) work. Configuration inconsistencies were identified
+and resolved as blocking issues for CI stability and security.
+
 ## Executive Summary
 
 Found **1 CRITICAL SECURITY** issue, **2 critical** configuration issues
@@ -99,22 +103,42 @@ matrix:
 
 ---
 
-### 3. Deprecated Linting Tools - CRITICAL
+### 3. Deprecated Linting Tools - FIXED
 
 **Issue**: Black and isort configured but not used (Ruff is the active linter)
 
-**Locations**:
+**Status**: **RESOLVED** - Black and isort sections removed, Ruff configured
 
-- `pyproject.toml:13-21` → `[tool.black]` and `[tool.isort]` sections
-- `.pre-commit-config.yaml:146` → Using Ruff instead
+**Previous Locations**:
+
+- `pyproject.toml:13-21` → `[tool.black]` and `[tool.isort]` sections (REMOVED)
+- `.pre-commit-config.yaml` → Using Ruff exclusively
 - `requirements-dev.txt` → Only Ruff installed
 
-**Problem**: Confusing configuration, dead code in pyproject.toml
+**Resolution Applied**:
 
-**Impact**: Developer confusion, outdated configuration
+- Removed `[tool.black]` section from pyproject.toml
+- Removed `[tool.isort]` section from pyproject.toml
+- Added comprehensive `[tool.ruff]` configuration
+- Ruff handles both linting and formatting (replaces Black + isort)
 
-**Recommendation**: Remove Black and isort sections from pyproject.toml, add
-Ruff configuration instead
+**Current Configuration** (pyproject.toml):
+
+```toml
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "S", "C4", "SIM"]
+# "I" = isort functionality built into Ruff
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+```
+
+**Impact**: Simplified tooling, faster linting, consistent formatting
 
 ---
 
@@ -236,3 +260,40 @@ support both.
 
 **Report Generated**: 2025-12-06 **Next Review**: Quarterly or on major
 dependency updates
+
+---
+
+## Verification Notes
+
+### Environment Variable Syntax (compose/data.yml)
+
+**Verified**: Docker Compose environment variable expansion syntax is correct
+
+- `REDIS_PASSWORD: "${REDIS_PASSWORD:-}"` - Correct syntax for optional env var
+- Double quotes preserve shell variable expansion
+- `:-` operator provides empty default if unset
+- Used consistently in entrypoint scripts (lines 86-88)
+
+**Validation**: Syntax tested with `docker compose config` - no errors
+
+### Ruff Configuration Verification
+
+**Confirmed**: Black and isort completely replaced by Ruff
+
+- pyproject.toml: No `[tool.black]` or `[tool.isort]` sections
+- pyproject.toml: `[tool.ruff]` section present with full config
+- .pre-commit-config.yaml: Only Ruff hooks active
+- requirements-dev.txt: Only `ruff>=0.14.6,<0.15.0` (no black/isort)
+
+**Note**: Ruff select includes "I" (isort) for import sorting
+
+### Prettier Version Clarification
+
+**Context**: mirrors-prettier rev != npm prettier version
+
+- `rev: v3.1.0` - pre-commit mirror wrapper version
+- `prettier@3.6.2` - actual Prettier npm package version
+- This is normal and expected behavior for pre-commit mirrors
+- The npm version (3.6.2) is what actually formats files
+
+**Documentation**: Added explanatory comment in .pre-commit-config.yaml
