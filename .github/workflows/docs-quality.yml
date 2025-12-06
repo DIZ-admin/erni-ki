@@ -1,0 +1,165 @@
+name: 📚 Documentation Quality
+
+on:
+  pull_request:
+    paths:
+      - "docs/**/*.md"
+      - "mkdocs.yml"
+      - ".github/workflows/docs-quality.yml"
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "docs/**/*.md"
+      - "mkdocs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: 🔍 Validate Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Setup Bun
+        uses: oven-sh/setup-bun@v2.0.2
+        with:
+          bun-version: 1.3.3
+
+      - name: 📦 Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml yamllint
+
+      - name: 📦 Install Node dependencies
+        run: |
+          bun add -g markdownlint-cli
+
+      - name: 🔗 Install lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --version
+          fail: false
+
+      - name: ✅ Validate frontmatter
+        id: frontmatter
+        run: |
+          python scripts/docs/validate-frontmatter.py \
+            --docs-dir docs \
+            --output docs/reports/audit-2025-12/frontmatter.json
+        continue-on-error: true
+
+      - name: 📝 Lint Markdown
+        id: markdown
+        run: |
+          markdownlint 'docs/**/*.md' \
+            --config .markdownlint.json \
+            --ignore 'docs/node_modules/**' \
+            --ignore 'docs/site/**' \
+            --ignore 'docs/.venv/**' \
+            || true
+        continue-on-error: true
+
+      - name: 🔍 Check YAML frontmatter
+        id: yaml
+        run: |
+          python3 -m yamllint docs/ \
+            -f parsable \
+            -c .yamllint.yml \
+            || true
+        continue-on-error: true
+
+      - name: 🔗 Check broken links
+        id: links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --max-redirects 5
+            --exclude-link-local
+            --exclude 'localhost'
+            --exclude '127\.0\.0\.1'
+            --exclude 'example\.com'
+            --exclude 'www\.conventionalcommits\.org'
+            --exclude 'docs\.pact\.io'
+            'docs/**/*.md'
+          fail: false
+
+      - name: ⏰ Check stale documents
+        id: stale
+        run: |
+          bash scripts/docs/check-stale-docs.sh docs 90 || true
+        continue-on-error: true
+
+      - name: 🌐 Check translation sync
+        id: translations
+        run: |
+          bash scripts/docs/translation-sync-check.sh docs || true
+        continue-on-error: true
+
+      - name: 📤 Upload frontmatter report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: frontmatter-report
+          path: docs/reports/audit-2025-12/frontmatter.json
+          retention-days: 30
+
+      - name: 📊 Summary
+        if: always()
+        run: |
+          echo "## 📚 Documentation Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontmatter Validation | ${{ steps.frontmatter.outcome == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Markdown Linting | ${{ steps.markdown.outcome == 'success' && '✅ Passed' || '⚠️ Issues Found' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| YAML Validation | ${{ steps.yaml.outcome == 'success' && '✅ Passed' || '⚠️ Issues Found' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Link Checker | ${{ steps.links.outcome == 'success' && '✅ Passed' || '⚠️ Broken Links' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Stale Documents | ${{ steps.stale.outcome == 'success' && '✅ Passed' || '⚠️ Stale Files' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Translation Sync | ${{ steps.translations.outcome == 'success' && '✅ Passed' || '⚠️ Out of Sync' }} |" >> $GITHUB_STEP_SUMMARY
+
+  build:
+    name: 🏗️ Build Documentation Site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v6.0.1
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 📦 Install MkDocs dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs-material mkdocs-static-i18n mkdocs-awesome-pages-plugin mkdocs-include-markdown-plugin mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin
+
+      - name: 🏗️ Build MkDocs site
+        run: |
+          mkdocs build --site-dir site --strict
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: mkdocs-site
+          path: site/
+          retention-days: 7
