@@ -127,14 +127,14 @@ read_time=$(measure_time docker exec erni-ki-redis-1 redis-cli -a "${REDIS_PASSW
 success "Read from Redis Main - ${read_time}"
 
 # Cleanup test key
-docker exec erni-ki-redis-1 redis-cli -a "${REDIS_PASSWORD}" del test_perf_key >/dev/null 2>&1
+docker exec erni-ki-redis-1 redis-cli -a "${REDIS_PASSWORD}" del test_perf_key 2>/dev/null || warning "Could not cleanup test key"
 
 echo -e "\n${BLUE}=== 5. Usage stats ===${NC}"
 
 # Redis Main stats
 info "Redis Main stats:"
 docker exec erni-ki-redis-1 redis-cli -a "${REDIS_PASSWORD}" info stats 2>/dev/null | grep -E "(connected_clients|total_commands_processed|keyspace_hits|keyspace_misses)" | while read -r line; do
-    echo "  $line"
+    echo "  ${line}"
 done
 
 # DB size

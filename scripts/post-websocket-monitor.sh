@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # ===================================================================
 # ERNI-KI Post-WebSocket Fix Monitor
 # Monitoring after WebSocket issue fix
@@ -131,7 +133,7 @@ total_score=0
 
 [ "$postgres_fatal_1h" -eq 0 ] && total_score=$((total_score + 15))
 
-[ ! -z "$rag_result" ] && total_score=$((total_score + 20))
+[ -n "$rag_result" ] && total_score=$((total_score + 20))
 
 [ "$healthy_services" -ge 26 ] && total_score=$((total_score + 20))
 [ "$healthy_services" -ge 20 ] && [ "$healthy_services" -lt 26 ] && total_score=$((total_score + 10))
@@ -172,7 +174,10 @@ echo ""
 # 8. Save results
 echo "💾 === SAVING RESULTS ==="
 report_file=".config-backup/monitoring/post-websocket-report-$(date +%Y%m%d-%H%M%S).txt"
-mkdir -p .config-backup/monitoring
+if ! mkdir -p .config-backup/monitoring; then
+    print_status "ERROR" "Failed to create directory for report"
+    exit 1
+fi
 
 {
     echo "ERNI-KI Post-WebSocket Monitor Report"

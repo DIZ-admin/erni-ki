@@ -507,7 +507,7 @@ repos:
       # Run Python unit tests with pytest
       - id: pytest-check
         name: "Python: run pytest tests"
-        entry: bash -c 'source .venv/bin/activate && python -m pytest tests/python/ -q --tb=short'
-        language: system
+        entry: scripts/ci/run-pytest.sh
+        language: script
         pass_filenames: false
         files: \.(py)$

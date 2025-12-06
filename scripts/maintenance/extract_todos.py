@@ -354,7 +354,7 @@ translation_status: original
     return "\n".join(report)
 
 
-def main():
+def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Extract task items")  # pragma: allowlist todo
     parser.add_argument(

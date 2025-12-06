@@ -55,7 +55,9 @@ set_secret() {
         echo -e "${YELLOW}Optional${NC}"
     fi
 
-    read -r -p "Enter value (or press Enter to skip): " value
+    # Use -s to hide input for secrets
+    read -r -s -p "Enter value (or press Enter to skip): " value
+    echo  # Add newline after hidden input
 
     if [ -z "$value" ]; then
         echo -e "${YELLOW}Skipped${NC}"

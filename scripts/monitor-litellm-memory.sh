@@ -64,7 +64,7 @@ check_memory() {
     log_info "Memory usage: $memory_percent% ($memory_usage)"
 
     # Threshold check
-    if (( $(echo "$memory_percent > $MEMORY_THRESHOLD" | bc -l) )); then
+    if (( $(echo "$memory_percent > $MEMORY_THRESHOLD" | bc) )); then
         send_alert "LiteLLM memory usage exceeded threshold ($MEMORY_THRESHOLD%)" "$memory_percent"
 
         # Extra diagnostics
@@ -99,7 +99,7 @@ main() {
     log_info "Starting LiteLLM memory monitoring check"
 
     # Ensure container exists
-    if ! docker ps --format '{{.Names}}' | grep -q "^$CONTAINER_NAME$"; then
+    if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
         log_info "ERROR: Container $CONTAINER_NAME is not running"
         exit 1
     fi

@@ -735,6 +735,16 @@ func TestRespondJSONError(t *testing.T) {
 	if w.Code != http.StatusInternalServerError {
 		t.Errorf("Expected status 500, got %d", w.Code)
 	}
+
+	// Verify Content-Type header
+	if ct := w.Header().Get("Content-Type"); !strings.Contains(ct, "application/json") {
+		t.Errorf("Expected Content-Type to contain application/json, got %q", ct)
+	}
+
+	// Verify error message in response body
+	if body := w.Body.String(); !strings.Contains(body, "test error") {
+		t.Errorf("Expected response body to contain error message, got: %s", body)
+	}
 }
 
 // Test main() error path.
