@@ -336,8 +336,7 @@ Fundamentals Progress:
 ## Нужна помощь?
 
 - **Вопросы по материалам?** → [FAQ](../getting-started/faq.md)
-- **Технические проблемы?** →
-  [Troubleshooting](../../operations/troubleshooting/index.md)
+- **Технические проблемы?** → [Troubleshooting](#support)
 - **Feedback?** → Create issue на GitHub
 
 ---

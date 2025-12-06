@@ -18,7 +18,15 @@
     "MD041": false,
     "MD060": false
   },
-  "ignores": [
-    "node_modules"
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules", "tests/node_modules", "tests/fixtures"],
+  "customRules": [],
+  "overrides": [
+    {
+      "files": ["docs/academy/**/*.md"],
+      "config": {
+        "MD051": false
+      }
+    }
   ]
 }

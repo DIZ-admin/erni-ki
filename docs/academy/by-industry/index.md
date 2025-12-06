@@ -7,4 +7,4 @@ last_updated: '2025-12-05'
 ---
 
 Страница доступна только на немецком языке.  
-Оригинал: [de/academy/by-industry/index.md](../../de/academy/by-industry/index.md)
+Оригинал: [de/academy/by-industry/index.md](#de-version)
