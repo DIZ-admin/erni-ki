@@ -396,7 +396,9 @@ jobs:
         run: |
           if [ -f "ops/prometheus/blackbox-noise.rules.yml" ]; then
             docker run --rm -v "$PWD/ops/prometheus:/etc/prometheus:ro" prom/prometheus:v2.55.1 \
-              promtool check rules /etc/prometheus/blackbox-noise.rules.yml
+              promtool check rules /etc/prometheus/blackbox-noise.rules.yml || \
+              docker run --rm -v "$PWD/ops/prometheus:/etc/prometheus:ro" prom/prometheus:v2.55.1 \
+              /bin/sh -c "promtool check rules /etc/prometheus/blackbox-noise.rules.yml"
           else
             echo "Prometheus rules not found, skipping"
           fi

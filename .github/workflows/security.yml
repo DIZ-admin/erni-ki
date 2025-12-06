@@ -420,6 +420,7 @@ jobs:
   sarif-aggregate:
     name: 🗂️ Aggregate SARIF
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [trivy, secret-scan, container-scan, config-scan]
     if: always()
 
