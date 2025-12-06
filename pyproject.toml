@@ -45,7 +45,7 @@ testpaths = [
 # Note: Coverage reporting is limited due to dynamic imports in tests
 # Tests use sys.path manipulation which coverage.py cannot track effectively
 # Current approach: Track test count (332 tests) instead of line coverage
-source = ["scripts", "conf"]
+# See .coveragerc for CI-specific omit patterns
 omit = [
     "tests/*",
     "test_*",
