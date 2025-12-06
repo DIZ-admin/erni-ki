@@ -13,49 +13,66 @@ configuration consistency across the project
 
 ## Executive Summary
 
-Found **3 critical** and **2 warning** level inconsistencies in tool
-configurations.
+Found **1 CRITICAL SECURITY** issue, **2 critical** configuration issues
+(FIXED), and **2 warning** level inconsistencies.
 
-### Critical Issues
+### CRITICAL - Security Update Required
 
-1. **Invalid Go Patch Version**: `1.24.11` → FIXED to `1.24.0` via go mod tidy
-2. **Bun Matrix Version Conflict**: `1.2.2` < minimum `1.3.0` from package.json
-3. **Deprecated Tools in pyproject.toml**: Black and isort configured but Ruff
-   is used
+1. **Go 1.24.0 Has 13 Vulnerabilities**: Updated to `1.24.11` to patch
+   crypto/x509, net/http, syscall vulnerabilities (includes DNS constraint
+   bypass, DoS, panics)
+
+### Critical Issues (FIXED)
+
+1. **Bun Matrix Version Conflict**: `1.2.2` < minimum `1.3.0` from package.json
+   → FIXED
+2. **Deprecated Tools in pyproject.toml**: Black and isort configured but Ruff
+   is used → FIXED
 
 ### Warnings
 
 1. **Python Version Matrix**: Testing 3.12 but project requires ^3.11
+   (acceptable)
 2. **Prettier Version Mismatch**: FIXED in commit 81a3b18
 
 ---
 
 ## Detailed Findings
 
-### 1. Go Version - FIXED
+### 1. Go Version - SECURITY UPDATE REQUIRED
 
-**Issue**: Invalid patch version specified (1.24.11)
+**Issue**: Using Go 1.24.0, but security patches available in 1.24.11
 
 **Locations**:
 
-- `.github/workflows/security.yml:212` → `go-version: "1.24.11"` (invalid patch)
-- `auth/go.mod:3` → `go 1.24.11` (invalid patch)
+- `auth/go.mod:3` → `go 1.24.11` (now updated)
+- `.github/workflows/security.yml:212` → `go-version: "1.24"` (uses latest
+  1.24.x)
+- Most CI jobs use `go-version-file: auth/go.mod` (auto-updated)
 
-**Problem**: Go 1.24 exists, but patch version .11 was invalid. Running
-`go mod tidy` corrected to 1.24.0.
+**Problem**: Go 1.24.0 has 13 known vulnerabilities in standard library
+(crypto/x509, net/http, syscall). All fixed in patch releases up to 1.24.11.
 
-**Impact**: RESOLVED - go.mod now uses valid 1.24.0, CI updated to 1.24
+**Critical Vulnerabilities**:
+
+- GO-2025-4175: Improper DNS name constraints (crypto/x509) → Fixed in 1.24.11
+- GO-2025-4155: Resource exhaustion in x509 error strings → Fixed in 1.24.11
+- GO-2025-4013: Panic with DSA public keys → Fixed in 1.24.8
+- GO-2025-4012: Cookie memory exhaustion → Fixed in 1.24.8
+- And 9 more vulnerabilities (see govulncheck output)
+
+**Impact**: CRITICAL - Production auth service vulnerable to multiple attacks
 
 **Resolution Applied**:
 
-```yaml
-# .github/workflows/security.yml
-go-version: '1.24'
+```go
+// auth/go.mod (updated to latest patch)
+go 1.24.11
 ```
 
-```go
-// auth/go.mod (auto-fixed by go mod tidy)
-go 1.24.0
+```bash
+# Update dependencies
+cd auth && go mod tidy
 ```
 
 ---
@@ -142,7 +159,7 @@ support both.
 | Tool          | Version       | Locations                                 |
 | ------------- | ------------- | ----------------------------------------- |
 | **Python**    | 3.11          | CI (default), pyproject.toml              |
-| **Go**        | 1.24.0        | auth/go.mod, security.yml                 |
+| **Go**        | 1.24.11       | auth/go.mod, security.yml (via go.mod)    |
 | **Ruff**      | 0.14.6-0.14.7 | requirements-dev.txt, pre-commit          |
 | **Prettier**  | 3.6.2         | pre-commit, prettier-run.sh, package.json |
 | **Bun**       | 1.3.3         | CI (default), workflows                   |
@@ -158,9 +175,14 @@ support both.
 
 ## Recommendations Priority
 
-### P0 - Critical (ALL COMPLETED)
+### P0 - CRITICAL SECURITY (COMPLETED)
 
-1. ~~**Fix Go version** to `1.24`~~ - DONE
+1. ~~**Update Go to 1.24.11** to patch 13 standard library vulnerabilities~~ -
+   DONE
+
+### P0 - Critical Configuration (ALL COMPLETED)
+
+1. ~~**Fix Go version** to `1.24`~~ - DONE (now 1.24.11)
 2. ~~**Remove Bun 1.2.2** from CI matrix~~ - DONE
 3. ~~**Clean up pyproject.toml** - remove Black/isort configs~~ - DONE
 
@@ -178,6 +200,7 @@ support both.
 
 ## Action Items
 
+- [x] **SECURITY**: Update Go to 1.24.11 (patches 13 vulnerabilities)
 - [x] Update Go version in security.yml and auth/go.mod
 - [x] Update Bun matrix in ci.yml
 - [x] Clean pyproject.toml (remove Black/isort)
@@ -191,12 +214,23 @@ support both.
 
 ### Current Production Versions (as of 2025-12-06)
 
-- **Go**: 1.24.0 (used in project), 1.23.4, 1.22.9
+- **Go**: 1.24.11 (used in project - SECURITY UPDATE), 1.23.4, 1.22.9
 - **Python**: 3.12.7, 3.11.10
 - **Bun**: 1.3.3
 - **Node.js**: 22.11.0 LTS, 20.11.0 LTS
 - **Ruff**: 0.14.7
 - **Prettier**: 3.6.2 (latest stable 3.x)
+
+### Go 1.24 Security Timeline
+
+- **1.24.0**: Initial release (December 2024)
+- **1.24.2**: Fixed chunked request smuggling (GO-2025-3563)
+- **1.24.4**: Fixed header leaks, x509 policy issues (GO-2025-3751,
+  GO-2025-3749)
+- **1.24.8**: Fixed cookie DoS, DSA panic (GO-2025-4012, GO-2025-4013)
+- **1.24.9**: Additional x509 fixes (GO-2025-3959)
+- **1.24.11**: Latest - DNS constraints, x509 resource exhaustion (GO-2025-4175,
+  GO-2025-4155)
 
 ---
 
