@@ -148,7 +148,7 @@ jobs:
           overwrite: true
 
       - name: 📤 Upload coverage to Codecov (Go)
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./auth/coverage.out
           flags: go
@@ -197,7 +197,7 @@ jobs:
 
       - name: 📤 Upload coverage to Codecov (Python)
         if: matrix.python == '3.12'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage.xml
           flags: python
@@ -268,7 +268,7 @@ jobs:
 
       - name: 📤 Upload coverage to Codecov (JS/TS)
         if: matrix.bun == '1.3.3'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage/lcov.info
           flags: js
@@ -527,7 +527,7 @@ jobs:
           path: artifacts/py
 
       - name: 📤 Upload merged coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: |
             artifacts/go/auth/coverage.out
