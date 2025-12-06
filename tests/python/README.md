@@ -98,11 +98,9 @@ Tests use a mix of:
 2. Import required modules:
 
    ```python
-   import sys
-   from pathlib import Path
    import pytest
 
-   sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+   # conftest.py already sets up sys.path for scripts directory
    import your_module
    ```
 
