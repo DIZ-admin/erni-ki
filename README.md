@@ -42,6 +42,9 @@ for f in env/*.example; do cp "$f" "${f%.example}.env"; done
 # Start all services using modular compose configuration
 ./docker-compose.sh up -d
 ./docker-compose.sh ps
+
+# Full merged config (manual) — use all layers together
+docker compose -f compose/base.yml -f compose/data.yml -f compose/ai.yml -f compose/gateway.yml -f compose/monitoring.yml config >/tmp/erni-ki.compose.yaml
 ```
 
 Access: Locally at <http://localhost:8080>, production —
@@ -76,7 +79,8 @@ Access: Locally at <http://localhost:8080>, production —
 
 - **Modular Docker Compose:** Infrastructure organized into 5 layered compose
   files (base → data → ai → gateway → monitoring). See `compose/README.md` for
-  details. Use `./docker-compose.sh` wrapper for all operations.
+  details. Use `./docker-compose.sh` wrapper for all operations. Partial stacks
+  still require base+data+ai+gateway together; monitoring is optional on top.
 - **AI Layer:** OpenWebUI + Ollama (GPU), LiteLLM gateway, MCP Server, Docling,
   Tika, EdgeTTS, RAG via SearXNG. Details — `docs/ai/` and
   `docs/reference/api-reference.md`.
