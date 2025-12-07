@@ -56,8 +56,8 @@ services:
       dockerfile: Dockerfile
     environment:
       AUTH_LOG_LEVEL: "info"
-      # Test JWT secret (auth service uses JWT_SECRET env var)
-      JWT_SECRET: "test-jwt-secret-for-integration-tests-only" # pragma: allowlist secret
+      # Auth service requires WEBUI_SECRET_KEY (min 32 chars)
+      WEBUI_SECRET_KEY: "test-secret-key-for-integration-tests-32chars" # pragma: allowlist secret
     healthcheck:
       test: ["CMD", "/app/main", "--health-check"]
       interval: 5s
@@ -75,6 +75,7 @@ services:
   # ==========================================================================
   prometheus:
     image: prom/prometheus:v3.0.0
+    user: root
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
