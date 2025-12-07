@@ -663,9 +663,8 @@ jobs:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
 
-      - name: 🔒 Run Gosec Security Scanner (toolchain 1.23.x)
+      - name: 🔒 Run Gosec Security Scanner
         env:
-          GOTOOLCHAIN: go1.23.4
           GOSEC_VERSION: v2.22.10
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
