@@ -20,6 +20,7 @@ export default [
       'dist/**',
       'build/**',
       'coverage/**',
+      'htmlcov/**',
       '*.min.js',
       '*.min.css',
       'data/**',

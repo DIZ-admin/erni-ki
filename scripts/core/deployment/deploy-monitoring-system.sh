@@ -14,7 +14,6 @@ source "${SCRIPT_DIR}/../../lib/common.sh"
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-LOG_FILE="/tmp/erni-ki-monitoring-deployment.log"
 
 # Check prerequisites
 check_prerequisites() {
@@ -41,7 +40,8 @@ check_prerequisites() {
     done
 
     # Check disk space
-    local disk_usage=$(df "$PROJECT_ROOT" | awk 'NR==2 {print $5}' | sed 's/%//')
+    local disk_usage
+    disk_usage=$(df "$PROJECT_ROOT" | awk 'NR==2 {print $5}' | sed 's/%//')
     if [[ $disk_usage -gt 80 ]]; then
         log_error "Insufficient disk space: ${disk_usage}%"
         exit 1
@@ -255,8 +255,9 @@ verify_monitoring_system() {
     local total_count=${#endpoints[@]}
 
     for endpoint_info in "${endpoints[@]}"; do
-        local endpoint=$(echo "$endpoint_info" | cut -d: -f1)
-        local service=$(echo "$endpoint_info" | cut -d: -f2)
+        local endpoint service
+        endpoint=$(echo "$endpoint_info" | cut -d: -f1)
+        service=$(echo "$endpoint_info" | cut -d: -f2)
 
         if curl -s -f "$endpoint" &> /dev/null; then
             log_success "$service is available"
@@ -281,7 +282,8 @@ verify_monitoring_system() {
 generate_deployment_report() {
     log_info "Generating deployment report..."
 
-    local report_file="$PROJECT_ROOT/.config-backup/monitoring-deployment-report-$(date +%Y%m%d_%H%M%S).txt"
+    local report_file
+    report_file="$PROJECT_ROOT/.config-backup/monitoring-deployment-report-$(date +%Y%m%d_%H%M%S).txt"
 
     {
         echo "=== ERNI-KI MONITORING SYSTEM DEPLOYMENT REPORT ==="
