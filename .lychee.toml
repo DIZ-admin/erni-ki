@@ -25,6 +25,7 @@ exclude = [
   "http://localhost:PORT*",
   "http:/localhost:PORT*",
   "http://localhost:PORT/*",
+  "https://example.com*",
   "https://your-domain*",
   "https://dash.cloudflare.com*",
   "https://ki.erni-gruppe.ch*",
@@ -32,6 +33,10 @@ exclude = [
   "https://prometheus.ki.erni-gruppe.ch*",
   "https://status.ki.erni-gruppe.ch*",
   "https://docs.erni-ki.ch*",
+  "https://docs.openwebui.com*",
+  "https://docs.litellm.ai*",
   "https://commitlint.js.org*",
+  "https://github.com/nginx/nginx/issues*",
+  "https://github.com/DIZ-admin/erni-ki/discussions*",
   "security@erni-ki.local"
 ]
