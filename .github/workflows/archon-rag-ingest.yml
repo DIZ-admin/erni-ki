@@ -22,6 +22,10 @@ jobs:
       fail-fast: false
       matrix:
         source:
+          - name: Anthropic Claude docs
+            url: https://docs.anthropic.com/llms.txt
+            language: en
+            tags: ["anthropic", "claude", "llm", "api"]
           - name: Supabase docs
             url: https://supabase.com/docs/llms.txt
             language: en
