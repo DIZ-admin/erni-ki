@@ -90,68 +90,16 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: 🔧 Resolve environment secrets
-        run: |
-          case "${{ needs['determine-environment'].outputs.environment }}" in
-            development)
-              echo "TUNNEL_TOKEN=${{ secrets.TUNNEL_TOKEN_DEV }}" >> "$GITHUB_ENV"
-              echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_DEV }}" >> "$GITHUB_ENV"
-              echo "CONTEXT7_API_KEY=${{ secrets.CONTEXT7_API_KEY_DEV }}" >> "$GITHUB_ENV"
-              echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY_DEV }}" >> "$GITHUB_ENV"
-              echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY_DEV }}" >> "$GITHUB_ENV"
-              ;;
-            staging)
-              echo "TUNNEL_TOKEN=${{ secrets.TUNNEL_TOKEN_STAGING }}" >> "$GITHUB_ENV"
-              echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_STAGING }}" >> "$GITHUB_ENV"
-              echo "CONTEXT7_API_KEY=${{ secrets.CONTEXT7_API_KEY_STAGING }}" >> "$GITHUB_ENV"
-              echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY_STAGING }}" >> "$GITHUB_ENV"
-              echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY_STAGING }}" >> "$GITHUB_ENV"
-              ;;
-            *)
-              echo "TUNNEL_TOKEN=${{ secrets.TUNNEL_TOKEN_PROD }}" >> "$GITHUB_ENV"
-              echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_PROD }}" >> "$GITHUB_ENV"
-              echo "CONTEXT7_API_KEY=${{ secrets.CONTEXT7_API_KEY_PROD }}" >> "$GITHUB_ENV"
-              echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY_PROD }}" >> "$GITHUB_ENV"
-              echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY_PROD }}" >> "$GITHUB_ENV"
-              ;;
-          esac
-
-      - name: 🔍 Validate required config
-        # pragma: allowlist secret
-        run: |
-          echo "Validating environment config for: ${{ needs['determine-environment'].outputs.environment }}"
-
-          env_keys=(TUNNEL_TOKEN OPENAI_API_KEY CONTEXT7_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY)
-          missing_env_keys=()
-
-          for key in "${env_keys[@]}"; do
-            value="${!key:-}"
-            if [ -z "$value" ] || [[ "$value" == *"REPLACE_WITH_REAL"* ]]; then
-              missing_env_keys+=("$key")
-            else
-              echo "✅ $key: configured"
-            fi
-          done
-
-          if [ ${#missing_env_keys[@]} -gt 0 ]; then
-            echo "❌ Missing or invalid environment keys:"
-            printf '%s\n' "${missing_env_keys[@]}"
-
-            if [ "${{ needs['determine-environment'].outputs.environment }}" = "production" ]; then
-              echo "🔴 CRITICAL: Production environment keys must be real values!"
-              exit 1
-            else
-              echo "⚠️ WARNING: Some environment keys are missing, but continuing for non-production environment"
-            fi
-          else
-            echo "✅ All required environment keys are configured"
-          fi
-        env:
-          TUNNEL_TOKEN: ${{ env.TUNNEL_TOKEN }}
-          OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
-          CONTEXT7_API_KEY: ${{ env.CONTEXT7_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ env.ANTHROPIC_API_KEY }}
-          GOOGLE_API_KEY: ${{ env.GOOGLE_API_KEY }}
+      - name: 🔧 Resolve and validate environment secrets
+        uses: ./.github/actions/resolve-secrets
+        with:
+          environment: ${{ needs['determine-environment'].outputs.environment }}
+          tunnel-token: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.TUNNEL_TOKEN_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.TUNNEL_TOKEN_STAGING || secrets.TUNNEL_TOKEN_PROD }}
+          openai-api-key: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.OPENAI_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.OPENAI_API_KEY_STAGING || secrets.OPENAI_API_KEY_PROD }}
+          context7-api-key: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.CONTEXT7_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.CONTEXT7_API_KEY_STAGING || secrets.CONTEXT7_API_KEY_PROD }}
+          anthropic-api-key: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.ANTHROPIC_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.ANTHROPIC_API_KEY_STAGING || secrets.ANTHROPIC_API_KEY_PROD }}
+          google-api-key: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.GOOGLE_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.GOOGLE_API_KEY_STAGING || secrets.GOOGLE_API_KEY_PROD }}
+          validate: "true"
 
   # Build Docker images with environment-specific configuration
   build-and-deploy:
@@ -169,21 +117,11 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: 🔧 Resolve environment secrets
-        run: |
-          case "${{ needs['determine-environment'].outputs.environment }}" in
-            development)
-              echo "TUNNEL_TOKEN=${{ secrets.TUNNEL_TOKEN_DEV }}" >> "$GITHUB_ENV"
-              echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_DEV }}" >> "$GITHUB_ENV"
-              ;;
-            staging)
-              echo "TUNNEL_TOKEN=${{ secrets.TUNNEL_TOKEN_STAGING }}" >> "$GITHUB_ENV"
-              echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_STAGING }}" >> "$GITHUB_ENV"
-              ;;
-            *)
-              echo "TUNNEL_TOKEN=${{ secrets.TUNNEL_TOKEN_PROD }}" >> "$GITHUB_ENV"
-              echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_PROD }}" >> "$GITHUB_ENV"
-              ;;
-          esac
+        uses: ./.github/actions/resolve-secrets
+        with:
+          environment: ${{ needs['determine-environment'].outputs.environment }}
+          tunnel-token: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.TUNNEL_TOKEN_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.TUNNEL_TOKEN_STAGING || secrets.TUNNEL_TOKEN_PROD }}
+          openai-api-key: ${{ needs['determine-environment'].outputs.environment == 'development' && secrets.OPENAI_API_KEY_DEV || needs['determine-environment'].outputs.environment == 'staging' && secrets.OPENAI_API_KEY_STAGING || secrets.OPENAI_API_KEY_PROD }}
 
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3

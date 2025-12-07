@@ -1,0 +1,102 @@
+# Composite action to resolve environment-specific secrets
+# Reduces duplication in deploy-environments.yml
+name: "Resolve Environment Secrets"
+description: "Resolves and validates environment-specific secrets for deployment"
+
+inputs:
+  environment:
+    description: "Target environment (development, staging, production)"
+    required: true
+  tunnel-token:
+    description: "Cloudflare Tunnel token for the environment"
+    required: true
+  openai-api-key:
+    description: "OpenAI API key for the environment"
+    required: true
+  context7-api-key:
+    description: "Context7 API key for the environment"
+    required: false
+    default: ""
+  anthropic-api-key:
+    description: "Anthropic API key for the environment"
+    required: false
+    default: ""
+  google-api-key:
+    description: "Google API key for the environment"
+    required: false
+    default: ""
+  validate:
+    description: "Whether to validate secrets (fail on production if missing)"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Export secrets to environment # pragma: allowlist secret
+      shell: bash
+      run: | # pragma: allowlist secret
+        echo "TUNNEL_TOKEN=${{ inputs.tunnel-token }}" >> "$GITHUB_ENV"
+        echo "OPENAI_API_KEY=${{ inputs.openai-api-key }}" >> "$GITHUB_ENV"
+
+        # Optional secrets
+        if [ -n "${{ inputs.context7-api-key }}" ]; then
+          echo "CONTEXT7_API_KEY=${{ inputs.context7-api-key }}" >> "$GITHUB_ENV"
+        fi
+        if [ -n "${{ inputs.anthropic-api-key }}" ]; then
+          echo "ANTHROPIC_API_KEY=${{ inputs.anthropic-api-key }}" >> "$GITHUB_ENV"
+        fi
+        if [ -n "${{ inputs.google-api-key }}" ]; then
+          echo "GOOGLE_API_KEY=${{ inputs.google-api-key }}" >> "$GITHUB_ENV"
+        fi
+
+        echo "::notice::Secrets exported for environment: ${{ inputs.environment }}"
+
+    - name: Validate secrets # pragma: allowlist secret
+      if: inputs.validate == 'true'
+      shell: bash
+      run: | # pragma: allowlist secret
+        echo "Validating environment config for: ${{ inputs.environment }}"
+
+        missing_keys=()
+
+        # Required secrets
+        if [ -z "${{ inputs.tunnel-token }}" ] || [[ "${{ inputs.tunnel-token }}" == *"REPLACE_WITH_REAL"* ]]; then
+          missing_keys+=("TUNNEL_TOKEN")
+        else
+          echo "::notice::TUNNEL_TOKEN: configured"
+        fi
+
+        if [ -z "${{ inputs.openai-api-key }}" ] || [[ "${{ inputs.openai-api-key }}" == *"REPLACE_WITH_REAL"* ]]; then
+          missing_keys+=("OPENAI_API_KEY")
+        else
+          echo "::notice::OPENAI_API_KEY: configured"
+        fi
+
+        # Optional secrets (warn if missing, don't fail)
+        for key_name in "CONTEXT7_API_KEY" "ANTHROPIC_API_KEY" "GOOGLE_API_KEY"; do
+          case "$key_name" in
+            "CONTEXT7_API_KEY") value="${{ inputs.context7-api-key }}" ;;
+            "ANTHROPIC_API_KEY") value="${{ inputs.anthropic-api-key }}" ;;
+            "GOOGLE_API_KEY") value="${{ inputs.google-api-key }}" ;;
+          esac
+
+          if [ -n "$value" ] && [[ "$value" != *"REPLACE_WITH_REAL"* ]]; then
+            echo "::notice::${key_name}: configured"
+          else
+            echo "::warning::${key_name}: not configured"
+          fi
+        done
+
+        if [ ${#missing_keys[@]} -gt 0 ]; then
+          echo "::error::Missing or invalid required secrets: ${missing_keys[*]}"
+
+          if [ "${{ inputs.environment }}" = "production" ]; then
+            echo "::error::CRITICAL: Production environment secrets must be real values!"
+            exit 1
+          else
+            echo "::warning::Some secrets are missing, but continuing for non-production environment"
+          fi
+        else
+          echo "::notice::All required secrets are configured"
+        fi
