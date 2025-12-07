@@ -122,6 +122,18 @@ set_secret "SMOKE_DURATION" \
     "1m" \
     "optional"
 
+# Archon API (for RAG ingest workflow and MCP integrations)
+echo -e "\n${GREEN}=== 4. Archon API ===${NC}"
+set_secret "ARCHON_API_URL" \
+    "Archon API base URL (e.g., http://localhost:8181 or https://archon.internal:8181)" \
+    "http://localhost:8181" \
+    "required"
+
+set_secret "ARCHON_API_KEY" \
+    "Archon API key (from Archon Settings → API Key)" \
+    "sk-archon-api-key" \
+    "required"
+
 # Summary
 echo -e "\n${GREEN}=== Setup Complete ===${NC}"
 echo -e "\nConfigured secrets:"

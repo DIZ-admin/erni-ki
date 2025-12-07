@@ -8,7 +8,7 @@ translation_status: original
 
 # GitHub Secrets Configuration Guide
 
-**Version**: 1.0 **Last Updated**: 2025-12-06 **Status**: Active
+**Version**: 1.1 **Last Updated**: 2025-12-07 **Status**: Active
 
 ## Overview
 
@@ -158,6 +158,28 @@ repository secret
 
 ---
 
+### 4. Archon API (RAG ingest, MCP integrations)
+
+#### `ARCHON_API_URL`
+
+**Purpose**: Base URL for Archon API used by RAG ingest workflow and MCP
+integrations
+
+**Example value**: `http://localhost:8181` (local) or
+`https://archon.internal:8181` (prod)
+
+**Required**: Yes (for archon-rag-ingest workflow)
+
+#### `ARCHON_API_KEY`
+
+**Purpose**: API key generated in Archon UI (Settings → API Key)
+
+**Required**: Yes (for archon-rag-ingest workflow)
+
+**Security note**: Keep this secret; do not pass via workflow inputs.
+
+---
+
 ## Setup Instructions
 
 ### Option 1: Repository-Level Secrets (Recommended)
@@ -197,6 +219,8 @@ For secrets shared across multiple repositories:
 | `CONTRACT_BASE_URL`     | Contract | **Required**             | URL         | `https://api.staging.example` |
 | `CONTRACT_BEARER_TOKEN` | Contract | **Required**             | Bearer JWT  | `Bearer eyJhbG...`            |
 | `SMOKE_BASE_URL`        | Smoke    | **Required**             | URL         | `https://api.staging.example` |
+| `ARCHON_API_URL`        | Archon   | **Required**             | URL         | `http://localhost:8181`       |
+| `ARCHON_API_KEY`        | Archon   | **Required**             | Token       | `sk-archon-api-key`           |
 | `SMOKE_AUTH_TOKEN`      | Smoke    | Optional                 | Bearer JWT  | `Bearer eyJhbG...`            |
 | `SMOKE_AUTH_PATH`       | Smoke    | Optional                 | API Path    | `/api/v1/auth/login`          |
 | `SMOKE_RAG_PATH`        | Smoke    | Optional                 | API Path    | `/api/v1/rag/query`           |
