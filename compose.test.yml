@@ -1,0 +1,124 @@
+# ============================================================================
+# ERNI-KI Integration Test Stack
+# ============================================================================
+# Minimal configuration for CI/CD smoke testing
+# Usage: docker compose -f compose.test.yml up -d
+# ============================================================================
+
+x-logging: &test-logging
+  driver: "json-file"
+  options:
+    max-size: "1m"
+    max-file: "1"
+
+services:
+  # ==========================================================================
+  # DATA LAYER
+  # ==========================================================================
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password # pragma: allowlist secret
+      POSTGRES_DB: test_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d test_db -U test_user"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      - test-data
+    logging: *test-logging
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  redis:
+    image: redis:7.0.15-alpine
+    command: >
+      sh -c 'redis-server --requirepass test_redis_password'
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "test_redis_password", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - test-data
+    logging: *test-logging
+
+  # ==========================================================================
+  # GATEWAY / AUTH
+  # ==========================================================================
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    environment:
+      AUTH_LOG_LEVEL: "info"
+      # Test JWT secret (auth service uses JWT_SECRET env var)
+      JWT_SECRET: "test-jwt-secret-for-integration-tests-only" # pragma: allowlist secret
+    healthcheck:
+      test: ["CMD", "/app/main", "--health-check"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - test-backend
+    ports:
+      - "19090:9090"
+    logging: *test-logging
+
+  # ==========================================================================
+  # MONITORING
+  # ==========================================================================
+  prometheus:
+    image: prom/prometheus:v3.0.0
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=1h"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./tests/integration/prometheus.test.yml:/etc/prometheus/prometheus.yml:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      - test-monitoring
+    ports:
+      - "19091:9090"
+    logging: *test-logging
+    tmpfs:
+      - /prometheus
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: test_grafana_password # pragma: allowlist secret
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    networks:
+      - test-monitoring
+    ports:
+      - "13000:3000"
+    logging: *test-logging
+
+networks:
+  test-data:
+    driver: bridge
+  test-backend:
+    driver: bridge
+  test-monitoring:
+    driver: bridge
