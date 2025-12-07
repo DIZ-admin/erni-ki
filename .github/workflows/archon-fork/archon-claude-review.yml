@@ -1,5 +1,7 @@
 name: Claude Review (erni-ki fork)
 
+permissions: read-all
+
 on:
   issue_comment:
     types: [created]
@@ -16,12 +18,13 @@ jobs:
       contains(github.event.comment.body, '@claude-review') &&
       contains(fromJSON('["DIZ-admin"]'), github.event.comment.user.login)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       pull-requests: write
       issues: write
       actions: read
-      id-token: write
+      # id-token: write # enable only if OIDC is required
     steps:
       - uses: actions/checkout@v4
         with:

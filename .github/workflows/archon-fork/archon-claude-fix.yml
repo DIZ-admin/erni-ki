@@ -1,5 +1,7 @@
 name: Claude Fix (erni-ki fork)
 
+permissions: read-all
+
 on:
   issue_comment:
     types: [created]
