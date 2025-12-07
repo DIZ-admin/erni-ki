@@ -74,18 +74,27 @@ jobs:
         if: github.event_name == 'pull_request' && steps.changed-files.outputs.any_changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          THRESHOLD: ${{ github.event.inputs.threshold || '60' }}
         run: |
           echo "Checking changed documentation files..."
-          THRESHOLD=${{ github.event.inputs.threshold || '60' }}
 
           # Create results directory
           mkdir -p artifacts
+          echo '{"results": [' > artifacts/results.json
+          first=true
 
-          # Check each changed file
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          # Check each changed file (using env var to avoid injection)
+          for file in $CHANGED_FILES; do
             echo "Validating: $file"
-            python scripts/docs/ai-content-validator.py "$file" --ci >> artifacts/results.json 2>&1 || true
+            if [ "$first" = true ]; then
+              first=false
+            else
+              echo ',' >> artifacts/results.json
+            fi
+            python scripts/docs/ai-content-validator.py "$file" --ci >> artifacts/results.json 2>&1 || echo '{"file": "'"$file"'", "score": 0, "error": true}' >> artifacts/results.json
           done
+          echo ']}' >> artifacts/results.json
 
           # Show summary
           echo "## Documentation Quality Check Results" >> $GITHUB_STEP_SUMMARY
@@ -96,10 +105,9 @@ jobs:
         if: github.event_name != 'pull_request' || steps.changed-files.outputs.any_changed != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PATH_TO_CHECK: ${{ github.event.inputs.path || 'docs/' }}
+          THRESHOLD: ${{ github.event.inputs.threshold || '60' }}
         run: |
-          PATH_TO_CHECK=${{ github.event.inputs.path || 'docs/' }}
-          THRESHOLD=${{ github.event.inputs.threshold || '60' }}
-
           echo "Running full documentation scan on: $PATH_TO_CHECK"
 
           # Run with threshold check
@@ -148,12 +156,11 @@ jobs:
               const avgScore = results.average_score || 0;
               const threshold = ${{ github.event.inputs.threshold || 60 }};
 
-              if (avgScore >= 80) {
-                comment += `Average Score: ${avgScore.toFixed(1)}/100\n\n`;
-              } else if (avgScore >= threshold) {
-                comment += `Average Score: ${avgScore.toFixed(1)}/100\n\n`;
+              if (avgScore >= threshold) {
+                const emoji = avgScore >= 80 ? '✅' : '⚠️';
+                comment += `${emoji} Average Score: ${avgScore.toFixed(1)}/100\n\n`;
               } else {
-                comment += `Average Score: ${avgScore.toFixed(1)}/100 (below threshold: ${threshold})\n\n`;
+                comment += `❌ Average Score: ${avgScore.toFixed(1)}/100 (below threshold: ${threshold})\n\n`;
               }
 
               // List files with issues

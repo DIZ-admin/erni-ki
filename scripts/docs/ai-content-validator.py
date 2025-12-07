@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -146,7 +147,7 @@ def check_structure(content: str) -> list[ValidationIssue]:
                         issue_type="readability",
                         message=f"Long paragraph (~{para_len} lines) - consider breaking",
                         severity="info",
-                        line=i - para_len,
+                        line=max(1, i - para_len + 1),  # Convert to 1-indexed
                     )
                 )
             current_paragraph = []
@@ -217,8 +218,8 @@ def analyze_with_ai(client: OpenAI, content: str, file_path: str) -> dict:
 
 File: {file_path}
 
-Content:
-{content[:4000]}  # Limit to ~4000 chars to stay within token limits
+Content (truncated to first 4000 chars):
+{content[:4000]}
 
 Provide a JSON response with:
 1. "score": 0-100 quality score
@@ -249,11 +250,10 @@ Respond with ONLY valid JSON, no markdown formatting."""
 
         result_text = response.choices[0].message.content or "{}"
 
-        # Clean up response (remove markdown code blocks if present)
-        if result_text.startswith("```"):
-            result_text = result_text.split("```")[1]
-            if result_text.startswith("json"):
-                result_text = result_text[4:]
+        # Clean up response (extract JSON from markdown code block if present)
+        match = re.search(r"```(?:json)?\s*([\s\S]*?)```", result_text)
+        if match:
+            result_text = match.group(1).strip()
 
         return json.loads(result_text)
 
@@ -433,7 +433,7 @@ def main() -> int:
         }
 
         if args.output:
-            with open(args.output, "w") as f:
+            with open(args.output, "w", encoding="utf-8") as f:
                 json.dump(output_data, f, indent=2)
 
         if args.ci:
