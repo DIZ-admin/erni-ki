@@ -18,11 +18,11 @@ jobs:
       contains(github.event.comment.body, '@claude-fix') &&
       contains(fromJSON('["DIZ-admin"]'), github.event.comment.user.login)
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     permissions:
       contents: write
       pull-requests: write
       issues: write
-      id-token: write
       actions: read
     steps:
       - uses: actions/checkout@v4
@@ -68,6 +68,7 @@ jobs:
       contains(github.event.comment.body, '@claude-fix') &&
       !contains(fromJSON('["DIZ-admin"]'), github.event.comment.user.login)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       issues: write
       pull-requests: write

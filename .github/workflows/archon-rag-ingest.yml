@@ -64,7 +64,8 @@ jobs:
         run: |
           : "${ARCHON_API_URL:?ARCHON_API_URL is required (input or secret)}"
           : "${ARCHON_API_KEY:?ARCHON_API_KEY is required (input or secret)}"
-          echo "Using ARCHON_API_URL=$ARCHON_API_URL"
+          # Log only scheme and host (hide path for security)
+          echo "Using ARCHON_API_URL: $(echo "$ARCHON_API_URL" | cut -d'/' -f1-3)"
 
       - name: Ingest source
         env:
@@ -73,16 +74,14 @@ jobs:
           LANG: ${{ matrix.source.language }}
           TAGS: ${{ join(matrix.source.tags, ',') }}
         run: |
-          payload=$(cat <<'EOF'
-          {
-            "type": "web",
-            "name": "'"${NAME}"'",
-            "url": "'"${URL}"'",
-            "language": "'"${LANG}"'",
-            "tags": [$(printf "'%s'" "${TAGS//,/','}")]
-          }
-          EOF
-          )
+          # Build JSON payload safely with jq
+          payload=$(jq -n \
+            --arg type "web" \
+            --arg name "$NAME" \
+            --arg url "$URL" \
+            --arg language "$LANG" \
+            --argjson tags "$(echo "$TAGS" | jq -R 'split(",")')" \
+            '{type: $type, name: $name, url: $url, language: $language, tags: $tags}')
 
           echo "Ingesting: $NAME ($URL)"
           http_code=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
@@ -93,7 +92,11 @@ jobs:
 
           echo "Response code: ${http_code}"
           echo "Response body:"
-          cat /tmp/resp.json
+          if [ -f /tmp/resp.json ]; then
+            cat /tmp/resp.json
+          else
+            echo "(No response body)"
+          fi
 
           if [ "$http_code" -ge 300 ]; then
             echo "❌ Failed to create source ${NAME}"
