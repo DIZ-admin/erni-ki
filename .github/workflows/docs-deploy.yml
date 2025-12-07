@@ -45,6 +45,47 @@ jobs:
       - name: 🧱 Build documentation
         run: mkdocs build --site-dir site
 
+      - name: 🤖 Generate llms.txt for AI/RAG
+        timeout-minutes: 5
+        run: |
+          set -e
+          # Create filtered docs directory (exclude translations and archive)
+          mkdir -p docs-filtered
+          rsync -av --exclude='de/' --exclude='en/' --exclude='archive/' docs/ docs-filtered/
+
+          # Generate llms.txt from filtered docs (pinned image digest)
+          docker run --rm -v ${{ github.workspace }}:/workspace \
+            mensfeld/llm-docs-builder@sha256:e91cae48f13f88ac81134fa814caf51b5329c37e5cfab921e1cd9387c0e67f04 \
+            generate -d docs-filtered -o site/llms.txt
+
+          # Cleanup
+          rm -rf docs-filtered
+
+      - name: 📄 Create llms-full.txt
+        timeout-minutes: 3
+        run: |
+          set -euo pipefail
+          # Concatenate all markdown files into llms-full.txt (exclude translations/archive)
+          {
+            echo "# ERNI-KI Full Documentation"
+            echo ""
+            echo "> Complete documentation for LLM consumption"
+            echo "> Base URL: https://docs.erni-gruppe.ch"
+            echo "> Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo ""
+            find docs -name "*.md" -type f \
+              ! -path "*/archive/*" \
+              ! -path "*/de/*" \
+              ! -path "*/en/*" \
+              -print0 | sort -z | while IFS= read -r -d '' file; do
+                echo "---"
+                echo "## File: ${file#docs/}"
+                echo ""
+                cat "$file"
+                echo ""
+            done
+          } > site/llms-full.txt
+
       - name: 🚫 Disable Jekyll
         run: touch site/.nojekyll
 
