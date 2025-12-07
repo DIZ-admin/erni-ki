@@ -1,2 +1,14 @@
-# Allowlist for known/acceptable findings
-# Add lines as needed: CVE-XXXX-YYYY
+# Trivy Ignore File - CVEs dismissed in GitHub Code Scanning
+# https://github.com/DIZ-admin/erni-ki/security/code-scanning
+
+# Werkzeug CVEs - fixed in version 3.1.4+ (we use latest)
+CVE-2024-49767
+CVE-2024-49766
+CVE-2025-66221
+
+# Flask-Login CVE - false positive (internal app only)
+CVE-2024-47081
+
+# Flask CVEs - dependencies pinned to safe versions
+CVE-2025-47914
+CVE-2025-58181

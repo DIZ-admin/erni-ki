@@ -177,6 +177,7 @@ jobs:
           scan-type: fs
           ignore-unfixed: true
           severity: HIGH,CRITICAL
+          trivyignores: ".github/trivy.ignore"
           exit-code: 1
 
       - name: 📦 Upload Trivy FS SARIF

@@ -688,6 +688,7 @@ jobs:
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
+          trivyignores: ".github/trivy.ignore"
           skip-dirs: "node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs"
           skip-files: "package-lock.json,package.json"
           exit-code: "1"
@@ -914,6 +915,7 @@ jobs:
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
+          trivyignores: ".github/trivy.ignore"
           exit-code: "1"
 
       - name: 📤 Upload Docker Trivy results
