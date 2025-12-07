@@ -14,7 +14,7 @@ jobs:
         github.event_name == 'pull_request_review_comment'
       ) &&
       contains(github.event.comment.body, '@claude-review') &&
-      contains(fromJSON('["maintainer1", "maintainer2"]'), github.event.comment.user.login)
+      contains(fromJSON('["DIZ-admin"]'), github.event.comment.user.login)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -62,7 +62,7 @@ jobs:
         github.event_name == 'pull_request_review_comment'
       ) &&
       contains(github.event.comment.body, '@claude-review') &&
-      !contains(fromJSON('["maintainer1", "maintainer2"]'), github.event.comment.user.login)
+      !contains(fromJSON('["DIZ-admin"]'), github.event.comment.user.login)
     runs-on: ubuntu-latest
     permissions:
       issues: write
