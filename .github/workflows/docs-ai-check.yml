@@ -84,7 +84,8 @@ jobs:
           echo '{"results": [' > artifacts/results.json
           first=true
 
-          # Check each changed file (using env var to avoid injection)
+          # Check each changed file (handle files with spaces using newline separator)
+          IFS=$'\n'
           for file in $CHANGED_FILES; do
             echo "Validating: $file"
             if [ "$first" = true ]; then
@@ -94,6 +95,7 @@ jobs:
             fi
             python scripts/docs/ai_content_validator.py "$file" --ci >> artifacts/results.json 2>&1 || echo '{"file": "'"$file"'", "score": 0, "error": true}' >> artifacts/results.json
           done
+          unset IFS
           echo ']}' >> artifacts/results.json
 
           # Show summary
@@ -149,7 +151,8 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            let comment = '## Documentation Quality Check\n\n';
+            const COMMENT_MARKER = '<!-- docs-ai-check -->';
+            let comment = `${COMMENT_MARKER}\n## Documentation Quality Check\n\n`;
 
             try {
               const results = JSON.parse(fs.readFileSync('artifacts/results.json', 'utf8'));
@@ -178,9 +181,28 @@ jobs:
               comment += 'Results not available. Check workflow logs for details.';
             }
 
-            github.rest.issues.createComment({
+            // Find existing comment to update (prevents duplicates)
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: comment
             });
+            const botComment = comments.find(c =>
+              c.body && c.body.includes(COMMENT_MARKER)
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }

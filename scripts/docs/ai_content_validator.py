@@ -39,15 +39,19 @@ REQUIRED_SECTIONS = {
     "guide": ["overview", "prerequisites", "conclusion"],
 }
 
-# Project terminology for consistency checks
-PROJECT_TERMS = [
-    "OpenWebUI",
-    "LiteLLM",
-    "Ollama",
-    "Docker Compose",
-    "Prometheus",
-    "Grafana",
-]
+# Project terminology for consistency checks (correct forms)
+PROJECT_TERMS = {
+    "openwebui": "OpenWebUI",
+    "open-webui": "OpenWebUI",
+    "litellm": "LiteLLM",
+    "lite-llm": "LiteLLM",
+    "docker-compose": "Docker Compose",
+    "dockercompose": "Docker Compose",
+    "github actions": "GitHub Actions",
+    "github-actions": "GitHub Actions",
+    "prometheus": "Prometheus",
+    "grafana": "Grafana",
+}
 
 
 @dataclass
@@ -152,6 +156,18 @@ def check_structure(content: str) -> list[ValidationIssue]:
                 )
             current_paragraph = []
 
+    # Check remaining paragraph at end of file (if no trailing newline)
+    if len(current_paragraph) > 15:
+        para_len = len(current_paragraph)
+        issues.append(
+            ValidationIssue(
+                issue_type="readability",
+                message=f"Long paragraph (~{para_len} lines) - consider breaking",
+                severity="info",
+                line=max(1, len(lines) - para_len + 1),
+            )
+        )
+
     # Check for code blocks
     code_blocks = content.count("```")
     if code_blocks % 2 != 0:
@@ -190,17 +206,11 @@ def check_completeness(content: str, doc_type: str) -> list[ValidationIssue]:
 def check_terminology(content: str) -> list[ValidationIssue]:
     """Check for consistent terminology usage."""
     issues = []
+    content_lower = content.lower()
 
-    # Check for common misspellings/inconsistencies
-    term_checks = [
-        ("openwebui", "OpenWebUI"),
-        ("litellm", "LiteLLM"),
-        ("docker-compose", "Docker Compose"),
-        ("github actions", "GitHub Actions"),
-    ]
-
-    for incorrect, correct in term_checks:
-        if incorrect in content.lower() and correct not in content:
+    # Check for common misspellings/inconsistencies using PROJECT_TERMS
+    for incorrect, correct in PROJECT_TERMS.items():
+        if incorrect in content_lower and correct not in content:
             issues.append(
                 ValidationIssue(
                     issue_type="consistency",
@@ -311,9 +321,9 @@ def validate_file(
     if use_ai and client:
         ai_result = analyze_with_ai(client, content, str(file_path))
 
-        # Merge AI results
+        # Merge AI results (clamp to 0-100)
         ai_score = ai_result.get("score", 70)
-        result.score = int((base_score + ai_score) / 2)  # Average of both
+        result.score = max(0, min(100, int((base_score + ai_score) / 2)))
 
         for issue in ai_result.get("issues", []):
             result.issues.append(
@@ -332,12 +342,15 @@ def validate_file(
 
 
 def validate_directory(
-    dir_path: Path, client: OpenAI | None = None, use_ai: bool = True
+    dir_path: Path,
+    client: OpenAI | None = None,
+    use_ai: bool = True,
+    recursive: bool = True,
 ) -> list[ValidationResult]:
     """Validate all markdown files in a directory."""
     results = []
 
-    md_files = list(dir_path.rglob("*.md"))
+    md_files = list(dir_path.rglob("*.md") if recursive else dir_path.glob("*.md"))
 
     for file_path in md_files:
         # Skip node_modules, .git, etc.
@@ -421,7 +434,7 @@ def main() -> int:
     if path.is_file():
         results = [validate_file(path, client, not args.no_ai)]
     else:
-        results = validate_directory(path, client, not args.no_ai)
+        results = validate_directory(path, client, not args.no_ai, args.recursive)
 
     # Output results
     if args.ci or args.output:
