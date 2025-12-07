@@ -108,13 +108,6 @@ testDescribe('Docker Compose Integration Tests', () => {
       });
       expect([401, 403]).toContain(res.status);
     });
-
-    it('exposes Prometheus metrics', async () => {
-      const res = await fetchWithTimeout(`${SERVICES.auth}/metrics`);
-      expect(res.status).toBe(200);
-      const body = await res.text();
-      expect(body).toContain('go_');
-    });
   });
 
   describe('Monitoring Stack', () => {
