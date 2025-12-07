@@ -32,6 +32,7 @@ exclude = [
   "https://grafana.ki.erni-gruppe.ch*",
   "https://prometheus.ki.erni-gruppe.ch*",
   "https://status.ki.erni-gruppe.ch*",
+  "https://status.erni-ki.ch*",
   "https://docs.erni-ki.ch*",
   "https://docs.openwebui.com*",
   "https://docs.litellm.ai*",

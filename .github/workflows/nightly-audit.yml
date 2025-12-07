@@ -55,6 +55,7 @@ jobs:
             --exclude 'your-domain'
             --exclude 'ki\.erni-gruppe\.ch'
             --exclude 'status\.ki\.erni-gruppe\.ch'
+            --exclude 'status\.erni-ki\.ch'
             --exclude 'grafana\.ki\.erni-gruppe\.ch'
             --exclude 'prometheus\.ki\.erni-gruppe\.ch'
             --exclude 'docs\.erni-ki\.ch'
