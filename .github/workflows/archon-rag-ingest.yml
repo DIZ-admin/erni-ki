@@ -1,0 +1,110 @@
+name: Archon RAG Ingest (llms.txt sources)
+
+permissions: read-all
+
+on:
+  workflow_dispatch:
+    inputs:
+      archon_api_url:
+        description: "Archon API base (e.g., https://archon.local:8181)"
+        required: true
+        type: string
+
+env:
+  ARCHON_API_URL: ${{ inputs.archon_api_url || secrets.ARCHON_API_URL }}
+  ARCHON_API_KEY: ${{ secrets.ARCHON_API_KEY }}
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        source:
+          - name: Supabase docs
+            url: https://supabase.com/docs/llms.txt
+            language: en
+            tags: ["supabase", "backend", "db"]
+          - name: Pydantic AI
+            url: https://ai.pydantic.dev/llms-full.txt
+            language: en
+            tags: ["python", "agents"]
+          - name: CopilotKit
+            url: https://docs.copilotkit.ai/llms-full.txt
+            language: en
+            tags: ["frontend", "agents", "ui"]
+          - name: Bun docs
+            url: https://bun.sh/docs/llms.txt
+            language: en
+            tags: ["js", "bun", "runtime"]
+          - name: Vitest docs
+            url: https://vitest.dev/llms.txt
+            language: en
+            tags: ["testing", "vitest"]
+          - name: Docker docs
+            url: https://docs.docker.com/llms.txt
+            language: en
+            tags: ["docker", "containers"]
+          - name: Gitleaks docs
+            url: https://gitleaks.io/llms.txt
+            language: en
+            tags: ["security", "secrets"]
+          - name: Sentry docs
+            url: https://sentry.io/llms.txt
+            language: en
+            tags: ["observability", "errors"]
+          - name: Sentry docs (full)
+            url: https://sentry.io/llms-full.txt
+            language: en
+            tags: ["observability", "errors"]
+
+    steps:
+      - name: Validate configuration
+        run: |
+          : "${ARCHON_API_URL:?ARCHON_API_URL is required (input or secret)}"
+          : "${ARCHON_API_KEY:?ARCHON_API_KEY is required (input or secret)}"
+          # Log only scheme and host (hide path for security)
+          echo "Using ARCHON_API_URL: $(echo "$ARCHON_API_URL" | cut -d'/' -f1-3)"
+
+      - name: Ingest source
+        env:
+          NAME: ${{ matrix.source.name }}
+          URL: ${{ matrix.source.url }}
+          LANG: ${{ matrix.source.language }}
+          TAGS: ${{ join(matrix.source.tags, ',') }}
+        run: |
+          # Build JSON payload safely with jq
+          payload=$(jq -n \
+            --arg type "web" \
+            --arg name "$NAME" \
+            --arg url "$URL" \
+            --arg language "$LANG" \
+            --argjson tags "$(echo "$TAGS" | jq -R 'split(",")')" \
+            '{type: $type, name: $name, url: $url, language: $language, tags: $tags}')
+
+          echo "Ingesting: $NAME ($URL)"
+          http_code=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+            -X POST "${ARCHON_API_URL%/}/api/knowledge/sources" \
+            -H "Authorization: Bearer ${ARCHON_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "${payload}")
+
+          echo "Response code: ${http_code}"
+          echo "Response body:"
+          if [ -f /tmp/resp.json ]; then
+            cat /tmp/resp.json
+          else
+            echo "(No response body)"
+          fi
+
+          if [ "$http_code" -ge 300 ]; then
+            echo "❌ Failed to create source ${NAME}"
+            exit 1
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "# Archon RAG Ingest" >> $GITHUB_STEP_SUMMARY
+          echo "- Source: ${{ matrix.source.name }} -> ${{ matrix.source.url }}" >> $GITHUB_STEP_SUMMARY

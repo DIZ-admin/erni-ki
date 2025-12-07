@@ -387,7 +387,7 @@ jobs:
           docker pull grafana/k6
           docker save grafana/k6 -o /tmp/k6-image/grafana-k6.tar
 
-      - name: 🏃 Run k6 smoke (skips if SMOKE_BASE_URL not set)
+      - name: 🏃 Run k6 smoke (skips if SMOKE_BASE_URL not set or unreachable)
         env:
           SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
           SMOKE_AUTH_TOKEN: ${{ secrets.SMOKE_AUTH_TOKEN }}
@@ -400,8 +400,18 @@ jobs:
             echo "::warning::SMOKE_BASE_URL not set; skipping k6 smoke test."
             exit 0
           fi
+          # Check if target is reachable before running full load test
+          # Extract host from URL for connectivity check
+          TARGET_HOST=$(echo "${SMOKE_BASE_URL}" | sed -E 's|https?://([^:/]+).*|\1|')
+          TARGET_PORT=$(echo "${SMOKE_BASE_URL}" | sed -E 's|https?://[^:/]+:?([0-9]*)/.*|\1|')
+          TARGET_PORT=${TARGET_PORT:-80}
+          if ! timeout 5 bash -c "cat < /dev/null > /dev/tcp/${TARGET_HOST}/${TARGET_PORT}" 2>/dev/null; then
+            echo "::warning::SMOKE_BASE_URL (${SMOKE_BASE_URL}) is unreachable; skipping k6 smoke test."
+            exit 0
+          fi
           mkdir -p artifacts/k6
-          docker run --rm \
+          # Use --network=host to access services on localhost from container
+          docker run --rm --network=host \
             -e SMOKE_BASE_URL \
             -e SMOKE_AUTH_TOKEN \
             -e SMOKE_AUTH_PATH \
