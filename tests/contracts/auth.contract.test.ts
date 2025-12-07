@@ -25,19 +25,28 @@ runtimeDescribe('auth contract runtime', () => {
   it('rejects invalid bearer token', async () => {
     let res: Response | undefined;
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
       res = await fetch(new URL('/validate', baseUrl).toString(), {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${bearer}`,
         },
-        signal: AbortSignal.timeout(5000), // 5s timeout
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
     } catch (error) {
       // Network error (connection refused, timeout, etc.)
       // Skip test gracefully when server is unreachable
       console.warn(
         `Contract test skipped: server unreachable at ${baseUrl} - ${error instanceof Error ? error.message : error}`,
       );
+      return;
+    }
+
+    // Additional safety check in case fetch somehow returns undefined
+    if (!res) {
+      console.warn(`Contract test skipped: fetch returned undefined for ${baseUrl}`);
       return;
     }
 
