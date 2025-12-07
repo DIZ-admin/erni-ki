@@ -1,3 +1,21 @@
+"""
+Pytest configuration and fixtures for Python tests.
+
+COVERAGE LIMITATION:
+    Coverage tracking is limited due to dynamic imports via sys.path manipulation.
+    coverage.py cannot reliably track modules imported after sys.path changes.
+
+    Current approach: Track test count (332+ tests) instead of line coverage threshold.
+
+    Future fix options:
+    1. Convert scripts/ to proper Python package with __init__.py files
+    2. Use pytest-pythonpath plugin instead of sys.path manipulation
+    3. Configure PYTHONPATH in CI before running coverage
+    4. Use `coverage run --source=scripts,conf` with explicit source paths
+
+    See: tests/python/README.md for details
+"""
+
 import importlib.util
 import sys
 from pathlib import Path

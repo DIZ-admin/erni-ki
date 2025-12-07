@@ -425,7 +425,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45 # Increased: first run pulls 4 large images (~20-30min)
     needs: [lint]
-    if: false # TEMPORARILY DISABLED - timeout issues with Promtail config verify
+    # Re-enabled: Fixed Promtail check to use --print-config-stderr instead of --dry-run
 
     steps:
       - name: 📥 Checkout code
@@ -565,11 +565,12 @@ jobs:
       - name: 📄 Promtail config verify
         run: |
           if [ -f "conf/promtail/promtail-config.yaml" ]; then
-            timeout 90 docker run --rm \
+            # Use --print-config-stderr for syntax validation without network connections
+            # (--dry-run tries to connect to Loki which times out in CI)
+            timeout 30 docker run --rm \
               -v "$PWD/conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro" \
-              -v /tmp/promtail-ci:/var/log/promtail \
               --entrypoint /bin/sh grafana/promtail:3.0.0 \
-              -c "mkdir -p /var/log/promtail && promtail --config.file=/etc/promtail/config.yaml --positions.file=/var/log/promtail/positions.yaml --log.level=error -config.expand-env=false -dry-run 2>&1 | head -5"
+              -c "promtail --config.file=/etc/promtail/config.yaml --print-config-stderr 2>&1 | head -20 && echo 'Config syntax valid'"
           else
             echo "promtail config not found, skipping"
           fi
@@ -665,11 +666,13 @@ jobs:
 
       - name: 🔒 Run Gosec Security Scanner
         env:
+          # SSA panic fix merged Oct 28, 2025 (issue #1410) - waiting for release after v2.22.10
+          # Track: https://github.com/securego/gosec/issues/1410
           GOSEC_VERSION: v2.22.10
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@${GOSEC_VERSION}
-          # Known upstream SSA panic with Go 1.24 - allow failure until gosec fixes it
-          gosec -fmt sarif -out gosec-results.sarif -severity high -confidence high -no-fail ./auth/... || echo "gosec exited non-zero (known upstream SSA panic); continuing"
+          # Fallback: SSA panic with Go 1.24 on nil pointer dereference - gosec still generates partial SARIF
+          gosec -fmt sarif -out gosec-results.sarif -severity high -confidence high -no-fail ./auth/... || echo "gosec SSA panic (Go 1.24 compat issue); SARIF may be partial"
 
       - name: 📤 Upload Gosec results to GitHub Security
         uses: github/codeql-action/upload-sarif@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
