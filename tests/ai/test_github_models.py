@@ -23,22 +23,24 @@ if TYPE_CHECKING:
     from openai import OpenAI as OpenAIType
     from openai.types.chat import ChatCompletion
 
-# GitHub Models configuration
-ENDPOINT = "https://models.github.ai/inference"
-MODEL = "openai/gpt-4o-mini"
+# GitHub Models configuration (sync with workflow env vars)
+ENDPOINT = os.getenv("GITHUB_MODELS_ENDPOINT", "https://models.github.ai/inference")
+MODEL = os.getenv("GITHUB_MODELS_MODEL", "openai/gpt-4o-mini")
 
 # Rate limit configuration (15 RPM = 4 seconds minimum between requests)
 # Using 5 seconds to be safe
 REQUEST_DELAY_SECONDS = 5
 
-# Try to import OpenAI client
+# Try to import OpenAI client - explicit initialization to avoid CodeQL warning
+OpenAI: Any = None
+OPENAI_AVAILABLE = False
 try:
-    from openai import OpenAI
+    from openai import OpenAI as _OpenAI
 
+    OpenAI = _OpenAI
     OPENAI_AVAILABLE = True
 except ImportError:
-    OpenAI = None  # type: ignore[misc,assignment]
-    OPENAI_AVAILABLE = False
+    pass
 
 
 class RateLimitedClient:
