@@ -81,6 +81,12 @@ on:
 env:
   REGISTRY: ghcr.io
 
+# Explicit permissions for reusable workflow (Checkov CKV2_GHA_1)
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
 jobs:
   build:
     name: 🏗️ Build & Push
