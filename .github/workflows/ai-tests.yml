@@ -43,7 +43,8 @@ jobs:
   ai-tests:
     name: AI Function Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Increased timeout: 6 tests × 5s delay + execution time
+    timeout-minutes: 5
     # Allow failure due to rate limits on free tier (15 RPM)
     continue-on-error: true
 
