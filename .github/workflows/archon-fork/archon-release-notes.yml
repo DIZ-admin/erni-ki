@@ -1,0 +1,149 @@
+name: AI Release Notes (erni-ki fork)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name (e.g., v0.6.4)"
+        required: true
+        type: string
+
+jobs:
+  generate-release-notes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get release tag
+        id: get_tag
+        run: |
+          echo "tag=${{ inputs.tag_name }}" >> $GITHUB_OUTPUT
+
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          CURRENT_TAG="${{ steps.get_tag.outputs.tag }}"
+          PREVIOUS_TAG=$(git tag --sort=-v:refname | grep -A1 "^${CURRENT_TAG}$" | tail -1)
+          if [ -z "$PREVIOUS_TAG" ] || [ "$PREVIOUS_TAG" == "$CURRENT_TAG" ]; then
+            PREVIOUS_TAG=$(git rev-list --max-parents=0 HEAD)
+            echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+            echo "is_first_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+            echo "is_first_release=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get commit messages
+        id: commits
+        run: |
+          COMMITS=$(git log ${{ steps.prev_tag.outputs.previous_tag }}..${{ steps.get_tag.outputs.tag }} --pretty=format:"- %s (%h) by %an" --no-merges)
+          echo "$COMMITS" > commits.txt
+          echo "commit_count=$(echo "$COMMITS" | wc -l)" >> $GITHUB_OUTPUT
+
+      - name: Get changed files summary
+        id: files
+        run: |
+          echo "### File Changes by Component" > changes.txt
+          echo "" >> changes.txt
+          echo "**JS/Bun:**" >> changes.txt
+          git diff ${{ steps.prev_tag.outputs.previous_tag }}..${{ steps.get_tag.outputs.tag }} --stat -- . | head -20 >> changes.txt
+          echo "" >> changes.txt
+          echo "**Go (auth):**" >> changes.txt
+          git diff ${{ steps.prev_tag.outputs.previous_tag }}..${{ steps.get_tag.outputs.tag }} --stat -- auth/ | head -20 >> changes.txt
+          echo "" >> changes.txt
+          echo "**Docs:**" >> changes.txt
+          git diff ${{ steps.prev_tag.outputs.previous_tag }}..${{ steps.get_tag.outputs.tag }} --stat -- docs/ | head -20 >> changes.txt
+
+      - name: Get merged PRs
+        id: prs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PREV_DATE=$(git log -1 --format=%ai ${{ steps.prev_tag.outputs.previous_tag }})
+          gh pr list \
+            --state merged \
+            --limit 100 \
+            --json number,title,mergedAt,author,url \
+            --jq --arg date "$PREV_DATE" \
+              '.[] | select(.mergedAt >= $date) | "- #\(.number): \(.title) by @\(.author.login) - \(.url)"' \
+            > prs.txt || echo "No PRs found" > prs.txt
+
+      - name: Prepare release context
+        run: |
+          cat > release-context.md <<'EOF'
+          # Release Notes Generation Task
+
+          You are writing release notes for erni-ki (AI platform based on Open WebUI, Bun/TS, Go auth, Docker Compose).
+
+          ## Release Information
+          **Version:** ${{ steps.get_tag.outputs.tag }}
+          **Previous Version:** ${{ steps.prev_tag.outputs.previous_tag }}
+          **Commits:** ${{ steps.commits.outputs.commit_count }}
+          **Is First Release:** ${{ steps.prev_tag.outputs.is_first_release }}
+
+          ## Commits
+          ```
+          EOF
+          cat commits.txt >> release-context.md
+          cat >> release-context.md <<'EOF'
+          ```
+
+          ## Pull Requests Merged
+          ```
+          EOF
+          cat prs.txt >> release-context.md
+          cat >> release-context.md <<'EOF'
+          ```
+
+          ## File Changes
+          ```
+          EOF
+          cat changes.txt >> release-context.md
+          cat >> release-context.md <<'EOF'
+          ```
+
+          ## Instructions
+          - Use structure: Overview, What's New (features/improvements/fixes),
+            Technical Changes (JS/Bun, Go auth, Docs/Infra), Stats, Contributors,
+            Breaking Changes, Links.
+          - Be concise, user-facing, and note beta-level caveats if any.
+          - Output markdown only, starting with
+            "# 🚀 Release ${{ steps.get_tag.outputs.tag }}".
+          EOF
+
+      - name: Generate release notes with Claude
+        uses: anthropics/claude-code-action@beta
+        timeout-minutes: 10
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          mode: agent
+          direct_prompt: |
+            Read release-context.md and write release notes to release_notes.md exactly per instructions. Output only the markdown content.
+
+      - name: Verify release notes
+        run: |
+          test -s release_notes.md
+          head -20 release_notes.md
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=${{ steps.get_tag.outputs.tag }}
+          if gh release view "$TAG" &>/dev/null; then
+            gh release edit "$TAG" --notes-file release_notes.md
+          else
+            gh release create "$TAG" --title "Release $TAG" --notes-file release_notes.md --latest
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-${{ steps.get_tag.outputs.tag }}
+          path: release_notes.md
+          retention-days: 30
