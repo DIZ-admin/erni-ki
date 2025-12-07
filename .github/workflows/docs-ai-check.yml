@@ -8,13 +8,13 @@ on:
     branches: [main, develop]
     paths:
       - "docs/**/*.md"
-      - "scripts/docs/ai-content-validator.py"
+      - "scripts/docs/ai_content_validator.py"
       - ".github/workflows/docs-ai-check.yml"
   pull_request:
     branches: [main, develop]
     paths:
       - "docs/**/*.md"
-      - "scripts/docs/ai-content-validator.py"
+      - "scripts/docs/ai_content_validator.py"
       - ".github/workflows/docs-ai-check.yml"
   workflow_dispatch:
     inputs:
@@ -92,7 +92,7 @@ jobs:
             else
               echo ',' >> artifacts/results.json
             fi
-            python scripts/docs/ai-content-validator.py "$file" --ci >> artifacts/results.json 2>&1 || echo '{"file": "'"$file"'", "score": 0, "error": true}' >> artifacts/results.json
+            python scripts/docs/ai_content_validator.py "$file" --ci >> artifacts/results.json 2>&1 || echo '{"file": "'"$file"'", "score": 0, "error": true}' >> artifacts/results.json
           done
           echo ']}' >> artifacts/results.json
 
@@ -111,7 +111,7 @@ jobs:
           echo "Running full documentation scan on: $PATH_TO_CHECK"
 
           # Run with threshold check
-          python scripts/docs/ai-content-validator.py "$PATH_TO_CHECK" \
+          python scripts/docs/ai_content_validator.py "$PATH_TO_CHECK" \
             --ci \
             --threshold "$THRESHOLD" \
             --output artifacts/results.json
