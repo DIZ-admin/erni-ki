@@ -316,6 +316,7 @@ jobs:
   notify:
     name: 📢 Deployment Notification
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [determine-environment, deploy]
     if: always() && needs['determine-environment'].outputs.should_deploy == 'true'
 

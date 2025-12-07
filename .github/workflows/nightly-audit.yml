@@ -8,6 +8,11 @@ on:
 permissions:
   contents: read
 
+# Prevent concurrent audit runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   audit:
     name: 🕵️ Nightly Documentation Audit
@@ -23,12 +28,12 @@ jobs:
         with:
           python-version: "3.11"
           cache: "pip"
+          cache-dependency-path: requirements-docs.txt
 
       - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install mkdocs-material mkdocs-static-i18n mkdocs-awesome-pages-plugin mkdocs-include-markdown-plugin mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin
-          pip install requests pyyaml
+          pip install -r requirements-docs.txt
 
       - name: 🧩 Validate docs metadata
         run: python scripts/docs/validate_metadata.py
@@ -47,6 +52,18 @@ jobs:
             --exclude 'localhost'
             --exclude '127\.0\.0\.1'
             --exclude 'example\.com'
+            --exclude 'your-domain'
+            --exclude 'ki\.erni-gruppe\.ch'
+            --exclude 'status\.erni-ki\.ch'
+            --exclude '192\.168\.\d+\.\d+'
+            --exclude 'nginx:8080'
+            --exclude 'openwebui:8080'
+            --exclude 'searxng:8080'
+            --exclude 'dash\.cloudflare\.com'
+            --exclude 'docs\.openwebui\.com/api'
+            --exclude 'github\.com/nginx/nginx/issues'
+            --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
+            --exclude 'docs\.litellm\.ai'
             'docs/**/*.md'
             'README.md'
           fail: true

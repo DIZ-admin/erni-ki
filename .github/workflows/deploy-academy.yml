@@ -85,20 +85,20 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
+          cache-dependency-path: requirements-docs.txt
 
       - name: Cache MkDocs build
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
-          path: |
-            ~/.cache/pip
-            site-academy
+          path: site-academy
           key: mkdocs-academy-${{ hashFiles('mkdocs-academy.yml', 'docs/academy/**') }}
           restore-keys: |
             mkdocs-academy-
 
       - name: Install dependencies
         run: |
-          pip install mkdocs-material mkdocs-minify-plugin
+          python -m pip install --upgrade pip
+          pip install -r requirements-docs.txt
 
       - name: Build site (strict mode)
         run: |
@@ -150,9 +150,18 @@ jobs:
             --exclude 'localhost'
             --exclude '127\.0\.0\.1'
             --exclude 'example\.com'
+            --exclude 'your-domain'
             --exclude 'ki\.erni-gruppe\.ch'
             --exclude 'status\.erni-ki\.ch'
             --exclude '192\.168\.\d+\.\d+'
+            --exclude 'nginx:8080'
+            --exclude 'openwebui:8080'
+            --exclude 'searxng:8080'
+            --exclude 'dash\.cloudflare\.com'
+            --exclude 'docs\.openwebui\.com/api'
+            --exclude 'github\.com/nginx/nginx/issues'
+            --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
+            --exclude 'docs\.litellm\.ai'
             'site-academy/**/*.html'
           fail: false
 
