@@ -244,11 +244,11 @@ verify_monitoring_system() {
     log_info "Verifying monitoring system..."
 
     local endpoints=(
-        "http://localhost:9091/-/healthy:Prometheus"
-        "http://localhost:3000/api/health:Grafana"
-        "http://localhost:9093/-/healthy:Alertmanager"
-        "http://localhost:9101/metrics:Node Exporter"
-        "http://localhost:9093/health:Webhook Receiver"
+        "http://localhost:9091/-/healthy|Prometheus"
+        "http://localhost:3000/api/health|Grafana"
+        "http://localhost:9093/-/healthy|Alertmanager"
+        "http://localhost:9101/metrics|Node Exporter"
+        "http://localhost:9093/health|Webhook Receiver"
     )
 
     local healthy_count=0
@@ -256,8 +256,7 @@ verify_monitoring_system() {
 
     for endpoint_info in "${endpoints[@]}"; do
         local endpoint service
-        endpoint=$(echo "$endpoint_info" | cut -d: -f1)
-        service=$(echo "$endpoint_info" | cut -d: -f2)
+        IFS='|' read -r endpoint service <<< "$endpoint_info"
 
         if curl -s -f "$endpoint" &> /dev/null; then
             log_success "$service is available"
