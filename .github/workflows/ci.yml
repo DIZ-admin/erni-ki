@@ -578,8 +578,11 @@ jobs:
       - name: 📑 Fluent Bit config check
         run: |
           if [ -f "conf/fluent-bit/fluent-bit.conf" ]; then
-            docker run --rm -v "$PWD/conf/fluent-bit:/fluent-bit:ro" fluent/fluent-bit:3.0 \
-              -c /fluent-bit/fluent-bit.conf -t
+            # Mount config file only (not directory) to avoid overwriting /fluent-bit/bin
+            # Use --dry-run instead of -t (changed in Fluent Bit 3.0: -t is now --tag)
+            docker run --rm \
+              -v "$PWD/conf/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro" \
+              fluent/fluent-bit:3.0 -c /fluent-bit/etc/fluent-bit.conf --dry-run
           else
             echo "fluent-bit.conf not found, skipping"
           fi
