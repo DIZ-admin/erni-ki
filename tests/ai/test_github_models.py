@@ -19,13 +19,20 @@ import pytest
 ENDPOINT = "https://models.github.ai/inference"
 MODEL = "openai/gpt-4o-mini"
 
+# Try to import OpenAI client
+try:
+    from openai import OpenAI
+
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OpenAI = None  # type: ignore[misc,assignment]
+    OPENAI_AVAILABLE = False
+
 
 @pytest.fixture
 def client():
     """Create OpenAI client configured for GitHub Models."""
-    try:
-        from openai import OpenAI
-    except ImportError:
+    if not OPENAI_AVAILABLE:
         pytest.skip("openai package not installed")
 
     token = os.environ.get("GITHUB_TOKEN")
