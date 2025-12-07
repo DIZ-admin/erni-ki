@@ -30,14 +30,17 @@
 
 ## Priority 1: AI/ML & LLM Platforms
 
-| Technology             | Type          | URL                                                    | Status   |
-| ---------------------- | ------------- | ------------------------------------------------------ | -------- |
-| Anthropic/Claude       | llms.txt      | https://docs.anthropic.com/llms.txt                    | Verified |
-| Model Context Protocol | llms-full.txt | https://modelcontextprotocol.io/llms-full.txt          | Verified |
-| LiteLLM                | llms.txt      | https://docs.litellm.ai/llms.txt                       | Verified |
-| LangGraph              | llms-full.txt | https://langchain-ai.github.io/langgraph/llms-full.txt | Verified |
-| Vercel AI SDK          | llms.txt      | https://sdk.vercel.ai/llms.txt                         | Verified |
-| Mastra AI              | llms.txt      | https://mastra.ai/llms.txt                             | Verified |
+| Technology             | Type          | URL                                                    | Status          |
+| ---------------------- | ------------- | ------------------------------------------------------ | --------------- |
+| Anthropic/Claude       | llms.txt      | https://docs.anthropic.com/llms.txt                    | Requires Auth\* |
+| Model Context Protocol | llms-full.txt | https://modelcontextprotocol.io/llms-full.txt          | Verified        |
+| LiteLLM                | llms.txt      | https://docs.litellm.ai/llms.txt                       | Verified        |
+| LangGraph              | llms-full.txt | https://langchain-ai.github.io/langgraph/llms-full.txt | Verified        |
+| Vercel AI SDK          | llms.txt      | https://sdk.vercel.ai/llms.txt                         | Verified        |
+| Mastra AI              | llms.txt      | https://mastra.ai/llms.txt                             | Verified        |
+
+> \*docs.anthropic.com redirects to docs.claude.com which requires Google IAP
+> authentication
 
 ---
 

@@ -22,10 +22,12 @@ jobs:
       fail-fast: false
       matrix:
         source:
-          - name: Anthropic Claude docs
-            url: https://docs.anthropic.com/llms.txt
+          # NOTE: docs.anthropic.com redirects to docs.claude.com which requires auth
+          # Using MCP (Model Context Protocol) by Anthropic as alternative
+          - name: Model Context Protocol (MCP)
+            url: https://modelcontextprotocol.io/llms-full.txt
             language: en
-            tags: ["anthropic", "claude", "llm", "api"]
+            tags: ["anthropic", "mcp", "protocol", "agents"]
           - name: Supabase docs
             url: https://supabase.com/docs/llms.txt
             language: en
