@@ -1,0 +1,208 @@
+# Reusable workflow for Docker image build and push
+# Used by: ci.yml, deploy-environments.yml, release.yml
+name: 🐳 Reusable Docker Build
+
+on:
+  workflow_call:
+    inputs:
+      context:
+        description: "Docker build context path"
+        type: string
+        default: "./auth"
+      dockerfile:
+        description: "Path to Dockerfile"
+        type: string
+        default: "./auth/Dockerfile"
+      platforms:
+        description: "Target platforms"
+        type: string
+        default: "linux/amd64,linux/arm64"
+      push:
+        description: "Push image to registry"
+        type: boolean
+        default: true
+      image-suffix:
+        description: "Image name suffix (e.g., /auth)"
+        type: string
+        default: "/auth"
+      tags:
+        description: "Additional tags (newline-separated)"
+        type: string
+        default: ""
+      labels:
+        description: "Image labels (newline-separated)"
+        type: string
+        default: ""
+      build-args:
+        description: "Build arguments (newline-separated)"
+        type: string
+        default: ""
+      use-metadata-action:
+        description: "Use docker/metadata-action for automatic tags"
+        type: boolean
+        default: true
+      metadata-tags:
+        description: "Metadata action tags configuration"
+        type: string
+        default: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,format=short,prefix=sha-
+      trivy-scan:
+        description: "Run Trivy vulnerability scan"
+        type: boolean
+        default: false
+      trivy-exit-code:
+        description: "Trivy exit code on vulnerabilities (0=warn, 1=fail)"
+        type: string
+        default: "1"
+      trivy-severity:
+        description: "Trivy severity levels"
+        type: string
+        default: "CRITICAL,HIGH"
+    secrets:
+      registry-token:
+        description: "Token for container registry authentication"
+        required: true
+      build-secrets:
+        description: "Build secrets (newline-separated key=value)"
+        required: false
+    outputs:
+      image-ref:
+        description: "Full image reference (registry/repo:tag)"
+        value: ${{ jobs.build.outputs.image-ref }}
+      digest:
+        description: "Image digest"
+        value: ${{ jobs.build.outputs.digest }}
+      metadata:
+        description: "Image metadata JSON"
+        value: ${{ jobs.build.outputs.metadata }}
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    name: 🏗️ Build & Push
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      image-ref: ${{ steps.image-ref.outputs.ref }}
+      digest: ${{ steps.build-push.outputs.digest }}
+      metadata: ${{ steps.meta.outputs.json }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
+
+      - name: 🔐 Login to Container Registry
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.registry-token }}
+
+      - name: 🔡 Normalize repository to lowercase
+        id: repo-lc
+        run: |
+          repo_lc=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          echo "repo_lc=${repo_lc}" >> "$GITHUB_OUTPUT"
+          echo "image=${{ env.REGISTRY }}/${repo_lc}${{ inputs.image-suffix }}" >> "$GITHUB_OUTPUT"
+
+      - name: 📋 Extract metadata
+        if: inputs.use-metadata-action
+        id: meta
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
+        with:
+          images: ${{ steps.repo-lc.outputs.image }}
+          tags: ${{ inputs.metadata-tags }}
+
+      - name: 🏷️ Compute image reference
+        id: image-ref
+        run: |
+          if [ "${{ inputs.use-metadata-action }}" = "true" ]; then
+            # Use first tag from metadata
+            ref=$(echo "${{ steps.meta.outputs.tags }}" | head -n1)
+          else
+            # Use first custom tag
+            ref="${{ steps.repo-lc.outputs.image }}:$(echo "${{ inputs.tags }}" | head -n1)"
+          fi
+          echo "ref=${ref}" >> "$GITHUB_OUTPUT"
+
+      - name: 🏷️ Prepare tags
+        id: tags
+        run: |
+          tags=""
+          if [ "${{ inputs.use-metadata-action }}" = "true" ]; then
+            tags="${{ steps.meta.outputs.tags }}"
+          fi
+          # Append custom tags
+          if [ -n "${{ inputs.tags }}" ]; then
+            custom_tags=$(echo "${{ inputs.tags }}" | while read -r tag; do
+              [ -n "$tag" ] && echo "${{ steps.repo-lc.outputs.image }}:${tag}"
+            done)
+            if [ -n "$tags" ]; then
+              tags="${tags}"$'\n'"${custom_tags}"
+            else
+              tags="${custom_tags}"
+            fi
+          fi
+          # Export multiline
+          {
+            echo "tags<<EOF"
+            echo "$tags"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: ✅ Validate Docker tags are lowercase
+        run: |
+          echo "${{ steps.tags.outputs.tags }}" | bash scripts/utilities/check-docker-tags.sh
+
+      - name: 🏗️ Build and push Docker image
+        id: build-push
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          platforms: ${{ inputs.platforms }}
+          push: ${{ inputs.push }}
+          tags: ${{ steps.tags.outputs.tags }}
+          labels: ${{ inputs.use-metadata-action && steps.meta.outputs.labels || inputs.labels }}
+          build-args: ${{ inputs.build-args }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          secrets: ${{ secrets.build-secrets }}
+
+      - name: 🔍 Run Trivy vulnerability scan
+        if: inputs.trivy-scan && inputs.push
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+        with:
+          image-ref: ${{ steps.image-ref.outputs.ref }}
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: ${{ inputs.trivy-severity }}
+          scanners: "vuln"
+          ignore-unfixed: true
+          exit-code: ${{ inputs.trivy-exit-code }}
+
+      - name: 📤 Upload Trivy SARIF results
+        if: inputs.trivy-scan && inputs.push && always()
+        uses: github/codeql-action/upload-sarif@4248455a6f2335bc3b7a8a62932f000050ec8f13 # v3
+        continue-on-error: true
+        with:
+          sarif_file: "trivy-results.sarif"
+
+      - name: 📊 Build summary
+        run: |
+          echo "## 🐳 Docker Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | \`${{ steps.repo-lc.outputs.image }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Digest | \`${{ steps.build-push.outputs.digest }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Platforms | ${{ inputs.platforms }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Pushed | ${{ inputs.push }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trivy Scan | ${{ inputs.trivy-scan }} |" >> $GITHUB_STEP_SUMMARY
