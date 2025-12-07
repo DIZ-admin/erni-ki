@@ -38,9 +38,8 @@ runtimeDescribe('auth contract runtime', () => {
     } catch (error) {
       // Network error (connection refused, timeout, etc.)
       // Skip test gracefully when server is unreachable
-      console.warn(
-        `Contract test skipped: server unreachable at ${baseUrl} - ${error instanceof Error ? error.message : error}`,
-      );
+      const errMsg = error instanceof Error ? error.message : String(error);
+      console.warn(`Contract test skipped: server unreachable at ${baseUrl} - ${errMsg}`);
       return;
     }
 
