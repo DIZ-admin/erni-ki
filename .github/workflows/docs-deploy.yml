@@ -46,21 +46,25 @@ jobs:
         run: mkdocs build --site-dir site
 
       - name: 🤖 Generate llms.txt for AI/RAG
+        timeout-minutes: 5
         run: |
+          set -e
           # Create filtered docs directory (exclude translations and archive)
           mkdir -p docs-filtered
           rsync -av --exclude='de/' --exclude='en/' --exclude='archive/' docs/ docs-filtered/
 
-          # Generate llms.txt from filtered docs
+          # Generate llms.txt from filtered docs (pinned image digest)
           docker run --rm -v ${{ github.workspace }}:/workspace \
-            mensfeld/llm-docs-builder:latest \
+            mensfeld/llm-docs-builder@sha256:e91cae48f13f88ac81134fa814caf51b5329c37e5cfab921e1cd9387c0e67f04 \
             generate -d docs-filtered -o site/llms.txt
 
           # Cleanup
           rm -rf docs-filtered
 
       - name: 📄 Create llms-full.txt
+        timeout-minutes: 3
         run: |
+          set -euo pipefail
           # Concatenate all markdown files into llms-full.txt (exclude translations/archive)
           {
             echo "# ERNI-KI Full Documentation"
