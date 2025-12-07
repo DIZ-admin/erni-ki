@@ -691,7 +691,7 @@ jobs:
           ignore-unfixed: true
           skip-dirs: "node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs"
           skip-files: "package-lock.json,package.json"
-          exit-code: "0"
+          exit-code: "1"
 
       - name: 📤 Upload Trivy results
         uses: github/codeql-action/upload-sarif@4248455a6f2335bc3b7a8a62932f000050ec8f13 # v3
@@ -910,7 +910,7 @@ jobs:
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
 
       - name: 📤 Upload Docker Trivy results
         uses: github/codeql-action/upload-sarif@4248455a6f2335bc3b7a8a62932f000050ec8f13 # v3

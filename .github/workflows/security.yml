@@ -216,7 +216,6 @@ jobs:
         run: |
           go install github.com/zricethezav/gitleaks/v8@v8.29.1
           gitleaks detect --redact --source=. -c .gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
-        continue-on-error: true
 
       - name: 📦 Upload Gitleaks SARIF
         if: always() && hashFiles('gitleaks-results.sarif') != ''
@@ -257,7 +256,7 @@ jobs:
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
-          exit-code: 0
+          exit-code: "1"
           trivyignores: ".github/trivy.ignore"
 
       - name: 📤 Upload Trivy results to GitHub Security
@@ -302,7 +301,7 @@ jobs:
           output_file_path: checkov-results.sarif
           config_file: .checkov.yml
           quiet: true
-          soft_fail: true
+          soft_fail: false
 
       - name: 📤 Upload Checkov results
         if: always() && hashFiles('checkov-results.sarif') != ''
