@@ -15,7 +15,6 @@ permissions:
   contents: read
   actions: read
   security-events: write
-  models: read # Enable GitHub Models API access for AI tests
 
 # Environment variables
 env:
