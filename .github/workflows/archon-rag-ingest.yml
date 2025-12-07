@@ -28,6 +28,10 @@ jobs:
             url: https://modelcontextprotocol.io/llms-full.txt
             language: en
             tags: ["anthropic", "mcp", "protocol", "agents"]
+          - name: LiteLLM docs
+            url: https://docs.litellm.ai/llms.txt
+            language: en
+            tags: ["litellm", "llm", "proxy", "api"]
           - name: Supabase docs
             url: https://supabase.com/docs/llms.txt
             language: en
