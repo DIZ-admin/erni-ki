@@ -64,6 +64,10 @@ trap cleanup EXIT
 
 main() {
   cd "$PROJECT_ROOT"
+  if [ $? -ne 0 ]; then
+    log_error "Failed to change to project root directory"
+    exit 1
+  fi
 
   log_info "Starting Docker Compose integration tests..."
   log_info "Compose file: ${COMPOSE_FILE}"
@@ -103,7 +107,9 @@ main() {
       running_count=$(docker compose -f "$COMPOSE_FILE" ps --format json 2>/dev/null | \
         jq -r 'select(.State == "running")' | wc -l || echo "0")
 
-      if [ "$running_count" -ge 5 ]; then
+      # Expected number of healthy services in compose.test.yml
+      readonly EXPECTED_SERVICE_COUNT=5
+      if [ "$running_count" -ge "$EXPECTED_SERVICE_COUNT" ]; then
         all_healthy=true
         break
       fi
