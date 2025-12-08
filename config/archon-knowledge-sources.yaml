@@ -1,0 +1,100 @@
+# Project-Specific Archon Knowledge Sources Configuration
+# This file extends the base Archon configuration with project-specific overrides.
+#
+# The base configuration is at:
+#   /Users/kostas/Documents/Projects/Archon/config/knowledge-sources.yaml
+#
+# This file allows you to:
+#   - Override priorities for existing sources
+#   - Add project-specific sources
+#   - Exclude sources not needed for this project
+
+version: "1.0"
+extends: archon # Use Archon base config as starting point
+last_updated: "2025-12-08"
+
+# =============================================================================
+# PRIORITY OVERRIDES
+# =============================================================================
+# Override priority levels for sources important to this project
+
+priority_overrides:
+  # AI/ML - critical for this project
+  pydantic-ai: critical
+  mcp: critical
+  litellm: high
+  ollama: critical # Local LLM inference
+  open-webui: high # Web UI for LLMs
+
+  # Backend - high priority
+  supabase: critical
+  pgvector: high
+
+  # DevOps - high for this project
+  nginx: high # Reverse proxy
+
+  # Testing - medium for this project
+  vitest: medium
+  pytest: medium
+
+# =============================================================================
+# PROJECT-SPECIFIC SOURCES
+# =============================================================================
+# Add sources specific to this project that aren't in the base config
+
+sources:
+  # Example: Internal documentation
+  # - id: internal-api
+  #   title: "Internal API Docs"
+  #   url: "https://internal.example.com/llms.txt"
+  #   tags:
+  #     - internal
+  #     - api
+  #   category: internal
+  #   priority: high
+
+  # Example: Project-specific technology
+  # - id: custom-framework
+  #   title: "Custom Framework Docs"
+  #   url: "https://framework.example.com/llms-full.txt"
+  #   tags:
+  #     - custom
+  #     - framework
+  #   category: ai-ml
+  #   priority: high
+
+# =============================================================================
+# EXCLUDED SOURCES
+# =============================================================================
+# Sources from base config that are not needed for this project
+
+exclude:
+  # Exclude sources not used in this project
+  # - ruff  # Using different linter
+  # - redis  # Not using Redis in this project
+
+# =============================================================================
+# PROJECT CATEGORIES
+# =============================================================================
+# Add project-specific categories
+
+categories:
+  internal:
+    name: "Internal Documentation"
+    description: "Project-specific internal documentation"
+    icon: "lock"
+
+# =============================================================================
+# SYNC SETTINGS
+# =============================================================================
+# Override sync behavior for this project
+
+sync:
+  # Detect sources in DB not in combined config
+  detect_orphans: true
+
+  # Prompt before deleting orphans
+  orphan_action: prompt
+
+  # Refresh sources older than 14 days
+  stale_threshold_days: 14

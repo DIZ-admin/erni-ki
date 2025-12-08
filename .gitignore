@@ -20,6 +20,7 @@ conf/nginx/ssl/renewal-hooks/
 conf/nginx/ssl/cloudflare.ini
 .env.*.local
 env/*.env
+env/*.local
 !env/*.example
 !env/*.template
 env/*.backup-*
