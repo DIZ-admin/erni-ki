@@ -19,7 +19,7 @@ EMOJI_PATTERN = re.compile(
     "\U0001f900-\U0001f9ff"  # supplemental symbols and pictographs
     "\U0001fa00-\U0001faff"  # symbols extended-A (faces, objects)
     "\U00002600-\U000026ff"  # misc symbols (weather, zodiac, etc.)
-    "\U000024c2-\U000024c2"  # circled M (Ⓜ️) - single char
+    "\U000024c2"  # circled M (Ⓜ️)
     "\U0001f200-\U0001f251"  # enclosed ideographic supplement
     "]+",
     flags=re.UNICODE,
@@ -85,7 +85,7 @@ def check_file_for_emoji(file_path: str) -> tuple[bool, list[str]]:
                 found_emoji.append(emoji)
 
         return len(found_emoji) > 0, found_emoji
-    except Exception as e:
+    except (OSError, UnicodeDecodeError) as e:
         print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
         return False, []
 

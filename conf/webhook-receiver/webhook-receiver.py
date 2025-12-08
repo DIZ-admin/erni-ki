@@ -286,7 +286,11 @@ def _create_webhook_handler(alert_type: str, description: str):
             process_alert(model, alert_type)
             return jsonify({"status": "success", "message": f"{description} processed"})
         except ValidationError as exc:
-            logger.warning("Payload validation failed: %s", exc)
+            logger.warning(
+                "Payload validation failed for %s webhook at locations: %s",
+                alert_type,
+                [err.get("loc") for err in exc.errors()],
+            )
             return jsonify({"error": "Invalid request payload"}), 400
         except Exception as exc:  # noqa: BLE001
             logger.exception("Unexpected error in %s webhook: %s", alert_type, exc)
