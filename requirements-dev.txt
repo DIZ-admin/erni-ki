@@ -1,7 +1,7 @@
 # Developer tooling for linting/formatting
 ruff>=0.14.6,<0.15.0
 pre-commit>=4.3,<5.0
-yamllint>=1.35,<1.36
+yamllint>=1.35,<1.38
 pyyaml>=6.0,<7.0
 mkdocs>=1.6,<1.7
 mkdocs-material>=9.5,<9.8
