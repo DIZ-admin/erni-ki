@@ -56,7 +56,7 @@ jobs:
           cache-dependency-path: auth/go.sum
 
       - name: 🔍 Initialize CodeQL
-        uses: github/codeql-action/init@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
+        uses: github/codeql-action/init@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
@@ -82,11 +82,11 @@ jobs:
 
       - name: 🏗️ Autobuild
         if: matrix.language != 'go'
-        uses: github/codeql-action/autobuild@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
+        uses: github/codeql-action/autobuild@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
 
       # Perform CodeQL analysis
       - name: 🔍 Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
+        uses: github/codeql-action/analyze@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
           category: "/language:${{ matrix.language }}"
 
@@ -494,6 +494,6 @@ jobs:
           find sarif -name '*.sarif' -maxdepth 3 -type f || true
 
       - name: 📤 Upload merged SARIF to Security
-        uses: github/codeql-action/upload-sarif@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
           sarif_file: sarif

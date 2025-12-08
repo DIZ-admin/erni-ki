@@ -739,7 +739,7 @@ jobs:
           gosec -fmt sarif -out gosec-results.sarif -severity high -confidence high -no-fail ./auth/... || echo "gosec SSA panic (Go 1.24 compat issue); SARIF may be partial"
 
       - name: 📤 Upload Gosec results to GitHub Security
-        uses: github/codeql-action/upload-sarif@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         if: always() && hashFiles('gosec-results.sarif') != ''
         with:
           sarif_file: gosec-results.sarif
@@ -761,7 +761,7 @@ jobs:
           exit-code: "1"
 
       - name: 📤 Upload Trivy results
-        uses: github/codeql-action/upload-sarif@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         if: always() && hashFiles('trivy-results.sarif') != ''
         with:
           sarif_file: "trivy-results.sarif"
@@ -986,7 +986,7 @@ jobs:
           exit-code: "1"
 
       - name: 📤 Upload Docker Trivy results
-        uses: github/codeql-action/upload-sarif@36a9c375704a9813bd709881c97694bcd24e1cb1 # v4
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         if: always() && hashFiles('docker-trivy-results.sarif') != ''
         with:
           sarif_file: "docker-trivy-results.sarif"
