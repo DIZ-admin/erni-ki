@@ -440,14 +440,15 @@ def handle_critical_webhook():
         )
 
     except (ValidationError, ValueError) as e:
-        return jsonify({"error": str(e)}), 400
+        logger.warning("Validation error in critical webhook: %s", e)
+        return jsonify({"error": "Invalid request payload"}), 400
     except PermissionError:
         return jsonify({"error": "Unauthorized"}), 401
     except (KeyError, TypeError) as e:
-        logger.error(f"Invalid payload structure: {e}", exc_info=True)
+        logger.error("Invalid payload structure: %s", e)
         return jsonify({"error": "Invalid payload"}), 400
-    except Exception as e:
-        logger.exception(f"Unexpected error handling critical webhook: {e}")
+    except Exception:
+        logger.exception("Unexpected error handling critical webhook")
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -466,14 +467,15 @@ def handle_warning_webhook():
         )
 
     except (ValidationError, ValueError) as e:
-        return jsonify({"error": str(e)}), 400
+        logger.warning("Validation error in warning webhook: %s", e)
+        return jsonify({"error": "Invalid request payload"}), 400
     except PermissionError:
         return jsonify({"error": "Unauthorized"}), 401
     except (KeyError, TypeError) as e:
-        logger.error(f"Invalid payload structure: {e}", exc_info=True)
+        logger.error("Invalid payload structure: %s", e)
         return jsonify({"error": "Invalid payload"}), 400
-    except Exception as e:
-        logger.exception(f"Unexpected error handling warning webhook: {e}")
+    except Exception:
+        logger.exception("Unexpected error handling warning webhook")
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -486,11 +488,12 @@ def handle_general_webhook():
         result = alert_processor.process_alerts(payload.model_dump())
         return jsonify({"status": "success", "message": "Alerts processed", "result": result})
     except (ValidationError, ValueError) as e:
-        return jsonify({"error": str(e)}), 400
+        logger.warning("Validation error in general webhook: %s", e)
+        return jsonify({"error": "Invalid request payload"}), 400
     except PermissionError:
         return jsonify({"error": "Unauthorized"}), 401
-    except Exception as e:
-        logger.exception(f"Unexpected error handling general webhook: {e}")
+    except Exception:
+        logger.exception("Unexpected error handling general webhook")
         return jsonify({"error": "Internal server error"}), 500
 
 
