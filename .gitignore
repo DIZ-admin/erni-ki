@@ -103,6 +103,7 @@ bin/
 scripts/lib/*
 !/scripts/lib/__init__.py
 !/scripts/lib/logger.py
+!/scripts/lib/llm_client.py
 !/scripts/lib/common.sh
 !/scripts/lib/monitoring.sh
 

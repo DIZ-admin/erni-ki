@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-AI-powered documentation quality validator using GitHub Models API.
+AI-powered documentation quality validator.
 
-Uses GPT-4o-mini to analyze markdown documentation for:
+Uses LiteLLM gateway (with GitHub Models fallback) to analyze markdown documentation for:
 - Completeness (required sections)
 - Readability (structure, clarity)
 - Consistency (terminology, formatting)
@@ -11,6 +11,12 @@ Usage:
     python scripts/docs/ai-content-validator.py docs/readme.md
     python scripts/docs/ai-content-validator.py docs/ --recursive
     python scripts/docs/ai-content-validator.py docs/ --ci --output results.json
+
+Environment Variables:
+    LITELLM_API_KEY   - LiteLLM gateway API key (primary)
+    LITELLM_ENDPOINT  - LiteLLM endpoint URL (default: http://litellm:4000/v1)
+    LITELLM_MODEL     - Model alias (default: docs-validator)
+    GITHUB_TOKEN      - Fallback to GitHub Models if LiteLLM unavailable
 """
 
 from __future__ import annotations
@@ -18,18 +24,18 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from openai import OpenAI
+    from scripts.lib.llm_client import LLMClient
 
-# GitHub Models configuration
-ENDPOINT = "https://models.github.ai/inference"
-MODEL = "openai/gpt-4o-mini"
+# LiteLLM configuration (with GitHub Models fallback)
+DEFAULT_MODEL = os.environ.get("LITELLM_MODEL", "docs-validator")
+# Fallback model for GitHub Models
+GITHUB_MODELS_MODEL = "openai/gpt-4o-mini"
 
 # Required sections for different doc types
 REQUIRED_SECTIONS = {
@@ -93,20 +99,20 @@ class ValidationResult:
         }
 
 
-def get_openai_client() -> OpenAI:
-    """Create OpenAI client configured for GitHub Models."""
+def get_llm_client_instance() -> LLMClient:
+    """Create LLM client with LiteLLM primary and GitHub Models fallback."""
+    # Add scripts directory to path for imports
+    scripts_dir = Path(__file__).parent.parent
+    if str(scripts_dir) not in sys.path:
+        sys.path.insert(0, str(scripts_dir))
+
     try:
-        from openai import OpenAI
+        from lib.llm_client import get_llm_client
     except ImportError:
-        print("Error: openai package not installed. Run: pip install openai")
+        print("Error: Could not import llm_client. Ensure scripts/lib/llm_client.py exists.")
         sys.exit(1)
 
-    token = os.environ.get("GITHUB_TOKEN")
-    if not token:
-        print("Error: GITHUB_TOKEN environment variable not set")
-        sys.exit(1)
-
-    return OpenAI(base_url=ENDPOINT, api_key=token)
+    return get_llm_client(model=DEFAULT_MODEL)
 
 
 def detect_doc_type(content: str, file_path: str) -> str:
@@ -222,7 +228,7 @@ def check_terminology(content: str) -> list[ValidationIssue]:
     return issues
 
 
-def analyze_with_ai(client: OpenAI, content: str, file_path: str) -> dict:
+def analyze_with_ai(client: LLMClient, content: str, file_path: str) -> dict:
     """Use AI to analyze document quality."""
     prompt = f"""Analyze this documentation file for quality. Be concise.
 
@@ -239,42 +245,26 @@ Provide a JSON response with:
 Focus on:
 - Is the content clear and well-structured?
 - Are there any missing important sections?
-- Is the technical accuracy apparent?
-
-Respond with ONLY valid JSON, no markdown formatting."""
+- Is the technical accuracy apparent?"""
 
     try:
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a technical documentation reviewer. "
-                    "Respond only with valid JSON.",
-                },
-                {"role": "user", "content": prompt},
-            ],
-            max_tokens=500,
+        # Use the LLMClient's analyze_json method which handles JSON extraction
+        return client.analyze_json(
+            prompt=prompt,
+            system="You are a technical documentation reviewer.",
             temperature=0.3,
+            max_tokens=500,
         )
-
-        result_text = response.choices[0].message.content or "{}"
-
-        # Clean up response (extract JSON from markdown code block if present)
-        match = re.search(r"```(?:json)?\s*([\s\S]*?)```", result_text)
-        if match:
-            result_text = match.group(1).strip()
-
-        return json.loads(result_text)
-
-    except json.JSONDecodeError:
-        return {"score": 70, "issues": [], "suggestions": ["AI analysis unavailable"]}
     except Exception as e:
-        return {"score": 70, "issues": [], "suggestions": [f"AI error: {e!s}"]}
+        # Fallback with default score on any error
+        error_msg = str(e)
+        if "JSON" in error_msg:
+            return {"score": 70, "issues": [], "suggestions": ["AI analysis unavailable"]}
+        return {"score": 70, "issues": [], "suggestions": [f"AI error: {error_msg}"]}
 
 
 def validate_file(
-    file_path: Path, client: OpenAI | None = None, use_ai: bool = True
+    file_path: Path, client: LLMClient | None = None, use_ai: bool = True
 ) -> ValidationResult:
     """Validate a single markdown file."""
     result = ValidationResult(file_path=str(file_path))
@@ -343,7 +333,7 @@ def validate_file(
 
 def validate_directory(
     dir_path: Path,
-    client: OpenAI | None = None,
+    client: LLMClient | None = None,
     use_ai: bool = True,
     recursive: bool = True,
 ) -> list[ValidationResult]:
@@ -425,10 +415,13 @@ def main() -> int:
     # Initialize AI client if needed
     client = None
     if not args.no_ai:
-        if os.environ.get("GITHUB_TOKEN"):
-            client = get_openai_client()
+        # LLMClient handles LiteLLM primary with GitHub Models fallback
+        has_litellm = os.environ.get("LITELLM_API_KEY")
+        has_github = os.environ.get("GITHUB_TOKEN")
+        if has_litellm or has_github:
+            client = get_llm_client_instance()
         else:
-            print("Warning: GITHUB_TOKEN not set, running without AI analysis")
+            print("Warning: Neither LITELLM_API_KEY nor GITHUB_TOKEN set, running without AI")
 
     # Run validation
     if path.is_file():

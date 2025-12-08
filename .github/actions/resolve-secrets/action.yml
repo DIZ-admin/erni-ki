@@ -25,6 +25,14 @@ inputs:
     description: "Google API key for the environment"
     required: false
     default: ""
+  litellm-api-key:
+    description: "LiteLLM gateway API key for AI services"
+    required: false
+    default: ""
+  litellm-endpoint:
+    description: "LiteLLM gateway endpoint URL"
+    required: false
+    default: "https://litellm.erni-ki.ch/v1"
   validate:
     description: "Whether to validate secrets (fail on production if missing)"
     required: false
@@ -48,6 +56,12 @@ runs:
         fi
         if [ -n "${{ inputs.google-api-key }}" ]; then
           echo "GOOGLE_API_KEY=${{ inputs.google-api-key }}" >> "$GITHUB_ENV"
+        fi
+        if [ -n "${{ inputs.litellm-api-key }}" ]; then
+          echo "LITELLM_API_KEY=${{ inputs.litellm-api-key }}" >> "$GITHUB_ENV"
+        fi
+        if [ -n "${{ inputs.litellm-endpoint }}" ]; then
+          echo "LITELLM_ENDPOINT=${{ inputs.litellm-endpoint }}" >> "$GITHUB_ENV"
         fi
 
         echo "::notice::Secrets exported for environment: ${{ inputs.environment }}"
@@ -74,11 +88,12 @@ runs:
         fi
 
         # Optional secrets (warn if missing, don't fail)
-        for key_name in "CONTEXT7_API_KEY" "ANTHROPIC_API_KEY" "GOOGLE_API_KEY"; do
+        for key_name in "CONTEXT7_API_KEY" "ANTHROPIC_API_KEY" "GOOGLE_API_KEY" "LITELLM_API_KEY"; do
           case "$key_name" in
             "CONTEXT7_API_KEY") value="${{ inputs.context7-api-key }}" ;;
             "ANTHROPIC_API_KEY") value="${{ inputs.anthropic-api-key }}" ;;
             "GOOGLE_API_KEY") value="${{ inputs.google-api-key }}" ;;
+            "LITELLM_API_KEY") value="${{ inputs.litellm-api-key }}" ;;
           esac
 
           if [ -n "$value" ] && [[ "$value" != *"REPLACE_WITH_REAL"* ]]; then
