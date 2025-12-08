@@ -8,6 +8,7 @@ import re
 import sys
 from pathlib import Path
 
+# CodeQL py/overly-large-range: Use specific emoji ranges instead of massive spans
 EMOJI_PATTERN = re.compile(
     "["
     "\U0001f600-\U0001f64f"  # emoticons
@@ -15,9 +16,11 @@ EMOJI_PATTERN = re.compile(
     "\U0001f680-\U0001f6ff"  # transport & map symbols
     "\U0001f1e0-\U0001f1ff"  # flags (iOS)
     "\U00002702-\U000027b0"  # dingbats
-    "\U000024c2-\U0001f251"
-    "\U0001f900-\U0001f9ff"  # supplemental symbols
-    "\U0001f018-\U0001f270"
+    "\U0001f900-\U0001f9ff"  # supplemental symbols and pictographs
+    "\U0001fa00-\U0001faff"  # symbols extended-A (faces, objects)
+    "\U00002600-\U000026ff"  # misc symbols (weather, zodiac, etc.)
+    "\U000024c2"  # circled M (Ⓜ️)
+    "\U0001f200-\U0001f251"  # enclosed ideographic supplement
     "]+",
     flags=re.UNICODE,
 )
@@ -82,7 +85,7 @@ def check_file_for_emoji(file_path: str) -> tuple[bool, list[str]]:
                 found_emoji.append(emoji)
 
         return len(found_emoji) > 0, found_emoji
-    except Exception as e:
+    except (OSError, UnicodeDecodeError) as e:
         print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
         return False, []
 

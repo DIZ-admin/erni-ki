@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit Configuration - ERNI-KI Project
+# Docs: https://docs.coderabbit.ai/reference/configuration
 
 language: ru
+tone_instructions: "Будь конструктивным и конкретным. Фокусируйся на безопасности, производительности и поддерживаемости."
 early_access: true
 enable_free_tier: true
 
@@ -15,11 +18,22 @@ reviews:
   collapse_walkthrough: false
   sequence_diagrams: true
   changed_files_summary: true
-  labeling_instructions: []
+  abort_on_close: true
+  estimate_code_review_effort: true
+  suggested_labels: true
+  suggested_reviewers: true
+  labeling_instructions:
+    - label: "security"
+      instructions: "Применяй к PR с изменениями в аутентификации, secrets, или безопасности"
+    - label: "breaking-change"
+      instructions: "Применяй если изменения ломают обратную совместимость API"
+    - label: "documentation"
+      instructions: "Применяй к PR с изменениями только в документации"
 
   auto_review:
     enabled: true
     auto_incremental_review: true
+    drafts: false
     base_branches:
       - main
       - develop
@@ -27,45 +41,152 @@ reviews:
       - "WIP"
       - "DO NOT REVIEW"
       - "wip"
+      - "[skip ci]"
+      - "[no review]"
+
+  # Tools configuration - enable relevant linters
+  tools:
+    # Python
+    ruff:
+      enabled: true
+    pylint:
+      enabled: false # Using ruff instead
+    # JavaScript/TypeScript
+    eslint:
+      enabled: true
+    biome:
+      enabled: false # Using eslint
+    # Shell
+    shellcheck:
+      enabled: true
+    # Docker/Infrastructure
+    hadolint:
+      enabled: true
+    checkov:
+      enabled: true
+    # Security
+    gitleaks:
+      enabled: true
+    semgrep:
+      enabled: true
+    # Go
+    golangci-lint:
+      enabled: true
+    # YAML
+    yamllint:
+      enabled: true
+    # Markdown
+    markdownlint:
+      enabled: true
+    languagetool:
+      enabled: false # Disable grammar check for code repos
 
   path_instructions:
     - path: "**/*.go"
       instructions: |
         - Проверяй на соответствие идиомам Go
-        - Убедись в обработке ошибок
+        - Убедись в обработке ошибок (не игнорируй err)
         - Проверь отсутствие утечек горутин
         - Валидируй использование context
+        - Проверь defer для cleanup операций
     - path: "**/*.py"
       instructions: |
-        - Проверяй соответствие PEP 8
-        - Убедись в наличии type hints
-        - Проверь обработку исключений
+        - Проверяй соответствие PEP 8 и Ruff правилам
+        - Убедись в наличии type hints для публичных функций
+        - Проверь обработку исключений (не используй bare except)
+        - Валидируй использование logging вместо print
+        - Проверь на SQL injection и другие уязвимости
+    - path: "**/*.ts"
+      instructions: |
+        - Проверь строгую типизацию (избегай any)
+        - Убедись в обработке ошибок в async функциях
+        - Валидируй null/undefined проверки
+        - Проверь на XSS уязвимости
     - path: "**/*.sh"
       instructions: |
         - Проверь использование set -euo pipefail
-        - Убедись в правильном экранировании переменных
-        - Проверь обработку ошибок
+        - Убедись в правильном экранировании переменных ("$var")
+        - Проверь обработку ошибок и exit codes
+        - Валидируй использование shellcheck директив
     - path: ".github/workflows/**"
       instructions: |
-        - Проверь безопасность secrets
-        - Убедись в наличии timeout
-        - Валидируй permissions
+        - Проверь безопасность secrets (не выводи в логи)
+        - Убедись в наличии timeout-minutes
+        - Валидируй минимальные permissions
+        - Проверь pinning версий actions (SHA)
+        - Убедись в использовании GITHUB_TOKEN вместо PAT где возможно
+    - path: "**/Dockerfile*"
+      instructions: |
+        - Проверь использование конкретных версий образов (не latest)
+        - Убедись в multi-stage builds для уменьшения размера
+        - Проверь запуск от non-root пользователя
+        - Валидируй HEALTHCHECK инструкцию
+        - Проверь на секреты в образе
     - path: "compose.yml"
       instructions: |
         - Проверь версии образов (pinning)
         - Убедись в наличии health checks
-        - Проверь resource limits
-        - Валидируй использование secrets
+        - Проверь resource limits (mem_limit, cpus)
+        - Валидируй использование secrets вместо environment
+        - Проверь restart policy
+    - path: "**/*.yaml"
+      instructions: |
+        - Проверь корректность синтаксиса YAML
+        - Убедись в консистентности отступов
+        - Валидируй наличие обязательных полей
+    - path: "tests/**"
+      instructions: |
+        - Проверь покрытие edge cases
+        - Убедись в изоляции тестов
+        - Валидируй mock/stub использование
+        - Проверь наличие assertions
+    - path: "docs/**/*.md"
+      instructions: |
+        - Проверь корректность markdown синтаксиса
+        - Убедись в работоспособности ссылок
+        - Валидируй наличие frontmatter где требуется
 
   path_filters:
     - "!**/*.lock"
     - "!**/*.sum"
     - "!**/package-lock.json"
+    - "!**/bun.lockb"
     - "!docs/locales/**"
     - "!scripts/archon/**"
     - "!site/**"
     - "!coverage/**"
-    - "!*.md"
+    - "!htmlcov/**"
+    - "!node_modules/**"
+    - "!.venv/**"
+    - "!**/*.min.js"
+    - "!**/*.min.css"
 
 chat:
   auto_reply: true
+
+knowledge_base:
+  opt_out: false
+  web_search:
+    enabled: true
+  learnings:
+    scope: auto
+  code_guidelines:
+    enabled: true
+    file_patterns:
+      - "CLAUDE.md"
+      - "CONTRIBUTING.md"
+      - "docs/development/**/*.md"
+
+code_generation:
+  docstrings:
+    enabled: true
+    language: ru
+  unit_tests:
+    enabled: true
+    path_instructions:
+      - path: "**/*.py"
+        instructions: "Используй pytest с fixtures и parametrize"
+      - path: "**/*.ts"
+        instructions: "Используй Vitest с describe/it структурой"
+      - path: "**/*.go"
+        instructions: "Используй стандартный testing пакет с table-driven tests"

@@ -1,0 +1,40 @@
+/* Academy KI Custom Styles */
+
+/* Primary branding */
+:root {
+  --md-primary-fg-color: #3f51b5;
+  --md-primary-fg-color--light: #5c6bc0;
+  --md-primary-fg-color--dark: #303f9f;
+  --md-accent-fg-color: #ffc107;
+}
+
+/* Hero section styling */
+.md-typeset h1 {
+  font-weight: 700;
+}
+
+/* Code block improvements */
+.md-typeset code {
+  background-color: var(--md-code-bg-color);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+}
+
+/* Admonition customization */
+.md-typeset .admonition.tip {
+  border-color: #4caf50;
+}
+
+.md-typeset .admonition.warning {
+  border-color: #ff9800;
+}
+
+/* Navigation improvements */
+.md-nav__link {
+  font-size: 0.75rem;
+}
+
+/* Footer styling */
+.md-footer {
+  background-color: var(--md-primary-fg-color--dark);
+}

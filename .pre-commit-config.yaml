@@ -97,6 +97,7 @@ repos:
           (?x)^(
             \.env.*|
             mkdocs\.yml|
+            mkdocs-academy\.yml|
             conf/litellm/config\.yaml|
             conf/.*\.yml|
             conf/.*\.yaml|
@@ -128,16 +129,40 @@ repos:
           )$
 
   # ===================================================================
+  # YAML LINTING
+  # ===================================================================
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: "yamllint: YAML style validation"
+        args: [-c=.yamllint]
+        exclude: |
+          (?x)^(
+            \.env.*|
+            mkdocs\.yml|
+            mkdocs-academy\.yml|
+            conf/litellm/config\.yaml|
+            data/.*|
+            logs/.*|
+            \.config-backup/.*|
+            \.pre-commit/.*
+          )$
+
+  # ===================================================================
   # PRETTIER FORMATTING
   # ===================================================================
+  # Note: mirrors-prettier rev (v3.1.0) != npm prettier version (3.6.2)
+  # mirrors-prettier is a pre-commit wrapper, actual Prettier version
+  # specified in additional_dependencies
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+    rev: v3.1.0
     hooks:
       - id: prettier
         name: "Prettier: code formatting"
         files: \.(md|yml|yaml|json|js|jsx|ts|tsx)$
         additional_dependencies:
-          - prettier@4.0.0-alpha.8
+          - prettier@3.6.2 # Actual Prettier version
 
   # ===================================================================
   # PYTHON LINTING/FORMATTING (RUFF)
@@ -478,3 +503,11 @@ repos:
         entry: scripts/security/check-secret-permissions.sh
         language: script
         pass_filenames: false
+
+      # Run Python unit tests with pytest
+      - id: pytest-check
+        name: "Python: run pytest tests"
+        entry: scripts/ci/run-pytest.sh
+        language: script
+        pass_filenames: false
+        files: \.(py)$

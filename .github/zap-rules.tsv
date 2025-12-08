@@ -1,0 +1,62 @@
+# ZAP Baseline Scan Rules Configuration
+# Format: rule_id	action	description
+# Actions: IGNORE, WARN, FAIL
+
+# Informational findings (IGNORE in baseline)
+10015	IGNORE	Incomplete or No Cache-control and Pragma HTTP Header Set
+10020	IGNORE	X-Frame-Options Header Not Set
+10021	IGNORE	X-Content-Type-Options Header Missing
+10035	IGNORE	Strict-Transport-Security Header Not Set
+10036	IGNORE	Server Leaks Version Information via "Server" HTTP Response Header Field
+10037	IGNORE	Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+10038	IGNORE	Content Security Policy (CSP) Header Not Set
+10039	IGNORE	X-Backend-Server Header Information Leak
+10040	IGNORE	Secure Pages Include Mixed Content
+10049	IGNORE	Non-Storable Content
+10050	IGNORE	Retrieved from Cache
+10054	IGNORE	Cookie Without SameSite Attribute
+10055	IGNORE	CSP: Wildcard Directive
+10063	IGNORE	Feature Policy Header Not Set
+10096	IGNORE	Timestamp Disclosure
+10109	IGNORE	Modern Web Application
+
+# Low severity (WARN)
+10010	WARN	Cookie No HttpOnly Flag
+10011	WARN	Cookie Without Secure Flag
+10017	WARN	Cross-Domain JavaScript Source File Inclusion
+10019	WARN	Content-Type Header Missing
+
+# Medium severity (WARN for baseline, FAIL for full scan)
+10012	WARN	Password Autocomplete in Browser
+10016	WARN	Web Browser XSS Protection Not Enabled
+10024	WARN	Information Disclosure - Sensitive Information in URL
+10025	WARN	Information Disclosure - Sensitive Information in HTTP Referrer Header
+10027	WARN	Information Disclosure - Suspicious Comments
+10032	WARN	Viewstate Scanner
+10052	WARN	X-ChromeLogger-Data Header Information Leak
+
+# High severity (FAIL)
+10020	FAIL	X-Frame-Options Header Scanner
+10023	FAIL	Information Disclosure - Debug Error Messages
+10028	FAIL	Open Redirect
+10029	FAIL	Cookie Poisoning
+10034	FAIL	Heartbleed OpenSSL Vulnerability
+10045	FAIL	Source Code Disclosure
+10095	FAIL	Backup File Disclosure
+10202	FAIL	Absence of Anti-CSRF Tokens
+
+# Critical (always FAIL)
+40012	FAIL	Cross Site Scripting (Reflected)
+40014	FAIL	Cross Site Scripting (Persistent)
+40016	FAIL	Cross Site Scripting (Persistent) - Prime
+40017	FAIL	Cross Site Scripting (Persistent) - Spider
+90019	FAIL	Server Side Code Injection
+90020	FAIL	Remote OS Command Injection
+90021	FAIL	XPath Injection
+90023	FAIL	XML External Entity Attack
+90024	FAIL	Generic Padding Oracle
+90025	FAIL	Expression Language Injection
+90026	FAIL	SOAP Action Spoofing
+90028	FAIL	Insecure HTTP Method
+90029	FAIL	SOAP XML Injection
+90030	FAIL	WSDL File Detection

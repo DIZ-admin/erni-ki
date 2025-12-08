@@ -11,21 +11,64 @@ python = "^3.11"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
+[tool.ruff]
 line-length = 100
-target-version = ['py311']
-include = '\.pyi?$'
+target-version = "py311"
 
-[tool.isort]
-profile = "black"
-line_length = 100
-multi_line_output = 3
+[tool.ruff.lint]
+select = [
+  "E", # pycodestyle errors
+  "W", # pycodestyle warnings
+  "F", # pyflakes
+  "I", # isort
+  "N", # pep8-naming
+  "UP", # pyupgrade
+  "B", # flake8-bugbear
+  "S", # flake8-bandit
+  "C4", # flake8-comprehensions
+  "SIM", # flake8-simplify
+]
+ignore = []
 
-
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-ra -q"
 testpaths = [
     "tests",
+]
+
+[tool.coverage.run]
+# Note: Coverage reporting is limited due to dynamic imports in tests
+# Tests use sys.path manipulation which coverage.py cannot track effectively
+# Current approach: Track test count (332 tests) instead of line coverage
+# See .coveragerc for CI-specific omit patterns
+omit = [
+    "tests/*",
+    "test_*",
+    "*/__pycache__/*",
+    "node_modules/*",
+    ".venv/*",
+    "venv/*",
+    "scripts/entrypoints/*",
+    "scripts/archon/*",
+    "**/site-packages/*",
+    ".git/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
 ]

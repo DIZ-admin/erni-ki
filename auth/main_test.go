@@ -670,3 +670,110 @@ func TestValidateSecretsErrorMessages(t *testing.T) {
 		})
 	}
 }
+
+// Test requestLogger with different status codes and error messages.
+func TestRequestLoggerVariants(t *testing.T) {
+	tests := []struct {
+		name         string
+		statusCode   int
+		errorMessage string
+		expectLog    string
+	}{
+		{
+			name:         "Success request",
+			statusCode:   200,
+			errorMessage: "",
+			expectLog:    "\"status\":200",
+		},
+		{
+			name:         "Error request with message",
+			statusCode:   500,
+			errorMessage: "internal error",
+			expectLog:    "\"status\":500",
+		},
+		{
+			name:         "Client error",
+			statusCode:   400,
+			errorMessage: "bad request",
+			expectLog:    "\"status\":400",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			params := gin.LogFormatterParams{
+				TimeStamp:    time.Now(),
+				StatusCode:   tt.statusCode,
+				Latency:      100 * time.Millisecond,
+				ClientIP:     "127.0.0.1",
+				Method:       http.MethodPost,
+				Path:         "/api/test",
+				ErrorMessage: tt.errorMessage,
+				Keys:         map[any]any{"request_id": "test-123"},
+			}
+
+			line := requestLogger(params)
+			if !strings.Contains(line, tt.expectLog) {
+				t.Errorf("Expected log to contain %s, got: %s", tt.expectLog, line)
+			}
+			// ErrorMessage is not included in log format, just verify the line contains basic info
+			if !strings.Contains(line, "\"time\":") || !strings.Contains(line, "\"method\":") {
+				t.Errorf("Expected log to contain time and method, got: %s", line)
+			}
+		})
+	}
+}
+
+// Test respondJSON error case.
+func TestRespondJSONError(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+
+	// Test error status code
+	respondJSON(c, http.StatusInternalServerError, gin.H{"error": "test error"})
+	if w.Code != http.StatusInternalServerError {
+		t.Errorf("Expected status 500, got %d", w.Code)
+	}
+
+	// Verify Content-Type header
+	if ct := w.Header().Get("Content-Type"); !strings.Contains(ct, "application/json") {
+		t.Errorf("Expected Content-Type to contain application/json, got %q", ct)
+	}
+
+	// Verify error message in response body
+	if body := w.Body.String(); !strings.Contains(body, "test error") {
+		t.Errorf("Expected response body to contain error message, got: %s", body)
+	}
+}
+
+// Test main() error path.
+func TestMainEntryPointError(t *testing.T) {
+	// This test validates error path in run()
+	origSecret := os.Getenv("WEBUI_SECRET_KEY")
+	origSkip := os.Getenv("SKIP_SERVER_START")
+
+	os.Unsetenv("WEBUI_SECRET_KEY")
+	os.Unsetenv("SKIP_SERVER_START")
+
+	defer func() {
+		if origSecret != "" {
+			os.Setenv("WEBUI_SECRET_KEY", origSecret)
+		} else {
+			os.Unsetenv("WEBUI_SECRET_KEY")
+		}
+		if origSkip != "" {
+			os.Setenv("SKIP_SERVER_START", origSkip)
+		} else {
+			os.Unsetenv("SKIP_SERVER_START")
+		}
+	}()
+
+	err := run([]string{"cmd"})
+	if err == nil {
+		t.Fatalf("Expected run() to return error when WEBUI_SECRET_KEY is missing")
+	}
+	if !strings.Contains(err.Error(), "secret validation failed") {
+		t.Errorf("Expected secret validation error, got: %v", err)
+	}
+}

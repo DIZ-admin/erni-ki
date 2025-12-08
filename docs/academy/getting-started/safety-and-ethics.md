@@ -398,9 +398,9 @@ names/details!)
 
 ## Дополнительное чтение
 
-- [ERNI Security Policy](../../security/security-policy.md)
-- [Data Protection Guidelines](../../security/security-best-practices.md)
-- [Compliance Documentation](../../reference/index.md)
+- ERNI Security Policy (internal)
+- Data Protection Guidelines (internal)
+- Compliance Documentation (internal)
 
 ---
 

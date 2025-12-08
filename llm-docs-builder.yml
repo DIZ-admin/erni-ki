@@ -1,0 +1,75 @@
+# llm-docs-builder configuration for erni-ki
+# Generates LLM-optimized documentation (llms.txt)
+# https://github.com/mensfeld/llm-docs-builder
+
+# Project metadata
+title: "ERNI-KI Documentation"
+description: "AI platform with Open WebUI, LiteLLM, Ollama - enterprise self-hosted LLM infrastructure"
+base_url: "https://docs.erni-gruppe.ch"
+
+# Source and output
+docs: "docs"
+output: "site/llms.txt"
+suffix: ".md"
+
+# Compression settings - remove noise for LLM consumption
+remove:
+  frontmatter: true # Remove YAML frontmatter
+  comments: true # Remove HTML comments
+  badges: true # Remove shield.io badges
+  images: false # Keep image references for context
+  code_examples: false # Keep code - important for technical docs
+  blockquotes: false # Keep blockquotes - often contain important notes
+  horizontal_rules: true # Remove decorative elements
+  empty_links: true # Remove placeholder links
+
+# Enhancement settings
+normalize_headings: true # Add hierarchical context
+simplify_links: true # Clean up complex markdown links
+convert_urls: true # Convert to clean URLs
+normalize_whitespace: true # Remove excessive whitespace
+
+# RAG-optimized metadata
+include_metadata: true
+include_tokens: true
+include_timestamps: true
+include_priority: false
+
+# File filtering
+include:
+  - "**/*.md"
+  - "**/*.mdx"
+
+exclude:
+  - "**/node_modules/**"
+  - "**/archive/**"
+  - "**/.git/**"
+  - "**/site/**"
+  - "**/site-academy/**"
+  - "**/*.min.js"
+  - "**/*.min.css"
+  - "**/de/**" # Exclude German translations (use source Russian)
+  - "**/en/**" # Exclude English translations (use source Russian)
+
+# Priority sections (higher priority = more important for RAG)
+priorities:
+  - pattern: "getting-started/**"
+    priority: 10
+  - pattern: "architecture/**"
+    priority: 9
+  - pattern: "deployment/**"
+    priority: 8
+  - pattern: "operations/**"
+    priority: 8
+  - pattern: "api/**"
+    priority: 7
+  - pattern: "development/**"
+    priority: 7
+  - pattern: "security/**"
+    priority: 6
+  - pattern: "guides/**"
+    priority: 5
+  - pattern: "reference/**"
+    priority: 5
+  - pattern: "troubleshooting/**"
+    priority: 4
