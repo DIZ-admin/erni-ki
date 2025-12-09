@@ -10,6 +10,21 @@ system_status: 'Production Ready'
 
 Comprehensive guide for deploying the ERNI-KI AI Platform.
 
+## Installation Flow
+
+```mermaid
+flowchart TD
+    A[Clone Repository] --> B[Setup Environment]
+    B --> C{GPU Available?}
+    C -->|Yes| D[Install NVIDIA Toolkit]
+    C -->|No| E[CPU-only Mode]
+    D --> F[Configure .env Files]
+    E --> F
+    F --> G[docker compose up -d]
+    G --> H[Verify Health]
+    H --> I[Access UI :8080]
+```
+
 ## Prerequisites
 
 ### Minimum Requirements

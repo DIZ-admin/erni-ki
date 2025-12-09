@@ -163,8 +163,7 @@ Loki. -**Контакты**: <security@erni-ki.local>, emergency hotline, PGP ke
 и troubleshooting:**
 [`Troubleshooting`](operations/troubleshooting/index.md) -**Безопасность:**
 [`security/security-policy.md`](security/security-policy.md),
-[`log-audit.md`](security/log-audit.md) -**Data &
-Storage:**[`data/index.md`](data/index.md) -**API и
+[`log-audit.md`](security/log-audit.md) -**API и
 интеграции:**[`api-reference.md`](reference/api-reference.md),
 [`mcpo-integration-guide.md`](reference/mcpo-integration-guide.md)
 

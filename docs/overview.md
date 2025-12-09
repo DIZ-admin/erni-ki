@@ -17,6 +17,26 @@ This page summarizes the platform state and links to the main sections.
 - Monitoring: Prometheus, Grafana, Loki, Alertmanager
 - Security: JWT everywhere, distroless images, secrets in env/ + Docker secrets
 
+```mermaid
+graph LR
+    subgraph "User Access"
+        U[Users] --> N[Nginx]
+    end
+    subgraph "AI Services"
+        N --> O[OpenWebUI]
+        O --> L[LiteLLM]
+        L --> OL[Ollama]
+    end
+    subgraph "Data & Storage"
+        O --> DB[(PostgreSQL)]
+        O --> R[(Redis)]
+    end
+    subgraph "Monitoring"
+        P[Prometheus] --> G[Grafana]
+        P --> A[Alertmanager]
+    end
+```
+
 ## Navigation
 
 - Architecture: [architecture/index.md](./architecture/index.md)

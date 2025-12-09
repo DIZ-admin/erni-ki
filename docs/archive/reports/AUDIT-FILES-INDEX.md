@@ -17,7 +17,7 @@ last_updated: '2025-12-04'
 ### 1. Полный технический аудит (80+ страниц)
 
 **Файл:**
-[archive/audits/comprehensive-investor-audit-2025-12-03.md](./archive/audits/comprehensive-investor-audit-2025-12-03.md)
+[comprehensive-investor-audit-2025-12-03.md](../audits/comprehensive-investor-audit-2025-12-03.md)
 
 **Содержание:**
 
@@ -137,7 +137,7 @@ last_updated: '2025-12-04'
 
 1. Прочитайте [INVESTOR-PITCH-SUMMARY.md](./INVESTOR-PITCH-SUMMARY.md) (10 мин)
 2. При необходимости детального dive →
-   [comprehensive-investor-audit-2025-12-03.md](./archive/audits/comprehensive-investor-audit-2025-12-03.md)
+   [comprehensive-investor-audit-2025-12-03.md](../audits/comprehensive-investor-audit-2025-12-03.md)
 
 ### Для бизнес-инвесторов:
 

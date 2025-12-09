@@ -995,7 +995,7 @@ etc.) **Sustainability** - maintenance processes, not just creation
 
 **Существующие материалы (для reference):**
 
-- [archive/audits/documentation-audit.md](archive/audits/documentation-audit.md)
+- [documentation-audit.md](../audits/documentation-audit.md)
 - [academy/](academy/)
 - [en/academy/](en/academy/)
 - [de/academy/](de/academy/)
@@ -1065,7 +1065,7 @@ created) **Questions:** GitHub Discussions or Issues
 
 - [MkDocs Material Documentation](https://squidfunk.github.io/mkdocs-material/)
 - [Current Academy Portal](academy/)
-- [Previous Documentation Audit](archive/audits/documentation-audit.md)
+- [Previous Documentation Audit](../audits/documentation-audit.md)
 - [Comprehensive Code Audit](COMPREHENSIVE-AUDIT-SUMMARY.txt)
 
 ---

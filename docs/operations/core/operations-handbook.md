@@ -12,6 +12,20 @@ last_updated: '2025-11-24'
 A compact guide for DevOps/SRE managing observability, SLA, and incident
 response.
 
+```mermaid
+flowchart TD
+    subgraph "Incident Flow"
+        A[Alert Triggered] --> B{Severity?}
+        B -->|Critical| C[Immediate Response <5min]
+        B -->|Warning| D[Triage within 30min]
+        C --> E[Check Logs/Metrics]
+        D --> E
+        E --> F[Apply Runbook]
+        F --> G[Verify Health]
+        G --> H[Document in Archon]
+    end
+```
+
 ## 1. Goal
 
 - Keep 32 production services Healthy (see `README.md`).

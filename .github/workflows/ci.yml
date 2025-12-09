@@ -797,31 +797,13 @@ jobs:
         uses: lycheeverse/lychee-action@a8c4c7cb88f0c7386610c35eb25108e448569cb0 # v2
         with:
           args: >
+            --config .lychee.toml
             --verbose
             --no-progress
             --max-redirects 5
-            --exclude-link-local
-            --exclude 'localhost'
-            --exclude '127\.0\.0\.1'
-            --exclude 'example\.com'
-            --exclude 'your-domain'
-            --exclude 'ki\.erni-gruppe\.ch'
-            --exclude 'status\.ki\.erni-gruppe\.ch'
-            --exclude 'status\.erni-ki\.ch'
-            --exclude 'grafana\.ki\.erni-gruppe\.ch'
-            --exclude 'prometheus\.ki\.erni-gruppe\.ch'
-            --exclude 'docs\.erni-ki\.ch'
-            --exclude '192\.168\.\d+\.\d+'
-            --exclude 'nginx:8080'
-            --exclude 'openwebui:8080'
-            --exclude 'searxng:8080'
-            --exclude 'dash\.cloudflare\.com'
-            --exclude 'docs\.openwebui\.com'
-            --exclude 'github\.com/nginx/nginx/issues'
-            --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
-            --exclude 'docs\.litellm\.ai'
-            --exclude 'commitlint\.js\.org'
             'docs/**/*.md'
+            '!docs/archive/**'
+            '!docs/*/archive/**'
             'README.md'
           fail: true
 
