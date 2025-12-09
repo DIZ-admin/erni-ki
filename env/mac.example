@@ -1,0 +1,16 @@
+# ============================================================================
+# macOS Development Environment Secrets
+# ============================================================================
+# Copy to env/mac.env and fill in with generated values:
+#   openssl rand -hex 16  # for passwords
+#   openssl rand -hex 32  # for secret keys
+# ============================================================================
+
+# Database passwords (use same password for simplicity in local dev)
+MAC_POSTGRES_PASSWORD=<generate-with-openssl-rand-hex-16>
+
+# Redis password
+MAC_REDIS_PASSWORD=<generate-with-openssl-rand-hex-16>
+
+# OpenWebUI secret key (min 32 chars)
+MAC_WEBUI_SECRET_KEY=<generate-with-openssl-rand-hex-32>

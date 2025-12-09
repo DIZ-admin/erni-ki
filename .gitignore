@@ -197,6 +197,7 @@ conf/**/*.yml
 !conf/nginx/includes/block-wordpress-scanners.conf
 !conf/nginx/includes/websocket-common.conf
 !conf/nginx/includes/ws-socket-io-common.conf
+!conf/nginx/includes/api-chat-common.conf
 !conf/nginx/includes/searxng-api-common.conf
 !conf/**/*.example
 !conf/**/*.template

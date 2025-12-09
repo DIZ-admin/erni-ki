@@ -34,9 +34,10 @@ services:
       - NVIDIA_VISIBLE_DEVICES=
       - NVIDIA_DRIVER_CAPABILITIES=
       - CUDA_VISIBLE_DEVICES=
-      - DATABASE_URL=postgresql://postgres:1a75506a124c2c1c5cd5902d1ca4fcbc@db:5432/openwebui
-      - PGVECTOR_DB_URL=postgresql://postgres:1a75506a124c2c1c5cd5902d1ca4fcbc@db:5432/openwebui
-      - WEBUI_SECRET_KEY=dummy-secret-key
+      # Use secrets from secrets/mac/ directory - no hardcoded passwords
+      - DATABASE_URL=postgresql://postgres:${MAC_POSTGRES_PASSWORD}@db:5432/openwebui
+      - PGVECTOR_DB_URL=postgresql://postgres:${MAC_POSTGRES_PASSWORD}@db:5432/openwebui
+      - WEBUI_SECRET_KEY=${MAC_WEBUI_SECRET_KEY}
       - OLLAMA_BASE_URLS=http://ollama:11434
     deploy: null
 
@@ -70,10 +71,11 @@ services:
       - CUDA_VISIBLE_DEVICES=
 
   # Simplify Postgres secret handling on macOS (use env instead of secret file)
+  # Set MAC_POSTGRES_PASSWORD in .env or env/mac.env
   db:
     env_file: []
     environment:
-      - POSTGRES_PASSWORD=1a75506a124c2c1c5cd5902d1ca4fcbc
+      - POSTGRES_PASSWORD=${MAC_POSTGRES_PASSWORD}
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD_FILE=
     secrets: []
@@ -86,9 +88,10 @@ services:
     profiles: ["disabled"]
 
   # Redis: ensure password substitution works on mac
+  # Set MAC_REDIS_PASSWORD in .env or env/mac.env
   redis:
     environment:
-      - REDIS_PASSWORD=f6a7b1684e0dde68df41218ca6688af7
+      - REDIS_PASSWORD=${MAC_REDIS_PASSWORD}
 
   cloudflared:
     depends_on:
@@ -109,7 +112,7 @@ services:
       - ../env/litellm.local
       - ../env/litellm.prisma.env
     environment:
-      - DATABASE_URL=postgresql://postgres:1a75506a124c2c1c5cd5902d1ca4fcbc@db:5432/postgres
+      - DATABASE_URL=postgresql://postgres:${MAC_POSTGRES_PASSWORD}@db:5432/postgres
       - LITELLM_DB_USER=postgres
       - LITELLM_DB_NAME=postgres
       - LITELLM_DB_HOST=db
