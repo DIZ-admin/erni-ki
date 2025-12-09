@@ -251,7 +251,7 @@ services:
   # ==========================================================================
   auth:
     build:
-      context: ../auth
+      context: ./auth
       dockerfile: Dockerfile
     env_file: ../env/auth.env
     logging: *important-logging
