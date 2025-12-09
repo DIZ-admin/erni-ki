@@ -78,7 +78,8 @@ services:
   # ==========================================================================
   cloudflared:
     entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/cloudflared-with-secret.sh"]
-    command: ["tunnel", "--no-autoupdate", "run"]
+    # h2mux reduces QUIC noise on flaky networks; tunnels still managed by token
+    command: ["tunnel", "--protocol", "h2mux", "--no-autoupdate", "run"]
     depends_on:
       nginx:
         condition: service_healthy

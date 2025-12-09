@@ -9,6 +9,7 @@
 .env
 .env.local
 secrets/letsencrypt/
+compose/secrets/
 
 # Legacy placements of ACME state (kept ignored to prevent re-introducing sensitive data)
 conf/nginx/ssl/live/
@@ -19,6 +20,7 @@ conf/nginx/ssl/renewal-hooks/
 conf/nginx/ssl/cloudflare.ini
 .env.*.local
 env/*.env
+env/*.local
 !env/*.example
 !env/*.template
 env/*.backup-*

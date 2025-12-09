@@ -38,6 +38,12 @@ COMPOSE_FILES=(
   "compose/monitoring.yml"
 )
 
+# macOS override (CPU, Apple Silicon). Auto-added on Darwin if file exists.
+MAC_OVERRIDE="compose/mac.override.yml"
+if [ "$(uname -s)" = "Darwin" ] && [ -f "$MAC_OVERRIDE" ]; then
+  COMPOSE_FILES+=("$MAC_OVERRIDE")
+fi
+
 # Build docker compose command
 build_compose_cmd() {
   local cmd="docker compose"
