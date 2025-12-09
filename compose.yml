@@ -265,8 +265,8 @@ services:
       retries: 3
       start_period: 5s
     labels:
-      # Allow auto-updates for Auth service
-      - "com.centurylinklabs.watchtower.enable=true"
+      # Disable Watchtower for locally-built image (no registry)
+      - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=auth-services"
     environment:
       - WEBUI_SECRET_KEY_FILE=/run/secrets/openwebui_secret_key
@@ -717,7 +717,8 @@ services:
         condition: service_healthy
     image: grafana/grafana:12.3.0
     container_name: erni-ki-grafana
-    user: "472:472"
+    user: "0:0"
+    env_file: env/grafana.env
     environment:
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
       GF_PATHS_DATA: "/var/lib/grafana"
@@ -750,9 +751,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     secrets:
-      - source: grafana_admin_password
-        target: grafana_admin_password
-        mode: 0444
+      - grafana_admin_password
     networks:
       - monitoring
 
@@ -784,6 +783,13 @@ services:
         aliases:
           - uptime-kuma
       frontend:
+        aliases:
+          - uptime-kuma
+      # Added backend and data networks to resolve DNS for internal services
+      backend:
+        aliases:
+          - uptime-kuma
+      data:
         aliases:
           - uptime-kuma
 
@@ -1132,7 +1138,8 @@ services:
       retries: 3
       start_period: 15s
     labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+      # Disable Watchtower for locally-built image (no registry)
+      - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     networks:
       - monitoring
@@ -1328,7 +1335,8 @@ services:
       retries: 3
       start_period: 15s
     labels:
-      - "com.centurylinklabs.watchtower.enable=true"
+      # Disable Watchtower for locally-built image (no registry)
+      - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     networks:
       - monitoring
@@ -1371,8 +1379,8 @@ services:
       retries: 3
       start_period: 10s
     labels:
-      # Allow auto-updates for Webhook Receiver
-      - "com.centurylinklabs.watchtower.enable=true"
+      # Disable Watchtower for locally-built image (no registry)
+      - "com.centurylinklabs.watchtower.enable=false"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
     networks:
       - backend
