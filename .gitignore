@@ -12,7 +12,6 @@ secrets/letsencrypt/
 secrets/linux/
 secrets/mac/
 compose/secrets/
-compose/secrets
 
 # Legacy placements of ACME state (kept ignored to prevent re-introducing sensitive data)
 conf/nginx/ssl/live/
@@ -197,6 +196,7 @@ conf/**/*.yml
 !conf/postgres-exporter/config.yml
 !conf/nginx/includes/block-wordpress-scanners.conf
 !conf/nginx/includes/websocket-common.conf
+!conf/nginx/includes/ws-socket-io-common.conf
 !conf/nginx/includes/searxng-api-common.conf
 !conf/**/*.example
 !conf/**/*.template
