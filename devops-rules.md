@@ -524,14 +524,16 @@ docker secret create new_secret secrets/new_secret
 ### Backup & Restore
 
 ```bash
-# Backrest (configured in compose/gateway.yml)
-# See: conf/backrest/ for backup schedules and retention policies
-docker exec backrest backrest backup     # Manual backup
-docker exec backrest backrest list       # List backups
+# Backrest Web UI (configured in compose/gateway.yml)
+# Access: http://localhost:9898 for backup management
+# Backrest orchestrates restic for automated backups
 
-# PostgreSQL direct backup (if needed)
-docker exec -it compose-db-1 pg_dump -U postgres openwebui > backup.sql
-docker exec -i compose-db-1 psql -U postgres openwebui < backup.sql
+# PostgreSQL direct backup
+./docker-compose.sh exec db pg_dump -U postgres openwebui > backup.sql
+./docker-compose.sh exec -T db psql -U postgres openwebui < backup.sql
+
+# Redis backup (RDB snapshot)
+./docker-compose.sh exec redis redis-cli BGSAVE
 ```
 
 ### Troubleshooting
