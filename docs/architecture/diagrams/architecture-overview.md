@@ -1,51 +1,51 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-27'
 ---
 
-# Обзор архитектуры ERNI-KI
+# ERNI-KI Architecture Overview
 
-## Высокоуровневая архитектура
+## High-Level Architecture
 
 ```mermaid
 graph TB
-    subgraph User_Level["Пользовательский уровень"]
-        User["Пользователь"]
-        Browser["Браузер"]
+    subgraph User_Level["User Level"]
+        User["User"]
+        Browser["Browser"]
     end
 
-    subgraph Access_Level["Уровень доступа"]
+    subgraph Access_Level["Access Level"]
         CF["Cloudflare Tunnel"]
         Nginx["Nginx Reverse Proxy"]
         Auth["JWT Auth Service"]
     end
 
-    subgraph App_Level["Уровень приложений"]
+    subgraph App_Level["Application Level"]
         OpenWebUI["Open WebUI#40;GPU#41;"]
         LiteLLM["LiteLLM Gateway"]
         SearXNG["SearXNG Search"]
     end
 
-    subgraph AI_Level["AI/ML уровень"]
+    subgraph AI_Level["AI/ML Level"]
         Ollama["Ollama#40;GPU#41;"]
         Docling["Docling OCR#40;GPU#41;"]
         EdgeTTS["EdgeTTS"]
     end
 
-    subgraph Data_Level["Уровень данных"]
+    subgraph Data_Level["Data Level"]
         PostgreSQL["PostgreSQL#40;pgvector#41;"]
         Redis["Redis Cache"]
     end
 
-    subgraph Aux_Services["Вспомогательные сервисы"]
+    subgraph Aux_Services["Auxiliary Services"]
         Tika["Apache Tika"]
         MCP["MCP Server"]
         Backrest["Backrest Backup"]
     end
 
-    subgraph Monitoring["Мониторинг"]
+    subgraph Monitoring["Monitoring"]
         Prometheus["Prometheus"]
         Grafana["Grafana"]
         Loki["Loki"]
@@ -85,40 +85,46 @@ graph TB
     Grafana --> Loki
 ```
 
-## Описание уровней
+## Layer Descriptions
 
-### Пользовательский уровень
+### User Level
 
-- Доступ через веб-браузер
-- HTTPS соединение
+- Access via web browser
+- HTTPS connection
 
-### Уровень доступа
+### Access Level
 
--**Cloudflare Tunnel**: Безопасный внешний доступ -**Nginx**: Reverse proxy и
-SSL termination -**Auth**: JWT аутентификация
+- **Cloudflare Tunnel**: Secure external access
+- **Nginx**: Reverse proxy and SSL termination
+- **Auth**: JWT authentication
 
-### Уровень приложений
+### Application Level
 
--**Open WebUI**: Основной пользовательский интерфейс
-(GPU-ускорение) -**LiteLLM**: Context Engineering Gateway -**SearXNG**:
-Поисковый движок
+- **Open WebUI**: Main user interface (GPU-accelerated)
+- **LiteLLM**: Context Engineering Gateway
+- **SearXNG**: Search engine
 
-### AI/ML уровень
+### AI/ML Level
 
--**Ollama**: LLM инференс (GPU RTX 5000) -**Docling**: OCR и обработка
-документов (GPU) -**EdgeTTS**: Синтез речи
+- **Ollama**: LLM inference (GPU RTX 5000)
+- **Docling**: OCR and document processing (GPU)
+- **EdgeTTS**: Speech synthesis
 
-### Уровень данных
+### Data Level
 
--**PostgreSQL**: Основная БД с pgvector расширением -**Redis**: Кэш и очереди
+- **PostgreSQL**: Main database with pgvector extension
+- **Redis**: Cache and queues
 
-### Вспомогательные сервисы
+### Auxiliary Services
 
--**Apache Tika**: Обработка файлов -**MCP Server**: Обработка
-запросов -**Backrest**: Резервное копирование
+- **Apache Tika**: File processing
+- **MCP Server**: Request processing
+- **Backrest**: Backup
 
-### Мониторинг
+### Monitoring
 
--**Prometheus**: Сбор метрик -**Grafana**: Визуализация -**Loki**:
-Логирование -**Alertmanager**: Управление алертами -**Uptime Kuma**: Мониторинг
-доступности
+- **Prometheus**: Metrics collection
+- **Grafana**: Visualization
+- **Loki**: Logging
+- **Alertmanager**: Alert management
+- **Uptime Kuma**: Availability monitoring

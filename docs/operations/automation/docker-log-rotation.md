@@ -1,24 +1,24 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Docker Log Rotation для ERNI-KI
+# Docker Log Rotation for ERNI-KI
 
 [TOC]
 
-## Описание
+## Description
 
-Настройка автоматической ротации логов Docker контейнеров для предотвращения
-неконтролируемого роста дискового пространства.
+Configure automatic rotation of Docker container logs to prevent uncontrolled
+disk space growth.
 
-## Рекомендуемая конфигурация
+## Recommended configuration
 
-### Глобальная настройка (daemon.json)
+### Global setting (daemon.json)
 
-Создать или обновить `/etc/docker/daemon.json`:
+Create or update `/etc/docker/daemon.json`:
 
 ```json
 {
@@ -30,25 +30,25 @@ last_updated: '2025-11-24'
 }
 ```
 
-После изменения перезапустить Docker:
+Restart Docker after changes:
 
 ```bash
 sudo systemctl restart docker
 ```
 
-**Эффект:**Каждый контейнер будет хранить максимум 3 файла по 10 MB (30 MB на
-контейнер).
+**Effect:** Each container will store maximum 3 files of 10 MB each (30 MB per
+container).
 
 ---
 
-### Настройка для отдельных сервисов (compose.yml)
+### Configuration for individual services (compose.yml)
 
-Добавить в каждый сервис в `compose.yml`:
+Add to each service in `compose.yml`:
 
 ```yaml
 services:
   openwebui:
-  # ... остальная конфигурация
+  # ... rest of configuration
   logging:
   driver: 'json-file'
   options:
@@ -56,9 +56,9 @@ services:
   max-file: '3'
 ```
 
-## Рекомендации по размерам для разных сервисов
+## Size recommendations for different services
 
-**Высоконагруженные сервисы (больше логов):**
+**High-load services (more logs):**
 
 - `openwebui`, `ollama`, `nginx`, `litellm`
 
@@ -70,7 +70,7 @@ logging:
   max-file: '5'
 ```
 
-**Стандартные сервисы:**
+**Standard services:**
 
 - `postgres`, `redis`, `prometheus`, `grafana`
 
@@ -82,7 +82,7 @@ logging:
   max-file: '3'
 ```
 
-**Низконагруженные сервисы:**
+**Low-load services:**
 
 - `backrest`, `webhook`, `watchtower`
 
@@ -96,15 +96,15 @@ logging:
 
 ---
 
-## Применение изменений
+## Applying changes
 
-### Вариант 1: Глобальная настройка (рекомендуется)
+### Option 1: Global configuration (recommended)
 
 ```bash
-# 1. Создать backup текущей конфигурации
+# 1. Create backup of current configuration
 sudo cp /etc/docker/daemon.json /etc/docker/daemon.json.backup-$(date +%Y%m%d) 2>/dev/null || true
 
-# 2. Создать новую конфигурацию
+# 2. Create new configuration
 sudo tee /etc/docker/daemon.json > /dev/null << 'EOF'
 {
  "log-driver": "json-file",
@@ -115,25 +115,25 @@ sudo tee /etc/docker/daemon.json > /dev/null << 'EOF'
 }
 EOF
 
-# 3. Перезапустить Docker
+# 3. Restart Docker
 sudo systemctl restart docker
 
-# 4. Проверить статус
+# 4. Check status
 sudo systemctl status docker
 
-# 5. Пересоздать контейнеры для применения новых настроек
+# 5. Recreate containers to apply new settings
 cd /home/konstantin/Documents/augment-projects/erni-ki
 docker compose up -d --force-recreate
 ```
 
-## Вариант 2: Настройка в compose.yml
+## Option 2: Configuration in compose.yml
 
 ```bash
-# 1. Создать backup
+# 1. Create backup
 cp compose.yml .config-backup/compose.yml.backup-$(date +%Y%m%d-%H%M%S)
 
-# 2. Добавить logging в каждый сервис (вручную или через sed)
-# Пример для одного сервиса:
+# 2. Add logging to each service (manually or via sed)
+# Example for one service:
 # services:
 # openwebui:
 # logging:
@@ -142,82 +142,82 @@ cp compose.yml .config-backup/compose.yml.backup-$(date +%Y%m%d-%H%M%S)
 # max-size: "10m"
 # max-file: "3"
 
-# 3. Применить изменения
+# 3. Apply changes
 docker compose up -d --force-recreate
 ```
 
 ---
 
-## Проверка текущих настроек
+## Check current settings
 
 ```bash
-# Проверить настройки конкретного контейнера
+# Check specific container settings
 docker inspect erni-ki-openwebui-1 | grep -A 10 "LogConfig"
 
-# Проверить размер логов всех контейнеров
+# Check log size of all containers
 docker ps -q | xargs -I {} sh -c 'echo "Container: {}"; docker inspect {} | grep -A 5 "LogPath" | grep LogPath | cut -d\" -f4 | xargs ls -lh 2>/dev/null'
 
-# Общий размер логов Docker
+# Total Docker logs size
 sudo du -sh /var/lib/docker/containers/*/
 ```
 
 ---
 
-## Очистка существующих логов
+## Clean existing logs
 
 ```bash
-# ВНИМАНИЕ: Удалит все текущие логи контейнеров!
+# WARNING: Will delete all current container logs!
 
-# Остановить все контейнеры
+# Stop all containers
 docker compose down
 
-# Очистить логи
+# Clean logs
 sudo truncate -s 0 /var/lib/docker/containers/*/*-json.log
 
-# Запустить контейнеры
+# Start containers
 docker compose up -d
 ```
 
 ---
 
-## Мониторинг
+## Monitoring
 
-Добавить в `scripts/monitor-disk-space.sh`:
+Add to `scripts/monitor-disk-space.sh`:
 
 ```bash
-# Размер логов Docker
+# Docker logs size
 DOCKER_LOGS_SIZE=$(sudo du -sh /var/lib/docker/containers/ 2>/dev/null | awk '{print $1}')
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Docker logs: $DOCKER_LOGS_SIZE" >> "$LOG_FILE"
 ```
 
 ---
 
-## Расчёт экономии
+## Savings calculation
 
-**Без ротации:**
+**Without rotation:**
 
-- 49 контейнеров × ~100 MB логов = ~5 GB
+- 49 containers × ~100 MB logs = ~5 GB
 
-**С ротацией (10m × 3):**
+**With rotation (10m × 3):**
 
-- 49 контейнеров × 30 MB = ~1.5 GB -**Экономия: ~3.5 GB**
-
----
-
-## Рекомендации
-
-1.**Использовать глобальную настройку**через `/etc/docker/daemon.json` - проще и
-единообразно 2.**Настроить мониторинг**размера логов через
-`monitor-disk-space.sh` 3.**Периодически проверять**размер логов:
-`sudo du -sh /var/lib/docker/containers/` 4.**Не устанавливать слишком маленькие
-значения**- можно потерять важные логи при диагностике 5.**Пересоздать
-контейнеры**после изменения настроек для применения
+- 49 containers × 30 MB = ~1.5 GB - **Savings: ~3.5 GB**
 
 ---
 
-## Альтернативные драйверы логирования
+## Recommendations
 
-### Syslog (для централизованного логирования)
+1. **Use global configuration** via `/etc/docker/daemon.json` - simpler and
+   uniform 2. **Configure monitoring** of log size via
+   `monitor-disk-space.sh` 3. **Periodically check** log size:
+   `sudo du -sh /var/lib/docker/containers/` 4. **Don't set values too small** -
+   can lose important logs during diagnostics 5. **Recreate containers** after
+   changing settings to apply
+
+---
+
+## Alternative logging drivers
+
+### Syslog (for centralized logging)
 
 {% raw %}
 
@@ -229,7 +229,7 @@ logging:
   tag: '{{.Name}}'
 ```
 
-### Local (более эффективный, чем json-file)
+### Local (more efficient than json-file)
 
 ```yaml
 logging:
@@ -243,5 +243,5 @@ logging:
 
 ---
 
-**Статус:**Документация создана**Применение:**Требует ручного выполнения
-команд**Приоритет:**Средний (рекомендуется применить в течение недели)
+**Status:** Documentation created **Application:** Requires manual execution of
+commands **Priority:** Medium (recommended to apply within a week)

@@ -1,230 +1,236 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Руководство по эксплуатации Redis в ERNI-KI
+# Redis Operations Guide for ERNI-KI
 
 [TOC]
 
-**Версия:**1.0**Дата:**23 сентября 2025**Система:**ERNI-KI
+**Version:** 1.0 **Date:** September 23, 2025 **System:** ERNI-KI
 
 ---
 
-## Обзор
+## Overview
 
-Redis в системе ERNI-KI используется как высокопроизводительный кэш для
-OpenWebUI и SearXNG. Система полностью мониторится, имеет автоматическое
-резервное копирование и оптимизирована для стабильной работы.
+Redis in the ERNI-KI system is used as a high-performance cache for OpenWebUI
+and SearXNG. The system is fully monitored, has automatic backups, and is
+optimized for stable operation.
 
 ---
 
-## Основные команды
+## Basic Commands
 
-### Проверка статуса
+### Status Check
 
 ```bash
-# Статус контейнера
+# Container status
 docker ps | grep redis
 
-# Подключение к Redis CLI
+# Connect to Redis CLI
 docker exec -it erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD"
 
-# Проверка доступности
+# Check availability
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
 ```
 
-## Мониторинг
+## Monitoring
 
 ```bash
-# Информация о памяти
+# Memory information
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info memory
 
-# Статистика операций
+# Operation statistics
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats
 
-# Количество ключей
+# Key count
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" dbsize
 ```
 
-## Резервное копирование
+## Backup
 
 ```bash
-# Создание снапшота
+# Create snapshot
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" BGSAVE
 
-# Проверка статуса бэкапа
+# Check backup status
 ./scripts/redis-backup-metrics.sh status
 
-# Тестирование восстановления
+# Test restoration
 ./scripts/redis-restore-simple.sh
 ```
 
 ---
 
-## Мониторинг и алерты
+## Monitoring and Alerts
 
-### Ключевые метрики
+### Key Metrics
 
--**redis_up**- Доступность Redis (должно быть 1) -**redis_memory_used_bytes**-
-Использование памяти -**redis_connected_clients**- Количество
-подключений -**redis_commands_processed_total**- Общее количество команд
+- **redis_up** - Redis availability (should be 1)
+- **redis_memory_used_bytes** - Memory usage
+- **redis_connected_clients** - Number of connections
+- **redis_commands_processed_total** - Total commands
 
-### Критические алерты
+### Critical Alerts
 
-1.**RedisDown**- Redis недоступен 2.**RedisHighMemoryUsage**- Использование
-памяти >90% 3.**RedisCriticalMemoryUsage**- Использование
-памяти >95% 4.**RedisHighConnections**- Слишком много
-подключений 5.**RedisBackupFailed**- Неудачное резервное копирование
+1. **RedisDown** - Redis unavailable
+2. **RedisHighMemoryUsage** - Memory usage >90%
+3. **RedisCriticalMemoryUsage** - Memory usage >95%
+4. **RedisHighConnections** - Too many connections
+5. **RedisBackupFailed** - Backup failed
 
-### Доступ к мониторингу
+### Monitoring Access
 
--**Prometheus:**<http://localhost:9091> -**Redis
-Exporter:**<http://localhost:9121/metrics> -**Grafana:**Через основной интерфейс
-ERNI-KI
+- **Prometheus:** <http://localhost:9091>
+- **Redis Exporter:** <http://localhost:9121/metrics>
+- **Grafana:** Via main ERNI-KI interface
 
 ---
 
-## Резервное копирование
+## Backup
 
-### Автоматическое резервное копирование
+### Automatic Backup
 
--**Ежедневно:**01:30 (хранится 7 дней) -**Еженедельно:**Воскресенье 02:00
-(хранится 4 недели) -**Местоположение:**`.config-backup/`
+- **Daily:** 01:30 (kept for 7 days)
+- **Weekly:** Sunday 02:00 (kept for 4 weeks)
+- **Location:** `.config-backup/`
 
-### Ручное резервное копирование
+### Manual Backup
 
 ```bash
-# Создание снапшота
+# Create snapshot
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" BGSAVE
 
-# Обновление метрик бэкапа
+# Update backup metrics
 ./scripts/redis-backup-metrics.sh success
 ```
 
-## Восстановление
+## Restoration
 
 ```bash
-# Тестовое восстановление
+# Test restoration
 ./scripts/redis-restore.sh --test
 
-# Восстановление из последней копии
+# Restore from latest backup
 ./scripts/redis-restore.sh
 
-# Восстановление из конкретной копии
+# Restore from specific backup
 ./scripts/redis-restore.sh --source /path/to/backup
 ```
 
 ---
 
-## Производительность
+## Performance
 
-### Текущие настройки
+### Current Settings
 
--**Максимальная память:**512MB -**Политика вытеснения:**allkeys-lru -**Частота
-фоновых задач:**50 Hz -**TCP keepalive:**300 секунд
+- **Maximum memory:** 512MB
+- **Eviction policy:** allkeys-lru
+- **Background task frequency:** 50 Hz
+- **TCP keepalive:** 300 seconds
 
-### Оптимизация
+### Optimization
 
 ```bash
-# Запуск оптимизации
+# Run optimization
 ./scripts/redis-performance-optimization.sh
 
-# Комплексное тестирование
+# Comprehensive testing
 ./scripts/redis-comprehensive-test.sh
 
-# Очистка памяти
+# Memory cleanup
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" memory purge
 ```
 
 ---
 
-## Устранение неполадок
+## Troubleshooting
 
-### Redis недоступен
+### Redis Unavailable
 
 ```bash
-# Проверка статуса контейнера
+# Check container status
 docker ps | grep redis
 
-# Перезапуск Redis
+# Restart Redis
 docker-compose restart redis
 
-# Проверка логов
+# Check logs
 docker logs erni-ki-redis-1 --tail 50
 ```
 
-## Высокое использование памяти
+## High Memory Usage
 
 ```bash
-# Проверка использования памяти
+# Check memory usage
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info memory
 
-# Принудительная очистка
+# Force cleanup
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" memory purge
 
-# Анализ ключей
+# Analyze keys
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" --bigkeys
 ```
 
-## Проблемы с производительностью
+## Performance Issues
 
 ```bash
-# Проверка медленных запросов
+# Check slow queries
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" slowlog get 10
 
-# Тест производительности
+# Performance test
 ./scripts/redis-comprehensive-test.sh
 
-# Анализ статистики
+# Analyze statistics
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" info stats
 ```
 
 ---
 
-## Регулярное обслуживание
+## Regular Maintenance
 
-### Ежедневно
+### Daily
 
-- [ ] Проверить алерты в Prometheus
-- [ ] Убедиться, что использование памяти <80%
-- [ ] Проверить статус резервного копирования
+- [ ] Check alerts in Prometheus
+- [ ] Ensure memory usage <80%
+- [ ] Check backup status
 
-### Еженедельно
+### Weekly
 
-- [ ] Запустить комплексное тестирование
-- [ ] Проанализировать логи на предмет ошибок
-- [ ] Проверить производительность
+- [ ] Run comprehensive testing
+- [ ] Analyze logs for errors
+- [ ] Check performance
 
-### Ежемесячно
+### Monthly
 
-- [ ] Обновить конфигурацию при необходимости
-- [ ] Провести тест восстановления
-- [ ] Проанализировать тренды использования
-
----
-
-## Безопасность
-
-### Аутентификация
-
--**Пароль:**$REDIS_PASSWORD -**Доступ:**Только из Docker сети
-ERNI-KI -**Порты:**Не экспонированы наружу
-
-### Рекомендации
-
-1. Регулярно обновляйте пароль Redis
-2. Мониторьте подозрительную активность
-3. Ограничивайте доступ к Redis CLI
-4. Используйте TLS для внешних подключений (если необходимо)
+- [ ] Update configuration if needed
+- [ ] Conduct restoration test
+- [ ] Analyze usage trends
 
 ---
 
-## Поддержка и ссылки
+## Security
 
-### Полезные ссылки
+### Authentication
+
+- **Password:** $REDIS_PASSWORD
+- **Access:** Only from ERNI-KI Docker network
+- **Ports:** Not exposed externally
+
+### Recommendations
+
+1. Regularly update Redis password
+2. Monitor suspicious activity
+3. Limit access to Redis CLI
+4. Use TLS for external connections (if needed)
+
+---
+
+## Support and References
+
+### Useful Links
 
 - [Redis Documentation](https://redis.io/documentation)
 - [Redis Best Practices](https://redis.io/topics/memory-optimization)
@@ -232,4 +238,4 @@ ERNI-KI -**Порты:**Не экспонированы наружу
 
 ---
 
-_Руководство подготовлено для системы ERNI-KI Версия 1.0 от 23 сентября 2025_
+_Guide prepared for ERNI-KI system Version 1.0 from September 23, 2025_

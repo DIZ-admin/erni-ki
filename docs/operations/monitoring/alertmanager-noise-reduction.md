@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -7,38 +7,36 @@ last_updated: '2025-11-24'
 
 # Alertmanager Noise Reduction & Redis Autoscaling
 
-## Цели
+## Goals
 
-- Снизить количество спамящих `HTTPErrors`/`HighHTTPResponseTime` алертов от
+- Reduce number of spammy `HTTPErrors`/`HighHTTPResponseTime` alerts from
   blackbox.
-- Зафиксировать процедуру автоскейла Redis при хронической фрагментации и
-  переполнении очереди Alertmanager.
+- Document Redis autoscaling procedure for chronic fragmentation and
+  Alertmanager queue overflow.
 
 ## Blackbox rate limiting
 
-1.**Прометеевские правила**— пример в `ops/prometheus/blackbox-noise.rules.yml`.
-Группа `blackbox-noise.rules` добавляет агрегирующие alerts
-(`BlackboxHTTPErrorBurst`, `BlackboxSustainedLatency`) и помечает их
-`noise_group=blackbox`. Скопируйте файл в конфигурацию Prometheus и добавьте в
-`rule_files`. 2.**Маршрут Alertmanager**—
-`ops/alertmanager/blackbox-noise-route.yml` содержит блок для `route.routes`. Он
-увеличивает `group_interval`/`repeat_interval` до 15m/3h. Разместите его выше
-маршрута `severity: warning`. 3.**Деплой**:
+1.**Prometheus rules**— example in `ops/prometheus/blackbox-noise.rules.yml`.
+Group `blackbox-noise.rules` adds aggregating alerts (`BlackboxHTTPErrorBurst`,
+`BlackboxSustainedLatency`) and marks them as `noise_group=blackbox`. Copy the
+file to Prometheus configuration and add to `rule_files`. 2.**Alertmanager
+route**— `ops/alertmanager/blackbox-noise-route.yml` contains a block for
+`route.routes`. It increases `group_interval`/`repeat_interval` to 15m/3h. Place
+it above the `severity: warning` route. 3.**Deploy**:
 
-- Внесите файлы в продовую конфигурацию (`conf/*`), перезапустите `prometheus` и
-  `alertmanager` контейнеры.
-- Убедитесь через UI, что вместо десятков `HTTPErrors` приходит единый
-  агрегированный alert.
+- Import files to production configuration (`conf/*`), restart `prometheus` and
+  `alertmanager` containers.
+- Verify via UI that instead of dozens of `HTTPErrors` you get a single
+  aggregated alert.
 
 ## Redis auto-scaling
 
-1.**Watchdog**— `scripts/maintenance/redis-fragmentation-watchdog.sh`
-поддерживает переменные `REDIS_AUTOSCALE_ENABLED`, `REDIS_AUTOSCALE_STEP_MB`
-(default 256MB) и `REDIS_AUTOSCALE_MAX_GB` (default 4GB). После `MAX_PURGES`
-скрипт bump'ит `maxmemory` через `CONFIG SET` и перезаписывает конфиг. 2.**Как
-включить**:
+1.**Watchdog**— `scripts/maintenance/redis-fragmentation-watchdog.sh` supports
+variables `REDIS_AUTOSCALE_ENABLED`, `REDIS_AUTOSCALE_STEP_MB` (default 256MB)
+and `REDIS_AUTOSCALE_MAX_GB` (default 4GB). After `MAX_PURGES` the script bumps
+`maxmemory` via `CONFIG SET` and rewrites config. 2.**How to enable**:
 
-- Экспортировать переменные (например, в cron):
+- Export variables (e.g., in cron):
 
   ```bash
   export REDIS_AUTOSCALE_ENABLED=true
@@ -46,41 +44,39 @@ last_updated: '2025-11-24'
   export REDIS_AUTOSCALE_MAX_GB=4
   ```
 
-- Запустить watchdog (cron/systemd) и убедиться, что в
-  `logs/redis-fragmentation-watchdog.log` появляются строки
-  `Autoscaling Redis maxmemory...`.
+- Run watchdog (cron/systemd) and verify that
+  `logs/redis-fragmentation-watchdog.log` contains
+  `Autoscaling Redis maxmemory...` lines.
 
-  3.**Мониторинг**— держим метрики `mem_fragmentation_ratio` и `maxmemory`
-  (внутри watchdog выводятся значения в MB). Дополнительно рекомендуется
-  добавить панель в Grafana (Redis dashboard) для отслеживания bump'ов.
+  3.**Monitoring**— track metrics `mem_fragmentation_ratio` and `maxmemory`
+  (values in MB are output inside watchdog). Additionally recommend adding a
+  Grafana panel (Redis dashboard) to track bumps.
 
-## Процедура при всплеске
+## Procedure for spike events
 
-1.**Очередь Alertmanager**: `tail -f .config-backup/logs/alertmanager-queue.log`
-— если >500 в течение 10 минут, убедиться, что blackbox alerts не заспамили (см.
-маршрут). Установить временный silence, если необходимо. 2.**Redis autoscale**:
-проверить лог watchdog; при отсутствии bump'ов можно вручную выполнить
-`docker compose exec redis redis-cli config set maxmemory <value>`. 3.**Документация**:
-ссылаться на этот runbook при разборе инцидента, фиксируя сколько раз autoscale
-сработал.
+1.**Alertmanager queue**: `tail -f .config-backup/logs/alertmanager-queue.log` —
+if >500 for 10 minutes, verify that blackbox alerts haven't spammed (see route).
+Set temporary silence if necessary. 2.**Redis autoscale**: check watchdog log;
+if no bumps occurred, you can manually execute
+`docker compose exec redis redis-cli config set maxmemory <value>`. 3.**Documentation**:
+reference this runbook when analyzing incidents, recording how many times
+autoscale was triggered.
 
-## Включение autoscale watchdog
+## Enabling autoscale watchdog
 
-1. Создайте environ-файл (пример: `ops/systemd/redis-watchdog.env.example`) и
-   подключите его в cron/systemd unit для `redis-fragmentation-watchdog.sh`.
-2. Обновите cron/systemd: `EnvironmentFile=~/.config/redis-watchdog.env` либо
-   экспорт переменных перед запуском.
-3. Следите за `logs/redis-fragmentation-watchdog.log` — после срабатывания
-   появится `Autoscaling Redis maxmemory ...`.
-4. Добавьте Grafana панель (Redis dashboard) с `mem_fragmentation_ratio` и
-   `maxmemory` и включите alert при резком росте.
+1. Create environ file (example: `ops/systemd/redis-watchdog.env.example`) and
+   connect it in cron/systemd unit for `redis-fragmentation-watchdog.sh`.
+2. Update cron/systemd: `EnvironmentFile=~/.config/redis-watchdog.env` or export
+   variables before execution.
+3. Monitor `logs/redis-fragmentation-watchdog.log` — after triggering
+   `Autoscaling Redis maxmemory ...` will appear.
+4. Add Grafana panel (Redis dashboard) with `mem_fragmentation_ratio` and
+   `maxmemory` and enable alert on sharp increase.
 
-## Grafana / Alertmanager наблюдение
+## Grafana / Alertmanager monitoring
 
-- В Grafana импортируйте Redis панель и добавьте новый graph "Blackbox Noise
-  Rate" (использует выражение из файла
-  `ops/prometheus/blackbox-noise.rules.yml`).
-- В Alertmanager UI убедитесь, что маршрут `noise_group=blackbox` группирует
-  алерты каждые 15 минут.
-- Документируйте все срабатывания в этом runbook (дата, источник, предпринятые
-  действия).
+- In Grafana import Redis panel and add new graph "Blackbox Noise Rate" (uses
+  expression from file `ops/prometheus/blackbox-noise.rules.yml`).
+- In Alertmanager UI verify that route `noise_group=blackbox` groups alerts
+  every 15 minutes.
+- Document all triggers in this runbook (date, source, actions taken).

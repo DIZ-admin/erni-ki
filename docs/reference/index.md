@@ -54,7 +54,7 @@ truth) -**[status-snippet.md](status-snippet.md)**- Status template for docs
 - MCP Integration: See [mcpo-integration-guide.md](mcpo-integration-guide.md)
 - CI/CD Setup: See [github-environments-setup.md](github-environments-setup.md)
 
-## Связанная документация
+## Related Documentation
 
 - [Architecture](../architecture/index.md)
 - [Operations](../operations/index.md)

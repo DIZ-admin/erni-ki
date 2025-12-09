@@ -59,5 +59,5 @@ NVIDIA_DRIVER_CAPABILITIES=compute,utility,monitoring
 NVIDIA_EXPORTER_COLLECT_QUADRO_METRICS=true
 # ECC error monitoring
 NVIDIA_EXPORTER_COLLECT_ECC_ERRORS=true
-# Метрики производительности
+# Performance state metrics
 NVIDIA_EXPORTER_COLLECT_PERFORMANCE_STATE=true

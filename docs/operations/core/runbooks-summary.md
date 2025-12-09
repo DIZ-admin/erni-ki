@@ -1,26 +1,26 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 title: 'Runbooks summary'
 ---
 
-# Runbooks — краткий обзор
+# Runbooks — Brief Overview
 
-Эта страница собирает ссылки на основные runbooks, чтобы избежать битых ссылок в
-документации. Все подробные инструкции находятся в директории
-`docs/operations/`.
+This page collects links to main runbooks to avoid broken links in
+documentation. All detailed instructions are in the `docs/operations/`
+directory.
 
-## Ключевые runbooks
+## Key Runbooks
 
-- [Общий troubleshooting](../troubleshooting/troubleshooting-guide.md)
-- [Процедуры рестартов сервисов](../maintenance/service-restart-procedures.md)
-- [Восстановление из бэкапов](../maintenance/backup-restore-procedures.md)
-- [Снижение шума Alertmanager](../monitoring/alertmanager-noise-reduction.md)
-- [Синхронизация access-логов и Fluent Bit](../monitoring/access-log-sync-and-fluentbit.md)
-- [Изменения конфигураций](configuration-change-process.md)
+- [General troubleshooting](../troubleshooting/troubleshooting-guide.md)
+- [Service restart procedures](../maintenance/service-restart-procedures.md)
+- [Backup restore procedures](../maintenance/backup-restore-procedures.md)
+- [Alertmanager noise reduction](../monitoring/alertmanager-noise-reduction.md)
+- [Access log sync and Fluent Bit](../monitoring/access-log-sync-and-fluentbit.md)
+- [Configuration changes](configuration-change-process.md)
 - [Docling shared volume](../maintenance/docling-shared-volume.md)
 
-> Если добавлены новые runbooks, обновите этот список, чтобы lychee не находил
-> устаревшие ссылки.
+> If new runbooks are added, update this list so lychee doesn't find outdated
+> links.

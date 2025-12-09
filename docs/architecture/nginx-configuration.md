@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -7,61 +7,61 @@ last_updated: '2025-11-24'
 
 # Nginx Configuration Guide - ERNI-KI
 
-> **Версия:**9.0 |**Дата:**2025-09-11 |**Статус:**Production Ready
+> **Version:** 9.0 | **Date:** 2025-09-11 | **Status:** Production Ready
 
-## Обзор
+## Overview
 
-Nginx в ERNI-KI выполняет роль reverse proxy с поддержкой SSL/TLS, WebSocket,
-rate limiting и кэширования. После оптимизации v9.0 конфигурация стала модульной
-и maintainable.
+Nginx in ERNI-KI serves as a reverse proxy with SSL/TLS support, WebSocket, rate
+limiting, and caching. After v9.0 optimization, the configuration has become
+modular and maintainable.
 
-## Архитектура конфигурации
+## Configuration Architecture
 
-### Структура файлов
+### File Structure
 
 ```bash
 conf/nginx/
- nginx.conf # Основная конфигурация
- Map директивы # Условная логика
- Upstream блоки # Backend серверы
- Rate limiting zones # Защита от DDoS
- Proxy cache настройки # Кэширование
- conf.d/default.conf # Server блоки
+ nginx.conf # Main configuration
+ Map directives # Conditional logic
+ Upstream blocks # Backend servers
+ Rate limiting zones # DDoS protection
+ Proxy cache settings # Caching
+ conf.d/default.conf # Server blocks
  Server :80 # HTTP → HTTPS redirect
- Server :443 # HTTPS с полной функциональностью
- Server :8080 # Cloudflare туннель
- includes/ # Переиспользуемые модули
- openwebui-common.conf # OpenWebUI proxy настройки
- searxng-api-common.conf # SearXNG API конфигурация
- searxng-web-common.conf # SearXNG веб-интерфейс
+ Server :443 # HTTPS with full functionality
+ Server :8080 # Cloudflare tunnel
+ includes/ # Reusable modules
+ openwebui-common.conf # OpenWebUI proxy settings
+ searxng-api-common.conf # SearXNG API configuration
+ searxng-web-common.conf # SearXNG web interface
  websocket-common.conf # WebSocket proxy
 ```
 
-## Ключевые компоненты
+## Key Components
 
-### 1. Map директивы (nginx.conf)
+### 1. Map Directives (nginx.conf)
 
 ```nginx
-# Определение Cloudflare туннеля
+# Cloudflare tunnel detection
 map $server_port $is_cloudflare_tunnel {
  default 0;
  8080 1;
 }
 
-# Условный X-Request-ID заголовок
+# Conditional X-Request-ID header
 map $is_cloudflare_tunnel $request_id_header {
  default "";
  1 $final_request_id;
 }
 
-# Универсальная переменная для include файлов
+# Universal variable for include files
 map $is_cloudflare_tunnel $universal_request_id {
  default $final_request_id;
  1 $final_request_id;
 }
 ```
 
-## 2. Upstream блоки
+## 2. Upstream Blocks
 
 ```nginx
 # OpenWebUI backend
@@ -72,7 +72,7 @@ upstream openwebui_backend {
  keepalive_timeout 60s;
 }
 
-# SearXNG upstream для RAG поиска
+# SearXNG upstream for RAG search
 upstream searxngUpstream {
  server searxng:8080 max_fails=3 fail_timeout=30s weight=1;
  keepalive 48;
@@ -84,7 +84,7 @@ upstream searxngUpstream {
 ## 3. Rate Limiting
 
 ```nginx
-# Зоны ограничения скорости
+# Rate limiting zones
 limit_req_zone $binary_remote_addr zone=general:20m rate=50r/s;
 limit_req_zone $binary_remote_addr zone=api:20m rate=30r/s;
 limit_req_zone $binary_remote_addr zone=searxng_api:10m rate=60r/s;
@@ -95,7 +95,7 @@ limit_conn_zone $binary_remote_addr zone=perip:10m;
 limit_conn_zone $server_name zone=perserver:10m;
 ```
 
-## Server блоки
+## Server Blocks
 
 ### Port 80 - HTTP Redirect
 
@@ -104,7 +104,7 @@ server {
  listen 80;
  server_name ki.erni-gruppe.ch diz.zone localhost;
 
- # Принудительное перенаправление на HTTPS
+ # Force redirect to HTTPS
  return 301 https://$host$request_uri;
 }
 ```
@@ -117,13 +117,13 @@ server {
  http2 on;
  server_name ki.erni-gruppe.ch diz.zone localhost;
 
- # SSL конфигурация
+ # SSL configuration
  ssl_certificate /etc/nginx/ssl/nginx-fullchain.crt;
  ssl_certificate_key /etc/nginx/ssl/nginx.key;
  ssl_protocols TLSv1.2 TLSv1.3;
- ssl_verify_client off; # Исправление для localhost
+ ssl_verify_client off; # Fix for localhost
 
- # Security headers (оптимизированные для localhost)
+ # Security headers (optimized for localhost)
  add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' localhost:*; ...";
  add_header Access-Control-Allow-Origin "https://ki.erni-gruppe.ch https://localhost ...";
 }
@@ -136,164 +136,167 @@ server {
  listen 8080;
  server_name ki.erni-gruppe.ch diz.zone localhost;
 
- # Оптимизированный для внешнего доступа
- # Без HTTPS редиректов
- # Использует $request_id_header для логирования
+ # Optimized for external access
+ # No HTTPS redirects
+ # Uses $request_id_header for logging
 }
 ```
 
-## Include файлы
+## Include Files
 
 ### openwebui-common.conf
 
 ```nginx
-# Общие настройки для OpenWebUI proxy
+# Common settings for OpenWebUI proxy
 limit_req zone=general burst=20 nodelay;
 limit_conn perip 30;
 limit_conn perserver 2000;
 
-# Стандартные proxy заголовки
+# Standard proxy headers
 proxy_set_header Host $host;
 proxy_set_header X-Real-IP $remote_addr;
 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 proxy_set_header X-Forwarded-Proto $scheme;
 proxy_set_header X-Request-ID $universal_request_id;
 
-# HTTP версия и соединения
+# HTTP version and connections
 proxy_http_version 1.1;
 proxy_set_header Connection "";
 
-# Таймауты
+# Timeouts
 proxy_connect_timeout 30s;
 proxy_send_timeout 60s;
 proxy_read_timeout 60s;
 
-# Проксирование к OpenWebUI
+# Proxy to OpenWebUI
 proxy_pass http://openwebui_backend;
 ```
 
 ## searxng-api-common.conf
 
 ```nginx
-# Rate limiting для SearXNG API
+# Rate limiting for SearXNG API
 limit_req zone=searxng_api burst=30 nodelay;
 limit_req_status 429;
 
-# Кэширование SearXNG ответов
+# SearXNG response caching
 proxy_cache searxng_cache;
 proxy_cache_valid 200 5m;
 proxy_cache_key "$scheme$request_method$host$request_uri";
 
-# URL rewriting для API
+# URL rewriting for API
 rewrite ^/api/searxng/(.*)$ /$1 break;
 
-# Проксирование к SearXNG upstream
+# Proxy to SearXNG upstream
 proxy_pass http://searxngUpstream;
 proxy_set_header X-Request-ID $universal_request_id;
 
-# Таймауты для поисковых запросов
+# Timeouts for search queries
 proxy_connect_timeout 5s;
 proxy_send_timeout 30s;
 proxy_read_timeout 30s;
 ```
 
-## API эндпоинты
+## API Endpoints
 
-### Основные эндпоинты
+### Main Endpoints
 
-| Эндпоинт              | Статус | Описание                   | Время ответа |
-| --------------------- | ------ | -------------------------- | ------------ |
-| `/health`             |        | Проверка состояния системы | <100ms       |
-| `/api/config`         |        | Конфигурация системы       | <200ms       |
-| `/api/searxng/search` |        | RAG веб-поиск              | <2s          |
-| `/api/mcp/`           |        | Model Context Protocol     | <500ms       |
-| WebSocket endpoints   |        | Real-time коммуникация     | <50ms        |
+| Endpoint              | Status | Description             | Response Time |
+| --------------------- | ------ | ----------------------- | ------------- |
+| `/health`             |        | System health check     | <100ms        |
+| `/api/config`         |        | System configuration    | <200ms        |
+| `/api/searxng/search` |        | RAG web search          | <2s           |
+| `/api/mcp/`           |        | Model Context Protocol  | <500ms        |
+| WebSocket endpoints   |        | Real-time communication | <50ms         |
 
-### Примеры использования
+### Usage Examples
 
 ```bash
-# Проверка состояния системы
+# System health check
 curl http://localhost:8080/health
-# Ответ: {"status":true}
+# Response: {"status":true}
 
-# SearXNG поиск для RAG
+# SearXNG search for RAG
 curl "http://localhost:8080/api/searxng/search?q=test&format=json"
-# Ответ: JSON с результатами поиска (31 результат из 4500)
+# Response: JSON with search results (31 results from 4500)
 
-# Конфигурация системы
+# System configuration
 curl http://localhost:8080/api/config
-# Ответ: JSON с настройками OpenWebUI
+# Response: JSON with OpenWebUI settings
 ```
 
-## Администрирование
+## Administration
 
-### Применение изменений
+### Applying Changes
 
 ```bash
-# Проверка конфигурации
+# Configuration check
 docker exec erni-ki-nginx-1 nginx -t
 
-# Hot-reload без перезапуска
+# Hot-reload without restart
 docker exec erni-ki-nginx-1 nginx -s reload
 
-# Копирование include файлов
+# Copy include files
 docker cp conf/nginx/includes/ erni-ki-nginx-1:/etc/nginx/
 ```
 
-## Мониторинг
+## Monitoring
 
 ```bash
-# Проверка логов
+# Check logs
 docker logs --tail=20 erni-ki-nginx-1
 
-# Статус контейнера
+# Container status
 docker ps | grep nginx
 
-# Проверка портов
+# Check ports
 netstat -tlnp | grep nginx
 ```
 
 ## Troubleshooting
 
-### Частые проблемы
+### Common Issues
 
-1.**404 на API эндпоинтах**
+1. **404 on API endpoints**
 
-- Проверить include файлы в контейнере
-- Убедиться в корректности upstream блоков
+- Check include files in container
+- Verify upstream blocks are correct
 
-  2.**WebSocket соединения не работают**
+2. **WebSocket connections not working**
 
-- Проверить websocket-common.conf
-- Убедиться в наличии Upgrade заголовков
+- Check websocket-common.conf
+- Ensure Upgrade headers are present
 
-  3.**SSL ошибки на localhost**
+3. **SSL errors on localhost**
 
-- Проверить ssl_verify_client off
-- Убедиться в корректности CSP политики
+- Check ssl_verify_client off
+- Verify CSP policy is correct
 
-### Диагностические команды
+### Diagnostic Commands
 
 ```bash
-# Проверка nginx конфигурации
+# Check nginx configuration
 docker exec erni-ki-nginx-1 nginx -T
 
-# Проверка upstream статуса
+# Check upstream status
 docker exec erni-ki-nginx-1 curl -s http://openwebui:8080/health
 
-# Проверка include файлов
+# Check include files
 docker exec erni-ki-nginx-1 ls -la /etc/nginx/includes/
 ```
 
-## Метрики производительности
+## Performance Metrics
 
--**Время ответа API:**<2 секунд -**WebSocket latency:**<50ms -**SSL
-handshake:**<100ms -**Кэш hit ratio:**>80% -**Rate limiting:**60 req/s для
-SearXNG API
+- **API response time:** <2 seconds
+- **WebSocket latency:** <50ms
+- **SSL handshake:** <100ms
+- **Cache hit ratio:** >80%
+- **Rate limiting:** 60 req/s for SearXNG API
 
-## Безопасность
+## Security
 
--**SSL/TLS:**TLSv1.2,
-TLSv1.3 -**HSTS:**max-age=31536000 -**CSP:**Оптимизированная для localhost и
-production -**Rate limiting:**Защита от DDoS атак -**CORS:**Настроенный для
-разрешенных доменов
+- **SSL/TLS:** TLSv1.2, TLSv1.3
+- **HSTS:** max-age=31536000
+- **CSP:** Optimized for localhost and production
+- **Rate limiting:** DDoS attack protection
+- **CORS:** Configured for allowed domains

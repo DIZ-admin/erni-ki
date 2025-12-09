@@ -1,24 +1,24 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-27'
 ---
 
-# Диаграмма развертывания
+# Deployment Diagram
 
-## Docker Compose архитектура
+## Docker Compose Architecture
 
 ```mermaid
 graph TB
-    subgraph Tier1["Критические сервисы (Tier 1)"]
+    subgraph Tier1["Critical Services (Tier 1)"]
         OpenWebUI["openwebui | v0.6.40 | GPU: RTX 5000 | 8GB RAM"]
         Ollama["ollama | v0.12.11 | GPU: RTX 5000 | 24GB RAM"]
         PostgreSQL["db (PostgreSQL) | pgvector/pg17 | 4GB RAM"]
         Nginx["nginx | v1.29.3 | 512MB RAM"]
     end
 
-    subgraph Tier2["Важные сервисы (Tier 2)"]
+    subgraph Tier2["Important Services (Tier 2)"]
         LiteLLM["litellm | v1.80.0.rc.1 | 12GB RAM"]
         Redis["redis | v7.0.15 | 1GB RAM"]
         SearXNG["searxng | latest | 1GB RAM"]
@@ -27,14 +27,14 @@ graph TB
         Backrest["backrest | v1.9.2"]
     end
 
-    subgraph Tier3["Вспомогательные сервисы (Tier 3)"]
+    subgraph Tier3["Auxiliary Services (Tier 3)"]
         Docling["docling | GPU: RTX 5000 | 12GB RAM"]
         EdgeTTS["edgetts | latest"]
         Tika["tika | latest"]
         MCP["mcposerver | git-91e8f94"]
     end
 
-    subgraph Tier4["Мониторинг (Tier 4)"]
+    subgraph Tier4["Monitoring (Tier 4)"]
         Prometheus["prometheus | v3.0.0"]
         Grafana["grafana | v11.3.0"]
         Loki["loki | v3.0.0"]
@@ -45,7 +45,7 @@ graph TB
         RedisExporter["redis-exporter | v1.67.0"]
     end
 
-    subgraph Infra["Инфраструктура"]
+    subgraph Infra["Infrastructure"]
         Watchtower["watchtower | v1.7.1"]
         FluentBit["fluent-bit | v3.2.2"]
     end
@@ -86,27 +86,30 @@ graph TB
     FluentBit --> Loki
 ```
 
-## Ресурсы и ограничения
+## Resources and Limits
 
-### GPU-сервисы (NVIDIA RTX 5000, 16GB VRAM)
+### GPU Services (NVIDIA RTX 5000, 16GB VRAM)
 
--**Ollama**: 24GB RAM, 12 CPU cores, OOM score: -900 -**OpenWebUI**: 8GB RAM, 4
-CPU cores, OOM score: -600 -**Docling**: 12GB RAM, 8 CPU cores, OOM score: -500
+- **Ollama**: 24GB RAM, 12 CPU cores, OOM score: -900
+- **OpenWebUI**: 8GB RAM, 4 CPU cores, OOM score: -600
+- **Docling**: 12GB RAM, 8 CPU cores, OOM score: -500
 
-### Критические сервисы
+### Critical Services
 
--**PostgreSQL**: 4GB RAM, 2 CPU cores -**Nginx**: 512MB RAM, 1 CPU
-core -**LiteLLM**: 12GB RAM, 1 CPU core, OOM score: -300
+- **PostgreSQL**: 4GB RAM, 2 CPU cores
+- **Nginx**: 512MB RAM, 1 CPU core
+- **LiteLLM**: 12GB RAM, 1 CPU core, OOM score: -300
 
-### Стратегия логирования (4-tier)
+### Logging Strategy (4-tier)
 
--**Tier 1 (Critical)**: Dual logging (json-file + fluentd backup) -**Tier 2
-(Important)**: Fluentd with buffering -**Tier 3 (Auxiliary)**: Fluentd with
-separate tags -**Tier 4 (Monitoring)**: Minimal logging
+- **Tier 1 (Critical)**: Dual logging (json-file + fluentd backup)
+- **Tier 2 (Important)**: Fluentd with buffering
+- **Tier 3 (Auxiliary)**: Fluentd with separate tags
+- **Tier 4 (Monitoring)**: Minimal logging
 
-## Auto-update политика
+## Auto-update Policy
 
-### Отключены (monitor-only)
+### Disabled (monitor-only)
 
 - Ollama (GPU-critical)
 - PostgreSQL (database)
@@ -115,9 +118,9 @@ separate tags -**Tier 4 (Monitoring)**: Minimal logging
 - LiteLLM (gateway)
 - Docling (GPU service)
 
-### Включены
+### Enabled
 
 - Redis, SearXNG, Auth
 - Cloudflared, Backrest
-- Все мониторинг-сервисы
+- All monitoring services
 - Tika, EdgeTTS, MCP

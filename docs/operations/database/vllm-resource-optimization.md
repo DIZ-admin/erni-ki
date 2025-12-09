@@ -1,18 +1,18 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# vLLM Resource Optimization для ERNI-KI
+# vLLM Resource Optimization for ERNI-KI
 
-## Обзор конфигурации
+## Configuration Overview
 
-Данная конфигурация оптимизирована для совместного использования ресурсов между
-vLLM (CPU) и Ollama (GPU) на системе с Quadro P2200.
+This configuration is optimized for shared resource usage between vLLM (CPU) and
+Ollama (GPU) on a system with Quadro P2200.
 
-## Архитектура ресурсов
+## Resource Architecture
 
 ```mermaid
 graph TB
@@ -38,14 +38,15 @@ graph TB
     RAM --> VRAM
 ```
 
-## Конфигурация CPU
+## CPU Configuration
 
 ### Thread Binding
 
--**vLLM**: Использует CPU ядра 0-6 (7 ядер) -**System**: Резервирует CPU ядро 7
-для системных процессов -**Ollama**: Может использовать любые доступные CPU ядра
+- **vLLM**: Uses CPU cores 0-6 (7 cores)
+- **System**: Reserves CPU core 7 for system processes
+- **Ollama**: Can use any available CPU cores
 
-### Переменные окружения
+### Environment Variables
 
 ```bash
 VLLM_CPU_OMP_THREADS_BIND=0-6
@@ -53,107 +54,111 @@ VLLM_CPU_NUM_OF_RESERVED_CPU=1
 VLLM_CPU_KVCACHE_SPACE=4
 ```
 
-## Конфигурация памяти
+## Memory Configuration
 
 ### vLLM Memory Limits
 
--**Лимит памяти**: 6GB -**Резерв памяти**: 2GB -**KV Cache**: 4GB
+- **Memory limit**: 6GB
+- **Memory reservation**: 2GB
+- **KV Cache**: 4GB
 
-### Оптимизация для CPU
+### CPU Optimization
 
--**Batch size**: 1024 tokens (оптимизировано для CPU) -**Max sequences**: 64
-(снижено для CPU) -**Block size**: 16 (рекомендовано для CPU)
+- **Batch size**: 1024 tokens (optimized for CPU)
+- **Max sequences**: 64 (reduced for CPU)
+- **Block size**: 16 (recommended for CPU)
 
-## Производительность
+## Performance
 
-### Ожидаемые показатели
+### Expected Metrics
 
--**vLLM CPU**: 2-5 tokens/sec (зависит от модели) -**Ollama GPU**: 15-30
-tokens/sec (с GPU ускорением) -**Совместная работа**: Без конфликтов ресурсов
+- **vLLM CPU**: 2-5 tokens/sec (depends on model)
+- **Ollama GPU**: 15-30 tokens/sec (with GPU acceleration)
+- **Combined operation**: No resource conflicts
 
-### Мониторинг
+### Monitoring
 
 ```bash
-# Проверка использования CPU
+# Check CPU usage
 htop
 
-# Проверка использования GPU
+# Check GPU usage
 nvidia-smi
 
-# Проверка памяти vLLM
+# Check vLLM memory
 docker stats vllm
 ```
 
-## Рекомендации по использованию
+## Usage Recommendations
 
-### Когда использовать vLLM (CPU)
+### When to Use vLLM (CPU)
 
-- Простые задачи генерации текста
-- Batch обработка (офлайн)
-- Когда Ollama занят GPU-интенсивными задачами
+- Simple text generation tasks
+- Batch processing (offline)
+- When Ollama is busy with GPU-intensive tasks
 
-### Когда использовать Ollama (GPU)
+### When to Use Ollama (GPU)
 
-- Интерактивные чаты
-- Большие модели (>7B параметров)
-- Задачи требующие низкой латентности
+- Interactive chats
+- Large models (>7B parameters)
+- Tasks requiring low latency
 
 ## Troubleshooting
 
-### Проблема: vLLM не запускается
+### Issue: vLLM won't start
 
 ```bash
-# Проверить переменные окружения
+# Check environment variables
 docker-compose exec vllm env | grep VLLM
 
-# Проверить логи
+# Check logs
 docker-compose logs vllm --tail=50
 ```
 
-## Проблема: Низкая производительность
+## Issue: Low Performance
 
 ```bash
-# Проверить CPU binding
+# Check CPU binding
 docker-compose exec vllm cat /proc/self/status | grep Cpus_allowed_list
 
-# Оптимизировать KV cache
+# Optimize KV cache
 export VLLM_CPU_KVCACHE_SPACE=6
 ```
 
-## Проблема: Конфликт с Ollama
+## Issue: Conflict with Ollama
 
 ```bash
-# Убедиться что vLLM использует только CPU
-docker-compose exec vllm nvidia-smi  # Должна выдать ошибку
+# Ensure vLLM uses CPU only
+docker-compose exec vllm nvidia-smi  # Should error
 
-# Проверить что Ollama имеет доступ к GPU
+# Check Ollama has GPU access
 docker-compose exec ollama nvidia-smi
 ```
 
-## Масштабирование
+## Scaling
 
-### Увеличение производительности vLLM
+### Increasing vLLM Performance
 
-1. Увеличить `VLLM_CPU_KVCACHE_SPACE` до 6-8GB
-2. Использовать больше CPU ядер (0-7)
-3. Оптимизировать модель (квантизация)
+1. Increase `VLLM_CPU_KVCACHE_SPACE` to 6-8GB
+2. Use more CPU cores (0-7)
+3. Optimize model (quantization)
 
-### Балансировка нагрузки
+### Load Balancing
 
-- Использовать nginx для распределения запросов
-- Настроить health checks для автоматического переключения
-- Мониторить производительность обоих сервисов
+- Use nginx to distribute requests
+- Configure health checks for automatic failover
+- Monitor performance of both services
 
-## Безопасность
+## Security
 
-### Изоляция ресурсов
+### Resource Isolation
 
-- vLLM изолирован от GPU через Docker
-- CPU ядра разделены между сервисами
-- Отдельные лимиты памяти для каждого сервиса
+- vLLM isolated from GPU via Docker
+- CPU cores separated between services
+- Separate memory limits for each service
 
-### Мониторинг ресурсов
+### Resource Monitoring
 
-- Автоматические алерты при превышении лимитов
-- Логирование использования ресурсов
-- Health checks для обоих сервисов
+- Automatic alerts on limit exceeded
+- Resource usage logging
+- Health checks for both services

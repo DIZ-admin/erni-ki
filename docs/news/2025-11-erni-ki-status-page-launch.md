@@ -1,22 +1,22 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-30'
 tags:
   - status-page
   - monitoring
-title: 'Запуск статус-страницы ERNI-KI'
+title: 'ERNI-KI Status Page Launch'
 date: 2025-11-23
 ---
 
-# Запуск статус-страницы ERNI-KI
+# ERNI-KI Status Page Launch
 
-Мы включили публичную статус-страницу ERNI-KI (v0.61.3).
+We have enabled public ERNI-KI status page (v0.61.3).
 
-- Отслеживаются здоровье 34 сервисов, дашборды Grafana и правила алертов.
-- Основана на данных Prometheus/Alertmanager, обновление каждые 60 секунд.
-- Добавлены ссылки на runbooks и раздел "Incident history".
+- Tracks health of 34 services, Grafana dashboards and alert rules.
+- Based on Prometheus/Alertmanager data, updates every 60 seconds.
+- Added links to runbooks and "Incident history" section.
 
-Страница доступна внутри портала мониторинга; детали — в операционном разделе
+Page is accessible within monitoring portal; details in operations section
 "Status Page".

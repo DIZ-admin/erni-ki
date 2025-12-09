@@ -1,13 +1,13 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-29'
+last_updated: '2025-12-09'
 ---
 
 # Troubleshooting Guide
 
-> **Document Version:** 1.0 **Last Updated:** 2025-11-29 **Resolution Time:**
+> **Document Version:** 1.0 **Last Updated:** 2025-12-09 **Resolution Time:**
 > Most issues resolvable in <15 minutes
 
 This guide helps diagnose and resolve common ERNI-KI issues.
@@ -256,8 +256,8 @@ grep OPENWEBUI_DB_USER .env
 
 # Test with explicit credentials
 psql -h localhost -U openwebui_user -d openwebui \
--c "SELECT 1;" \
--W # Will prompt for password
+ -c "SELECT 1;" \
+ -W # Will prompt for password
 
 ```
 
@@ -281,7 +281,7 @@ docker-compose exec db psql -U openwebui_user openwebui < backup.sql
 ```bash
 # Check active connections
 docker-compose exec db psql -U openwebui_user -d openwebui \
--c "SELECT COUNT(*) FROM pg_stat_activity;"
+ -c "SELECT COUNT(*) FROM pg_stat_activity;"
 
 # Increase pool size in openwebui.env
 echo "DATABASE_CONNECTION_POOL_SIZE=20" >> env/openwebui.env
@@ -314,9 +314,9 @@ print(f'Expected: {sig}')
 
 # Test webhook endpoint
 curl -X POST http://localhost:5001/webhook \
- -H "Content-Type: application/json" \
- -H "X-Signature: $(python3 -c '...')" \
- -d '{"alerts":[]}'
+  -H "Content-Type: application/json" \
+  -H "X-Signature: $(python3 -c '...')" \
+  -d '{"alerts":[]}'
 
 
 ```
@@ -398,9 +398,9 @@ cat etc/alertmanager/alertmanager.yml
 
 # Ensure webhook_configs section exists:
 # receivers:
-# - name: 'webhook-receiver'
-# webhook_configs:
-# - url: 'http://webhook-receiver:5001/webhook'
+#  - name: 'webhook-receiver'
+#    webhook_configs:
+#      - url: 'http://webhook-receiver:5001/webhook'
 
 # Reload Alertmanager
 docker-compose restart alertmanager
@@ -515,7 +515,7 @@ watch -n 1 'docker stats --no-stream | grep openwebui'
 
 # Check database query performance
 docker-compose exec db psql -U openwebui_user -d openwebui \
- -c "SHOW slow_query_log;"
+  -c "SHOW slow_query_log;"
 
 # Check logs for slow requests
 docker-compose logs openwebui | grep "duration"
@@ -530,7 +530,7 @@ docker-compose logs openwebui | grep "duration"
 ```bash
 # Check for missing indexes
 docker-compose exec db psql -U openwebui_user -d openwebui \
--c "SELECT * FROM pg_stat_user_indexes ORDER BY idx_scan DESC;"
+ -c "SELECT * FROM pg_stat_user_indexes ORDER BY idx_scan DESC;"
 
 # Vacuum and analyze
 docker-compose exec db vacuumdb -U openwebui_user -d openwebui
@@ -547,10 +547,10 @@ docker stats --no-stream | grep openwebui
 # If high: Increase allocated resources
 # Edit docker-compose.yml:
 # deploy:
-# resources:
-# limits:
-# cpus: '2'
-# memory: 4G
+#   resources:
+#     limits:
+#       cpus: '2'
+#       memory: 4G
 
 ```
 
@@ -570,7 +570,7 @@ docker network inspect erni-ki_default
 ```bash
 # Check connection pool usage
 docker-compose exec db psql -U openwebui_user -d openwebui \
--c "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
+ -c "SELECT COUNT(*) FROM pg_stat_activity WHERE state = 'active';"
 
 ```
 
@@ -604,9 +604,9 @@ docker stats openwebui --no-stream
 
 # Or use docker-compose.yml:
 # deploy:
-# resources:
-# limits:
-# memory: 4G
+#   resources:
+#     limits:
+#       memory: 4G
 
 ```
 
@@ -626,8 +626,8 @@ docker-compose exec redis redis-cli CONFIG SET maxmemory 1gb
 ```bash
 # Monitor memory over time
 while true; do
-echo "$(date): $(docker stats --no-stream openwebui | tail -1)"
-sleep 60
+ echo "$(date): $(docker stats --no-stream openwebui | tail -1)"
+ sleep 60
 done
 
 # If consistently increasing: Check application logs for leaks
@@ -661,9 +661,9 @@ docker-compose logs openwebui | tail -50
 ```bash
 # Edit docker-compose.yml:
 # deploy:
-# resources:
-# limits:
-# cpus: '2'
+#   resources:
+#     limits:
+#       cpus: '2'
 
 ```
 
@@ -672,8 +672,8 @@ docker-compose logs openwebui | tail -50
 ```bash
 # Identify slow queries
 docker-compose exec db psql -U openwebui_user -d openwebui \
--c "SELECT query, mean_exec_time FROM pg_stat_statements \
-ORDER BY mean_exec_time DESC LIMIT 5;"
+ -c "SELECT query, mean_exec_time FROM pg_stat_statements \
+ ORDER BY mean_exec_time DESC LIMIT 5;"
 
 # Add indexes for frequently queried columns
 
@@ -718,14 +718,14 @@ docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu22.04 nvidia-smi
 ```bash
 # Edit docker-compose.yml:
 # services:
-# ollama:
-# deploy:
-# resources:
-# reservations:
-# devices:
-# - driver: nvidia
-# count: 1
-# capabilities: [gpu]
+#   ollama:
+#     deploy:
+#       resources:
+#         reservations:
+#           devices:
+#             - driver: nvidia
+#               count: 1
+#               capabilities: [gpu]
 
 ```
 
@@ -813,7 +813,7 @@ docker-compose restart ollama
 ```bash
 # Check if user exists
 docker-compose exec db psql -U openwebui_user -d openwebui \
- -c "SELECT id, name, email FROM user LIMIT 5;"
+  -c "SELECT id, name, email FROM user LIMIT 5;"
 
 # Check token validity
 curl -v -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/chats
@@ -831,8 +831,8 @@ docker-compose logs openwebui | grep -i "auth\|token\|401\|403"
 ```bash
 # Get new token
 curl -X POST http://localhost:8080/api/v1/auths/signin \
--H "Content-Type: application/json" \
--d '{"email":"admin@localhost","password":"CHANGEME"}' # pragma: allowlist secret
+ -H "Content-Type: application/json" \
+ -d '{"email":"admin@localhost","password":"CHANGEME"}' # pragma: allowlist secret
 
 # Use token in header
 curl -H "Authorization: Bearer <token>" http://localhost:8080/api/v1/chats
@@ -857,7 +857,7 @@ from sqlalchemy import create_engine
 ```bash
 # Check user role
 docker-compose exec db psql -U openwebui_user -d openwebui \
--c "SELECT id, name, role FROM user WHERE email='admin@localhost';"
+ -c "SELECT id, name, role FROM user WHERE email='admin@localhost';"
 
 ```
 
@@ -904,7 +904,7 @@ openssl rand -base64 32
 
 # Update in database
 docker-compose exec db psql -U openwebui_user -d openwebui \
--c "UPDATE user SET password_hash='...' WHERE id='admin';"
+ -c "UPDATE user SET password_hash='...' WHERE id='admin';"
 
 ```
 
@@ -977,7 +977,7 @@ docker-compose restart ollama
 # 1. Stop everything
 docker-compose down
 
-# 2. Remove volumes ( DELETES DATA)
+# 2. Remove volumes (⚠ DELETES DATA)
 docker-compose down -v
 
 # 3. Remove images
@@ -1021,7 +1021,7 @@ docker-compose exec db psql -U openwebui_user openwebui < backups/latest.sql
 
 # Verify restore
 docker-compose exec db psql -U openwebui_user -d openwebui \
- -c "SELECT COUNT(*) FROM chat;"
+  -c "SELECT COUNT(*) FROM chat;"
 
 
 ```
@@ -1035,10 +1035,10 @@ docker-compose exec db psql -U openwebui_user -d openwebui \
 ```bash
 # Create debug bundle
 tar -czf debug-bundle.tar.gz \
- <(docker-compose logs --since 1h) \
- <(docker stats --no-stream) \
- <(docker-compose config) \
- <(docker network inspect erni-ki_default)
+  <(docker-compose logs --since 1h) \
+  <(docker stats --no-stream) \
+  <(docker-compose config) \
+  <(docker network inspect erni-ki_default)
 
 # Share for support
 
@@ -1061,8 +1061,8 @@ tar -czf debug-bundle.tar.gz \
 
 - **Slack:** #erni-ki-support
 - **Email:** support@erni-gruppe.ch
-- **Docs:** локальная документация в репозитории (внешний портал временно
-  недоступен)
+- **Docs:** local documentation in repository (external portal temporarily
+  unavailable)
 
 ---
 

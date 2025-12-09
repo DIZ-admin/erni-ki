@@ -1,50 +1,49 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Техническое обслуживание ERNI-KI
+# ERNI-KI Technical Maintenance
 
-Все процедуры продвинутого обслуживания: резервные копии, рестарт сервисов,
-очистка Docling volume и чек-листы обновлений образов. Сводка регламентов по
-резервному копированию, обновлению образов и очистке общих хранилищ.
+All advanced maintenance procedures: backups, service restarts, Docling volume
+cleanup and image update checklists. Summary of regulations for backup, image
+updates and shared storage cleanup.
 
-## Документы
+## Documents
 
-- [backup-restore-procedures.md](backup-restore-procedures.md) — регламент по
-  созданию бэкапов и восстановлению.
-- [docling-shared-volume.md](docling-shared-volume.md) — политика хранения,
-  безопасность и очистка общего тома Docling.
-- [image-upgrade-checklist.md](image-upgrade-checklist.md) — пошаговое
-  руководство по обновлению контейнеров и проверке digest-ов.
-- [service-restart-procedures.md](service-restart-procedures.md) — матрица
-  безопасного перезапуска критичных сервисов.
+- [backup-restore-procedures.md](backup-restore-procedures.md) — regulations for
+  creating backups and restoration.
+- [docling-shared-volume.md](docling-shared-volume.md) — storage policy,
+  security and cleanup of Docling shared volume.
+- [image-upgrade-checklist.md](image-upgrade-checklist.md) — step-by-step guide
+  for updating containers and checking digests.
+- [service-restart-procedures.md](service-restart-procedures.md) — matrix for
+  safe restart of critical services.
 
-## Как использовать
+## How to use
 
-- Перед обновлением зависимостей — пройдите checklist.
-- Планируете уборку артефактов Docling — сверяйтесь с соответствующим файлом.
-- Прежде чем перезапускать сервисы в продакшне — следуйте процедурам из
+- Before updating dependencies — go through checklist.
+- Planning Docling artifacts cleanup — reference the corresponding file.
+- Before restarting services in production — follow procedures from
   `service-restart-procedures.md`.
 
-Фиксируйте результаты операций в Jira/Archon и обновляйте этот README при
-добавлении новых процедур.
+Record operation results in Jira/Archon and update this README when adding new
+procedures.
 
-## Регулярные задачи
+## Regular tasks
 
--**Ежедневно:**проверка бэкапов (`backrest`) и свободного места Docling
-volume. -**Еженедельно:**обновление образов через checklist и smoke-тест
-сервисов. -**Ежемесячно:**аудит cron-скриптов, ротация сертификатов, инспекция
-`./data/*` на накопление мусора.
+- **Daily:** check backups (`backrest`) and Docling volume free space. -
+  **Weekly:** update images through checklist and smoke-test services. -
+  **Monthly:** audit cron scripts, certificate rotation, inspect `./data/*` for
+  garbage accumulation.
 
-## Коммуникация
+## Communication
 
-1. Создайте тикет в Jira/Archon с описанием и window.
-2. Уведомите заинтересованные команды за 24 часа.
-3. После действий приложите логи, отметьте результаты в тикете и статусной
-   странице.
+1. Create ticket in Jira/Archon with description and window.
+2. Notify interested teams 24 hours in advance.
+3. After actions, attach logs, mark results in ticket and status page.
 
-Используйте этот README перед выполнением maintenance-работ и фиксируйте
-результаты в Jira/Archon.
+Use this README before performing maintenance work and record results in
+Jira/Archon.

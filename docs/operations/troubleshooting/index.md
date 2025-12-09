@@ -1,29 +1,29 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Трублшутинг ERNI-KI
+# ERNI-KI Troubleshooting
 
-Собрание руководств по анализу инцидентов и восстановлению сервисов.
+Collection of guides for incident analysis and service recovery.
 
-## Разделы
+## Sections
 
-- [troubleshooting-guide.md](troubleshooting-guide.md) — общая методика поиска
-  причин, чек-листы для сетевых, GPU и сервисных проблем.
-- Дополняйте README ссылками на тематические runbook-и из `operations/core` и
-  `operations/diagnostics`, если появляются новые сценарии.
+- [troubleshooting-guide.md](troubleshooting-guide.md) — general methodology for
+  finding root causes, checklists for network, GPU and service issues.
+- Supplement README with links to thematic runbooks from `operations/core` and
+  `operations/diagnostics` if new scenarios appear.
 
-## Стандартный подход
+## Standard Approach
 
-1. Сверьтесь со статус-страницей и активными алертами.
-2. Соберите артефакты: `docker compose ps`, логи сервисов, метрики.
-3. Классифицируйте проблему (LLM, сеть, БД, UI) и откройте нужный runbook.
+1. Check status page and active alerts.
+2. Collect artifacts: `docker compose ps`, service logs, metrics.
+3. Classify issue (LLM, network, DB, UI) and open appropriate runbook.
 
-## Документирование
+## Documentation
 
-- После устранения инцидента добавьте краткую запись в troubleshooting-guide.
-- Отмечайте runbook-и тегами (`llm`, `network`, `db`) для быстрого поиска.
-- Обновляйте этот индекс и audit trail ссылками на новые сценарии.
+- After resolving an incident, add brief note to troubleshooting-guide.
+- Mark runbooks with tags (`llm`, `network`, `db`) for quick search.
+- Update this index and audit trail with links to new scenarios.

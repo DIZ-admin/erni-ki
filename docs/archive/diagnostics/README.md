@@ -1,15 +1,15 @@
 ---
-language: ru
-translation_status: original
+language: en
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-29'
+last_updated: '2025-12-09'
 ---
 
-# Диагностика (архив)
+# Diagnostics (Archive)
 
-Для списка исторических диагностик см. `docs/archive/diagnostics/index.md`.
+For the list of historical diagnostics see `docs/archive/diagnostics/index.md`.
 
-Содержимое каталога:
+Directory contents:
 
 - full-server-diagnostics-2025-11-04.md
 - log-analysis-correction-2025-11-04.md

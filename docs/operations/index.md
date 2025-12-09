@@ -61,14 +61,15 @@ See [monitoring-guide.md](../../operations/monitoring/monitoring-guide.md) (RU).
 [troubleshooting-guide.md](../../operations/troubleshooting/troubleshooting-guide.md)
 (RU).
 
-## Операционный ритм
+## Operational Rhythm
 
--**Ежедневно:**проверка статус-страницы, `CronJobFailed`, контроль
-бэкапов. -**Еженедельно:**аудит изменений по `configuration-change-process.md` и
-обновление журнала maintenance. -**Ежемесячно:**тренировочные восстановления по
+-**Daily:**check status page, `CronJobFailed`, backup
+monitoring. -**Weekly:**configuration change audit per
+`configuration-change-process.md` and maintenance log
+updates. -**Monthly:**practice restores per
 `maintenance/backup-restore-procedures.md`.
 
-## Связанная документация
+## Related Documentation
 
 - [Architecture Overview](../architecture/index.md)
 - [Getting Started](../getting-started/index.md)

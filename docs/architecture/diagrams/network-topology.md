@@ -1,35 +1,35 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-27'
 ---
 
-# Сетевая топология
+# Network Topology
 
-## Сетевая архитектура и порты
+## Network Architecture and Ports
 
 ```mermaid
 graph TB
-    subgraph External["Внешняя сеть"]
-        Internet["Интернет"]
-        ExternalUser["Внешний | пользователь"]
+    subgraph External["External Network"]
+        Internet["Internet"]
+        ExternalUser["External | user"]
     end
 
-    subgraph Local["Локальная сеть (192.168.62.0/24)"]
-        LocalUser["Локальный | пользователь"]
+    subgraph Local["Local Network (192.168.62.0/24)"]
+        LocalUser["Local | user"]
         Router["LANCOM Router | 192.168.62.1"]
         Server["ERNI-KI Server | 192.168.62.153"]
     end
 
-    subgraph Public["Публичные порты (Server)"]
+    subgraph Public["Public Ports (Server)"]
         Port80["80/tcp | HTTP"]
         Port443["443/tcp | HTTPS"]
         Port8080["8080/tcp | HTTP Alt"]
         Port3001["3001/tcp | Uptime Kuma"]
     end
 
-    subgraph Localhost["Localhost-only порты"]
+    subgraph Localhost["Localhost-only Ports"]
         Port4000["127.0.0.1:4000 | LiteLLM API"]
         Port11434["127.0.0.1:11434 | Ollama"]
         Port9091["127.0.0.1:9091 | Prometheus"]
@@ -77,20 +77,20 @@ graph TB
     Port8080 --> DockerBridge
 ```
 
-## Таблица портов
+## Port Table
 
-### Публичные порты (доступны из локальной сети)
+### Public Ports (accessible from local network)
 
-| Порт | Сервис      | Протокол | Описание               |
+| Port | Service     | Protocol | Description            |
 | ---- | ----------- | -------- | ---------------------- |
-| 80   | Nginx       | HTTP     | HTTP редирект на HTTPS |
-| 443  | Nginx       | HTTPS    | Основной HTTPS доступ  |
-| 8080 | Nginx       | HTTP     | Альтернативный HTTP    |
+| 80   | Nginx       | HTTP     | HTTP redirect to HTTPS |
+| 443  | Nginx       | HTTPS    | Main HTTPS access      |
+| 8080 | Nginx       | HTTP     | Alternative HTTP       |
 | 3001 | Uptime Kuma | HTTP     | Status page            |
 
-### Localhost-only порты (доступны только с сервера)
+### Localhost-only Ports (accessible only from server)
 
-| Порт  | Сервис       | Протокол | Описание          |
+| Port  | Service      | Protocol | Description       |
 | ----- | ------------ | -------- | ----------------- |
 | 4000  | LiteLLM      | HTTP     | LiteLLM Proxy API |
 | 11434 | Ollama       | HTTP     | Ollama API        |
@@ -105,9 +105,9 @@ graph TB
 | 8000  | MCP          | HTTP     | MCP Server API    |
 | 8091  | Watchtower   | HTTP     | Watchtower API    |
 
-### Внутренние порты (Docker network)
+### Internal Ports (Docker network)
 
-| Порт | Сервис              | Описание       |
+| Port | Service             | Description    |
 | ---- | ------------------- | -------------- |
 | 5432 | PostgreSQL          | Database       |
 | 6379 | Redis               | Cache & Queues |
@@ -118,22 +118,22 @@ graph TB
 | 9187 | PostgreSQL Exporter | DB metrics     |
 | 9121 | Redis Exporter      | Redis metrics  |
 
-## Сетевая безопасность
+## Network Security
 
-### Firewall правила
+### Firewall Rules
 
-- Публичные порты: 80, 443, 8080, 3001
-- Localhost-only: все остальные сервисы
-- Docker bridge: изолированная сеть для контейнеров
+- Public ports: 80, 443, 8080, 3001
+- Localhost-only: all other services
+- Docker bridge: isolated network for containers
 
 ### SSL/TLS
 
-- Let's Encrypt сертификат для `ki.erni-gruppe.ch`
+- Let's Encrypt certificate for `ki.erni-gruppe.ch`
 - Nginx SSL termination
-- Внутренние соединения через HTTP (Docker network)
+- Internal connections via HTTP (Docker network)
 
 ### Cloudflare Tunnel
 
-- Безопасный внешний доступ без port forwarding
-- DDoS защита
-- Автоматический SSL
+- Secure external access without port forwarding
+- DDoS protection
+- Automatic SSL

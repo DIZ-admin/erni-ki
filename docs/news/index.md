@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -8,20 +8,20 @@ date: 2025-11-22
 description: 'ERNI-KI Blog'
 ---
 
-# Новости ERNI-KI
+# ERNI-KI News
 
-Добро пожаловать в раздел новостей. Здесь публикуем релизы, статусные обновления
-и важные анонсы по платформе ERNI-KI.
+Welcome to the news section. Here we publish releases, status updates and
+important announcements about ERNI-KI platform.
 
-## Последние релизы
+## Latest releases
 
--**2025-11**— Запуск статус‑страницы и обновление документации:
-`2025-11-erni-ki-status-page-launch.md`
+- **2025-11** — Status page launch and documentation update:
+  `2025-11-erni-ki-status-page-launch.md`
 
-## Архив
+## Archive
 
 - `archive/2025.md`
 
-## Академия KI (новостная лента)
+## KI Academy (news feed)
 
 - `../academy/news/index.md`

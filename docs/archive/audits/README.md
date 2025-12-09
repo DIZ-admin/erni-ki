@@ -1,17 +1,17 @@
 ---
-language: ru
-translation_status: original
+language: en
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-12-03'
+last_updated: '2025-12-09'
 ---
 
-# Архив аудитов
+# Audits Archive
 
-Полная навигация доступна в `docs/archive/audits/index.md`. Этот файл
-сохраняется для совместимости чеков и указывает на каталог с историческими
-аудитами.
+Full navigation is available in `docs/archive/audits/index.md`. This file is
+kept for compatibility checks and points to the directory with historical
+audits.
 
-Актуальные файлы каталога:
+Current directory files:
 
 - ci-health.md
 - documentation-audit.md

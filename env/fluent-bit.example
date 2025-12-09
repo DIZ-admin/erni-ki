@@ -58,11 +58,11 @@ FLB_STORAGE_PATH=/tmp/fluent-bit-storage
 FLB_PROMETHEUS_METRICS=On
 # Prometheus metrics host
 FLB_PROMETHEUS_HOST=0.0.0.0
-# Порт для метрик Prometheus
+# Prometheus metrics port
 FLB_PROMETHEUS_PORT=2021
 
-# === Безопасность ===
-# Отключить TLS для внутренней сети
+# === Security ===
+# Disable TLS for internal network
 FLB_TLS=Off
-# Проверка SSL сертификатов
+# SSL certificate verification
 FLB_TLS_VERIFY=Off

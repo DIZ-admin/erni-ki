@@ -59,8 +59,8 @@ BLACKBOX_TARGET_API_URL=http://localhost:8080/health
 # SearXNG health URL
 BLACKBOX_TARGET_SEARXNG_URL=http://localhost:8080/searxng/healthz
 
-# === SSL мониторинг ===
-# Предупреждать за N дней до истечения сертификата
+# === SSL monitoring ===
+# Warn N days before certificate expiration
 BLACKBOX_SSL_EXPIRY_WARNING_DAYS=30
-# Проверять цепочку сертификатов
+# Verify certificate chain
 BLACKBOX_SSL_CHECK_CHAIN=true

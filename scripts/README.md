@@ -52,8 +52,8 @@ stay in English; docs live under `docs/`.
 
 ## Legacy
 
-- `legacy/health-monitor.sh` — LEGACY, заменён на `health-monitor-v2.sh`
-- `docs/update_status_snippet.py` — LEGACY совместимости; используйте
+- `legacy/health-monitor.sh` — LEGACY, replaced by `health-monitor-v2.sh`
+- `docs/update_status_snippet.py` — LEGACY compatibility wrapper; use
   `docs/update_status_snippet_v2.py`
 - Removed wrappers: `update-critical-services.sh`, `critical-alert.sh`,
   `translate_comments.py` (no targets/obsolete).
