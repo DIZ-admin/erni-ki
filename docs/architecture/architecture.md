@@ -3,19 +3,15 @@ language: ru
 translation_status: complete
 doc_version: '2025.11'
 title: 'architecture'
-system_version: '12.1'
-last_updated: '2025-11-22'
+system_version: '2025.11'
+last_updated: '2025-12-09'
 system_status: 'Production Ready'
 ---
 
 # Архитектура системы ERNI-KI
 
-> **Версия документа:**12.1**Дата обновления:**2025-11-23**Статус системы:**
-> Production Ready (в compose.yml 32 сервисов; 5/5 Grafana дашбордов
-> provisioned; 20 активных правил алертов. LiteLLM v1.80.0.rc.1, Docling, MCP
-> Server, Apache Tika, Watchtower monitor-only. Мониторинг: Prometheus v3.0.0,
-> Loki v3.0.0, Fluent Bit v3.1.0, Alertmanager v0.27.0.**Prometheus targets:
-> 32/32 UP (100%)**)
+> **Версия документа:** 2025.11 **Дата обновления:** 2025-12-09 **Статус
+> системы:** Production Ready
 
 ## Обзор архитектуры
 

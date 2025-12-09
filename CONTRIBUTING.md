@@ -1,438 +1,123 @@
-# Руководство по участию в проекте ERNI-KI
+# Contributing to ERNI-KI
 
-Спасибо за интерес к участию в развитии ERNI-KI! Мы ценим любой вклад в проект.
+Thank you for your interest in contributing to ERNI-KI! We appreciate all
+contributions.
 
-## Содержание
+## Table of Contents
 
-- [Как помочь проекту](#как-помочь-проекту)
-- [Сообщение об ошибках](#сообщение-об-ошибках)
-- [Предложение улучшений](#предложение-улучшений)
-- [Разработка](#разработка)
-- [Стандарты кодирования](#стандарты-кодирования)
-- [Тестирование](#тестирование)
-- [Документация](#документация)
+- [How to Contribute](#how-to-contribute)
+- [Reporting Issues](#reporting-issues)
+- [Proposing Improvements](#proposing-improvements)
+- [Development Workflow](#development-workflow)
+- [Coding Standards](#coding-standards)
+- [Testing](#testing)
+- [Documentation](#documentation)
 
-## Как помочь проекту
+## How to Contribute
 
-### Сообщение об ошибках
+### Reporting Issues
 
-- Проверьте, что ошибка еще не была зарегистрирована в
-  [Issues](https://github.com/DIZ-admin/erni-ki/issues)
-- Используйте шаблон для сообщения об ошибках
-- Предоставьте максимально подробную информацию
+1.  **Search existing issues**: Check
+    [Issues](https://github.com/DIZ-admin/erni-ki/issues) to avoid duplicates.
+2.  **Use the template**: Provide detailed information using the issue template.
+3.  **Reproduce**: Ensure the bug is reproducible and provide steps.
 
-### Предложение новых функций
+### Proposing Improvements
 
-- Обсудите идею в
-  [Discussions](https://github.com/DIZ-admin/erni-ki/discussions)
-- Создайте Feature Request с детальным описанием
-- Объясните, как это улучшит проект
+1.  **Discuss first**: Open a discussion in
+    [Discussions](https://github.com/DIZ-admin/erni-ki/discussions).
+2.  **Create Feature Request**: Describe the feature and the problem it solves.
 
-### Улучшение документации
+### Improving Documentation
 
-- Исправление опечаток и грамматических ошибок
-- Добавление примеров использования
-- Перевод документации на другие языки
-- Создание туториалов и гайдов
-- При обновлении статусных метрик редактируйте только
-  `docs/reference/status.yml`, затем выполняйте
-  `scripts/docs/update_status_snippet.py` — он синхронизирует `README.md`,
-  `docs/index.md` и `docs/overview.md`.
-- Для новых файлов код и конфигурация (включая комментарии) должны быть на
-  английском.
-- Документация — в `docs/ru/`, `docs/de/` или `docs/en/`.
-- Проверка запускается командой `npm run lint:language`.
-- Линтеры кода: `pip install -r requirements-dev.txt && npm run lint` (ESLint +
-  Ruff).
-- Подробные правила описаны в `docs/reference/language-policy.md`.
-- Стандарты метаданных (frontmatter) — в `docs/reference/metadata-standards.md`.
+- Fix typos and grammar.
+- Add usage examples.
+- Translate documentation (current languages: `ru` default, `en`, `de`).
+- **Note**: New code and configuration comments must be in **English**.
+- Run `npm run lint:language` to check language policies.
+- See `docs/reference/language-policy.md` for detailed rules.
 
-### Тестирование
+## Development Workflow
 
-- Тестирование новых функций
-- Написание unit и integration тестов
-- Тестирование на различных платформах
-- Нагрузочное тестирование
-- Секреты для CI-тестов:
-  - Контракты требуют `CONTRACT_BASE_URL` и `CONTRACT_BEARER_TOKEN` (job
-    `contract-tests` падает на `main/develop` при отсутствии).
-  - Нагрузочный smoke (k6) требует `SMOKE_BASE_URL` (job `load-smoke` падает на
-    `main/develop` при отсутствии; артефакт `k6-smoke-summary` при наличии
-    секретов).
-- Быстрые подсказки по фейлам CI:
-  - Контракты — job `contract-tests`
-  - Нагрузка — job `load-smoke`
-  - Observability конфиги/env — job `observability-configs`
+### Branching Strategy
 
-## Быстрые команды pre-commit
+- **`main`**: Production releases.
+- **`develop`**: Integration branch for ongoing work.
+- **Feature branches**: `feature/<name>`, `fix/<name>`, `docs/<name>`.
+- **Process**:
+  1.  Branch from `develop` (or `main` for hotfixes).
+  2.  Open PR to `develop`.
+  3.  Pass all CI checks.
+  4.  Squash merge.
 
-- Запустить хуки только для изменённых файлов: `pre-commit run`
-- Запустить для конкретного файла: `pre-commit run --files path/to/file.md`
-- Пропустить тяжёлые хуки (например, link-check/type-check) при локальной
-  проверке:
-  `SKIP="visuals-and-links-check,docs-validate-metadata,docs-validate-status-snippets,typescript-type-check,eslint,docker-compose-check" pre-commit run --files path/to/file`
-- Проверить всё (медленно): `pre-commit run --all-files`
-- Удалить мусор/дубликаты перед коммитом: `git clean -fdX` (предварительно
-  сохраните нужные файлы)
+### Pre-commit Hooks
 
-## Сообщение об ошибках
-
-### Перед созданием Issue
-
-1. **Поиск существующих Issues** - возможно, проблема уже известна
-2. **Проверка документации** - убедитесь, что это действительно ошибка
-3. **Воспроизведение** - убедитесь, что ошибка воспроизводится стабильно
-
-### Шаблон сообщения об ошибке
-
-```markdown
-## Описание ошибки
-
-Краткое и четкое описание проблемы.
-
-## Шаги для воспроизведения
-
-1. Перейти к '...'
-2. Нажать на '...'
-3. Прокрутить до '...'
-4. Увидеть ошибку
-
-## Ожидаемое поведение
-
-Описание того, что должно было произойти.
-
-## Скриншоты
-
-Если применимо, добавьте скриншоты для объяснения проблемы.
-
-## Информация о системе
-
-- ОС: [например, Ubuntu 22.04]
-- Docker версия: [например, 24.0.7]
-- Версия ERNI-KI: [например, 2.0.0]
-- GPU: [например, NVIDIA RTX 4060]
-
-## Логи
-```
-
-Вставьте соответствующие логи здесь
-
-```
-
-## Дополнительный контекст
-Любая другая информация о проблеме.
-```
-
-## Предложение улучшений
-
-### Шаблон Feature Request
-
-```markdown
-## Описание функции
-
-Четкое и краткое описание желаемой функции.
-
-## Проблема, которую решает
-
-Объясните проблему, которую вы пытаетесь решить.
-
-## Предлагаемое решение
-
-Детальное описание того, как должна работать функция.
-
-## Альтернативы
-
-Описание альтернативных решений, которые вы рассматривали.
-
-## Дополнительный контекст
-
-Скриншоты, макеты, или другие материалы.
-```
-
-## Разработка
-
-### Правила веток и merge
-
-- Основные ветки: `main` (prod), `develop` (integration). Ветки `release/*` и
-  `hotfix/*` — только по необходимости и удаляются после слияния.
-- Новые работы: `feature/<тема>`, `fix/<тема>`, `docs/<тема>`, `ci/<тема>`,
-  `hotfix/<issue>` (от `main`, затем back-merge в `develop`).
-- База PR: всё, кроме hotfix, мержится в `develop`; hotfix — в `main` с обратным
-  мержем в `develop`. Предпочтительный merge — squash (чистая история), удалять
-  ветку после merge.
-- Требования к PR: все проверки зелёные (CI, mypy, линтеры, покрытие), ветка
-  синхронизирована с базовой (`rebase`/`update branch`), нет локальных
-  TODO/FIXME без задач.
-- Гигиена: не держать ветки >4 недель без движения; регулярно удалять слитые
-  ветки (`git fetch --prune` локально, автоудаление веток в настройках
-  репозитория).
-
-### Требования к PR и проверкам
-
-- Все статус-проверки зелёные: линтеры (ESLint/Ruff), mypy, тесты
-  (Python/Go/JS), покрытие (целевое ≥80% после повышения фактического),
-  security-сканы (CodeQL + дополнительные).
-- Ветка синхронизирована с базовой, конфликты и TODO/FIXME без задач
-  отсутствуют.
-- Merge: предпочтительно squash, удалять ветку после merge.
-
-### Минимальные версии инструментов
-
-- Node.js: 22.14.0 (`nvm use` по `.nvmrc`).
-- Python: 3.11 (venv обязателен перед установкой зависимостей).
-- Go: версия из `auth/go.mod`; `gofmt`/`goimports` ставятся `go install`.
-- pre-commit: ≥3.5.0; установка:
-  `pre-commit install && pre-commit install --hook-type commit-msg`.
-
-### Процесс релиза (кратко)
-
-- Поток: `feature/*` → PR в `develop`; hotfix от `main` с back-merge в
-  `develop`; release/\_ только при подготовке релиза.
-- Перед релизом: все проверки зелёные, покрытие соответствует целевому статус
-  успешен.
-- После релиза: удалить release/hotfix ветку, убедиться в обратном merge в
-  `develop`.
-
-### Настройка среды разработки
-
-1. **Fork репозитория**
+We use `pre-commit` to ensure code quality.
 
 ```bash
-# Клонируйте ваш fork
-git clone https://github.com/your-username/erni-ki.git
-cd erni-ki
+# Install hooks
+pip install -r requirements-dev.txt
+pre-commit install
+pre-commit install --hook-type commit-msg
 
-# Добавьте upstream remote
-git remote add upstream https://github.com/DIZ-admin/erni-ki.git
+# Run manually
+pre-commit run --all-files
 ```
 
-2. **Установка зависимостей**
-
-```bash
-# Node.js зависимости
-npm install
-
-# Go зависимости для auth сервиса
-cd auth
-go mod download
-cd ..
-
-# Python зависимости для сборки документации (MkDocs + i18n)
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install mkdocs mkdocs-material mkdocs-static-i18n
-
-# Копирование конфигураций
-cp compose.yml.example compose.yml
-for file in env/*.example; do
- cp "$file" "${file%.example}"
-done
-```
-
-3. **Запуск в режиме разработки**
-
-```bash
-# Запуск всех сервисов
-docker compose up -d
-
-# Просмотр логов
-docker compose logs -f
-```
-
-### Процесс разработки
-
-1. **Создание ветки**
-
-```bash
-git checkout -b feature/amazing-feature
-```
-
-2. **Внесение изменений**
-
-- Следуйте стандартам кодирования
-- Добавьте тесты для новой функциональности
-- Обновите документацию при необходимости
-
-3. **Коммиты**
-
-```bash
-# Используйте conventional commits
-git commit -m "feat: добавить поддержку новых языковых моделей"
-git commit -m "fix: исправить ошибку аутентификации"
-git commit -m "docs: обновить API документацию"
-```
-
-4. **Push и Pull Request**
-
-```bash
-git push origin feature/amazing-feature
-```
-
-## Стандарты кодирования
+## coding Standards
 
 ### TypeScript/JavaScript
 
-```typescript
-// Используйте строгую типизацию
-interface ChatMessage {
-  id: string;
-  content: string;
-  role: 'user' | 'assistant';
-  timestamp: Date;
-}
-
-// Предпочитайте async/await
-async function sendMessage(message: ChatMessage): Promise<Response> {
-  try {
-    const response = await fetch('/api/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message),
-    });
-    return response;
-  } catch (error) {
-    console.error('Failed to send message:', error);
-    throw error;
-  }
-}
-```
+- Use strict typing.
+- Prefer `async/await`.
+- Run `npm run lint` (ESLint).
 
 ### Go
 
-```go
-// Используйте четкие имена и обработку ошибок
-func ValidateJWT(tokenString string) (*Claims, error) {
- token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
- if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
- return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
- }
- return []byte(os.Getenv("JWT_SECRET")), nil
- })
+- Follow standard Go conventions.
+- Use `gofmt` and `goimports`.
 
- if err != nil {
- return nil, fmt.Errorf("failed to parse token: %w", err)
- }
+### Python
 
- if claims, ok := token.Claims.(*Claims); ok && token.Valid {
- return claims, nil
- }
+- Follow PEP 8.
+- Use strict type hints.
+- Run `ruff check .` .
 
- return nil, fmt.Errorf("invalid token")
-}
-```
+### Commit Messages
 
-### Conventional Commits
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-Используйте следующие префиксы:
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation
+- `style:` Formatting
+- `refactor:` Code restructuring
+- `test:` Adding tests
+- `chore:` Maintenance
 
-- `feat:` - новая функция
-- `fix:` - исправление ошибки
-- `docs:` - изменения в документации
-- `style:` - форматирование кода
-- `refactor:` - рефакторинг кода
-- `test:` - добавление тестов
-- `chore:` - обновление зависимостей, конфигураций
+## Testing
 
-## Тестирование
-
-### Запуск тестов
+Ensure all tests pass before submitting a PR.
 
 ```bash
-# Все тесты
+# All tests
 npm test
 
-# Unit тесты
+# Unit tests
 npm run test:unit
 
-# Integration тесты
-npm run test:integration
-
-# Тесты с покрытием
-npm run test:coverage
-
-# Go тесты
+# Go tests
 cd auth && go test -v ./...
 ```
 
-### Написание тестов
+## Documentation
 
-```typescript
-// tests/unit/auth.test.ts
-import { describe, it, expect } from 'vitest';
-import { validateJWT } from '../src/utils/auth';
+- Update `docs/reference/api-reference.md` for API changes.
+- Update `docs/getting-started/user-guide.md` for new features.
+- Primary documentation language is **Russian** (currently), but English is
+  required for code/config.
 
-describe('Auth Utils', () => {
-  it('should validate correct JWT token', () => {
-    const token = 'valid-jwt-token';
-    const result = validateJWT(token);
-    expect(result.valid).toBe(true);
-  });
+## License
 
-  it('should reject invalid JWT token', () => {
-    const token = 'invalid-token';
-    const result = validateJWT(token);
-    expect(result.valid).toBe(false);
-  });
-});
-```
-
-## Документация
-
-### Обновление документации
-
-- Все изменения API должны быть отражены в `docs/reference/api-reference.md`
-- Новые функции требуют обновления `docs/getting-started/user-guide.md`
-- Изменения в архитектуре - обновление `docs/architecture/architecture.md`
-
-### Стиль документации
-
-- Используйте четкие заголовки и структуру
-- Добавляйте примеры кода
-- Включайте скриншоты для UI изменений
-- Пишите на русском языке для основной документации
-
-## Code Review
-
-### Что проверяем
-
-- Код соответствует стандартам проекта
-- Все тесты проходят
-- Документация обновлена
-- Нет breaking changes без major version bump
-- Безопасность кода
-
-### Процесс Review
-
-1. Автоматические проверки CI/CD должны пройти
-2. Минимум 1 approval от maintainer
-3. Все комментарии должны быть разрешены
-4. Squash merge для feature веток
-
-## Релизы
-
-### Версионирование
-
-Проект использует [Semantic Versioning](https://semver.org/):
-
-- **MAJOR** - несовместимые изменения API
-- **MINOR** - новая функциональность с обратной совместимостью
-- **PATCH** - исправления ошибок
-
-### Процесс релиза
-
-1. Обновление `CHANGELOG.md`
-2. Создание release branch
-3. Тестирование релиза
-4. Создание Git tag
-5. Публикация release notes
-
-## Связь
-
-- **GitHub Issues** - для багов и feature requests
-- **GitHub Discussions** - для общих вопросов
-- **Email** - для приватных вопросов
-
----
-
-**Спасибо за участие в развитии ERNI-KI!**
+By contributing, you agree that your contributions will be licensed under the
+MIT License.
