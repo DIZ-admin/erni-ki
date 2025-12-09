@@ -22,10 +22,10 @@ this version tracks them and highlights the most important user links.
 > - Automation: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
 >   01:30, Watchtower selective updates
 
-- Start here: [Academy KI](academy/index.md) — Open WebUI basics, Prompting 101,
-  HowTo, News.
-- Quick start: [Open WebUI basics](../academy/openwebui-basics.md) and
-  [Prompting 101](../academy/prompting-101.md).
-- Practical scenarios: [HowTo collection](academy/howto/index.md).
-- Uptime first:**[System status](system/status.md)**before you escalate an
-  issue.
+- Start here: [Academy KI](./academy/index.md) — Open WebUI basics, Prompting
+  101, HowTo, News.
+- Quick start: [Open WebUI basics](./academy/openwebui-basics.md) and
+  [Prompting 101](./academy/prompting-101.md).
+- Practical scenarios: [HowTo collection](./academy/howto/index.md).
+- Uptime first: **[System status](https://status.erni-ki.ch)** before you
+  escalate an issue.

@@ -19,4 +19,4 @@ Core operational documentation and runbooks for ERNI-KI.
 
 This is a partial English translation. The Russian version is the primary source
 with complete documentation. For missing sections, refer to the
-[Russian version](../../../operations/core/index.md).
+[Russian version](../../ru/operations/core/index.md).

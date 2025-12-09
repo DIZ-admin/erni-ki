@@ -12,36 +12,34 @@ system architecture.
 
 ## Contents
 
--**[architecture.md](../../architecture/architecture.md)**- Complete system
-architecture overview (RU) (v0.61.3)
+- **[architecture.md](./architecture.md)** - Complete system architecture overview
 
-- System components and their interactions
-- Network architecture and port mappings
-- Service inventory and dependencies
-- Mermaid diagrams for visual reference
+  - System components and their interactions
+  - Network architecture and port mappings
+  - Service inventory and dependencies
+  - Mermaid diagrams for visual reference
 
--**[services-overview.md](../../architecture/services-overview.md)**- Detailed
-service catalog (RU)
+- **[services-overview.md](./services-overview.md)** - Detailed service catalog
 
-- AI/ML services (Ollama, LiteLLM, Context7)
-- Data services (PostgreSQL, Redis)
-- Infrastructure services (Nginx, Cloudflare)
-- Monitoring stack (Prometheus, Grafana, Loki)
+  - AI/ML services (Ollama, LiteLLM, Context7)
+  - Data services (PostgreSQL, Redis)
+  - Infrastructure services (Nginx, Cloudflare)
+  - Monitoring stack (Prometheus, Grafana, Loki)
 
--**[service-inventory.md](../../architecture/service-inventory.md)**-
-Machine-readable service catalog (RU)
+- **[service-inventory.md](./service-inventory.md)** - Machine-readable service
+  catalog
 
--**[nginx-configuration.md](../../architecture/nginx-configuration.md)**- Nginx
-reverse proxy setup (RU)
+- **[nginx-configuration.md](./nginx-configuration.md)** - Nginx reverse proxy
+  setup
 
-- SSL/TLS configuration
-- Rate limiting
-- WebSocket proxying
-- Security headers
+  - SSL/TLS configuration
+  - Rate limiting
+  - WebSocket proxying
+  - Security headers
 
 ## Quick Links
 
-- [System Overview](../../overview.md) (RU)
+- [System Overview](../overview.md)
 - [Operations Guide](../operations/index.md)
 - [Installation Guide](../getting-started/installation.md)
 

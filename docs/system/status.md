@@ -51,8 +51,8 @@ contact the status-page owners listed in `operations/core/status-page.md`.
 ## Related documentation
 
 - Operations runbook and escalation:
-  [`docs/operations/core/status-page.md`](../../operations/core/status-page.md)
+  [operations/core/status-page.md](../operations/core/status-page.md)
 - User basics for Open WebUI:
-  [`docs/academy/openwebui-basics.md`](../../academy/openwebui-basics.md)
+  [academy/openwebui-basics.md](../academy/openwebui-basics.md)
 - Prompting checklist:
-  [`docs/academy/prompting-101.md`](../../academy/prompting-101.md)
+  [academy/prompting-101.md](../academy/prompting-101.md)
