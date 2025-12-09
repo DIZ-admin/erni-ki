@@ -259,3 +259,37 @@ groups:
           summary: "PublicAI model missing"
           description: "liteLLM is receiving continuous 404 ('Model not found') from PublicAI"
           action: "Check that publicai-apertus-70b model is active and aliases are configured"
+
+      # === LITELLM GATEWAY ALERTS ===
+      - alert: LiteLLMGatewayDown
+        expr: probe_success{job="blackbox", instance=~".*litellm.*"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: litellm
+        annotations:
+          summary: "LiteLLM Gateway is down"
+          description: "LiteLLM gateway has not responded to health checks for 2 minutes"
+          action: "Check status: docker compose logs litellm"
+
+      - alert: LiteLLMHighLatency
+        expr: histogram_quantile(0.95, rate(litellm_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: litellm
+        annotations:
+          summary: "High LiteLLM request latency"
+          description: "95th percentile latency > 5 seconds ({{ $value | humanize }}s)"
+          action: "Check upstream providers and network connectivity"
+
+      - alert: LiteLLMBudgetExhausted
+        expr: litellm_budget_remaining < 1
+        for: 1m
+        labels:
+          severity: warning
+          component: litellm
+        annotations:
+          summary: "LiteLLM budget nearly exhausted"
+          description: "Less than $1 remaining in budget"
+          action: "Review usage and increase budget if needed"

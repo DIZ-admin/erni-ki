@@ -1,4 +1,5 @@
-# AI-powered documentation quality validation using GitHub Models
+# AI-powered documentation quality validation using LiteLLM gateway
+# Falls back to GitHub Models if LiteLLM is unavailable
 # Analyzes markdown files for completeness, readability, and consistency
 
 name: Docs AI Quality Check
@@ -29,12 +30,13 @@ on:
 
 permissions:
   contents: read
-  models: read # Enable GitHub Models API access
+  models: read # Enable GitHub Models API access (fallback)
   pull-requests: write # For PR comments
 
 env:
-  GITHUB_MODELS_ENDPOINT: https://models.github.ai/inference
-  GITHUB_MODELS_MODEL: openai/gpt-4o-mini
+  # LiteLLM gateway (primary) - uses model aliases from LiteLLM config
+  LITELLM_ENDPOINT: https://litellm.erni-ki.ch/v1
+  LITELLM_MODEL: docs-validator
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -73,6 +75,8 @@ jobs:
       - name: Run AI documentation check (PR - changed files only)
         if: github.event_name == 'pull_request' && steps.changed-files.outputs.any_changed == 'true'
         env:
+          # LiteLLM primary, GitHub Models fallback
+          LITELLM_API_KEY: ${{ secrets.LITELLM_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
           THRESHOLD: ${{ github.event.inputs.threshold || '60' }}
@@ -106,6 +110,8 @@ jobs:
       - name: Run AI documentation check (full scan)
         if: github.event_name != 'pull_request' || steps.changed-files.outputs.any_changed != 'true'
         env:
+          # LiteLLM primary, GitHub Models fallback
+          LITELLM_API_KEY: ${{ secrets.LITELLM_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PATH_TO_CHECK: ${{ github.event.inputs.path || 'docs/' }}
           THRESHOLD: ${{ github.event.inputs.threshold || '60' }}
