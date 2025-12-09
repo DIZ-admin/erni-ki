@@ -524,14 +524,14 @@ docker secret create new_secret secrets/new_secret
 ### Backup & Restore
 
 ```bash
-# Backup PostgreSQL
-./scripts/maintenance/backup-postgres.sh
+# Backrest (configured in compose/gateway.yml)
+# See: conf/backrest/ for backup schedules and retention policies
+docker exec backrest backrest backup     # Manual backup
+docker exec backrest backrest list       # List backups
 
-# Restore PostgreSQL
-./scripts/maintenance/restore-postgres.sh <backup_file>
-
-# Backup all data (Backrest)
-# Configured via compose/gateway.yml
+# PostgreSQL direct backup (if needed)
+docker exec -it compose-db-1 pg_dump -U postgres openwebui > backup.sql
+docker exec -i compose-db-1 psql -U postgres openwebui < backup.sql
 ```
 
 ### Troubleshooting

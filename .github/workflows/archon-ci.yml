@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Check CLAUDE.md exists
         run: |
@@ -102,13 +102,8 @@ jobs:
           ARCHON_API_URL: ${{ vars.ARCHON_API_URL }}
           ARCHON_API_KEY: ${{ secrets.ARCHON_API_KEY }}
         run: |
-          if [ -z "$ARCHON_API_URL" ]; then
-            echo "::notice::ARCHON_API_URL not configured, skipping connectivity test"
-            exit 0
-          fi
-
           echo "Testing Archon connectivity..."
-          http_code=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+          http_code=$(curl --silent -o /tmp/resp.json -w "%{http_code}" \
             --max-time 10 \
             "${ARCHON_API_URL%/}/health" \
             -H "Authorization: Bearer ${ARCHON_API_KEY:-}" \
