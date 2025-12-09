@@ -12,15 +12,14 @@ system architecture.
 
 ## Contents
 
-- **[architecture.md](./architecture.md)** - Complete system architecture overview
-
+- **[architecture.md](./architecture.md)** - Complete system architecture
+  overview
   - System components and their interactions
   - Network architecture and port mappings
   - Service inventory and dependencies
   - Mermaid diagrams for visual reference
 
 - **[services-overview.md](./services-overview.md)** - Detailed service catalog
-
   - AI/ML services (Ollama, LiteLLM, Context7)
   - Data services (PostgreSQL, Redis)
   - Infrastructure services (Nginx, Cloudflare)
@@ -31,7 +30,6 @@ system architecture.
 
 - **[nginx-configuration.md](./nginx-configuration.md)** - Nginx reverse proxy
   setup
-
   - SSL/TLS configuration
   - Rate limiting
   - WebSocket proxying
