@@ -1,7 +1,7 @@
 ---
 language: ru
 translation_status: complete
-doc_version: '2025.12'
+doc_version: '2025.11'
 last_updated: '2025-12-09'
 ---
 
@@ -16,19 +16,19 @@ It's automatically synchronized from `compose.yml`.
 
 ## Core Services (11 total)
 
-| Service          | Component                   | Version           | Image                                              | Port   | Status |
-| ---------------- | --------------------------- | ----------------- | -------------------------------------------------- | ------ | ------ |
-| OpenWebUI        | Frontend/Chat UI            | 0.6.40            | ghcr.io/open-webui/open-webui:v0.6.40              | 8080   | Stable |
-| Ollama           | LLM Inference Engine        | 0.13.0            | ollama/ollama:0.13.0                               | 11434  | Stable |
-| LiteLLM          | Gateway/Context Engineering | 1.80.0-stable.1   | ghcr.io/berriai/litellm:v1.80.0-stable.1           | 4000   | Stable |
-| PostgreSQL       | Database + pgvector         | 17 (pgvector)     | pgvector/pgvector:pg17                             | 5432   | Stable |
-| Redis            | Cache/Session Store         | 7.0.15            | redis:7.0.15-alpine                                | 6379   | Stable |
-| Nginx            | Reverse Proxy               | 1.29.3            | nginx:1.29.3                                       | 80,443 | Stable |
-| Docling          | Document Processing (GPU)   | cu126 (sha256)    | ghcr.io/docling-project/docling-serve-cu126        | 5001   | Stable |
-| SearXNG          | Meta Search Engine          | 2025.11.21        | searxng/searxng:2025.11.21-b876d0bed               | 8888   | Stable |
-| MCPO Server      | MCP Tools Server            | git-91e8f94       | ghcr.io/open-webui/mcpo:git-91e8f94                | 8000   | Stable |
-| Cloudflared      | Cloudflare Tunnel           | 2025.11.1         | cloudflare/cloudflared:2025.11.1                   | -      | Stable |
-| EdgeTTS          | Text-to-Speech              | sha256 (pinned)   | travisvn/openai-edge-tts@sha256:4e7e2773...        | 5050   | Stable |
+| Service     | Component                   | Version         | Image                                       | Port   | Status |
+| ----------- | --------------------------- | --------------- | ------------------------------------------- | ------ | ------ |
+| OpenWebUI   | Frontend/Chat UI            | 0.6.40          | ghcr.io/open-webui/open-webui:v0.6.40       | 8080   | Stable |
+| Ollama      | LLM Inference Engine        | 0.13.0          | ollama/ollama:0.13.0                        | 11434  | Stable |
+| LiteLLM     | Gateway/Context Engineering | 1.80.0-stable.1 | ghcr.io/berriai/litellm:v1.80.0-stable.1    | 4000   | Stable |
+| PostgreSQL  | Database + pgvector         | 17 (pgvector)   | pgvector/pgvector:pg17                      | 5432   | Stable |
+| Redis       | Cache/Session Store         | 7.0.15          | redis:7.0.15-alpine                         | 6379   | Stable |
+| Nginx       | Reverse Proxy               | 1.29.3          | nginx:1.29.3                                | 80,443 | Stable |
+| Docling     | Document Processing (GPU)   | cu126 (sha256)  | ghcr.io/docling-project/docling-serve-cu126 | 5001   | Stable |
+| SearXNG     | Meta Search Engine          | 2025.11.21      | searxng/searxng:2025.11.21-b876d0bed        | 8888   | Stable |
+| MCPO Server | MCP Tools Server            | git-91e8f94     | ghcr.io/open-webui/mcpo:git-91e8f94         | 8000   | Stable |
+| Cloudflared | Cloudflare Tunnel           | 2025.11.1       | cloudflare/cloudflared:2025.11.1            | -      | Stable |
+| EdgeTTS     | Text-to-Speech              | sha256 (pinned) | travisvn/openai-edge-tts@sha256:4e7e2773... | 5050   | Stable |
 
 ## Monitoring & Observability (8 total)
 
@@ -45,31 +45,31 @@ It's automatically synchronized from `compose.yml`.
 
 ## Exporters (7 total)
 
-| Service           | Purpose          | Version        | Image                                          | Port | Status |
-| ----------------- | ---------------- | -------------- | ---------------------------------------------- | ---- | ------ |
-| Postgres Exporter | Database Metrics | 0.18.1         | prometheuscommunity/postgres-exporter:v0.18.1  | 9187 | Stable |
-| Redis Exporter    | Cache Metrics    | 1.80.1         | oliver006/redis_exporter:v1.80.1               | 9121 | Stable |
-| Nginx Exporter    | Proxy Metrics    | 1.5.1          | nginx/nginx-prometheus-exporter:1.5.1          | 9113 | Stable |
-| Blackbox Exporter | Endpoint Testing | 0.27.0         | prom/blackbox-exporter:v0.27.0                 | 9115 | Stable |
-| NVIDIA Exporter   | GPU Metrics      | 0.1            | mindprince/nvidia_gpu_prometheus_exporter:0.1  | 9445 | Stable |
-| Ollama Exporter   | Ollama Metrics   | 1.0.0 (custom) | erni-ki:ollama-exporter                        | 9778 | Custom |
-| RAG Exporter      | RAG Health       | 1.0.0 (custom) | erni-ki:rag-exporter                           | 9808 | Custom |
+| Service           | Purpose          | Version        | Image                                         | Port | Status |
+| ----------------- | ---------------- | -------------- | --------------------------------------------- | ---- | ------ |
+| Postgres Exporter | Database Metrics | 0.18.1         | prometheuscommunity/postgres-exporter:v0.18.1 | 9187 | Stable |
+| Redis Exporter    | Cache Metrics    | 1.80.1         | oliver006/redis_exporter:v1.80.1              | 9121 | Stable |
+| Nginx Exporter    | Proxy Metrics    | 1.5.1          | nginx/nginx-prometheus-exporter:1.5.1         | 9113 | Stable |
+| Blackbox Exporter | Endpoint Testing | 0.27.0         | prom/blackbox-exporter:v0.27.0                | 9115 | Stable |
+| NVIDIA Exporter   | GPU Metrics      | 0.1            | mindprince/nvidia_gpu_prometheus_exporter:0.1 | 9445 | Stable |
+| Ollama Exporter   | Ollama Metrics   | 1.0.0 (custom) | erni-ki:ollama-exporter                       | 9778 | Custom |
+| RAG Exporter      | RAG Health       | 1.0.0 (custom) | erni-ki:rag-exporter                          | 9808 | Custom |
 
 ## Data Storage & Management (2 total)
 
-| Service    | Purpose          | Version         | Image                  | Port | Status |
-| ---------- | ---------------- | --------------- | ---------------------- | ---- | ------ |
-| PostgreSQL | Primary Database | 17 + pgvector   | pgvector/pgvector:pg17 | 5432 | Stable |
-| Redis      | Cache Store      | 7.0.15          | redis:7.0.15-alpine    | 6379 | Stable |
+| Service    | Purpose          | Version       | Image                  | Port | Status |
+| ---------- | ---------------- | ------------- | ---------------------- | ---- | ------ |
+| PostgreSQL | Primary Database | 17 + pgvector | pgvector/pgvector:pg17 | 5432 | Stable |
+| Redis      | Cache Store      | 7.0.15        | redis:7.0.15-alpine    | 6379 | Stable |
 
 ## Utilities & Support (4 total)
 
-| Service     | Purpose           | Version | Image                         | Port | Status |
-| ----------- | ----------------- | ------- | ----------------------------- | ---- | ------ |
-| Backrest    | Backup Management | 1.10.1  | garethgeorge/backrest:v1.10.1 | 9898 | Stable |
-| Watchtower  | Auto-Update       | 1.7.1   | containrrr/watchtower:1.7.1   | -    | Stable |
-| Uptime Kuma | Uptime Monitoring | 2.0.2   | louislam/uptime-kuma:2.0.2    | 3001 | Stable |
-| Tika        | Content Extraction| 3.2.3.0 | apache/tika:3.2.3.0-full      | 9998 | Stable |
+| Service     | Purpose            | Version | Image                         | Port | Status |
+| ----------- | ------------------ | ------- | ----------------------------- | ---- | ------ |
+| Backrest    | Backup Management  | 1.10.1  | garethgeorge/backrest:v1.10.1 | 9898 | Stable |
+| Watchtower  | Auto-Update        | 1.7.1   | containrrr/watchtower:1.7.1   | -    | Stable |
+| Uptime Kuma | Uptime Monitoring  | 2.0.2   | louislam/uptime-kuma:2.0.2    | 3001 | Stable |
+| Tika        | Content Extraction | 3.2.3.0 | apache/tika:3.2.3.0-full      | 9998 | Stable |
 
 ## Key Service Descriptions
 
@@ -87,8 +87,10 @@ It's automatically synchronized from `compose.yml`.
 - **Version:** 0.13.0
 - **Purpose:** Local LLM inference engine
 - **Supported Models:** Llama 3.x, Mistral, Qwen, Phi, DeepSeek, etc.
-- **Hardware:** GPU-accelerated (NVIDIA CUDA 12.0+), Vulkan support, CPU fallback
-- **Key Features:** Model management, streaming responses, embeddings, vision models
+- **Hardware:** GPU-accelerated (NVIDIA CUDA 12.0+), Vulkan support, CPU
+  fallback
+- **Key Features:** Model management, streaming responses, embeddings, vision
+  models
 - **Documentation:** https://github.com/ollama/ollama
 
 ### LiteLLM
