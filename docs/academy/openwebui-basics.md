@@ -42,7 +42,7 @@ calls so you can assess quality or escalate issues.
 
 ## Further reading
 
-- [System status](../../system/status.md) – check incidents before escalating.
+- [System status](https://status.erni-ki.ch) – check incidents before escalating.
 - [Prompting 101](prompting-101.md) – high-level guidance for writing effective
   prompts.
 - [HowTo guides](howto/index.md) – ready-made flows for customer emails, meeting

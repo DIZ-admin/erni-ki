@@ -56,5 +56,5 @@ ERNI Support
 
 ## Related materials
 
-- [System status](../../system/status.md) – double-check for open incidents.
+- [System status](https://status.erni-ki.ch) – double-check for open incidents.
 - [Prompting 101](../prompting-101.md) – best practices for structured prompts.

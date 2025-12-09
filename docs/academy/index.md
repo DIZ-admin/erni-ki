@@ -39,4 +39,4 @@ contribute feedback or new prompts.
 - For new modules, create an index file with learning objectives and expected
   duration.
 
-> Always start with the health check:**[System status](../system/status.md)**.
+> Always start with the health check: **[System status](https://status.erni-ki.ch)**.
