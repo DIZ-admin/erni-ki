@@ -191,6 +191,9 @@ services:
       ollama:
         condition: service_healthy
     env_file: env/litellm.env
+    environment:
+      # DATABASE_URL must be set before Prisma migration runs
+      DATABASE_URL: postgresql://litellm_user:LL_secure_pass_2025!@db:5432/litellm?sslmode=disable
     entrypoint:
       - /bin/bash
       - /opt/erni/bin/litellm-entrypoint.sh

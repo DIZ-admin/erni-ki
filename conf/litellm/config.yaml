@@ -43,7 +43,7 @@ router_settings:
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
-  database_url: ""  # disabled for local macOS; use env to enable in prod
+  database_url: os.environ/DATABASE_URL  # set via environment variable
   ui_username: os.environ/UI_USERNAME
   ui_password: os.environ/UI_PASSWORD
   max_budget: 100
