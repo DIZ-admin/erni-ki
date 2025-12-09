@@ -2,8 +2,8 @@
 # CodeRabbit Configuration - ERNI-KI Project
 # Docs: https://docs.coderabbit.ai/reference/configuration
 
-language: ru
-tone_instructions: "Будь конструктивным и конкретным. Фокусируйся на безопасности, производительности и поддерживаемости."
+language: en
+tone_instructions: "Be constructive and specific. Focus on security, performance, and maintainability."
 early_access: true
 enable_free_tier: true
 
@@ -11,7 +11,7 @@ reviews:
   profile: chill
   request_changes_workflow: false
   high_level_summary: true
-  high_level_summary_placeholder: "## Обзор изменений"
+  high_level_summary_placeholder: "## Change Overview"
   auto_title_placeholder: "### CodeRabbit Review"
   poem: false
   review_status: true
@@ -24,11 +24,11 @@ reviews:
   suggested_reviewers: true
   labeling_instructions:
     - label: "security"
-      instructions: "Применяй к PR с изменениями в аутентификации, secrets, или безопасности"
+      instructions: "Apply to PRs with changes to authentication, secrets, or security"
     - label: "breaking-change"
-      instructions: "Применяй если изменения ломают обратную совместимость API"
+      instructions: "Apply if changes break API backward compatibility"
     - label: "documentation"
-      instructions: "Применяй к PR с изменениями только в документации"
+      instructions: "Apply to PRs with documentation-only changes"
 
   auto_review:
     enabled: true
@@ -84,67 +84,67 @@ reviews:
   path_instructions:
     - path: "**/*.go"
       instructions: |
-        - Проверяй на соответствие идиомам Go
-        - Убедись в обработке ошибок (не игнорируй err)
-        - Проверь отсутствие утечек горутин
-        - Валидируй использование context
-        - Проверь defer для cleanup операций
+        - Check for Go idioms compliance
+        - Ensure error handling (don't ignore err)
+        - Check for goroutine leaks
+        - Validate context usage
+        - Check defer for cleanup operations
     - path: "**/*.py"
       instructions: |
-        - Проверяй соответствие PEP 8 и Ruff правилам
-        - Убедись в наличии type hints для публичных функций
-        - Проверь обработку исключений (не используй bare except)
-        - Валидируй использование logging вместо print
-        - Проверь на SQL injection и другие уязвимости
+        - Check PEP 8 and Ruff rules compliance
+        - Ensure type hints for public functions
+        - Check exception handling (don't use bare except)
+        - Validate logging usage instead of print
+        - Check for SQL injection and other vulnerabilities
     - path: "**/*.ts"
       instructions: |
-        - Проверь строгую типизацию (избегай any)
-        - Убедись в обработке ошибок в async функциях
-        - Валидируй null/undefined проверки
-        - Проверь на XSS уязвимости
+        - Check strict typing (avoid any)
+        - Ensure error handling in async functions
+        - Validate null/undefined checks
+        - Check for XSS vulnerabilities
     - path: "**/*.sh"
       instructions: |
-        - Проверь использование set -euo pipefail
-        - Убедись в правильном экранировании переменных ("$var")
-        - Проверь обработку ошибок и exit codes
-        - Валидируй использование shellcheck директив
+        - Check for set -euo pipefail usage
+        - Ensure proper variable quoting ("$var")
+        - Check error handling and exit codes
+        - Validate shellcheck directive usage
     - path: ".github/workflows/**"
       instructions: |
-        - Проверь безопасность secrets (не выводи в логи)
-        - Убедись в наличии timeout-minutes
-        - Валидируй минимальные permissions
-        - Проверь pinning версий actions (SHA)
-        - Убедись в использовании GITHUB_TOKEN вместо PAT где возможно
+        - Check secrets security (don't log them)
+        - Ensure timeout-minutes is present
+        - Validate minimal permissions
+        - Check action version pinning (SHA)
+        - Ensure GITHUB_TOKEN usage instead of PAT where possible
     - path: "**/Dockerfile*"
       instructions: |
-        - Проверь использование конкретных версий образов (не latest)
-        - Убедись в multi-stage builds для уменьшения размера
-        - Проверь запуск от non-root пользователя
-        - Валидируй HEALTHCHECK инструкцию
-        - Проверь на секреты в образе
+        - Check for specific image versions (not latest)
+        - Ensure multi-stage builds for size reduction
+        - Check for non-root user execution
+        - Validate HEALTHCHECK instruction
+        - Check for secrets in image
     - path: "compose.yml"
       instructions: |
-        - Проверь версии образов (pinning)
-        - Убедись в наличии health checks
-        - Проверь resource limits (mem_limit, cpus)
-        - Валидируй использование secrets вместо environment
-        - Проверь restart policy
+        - Check image version pinning
+        - Ensure health checks are present
+        - Check resource limits (mem_limit, cpus)
+        - Validate secrets usage instead of environment
+        - Check restart policy
     - path: "**/*.yaml"
       instructions: |
-        - Проверь корректность синтаксиса YAML
-        - Убедись в консистентности отступов
-        - Валидируй наличие обязательных полей
+        - Check YAML syntax correctness
+        - Ensure consistent indentation
+        - Validate required fields presence
     - path: "tests/**"
       instructions: |
-        - Проверь покрытие edge cases
-        - Убедись в изоляции тестов
-        - Валидируй mock/stub использование
-        - Проверь наличие assertions
+        - Check edge case coverage
+        - Ensure test isolation
+        - Validate mock/stub usage
+        - Check for assertions presence
     - path: "docs/**/*.md"
       instructions: |
-        - Проверь корректность markdown синтаксиса
-        - Убедись в работоспособности ссылок
-        - Валидируй наличие frontmatter где требуется
+        - Check markdown syntax correctness
+        - Ensure links are working
+        - Validate frontmatter presence where required
 
   path_filters:
     - "!**/*.lock"
@@ -180,13 +180,13 @@ knowledge_base:
 code_generation:
   docstrings:
     enabled: true
-    language: ru
+    language: en
   unit_tests:
     enabled: true
     path_instructions:
       - path: "**/*.py"
-        instructions: "Используй pytest с fixtures и parametrize"
+        instructions: "Use pytest with fixtures and parametrize"
       - path: "**/*.ts"
-        instructions: "Используй Vitest с describe/it структурой"
+        instructions: "Use Vitest with describe/it structure"
       - path: "**/*.go"
-        instructions: "Используй стандартный testing пакет с table-driven tests"
+        instructions: "Use standard testing package with table-driven tests"
