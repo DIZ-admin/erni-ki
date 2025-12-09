@@ -71,7 +71,7 @@ services:
       - backend
     restart: unless-stopped
     volumes:
-      - ./data/ollama:/root/.ollama
+      - ../data/ollama:/root/.ollama
     labels:
       # CRITICAL: Disable Ollama auto-updates (GPU)
       - "com.centurylinklabs.watchtower.enable=false"
@@ -114,7 +114,7 @@ services:
       start_period: 30s
     volumes:
       - ./conf/litellm/config.yaml:/app/config.yaml:ro
-      - ./data/litellm:/app/data
+      - ../data/litellm:/app/data
       - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro
       - ./conf/litellm/custom_providers:/app/custom_providers:ro
     command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
@@ -183,8 +183,8 @@ services:
     logging: *critical-logging
     restart: unless-stopped
     volumes:
-      - ./data/openwebui:/app/backend/data
-      - ./data/docling/shared:/app/backend/data/docling-shared
+      - ../data/openwebui:/app/backend/data
+      - ../data/docling/shared:/app/backend/data/docling-shared
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
     secrets:
       - postgres_password
@@ -233,11 +233,11 @@ services:
     logging: *auxiliary-logging
     restart: unless-stopped
     volumes:
-      - ./data/docling/models:/opt/app-root/src/.cache/huggingface
-      - ./data/docling/easyocr:/opt/app-root/src/.EasyOCR
-      - ./data/docling/docling-models:/opt/app-root/src/.cache/docling
-      - ./data/docling/docling-models:/docling-artifacts
-      - ./data/docling/shared:/docling-shared
+      - ../data/docling/models:/opt/app-root/src/.cache/huggingface
+      - ../data/docling/easyocr:/opt/app-root/src/.EasyOCR
+      - ../data/docling/docling-models:/opt/app-root/src/.cache/docling
+      - ../data/docling/docling-models:/docling-artifacts
+      - ../data/docling/shared:/docling-shared
     networks:
       - backend
       - data
@@ -413,7 +413,7 @@ services:
     cpus: "0.5"
     volumes:
       - ./conf/mcposerver:/app/conf:ro
-      - ./data:/app/data
+      - ../data:/app/data
       - ./scripts/entrypoints/mcposerver-with-secrets.sh:/opt/erni/bin/mcposerver-with-secrets.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
     secrets:
