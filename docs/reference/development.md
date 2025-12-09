@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -7,44 +7,44 @@ last_updated: '2025-11-24'
 
 # Development Guide — ERNI-KI
 
-Этот документ описывает настройку окружения разработчика и базовые процессы.
+This document describes developer environment setup and basic processes.
 
-## Требования
+## Requirements
 
 - Node.js 20+, npm
-- Docker 24+ и Docker Compose v2
-- (Опционально) NVIDIA Container Toolkit для локального теста GPU
+- Docker 24+ and Docker Compose v2
+- (Optional) NVIDIA Container Toolkit for local GPU testing
 
-## Быстрый старт разработчика
+## Developer Quick Start
 
 ```bash
-# Установка JS-зависимостей (фронт/скрипты)
+# Install JS dependencies (frontend/scripts)
 npm install
 
-# Юнит‑тесты
+# Unit tests
 npm test
 
-# Линтинг и форматирование (ESLint + Ruff + Prettier)
+# Linting and formatting (ESLint + Ruff + Prettier)
 python -m pip install -r requirements-dev.txt
 bun run lint
-# Автоформат Python при необходимости
+# Auto-format Python if needed
 bun run format:py
 ```
 
-## Локальный запуск сервисов
+## Local Service Startup
 
 ```bash
-# Запуск всех контейнеров
+# Start all containers
 docker compose up -d
 
-# Логи сервиса
+# Service logs
 docker compose logs -f <service>
 
-# Статус
+# Status
 docker compose ps
 ```
 
-## Мониторинг и отладка
+## Monitoring and Debugging
 
 - Prometheus: <http://localhost:9091>
 - Grafana: <http://localhost:3000> (admin/admin123)
@@ -52,43 +52,43 @@ docker compose ps
 - RAG Exporter: <http://localhost:9808/metrics>
 - LiteLLM Context7: <http://localhost:4000/health> (liveliness/readiness)
 
-Горячая перезагрузка конфигов:
+Hot reload configs:
 
 ```bash
 curl -X POST http://localhost:9091/-/reload # Prometheus
 curl -X POST http://localhost:9093/-/reload # Alertmanager
 ```
 
-### LiteLLM & Context7 контроль
+### LiteLLM & Context7 Control
 
-- Основные endpoints: `/lite/api/v1/context`, `/lite/api/v1/think`,
+- Main endpoints: `/lite/api/v1/context`, `/lite/api/v1/think`,
   `/lite/api/v1/models`, `/health/liveliness`.
-- Для теста используйте `curl -s http://localhost:4000/health/liveliness` и
+- For testing use `curl -s http://localhost:4000/health/liveliness` and
   `curl -X POST http://localhost:4000/lite/api/v1/context ...`.
-- Скрипты наблюдения:
-- `scripts/monitor-litellm-memory.sh` — cron/webhook уведомления при росте
-  памяти LiteLLM.
-- `scripts/infrastructure/monitoring/test-network-performance.sh` —
-  latency-проверки маршрутов nginx ↔ LiteLLM ↔ Ollama/PostgreSQL/Redis.
+- Monitoring scripts:
+- `scripts/monitor-litellm-memory.sh` — cron/webhook notifications on LiteLLM
+  memory growth.
+- `scripts/infrastructure/monitoring/test-network-performance.sh` — latency
+  checks for nginx ↔ LiteLLM ↔ Ollama/PostgreSQL/Redis routes.
 
-## Конвенции кода
+## Code Conventions
 
-- Единый стиль форматирования (Prettier/ESLint)
-- Понятные имена переменных и файлов
-- Русские комментарии в ключевых конфигурациях
+- Consistent formatting style (Prettier/ESLint)
+- Clear variable and file names
+- English comments in key configurations
 
-## Вклад в проект
+## Contributing to the Project
 
-Прочитайте CONTRIBUTING.md. Создавайте ветки feature/\*, оформляйте PR с кратким
-описанием и ссылками на задачи/тикеты.
+Read CONTRIBUTING.md. Create feature/\* branches, submit PRs with brief
+descriptions and links to tasks/tickets.
 
-## Документация и статус-блок
+## Documentation and Status Block
 
-- После изменения `docs/reference/status.yml` обязательно выполните
-  `scripts/docs/update_status_snippet.py` — скрипт обновит
-  `docs/reference/status-snippet.md` и вставку в `README.md`.
-- Для MkDocs страниц используйте вставку сниппета, например:
+- After changing `docs/reference/status.yml` make sure to run
+  `scripts/docs/update_status_snippet.py` — the script will update
+  `docs/reference/status-snippet.md` and the insert in `README.md`.
+- For MkDocs pages use the snippet insert, for example:
   `{% raw %}{% include-markdown "reference/status-snippet.md" %}{% endraw %}`
-  (см. `docs/index.md`, `docs/overview.md`).
-- В PR приложите результат `git status` подтверждающий, что README и snippet
-  синхронизированы.
+  (see `docs/index.md`, `docs/overview.md`).
+- In your PR attach the result of `git status` confirming that README and
+  snippet are synchronized.

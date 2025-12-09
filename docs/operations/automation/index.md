@@ -1,47 +1,46 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Автоматизация операционных задач ERNI-KI
+# ERNI-KI Operational Task Automation
 
-Раздел описывает регламенты и скрипты, которые помогают поддерживать кластеры
-ERNI-KI без ручного вмешательства. Используйте этот индекс, чтобы быстро найти
-процедуру очистки, обслуживания или регулярных проверок.
+Section describes regulations and scripts that help maintain ERNI-KI clusters
+without manual intervention. Use this index to quickly find cleanup, maintenance
+or regular check procedures.
 
-## Ключевые документы
+## Key documents
 
-- [automated-maintenance-guide.md](automated-maintenance-guide.md) — расписание
-  ежедневных/еженедельных задач, контроль watchdog-скриптов, политика
-  автозапуска Cron/ systemd таймеров.
-- [docker-cleanup-guide.md](docker-cleanup-guide.md) — автоматическая очистка
-  Docker images/volumes, ротация зависших контейнеров, рекомендации по ресурсам.
-- [docker-log-rotation.md](docker-log-rotation.md) — настройка logrotate и
-  Fluent Bit для контейнерных логов, параметры хранения и мониторинга
-  переполнений.
+- [automated-maintenance-guide.md](automated-maintenance-guide.md) — schedule of
+  daily/weekly tasks, watchdog script control, policy for auto-start
+  Cron/systemd timers.
+- [docker-cleanup-guide.md](docker-cleanup-guide.md) — automatic cleanup of
+  Docker images/volumes, rotation of stuck containers, resource recommendations.
+- [docker-log-rotation.md](docker-log-rotation.md) — logrotate and Fluent Bit
+  configuration for container logs, storage parameters and monitoring overflows.
 
-## Когда обращаться к разделу
+## When to refer to this section
 
-- Регулярные профилактические работы перед релизом.
-- Подготовка новой среды (dev/stage/prod) с теми же автоматизациями.
-- Настройка alerting на Cron/maintenance задачи.
+- Regular preventive work before release.
+- Preparing new environment (dev/stage/prod) with same automations.
+- Setting up alerting for Cron/maintenance tasks.
 
-**Совет:**после выполнения автоматизированной процедуры зафиксируйте результат в
-`docs/operations/maintenance/index.md` или в тикете сопровождения.
+**Tip:** after executing automated procedure, record result in
+`docs/operations/maintenance/index.md` or in maintenance ticket.
 
-## Контроль исправности автоматизации
+## Automation health control
 
-1. Раз в сутки проверяйте `logs/maintenance/*.log` на ошибки и длительность.
-2. Prometheus правило `CronJobFailed` должно иметь SLA ≤ 1% недоступности.
-3. Все скрипты запускаются через `systemd` юниты; используйте
-   `systemctl status erni-maintenance@*` перед релизом.
+1. Check `logs/maintenance/*.log` daily for errors and duration.
+2. Prometheus rule `CronJobFailed` should have SLA ≤ 1% unavailability.
+3. All scripts run through `systemd` units; use
+   `systemctl status erni-maintenance@*` before release.
 
-## Вклад в библиотеку автоматизации
+## Contributing to automation library
 
-- Скрипты размещаем в `scripts/automation/` с префиксом `erni-`.
-- Добавляйте dry-run режим, чтобы проверять изменения перед применением.
-- Обновляйте соответствующий раздел этого README и связывайте скрипт с runbook.
+- Place scripts in `scripts/automation/` with `erni-` prefix.
+- Add dry-run mode to check changes before applying.
+- Update corresponding section of this README and link script to runbook.
 
-Обновляйте README при добавлении новых сценариев автоматизации.
+Update README when adding new automation scenarios.

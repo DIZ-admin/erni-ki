@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 title: 'Database Monitoring Plan'
 translation_status: complete
 doc_version: '2025.11'
@@ -8,23 +8,23 @@ last_updated: '2025-11-24'
 
 # Database Monitoring Plan
 
-## Введение
+## Introduction
 
-Этот план описывает стратегию мониторинга уровня базы данных, включая ключевые
-метрики и правила оповещения.
+This plan describes the database-level monitoring strategy, including key
+metrics and alerting rules.
 
-## Метрики
+## Metrics
 
-- Используйте**PostgreSQL Exporter**(порт `9188`) для сбора метрик СУБД.
-- Отслеживайте метрики LVM для контроля дискового пространства.
+- Use **PostgreSQL Exporter** (port `9188`) to collect DBMS metrics.
+- Track LVM metrics to monitor disk space.
 
-## Оповещения
+## Alerts
 
-- Настройте критические алерты, такие как `PostgreSQLDown` и
+- Configure critical alerts such as `PostgreSQLDown` and
   `PostgreSQLHighConnections`.
-- Полный список правил см. в `conf/prometheus/alerts.yml`.
+- See `conf/prometheus/alerts.yml` for the complete list of rules.
 
-## Ссылки
+## References
 
 - [`docs/operations/monitoring/monitoring-guide.md`](../monitoring/monitoring-guide.md)
-  — общее руководство по мониторингу.
+  — general monitoring guide.

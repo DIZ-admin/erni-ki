@@ -1,44 +1,43 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Стандарты метаданных документации ERNI-KI
+# ERNI-KI Documentation Metadata Standards
 
-## Обязательные поля (для всех документов)
+## Required Fields (for all documents)
 
 - `language` — `ru|de|en`
 - `translation_status` — `complete|in_progress|pending|outdated`
 - `doc_version` — `'2025.11'`
 
-## Рекомендуемые поля
+## Recommended Fields
 
 - `last_updated` — `'YYYY-MM-DD'`
-- `system_version` — `'12.1'` (только для технических/архитектурных обзоров)
-- `system_status` — `'Production Ready'` (если отражает готовность системы)
+- `system_version` — `'12.1'` (only for technical/architectural overviews)
+- `system_status` — `'Production Ready'` (if reflecting system readiness)
 
-## Допустимые поля по необходимости
+## Optional Fields As Needed
 
-- `title` — заголовок (для новостей/блога)
-- `description` — краткое описание (новости/блог)
-- `tags` — теги (новости/блог)
-- `date` — дата публикации (используется для новостей/блога)
-- `page_id` — только для порталов/специфичной навигации
+- `title` — title (for news/blog)
+- `description` — brief description (news/blog)
+- `tags` — tags (news/blog)
+- `date` — publication date (used for news/blog)
+- `page_id` — only for portals/specific navigation
 
-## Запрещённые/устаревшие поля
+## Deprecated/Forbidden Fields
 
-- `author`, `contributors`, `maintainer` — используйте git history
-- `created`, `updated`, `created_date`, `last_modified` — используйте
-  `last_updated`
-- `version` — заменять на `system_version`
-- `status` — заменять на `system_status` (для статуса системы) или `doc_status`
-  (для статуса документа)
+- `author`, `contributors`, `maintainer` — use git history
+- `created`, `updated`, `created_date`, `last_modified` — use `last_updated`
+- `version` — replace with `system_version`
+- `status` — replace with `system_status` (for system status) or `doc_status`
+  (for document status)
 
-## Шаблоны
+## Templates
 
-### Базовый
+### Basic
 
 ```yaml
 ---
@@ -49,7 +48,7 @@ last_updated: '2025-11-24'
 ---
 ```
 
-### Технический (с версией системы)
+### Technical (with system version)
 
 ```yaml
 ---
@@ -62,21 +61,21 @@ last_updated: '2025-11-23'
 ---
 ```
 
-### Новости/Блог
+### News/Blog
 
 ```yaml
 ---
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-title: 'Заголовок новости'
+title: 'News Title'
 date: 2025-11-20
-description: 'Краткое описание'
+description: 'Brief description'
 tags: ['release', 'update']
 ---
 ```
 
-### Минимальный
+### Minimal
 
 ```yaml
 ---
@@ -86,10 +85,11 @@ doc_version: '2025.11'
 ---
 ```
 
-## Правила применения
+## Application Rules
 
-1.**doc_version**фиксируется глобально и обновляется при релизе
-документации. 2.**system_version/system_status**применять только там, где описан
-реальный статус прод-стека. 3.**last_updated**задавать для всех активных (не
-архивных) документов. 4.**date**использовать только для новостей/блог-постов. 5.
-Не добавлять персональные поля (`author` и т.п.); rely on git blame/history.
+1. **doc_version** is fixed globally and updated on documentation release.
+2. **system_version/system_status** apply only where actual prod-stack status is
+   described.
+3. **last_updated** should be set for all active (non-archived) documents.
+4. **date** use only for news/blog posts.
+5. Do not add personal fields (`author` etc.); rely on git blame/history.

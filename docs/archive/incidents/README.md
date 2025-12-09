@@ -1,16 +1,15 @@
 ---
-language: ru
-translation_status: original
+language: en
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-29'
+last_updated: '2025-12-09'
 ---
 
-# Инциденты (архив)
+# Incidents (Archive)
 
-Исторические отчёты об инцидентах перечислены в
-`docs/archive/incidents/index.md`.
+Historical incident reports are listed in `docs/archive/incidents/index.md`.
 
-Содержимое каталога:
+Directory contents:
 
 - docx-upload-fix-20251030.md
 - phase-2-completion-2025-11-04.md

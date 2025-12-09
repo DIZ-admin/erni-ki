@@ -1,72 +1,75 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-28'
+last_updated: '2025-11-24'
 ---
 
-# Документация по эксплуатации
+# Operations Documentation
 
-Этот каталог содержит операционные руководства, ранбуки и процедуры для
-управления платформой ERNI-KI.
+This directory contains operational guides, runbooks, and procedures for
+managing the ERNI-KI platform.
 
-## Содержание
+## Contents
 
-### Основные руководства
+### Core Guides
 
--**[admin-guide.md](core/admin-guide.md)**- Справочник системного администратора
+- **[admin-guide.md](./core/admin-guide.md)** - System administration handbook
 
-- Управление пользователями
-- Конфигурация сервисов
-- Процедуры резервного копирования и восстановления
-- Управление безопасностью
+  - User management
+  - Service configuration
+  - Backup and restore procedures
+  - Security management
 
--**[monitoring-guide.md](monitoring/monitoring-guide.md)**- Полная документация
-по мониторингу
+- **[monitoring-guide.md](./monitoring/monitoring-guide.md)** - Comprehensive
+  monitoring documentation
 
-- Метрики Prometheus и алерты
-- Дашборды Grafana (5 настроенных)
-- Агрегация логов Loki
-- Отслеживание SLO (Service Level Objective)
+  - Prometheus metrics and alerts
+  - Grafana dashboards (5 provisioned)
+  - Loki log aggregation
+  - SLO (Service Level Objective) tracking
 
-### Устранение неполадок и Ранбуки
+### Troubleshooting & Runbooks
 
--**[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)**-
-Процедуры диагностики и частые проблемы -**Обслуживание:**
-[Перезапуск сервисов](maintenance/service-restart-procedures.md),
-[Резервное копирование и восстановление](maintenance/backup-restore-procedures.md)
+- **[troubleshooting-guide.md](./troubleshooting/troubleshooting-guide.md)** -
+  Diagnostic procedures and common issues
+- **Maintenance:**
+  [Service restarts](./maintenance/service-restart-procedures.md),
+  [Backup & Restore](./maintenance/backup-restore-procedures.md)
 
-### Специализированные руководства
+### Specialized Guides
 
--**Автоматизация:**
-[Автоматизированное обслуживание](automation/automated-maintenance-guide.md) -**Базы
-данных:**[Обзор операций](database/index.md) -**Мониторинг:**[Руководство по мониторингу](monitoring/monitoring-guide.md)
+- **Automation:**
+  [Automated maintenance](./automation/automated-maintenance-guide.md)
+- **Database:** [Operations overview](./database/index.md)
+- **Monitoring:** [Monitoring guide](./monitoring/monitoring-guide.md)
 
-### Диагностика
+### Diagnostics
 
--**[diagnostics/index.md](diagnostics/index.md)**- Диагностические отчеты и
-методологии
+- **[diagnostics/index.md](./diagnostics/index.md)** - Diagnostic reports and
+  methodologies
 
-## Быстрый старт
+## Quick Start
 
-**Для операторов:**Начните с [admin-guide.md](core/admin-guide.md).**Для
-мониторинга:**См. [monitoring-guide.md](monitoring/monitoring-guide.md).**Для
-инцидентов:**Проверьте
-[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
+**For Operators:** Start with the [admin-guide.md](./core/admin-guide.md).
+**For Monitoring:** See
+[monitoring-guide.md](./monitoring/monitoring-guide.md). **For Incidents:**
+Check [troubleshooting-guide.md](./troubleshooting/troubleshooting-guide.md).
 
-## Операционный ритм
+## Operational Rhythm
 
--**Ежедневно:**проверка статус-страницы, `CronJobFailed`, контроль
-бэкапов. -**Еженедельно:**аудит изменений по `configuration-change-process.md` и
-обновление журнала maintenance. -**Ежемесячно:**тренировочные восстановления по
-`maintenance/backup-restore-procedures.md`.
+- **Daily:** check status page, `CronJobFailed`, backup monitoring.
+- **Weekly:** configuration change audit per
+  `configuration-change-process.md` and maintenance log updates.
+- **Monthly:** practice restores per
+  `maintenance/backup-restore-procedures.md`.
 
-## Связанная документация
+## Related Documentation
 
-- [Обзор архитектуры](../architecture/index.md)
-- [Начало работы](../getting-started/index.md)
-- [Безопасность](../security/index.md)
+- [Architecture Overview](../architecture/index.md)
+- [Getting Started](../getting-started/index.md)
+- [Security Guide](../security/index.md)
 
-## Версия
+## Version
 
-Версия документации:**12.1**Последнее обновление:**2025-11-24**
+Documentation version:**12.1**Last updated:**2025-11-24**

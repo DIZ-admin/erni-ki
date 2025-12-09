@@ -1,7 +1,7 @@
 {
   "name": "erni-ki-ai-diagnostics",
   "version": "1.0.0",
-  "description": "Комплексная диагностика AI моделей ERNI-KI с использованием Playwright",
+  "description": "Comprehensive AI model diagnostics for ERNI-KI using Playwright",
   "main": "ai-models-diagnostics.js",
   "scripts": {
     "test": "node ai-models-diagnostics.js",
@@ -19,7 +19,7 @@
     "rag",
     "gpu"
   ],
-  "author": "Альтэон Шульц (Tech Lead)",
+  "author": "Alteon Schultz (Tech Lead)",
   "license": "MIT",
   "type": "module",
   "dependencies": {

@@ -1,34 +1,34 @@
 # Archon API Helper Scripts
 
-Набор скриптов для работы с Archon API через REST интерфейс.
+A set of scripts for working with Archon API via REST interface.
 
-## Доступные скрипты
+## Available Scripts
 
 ### get-tasks.sh
 
-Получение списка задач с фильтрацией по статусу.
+Get task list with status filtering.
 
-**Использование:**
+**Usage:**
 
 ```bash
-# Все задачи
+# All tasks
 ./scripts/archon/get-tasks.sh
 
-# Только TODO задачи
+# Only TODO tasks
 ./scripts/archon/get-tasks.sh todo
 
-# Только DOING задачи
+# Only DOING tasks
 ./scripts/archon/get-tasks.sh doing
 
-# Только DONE задачи
+# Only DONE tasks
 ./scripts/archon/get-tasks.sh done
 ```
 
 ### get-projects.sh
 
-Получение списка всех проектов.
+Get list of all projects.
 
-**Использование:**
+**Usage:**
 
 ```bash
 ./scripts/archon/get-projects.sh
@@ -36,69 +36,69 @@
 
 ### search-kb.sh
 
-Поиск в knowledge base Archon.
+Search in Archon knowledge base.
 
-**Использование:**
+**Usage:**
 
 ```bash
 ./scripts/archon/search-kb.sh "query text"
 
-# Примеры
+# Examples
 ./scripts/archon/search-kb.sh "authentication JWT"
 ./scripts/archon/search-kb.sh "docker compose"
 ./scripts/archon/search-kb.sh "postgres setup"
 ```
 
-## Прямой доступ к API
+## Direct API Access
 
 ### Endpoints
 
-| Endpoint                                     | Метод | Описание          |
-| -------------------------------------------- | ----- | ----------------- |
-| `http://localhost:8181/api/health`           | GET   | Health check      |
-| `http://localhost:8181/api/tasks`            | GET   | Список всех задач |
-| `http://localhost:8181/api/projects`         | GET   | Список проектов   |
-| `http://localhost:8181/api/knowledge/search` | POST  | Поиск в KB        |
+| Endpoint                                     | Method | Description    |
+| -------------------------------------------- | ------ | -------------- |
+| `http://localhost:8181/api/health`           | GET    | Health check   |
+| `http://localhost:8181/api/tasks`            | GET    | List all tasks |
+| `http://localhost:8181/api/projects`         | GET    | List projects  |
+| `http://localhost:8181/api/knowledge/search` | POST   | Search in KB   |
 
-### Примеры
+### Examples
 
 ```bash
 # Health check
 curl -s http://localhost:8181/api/health | jq .
 
-# Все задачи
+# All tasks
 curl -s http://localhost:8181/api/tasks | jq .
 
-# TODO задачи
+# TODO tasks
 curl -s http://localhost:8181/api/tasks | \
   jq '.tasks[] | select(.status == "todo")'
 
-# Поиск в KB
+# Search in KB
 curl -s -X POST http://localhost:8181/api/knowledge/search \
   -H "Content-Type: application/json" \
   -d '{"query": "docker", "limit": 5}' | jq .
 ```
 
-## Требования
+## Requirements
 
-- `curl` - для HTTP запросов
-- `jq` - для обработки JSON (опционально, но рекомендуется)
+- `curl` - for HTTP requests
+- `jq` - for JSON processing (optional but recommended)
 
 ## Archon UI
 
-Web интерфейс доступен по адресу: http://localhost:3737
+Web interface is available at: http://localhost:3737
 
-## Статус сервисов
+## Service Status
 
-Проверить статус Archon контейнеров:
+Check Archon container status:
 
 ```bash
 docker ps | grep archon
 ```
 
-Должны быть запущены:
+Should be running:
 
-- `archon-mcp` (порт 8051)
-- `archon-server` (порт 8181)
-- `archon-ui` (порт 3737)
-- `archon-agent-work-orders` (порт 8053)
+- `archon-mcp` (port 8051)
+- `archon-server` (port 8181)
+- `archon-ui` (port 3737)
+- `archon-agent-work-orders` (port 8053)

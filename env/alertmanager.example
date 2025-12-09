@@ -58,8 +58,8 @@ ALERTMANAGER_SMTP_AUTH_USERNAME=your-smtp-username
 ALERTMANAGER_SMTP_AUTH_PASSWORD=
 
 # === Security ===
-# Отключить аутентификацию для внутренней сети
+# Disable authentication for internal network
 ALERTMANAGER_WEB_CONFIG_FILE=
-# Отключить HTTPS
+# Disable HTTPS
 ALERTMANAGER_WEB_CERT_FILE=
 ALERTMANAGER_WEB_KEY_FILE=

@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -166,24 +166,24 @@ Authorization: Bearer your-jwt-token
 
 **Запрос:**
 
-```json
+```jsonc
 {
   "email": "user@example.com",
-  "password": "your-password"
+  "password": "your-password", // pragma: allowlist secret
 }
 ```
 
 **Ответ:**
 
-```json
+```jsonc
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": "sample-token",
   "user": {
     "id": "user-uuid",
     "name": "User Name",
     "email": "user@example.com",
-    "role": "user"
-  }
+    "role": "user",
+  },
 }
 ```
 
@@ -193,11 +193,11 @@ Authorization: Bearer your-jwt-token
 
 **Запрос:**
 
-```json
+```jsonc
 {
   "name": "New User",
   "email": "newuser@example.com",
-  "password": "secure-password"
+  "password": "secure-password", // pragma: allowlist secret
 }
 ```
 

@@ -1,57 +1,60 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Написать письмо клиенту
+# Write a customer email
 
-## Когда использовать
+Use this structure when drafting customer-facing emails with Open WebUI.
 
-- Нужно отправить итоги встречи или апдейты по проекту.
-- Требуется вежливый и четкий тон без лишней воды.
-- Нужно быстро собрать письмо из фактов и не забыть CTA.
+## Preparation checklist
 
-## Что подготовить (входные данные)
+1. Incident or request ID.
+2. Customer name, account, and timezone.
+3. Latest status (including blockers and ETA).
+4. Required call-to-action or approval.
+5. Tone preference (formal / neutral / friendly).
 
-- Тема встречи/повода, ключевые решения, дедлайны, ответственные.
-- Язык письма (RU/DE/EN) и желаемый тон (официальный/дружелюбный).
-- Канал отправки (email/Teams) и требуется ли CTA (подтвердить, выбрать слот).
-
-## Шаги
-
-1. Откройте Open WebUI и выберите универсальную модель (например, GPT-4o).
-2. Подготовьте факты: тема встречи, решения, дедлайны, контактные лица.
-3. Сформулируйте промпт по шаблону роль → задача → контекст → формат.
-4. Укажите язык письма (RU/DE/EN) и желаемый тон (официальный/дружелюбный).
-5. Проверьте текст на точность фактов и адаптируйте приветствие под клиента.
-6. Сохраните результат или отправьте через почтовый клиент.
-
-### Готовый промпт
+## Prompt template
 
 ```
-Ты — аккаунт-менеджер. Задача: написать письмо клиенту с итогами встречи.
-Контекст: <договоренности>, дедлайн <дата>, ответственные: <имена>.
-Тон: <официальный/дружелюбный>, язык: <RU/DE/EN>.
-Формат: приветствие, 3–5 пунктов с итогами, явный CTA с датой/следующим шагом.
-Добавь тему письма.
+You are writing an email to <customer_name>. Use a <tone> tone.
+
+Context:
+- Topic: <brief summary>
+- Current status: <status/ETA>
+- Needed action: <action items>
+- Additional notes: <risks/escalations>
+
+Draft a concise email with greeting, body, next steps, and signature.
 ```
 
-## Примеры промптов
+## QA checklist
 
--**Хороший:**
+- Confirm the email references the correct incident/request ID.
+- Verify that dates and times mention the customer’s timezone.
+- Ensure there is a clear ask (or explicitly state “no action required”).
+- Remove internal-only abbreviations before sending.
 
-- "Ты — аккаунт-менеджер. Задача: написать письмо клиенту с итогами сегодняшней
-  встречи. Контекст: договорились дать тестовый доступ до пятницы, ответственная
-  — Анна Иванова, следующий шаг — демо 25 числа. Формат: приветствие, 3 пункта с
-  итогами, CTA — подтвердить демо." -**Плохой:**
-- "Напиши письмо клиенту про встречу." (нет контекста, неясно, какие итоги и что
-  нужно сделать)
+## Example output
 
-## Чек-лист перед отправкой
+```
+Hello <Name>,
 
-- Есть тема письма и явный CTA (дата, подтверждение, ссылка)?
-- Проверены факты: даты, названия, ответственные.
-- Тон и язык соответствуют получателю.
-- Нет внутренних ссылок/данных, которые нельзя раскрывать.
+thanks for confirming access to workspace ACME-143. Our engineers applied the
+fix at 14:30 CET and monitoring shows recovery.
+
+Next steps
+- Keep an eye on the dashboard for 1 hour.
+- Let us know if new errors appear.
+
+Regards,
+ERNI Support
+```
+
+## Related materials
+
+- [System status](https://status.erni-ki.ch) – double-check for open incidents.
+- [Prompting 101](../prompting-101.md) – best practices for structured prompts.

@@ -1,24 +1,24 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-27'
 ---
 
-# Архитектурные диаграммы
+# Architecture Diagrams
 
-Визуализация архитектуры ERNI-KI с использованием Mermaid диаграмм.
+Visualization of ERNI-KI architecture using Mermaid diagrams.
 
-## Доступные диаграммы
+## Available Diagrams
 
-- [Обзор архитектуры](architecture-overview.md) - высокоуровневая архитектура
-  системы
-- [Диаграмма развертывания](deployment-diagram.md) - Docker-контейнеры и их
-  взаимосвязи
-- [Сетевая топология](network-topology.md) - сетевая архитектура и порты
-- [Поток данных](data-flow.md) - потоки данных между компонентами
+- [Architecture Overview](architecture-overview.md) - high-level system
+  architecture
+- [Deployment Diagram](deployment-diagram.md) - Docker containers and their
+  relationships
+- [Network Topology](network-topology.md) - network architecture and ports
+- [Data Flow](data-flow.md) - data flows between components
 
-## Назначение
+## Purpose
 
-Эти диаграммы помогают понять структуру системы, взаимодействие компонентов и
-потоки данных.
+These diagrams help understand the system structure, component interactions, and
+data flows.

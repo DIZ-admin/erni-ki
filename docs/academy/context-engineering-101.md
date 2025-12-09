@@ -1,64 +1,60 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-12-06'
+last_updated: '2025-12-01'
 ---
 
 # Context Engineering 101
 
-> Коротко: контекст-инжиниринг = как подать модели правильные данные, историю и
-> инструменты в нужный момент, чтобы ответы были точными, быстрыми и
-> безопасными.
+> Context engineering = how to supply the model with the right data, history,
+> and tools at the right moment so answers are accurate, fast, and safe.
 
-## Что это и зачем
+## What it is and why it matters
 
-- Контекст — не только промпт. Это системные инструкции, извлечённые документы
-  (RAG/Context7/Docling), история диалога, результаты инструментов (LiteLLM
-  tools), ограничения по безопасности.
-- Цель: минимальный, но достаточный набор токенов, чтобы модель опиралась на
-  проверенные источники (Redis/RAG) и не фантазировала.
+- Context is more than a prompt: system instructions, retrieved documents
+  (RAG/Context7/Docling), dialog history, tool outputs (LiteLLM tools), and
+  safety constraints.
+- Goal: a minimal yet sufficient token budget so the model relies on trusted
+  sources (Redis/RAG) and does not hallucinate.
 
-## Анатомия контекста в ERNI-KI
+## Context anatomy in ERNI-KI
 
-- **System prompt:** роль, политики, запреты.
-- **Retrieved docs:** релевантные фрагменты (Context7, Docling, Tika).
-- **User history:** последние сообщения/решения (усекать по важности, не по
-  длине).
-- **Tool outputs:** результаты API/скриптов, которые должны попасть в итоговый
-  ответ.
-- **Guardrails:** фильтры, лимиты токенов, приватность (не добавлять личные
-  данные без явного разрешения).
+- **System prompt:** role, policies, constraints.
+- **Retrieved docs:** relevant snippets (Context7, Docling, Tika).
+- **User history:** latest turns/decisions (trim by importance, not just
+  length).
+- **Tool outputs:** API/script results that must appear in the final answer.
+- **Guardrails:** filters, token limits, privacy (no PII without explicit
+  consent).
 
-## Практика: как готовить контекст
+## Practice: preparing context
 
-- **Отбор источников:** только доверенные коллекции; помечайте версии и даты.
-- **Обрезка:** удаляйте шум (приветствия, дубликаты), оставляйте маркеры
-  разделов и заголовки.
-- **Сжатие:** делайте краткие выжимки, если фрагменты слишком длинные, но не
-  убирайте цифры и ключевые факты.
-- **Границы приватности:** не подмешивайте персональные данные/внутренние ссылки
-  без разрешения; используйте redaction, если сомневаетесь.
-- **Проверка полноты:** перед отправкой убедитесь, что в контексте есть ответ на
-  вопрос пользователя; если нет — запросите недостающие данные.
+- **Source selection:** only trusted collections; keep versions and dates.
+- **Trimming:** remove noise (greetings, duplicates), keep section markers and
+  headings.
+- **Compression:** concise summaries when snippets are long; preserve numbers
+  and key facts.
+- **Privacy:** avoid mixing in personal/internal links without permission;
+  redact when in doubt.
+- **Completeness check:** ensure the context contains the answer; if not, ask
+  for missing data before responding.
 
-## Чек-лист для разработчиков (RAG/агенты)
+## Developer checklist (RAG/agents)
 
-- Определите бюджет токенов: сколько под систему, сколько под retrieved docs,
-  сколько под историю.
-- Ранжируйте документы: BM25 + векторный поиск + rerank → топ-k → усечение.
-- Логируйте, что именно ушло в контекст: это база для дебага и снижения
-  стоимости.
-- Добавляйте source tags в контекст, чтобы модель могла ссылаться на источники.
-- Если ответ не найден в контексте — возвращайте "нет данных" вместо догадок.
+- Define token budget: system vs retrieved docs vs history.
+- Rank documents: BM25 + vector + rerank → top-k → trim.
+- Log exactly what went into context for debugging and cost control.
+- Add source tags so the model can cite references.
+- If the answer is not in context, return “no data” instead of guessing.
 
-## Когда дело не в контексте
+## When it’s not about context
 
-- Нужна новая функция → меняйте пайплайн/модель, а не раздувайте контекст.
-- Узкие ограничения (PII, лицензии) → применяйте фильтры до и после модели.
-- Сложные вычисления → отдавайте инструментам, а не LLM.
+- Need new capabilities → adjust pipeline/model, not just expand context.
+- Tight constraints (PII, licensing) → enforce filters before and after the LLM.
+- Heavy computation → push to tools instead of the LLM.
 
-## Связанные материалы
+## Related materials
 
-- Prompting 101: базовые паттерны и лимиты промптов.
-- RAG и мониторинг: разделы Operations → Monitoring (Redis/LiteLLM/Context7).
+- Prompting 101: basic patterns and prompt limits.
+- RAG and monitoring: see Operations → Monitoring (Redis/LiteLLM/Context7).

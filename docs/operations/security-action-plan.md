@@ -1,79 +1,78 @@
 ---
-language: ru
-translation_status: original
+language: en
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-12-03'
 ---
 
 # Security Action Plan - ERNI-KI
 
-**Дата создания:**2025-12-03**Статус:**ACTIVE**Приоритет:**CRITICAL
-**Основание:**
+**Created:**2025-12-03**Status:**ACTIVE**Priority:**CRITICAL **Basis:**
 [ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 
 ---
 
 ## Executive Summary
 
-Выявлены**критические уязвимости безопасности**(CVSS 6.5-10.0), требующие
-немедленного устранения. Данный план определяет приоритетные действия и
-ответственных.
+**Critical security vulnerabilities**(CVSS 6.5-10.0) have been identified and
+require immediate remediation. This plan defines priority actions and
+responsibilities.
 
-**Статус блокировки production:**BLOCKED (до выполнения Phase 1)
+**Production block status:**BLOCKED (until Phase 1 completion)
 
 ---
 
-## Phase 1: Критические фиксы (1-3 дня)
+## Phase 1: Critical Fixes (1-3 days)
 
-### Task 1.1: Удалить секреты из Git (CVSS 10.0)
+### Task 1.1: Remove Secrets from Git (CVSS 10.0)
 
-**Приоритет:**P0 - CRITICAL**Сроки:**1 день**Ответственный:**DevOps Lead
-**Статус:**TO DO
+**Priority:**P0 - CRITICAL**Timeline:**1 day**Responsible:**DevOps Lead
+**Status:**TO DO
 
-**Проблема:**
+**Problem:**
 
 ```bash
 secrets/
- postgres_password.txt # PLAIN TEXT В GIT!
- litellm_api_key.txt # PLAIN TEXT В GIT!
- openai_api_key.txt # PLAIN TEXT В GIT!
+ postgres_password.txt # PLAIN TEXT IN GIT!
+ litellm_api_key.txt # PLAIN TEXT IN GIT!
+ openai_api_key.txt # PLAIN TEXT IN GIT!
  grafana_admin_password.txt # Weak: "admin"
 ```
 
-**Действия:**
+**Actions:**
 
-1.**Установить git-filter-repo**
+1.**Install git-filter-repo**
 
 ```bash
 pip install git-filter-repo
 ```
 
-2.**Удалить секреты из истории Git**
+2.**Remove secrets from Git history**
 
 ```bash
-# Бэкап репозитория
+# Backup repository
 cp -r .git .git.backup
 
-# Удалить secrets/ и env/ из истории
+# Remove secrets/ and env/ from history
 git filter-repo --invert-paths \
  --path secrets/ \
  --path env/ \
  --force
 
-# Проверить результат
+# Verify result
 git log --all --full-history -- secrets/
 ```
 
-3.**Force push (КООРДИНИРОВАТЬ С КОМАНДОЙ!)**
+3.**Force push (COORDINATE WITH TEAM!)**
 
 ```bash
-# Уведомить всех разработчиков
-# Затем:
+# Notify all developers
+# Then:
 git push --force --all
 git push --force --tags
 ```
 
-4.**Ротация ВСЕХ скомпрометированных секретов**
+4.**Rotate ALL compromised secrets**
 
 ```bash
 # PostgreSQL
@@ -82,10 +81,10 @@ psql -U postgres -c "ALTER USER postgres PASSWORD '$(openssl rand -base64 32)';"
 # Redis
 redis-cli CONFIG SET requirepass "$(openssl rand -base64 32)"
 
-# LiteLLM, OpenAI - регенерация API keys в консолях
+# LiteLLM, OpenAI - regenerate API keys in consoles
 ```
 
-5.**Создать .example файлы**
+5.**Create .example files**
 
 ```bash
 for file in secrets/*.txt; do
@@ -96,7 +95,7 @@ git add secrets/*.example
 git commit -m "security: add secret templates"
 ```
 
-6.**Обновить .gitignore**
+6.**Update .gitignore**
 
 ```bash
 echo "secrets/*.txt" >> .gitignore
@@ -105,30 +104,30 @@ git add .gitignore
 git commit -m "security: ignore secrets and env files"
 ```
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] История Git не содержит secrets/
-- [ ] Все секреты ротированы
-- [ ] .example файлы созданы
-- [ ] .gitignore обновлен
-- [ ] Команда уведомлена
+- [ ] Git history does not contain secrets/
+- [ ] All secrets rotated
+- [ ] .example files created
+- [ ] .gitignore updated
+- [ ] Team notified
 
 ---
 
-### Task 1.2: Закрыть Uptime Kuma (CVSS 6.5)
+### Task 1.2: Secure Uptime Kuma (CVSS 6.5)
 
-**Приоритет:**P0 - CRITICAL**Сроки:**1 час**Ответственный:**DevOps Engineer
-**Статус:**TO DO
+**Priority:**P0 - CRITICAL**Timeline:**1 hour**Responsible:**DevOps Engineer
+**Status:**TO DO
 
-**Проблема:**
+**Problem:**
 
 ```yaml
 uptime-kuma:
   ports:
-    - '3001:3001' # Открыт для всей сети!
+    - '3001:3001' # Open to entire network!
 ```
 
-**Действие:**
+**Action:**
 
 ```yaml
 uptime-kuma:
@@ -136,70 +135,70 @@ uptime-kuma:
     - '127.0.0.1:3001:3001' # Localhost only
 ```
 
-**Шаги:**
+**Steps:**
 
-1. Редактировать compose.yml
+1. Edit compose.yml
 2. `docker compose up -d uptime-kuma`
-3. Проверить доступность только с localhost
+3. Verify accessible only from localhost
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] порт bind к 127.0.0.1
-- [ ] `curl http://localhost:3001` - ОК
+- [ ] Port bound to 127.0.0.1
+- [ ] `curl http://localhost:3001` - OK
 - [ ] `curl http://192.168.x.x:3001` - FAIL
 
 ---
 
-### Task 1.3: Исправить Watchtower user (CVSS 7.8)
+### Task 1.3: Fix Watchtower User (CVSS 7.8)
 
-**Приоритет:**P0 - CRITICAL**Сроки:**1 час**Ответственный:**DevOps Engineer
-**Статус:**TO DO
+**Priority:**P0 - CRITICAL**Timeline:**1 hour**Responsible:**DevOps Engineer
+**Status:**TO DO
 
-**Проблема:**
+**Problem:**
 
 ```yaml
 watchtower:
   user: '0' # root UID
 ```
 
-**Действие:**
+**Action:**
 
 ```yaml
 watchtower:
   user: '${DOCKER_GID:-999}:${DOCKER_GID:-999}'
 ```
 
-**Шаги:**
+**Steps:**
 
-1. Получить GID группы docker
+1. Get docker group GID
 
 ```bash
 getent group docker | cut -d: -f3
-# Добавить в .env: DOCKER_GID=999
+# Add to .env: DOCKER_GID=999
 ```
 
-2. Обновить compose.yml
+2. Update compose.yml
 3. `docker compose up -d watchtower`
-4. Проверить, что Watchtower работает
+4. Verify Watchtower is working
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] user не root
-- [ ] Watchtower успешно обновляет контейнеры
-- [ ] Логи не содержат permission denied
+- [ ] User not root
+- [ ] Watchtower successfully updates containers
+- [ ] Logs contain no permission denied errors
 
 ---
 
-### Task 1.4: Добавить ShellCheck в CI (P1)
+### Task 1.4: Add ShellCheck to CI (P1)
 
-**Приоритет:**P1 - HIGH**Сроки:**1 день**Ответственный:**DevOps Engineer
-**Статус:**TO DO
+**Priority:**P1 - HIGH**Timeline:**1 day**Responsible:**DevOps Engineer
+**Status:**TO DO
 
-**Проблема:**110 shell скриптов без статического анализа
+**Problem:**110 shell scripts without static analysis
 
-**Действия:**
+**Actions:**
 
-1.**Добавить в .pre-commit-config.yaml**
+1.**Add to .pre-commit-config.yaml**
 
 ```yaml
 - repo: https://github.com/koalaman/shellcheck-precommit
@@ -209,7 +208,7 @@ getent group docker | cut -d: -f3
  args: ['--severity=warning']
 ```
 
-2.**Добавить в CI**
+2.**Add to CI**
 
 ```yaml
 # .github/workflows/ci.yml
@@ -218,30 +217,30 @@ getent group docker | cut -d: -f3
  find . -name "*.sh" -not -path "./node_modules/*" | xargs shellcheck
 ```
 
-3.**Исправить критические issues**
+3.**Fix critical issues**
 
 ```bash
 shellcheck scripts/**/*.sh conf/**/*.sh | grep "error:"
 ```
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] ShellCheck в pre-commit
-- [ ] ShellCheck в CI
+- [ ] ShellCheck in pre-commit
+- [ ] ShellCheck in CI
 - [ ] 0 critical issues
 
 ---
 
-## Phase 2: Высокоприоритетные (1-2 недели)
+## Phase 2: High Priority (1-2 weeks)
 
 ### Task 2.1: Network Segmentation (P1)
 
-**Приоритет:**P1 - HIGH**Сроки:**1 неделя**Ответственный:**DevOps Lead
-**Статус:**TO DO
+**Priority:**P1 - HIGH**Timeline:**1 week**Responsible:**DevOps Lead
+**Status:**TO DO
 
-**Цель:**Изолировать сервисы по функциональным слоям
+**Goal:**Isolate services by functional layers
 
-**Дизайн:**
+**Design:**
 
 ```yaml
 networks:
@@ -269,7 +268,7 @@ networks:
  - subnet: 172.23.0.0/24
 ```
 
-**Маппинг сервисов:**
+**Service Mapping:**
 
 ```yaml
 # Frontend (public-facing)
@@ -292,23 +291,23 @@ networks:
 - exporters: [monitoring, backend/data]
 ```
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] 4 сети созданы
-- [ ] Все сервисы назначены
-- [ ] internal: true для backend/data
-- [ ] Тестирование connectivity
+- [ ] 4 networks created
+- [ ] All services assigned
+- [ ] internal: true for backend/data
+- [ ] Connectivity testing
 
 ---
 
-### Task 2.2: Модуляризация compose.yml (P1)
+### Task 2.2: Modularize compose.yml (P1)
 
-**Приоритет:**P1 - HIGH**Сроки:**2 недели**Ответственный:**DevOps Engineer
-**Статус:**TO DO
+**Priority:**P1 - HIGH**Timeline:**2 weeks**Responsible:**DevOps Engineer
+**Status:**TO DO
 
-**Цель:**Разделить 1276-строчный монолит
+**Goal:**Split 1276-line monolith
 
-**Структура:**
+**Structure:**
 
 ```
 compose/
@@ -320,18 +319,18 @@ compose/
  production.yml # Production overrides
 ```
 
-**Миграция:**
+**Migration:**
 
 ```bash
-# Создать директорию
+# Create directory
 mkdir compose
 
-# Разделить файл
-# 1. base.yml - первые 50 строк + x-logging
+# Split file
+# 1. base.yml - first 50 lines + x-logging
 # 2. ai-services.yml - openwebui, ollama, litellm, docling
 # ...
 
-# Тестировать
+# Test
 docker compose -f compose/base.yml \
  -f compose/ai-services.yml \
  -f compose/data-services.yml \
@@ -340,26 +339,26 @@ docker compose -f compose/base.yml \
  -f compose/production.yml \
  config > test-compose.yml
 
-# Сравнить с оригиналом
+# Compare with original
 diff <(yq eval-all 'sort_keys(..)' compose.yml) \
  <(yq eval-all 'sort_keys(..)' test-compose.yml)
 ```
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] 6 модулей созданы
-- [ ] `docker compose config` работает
-- [ ] Нет различий с оригиналом
-- [ ] README обновлен
+- [ ] 6 modules created
+- [ ] `docker compose config` works
+- [ ] No differences from original
+- [ ] README updated
 
 ---
 
 ### Task 2.3: Integration Tests (P2)
 
-**Приоритет:**P2 - MEDIUM**Сроки:**2 недели**Ответственный:**QA Engineer
-**Статус:**TO DO
+**Priority:**P2 - MEDIUM**Timeline:**2 weeks**Responsible:**QA Engineer
+**Status:**TO DO
 
-**Цель:**Покрыть критические integration flows
+**Goal:**Cover critical integration flows
 
 **Test cases:**
 
@@ -387,32 +386,32 @@ describe('AI Pipeline Integration', () => {
 2.**Auth service JWT validation**3.**Prometheus scraping all targets**4.**Fluent
 Bit → Loki log ingestion**
 
-**Критерии завершения:**
+**Completion Criteria:**
 
 - [ ] 10+ integration tests
-- [ ] CI pipeline интеграция
+- [ ] CI pipeline integration
 - [ ] Coverage report
 
 ---
 
-## Phase 3: Среднеприоритетные (1 месяц)
+## Phase 3: Medium Priority (1 month)
 
-### Task 3.1: SOPS для секретов (P2) {: #task-31-sops-для-секретов-p2 }
+### Task 3.1: SOPS for Secrets (P2) {: #task-31-sops-for-secrets-p2 }
 
-**Приоритет:**P2 - MEDIUM**Сроки:**1 месяц**Ответственный:**DevOps Lead
-**Статус:**TO DO
+**Priority:**P2 - MEDIUM**Timeline:**1 month**Responsible:**DevOps Lead
+**Status:**TO DO
 
-**Цель:**Шифрование секретов at rest
+**Goal:**Encryption of secrets at rest
 
-**Внедрение:**
+**Implementation:**
 
-1.**Установить SOPS**
+1.**Install SOPS**
 
 ```bash
-brew install sops # или apt-get install sops
+brew install sops # or apt-get install sops
 ```
 
-2.**Создать GPG ключ для команды**
+2.**Create GPG key for team**
 
 ```bash
 gpg --batch --generate-key <<EOF
@@ -424,11 +423,11 @@ Name-Email: devops@erni-gruppe.ch
 Expire-Date: 2y
 EOF
 
-# Экспорт публичного ключа
+# Export public key
 gpg --export --armor "ERNI-KI DevOps" > .sops.pub
 ```
 
-3.**Конфигурация SOPS**
+3.**Configure SOPS**
 
 ```yaml
 # .sops.yaml
@@ -438,7 +437,7 @@ creation_rules:
  FBC7B9E2A4F9289AC0C1D4843D16CEE4A27381B4
 ```
 
-4.**Зашифровать секреты**
+4.**Encrypt secrets**
 
 ```bash
 for file in secrets/*.txt; do
@@ -463,23 +462,23 @@ done
 exec "$@"
 ```
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] SOPS настроен
-- [ ] Все секреты зашифрованы
-- [ ] Entrypoint работает
-- [ ] Документация обновлена
+- [ ] SOPS configured
+- [ ] All secrets encrypted
+- [ ] Entrypoint working
+- [ ] Documentation updated
 
 ---
 
 ### Task 3.2: JWT Rotation (P2)
 
-**Приоритет:**P2 - MEDIUM**Сроки:**1 месяц**Ответственный:**Backend
-Developer**Статус:**TO DO
+**Priority:**P2 - MEDIUM**Timeline:**1 month**Responsible:**Backend
+Developer**Status:**TO DO
 
-**Цель:**Автоматическая ротация JWT signing keys
+**Goal:**Automatic JWT signing key rotation
 
-**Дизайн:**
+**Design:**
 
 ```go
 // pkg/jwt/rotation.go
@@ -502,33 +501,33 @@ func (r *KeyRotator) Rotate() error {
 }
 
 func (r *KeyRotator) Verify(token string) (Claims, error) {
- // Попытка верификации с current key
+ // Try verification with current key
  claims, err := jwt.Parse(token, r.current)
  if err == nil {
  return claims, nil
  }
 
- // Fallback на previous key
+ // Fallback to previous key
  return jwt.Parse(token, r.previous)
 }
 ```
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] KeyRotator реализован
-- [ ] Ротация каждые 7 дней
-- [ ] Поддержка 2 валидных ключей
+- [ ] KeyRotator implemented
+- [ ] Rotation every 7 days
+- [ ] Support for 2 valid keys
 - [ ] Unit tests
-- [ ] Документация
+- [ ] Documentation
 
 ---
 
 ### Task 3.3: Load Tests (P2)
 
-**Приоритет:**P2 - MEDIUM**Сроки:**1 месяц**Ответственный:**QA Engineer
-**Статус:**TO DO
+**Priority:**P2 - MEDIUM**Timeline:**1 month**Responsible:**QA Engineer
+**Status:**TO DO
 
-**Цель:**Определить capacity и bottlenecks
+**Goal:**Determine capacity and bottlenecks
 
 **Scenarios:**
 
@@ -573,22 +572,22 @@ export default function () {
 
 2.**RAG pipeline load**3.**Prometheus query load**
 
-**Критерии завершения:**
+**Completion Criteria:**
 
 - [ ] 3 k6 scenarios
-- [ ] Baseline metrics собраны
-- [ ] Bottlenecks идентифицированы
+- [ ] Baseline metrics collected
+- [ ] Bottlenecks identified
 - [ ] Performance report
 
 ---
 
-## Phase 4: Долгосрочные (3-6 месяцев)
+## Phase 4: Long-term (3-6 months)
 
 ### Task 4.1: SLI/SLO Definition (P3)
 
-**Приоритет:**P3 - LOW**Сроки:**1 месяц**Ответственный:**SRE**Статус:**BACKLOG
+**Priority:**P3 - LOW**Timeline:**1 month**Responsible:**SRE**Status:**BACKLOG
 
-**Цель:**Формализовать service level objectives
+**Goal:**Formalize service level objectives
 
 **SLI Definition:**
 
@@ -619,10 +618,10 @@ slos:
  window: 30d
 ```
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] SLI defined для всех критических сервисов
-- [ ] Prometheus rules созданы
+- [ ] SLI defined for all critical services
+- [ ] Prometheus rules created
 - [ ] Grafana dashboard
 - [ ] Runbooks
 
@@ -630,30 +629,30 @@ slos:
 
 ### Task 4.2: Kubernetes Migration (P4)
 
-**Приоритет:**P4 - BACKLOG**Сроки:**6 месяцев**Ответственный:**DevOps Lead
-**Статус:**BACKLOG
+**Priority:**P4 - BACKLOG**Timeline:**6 months**Responsible:**DevOps Lead
+**Status:**BACKLOG
 
-**Цель:**Миграция с Docker Compose на Kubernetes
+**Goal:**Migration from Docker Compose to Kubernetes
 
 **Benefits:**
 
-- Network Policies для изоляции
-- HPA для автоскейлинга
-- Rolling updates с zero downtime
+- Network Policies for isolation
+- HPA for autoscaling
+- Rolling updates with zero downtime
 - External Secrets Operator
 - Service mesh (Istio)
 
-**Этапы:**
+**Phases:**
 
-1.**Proof of Concept (1 месяц)**2.**Helm charts разработка (2
-месяца)**3.**Staging migration (1 месяц)**4.**Production migration (2 месяца)**
+1.**Proof of Concept (1 month)**2.**Helm charts development (2
+months)**3.**Staging migration (1 month)**4.**Production migration (2 months)**
 
-**Критерии завершения:**
+**Completion Criteria:**
 
-- [ ] POC успешен
-- [ ] Helm charts готовы
-- [ ] Staging работает
-- [ ] Production мигрирован
+- [ ] POC successful
+- [ ] Helm charts ready
+- [ ] Staging working
+- [ ] Production migrated
 
 ---
 
@@ -670,7 +669,7 @@ slos:
 
 ### Milestones
 
-- [ ]**Milestone 1:**Критические фиксы (Week 1)
+- [ ]**Milestone 1:**Critical fixes (Week 1)
 - [ ]**Milestone 2:**Production unblocked (Week 2)
 - [ ]**Milestone 3:**Network segmentation (Week 4)
 - [ ]**Milestone 4:**SOPS + JWT rotation (Month 2)
@@ -678,35 +677,35 @@ slos:
 
 ---
 
-## Ответственные
+## Responsibilities
 
-| Роль              | Имя | Задачи             |
-| ----------------- | --- | ------------------ |
-| DevOps Lead       | TBD | 1.1, 2.1, 3.1      |
-| DevOps Engineer   | TBD | 1.2, 1.3, 1.4, 2.2 |
-| Backend Developer | TBD | 3.2                |
-| QA Engineer       | TBD | 2.3, 3.3           |
-| SRE               | TBD | 4.1                |
+| Role              | Name | Tasks              |
+| ----------------- | ---- | ------------------ |
+| DevOps Lead       | TBD  | 1.1, 2.1, 3.1      |
+| DevOps Engineer   | TBD  | 1.2, 1.3, 1.4, 2.2 |
+| Backend Developer | TBD  | 3.2                |
+| QA Engineer       | TBD  | 2.3, 3.3           |
+| SRE               | TBD  | 4.1                |
 
 ---
 
-## Коммуникация
+## Communication
 
 ### Weekly Status Updates
 
-- Каждый понедельник в 10:00
+- Every Monday at 10:00
 - Slack: #erni-ki-security
-- Формат: Task ID, Status, Blockers
+- Format: Task ID, Status, Blockers
 
 ### Escalation Path
 
-- P0 issues: Немедленно в Slack + email DevOps Lead
+- P0 issues: Immediately to Slack + email DevOps Lead
 - P1 issues: Daily standup
 - P2+ issues: Weekly status update
 
 ---
 
-## Ссылки
+## Links
 
 - [ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 - [Security Policy](../security/security-policy.md)
@@ -714,4 +713,4 @@ slos:
 
 ---
 
-**Статус:**ACTIVE**Следующий review:**2025-12-04
+**Status:**ACTIVE**Next review:**2025-12-04

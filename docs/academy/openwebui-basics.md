@@ -1,53 +1,49 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Основы Open WebUI
+# Open WebUI basics
 
-## Как открыть Open WebUI
+Open WebUI is the default interface for interacting with ERNI-KI. The summary
+below mirrors the Russian canonical guide and gives the essentials so an
+English-speaking operator can work without switching locales.
 
-1. Откройте браузер и перейдите на `https://ki.erni-gruppe.ch` (внутренняя сеть)
-   или используйте предоставленный VPN-адрес.
-2. Войдите через корпоративное SSO. Если доступ не работает, сначала проверьте
-   [статус системы](https://status.erni-ki.ch), затем создайте тикет в
-   поддержку.
-3. Выберите рабочее пространство (Workspace) с нужными шаблонами, либо
-   используйте**Default**, если нужен быстрый одноразовый запрос.
+## Quick tour
 
-## Как выбрать модель
+-**Sidebar**– access chat history, file attachments, and the AG-UI event
+stream. -**Prompt composer**– supports multi-line prompts, Markdown, and tool
+calls. -**Status footer**– shows connected model, MCP tool availability, and GPU
+usage.
 
-1. Нажмите на селектор модели в правом верхнем углу интерфейса.
-2. Используйте подсказки к моделям:**GPT-4o**— универсальная для текста и
-   коммуникаций, кодовые модели — для разработки и отладки, RAG-модели — для
-   работы с внутренними документами.
-3. Если не уверены, начните с модели по умолчанию в выбранном Workspace — она
-   преднастроена командой ERNI под типовые сценарии.
+## Daily workflow
 
-## Как задать простой запрос
+1.**Pick a workspace**(project/customer) before sending prompts; this keeps
+audits and costs separated. 2.**Attach context**– drag documents or screenshots
+into the panel so they are indexed for the current session. 3.**Use system
+prompts**– the `Templates` menu stores reusable prompts for emails, reports, or
+diagnostics. 4.**Track responses**– each reply exposes tokens, latency, and tool
+calls so you can assess quality or escalate issues.
 
-1. В поле ввода сформулируйте задачу в одном-двух предложениях.
-2. Добавьте контекст: кто читатель, какой формат нужен, дедлайн, язык ответа.
-3. Прикрепите файлы (если нужно) — они попадут в контекст запроса.
-4. Нажмите**Send**и оцените ответ. При необходимости уточните требования и
-   повторите запрос.
+## Attachments & tools
 
-## Как пользоваться готовыми шаблонами
+- Files up to 25 MB per upload, automatically routed through Docling/Tika.
+- MCP tools—including Filesystem, PostgreSQL, and Time—are available via the
+  “Tools” icon once Archon authorizes them.
+- Use `@` mentions to call custom tools (e.g., `@diagnostics.start_check`).
 
-1. Откройте раздел**Prompts**или**Workspaces**в левой панели.
-2. Навигируйте по категориям (письма, резюме встреч, тикеты) или по поиску.
-3. Заполните переменные (имя клиента, тема, дедлайн) и нажмите**Run**— шаблон
-   уже содержит проверенный формат и тон.
-4. При необходимости переключитесь на альтернативную модель внутри шаблона (если
-   он её предлагает) и повторите запуск.
-5. Сохраните результат или отправьте в нужный канал.
+## Troubleshooting
 
-## Чек-лист перед стартом
+- If the chat area shows “Waiting for response” longer than 20 s, open the MCP
+  Activity panel and copy the correlation ID when reporting an incident.
+- Use `CTRL+SHIFT+L` to download raw logs for the last session.
 
-- Статус панели зелёный? Проверьте [статус системы](https://status.erni-ki.ch).
-- Выбран правильный Workspace и язык ответа? Это влияет на подсказки и тон.
-- Есть чувствительные данные? Убедитесь, что они разрешены к использованию.
-- Для RAG убедитесь, что нужный источник подключен и обновлён (посмотрите метку
-  времени в источнике).
+## Further reading
+
+- [System status](https://status.erni-ki.ch) – check incidents before escalating.
+- [Prompting 101](prompting-101.md) – high-level guidance for writing effective
+  prompts.
+- [HowTo guides](howto/index.md) – ready-made flows for customer emails, meeting
+  summaries, and ticket creation.

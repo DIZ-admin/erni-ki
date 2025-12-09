@@ -1,129 +1,128 @@
-# ERNI-KI SSL Setup - Быстрый старт
+# ERNI-KI SSL Setup - Quick Start
 
-## Быстрая установка Let's Encrypt
+## Quick Let's Encrypt Installation
 
-### 1. Получите Cloudflare API токен
+### 1. Get Cloudflare API Token
 
-1. Войдите в [Cloudflare Dashboard](https://dash.cloudflare.com/)
+1. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com/)
 2. **My Profile** → **API Tokens** → **Create Token**
-3. **Custom token** с правами:
+3. **Custom token** with permissions:
 
 - `Zone:Zone:Read`
 - `Zone:DNS:Edit`
-- Зона: `erni-gruppe.ch`
+- Zone: `erni-gruppe.ch`
 
-### 2. Установите сертификат
+### 2. Install Certificate
 
 ```bash
-# Установите API токен
+# Set API token
 export CF_Token="your_cloudflare_api_token_here"
 
-# Запустите установку
+# Run installation
 ./scripts/ssl/setup-letsencrypt.sh
 ```
 
-### 3. Проверьте результат
+### 3. Verify Result
 
 ```bash
-# Тест конфигурации
+# Test configuration
 ./scripts/ssl/test-nginx-config.sh
 
-# Проверка сертификата
+# Check certificate
 curl -I https://ki.erni-gruppe.ch/
 ```
 
-## Доступные скрипты
+## Available Scripts
 
-| Скрипт                    | Описание                               |
-| ------------------------- | -------------------------------------- |
-| `setup-letsencrypt.sh`    | Автоматическая установка Let's Encrypt |
-| `monitor-certificates.sh` | Мониторинг и обновление сертификатов   |
-| `test-nginx-config.sh`    | Тестирование SSL конфигурации          |
-| `setup-ssl-monitoring.sh` | Настройка автомониторинга              |
-| `check-ssl-now.sh`        | Быстрая проверка сертификатов          |
+| Script                    | Description                          |
+| ------------------------- | ------------------------------------ |
+| `setup-letsencrypt.sh`    | Automatic Let's Encrypt installation |
+| `monitor-certificates.sh` | Monitor and renew certificates       |
+| `test-nginx-config.sh`    | Test SSL configuration               |
+| `setup-ssl-monitoring.sh` | Set up auto-monitoring               |
+| `check-ssl-now.sh`        | Quick certificate check              |
 
-## Команды мониторинга
+## Monitoring Commands
 
 ```bash
-# Проверка сертификата
+# Check certificate
 ./scripts/ssl/monitor-certificates.sh check
 
-# Принудительное обновление
+# Force renewal
 ./scripts/ssl/monitor-certificates.sh renew
 
-# Генерация отчета
+# Generate report
 ./scripts/ssl/monitor-certificates.sh report
 
-# Тест HTTPS доступности
+# Test HTTPS availability
 ./scripts/ssl/monitor-certificates.sh test
 ```
 
-## Статус автомониторинга
+## Auto-Monitoring Status
 
 ```bash
-# Статус systemd timer
+# Check systemd timer status
 systemctl --user status erni-ki-ssl-monitor.timer
 
-# Просмотр логов
+# View logs
 journalctl --user -u erni-ki-ssl-monitor.service
 
-# Ручной запуск проверки
+# Manual check
 ./scripts/ssl/check-ssl-now.sh
 ```
 
-## Устранение неполадок
+## Troubleshooting
 
-### Проблема: Ошибка Cloudflare API
+### Problem: Cloudflare API Error
 
 ```bash
-# Проверьте токен
+# Verify token
 curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
  -H "Authorization: Bearer $CF_Token"
 ```
 
-### Проблема: Ошибка nginx
+### Problem: Nginx Error
 
 ```bash
-# Проверьте конфигурацию
+# Check configuration
 docker compose exec nginx nginx -t
 
-# Перезапустите nginx
+# Restart nginx
 docker compose restart nginx
 ```
 
-### Проблема: DNS propagation
+### Problem: DNS Propagation
 
 ```bash
-# Проверьте DNS записи
+# Check DNS records
 dig TXT _acme-challenge.ki.erni-gruppe.ch
 
-# Подождите 2-5 минут и повторите
+# Wait 2-5 minutes and retry
 ```
 
-## Документация
+## Documentation
 
-- **Полное руководство**:
+- **Full guide**:
   [docs/ssl-letsencrypt-setup.md](../docs/ssl-letsencrypt-setup.md)
-- **Итоговый отчет**:
-  [docs/ssl-setup-complete.md](../docs/ssl-setup-complete.md)
-- **Конфигурация**: [conf/ssl/monitoring.conf](../conf/ssl/monitoring.conf)
+- **Final report**: [docs/ssl-setup-complete.md](../docs/ssl-setup-complete.md)
+- **Configuration**: [conf/ssl/monitoring.conf](../conf/ssl/monitoring.conf)
 
-## Экстренное восстановление
+## Emergency Recovery
 
 ```bash
-# Откат к предыдущим сертификатам
+# Rollback to previous certificates
 BACKUP_DIR=".config-backup/ssl-setup-20250811-134107"
 cp "$BACKUP_DIR/nginx.crt" conf/nginx/ssl/
 cp "$BACKUP_DIR/nginx.key" conf/nginx/ssl/
 docker compose restart nginx
 ```
 
-## Ожидаемые результаты
+## Expected Results
 
-После успешной установки:
+After successful installation:
 
-- Валидный SSL сертификат от Let's Encrypt
-- A+ рейтинг на SSL Labs
-- Автоматическое обновление каждые 60 дней
-- HTTP/2 и TLS 1.3 поддержка
-- Все 25+ сервисов ERNI-KI работают через HTTPS
+- Valid SSL certificate from Let's Encrypt
+- A+ rating on SSL Labs
+- Automatic renewal every 60 days
+- HTTP/2 and TLS 1.3 support
+- All 25+ ERNI-KI services working via HTTPS

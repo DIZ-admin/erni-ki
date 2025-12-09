@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -7,9 +7,9 @@ last_updated: '2025-11-24'
 
 # GitHub Governance Checklist
 
-_Обновлено: 2025-11-17_
+_Updated: 2025-11-17_
 
-## Визуализация: поток работы с PR
+## Visualization: PR workflow
 
 ```mermaid
 flowchart TD
@@ -20,11 +20,10 @@ flowchart TD
  Merge --> Main[Release via main]
 ```
 
-## 1. Структура веток
+## 1. Branch Structure
 
--**Основная ветка:**`main` -**Рабочая ветка:**`develop` (ранее `dev`). Требуется
-переименовать удалённую ветку и перенастроить branch protection через GitHub
-UI/CLI:
+-**Main branch:**`main` -**Working branch:**`develop` (formerly `dev`). Need to
+rename remote branch and reconfigure branch protection via GitHub UI/CLI:
 
 ```bash
 git push origin develop:develop
@@ -32,42 +31,41 @@ git push origin :dev
 gh api repos/:owner/:repo/branches/develop/protection -X PUT --input protect-develop.json
 ```
 
-## 2. Branch protection (рекомендуемые настройки)
+## 2. Branch protection (recommended settings)
 
-| Ветка     | Требования                                                                                                                                                              |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main`    | Required pull request reviews ≥ 1, dismiss stale reviews, блокировка прямых пушей, запрет merge при failing checks (`lint`, `test-go`, `test-js`, `security`, `deploy`) |
-| `develop` | Required pull request reviews ≥ 1, запрет прямых пушей, обязательные проверки `lint`, `test-go`, `test-js`                                                              |
+| Branch    | Requirements                                                                                                                                                      |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main`    | Required pull request reviews ≥ 1, dismiss stale reviews, block direct pushes, block merge on failing checks (`lint`, `test-go`, `test-js`, `security`, `deploy`) |
+| `develop` | Required pull request reviews ≥ 1, block direct pushes, required checks `lint`, `test-go`, `test-js`                                                              |
 
-> Настройте через GitHub UI или
-> `gh api repos/:owner/:repo/branches/<branch>/protection`. Снимок конфигурации
-> приложить к документации.
+> Configure via GitHub UI or
+> `gh api repos/:owner/:repo/branches/<branch>/protection`. Attach configuration
+> snapshot to documentation.
 
 ## 3. GitHub Actions
 
 - Workflows: `ci.yml`, `security.yml`, `deploy-environments.yml`
-- Permissions уже минимальны (`contents:read`, `security-events:write`,
+- Permissions already minimal (`contents:read`, `security-events:write`,
   `packages:write`)
-- Следите, чтобы `develop` присутствовала в списке веток в каждом workflow
-  (обновлено в коде)
+- Ensure `develop` is present in branch list in each workflow (updated in code)
 
-## 3.1 Гигиена веток
+## 3.1 Branch Hygiene
 
-- Авто-удаление merged branches включить в настройках репозитория.
-- Регулярно очищать локальные ссылки на удалённые ветки:
+- Enable auto-delete of merged branches in repository settings.
+- Regularly clean local references to remote branches:
 
 ```bash
 git fetch --prune
-git branch -r --merged origin/main   # убедиться, что нет лишних active веток
+git branch -r --merged origin/main   # verify no extra active branches
 ```
 
-- Разрешённые типы веток: `feature/*`, `fix/*`, `docs/*`, `ci/*`, `hotfix/*`.
-- Срок жизни ветки ≤ 4 недели; перед продлением требуется согласование в PR.
-- История merge: `squash` по умолчанию; `rebase` допускается для мелких правок.
+- Allowed branch types: `feature/*`, `fix/*`, `docs/*`, `ci/*`, `hotfix/*`.
+- Branch lifespan ≤ 4 weeks; extension requires approval in PR.
+- Merge history: `squash` by default; `rebase` allowed for minor fixes.
 
 ## 4. Secrets & Environments
 
-См. `docs/reference/github-environments-setup.md`. Выполнить скрипты:
+See `docs/reference/github-environments-setup.md`. Execute scripts:
 
 ```bash
 ./scripts/infrastructure/security/setup-github-environments.sh
@@ -76,18 +74,18 @@ git branch -r --merged origin/main   # убедиться, что нет лиш�
 ./scripts/infrastructure/security/validate-environment-secrets.sh
 ```
 
-Результаты проверки фиксируйте в таблице журнала.
+Document verification results in log table.
 
-## 5. Шаблоны и ответственность
+## 5. Templates and Responsibility
 
-- CODEOWNERS настроен для CI/безопасности.
-- Issue/PR templates и Dependabot включены (см. `.github/`).
+- CODEOWNERS configured for CI/security.
+- Issue/PR templates and Dependabot enabled (see `.github/`).
 
-## 6. Открытые действия
+## 6. Open Actions
 
-1. Переименовать удалённую ветку `dev` → `develop` и обновить protection rules.
-2. Подтвердить статус GitHub Environments и секретов, заполнить журнал.
-3. Добавить required status checks для `main`/`develop` согласно списку в
+1. Rename remote branch `dev` → `develop` and update protection rules.
+2. Confirm GitHub Environments and secrets status, fill log.
+3. Add required status checks for `main`/`develop` per list in
    `docs/archive/audits/ci-health.md`.
-4. Поддерживать чистоту веток (последняя чистка: 2025-12-04, удалены устаревшие
-   `audit/*`, `chore/*`, `fix/*`, `dependabot/*` и `update`).
+4. Maintain branch cleanliness (last cleanup: 2025-12-04, removed outdated
+   `audit/*`, `chore/*`, `fix/*`, `dependabot/*` and `update`).

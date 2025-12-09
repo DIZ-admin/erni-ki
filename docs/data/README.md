@@ -1,15 +1,15 @@
 ---
-language: ru
-translation_status: original
+language: en
+translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-29'
+last_updated: '2025-12-09'
 ---
 
-# Данные и конфигурации
+# Data and Configurations
 
-Основная навигация перенесена в `docs/data/index.md`. Здесь сохраняется ссылка на
-актуальные описания наборов данных и конфигураций.
+The main navigation has been moved to `docs/data/index.md`. Here we keep a link to
+current descriptions of datasets and configurations.
 
-| Файл     | Описание                    |
-| -------- | --------------------------- |
-| index.md | Сводная навигация по данным |
+| File     | Description                   |
+| -------- | ----------------------------- |
+| index.md | Consolidated data navigation  |

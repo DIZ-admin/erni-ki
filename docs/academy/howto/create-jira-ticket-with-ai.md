@@ -1,52 +1,57 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Создать JIRA тикет с помощью AI
+# Create a JIRA ticket with AI
 
-## Когда использовать
+## Introduction
 
-- Нужно быстро оформить баг или запрос на улучшение.
-- Есть сырые заметки, которые нужно превратить в структурированный тикет.
+This guide explains how to generate JIRA tickets using AI assistance. It covers
+required inputs, configuration steps, and example prompts to streamline ticket
+creation.
 
-## Шаги
+## Inputs required
 
-1. Подготовьте минимальную информацию: заголовок, шаги воспроизведения,
-   ожидаемый и фактический результат, окружение.
-2. Вставьте факты в промпт и попросите модель оформить их в формате JIRA
-   (используйте рабочее пространство**Support**или готовый шаблон тикета).
-3. Проверяйте, чтобы не раскрывались конфиденциальные данные и ссылки.
-4. Вставьте результат в JIRA, назначьте исполнителя и приоритет. Уточните
-   "Severity/Impact" — это поможет triage.
-5. Добавьте ссылки на логи или скриншоты, если они есть, и закрепите дату
-   воспроизведения.
+- Issue type (Bug/Story/Task) and priority.
+- Environment or service affected.
+- Observed behavior, expected behavior, and reproduction steps.
+- Links to logs, screenshots, or dashboards.
 
-### Готовый промпт
+## Prompt template
 
 ```
-Ты — support-инженер. Составь черновик тикета Jira по фактам ниже.
-Вставь: summary, description (steps, expected vs actual), окружение, labels,
-severity, 3 acceptance criteria. Не добавляй выдуманных фактов.
-Данные: <вставь заметки/логи>. Язык: RU. Формат: markdown.
+Create a Jira issue from the facts below.
+
+Issue type: <type>
+Priority: <priority>
+Component/service: <component>
+Summary hint: <concise sentence>
+
+Observed behaviour: <text>
+Expected behaviour: <text>
+Steps to reproduce:
+1. ...
+2. ...
+
+Acceptance criteria:
+- ...
+
+Respond with sections: Summary, Description, Steps to Reproduce, Acceptance
+Criteria, Attachments, Tags.
 ```
 
-## Примеры промптов
+## Review checklist
 
--**Хороший:**
+- Summary mentions component and impact.
+- Description clearly separates observed vs. expected results.
+- Acceptance criteria are testable and align with the definition of done.
+- Attachments reference file names already uploaded to the chat.
 
-- "Ты — support-инженер. Задача: оформить баг-тикет. Контекст: после обновления
-  1.2.3 пользователи не могут авторизоваться через SSO, ошибка 401. Шаги:
-  открыть /login, выбрать SSO, ввести учетку, получить ошибку. Ожидание:
-  успешный вход. Фактически: 401. Окружение: prod, chrome. Формат: summary,
-  description с шагами, expected/actual, labels=auth,
-  priority=High." -**Плохой:**
-- "Создай тикет про ошибку логина" (не хватает шагов и ожидаемого поведения)
+## After generating the draft
 
-## Чек-лист
-
-- Указаны expected/actual и дата воспроизведения.
-- Есть severity/impact, labels/компоненты.
-- В тексте нет секретов (пароли, токены, приватные URL).
+Paste the content into the Jira Create dialog, assign the correct team, and add
+the label `ai-draft` so reviewers know the origin. Update the ticket status once
+manually verified.

@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -7,60 +7,59 @@ last_updated: '2025-11-24'
 
 # LiteLLM Redis Caching Configuration
 
-Документация о конфигурации кеширования для LiteLLM в системе ERNI-KI.
+Documentation about caching configuration for LiteLLM in ERNI-KI system.
 
-## Текущий статус
+## Current status
 
-**Версия LiteLLM:** v1.80.0-stable.1 (фиксирует таймауты из RC)  
-**Redis Caching:** ОТКЛЮЧЕН по умолчанию (используем локальный кеш)  
-**Причина текущего статуса:** сохраняем локальный кеш как безопасное значение по
-умолчанию; при необходимости Redis можно включить (см. ниже).
+**LiteLLM Version:** v1.80.0-stable.1 (fixes timeouts from RC) **Redis
+Caching:** DISABLED by default (using local cache) **Current status reason:**
+keeping local cache as safe default; Redis can be enabled if needed (see below).
 
-## Известные проблемы
+## Known issues
 
-### Bug в LiteLLM v1.80.0.rc.1 (исправлен в stable)
+### Bug in LiteLLM v1.80.0.rc.1 (fixed in stable)
 
-LiteLLM v1.80.0.rc.1 содержал баг с жестко закодированным `socket_timeout: 5.0`
-для Redis соединений, что приводило к проблемам со стабильностью при
-использовании Redis caching. В образе v1.80.0-stable.1 это поведение исправлено
-и `socket_timeout` можно настраивать через `cache_params`.
+LiteLLM v1.80.0.rc.1 contained bug with hardcoded `socket_timeout: 5.0` for
+Redis connections, which led to stability issues when using Redis caching. In
+v1.80.0-stable.1 image this behavior is fixed and `socket_timeout` can be
+configured via `cache_params`.
 
-**Проблема:**
+**Problem:**
 
-- Hardcoded timeout слишком короткий для production workloads
-- Приводит к частым timeout ошибкам при высокой нагрузке
-- Невозможно переопределить через конфигурацию
+- Hardcoded timeout too short for production workloads
+- Leads to frequent timeout errors under high load
+- Cannot be overridden via configuration
 
-**Workaround:** Использовать локальный (in-memory) кеш (активно сейчас). Для
-Redis задайте `socket_timeout` и включите секцию cache_params (см. примеры).
+**Workaround:** Use local (in-memory) cache (currently active). For Redis set
+`socket_timeout` and enable cache_params section (see examples).
 
-## Текущая конфигурация
+## Current configuration
 
-### Local Caching (Активно)
+### Local Caching (Active)
 
-**Файл:**`conf/litellm/config.yaml`
+**File:** `conf/litellm/config.yaml`
 
 ```yaml
 litellm_settings:
  cache: true # Enable caching
  cache_params:
- type: 'local' # Use in-memory caching (до фикса Redis)
+ type: 'local' # Use in-memory caching (until Redis fix)
  ttl: 1800 # Cache TTL in seconds (30 minutes)
  supported_call_types:
  ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
 ```
 
-**Характеристики:**
+**Characteristics:**
 
-- Быстрое кеширование в памяти процесса
-- Нет сетевых задержек
-- Кеш не разделяется между экземплярами
-- Кеш очищается при перезапуске сервиса
-- TTL: 30 минут
+- Fast in-process memory caching
+- No network latency
+- Cache not shared between instances
+- Cache cleared on service restart
+- TTL: 30 minutes
 
-### Redis Caching (Отключен)
+### Redis Caching (Disabled)
 
-**Файл:**`conf/litellm/config.yaml` (строки 38-42)
+**File:** `conf/litellm/config.yaml` (lines 38-42)
 
 ```yaml
 router_settings:
@@ -71,51 +70,51 @@ router_settings:
   # redis_db: 1 # Use the same DB as caching
 ```
 
-**Преимущества Redis (когда баг будет исправлен):**
+**Redis advantages (when bug is fixed):**
 
-- Разделяемый кеш между всеми экземплярами LiteLLM
-- Персистентный кеш (переживает перезапуск)
-- Масштабируемость
-- Centralized cache управление
+- Shared cache between all LiteLLM instances
+- Persistent cache (survives restart)
+- Scalability
+- Centralized cache management
 
-## Как переключиться на Redis caching
+## How to switch to Redis caching
 
-> [!WARNING] Не включайте Redis caching до обновления LiteLLM на версию с
-> исправленным багом!
+> [!WARNING] Don't enable Redis caching until LiteLLM updates to version with
+> fixed bug!
 
-### Шаг 1: Обновите LiteLLM
+### Step 1: Update LiteLLM
 
 ```bash
-# Проверьте текущую версию
+# Check current version
 docker exec erni-ki-litellm-1 pip show litellm | grep Version
 
-# Обновите до версии с исправлением (когда будет доступна)
-# Обновите image в compose.yml:
-# image: ghcr.io/berriai/litellm:v1.81.0 # или новее
+# Update to version with fix (when available)
+# Update image in compose.yml:
+# image: ghcr.io/berriai/litellm:v1.81.0 # or newer
 ```
 
-### Шаг 2: Обновите конфигурацию
+### Step 2: Update configuration
 
-Отредактируйте `conf/litellm/config.yaml`:
+Edit `conf/litellm/config.yaml`:
 
-**Раскомментируйте Redis настройки в router_settings:**
+**Uncomment Redis settings in router_settings:**
 
 ```yaml
 router_settings:
-  # ... другие настройки ...
+  # ... other settings ...
   redis_host: 'redis'
   redis_port: 6379
   redis_password: '$REDIS_PASSWORD' # pragma: allowlist secret
   redis_db: 1
 ```
 
-**Измените cache_params для использования Redis:**
+**Change cache_params to use Redis:**
 
 ```yaml
 litellm_settings:
  cache: true
  cache_params:
- type: 'redis' # Было: "local"
+ type: 'redis' # Was: "local"
  host: 'redis'
  port: 6379
  password: '$REDIS_PASSWORD' # pragma: allowlist secret
@@ -123,52 +122,52 @@ litellm_settings:
  ttl: 1800
  supported_call_types:
  ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
- # Timeout settings (когда баг будет исправлен)
+ # Timeout settings (when bug is fixed)
  socket_connect_timeout: 10
- socket_timeout: 30 # Увеличенный timeout
+ socket_timeout: 30 # Increased timeout
  connection_pool_timeout: 5
  retry_on_timeout: true
  health_check_interval: 30
 ```
 
-### Шаг 3: Перезапустите LiteLLM
+### Step 3: Restart LiteLLM
 
 ```bash
 docker compose restart litellm
 ```
 
-### Шаг 4: Проверьте работу
+### Step 4: Verify operation
 
 ```bash
-# Проверьте логи LiteLLM
+# Check LiteLLM logs
 docker logs erni-ki-litellm-1 --tail 100 | grep -i redis
 
-# Проверьте Redis connections
+# Check Redis connections
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" CLIENT LIST
 
-# Проверьте кеш в Redis
+# Check cache in Redis
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" -n 1 KEYS "*"
 ```
 
-## Как вернуться на Local caching
+## How to return to Local caching
 
-Если Redis caching вызывает проблемы, вернитесь к локальному кешированию:
+If Redis caching causes issues, return to local caching:
 
-### Шаг 1: Обновите конфигурацию
+### Step 1: Update configuration
 
-Отредактируйте `conf/litellm/config.yaml`:
+Edit `conf/litellm/config.yaml`:
 
 ```yaml
 litellm_settings:
  cache: true
  cache_params:
- type: 'local' # Было: "redis"
+ type: 'local' # Was: "redis"
  ttl: 1800
  supported_call_types:
  ['acompletion', 'atext_completion', 'aembedding', 'atranscription']
 ```
 
-Закомментируйте Redis настройки в router_settings:
+Comment out Redis settings in router_settings:
 
 ```yaml
 router_settings:
@@ -179,109 +178,108 @@ router_settings:
   # redis_db: 1
 ```
 
-### Шаг 2: Перезапустите LiteLLM
+### Step 2: Restart LiteLLM
 
 ```bash
 docker compose restart litellm
 ```
 
-## Производительность
+## Performance
 
 ### Local Cache
 
-**Преимущества:**
+**Advantages:**
 
-- Минимальная задержка (~1-2ms hit time)
-- Нет сетевых накладных расходов
-- Простая конфигурация
+- Minimal latency (~1-2ms hit time)
+- No network overhead
+- Simple configuration
 
-**Недостатки:**
+**Disadvantages:**
 
-- Ограничен памятью процесса
-- Не разделяется между инстансами
-- Теряется при перезапуске
+- Limited by process memory
+- Not shared between instances
+- Lost on restart
 
-**Подходит для:**
+**Suitable for:**
 
 - Single-instance deployments
 - Development/testing
-- Workloads с низким hit rate
+- Workloads with low hit rate
 
 ### Redis Cache
 
-**Преимущества:**
+**Advantages:**
 
-- Разделяемый кеш (distributed)
-- Персистентность
-- Масштабируемость
+- Shared cache (distributed)
+- Persistence
+- Scalability
 
-**Недостатки:**
+**Disadvantages:**
 
-- Сетевая задержка (~5-10ms hit time)
-- Требует дополнительную память Redis
-- Сложнее конфигурация
+- Network latency (~5-10ms hit time)
+- Requires additional Redis memory
+- More complex configuration
 
-**Подходит для:**
+**Suitable for:**
 
 - Multi-instance deployments
-- Production с high traffic
-- Workloads с высоким hit rate
+- Production with high traffic
+- Workloads with high hit rate
 
 ## Troubleshooting
 
-### Проблема: LiteLLM не кеширует запросы
+### Problem: LiteLLM not caching requests
 
-**Решение:**
+**Solution:**
 
-1. Проверьте что `cache: true` в `litellm_settings`
-2. Проверьте логи на ошибки кеширования:
+1. Check that `cache: true` in `litellm_settings`
+2. Check logs for caching errors:
 
 ```bash
 docker logs erni-ki-litellm-1 | grep -i cache
 ```
 
-### Проблема: Redis timeout ошибки
+### Problem: Redis timeout errors
 
-**Решение:**
+**Solution:**
 
-1. Убедитесь что используете LiteLLM версии без бага
-2. Увеличьте `socket_timeout` в cache_params
-3. Проверьте сетевую латентность до Redis:
+1. Ensure using LiteLLM version without bug
+2. Increase `socket_timeout` in cache_params
+3. Check network latency to Redis:
 
 ```bash
 docker exec erni-ki-litellm-1 ping redis
 ```
 
-### Проблема: Кеш не очищается
+### Problem: Cache not clearing
 
-**Решение для Redis:**
+**Solution for Redis:**
 
 ```bash
-# Очистить все ключи в DB 1 (cache DB)
+# Clear all keys in DB 1 (cache DB)
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" -n 1 FLUSHDB
 ```
 
-**Решение для Local:**
+**Solution for Local:**
 
 ```bash
-# Перезапустить LiteLLM
+# Restart LiteLLM
 docker compose restart litellm
 ```
 
-## Связанные документы
+## Related documents
 
 - `../../../conf/litellm/config.yaml`
 - `../database/redis-operations-guide.md`
 - [LiteLLM Official Docs](https://docs.litellm.ai/)
 
-## История изменений
+## Change history
 
-| Дата       | Версия LiteLLM | Статус Redis       | Причина              |
-| ---------- | -------------- | ------------------ | -------------------- |
-| 2025-11-24 | v1.80.0.rc.1   | Отключен           | Bug с socket_timeout |
-| 2025-10-02 | v1.80.0.rc.1   | Включен → Отключен | Обнаружен баг        |
+| Date       | LiteLLM Version | Redis Status       | Reason                  |
+| ---------- | --------------- | ------------------ | ----------------------- |
+| 2025-11-24 | v1.80.0.rc.1    | Disabled           | Bug with socket_timeout |
+| 2025-10-02 | v1.80.0.rc.1    | Enabled → Disabled | Bug discovered          |
 
 ---
 
-**Последнее обновление:** 2025-11-24  
-**Версия документа:** 1.0
+**Last Updated:** 2025-11-24 **Document Version:** 1.0

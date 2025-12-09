@@ -1,74 +1,60 @@
 ---
-language: ru
-translation_status: complete
+language: en
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+translation_status: pending
 ---
 
-# Security Documentation
+# Security Guide
 
-This directory contains security-related documentation, policies, and procedures
-for the ERNI-KI platform.
+## Overview
 
-## Contents
+This page aggregates the core security materials for the ERNI-KI platform:
+policies, operational hardening, scanning pipelines, and incident reporting. Use
+it as an entrypoint before enabling production access or sharing builds.
 
-### Security Guides
+### Security pillars
 
--**[authentication.md](authentication.md)**- Authentication and authorization
+- **Policies:** disclosure & reporting, severity classes, SLAs for fixes
+- **Hardening:** Nginx headers/limits, Docker/Compose least-privilege
+- **Scanning:** CodeQL, Trivy, Gosec, Gitleaks, Bun audit
+- **Monitoring:** Prometheus rules and log/watch items
+- **Process:** secure releases, backups, secrets hygiene
 
-- JWT token management
-- User authentication flow
-- API key management
-- Rate limiting
+### Quick checklist
 
--**[ssl-tls-setup.md](ssl-tls-setup.md)**- SSL/TLS configuration
+- Secrets stored in env/secret managers (no plaintext in repo)
+- Bun audit + Trivy + CodeQL + Gosec run in CI
+- Nginx: security headers, rate limits, size limits
+- Containers: non-root user, dropped capabilities, read-only FS where possible
+- Alerts: auth failures, high 4xx/5xx rates, config changes
+- Backups: periodic, restore tested
 
-- Certificate management
-- Cloudflare integration
-- Zero Trust setup
+## Key Documents
 
-### Security Policies
+- **Security Policy:** [`security-policy.md`](./security-policy.md) — reporting,
+  SLAs, severity classes, remediation steps.
+- **Infrastructure Hardening:**
+  - Nginx recommendations inside `security-policy.md`
+    (headers/limits/rate-limits).
+  - Docker hardening snippet (non-root, cap_drop, read-only FS).
+- **Scanners in CI:** `.github/workflows/ci.yml` (CodeQL/Trivy/Gosec/Bun audit)
+  and `security.yml` (if enabled).
+- **Monitoring & Alerts:** Prometheus rules examples in `security-policy.md` and
+  logging guidelines in ops docs.
 
--**[security-best-practices.md](security-best-practices.md)**- Security
-guidelines
+## Incident Reporting
 
-- Secure configuration
-- Network security
-- Data protection
-- Access control
+Send private reports to **security@erni-ki.local** (PGP if available). Provide
+description, repro steps, impact, and suggested mitigation. Avoid public issues
+until coordinated disclosure is agreed.
 
-## Quick Reference
+## Contacts
 
-**For Administrators:**
+- Security Team: `security@erni-ki.local`
+- Emergency contact: +7-XXX-XXX-XXXX
 
-- Set up authentication: [authentication.md](authentication.md)
-- Configure SSL: [ssl-tls-setup.md](ssl-tls-setup.md)
+## Status & Maintenance
 
-**For Developers:**
-
-- Review best practices:
-  [security-best-practices.md](security-best-practices.md)
-
-## Security Architecture
-
-ERNI-KI implements multiple security layers:
-
--**JWT Authentication**- Secure user sessions -**SSL/TLS**- Encrypted
-communications -**Cloudflare Zero Trust**- DDoS protection and secure
-tunnels -**Rate Limiting**- Abuse prevention -**Local Data Storage**- Data
-sovereignty
-
-## Reporting Security Issues
-
-**DO NOT**create public GitHub issues for security vulnerabilities. Contact:
-<security@erni-gruppe.ch>
-
-## Связанная документация
-
-- [Architecture](../architecture/index.md)
-- [Operations](../operations/index.md)
-- [Getting Started](../getting-started/index.md)
-
-## Version
-
-Documentation version:**12.1**Last updated:**2025-11-22**
+- Doc version: 2025.11 (EN). Keep aligned with RU/DE pages when updating.
+- Update this landing page when scanners/policies change or new hardening
+  guidance appears in infra configs.

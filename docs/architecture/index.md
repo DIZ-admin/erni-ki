@@ -1,49 +1,48 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-28'
+last_updated: '2025-11-24'
 ---
 
-# Архитектурная документация
+# Architecture Documentation
 
-Этот каталог содержит исчерпывающую техническую документацию по архитектуре
-системы ERNI-KI.
+This directory contains comprehensive technical documentation of the ERNI-KI
+system architecture.
 
-## Содержание
+## Contents
 
--**[architecture.md](architecture.md)**- Полный обзор архитектуры системы
-(v0.61.3)
+- **[architecture.md](./architecture.md)** - Complete system architecture overview
 
-- Компоненты системы и их взаимодействие
-- Сетевая архитектура и маппинг портов
-- Инвентаризация сервисов и зависимости
-- Диаграммы Mermaid для визуализации
+  - System components and their interactions
+  - Network architecture and port mappings
+  - Service inventory and dependencies
+  - Mermaid diagrams for visual reference
 
--**[services-overview.md](services-overview.md)**- Детальный каталог сервисов
+- **[services-overview.md](./services-overview.md)** - Detailed service catalog
 
-- AI/ML сервисы (Ollama, LiteLLM, Context7)
-- Сервисы данных (PostgreSQL, Redis)
-- Инфраструктурные сервисы (Nginx, Cloudflare)
-- Стек мониторинга (Prometheus, Grafana, Loki)
+  - AI/ML services (Ollama, LiteLLM, Context7)
+  - Data services (PostgreSQL, Redis)
+  - Infrastructure services (Nginx, Cloudflare)
+  - Monitoring stack (Prometheus, Grafana, Loki)
 
--**[service-inventory.md](service-inventory.md)**- Машиночитаемый каталог
-сервисов
+- **[service-inventory.md](./service-inventory.md)** - Machine-readable service
+  catalog
 
--**[nginx-configuration.md](nginx-configuration.md)**- Настройка Nginx reverse
-proxy
+- **[nginx-configuration.md](./nginx-configuration.md)** - Nginx reverse proxy
+  setup
 
-- Конфигурация SSL/TLS
-- Ограничение скорости (Rate limiting)
-- Проксирование WebSocket
-- Заголовки безопасности
+  - SSL/TLS configuration
+  - Rate limiting
+  - WebSocket proxying
+  - Security headers
 
-## Быстрые ссылки
+## Quick Links
 
-- [Обзор системы](../overview.md)
-- [Руководство по эксплуатации](../operations/index.md)
-- [Руководство по установке](../getting-started/installation.md)
+- [System Overview](../overview.md)
+- [Operations Guide](../operations/index.md)
+- [Installation Guide](../getting-started/installation.md)
 
-## Версия
+## Version
 
-Текущая версия архитектуры:**12.1**(Wave 3) Последнее обновление:**2025-11-22**
+Current architecture version:**12.1**(Wave 3) Last updated:**2025-11-22**

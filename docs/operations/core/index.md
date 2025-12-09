@@ -1,51 +1,22 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: partial
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-27'
 ---
 
-# Базовые операции ERNI-KI
+# Core Operations
 
-Core-раздел описывает процессы ежедневного управления платформой: от
-администрирования и маршрутизации инцидентов до статуса публичных сервисов.
+Core operational documentation and runbooks for ERNI-KI.
 
-## Содержимое каталога
+## Available Documentation
 
-- [operations-handbook.md](operations-handbook.md) — главный справочник по
-  операционным процедурам и распределению ролей.
-- [admin-guide.md](admin-guide.md) — задачи администратора (учётные записи,
-  доступы, VPN, базовая эксплуатация).
-- [status-page.md](status-page.md) — как поддерживать и публиковать статусную
-  страницу для внутренних/внешних стейкхолдеров.
-- [github-governance.md](github-governance.md) — политика работы с GitHub
-  (ветки, ревью, доступы, секреты).
-- [configuration-change-process.md](configuration-change-process.md) — процесс
-  внесения конфигурационных изменений и коммуникация.
-- [runbooks-summary.md](runbooks-summary.md) — единый список runbook-ов с
-  быстрыми ссылками.
+- [Overview](index.md) - Project overview
+- [Operations Handbook](operations-handbook.md) - Standard operational
+  procedures
 
-## Использование
+## Note
 
-1. Планируете админскую операцию — начните с Handbook.
-2. Требуется изменить конфигурацию — сверяйтесь с процессом и статусной
-   страницей.
-3. Нужен обзор runbook-ов — используйте summary-документ.
-
-**Tip:**Добавляйте новые процедуры сюда и обновляйте ссылки, чтобы сохранить
-актуальный индекс раздела.
-
-## Операционный ритм
-
--**Ежедневно:**проверка статус-страницы, отчётов watchdog-скриптов,
-инциденты. -**Еженедельно:**аудит доступов, ревью открытых Change
-Request. -**Ежемесячно:**обновление runbook-ов и публикация изменений в
-Confluence.
-
-## Эскалации
-
-1. Сверьтесь с `operations-handbook.md` — там указаны роли on-call.
-2. Задокументируйте шаги в соответствующем runbook и добавьте ссылки на логи.
-3. После решения обновите статус-страницу и занесите изменение в changelog.
-
-Используйте этот README как отправную точку для любых операций L2/L3.
+This is a partial English translation. The Russian version is the primary source
+with complete documentation. For missing sections, refer to the
+[Russian version](../../ru/operations/core/index.md).

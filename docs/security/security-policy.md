@@ -1,116 +1,115 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
+title: 'Security Policy'
 ---
 
-# Security Policy для проекта erni-ki
+# Security Policy for the erni-ki project
 
-## Политика безопасности
+## Security policy
 
-### Поддерживаемые версии
+### Supported versions
 
-Мы предоставляем обновления безопасности для следующих версий:
+We ship security updates for the following versions:
 
-| Версия | Поддержка |
-| ------ | --------- |
-| 1.x.x  | Да        |
-| 0.x.x  | Нет       |
+| Version | Support |
+| ------- | ------- |
+| 1.x.x   | Yes     |
+| 0.x.x   | No      |
 
-### Сообщение об уязвимостях
+### Reporting vulnerabilities
 
-Если вы обнаружили уязвимость в проекте erni-ki, пожалуйста:
+If you discover a vulnerability in erni-ki, please:
 
-1.**НЕ создавайте публичный issue**в GitHub 2. Отправьте отчет на email:
-<security@erni-ki.local> 3. Включите следующую информацию:
+1.**Do NOT open a public GitHub issue**2. Send a report to:
+<security@erni-ki.local> 3. Include:
 
-- Описание уязвимости
-- Шаги для воспроизведения
-- Потенциальное влияние
-- Предлагаемое решение (если есть)
+- Vulnerability description
+- Reproduction steps
+- Potential impact
+- Proposed fix or mitigation (if any)
 
-### Время ответа
+### Response time
 
--**Подтверждение получения**: в течение 24 часов -**Первоначальная оценка**: в
-течение 72 часов -**Исправление критических уязвимостей**: в течение 7
-дней -**Исправление некритических уязвимостей**: в течение 30 дней
+-**Acknowledgement:**within 24 hours -**Initial assessment:**within 72
+hours -**Critical fix:**within 7 days -**Non-critical fix:**within 30 days
 
-### Классификация уязвимостей
+### Severity classes
 
-#### Критические (Critical)
+#### Critical
 
-- Удаленное выполнение кода
-- Обход аутентификации
-- Утечка секретных данных
-- Полный компромисс системы
+- Remote code execution
+- Authentication bypass
+- Leakage of secrets or credentials
+- Full system compromise
 
-#### Высокие (High)
+#### High
 
-- Повышение привилегий
-- Инъекции SQL/NoSQL
-- Межсайтовый скриптинг (XSS)
-- Подделка межсайтовых запросов (CSRF)
+- Privilege escalation
+- SQL/NoSQL injections
+- Cross-site scripting (XSS)
+- Cross-site request forgery (CSRF)
 
-#### Средние (Medium)
+#### Medium
 
-- Утечка информации
-- Отказ в обслуживании (DoS)
-- Слабые настройки безопасности
+- Information disclosure
+- Denial of service (DoS)
+- Weak security settings
 
-#### Низкие (Low)
+#### Low
 
-- Информационные утечки
-- Проблемы конфигурации
+- Informational disclosures
+- Minor configuration issues
 
-### Процесс исправления
+### Remediation process
 
-1.**Анализ и подтверждение**уязвимости 2.**Разработка исправления**в приватной
-ветке 3.**Тестирование**исправления 4.**Координированное раскрытие**с
-исследователем 5.**Публикация обновления**безопасности 6.**Публичное
-раскрытие**через 90 дней
+1.**Analyze and confirm**the vulnerability 2.**Develop the fix**in a private
+branch 3.**Test**the fix 4.**Coordinate disclosure**with the
+reporter 5.**Publish the security update**6.**Public disclosure**after 90 days
 
-### Рекомендации по безопасности
+### Security recommendations
 
-#### Для администраторов
+#### For administrators
 
-1.**Регулярно обновляйте**все компоненты системы 2.**Используйте сильные
-пароли**и секретные ключи 3.**Настройте мониторинг**безопасности 4.**Ограничьте
-сетевой доступ**к сервисам 5.**Регулярно создавайте резервные копии**
+1.**Keep all components updated**2.**Use strong passwords**and secret
+keys 3.**Enable security monitoring**4.**Restrict network access**to
+services 5.**Back up regularly**
 
-#### Для разработчиков
+#### For developers
 
-1.**Следуйте принципам**безопасной разработки 2.**Проводите code review**всех
-изменений 3.**Используйте статический анализ**кода 4.**Тестируйте на
-уязвимости**перед релизом 5.**Не храните секреты**в коде
+1.**Follow secure coding practices**2.**Run code reviews**on every
+change 3.**Use static analysis**tools 4.**Security-test before releases**5.**Do
+not store secrets**in the codebase
 
-### Конфигурация безопасности
+### Security configuration
 
-#### Обязательные настройки
+#### Mandatory settings
 
 ```yaml
-# Сильные секретные ключи
-WEBUI_SECRET_KEY: 'сгенерированный-256-битный-ключ'
-JWT_SECRET: 'сгенерированный-256-битный-ключ'
+# Strong secret keys
+WEBUI_SECRET_KEY: '<generated-256-bit-key>'
+JWT_SECRET: '<generated-256-bit-key>'
 
-# Безопасные пароли баз данных
-POSTGRES_PASSWORD: 'сложный-пароль-минимум-16-символов'
-REDIS_PASSWORD: 'сложный-пароль-минимум-16-символов'
+# Secure database passwords
+POSTGRES_PASSWORD: '<complex-password-16+ chars>'
+REDIS_PASSWORD: '<complex-password-16+ chars>'
 ```
 
-## Рекомендуемые настройки Nginx
+## Recommended Nginx settings
 
 ```nginx
-# Скрытие версии сервера
+# Hide server version
 server_tokens off;
 
-# Безопасные заголовки
+# Security headers
 add_header X-Frame-Options DENY;
 add_header X-Content-Type-Options nosniff;
 add_header X-XSS-Protection "1; mode=block";
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
 
-# Ограничение размера запросов
+# Request limits
 client_max_body_size 20M;
 client_body_timeout 10s;
 client_header_timeout 10s;
@@ -120,13 +119,13 @@ limit_req_zone $binary_remote_addr zone=auth:10m rate=10r/m;
 limit_req zone=auth burst=5 nodelay;
 ```
 
-## Docker безопасность
+## Docker hardening
 
 ```yaml
-# Запуск от непривилегированного пользователя
+# Run as non-root
 user: '1001:1001'
 
-# Ограничение capabilities
+# Drop capabilities
 cap_drop:
   - ALL
 cap_add:
@@ -134,13 +133,13 @@ cap_add:
   - SETGID
   - SETUID
 
-# Read-only файловая система
+# Read-only filesystem
 read_only: true
 tmpfs:
   - /tmp
   - /var/tmp
 
-# Ограничение ресурсов
+# Resource limits
 deploy:
   resources:
   limits:
@@ -148,18 +147,17 @@ deploy:
   cpus: '0.5'
 ```
 
-## Мониторинг безопасности
+## Security monitoring
 
-### Логи для мониторинга
+### Logs to monitor
 
-1.**Неудачные попытки аутентификации**2.**Подозрительные HTTP
-запросы**3.**Ошибки доступа к файлам**4.**Необычная сетевая
-активность**5.**Изменения в конфигурации**
+1.**Failed authentication attempts**2.**Suspicious HTTP requests**3.**File
+access errors**4.**Unusual network activity**5.**Configuration changes**
 
-#### Алерты безопасности
+#### Security alerts
 
 ```yaml
-# Prometheus правила
+# Prometheus rules
 - alert: SuspiciousAuthActivity
  expr: rate(auth_requests_total{status="401"}[1m]) > 10
  for: 1m
@@ -175,18 +173,15 @@ deploy:
  category: security
 ```
 
-## Контакты
+## Contacts
 
--**Security Team**: <security@erni-ki.local> -**Emergency Contact**:
-+7-XXX-XXX-XXXX -**PGP Key**: [Ссылка на публичный ключ]
+-**Security Team:**<security@erni-ki.local> -**Emergency
+Contact:**+7-XXX-XXX-XXXX -**PGP Key:**[Public key link]
 
-### Благодарности
+### Acknowledgements
 
-Мы благодарим исследователей безопасности, которые ответственно сообщают об
-уязвимостях:
+We thank security researchers who report vulnerabilities responsibly:
 
-- [Список исследователей будет обновляться]
+- [Researcher list will be updated]
 
 ---
-
-**Последнее обновление**: 2024-12-30**Версия политики**: 1.0

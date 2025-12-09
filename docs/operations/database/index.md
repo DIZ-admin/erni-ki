@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -7,23 +7,23 @@ last_updated: '2025-11-24'
 
 # Data & Storage Overview
 
-> **Актуальность:**ноябрь 2025 (Release v0.61.3).  
-> Используйте этот раздел как точку входа перед переходом к отдельным гайдам.
+> **Relevance:** November 2025 (Release v0.61.3). Use this section as an entry
+> point before proceeding to individual guides.
 
-## Краткое состояние
+## Current Status
 
-| Компонент       | Статус / инструкция                                                                                                         | Последнее обновление |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------- |
-| PostgreSQL 17   | `database-monitoring-plan.md`, `database-production-optimizations.md` – описывают pgvector, VACUUM, алерты.                 | 2025-10              |
-| Redis 7-alpine  | `redis-monitoring-grafana.md`, `redis-operations-guide.md` – дефрагментация, watchdog, мониторинг Grafana.                  | 2025-10              |
-| vLLM / LiteLLM  | `vllm-resource-optimization.md` + скрипты `scripts/monitor-litellm-memory.sh`, `scripts/redis-performance-optimization.sh`. | 2025-11              |
-| Troubleshooting | `database-troubleshooting.md` – чек-листы по latency/locks, pgvector, бэкапы.                                               | 2025-10              |
+| Component       | Status / Instructions                                                                                                       | Last Updated |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| PostgreSQL 17   | `database-monitoring-plan.md`, `database-production-optimizations.md` – describe pgvector, VACUUM, alerts.                  | 2025-10      |
+| Redis 7-alpine  | `redis-monitoring-grafana.md`, `redis-operations-guide.md` – defragmentation, watchdog, Grafana monitoring.                 | 2025-10      |
+| vLLM / LiteLLM  | `vllm-resource-optimization.md` + scripts `scripts/monitor-litellm-memory.sh`, `scripts/redis-performance-optimization.sh`. | 2025-11      |
+| Troubleshooting | `database-troubleshooting.md` – checklists for latency/locks, pgvector, backups.                                            | 2025-10      |
 
-## Как поддерживать актуальность
+## How to Maintain Relevance
 
-1. При изменении настроек PostgreSQL/Redis обновляйте соответствующий файл из
-   таблицы и фиксируйте дату в разделе «Краткое состояние».
-2. При релизе новых версий (LiteLLM/RAG) – синхронизируйте статус с `README.md`
-   (раздел Data & Storage) и `docs/overview.md`.
-3. Используйте `docs/archive/config-backup/monitoring-report*` для фиксации
-   cron-результатов и ссылок на эти гайд-страницы.
+1. When changing PostgreSQL/Redis settings, update the corresponding file from
+   the table and record the date in the "Current Status" section.
+2. When releasing new versions (LiteLLM/RAG) – synchronize status with
+   `README.md` (Data & Storage section) and `docs/overview.md`.
+3. Use `docs/archive/config-backup/monitoring-report*` to record cron results
+   and links to these guide pages.

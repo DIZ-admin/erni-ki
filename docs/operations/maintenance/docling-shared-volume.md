@@ -1,109 +1,107 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Политика доступа и очистки Docling Shared Volume
+# Docling Shared Volume Access and Cleanup Policy
 
 [TOC]
 
-Shared volume `./data/docling/shared` используется сервисами Docling и OpenWebUI
-для обмена файлами, которые проходят OCR/экстракцию. Том может содержать PII,
-поэтому требуется формализованный контроль доступа и стратегия хранения.
+Shared volume `./data/docling/shared` is used by Docling and OpenWebUI services
+for exchanging files that undergo OCR/extraction. The volume may contain PII,
+therefore formalized access control and retention strategy is required.
 
-## 1. Категории данных
+## 1. Data Categories
 
-| Каталог       | Источник                              | Содержимое                                              | Retention по умолчанию   |
-| ------------- | ------------------------------------- | ------------------------------------------------------- | ------------------------ |
-| `uploads/`    | OpenWebUI (пользовательские загрузки) | Исходные документы, pdf, изображения.                   | 2 дня                    |
-| `processed/`  | Docling pipeline                      | Нормализованные chunk-и, JSON, промежуточные артефакты. | 14 дней                  |
-| `exports/`    | Docling/OpenWebUI                     | Готовые ответы, zip, отчёты.                            | 30 дней                  |
-| `quarantine/` | Docling                               | Файлы с ошибками/подозрениями на malware/PII.           | 60 дней, ручная проверка |
-| `tmp/`        | Обе службы                            | Краткоживущие временные файлы, дампы.                   | 1 день                   |
+| Directory     | Source                   | Content                                          | Default Retention      |
+| ------------- | ------------------------ | ------------------------------------------------ | ---------------------- |
+| `uploads/`    | OpenWebUI (user uploads) | Original documents, pdfs, images.                | 2 days                 |
+| `processed/`  | Docling pipeline         | Normalized chunks, JSON, intermediate artifacts. | 14 days                |
+| `exports/`    | Docling/OpenWebUI        | Ready responses, zips, reports.                  | 30 days                |
+| `quarantine/` | Docling                  | Files with errors/suspicions of malware/PII.     | 60 days, manual review |
+| `tmp/`        | Both services            | Short-lived temporary files, dumps.              | 1 day                  |
 
-> Структура создаётся автоматически скриптом
-> `scripts/maintenance/docling-shared-cleanup.sh`. Если каталога нет — он будет
-> создан с корректными правами.
+> Structure is created automatically by the script
+> `scripts/maintenance/docling-shared-cleanup.sh`. If directory doesn't exist,
+> it will be created with correct permissions.
 
-## 2. RBAC и права на хосте
+## 2. RBAC and Host Permissions
 
-- Базовый владелец: системный пользователь, под которым запускается docker
-  compose (`$USER`).
-- Создаём группу `docling-data` (однократно): `sudo groupadd -f docling-data`.
-- Назначаем владельца каталога:
-  `sudo chgrp -R docling-data ./data/docling/shared`.
-- Права на корень и подкаталоги:
+- Base owner: system user under which docker compose runs (`$USER`).
+- Create group `docling-data` (one-time): `sudo groupadd -f docling-data`.
+- Assign directory owner: `sudo chgrp -R docling-data ./data/docling/shared`.
+- Permissions on root and subdirectories:
   `chmod 770 ./data/docling/shared{,/uploads,/processed,/exports,/quarantine,/tmp}`.
-- В группу `docling-data` включаем админов AI-платформы и сервисные аккаунты,
-  которые должны читать/писать файлы с хоста.
-- Для read-only аудиторов создаём группу `docling-readonly` и выдаём `chmod 750`
-  на `exports/`.
+- Include AI-platform admins and service accounts in `docling-data` group, who
+  should read/write files from the host.
+- For read-only auditors, create `docling-readonly` group and grant `chmod 750`
+  on `exports/`.
 
-> Автоматизация: выполни
-> `./scripts/maintenance/enforce-docling-shared-policy.sh` (по необходимости
-> выстави `DOC_SHARED_OWNER`, `DOC_SHARED_GROUP`, `DOC_SHARED_READONLY_GROUP`).
-> Скрипт создаёт группы, выравнивает владельца и задаёт ACL для `exports/`.
+> Automation: execute `./scripts/maintenance/enforce-docling-shared-policy.sh`
+> (if necessary set `DOC_SHARED_OWNER`, `DOC_SHARED_GROUP`,
+> `DOC_SHARED_READONLY_GROUP`). Script creates groups, aligns owner and sets ACL
+> for `exports/`.
 
-Контейнеры Docling/OpenWebUI обращаются к тому же каталогу по UID 1000 (по
-умолчанию). При необходимости более строгого разграничения используйте ACL:
+Docling/OpenWebUI containers access the same directory by UID 1000 (by default).
+If stricter separation is needed, use ACL:
 
 ```bash
 sudo setfacl -m g:docling-readonly:rx ./data/docling/shared/exports
 sudo setfacl -m g:docling-data:rwx ./data/docling/shared
 ```
 
-## 3. Очистка и контроль объёма
+## 3. Cleanup and Volume Control
 
-Скрипт `scripts/maintenance/docling-shared-cleanup.sh` реализует ретеншн.
-Поведение настраивается переменными:
+Script `scripts/maintenance/docling-shared-cleanup.sh` implements retention.
+Behavior is configured by variables:
 
-| Переменная                             | Значение по умолчанию   | Назначение                        |
-| -------------------------------------- | ----------------------- | --------------------------------- |
-| `DOC_SHARED_ROOT`                      | `./data/docling/shared` | Путь до тома                      |
-| `DOC_SHARED_INPUT_RETENTION_DAYS`      | 2                       | Срок хранения raw загрузок        |
-| `DOC_SHARED_PROCESSED_RETENTION_DAYS`  | 14                      | Срок хранения обработанных данных |
-| `DOC_SHARED_EXPORT_RETENTION_DAYS`     | 30                      | Хранение экспортов                |
-| `DOC_SHARED_QUARANTINE_RETENTION_DAYS` | 60                      | Карантин                          |
-| `DOC_SHARED_TMP_RETENTION_DAYS`        | 1                       | Временные файлы                   |
-| `DOC_SHARED_MAX_SIZE_GB`               | 20                      | Софт-лимит для alert-логирования  |
+| Variable                               | Default Value           | Purpose                         |
+| -------------------------------------- | ----------------------- | ------------------------------- |
+| `DOC_SHARED_ROOT`                      | `./data/docling/shared` | Path to volume                  |
+| `DOC_SHARED_INPUT_RETENTION_DAYS`      | 2                       | Raw uploads retention period    |
+| `DOC_SHARED_PROCESSED_RETENTION_DAYS`  | 14                      | Processed data retention period |
+| `DOC_SHARED_EXPORT_RETENTION_DAYS`     | 30                      | Exports storage                 |
+| `DOC_SHARED_QUARANTINE_RETENTION_DAYS` | 60                      | Quarantine                      |
+| `DOC_SHARED_TMP_RETENTION_DAYS`        | 1                       | Temporary files                 |
+| `DOC_SHARED_MAX_SIZE_GB`               | 20                      | Soft limit for alert logging    |
 
 ### 3.1 Manual / dry-run
 
 ```bash
-./scripts/maintenance/docling-shared-cleanup.sh          # dry-run (по умолчанию)
+./scripts/maintenance/docling-shared-cleanup.sh          # dry-run (default)
 DOC_SHARED_INPUT_RETENTION_DAYS=1 ./scripts/maintenance/docling-shared-cleanup.sh
 ```
 
-### 3.2 Применение и cron
+### 3.2 Apply and cron
 
 ```bash
 sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply \
   >> logs/docling-shared-cleanup.log 2>&1
 ```
 
-Рекомендуемый cron (ежедневно в 02:10):
+Recommended cron (daily at 02:10):
 
 ````cron
 10 2 * * * cd /home/konstantin/Documents/augment-projects/erni-ki && \
   sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply >> logs/docling-shared-cleanup.log 2>&1
 
->**Важно:**используйте `sudo -E` (с NOPASSWD в sudoers) либо запускайте cron под пользователем,
-> который владеет `data/docling`. Иначе задача снова упрётся в Permission denied.
+>**Important:** use `sudo -E` (with NOPASSWD in sudoers) or run cron under the user
+> who owns `data/docling`. Otherwise the task will fail with Permission denied again.
 
-Сгенерировать готовый sudoers-файл можно так:
+To generate a ready sudoers file:
 
 ```bash
 ./scripts/maintenance/render-docling-cleanup-sudoers.sh | sudo tee /etc/sudoers.d/docling-cleanup
 ````
 
-По умолчанию в правила добавляются нужные `env_keep`, поэтому cron/systemd могут
-передавать `DOC_SHARED_*` переменные без ручного редактирования `/etc/sudoers`.
+By default, necessary `env_keep` rules are added, so cron/systemd can pass
+`DOC_SHARED_*` variables without manual editing of `/etc/sudoers`.
 
 ### 3.3 Systemd unit
 
-В репозитории уже есть unit-файлы и сценарий установки:
+The repository already has unit files and installation script:
 
 - `ops/systemd/docling-cleanup.service`
 - `ops/systemd/docling-cleanup.timer`
@@ -111,46 +109,45 @@ sudo -E ./scripts/maintenance/docling-shared-cleanup.sh --apply \
 - `ops/sudoers/docling-cleanup.sudoers`
 - `scripts/maintenance/install-docling-cleanup-unit.sh`
 
-**Порядок включения**
+**Activation steps**
 
-1. Скопируйте `ops/sudoers/docling-cleanup.sudoers` в
-   `/etc/sudoers.d/docling-cleanup`, подставив реального пользователя и путь к
-   репозиторию (NOPASSWD).
-2. Выполните `./scripts/maintenance/install-docling-cleanup-unit.sh` —
-   unit-файлы попадут в `~/.config/systemd/user`, создастся
-   `~/.config/docling-cleanup.env`, таймер `docling-cleanup.timer` включится
-   автоматически.
-3. Отредактируйте `~/.config/docling-cleanup.env` (пример прилагается), чтобы
-   задать владельца/группу и путь к shared volume. По умолчанию запуск в 02:10
-   CET, `RandomizedDelaySec=300`.
+1. Copy `ops/sudoers/docling-cleanup.sudoers` to
+   `/etc/sudoers.d/docling-cleanup`, substituting the actual user and path to
+   repository (NOPASSWD).
+2. Execute `./scripts/maintenance/install-docling-cleanup-unit.sh` — unit files
+   will be placed in `~/.config/systemd/user`, creates
+   `~/.config/docling-cleanup.env`, timer `docling-cleanup.timer` will enable
+   automatically.
+3. Edit `~/.config/docling-cleanup.env` (example provided) to set owner/group
+   and path to shared volume. By default runs at 02:10 CET,
+   `RandomizedDelaySec=300`.
 
-> Для system-level установки перенесите unit-файлы в `/etc/systemd/system`,
-> добавьте `User=docling-maint` в `.service` и включите таймер через
+> For system-level installation, move unit files to `/etc/systemd/system`, add
+> `User=docling-maint` to `.service` and enable timer via
 > `systemctl enable --now docling-cleanup.timer`.
 
-Добавьте мониторинг лога (Fluent Bit → Loki) и алерт, если в выходе появится
-`WARNING: shared volume size ... exceeds`. Скрипт
-`scripts/monitoring/docling-cleanup-permission-metric.sh` публикует метрику
-`erni_docling_cleanup_permission_denied`; включите его в cron/systemd и
-Alertmanager, чтобы срабатывать при повторных `Permission denied`.
+Add log monitoring (Fluent Bit → Loki) and alert if output shows
+`WARNING: shared volume size ... exceeds`. Script
+`scripts/monitoring/docling-cleanup-permission-metric.sh` publishes metric
+`erni_docling_cleanup_permission_denied`; include it in cron/systemd and
+Alertmanager to trigger on repeated `Permission denied`.
 
-## 4. Инцидентные процедуры
+## 4. Incident Procedures
 
-1.**Обнаружен подозрительный файл**— переместите его в `quarantine/` и
-зафиксируйте в тикете (добавьте дату/автора в имени файла), выполните
-`chmod 640`. 2.**Переполнен том**— запустите скрипт с уменьшенными ретеншн
-параметрами либо удалите вручную после согласования с владельцем
-данных. 3.**Запрос на восстановление**— данные старше Retention не
-гарантируются; используйте Backrest/Backups, если нужно восстановить удалённый
-файл.
+1. **Suspicious file detected** — move it to `quarantine/` and document in
+   ticket (add date/author in filename), execute `chmod 640`. 2. **Volume full**
+   — run script with reduced retention parameters or delete manually after
+   coordination with data owner. 3. **Restore request** — data older than
+   Retention is not guaranteed; use Backrest/Backups if you need to restore
+   deleted file.
 
-## 5. Документация
+## 5. Documentation
 
-- Основной справочник: `docs/architecture/service-inventory.md` (раздел
-  «Политика Docling shared volume»).
-- Archon документ `ERNI-KI Минимальное описание проекта` — содержит summary и
-  риски.
-- Скрипт очистки: `scripts/maintenance/docling-shared-cleanup.sh`.
+- Main reference: `docs/architecture/service-inventory.md` (section "Docling
+  shared volume policy").
+- Archon document `ERNI-KI Minimal Project Description` — contains summary and
+  risks.
+- Cleanup script: `scripts/maintenance/docling-shared-cleanup.sh`.
 
 ```
 

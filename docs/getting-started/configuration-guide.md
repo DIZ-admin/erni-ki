@@ -1,40 +1,40 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: original
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-28'
 ---
 
-# Руководство по конфигурации ERNI-KI
+# ERNI-KI Configuration Guide
 
-> **Версия:**11.0**Дата обновления:**2025-09-25**Статус:**Production Ready [TOC]
+> **Version:**11.0**Updated:**2025-09-25**Status:**Production Ready [TOC]
 
-Данное руководство содержит production-ready конфигурации для всех компонентов
-системы ERNI-KI с русскими комментариями для ключевых настроек.
+This guide contains production-ready configurations for all ERNI-KI system
+components with comments for key settings.
 
-## Обзор конфигурации
+## Configuration Overview
 
-Система ERNI-KI использует модульную структуру конфигурации:
+The ERNI-KI system uses a modular configuration structure:
 
 ```
-env/ # Переменные окружения для каждого сервиса
- openwebui.env # Основной AI интерфейс
- ollama.env # LLM сервер с GPU
+env/ # Environment variables for each service
+ openwebui.env # Main AI interface
+ ollama.env # LLM server with GPU
  litellm.env # Context Engineering Gateway
  mcposerver.env # Model Context Protocol
- searxng.env # Поисковый движок
- tika.env # Извлечение метаданных
+ searxng.env # Search engine
+ tika.env # Metadata extraction
  ...
 
-conf/ # Конфигурационные файлы
- nginx/ # Reverse proxy конфигурация
- prometheus/ # Мониторинг метрик
- grafana/ # Дашборды и визуализация
- litellm/ # LLM Gateway настройки
+conf/ # Configuration files
+ nginx/ # Reverse proxy configuration
+ prometheus/ # Metrics monitoring
+ grafana/ # Dashboards and visualization
+ litellm/ # LLM Gateway settings
  ...
 ```
 
-## Визуализация: конфигурационные артефакты
+## Visualization: Configuration Artifacts
 
 ```mermaid
 flowchart TD
@@ -44,98 +44,98 @@ flowchart TD
  Compose --> LiteLLM[conf/litellm]
  Compose --> Grafana[conf/grafana]
  Env --> Secrets[secrets/*]
- Secrets --> Runtime[Запуск docker compose]
+ Secrets --> Runtime[Run docker compose]
 ```
 
 ## AI & ML Services
 
 ### OpenWebUI Configuration
 
-**Файл:**`env/openwebui.env`
+**File:**`env/openwebui.env`
 
 ```bash
-# === ОСНОВНЫЕ НАСТРОЙКИ ===
+# === MAIN SETTINGS ===
 WEBUI_NAME="ERNI-KI AI Platform"
 WEBUI_URL="https://ki.erni-gruppe.ch"
 
-# === БЕЗОПАСНОСТЬ ===
-WEBUI_SECRET_KEY="your-secret-key-here" # КРИТИЧНО: Замените на уникальный ключ # pragma: allowlist secret
-ENABLE_SIGNUP=false # Отключить регистрацию в продакшене
-DEFAULT_USER_ROLE="user" # Роль по умолчанию для новых пользователей
-CORS_ALLOW_ORIGIN="https://diz.zone;https://webui.diz.zone;https://ki.erni-gruppe.ch;https://192.168.62.153;http://192.168.62.153:8080" # Разделяйте origin знаком ';'
+# === SECURITY ===
+WEBUI_SECRET_KEY="your-secret-key-here" # CRITICAL: Replace with unique key # pragma: allowlist secret
+ENABLE_SIGNUP=false # Disable signup in production
+DEFAULT_USER_ROLE="user" # Default role for new users
+CORS_ALLOW_ORIGIN="https://diz.zone;https://webui.diz.zone;https://ki.erni-gruppe.ch;https://192.168.62.153;http://192.168.62.153:8080" # Separate origins with ';'
 
-# === GPU УСКОРЕНИЕ ===
-NVIDIA_VISIBLE_DEVICES=all # Доступ ко всем GPU
-NVIDIA_DRIVER_CAPABILITIES=compute,utility # Необходимые возможности драйвера
+# === GPU ACCELERATION ===
+NVIDIA_VISIBLE_DEVICES=all # Access to all GPUs
+NVIDIA_DRIVER_CAPABILITIES=compute,utility # Required driver capabilities
 
-# === ИНТЕГРАЦИИ ===
-OLLAMA_BASE_URL="http://ollama:11434" # Подключение к Ollama
+# === INTEGRATIONS ===
+OLLAMA_BASE_URL="http://ollama:11434" # Connect to Ollama
 LITELLM_BASE_URL="http://litellm:4000" # LiteLLM Gateway
 SEARXNG_QUERY_URL="http://nginx:8080/api/searxng/search?q=<query>&format=json"
 
-# === ОБРАБОТКА ДОКУМЕНТОВ ===
-TIKA_BASE_URL="http://tika:9998" # Apache Tika для метаданных
+# === DOCUMENT PROCESSING ===
+TIKA_BASE_URL="http://tika:9998" # Apache Tika for metadata
 
-# === ПРОИЗВОДИТЕЛЬНОСТЬ ===
-WEBUI_SESSION_COOKIE_SAME_SITE="lax" # Совместимость с iframe
+# === PERFORMANCE ===
+WEBUI_SESSION_COOKIE_SAME_SITE="lax" # Compatibility with iframe
 WEBUI_SESSION_COOKIE_SECURE=true # HTTPS only cookies
 ```
 
-## Ollama Configuration
+### Ollama Configuration
 
-**Файл:**`env/ollama.env`
+**File:**`env/ollama.env`
 
 ```bash
-# === GPU НАСТРОЙКИ ===
-NVIDIA_VISIBLE_DEVICES=all # Использовать все доступные GPU
-OLLAMA_GPU_LAYERS=35 # Количество слоев на GPU (оптимально)
-OLLAMA_NUM_PARALLEL=4 # Параллельные запросы
+# === GPU SETTINGS ===
+NVIDIA_VISIBLE_DEVICES=all # Use all available GPUs
+OLLAMA_GPU_LAYERS=35 # Number of layers on GPU (optimal)
+OLLAMA_NUM_PARALLEL=4 # Parallel requests
 
-# === ПАМЯТЬ И ПРОИЗВОДИТЕЛЬНОСТЬ ===
-OLLAMA_MAX_LOADED_MODELS=3 # Максимум моделей в памяти
-OLLAMA_FLASH_ATTENTION=true # Оптимизация внимания
-OLLAMA_KV_CACHE_TYPE="f16" # Тип кэша ключ-значение
+# === MEMORY AND PERFORMANCE ===
+OLLAMA_MAX_LOADED_MODELS=3 # Max models in memory
+OLLAMA_FLASH_ATTENTION=true # Attention optimization
+OLLAMA_KV_CACHE_TYPE="f16" # Key-value cache type
 
-# === СЕТЕВЫЕ НАСТРОЙКИ ===
-OLLAMA_HOST="0.0.0.0:11434" # Слушать на всех интерфейсах
-OLLAMA_ORIGINS="*" # CORS для всех источников
+# === NETWORK SETTINGS ===
+OLLAMA_HOST="0.0.0.0:11434" # Listen on all interfaces
+OLLAMA_ORIGINS="*" # CORS for all origins
 
-# === ЛОГИРОВАНИЕ ===
-OLLAMA_DEBUG=false # Отключить debug в продакшене
-OLLAMA_VERBOSE=false # Минимальное логирование
+# === LOGGING ===
+OLLAMA_DEBUG=false # Disable debug in production
+OLLAMA_VERBOSE=false # Minimal logging
 ```
 
-## LiteLLM Configuration
+### LiteLLM Configuration
 
-**Файл:**`env/litellm.env`
+**File:**`env/litellm.env`
 
 ```bash
-# === ОСНОВНЫЕ НАСТРОЙКИ ===
+# === MAIN SETTINGS ===
 LITELLM_PORT=4000
 LITELLM_HOST="0.0.0.0"
 
-# === БАЗА ДАННЫХ ===
+# === DATABASE ===
 DATABASE_URL="postgresql://erni_ki:password@db:5432/erni_ki" # pragma: allowlist secret
 
-# === БЕЗОПАСНОСТЬ ===
-LITELLM_MASTER_KEY="sk-your-master-key-here" # КРИТИЧНО: Уникальный мастер-ключ # pragma: allowlist secret
-LITELLM_SALT_KEY="your-salt-key-here" # Соль для хеширования
+# === SECURITY ===
+LITELLM_MASTER_KEY="sk-your-master-key-here" # CRITICAL: Unique master key # pragma: allowlist secret
+LITELLM_SALT_KEY="your-salt-key-here" # Salt for hashing
 
-# === ИНТЕГРАЦИИ ===
-OLLAMA_BASE_URL="http://ollama:11434" # Локальный Ollama
-OPENAI_API_KEY="your-openai-key" # OpenAI API (опционально) # pragma: allowlist secret
+# === INTEGRATIONS ===
+OLLAMA_BASE_URL="http://ollama:11434" # Local Ollama
+OPENAI_API_KEY="your-openai-key" # OpenAI API (optional) # pragma: allowlist secret
 
-# === ПРОИЗВОДИТЕЛЬНОСТЬ ===
-LITELLM_REQUEST_TIMEOUT=600 # Таймаут запросов (10 минут)
-LITELLM_MAX_BUDGET=1000 # Максимальный бюджет в месяц
+# === PERFORMANCE ===
+LITELLM_REQUEST_TIMEOUT=600 # Request timeout (10 minutes)
+LITELLM_MAX_BUDGET=1000 # Max monthly budget
 ```
 
-**Файл:**`conf/litellm/config.yaml`
+**File:**`conf/litellm/config.yaml`
 
 ```yaml
-# === КОНФИГУРАЦИЯ МОДЕЛЕЙ ===
+# === MODEL CONFIGURATION ===
 model_list:
- # Локальные модели через Ollama
+ # Local models via Ollama
  - model_name: 'llama3.2'
  litellm_params:
  model: 'ollama/llama3.2'
@@ -146,137 +146,137 @@ model_list:
  model: 'ollama/qwen2.5-coder:1.5b'
  api_base: 'http://ollama:11434'
 
-# === ОБЩИЕ НАСТРОЙКИ ===
+# === GENERAL SETTINGS ===
 general_settings:
- master_key: 'sk-your-master-key-here' # Должен совпадать с env
+ master_key: 'sk-your-master-key-here' # Must match env
  database_url: 'postgresql://erni_ki:password@db:5432/erni_ki' # pragma: allowlist secret
 
- # === БЕЗОПАСНОСТЬ ===
- enforce_user_param: true # Обязательный параметр пользователя
- max_budget: 1000 # Максимальный бюджет
- budget_duration: '30d' # Период бюджета
+ # === SECURITY ===
+ enforce_user_param: true # Mandatory user parameter
+ max_budget: 1000 # Max budget
+ budget_duration: '30d' # Budget period
 
- # === ПРОИЗВОДИТЕЛЬНОСТЬ ===
- request_timeout: 600 # Таймаут запросов
- max_parallel_requests: 10 # Максимум параллельных запросов
+ # === PERFORMANCE ===
+ request_timeout: 600 # Request timeout
+ max_parallel_requests: 10 # Max parallel requests
 
- # === ЛОГИРОВАНИЕ ===
- set_verbose: false # Минимальное логирование в продакшене
+ # === LOGGING ===
+ set_verbose: false # Minimal logging in production
 ```
 
 ## Document Processing
 
 ### Apache Tika Configuration
 
-**Файл:**`env/tika.env`
+**File:**`env/tika.env`
 
 ```bash
-# === ОСНОВНЫЕ НАСТРОЙКИ ===
+# === MAIN SETTINGS ===
 TIKA_PORT=9998
 TIKA_HOST="0.0.0.0"
 
-# === БЕЗОПАСНОСТЬ ===
-TIKA_CONFIG_FILE="/opt/tika/tika-config.xml" # Конфигурационный файл
-TIKA_MAX_FILE_SIZE=104857600 # 100MB максимальный размер
+# === SECURITY ===
+TIKA_CONFIG_FILE="/opt/tika/tika-config.xml" # Configuration file
+TIKA_MAX_FILE_SIZE=104857600 # 100MB max size
 
-# === ПРОИЗВОДИТЕЛЬНОСТЬ ===
-TIKA_REQUEST_TIMEOUT=300000 # 5 минут таймаут
-TIKA_TASK_TIMEOUT=120000 # 2 минуты на задачу
-TIKA_MAX_FORK_COUNT=4 # Максимум процессов
+# === PERFORMANCE ===
+TIKA_REQUEST_TIMEOUT=300000 # 5 minutes timeout
+TIKA_TASK_TIMEOUT=120000 # 2 minutes per task
+TIKA_MAX_FORK_COUNT=4 # Max processes
 
-# === JVM НАСТРОЙКИ ===
-JAVA_OPTS="-Xmx2g -Xms1g -XX:+UseG1GC" # Оптимизация памяти
+# === JVM SETTINGS ===
+JAVA_OPTS="-Xmx2g -Xms1g -XX:+UseG1GC" # Memory optimization
 ```
 
 ## Search & RAG
 
 ### SearXNG Configuration
 
-**Файл:**`env/searxng.env`
+**File:**`env/searxng.env`
 
 ```bash
-# === ОСНОВНЫЕ НАСТРОЙКИ ===
+# === MAIN SETTINGS ===
 SEARXNG_PORT=8080
 SEARXNG_BASE_URL="http://searxng:8080"
 
-# === БЕЗОПАСНОСТЬ ===
-SEARXNG_SECRET_KEY="your-searxng-secret-key" # КРИТИЧНО: Уникальный ключ # pragma: allowlist secret
+# === SECURITY ===
+SEARXNG_SECRET_KEY="your-searxng-secret-key" # CRITICAL: Unique key # pragma: allowlist secret
 SEARXNG_BIND_ADDRESS="0.0.0.0:8080"
 
-# === ПРОИЗВОДИТЕЛЬНОСТЬ ===
-SEARXNG_DEFAULT_HTTP_TIMEOUT=3.0 # Таймаут HTTP запросов
-SEARXNG_POOL_CONNECTIONS=100 # Пул соединений
-SEARXNG_POOL_MAXSIZE=20 # Максимум соединений в пуле
+# === PERFORMANCE ===
+SEARXNG_DEFAULT_HTTP_TIMEOUT=3.0 # HTTP request timeout
+SEARXNG_POOL_CONNECTIONS=100 # Connection pool
+SEARXNG_POOL_MAXSIZE=20 # Max connections in pool
 
-# === ПОИСКОВЫЕ ДВИЖКИ ===
-SEARXNG_ENGINES_BRAVE_DISABLED=false # Включить Brave Search
-SEARXNG_ENGINES_STARTPAGE_DISABLED=false # Включить Startpage
-SEARXNG_ENGINES_WIKIPEDIA_TIMEOUT=5.0 # Увеличенный таймаут для Wikipedia
+# === SEARCH ENGINES ===
+SEARXNG_ENGINES_BRAVE_DISABLED=false # Enable Brave Search
+SEARXNG_ENGINES_STARTPAGE_DISABLED=false # Enable Startpage
+SEARXNG_ENGINES_WIKIPEDIA_TIMEOUT=5.0 # Increased timeout for Wikipedia
 ```
 
 ## Data Layer
 
 ### PostgreSQL Configuration
 
-**Файл:**`env/postgres.env`
+**File:**`env/postgres.env`
 
 ```bash
-# === ОСНОВНЫЕ НАСТРОЙКИ ===
+# === MAIN SETTINGS ===
 POSTGRES_DB=erni_ki
 POSTGRES_USER=erni_ki
-POSTGRES_PASSWORD=your-secure-password # КРИТИЧНО: Сильный пароль
+POSTGRES_PASSWORD=your-secure-password # CRITICAL: Strong password
 
-# === ПРОИЗВОДИТЕЛЬНОСТЬ ===
-POSTGRES_SHARED_BUFFERS=256MB # Буферы разделяемой памяти
-POSTGRES_MAX_CONNECTIONS=200 # Максимум подключений
-POSTGRES_WORK_MEM=4MB # Рабочая память на операцию
+# === PERFORMANCE ===
+POSTGRES_SHARED_BUFFERS=256MB # Shared memory buffers
+POSTGRES_MAX_CONNECTIONS=200 # Max connections
+POSTGRES_WORK_MEM=4MB # Work memory per operation
 
-# === БЕЗОПАСНОСТЬ ===
-POSTGRES_HOST_AUTH_METHOD=md5 # Аутентификация по паролю
-POSTGRES_INITDB_ARGS="--auth-host=md5" # Инициализация с MD5
+# === SECURITY ===
+POSTGRES_HOST_AUTH_METHOD=md5 # Password authentication
+POSTGRES_INITDB_ARGS="--auth-host=md5" # Init with MD5
 
-# === РАСШИРЕНИЯ ===
-POSTGRES_EXTENSIONS="pgvector,pg_stat_statements" # Необходимые расширения
+# === EXTENSIONS ===
+POSTGRES_EXTENSIONS="pgvector,pg_stat_statements" # Required extensions
 ```
 
-## Redis Configuration
+### Redis Configuration
 
-**Файл:**`env/redis.env`
+**File:**`env/redis.env`
 
 ```bash
-# === ОСНОВНЫЕ НАСТРОЙКИ ===
+# === MAIN SETTINGS ===
 REDIS_PORT=6379
 REDIS_BIND="0.0.0.0"
 
-# === БЕЗОПАСНОСТЬ ===
-REDIS_PASSWORD="your-redis-password" # КРИТИЧНО: Сильный пароль # pragma: allowlist secret
-REDIS_PROTECTED_MODE=yes # Защищенный режим
+# === SECURITY ===
+REDIS_PASSWORD="your-redis-password" # CRITICAL: Strong password # pragma: allowlist secret
+REDIS_PROTECTED_MODE=yes # Protected mode
 
-# === ПАМЯТЬ ===
-REDIS_MAXMEMORY=2gb # Максимум памяти
-REDIS_MAXMEMORY_POLICY=allkeys-lru # Политика вытеснения
+# === MEMORY ===
+REDIS_MAXMEMORY=2gb # Max memory
+REDIS_MAXMEMORY_POLICY=allkeys-lru # Eviction policy
 
-# === ПРОИЗВОДИТЕЛЬНОСТЬ ===
-REDIS_SAVE="900 1 300 10 60 10000" # Настройки сохранения
-REDIS_TCP_KEEPALIVE=300 # Keep-alive соединений
+# === PERFORMANCE ===
+REDIS_SAVE="900 1 300 10 60 10000" # Save settings
+REDIS_TCP_KEEPALIVE=300 # Keep-alive connections
 ```
 
 ## Network & Security
 
 ### Nginx Configuration
 
-**Основной файл:**`conf/nginx/conf.d/default.conf`
+**Main File:**`conf/nginx/conf.d/default.conf`
 
 ```nginx
-# === ОСНОВНОЙ СЕРВЕР БЛОК ===
+# === MAIN SERVER BLOCK ===
 server {
  listen 443 ssl http2;
  listen [::]:443 ssl http2;
 
- # === ДОМЕНЫ ===
+ # === DOMAINS ===
  server_name ki.erni-gruppe.ch diz.zone localhost nginx;
 
- # === SSL НАСТРОЙКИ ===
+ # === SSL SETTINGS ===
  ssl_certificate /etc/nginx/ssl/nginx-fullchain.crt;
  ssl_certificate_key /etc/nginx/ssl/nginx.key;
  ssl_protocols TLSv1.2 TLSv1.3;
@@ -285,25 +285,25 @@ server {
  ssl_session_cache shared:SSL:100m;
  ssl_session_timeout 8h;
 
- # === БЕЗОПАСНОСТЬ ===
+ # === SECURITY ===
  add_header X-Frame-Options "SAMEORIGIN" always;
  add_header X-XSS-Protection "1; mode=block" always;
  add_header X-Content-Type-Options "nosniff" always;
  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
- # === ПРОИЗВОДИТЕЛЬНОСТЬ ===
+ # === PERFORMANCE ===
  gzip on;
  gzip_vary on;
  gzip_min_length 1024;
  gzip_types text/plain text/css application/json application/javascript;
 
- # === ПРОКСИРОВАНИЕ К OPENWEBUI ===
+ # === PROXY TO OPENWEBUI ===
  location / {
  include /etc/nginx/includes/openwebui-common.conf;
  proxy_pass http://openwebuiUpstream;
  }
 
- # === API МАРШРУТЫ ===
+ # === API ROUTES ===
  location /api/searxng/ {
  include /etc/nginx/includes/searxng-api-common.conf;
  proxy_pass http://searxngUpstream;
@@ -316,20 +316,20 @@ server {
 
 ### Prometheus Configuration
 
-**Файл:**`conf/prometheus/prometheus.yml`
+**File:**`conf/prometheus/prometheus.yml`
 
 ```yaml
-# === ГЛОБАЛЬНЫЕ НАСТРОЙКИ ===
+# === GLOBAL SETTINGS ===
 global:
- scrape_interval: 15s # Интервал сбора метрик
- evaluation_interval: 15s # Интервал оценки правил
+ scrape_interval: 15s # Scrape interval
+ evaluation_interval: 15s # Rule evaluation interval
  external_labels:
- cluster: 'erni-ki' # Метка кластера
- environment: 'production' # Окружение
+ cluster: 'erni-ki' # Cluster label
+ environment: 'production' # Environment
 
-# === ПРАВИЛА АЛЕРТОВ ===
+# === ALERT RULES ===
 rule_files:
- - 'rules/*.yml' # Файлы с правилами
+ - 'rules/*.yml' # Rule files
 
 # === ALERTMANAGER ===
 alerting:
@@ -338,9 +338,9 @@ alerting:
  - targets:
  - alertmanager:9093
 
-# === ЗАДАНИЯ СБОРА МЕТРИК ===
+# === SCRAPE CONFIGS ===
 scrape_configs:
- # Основные сервисы
+ # Core services
  - job_name: 'prometheus'
  static_configs:
  - targets: ['localhost:9090']
@@ -357,7 +357,7 @@ scrape_configs:
  static_configs:
  - targets: ['postgres-exporter:9187']
 
- # Blackbox мониторинг HTTPS endpoints
+ # Blackbox monitoring HTTPS endpoints
  - job_name: 'blackbox-https'
  metrics_path: /probe
  params:
@@ -378,11 +378,11 @@ scrape_configs:
 
 ## Security Best Practices
 
-### 1. Переменные окружения
+### 1. Environment Variables
 
 ```bash
-# === КРИТИЧНЫЕ ПЕРЕМЕННЫЕ ===
-# Всегда используйте сильные, уникальные значения:
+# === CRITICAL VARIABLES ===
+# Always use strong, unique values:
 
 WEBUI_SECRET_KEY="$(openssl rand -hex 32)"
 LITELLM_MASTER_KEY="sk-$(openssl rand -hex 32)"
@@ -391,10 +391,10 @@ REDIS_PASSWORD="$(openssl rand -base64 32)"
 SEARXNG_SECRET_KEY="$(openssl rand -hex 16)"
 ```
 
-## 2. SSL/TLS Настройки
+### 2. SSL/TLS Settings
 
 ```nginx
-# === СОВРЕМЕННЫЕ SSL НАСТРОЙКИ ===
+# === MODERN SSL SETTINGS ===
 ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
 ssl_prefer_server_ciphers off;
@@ -405,52 +405,51 @@ ssl_session_timeout 8h;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 ```
 
-## 3. Файловые разрешения
+### 3. File Permissions
 
 ```bash
-# === БЕЗОПАСНЫЕ РАЗРЕШЕНИЯ ===
-chmod 600 env/*.env # Только владелец может читать env файлы
-chmod 644 conf/nginx/*.conf # Конфигурации nginx
-chmod 600 conf/nginx/ssl/* # SSL сертификаты и ключи
+# === SECURE PERMISSIONS ===
+chmod 600 env/*.env # Only owner can read env files
+chmod 644 conf/nginx/*.conf # Nginx configs
+chmod 600 conf/nginx/ssl/* # SSL certs and keys
 ```
 
 ## Production Deployment
 
-### 1. Проверка конфигурации
+### 1. Configuration Check
 
 ```bash
-# Проверка синтаксиса nginx
+# Check nginx syntax
 docker exec erni-ki-nginx-1 nginx -t
 
-# Проверка конфигурации Prometheus
+# Check Prometheus config
 docker exec erni-ki-prometheus promtool check config /etc/prometheus/prometheus.yml
 
-# Проверка подключения к базе данных
+# Check database connection
 docker exec erni-ki-db-1 pg_isready -U erni_ki
 ```
 
-## 2. Мониторинг конфигурации
+### 2. Configuration Monitoring
 
 ```bash
-# Проверка статуса всех сервисов
+# Check status of all services
 docker-compose ps
 
-# Проверка логов критичных сервисов
+# Check logs of critical services
 docker-compose logs --tail=50 openwebui ollama litellm nginx postgres
 ```
 
-## 3. Резервное копирование конфигурации
+### 3. Configuration Backup
 
 ```bash
-# Создание резервной копии
+# Create backup
 tar -czf erni-ki-config-$(date +%Y%m%d).tar.gz env/ conf/
 
-# Восстановление из резервной копии
+# Restore from backup
 tar -xzf erni-ki-config-YYYYMMDD.tar.gz
 ```
 
 ---
 
-> **Важно:**Всегда тестируйте изменения конфигурации в тестовой среде перед
-> применением в продакшене. Создавайте резервные копии перед внесением
-> изменений.
+> **Important:**Always test configuration changes in a test environment before
+> applying to production. Create backups before making changes.

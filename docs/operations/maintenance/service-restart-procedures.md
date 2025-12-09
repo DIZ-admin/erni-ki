@@ -1,63 +1,63 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Процедуры перезапуска сервисов ERNI-KI
+# ERNI-KI Service Restart Procedures
 
 [TOC]
 
-**Версия:**1.0**Дата создания:**2025-09-25**Последнее обновление:**
-2025-09-25**Ответственный:**Tech Lead
+**Version:** 1.0 **Created:** 2025-09-25 **Last Updated:** 2025-09-25 **Owner:**
+Tech Lead
 
 ---
 
-## ОБЩИЕ ПРИНЦИПЫ
+## GENERAL PRINCIPLES
 
-### **Перед перезапуском ВСЕГДА:**
+### **Before restarting ALWAYS:**
 
-1.**Создать backup**текущих конфигураций 2.**Проверить статус**зависимых
-сервисов 3.**Уведомить пользователей**о плановом обслуживании 4.**Подготовить
-rollback план**на случай проблем
+1. **Create backup** of current configurations 2. **Check status** of dependent
+   services 3. **Notify users** about planned maintenance 4. **Prepare rollback
+   plan** in case of problems
 
-### **Порядок перезапуска (критически важно):**
+### **Restart order (critically important):**
 
-1.**Monitoring сервисы**(Exporters, Fluent-bit) 2.**Infrastructure
-сервисы**(Redis, PostgreSQL) 3.**AI сервисы**(Ollama, LiteLLM) 4.**Critical
-сервисы**(OpenWebUI, Nginx)
+1. **Monitoring services** (Exporters, Fluent-bit) 2. **Infrastructure
+   services** (Redis, PostgreSQL) 3. **AI services** (Ollama, LiteLLM) 4.
+   **Critical services** (OpenWebUI, Nginx)
 
 ---
 
-## ЭКСТРЕННЫЙ ПЕРЕЗАПУСК (КРИТИЧЕСКИЕ ПРОБЛЕМЫ)
+## EMERGENCY RESTART (CRITICAL ISSUES)
 
-### **Полный перезапуск системы**
+### **Full system restart**
 
 ```bash
-# 1. Создать emergency backup
+# 1. Create emergency backup
 BACKUP_DIR=".config-backup/emergency-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP_DIR"
 sudo cp -r env/ conf/ compose.yml "$BACKUP_DIR/"
 
-# 2. Остановить все сервисы
+# 2. Stop all services
 docker compose down
 
-# 3. Очистить логи (опционально)
+# 3. Clean logs (optional)
 docker system prune -f --volumes
 
-# 4. Запустить систему
+# 4. Start system
 docker compose up -d
 
-# 5. Проверить статус
+# 5. Check status
 docker compose ps
 docker compose logs --tail=50
 ```
 
-## **Перезапуск критических сервисов**
+## **Critical service restart**
 
 ```bash
-# OpenWebUI (основной интерфейс)
+# OpenWebUI (main interface)
 docker compose restart openwebui
 docker compose logs openwebui --tail=20
 
@@ -65,249 +65,249 @@ docker compose logs openwebui --tail=20
 docker compose restart nginx
 docker compose logs nginx --tail=20
 
-# PostgreSQL (база данных)
+# PostgreSQL (database)
 docker compose restart db
 docker compose logs db --tail=20
 ```
 
 ---
 
-## ПЛАНОВЫЙ ПЕРЕЗАПУСК СЕРВИСОВ
+## PLANNED SERVICE RESTART
 
-### **1. AUXILIARY СЕРВИСЫ (низкий приоритет)**
+### **1. AUXILIARY SERVICES (low priority)**
 
 #### **EdgeTTS (Text-to-Speech)**
 
 ```bash
-# Проверка статуса
+# Check status
 docker compose ps edgetts
-curl -f http://localhost:5050/health || echo "EdgeTTS недоступен"
+curl -f http://localhost:5050/health || echo "EdgeTTS unavailable"
 
-# Перезапуск
+# Restart
 docker compose restart edgetts
 
-# Проверка после перезапуска
+# Check after restart
 sleep 10
 docker compose logs edgetts --tail=10
-curl -f http://localhost:5050/health && echo "EdgeTTS восстановлен"
+curl -f http://localhost:5050/health && echo "EdgeTTS restored"
 ```
 
-## **Apache Tika (документы)**
+## **Apache Tika (documents)**
 
 ```bash
-# Проверка статуса
+# Check status
 docker compose ps tika
-curl -f http://localhost:9998/tika || echo "Tika недоступен"
+curl -f http://localhost:9998/tika || echo "Tika unavailable"
 
-# Перезапуск
+# Restart
 docker compose restart tika
 
-# Проверка после перезапуска
+# Check after restart
 sleep 15
 docker compose logs tika --tail=10
-curl -f http://localhost:9998/tika && echo "Tika восстановлен"
+curl -f http://localhost:9998/tika && echo "Tika restored"
 ```
 
 ```bash
-# Проверка статуса
+# Check status
 
-# Перезапуск
+# Restart
 
-# Проверка после перезапуска
+# Check after restart
 sleep 20
 ```
 
-## **2. MONITORING СЕРВИСЫ**
+## **2. MONITORING SERVICES**
 
-### **Prometheus (метрики)**
+### **Prometheus (metrics)**
 
 ```bash
-# Проверка конфигурации
+# Check configuration
 docker exec erni-ki-prometheus promtool check config /etc/prometheus/prometheus.yml
 
-# Перезапуск
+# Restart
 docker compose restart prometheus
 
-# Проверка после перезапуска
+# Check after restart
 sleep 10
-curl -f http://localhost:9090/-/healthy && echo "Prometheus восстановлен"
+curl -f http://localhost:9090/-/healthy && echo "Prometheus restored"
 ```
 
-## **Grafana (дашборды)**
+## **Grafana (dashboards)**
 
 ```bash
-# Перезапуск
+# Restart
 docker compose restart grafana
 
-# Проверка после перезапуска
+# Check after restart
 sleep 15
-curl -f http://localhost:3000/api/health && echo "Grafana восстановлен"
+curl -f http://localhost:3000/api/health && echo "Grafana restored"
 ```
 
-## **3. INFRASTRUCTURE СЕРВИСЫ**
+## **3. INFRASTRUCTURE SERVICES**
 
-### **Redis (кэш)**
+### **Redis (cache)**
 
 ```bash
-# Проверка статуса
+# Check status
 docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 
-# Перезапуск
+# Restart
 docker compose restart redis
 
-# Проверка после перезапуска
+# Check after restart
 sleep 5
 docker exec erni-ki-redis-1 redis-cli -a $REDIS_PASSWORD ping
 ```
 
-## **PostgreSQL (база данных)**
+## **PostgreSQL (database)**
 
 ```bash
-# ВНИМАНИЕ: Критический сервис! Уведомить пользователей!
+# WARNING: Critical service! Notify users!
 
-# Проверка статуса
+# Check status
 docker exec erni-ki-db-1 pg_isready -U postgres
 
-# Создать backup БД
+# Create database backup
 docker exec erni-ki-db-1 pg_dump -U postgres openwebui > backup-$(date +%Y%m%d-%H%M%S).sql
 
-# Перезапуск
+# Restart
 docker compose restart db
 
-# Проверка после перезапуска
+# Check after restart
 sleep 10
 docker exec erni-ki-db-1 pg_isready -U postgres
 ```
 
-## **4. AI СЕРВИСЫ**
+## **4. AI SERVICES**
 
-### **Ollama (LLM сервер)**
+### **Ollama (LLM server)**
 
 ```bash
-# ВНИМАНИЕ: GPU сервис! Проверить NVIDIA драйверы!
+# WARNING: GPU service! Check NVIDIA drivers!
 
-# Проверка GPU
+# Check GPU
 nvidia-smi
 
-# Проверка статуса Ollama
-curl -f http://localhost:11434/api/tags || echo "Ollama недоступен"
+# Check Ollama status
+curl -f http://localhost:11434/api/tags || echo "Ollama unavailable"
 
-# Перезапуск
+# Restart
 docker compose restart ollama
 
-# Проверка после перезапуска (может занять до 60 секунд)
+# Check after restart (may take up to 60 seconds)
 sleep 30
-curl -f http://localhost:11434/api/tags && echo "Ollama восстановлен"
+curl -f http://localhost:11434/api/tags && echo "Ollama restored"
 
-# Проверка GPU использования
+# Check GPU usage
 docker exec erni-ki-ollama-1 nvidia-smi
 ```
 
 ## **LiteLLM (AI Gateway)**
 
 ```bash
-# Проверка статуса
-curl -f http://localhost:4000/health || echo "LiteLLM недоступен"
+# Check status
+curl -f http://localhost:4000/health || echo "LiteLLM unavailable"
 
-# Перезапуск
+# Restart
 docker compose restart litellm
 
-# Проверка после перезапуска
+# Check after restart
 sleep 15
-curl -f http://localhost:4000/health && echo "LiteLLM восстановлен"
+curl -f http://localhost:4000/health && echo "LiteLLM restored"
 ```
 
-## **5. CRITICAL СЕРВИСЫ**
+## **5. CRITICAL SERVICES**
 
-### **OpenWebUI (основной интерфейс)**
+### **OpenWebUI (main interface)**
 
 ```bash
-# ВНИМАНИЕ: Основной пользовательский интерфейс!
+# WARNING: Main user interface!
 
-# Проверка зависимостей
+# Check dependencies
 docker compose ps db redis ollama
 
-# Перезапуск
+# Restart
 docker compose restart openwebui
 
-# Проверка после перезапуска
+# Check after restart
 sleep 20
-curl -f http://localhost:8080/health && echo "OpenWebUI восстановлен"
+curl -f http://localhost:8080/health && echo "OpenWebUI restored"
 
-# Проверка через nginx
-curl -f http://localhost/health && echo "OpenWebUI доступен через nginx"
+# Check through nginx
+curl -f http://localhost/health && echo "OpenWebUI accessible through nginx"
 ```
 
 ## **Nginx (reverse proxy)**
 
 ```bash
-# ВНИМАНИЕ: Критический сервис для внешнего доступа!
+# WARNING: Critical service for external access!
 
-# Проверка конфигурации
+# Check configuration
 docker exec erni-ki-nginx-1 nginx -t
 
-# Перезапуск
+# Restart
 docker compose restart nginx
 
-# Проверка после перезапуска
+# Check after restart
 sleep 5
-curl -I http://localhost && echo "Nginx восстановлен"
-curl -I https://localhost && echo "HTTPS работает"
+curl -I http://localhost && echo "Nginx restored"
+curl -I https://localhost && echo "HTTPS working"
 ```
 
 ---
 
-## ПРОВЕРКА ПОСЛЕ ПЕРЕЗАПУСКА
+## POST-RESTART VERIFICATION
 
-### **Автоматическая проверка всех сервисов**
+### **Automatic check of all services**
 
 ```bash
 # !/bin/bash
-# Скрипт проверки здоровья системы после перезапуска
+# System health check script after restart
 
-echo "=== ПРОВЕРКА СТАТУСА СЕРВИСОВ ==="
+echo "=== SERVICE STATUS CHECK ==="
 docker compose ps
 
-echo -e "\n=== ПРОВЕРКА КРИТИЧЕСКИХ ENDPOINTS ==="
-curl -f http://localhost/health && echo " OpenWebUI доступен" || echo " OpenWebUI недоступен"
-curl -f http://localhost:11434/api/tags && echo " Ollama работает" || echo " Ollama недоступен"
-curl -f http://localhost:9090/-/healthy && echo " Prometheus работает" || echo " Prometheus недоступен"
+echo -e "\n=== CRITICAL ENDPOINTS CHECK ==="
+curl -f http://localhost/health && echo " OpenWebUI accessible" || echo " OpenWebUI unavailable"
+curl -f http://localhost:11434/api/tags && echo " Ollama working" || echo " Ollama unavailable"
+curl -f http://localhost:9090/-/healthy && echo " Prometheus working" || echo " Prometheus unavailable"
 
-echo -e "\n=== ПРОВЕРКА ВНЕШНЕГО ДОСТУПА ==="
-curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo " Внешний доступ работает" || echo " Внешний доступ недоступен"
+echo -e "\n=== EXTERNAL ACCESS CHECK ==="
+curl -s -I https://ki.erni-gruppe.ch/health | head -1 && echo " External access working" || echo " External access unavailable"
 
-echo -e "\n=== ПРОВЕРКА GPU ==="
-docker exec erni-ki-ollama-1 nvidia-smi | grep "NVIDIA-SMI" && echo " GPU доступен" || echo " GPU недоступен"
+echo -e "\n=== GPU CHECK ==="
+docker exec erni-ki-ollama-1 nvidia-smi | grep "NVIDIA-SMI" && echo " GPU available" || echo " GPU unavailable"
 
-echo -e "\n=== ПРОВЕРКА ЛОГОВ НА ОШИБКИ ==="
+echo -e "\n=== ERROR LOG CHECK ==="
 docker compose logs --tail=100 | grep -i error | tail -5
 ```
 
 ---
 
-## ЭСКАЛАЦИЯ ПРОБЛЕМ
+## PROBLEM ESCALATION
 
-### **Уровень 1: Автоматическое восстановление**
+### **Level 1: Automatic recovery**
 
-- Простой перезапуск сервиса
-- Проверка логов
-- Базовая диагностика
+- Simple service restart
+- Log review
+- Basic diagnostics
 
-### **Уровень 2: Ручное вмешательство**
+### **Level 2: Manual intervention**
 
-- Анализ конфигураций
-- Проверка зависимостей
-- Rollback к предыдущей версии
+- Configuration analysis
+- Dependency check
+- Rollback to previous version
 
-### **Уровень 3: Критическая эскалация**
+### **Level 3: Critical escalation**
 
-- Полное восстановление из backup
-- Контакт с Tech Lead
-- Документирование инцидента
+- Full restore from backup
+- Contact Tech Lead
+- Incident documentation
 
 ---
 
-## СВЯЗАННЫЕ ДОКУМЕНТЫ
+## RELATED DOCUMENTS
 
 - [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
 - [Configuration Change Process](../core/configuration-change-process.md)
@@ -316,4 +316,4 @@ docker compose logs --tail=100 | grep -i error | tail -5
 
 ---
 
-_Документ создан в рамках оптимизации конфигураций ERNI-KI 2025-09-25_
+_Document created as part of ERNI-KI configuration optimization 2025-09-25_

@@ -1,29 +1,30 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
 # HowTo
 
-Практические сценарии с четкими шагами и готовыми промптами. Каждый раздел
-описывает, когда использовать инструкцию, что делать и какие промпты работают
-лучше всего.
+The ERNI-KI academy contains a set of guided flows for common knowledge-work
+tasks. Each article mirrors the Russian canonical version and adds quick English
+checklists so non-Russian speakers can still benefit from the playbook.
 
-- Перед запуском сценария убедитесь, что выбрана нужная модель и статус сервисов
-  зелёный: [Проверить](https://status.erni-ki.ch).
-- Используйте проверенный шаблон промпта:**Роль → Задача → Контекст → Формат →
-  Ограничения (данные/тон/язык)**.
-- Всегда указывайте язык ответа и допустимость использования внутренних данных.
+The scenarios currently covered are:
 
-## Быстрый выбор сценария
+-**Customer email**– gather facts, pick the right tone, and deliver clear next
+steps. -**Meeting summary**– condense transcripts or chat logs into actionable
+notes and owner lists. -**JIRA ticket creation**– turn semi-structured
+requirements into ready-to- triage issues.
 
-- [Написать письмо клиенту](write-customer-email.md) — итог встречи или апдейты,
-  готовый каркас письма + чек-лист фактов.
-- [Суммировать заметки встречи](summarize-meeting-notes.md) — краткие выводы,
-  действия, риски, таблица решений.
-- [Создать JIRA тикет с помощью AI](create-jira-ticket-with-ai.md) — черновик по
-  сырым заметкам с готовым промптом и полями.
-- [Создать JIRA тикет (структура вручную)](create-jira-ticket.md) — минимальный
-  набор полей и acceptance criteria, если не хочется просить AI.
+Each guide includes:
+
+1.**Preparation checklist**– what context to collect before
+prompting. 2.**Prompt template**– copy-and-paste friendly structure referencing
+the collected facts. 3.**Quality gate**– quick QA to ensure the AI output meets
+expectations.
+
+- [Write a customer email](write-customer-email.md)
+- [Summarize meeting notes](summarize-meeting-notes.md)
+- [Create a JIRA ticket with AI](create-jira-ticket-with-ai.md)

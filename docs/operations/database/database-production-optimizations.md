@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 title: 'Production Database Optimizations'
 translation_status: complete
 doc_version: '2025.11'
@@ -8,19 +8,18 @@ last_updated: '2025-11-24'
 
 # Production Database Optimizations
 
-## Введение
+## Introduction
 
-В этом руководстве описаны стратегии оптимизации производственной базы данных
-PostgreSQL для обеспечения высокой производительности и надежности.
+This guide describes production PostgreSQL database optimization strategies to
+ensure high performance and reliability.
 
-## Конфигурация и обслуживание
+## Configuration and Maintenance
 
-- Настройте**pg_stat_statements**для отслеживания медленных запросов.
-- Регулярно запускайте**vacuum jobs**для очистки мертвых кортежей (см.
+- Configure **pg_stat_statements** to track slow queries.
+- Regularly run **vacuum jobs** to clean up dead tuples (see
   [`docs/operations/automation/automated-maintenance-guide.md`](../automation/automated-maintenance-guide.md)).
 
-## Мониторинг производительности
+## Performance Monitoring
 
-- Отслеживайте**bloat**(раздувание таблиц/индексов) для предотвращения
-  деградации производительности.
-- Контролируйте**replication lag**, если используется репликация.
+- Track **bloat** (table/index bloat) to prevent performance degradation.
+- Monitor **replication lag** if replication is used.

@@ -1,35 +1,35 @@
-# Docker Secrets для ERNI-KI
+# Docker Secrets for ERNI-KI
 
-Эта директория содержит чувствительные данные (пароли, API ключи) для Docker
-Compose secrets.
+This directory contains sensitive data (passwords, API keys) for Docker Compose
+secrets.
 
-## Структура
+## Structure
 
 ```
 secrets/
- postgres_password.txt # Пароль PostgreSQL
- litellm_db_password.txt # Пароль БД для LiteLLM
- litellm_api_key.txt # API ключ LiteLLM
- publicai_api_key.txt # PublicAI ключ для внешних моделей LiteLLM
- context7_api_key.txt # API ключ Context7
- watchtower_api_token.txt # Токен доступа к HTTP API Watchtower
- grafana_admin_password.txt # Пароль администратора Grafana
- postgres_exporter_dsn.txt # DSN для postgres-exporter
- redis_exporter_url.txt # JSON-карта host→пароль для redis-exporter
- openwebui_secret_key.txt # FastAPI SECRET_KEY для OpenWebUI
- litellm_master_key.txt # MASTER KEY LiteLLM
- litellm_salt_key.txt # SALT KEY LiteLLM
- litellm_ui_password.txt # Пароль UI LiteLLM
- *.example # Примеры файлов
- README.md # Этот файл
+ postgres_password.txt        # PostgreSQL password
+ litellm_db_password.txt      # LiteLLM database password
+ litellm_api_key.txt          # LiteLLM API key
+ publicai_api_key.txt         # PublicAI key for external LiteLLM models
+ context7_api_key.txt         # Context7 API key
+ watchtower_api_token.txt     # Watchtower HTTP API access token
+ grafana_admin_password.txt   # Grafana admin password
+ postgres_exporter_dsn.txt    # DSN for postgres-exporter
+ redis_exporter_url.txt       # JSON map host→password for redis-exporter
+ openwebui_secret_key.txt     # FastAPI SECRET_KEY for OpenWebUI
+ litellm_master_key.txt       # LiteLLM MASTER KEY
+ litellm_salt_key.txt         # LiteLLM SALT KEY
+ litellm_ui_password.txt      # LiteLLM UI password
+ *.example                    # Example files
+ README.md                    # This file
 ```
 
-## Быстрый старт
+## Quick Start
 
-### 1. Создание секретов из примеров
+### 1. Create secrets from examples
 
 ```bash
-# Скопировать примеры
+# Copy examples
 cp secrets/postgres_password.txt.example secrets/postgres_password.txt
 cp secrets/litellm_db_password.txt.example secrets/litellm_db_password.txt
 cp secrets/litellm_api_key.txt.example secrets/litellm_api_key.txt
@@ -44,13 +44,13 @@ cp secrets/litellm_master_key.txt.example secrets/litellm_master_key.txt
 cp secrets/litellm_salt_key.txt.example secrets/litellm_salt_key.txt
 cp secrets/litellm_ui_password.txt.example secrets/litellm_ui_password.txt
 
-# Установить права доступа
+# Set file permissions
 chmod 600 secrets/*.txt
 ```
 
-### 2. Заполнение секретов
+### 2. Populate secrets
 
-Отредактируйте каждый файл и замените placeholder значения на реальные:
+Edit each file and replace placeholder values with real ones:
 
 ```bash
 # PostgreSQL password
@@ -62,7 +62,7 @@ echo "your-litellm-db-password" > secrets/litellm_db_password.txt
 # LiteLLM API key
 echo "sk-your-api-key" > secrets/litellm_api_key.txt
 
-# PublicAI API key (используется кастомным провайдером LiteLLM)
+# PublicAI API key (used by custom LiteLLM provider)
 echo "zpka_your_publicai_key" > secrets/publicai_api_key.txt
 
 # Context7 API key
@@ -79,48 +79,48 @@ echo "postgresql://postgres:your-password@db:5432/openwebui?sslmode=disable" > s
 
 # Redis exporter password map (JSON)
 echo '{"redis://redis:6379":"your-redis-password"}' > secrets/redis_exporter_url.txt
-# Если аутентификация отключена, оставьте значение пустым: {"redis://redis:6379":""}
+# If authentication is disabled, leave value empty: {"redis://redis:6379":""}
 
 # OpenWebUI secret key (64 hex chars)
 openssl rand -hex 32 > secrets/openwebui_secret_key.txt
 
-# LiteLLM master/salt keys и пароль UI
+# LiteLLM master/salt keys and UI password
 openssl rand -base64 48 | tr -d '=+/ ' | cut -c1-48 > secrets/litellm_master_key.txt
 openssl rand -hex 32 > secrets/litellm_salt_key.txt
 openssl rand -base64 48 | tr -d '=+/ ' | cut -c1-32 > secrets/litellm_ui_password.txt
 
-# Установить права доступа
+# Set file permissions
 chmod 600 secrets/*.txt
 ```
 
-## Безопасность
+## Security
 
-### Важно!
+### Important!
 
-- Файлы `*.txt` **НЕ** должны быть в git (добавлены в `.gitignore`)
-- Права доступа должны быть `600` (только владелец может читать/писать)
-- Файлы `*.example` **ДОЛЖНЫ** быть в git (для документации)
-- **НИКОГДА** не коммитьте реальные секреты в git!
+- `*.txt` files **MUST NOT** be in git (added to `.gitignore`)
+- Permissions should be `600` (only owner can read/write)
+- `*.example` files **MUST** be in git (for documentation)
+- **NEVER** commit real secrets to git!
 
-### Проверка безопасности
+### Security Check
 
 ```bash
-# Проверить права доступа
+# Check file permissions
 ls -l secrets/*.txt
 
-# Должно быть: -rw------- (600)
-# Если нет, исправить:
+# Should be: -rw------- (600)
+# If not, fix:
 chmod 600 secrets/*.txt
 
-# Проверить что секреты не в git
+# Check that secrets are not in git
 git status secrets/
 
-# Должно показать только *.example файлы
+# Should show only *.example files
 ```
 
-## Использование в Docker Compose
+## Usage in Docker Compose
 
-Секреты автоматически монтируются в контейнеры через `compose.yml`:
+Secrets are automatically mounted into containers via `compose.yml`:
 
 ```yaml
 secrets:
@@ -137,64 +137,64 @@ services:
  POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
 ```
 
-Внутри контейнера секреты доступны в `/run/secrets/`:
+Inside the container, secrets are available at `/run/secrets/`:
 
 ```bash
-# Пример чтения секрета в контейнере
+# Example of reading secret in container
 cat /run/secrets/postgres_password
 ```
 
-## Ротация секретов
+## Secret Rotation
 
-При смене паролей/ключей:
+When changing passwords/keys:
 
-1. Обновите файлы в `secrets/`
-2. Перезапустите сервисы:
+1. Update files in `secrets/`
+2. Restart services:
 
 ```bash
 docker compose down
 docker compose up -d
 ```
 
-## Генерация безопасных паролей
+## Generating Secure Passwords
 
 ```bash
-# Генерация случайного пароля (32 символа)
+# Generate random password (32 characters)
 openssl rand -base64 32
 
-# Генерация пароля с специальными символами
+# Generate password with special characters
 openssl rand -base64 32 | tr -d "=+/" | cut -c1-32
 
-# Генерация UUID (для API ключей)
+# Generate UUID (for API keys)
 uuidgen
 ```
 
 ## Troubleshooting
 
-### Проблема: Сервис не может прочитать секрет
+### Problem: Service cannot read secret
 
 ```bash
-# Проверить права доступа
+# Check file permissions
 ls -l secrets/*.txt
 
-# Проверить содержимое (без вывода в консоль!)
+# Check contents (without outputting to console!)
 wc -l secrets/*.txt
 
-# Проверить что файл не пустой
+# Check that file is not empty
 [ -s secrets/postgres_password.txt ] && echo "OK" || echo "EMPTY"
 ```
 
-### Проблема: Docker Compose не видит секреты
+### Problem: Docker Compose doesn't see secrets
 
 ```bash
-# Проверить конфигурацию
+# Check configuration
 docker compose config | grep -A 5 secrets
 
-# Проверить что файлы существуют
+# Check that files exist
 ls -l secrets/*.txt
 ```
 
-## Дополнительная информация
+## Additional Information
 
 - [Docker Secrets Documentation](https://docs.docker.com/engine/swarm/secrets/)
 - [Best Practices for Secrets Management](https://docs.docker.com/compose/use-secrets/)
@@ -202,4 +202,4 @@ ls -l secrets/*.txt
 
 ---
 
-**Создано:** 2025-10-30 **Обновлено:** 2025-10-30 **Версия:** 1.0
+**Created:** 2025-10-30 **Updated:** 2025-10-30 **Version:** 1.0

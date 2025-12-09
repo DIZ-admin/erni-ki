@@ -1,56 +1,56 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Мониторинг ERNI-KI
+# ERNI-KI Monitoring
 
-Центральный навигатор по руководствам мониторинга: отсюда можно перейти в
-основной гайд, runbook-и по алертам, дашбордам и расследованиям.
+Central navigator for monitoring guides: from here you can access the main
+guide, runbooks for alerts, dashboards and investigations.
 
-## Что внутри
+## What's Inside
 
-- [monitoring-guide.md](monitoring-guide.md) — полный обзор архитектуры
-  мониторинга, exporters, health-checks и процедур.
-- [grafana-dashboards-guide.md](grafana-dashboards-guide.md) — описание ключевых
-  дашбордов, метрик и best practices.
-- [prometheus-alerts-guide.md](prometheus-alerts-guide.md) — настройка правил
-  алертинга и связь с Alertmanager.
-- [prometheus-queries-reference.md](prometheus-queries-reference.md) —
-  справочник полезных Prometheus-запросов.
+- [monitoring-guide.md](monitoring-guide.md) — complete overview of monitoring
+  architecture, exporters, health checks and procedures.
+- [grafana-dashboards-guide.md](grafana-dashboards-guide.md) — description of
+  key dashboards, metrics and best practices.
+- [prometheus-alerts-guide.md](prometheus-alerts-guide.md) — alerting rules
+  configuration and Alertmanager integration.
+- [prometheus-queries-reference.md](prometheus-queries-reference.md) — reference
+  for useful Prometheus queries.
 - [legacy-monitoring-scripts-migration.md](legacy-monitoring-scripts-migration.md)
-  — быстрый план перехода на `health-monitor-v2.sh` и другие обновлённые
-  утилиты.
-- [rag-monitoring.md](rag-monitoring.md) и
-  [searxng-redis-issue-analysis.md](searxng-redis-issue-analysis.md) — узкие
-  случаи и playbooks.
-- [access-log-sync-and-fluentbit.md](access-log-sync-and-fluentbit.md) — сбор и
-  доставка логов Nginx/Fluent Bit.
-- [alertmanager-noise-reduction.md](alertmanager-noise-reduction.md) — борьба с
-  шумными алертами.
+  — quick plan for migrating to `health-monitor-v2.sh` and other updated
+  utilities.
+- [rag-monitoring.md](rag-monitoring.md) and
+  [searxng-redis-issue-analysis.md](searxng-redis-issue-analysis.md) — specific
+  cases and playbooks.
+- [access-log-sync-and-fluentbit.md](access-log-sync-and-fluentbit.md) —
+  Nginx/Fluent Bit log collection and delivery.
+- [alertmanager-noise-reduction.md](alertmanager-noise-reduction.md) — dealing
+  with noisy alerts.
 
-## Практическое применение
+## Practical Application
 
-1. Настройка мониторинга новой среды — начните с общего гайда.
-2. Нужна метрика/запрос — откройте reference-документ.
-3. При алерте используйте соответствующий playbook или анализ noise reduction.
+1. Setting up monitoring for new environment — start with general guide.
+2. Need a metric/query — open reference document.
+3. For alerts use appropriate playbook or noise reduction analysis.
 
-При добавлении нового exporter-а или runbook-а обновляйте README, чтобы
-разработчики и DevOps быстро находили материалы.
+When adding a new exporter or runbook, update the README so that developers and
+DevOps can quickly find materials.
 
-## Рутина дежурного
+## On-call Routine
 
-1. Проверяйте Alertmanager на новые инциденты и сверяйте со статус-страницей.
-2. Просматривайте Grafana дашборды `Platform Overview`, `Exporters Health`,
+1. Check Alertmanager for new incidents and compare with status page.
+2. Review Grafana dashboards `Platform Overview`, `Exporters Health`,
    `Cost & Tokens`.
-3. Раз в сутки сверяйте состояние `PrometheusTargetsDown` и `LogPipelineLag`.
+3. Daily check status of `PrometheusTargetsDown` and `LogPipelineLag`.
 
-## Что улучшать дальше
+## What to Improve Next
 
-- Добавляйте диаграммы (Mermaid) с потоками метрик/логов в новые статьи.
-- При появлении нового экспортера описывайте его конфигурацию, порты и таргеты в
-  отдельном разделе.
+- Add diagrams (Mermaid) with metrics/logs flows to new articles.
+- When new exporter appears describe its configuration, ports and targets in
+  separate section.
 
-Обновляйте README при появлении новых exporter-ов или runbook-ов.
+Update README when new exporters or runbooks appear.

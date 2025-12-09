@@ -1,78 +1,76 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-12-01'
+last_updated: '2025-12-09'
 ---
 
-# Стандарты качества кода
+# Code Quality Standards
 
-Единый набор правил для внутренних скриптов, сервисов и инфраструктурных
-артефактов. Соблюдение стандарта является обязательной входной точкой для code
-review и CI.
+A unified set of rules for internal scripts, services, and infrastructure
+artifacts. Compliance with these standards is a mandatory entry point for code
+review and CI.
 
-## 1. Цели и область применения
+## 1. Goals and Scope
 
-- Обеспечить стабильность платформы ERNI-KI и воспроизводимость сборок.
-- Снизить риски за счёт единообразных правил по безопасности, тестам и стилю.
-- Ускорить онбординг: все проекты (Go, Python, JS/TS, Bash, Infra-as-Code)
-  следуют одному чек-листу.
-- Обеспечить прослеживаемость: любые исключения документируются, согласуются и
-  имеют срок действия.
-- Поддерживать качество документации на уровне ≥ 95/100 по внутренней шкале
-  зрелости (полнота, актуальность, пригодность к действию).
+- Ensure stability of the ERNI-KI platform and reproducibility of builds.
+- Reduce risks through unified rules for security, testing, and style.
+- Accelerate onboarding: all projects (Go, Python, JS/TS, Bash, Infra-as-Code)
+  follow one checklist.
+- Ensure traceability: any exceptions are documented, agreed upon, and have an
+  expiration date.
+- Maintain documentation quality at ≥ 95/100 on internal maturity scale
+  (completeness, relevance, actionability).
 
-### Роли и ответственность
+### Roles and Responsibilities
 
-- **Автор** — обеспечивает наличие тестов, документации и актуальных чек-листов
-  для своего изменения.
-- **Ревьюер** — проверяет выполнение стандартов, валидирует риски и чётко
-  фиксирует замечания.
-- **Владелец продукта/компонента** — утверждает исключения из правил и сроки их
-  закрытия.
+- **Author** — ensures the presence of tests, documentation, and up-to-date
+  checklists for their changes.
+- **Reviewer** — verifies compliance with standards, validates risks, and
+  clearly documents remarks.
+- **Product/Component Owner** — approves exceptions to rules and their closure
+  deadlines.
 
-### Уровни строгости и исключения
+### Severity Levels and Exceptions
 
-- Блокирующие: безопасность, утечки секретов, отсутствие тестов для публичного
-  API, падение линтеров — нельзя мёрджить без фикса.
-- Предупреждения: косметические несоответствия стиля при явном согласовании с
-  ревьюером, если не нарушают читаемость и не несут риск.
-- Исключения оформляются через комментарий в PR с обоснованием, сроком и
-  ответственным; фиксируются в CHANGELOG или документации.
-- Каждое исключение сопровождается планом устранения и меткой даты просрочки;
-  ревьюеры отслеживают их закрытие в следующих релизах.
+- Blocking: security, secret leaks, missing tests for public API, linter
+  failures — cannot merge without fix.
+- Warnings: cosmetic style inconsistencies with explicit reviewer agreement, if
+  they don't harm readability or carry risk.
+- Exceptions are documented via PR comment with justification, deadline, and
+  responsible person; recorded in CHANGELOG or documentation.
+- Each exception includes a remediation plan and expiration date label;
+  reviewers track their closure in subsequent releases.
 
-### Управление документацией
+### Documentation Management
 
-- Владелец компонента назначает **куратора документации**, который отвечает за
-  свежесть инструкций и контроль качества текста.
-- Перед релизом обязательно провести мини-аудит: обновить примеры запуска,
-  команды CI, переменные окружения и ссылки на ADR.
-- Для пользовательских изменений публикуйте краткое резюме (tl;dr), список
-  влияний на пользователей и проверенные сценарии (smoke-check).
+- Component owner appoints a **documentation curator**, who is responsible for
+  keeping instructions fresh and controlling text quality.
+- Before release, conduct a mini-audit: update launch examples, CI commands,
+  environment variables, and ADR references.
+- For user-facing changes, publish a brief summary (tl;dr), list of user
+  impacts, and verified scenarios (smoke-check).
 
-## 2. Обязательные принципы (для всех языков)
+## 2. Mandatory Principles (for all languages)
 
-- **Стиль и форматирование:** запускайте форматтеры перед коммитом (`gofmt`,
-  `ruff format`, `eslint --fix`, `shfmt`). Не отключайте правила lint без
-  причины и без комментария.
-- **Типизация и контракты:** включайте строгие режимы (`pyproject.toml` с
-  `mypy`/`ruff`, `tsconfig.json` с `strict: true`, `go vet`).
-- **Тестируемость:** каждый новый модуль сопровождайте unit-тестами; без тестов
-  изменения не принимаются. Минимум — happy path + негативные кейсы.
-- **Ошибки и логирование:** используйте структурированные логи, возвращайте
-  информативные ошибки с контекстом; не глушите исключения/ошибки.
-- **Зависимости:** фиксируйте версии (`go.mod`, `requirements*.txt`,
-  `package-lock.json`), избегайте прямых `latest`. Удаляйте невостребованные
-  пакеты.
-- **Безопасность:** запрещены секреты в коде/логах. Включайте линтеры
-  безопасности (Trivy, `npm audit`, `pip-audit`, `gosec`) и устраняйте
-  блокирующие находки.
-- **Документация:** публичные функции/скрипты сопровождайте docstring/`//`
-  комментариями. Обновляйте README/mkdocs при изменении поведения.
-- **Прослеживаемость:** связывайте изменения с задачами/тикетами, указывайте
-  ссылки в описании PR. В CHANGELOG отражайте значимые пользовательские
-  изменения и миграции.
+- **Style and Formatting:** run formatters before commit (`gofmt`,
+  `ruff format`, `eslint --fix`, `shfmt`). Don't disable lint rules without
+  reason and without comment.
+- **Typing and Contracts:** enable strict modes (`pyproject.toml` with
+  `mypy`/`ruff`, `tsconfig.json` with `strict: true`, `go vet`).
+- **Testability:** accompany each new module with unit tests; changes are not
+  accepted without tests. Minimum — happy path + negative cases.
+- **Errors and Logging:** use structured logs, return informative errors with
+  context; don't suppress exceptions/errors.
+- **Dependencies:** pin versions (`go.mod`, `requirements*.txt`,
+  `package-lock.json`), avoid direct `latest`. Remove unused packages.
+- **Security:** secrets in code/logs are forbidden. Enable security linters
+  (Trivy, `npm audit`, `pip-audit`, `gosec`) and fix blocking findings.
+- **Documentation:** accompany public functions/scripts with docstring/`//`
+  comments. Update README/mkdocs when behavior changes.
+- **Traceability:** link changes to tasks/tickets, provide references in PR
+  description. In CHANGELOG reflect significant user-facing changes and
+  migrations.
 
 ## 3. Языковые профили
 

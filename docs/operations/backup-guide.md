@@ -1,5 +1,5 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
@@ -7,66 +7,65 @@ last_updated: '2025-11-24'
 
 # Backup Guide
 
-Краткий путеводитель по резервному копированию ERNI-KI и ссылкам на детальные
-процедуры.
+Quick guide to ERNI-KI backup procedures and links to detailed documentation.
 
-## Что покрываем
+## What We Cover
 
-- PostgreSQL (данные OpenWebUI)
-- Конфигурации: `env/`, `conf/`, `compose.yml`
-- Пользовательские артефакты (uploads, модели Ollama)
-- Критичные логи (последние 7 дней)
-- Сертификаты TLS
+- PostgreSQL (OpenWebUI data)
+- Configurations: `env/`, `conf/`, `compose.yml`
+- User artifacts (uploads, Ollama models)
+- Critical logs (last 7 days)
+- TLS certificates
 
-## Быстрый чеклист
+## Quick Checklist
 
-1.**Автобэкапы Backrest**
+1.**Automated Backrest Backups**
 
-- Статус: `docker compose ps backrest`
-- Логи: `docker compose logs backrest --tail=50`
-- История: `curl -s http://localhost:9898/api/v1/repos`
+- Status: `docker compose ps backrest`
+- Logs: `docker compose logs backrest --tail=50`
+- History: `curl -s http://localhost:9898/api/v1/repos`
 
-  2.**Бэкап перед изменениями**
+  2.**Pre-Change Backup**
 
-- Снимите snapshot (Backrest full/incremental)
-- Экспортируйте конфиг: `tar -czf config-$(date +%F).tgz env conf compose.yml`
+- Take snapshot (Backrest full/incremental)
+- Export config: `tar -czf config-$(date +%F).tgz env conf compose.yml`
 
-  3.**Валидация восстановления (раз в месяц)**
+  3.**Restore Validation (monthly)**
 
-- Разверните на тестовом стенде
-- Проверьте запуск OpenWebUI + БД
-- Убедитесь, что uploads и модели доступны
+- Deploy to test environment
+- Verify OpenWebUI + DB startup
+- Ensure uploads and models are accessible
 
-## Когда что использовать
+## When to Use What
 
--**Рутинные бэкапы и vacuum/maintenance:**см.
+-**Routine backups and vacuum/maintenance:**see
 `operations/automation/automated-maintenance-guide.md`
 
--**Полные пошаговые процедуры бэкапа/рестора:**см.
+-**Complete step-by-step backup/restore procedures:**see
 `operations/maintenance/backup-restore-procedures.md`
 
--**Рестарт сервисов после восстановления:**см.
+-**Service restart after restore:**see
 `operations/maintenance/service-restart-procedures.md`
 
 ## RPO/RTO
 
--**RPO:**≤ 15 минут (инкрементальные бэкапы + WAL streaming) -**RTO:**≤ 45 минут
-для OpenWebUI + БД
+-**RPO:**≤ 15 minutes (incremental backups + WAL streaming) -**RTO:**≤ 45
+minutes for OpenWebUI + DB
 
-- Проверяйте показатели ежемесячно и фиксируйте результат в Backrest dashboard.
+- Check metrics monthly and record results in Backrest dashboard.
 
-## Визуализация: цикл бэкапов
+## Visualization: Backup Cycle
 
 ```mermaid
 flowchart LR
   Schedule[Cron 01:30] --> Backrest[Backrest backup]
-  Backrest --> Store[Хранилище ./data/backrest]
-  Store --> Verify[Проверка restore --dry-run]
-  Verify --> Report[Отчёт в Archon/Jira]
+  Backrest --> Store[Storage ./data/backrest]
+  Store --> Verify[Check restore --dry-run]
+  Verify --> Report[Report to Archon/Jira]
 ```
 
-## Контрольный список
+## Checklist
 
-- Проверить успешность ночного бэкапа в Backrest logs.
-- Раз в неделю выполнять `--dry-run` восстановление на стенд.
-- Обновлять инструкции в runbook при смене расписания/хранилища.
+- Verify successful nightly backup in Backrest logs.
+- Perform weekly `--dry-run` restore to test environment.
+- Update runbook instructions when changing schedule/storage.

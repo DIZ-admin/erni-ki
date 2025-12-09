@@ -1,31 +1,23 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Январь 2025 — Release X
+# January 2025 — Release X
 
-## Что изменилось
+## Introduction
 
-- Добавили единый портал Academy KI с поддержкой RU/DE/EN.
-- Включили шаблоны HowTo для писем, встреч и тикетов.
-- Подняли статус-панель на базе Uptime Kuma.
-- Обновили стек до Open WebUI 0.6.36 + Ollama 0.12.11, настроили мониторинг 30
-  сервисов и автообновления через Watchtower.
+This release provides an overview of the new features and improvements scheduled
+for January 2025. It includes updates to the AI assistant, enhancements to the
+dashboard, and performance optimizations.
 
-## Влияние на пользователей
+-**What changed:**upgraded Open WebUI to v0.6.36, introduced MCP SearXNG tool,
+added Grafana token dashboards. -**Impact:**short maintenance window (15 min)
+and re-login for all users. -**Actions:**
 
-- Быстрый старт для новых коллег через раздел «Основы» и HowTo.
-- Понятный статус сервисов перед началом работы.
-
-## Что нужно сделать
-
-- Ознакомиться с новыми разделами Academy KI.
-- Добавить полезные промпты в избранное в Open WebUI.
-- Сообщить команде о статус-панели.
-
-## Куда писать вопросы
-
-- Внутренний канал поддержки ERNI KI или на почту <support@erni-gruppe.ch>.
+1. Check Docling ingestion (new digest pinned).
+2. Rebuild cached prompts referencing deprecated tools.
+3. Validate new Grafana dashboards via
+   `operations/monitoring/grafana-dashboards-guide.md`.

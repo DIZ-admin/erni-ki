@@ -1,156 +1,166 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Redis Monitoring с Grafana в системе ERNI-KI
+# Redis Monitoring with Grafana in ERNI-KI
 
-## Обзор
+## Overview
 
-Система ERNI-KI теперь включает полноценный мониторинг Redis через Grafana с
-использованием Redis Data Source plugin. Это решение заменяет проблемный
-Redis-exporter и обеспечивает стабильный мониторинг Redis 7.4.5 Alpine.
+The ERNI-KI system now includes comprehensive Redis monitoring via Grafana using
+the Redis Data Source plugin. This solution replaces the problematic
+Redis-exporter and provides stable monitoring for Redis 7.4.5 Alpine.
 
-## Быстрый старт
+## Quick Start
 
-### Доступ к Grafana
+### Grafana Access
 
--**URL**: <http://localhost:3000> -**Логин**: admin -**Пароль**: admin123
+- **URL**: <http://localhost:3000>
+- **Login**: admin
+- **Password**: admin123
 
-### Доступ к Redis дашборду
+### Access Redis Dashboard
 
-1. Откройте Grafana в браузере
-2. Перейдите в раздел "Dashboards"
-3. Найдите дашборд "Redis Monitoring - ERNI-KI"
+1. Open Grafana in browser
+2. Navigate to "Dashboards" section
+3. Find dashboard "Redis Monitoring - ERNI-KI"
 
-## Техническая конфигурация
+## Technical Configuration
 
 ### Redis Data Source
 
--**Название**: Redis-ERNI-KI -**Тип**: redis-datasource -**URL**:
-redis://redis:6379 -**Аутентификация**: requirepass
-($REDIS_PASSWORD) -**Режим**: standalone
+- **Name**: Redis-ERNI-KI
+- **Type**: redis-datasource
+- **URL**: redis://redis:6379
+- **Authentication**: requirepass ($REDIS_PASSWORD)
+- **Mode**: standalone
 
-### Автоматическая настройка
+### Automatic Configuration
 
-Конфигурация применяется автоматически через Grafana provisioning:
+Configuration is applied automatically via Grafana provisioning:
 
 - Data Source: `conf/grafana/provisioning/datasources/redis.yml`
 - Dashboard: `conf/grafana/dashboards/infrastructure/redis-monitoring.json`
 
-## Доступные метрики
+## Available Metrics
 
-### Основные метрики
+### Main Metrics
 
--**Memory Usage**: Использование памяти Redis -**Connected Clients**: Количество
-подключенных клиентов -**Commands Processed**: Обработанные команды -**Network
-I/O**: Сетевой трафик -**Keyspace**: Информация о базах данных
+- **Memory Usage**: Redis memory usage
+- **Connected Clients**: Number of connected clients
+- **Commands Processed**: Processed commands
+- **Network I/O**: Network traffic
+- **Keyspace**: Database information
 
-### Дополнительные метрики
+### Additional Metrics
 
--**Server Info**: Версия, время работы, режим -**Persistence**: Статус
-сохранения данных -**Replication**: Информация о репликации (если настроена)
+- **Server Info**: Version, uptime, mode
+- **Persistence**: Data persistence status
+- **Replication**: Replication information (if configured)
 
-## Расширение мониторинга
+## Extending Monitoring
 
-### Добавление новых панелей
+### Adding New Panels
 
-1. Откройте дашборд в режиме редактирования
-2. Добавьте новую панель
-3. Выберите Redis-ERNI-KI как источник данных
-4. Настройте команду и поля:
+1. Open dashboard in edit mode
+2. Add new panel
+3. Select Redis-ERNI-KI as data source
+4. Configure command and fields:
 
--**Command**: info -**Section**: memory/stats/server/clients -**Field**:
-конкретное поле из Redis INFO
+- **Command**: info
+- **Section**: memory/stats/server/clients
+- **Field**: specific field from Redis INFO
 
-### Примеры команд Redis
+### Redis Command Examples
 
 ```bash
-# Основная информация
+# Basic information
 INFO server
 INFO memory
 INFO stats
 INFO clients
 
-# Специфические метрики
+# Specific metrics
 DBSIZE
 LASTSAVE
 CONFIG GET maxmemory
 ```
 
-## Мониторинг производительности
+## Performance Monitoring
 
-### Ключевые показатели для отслеживания
+### Key Indicators to Track
 
-1.**used_memory**- использование памяти 2.**connected_clients**- количество
-клиентов 3.**total_commands_processed**- общее количество
-команд 4.**instantaneous_ops_per_sec**- операций в
-секунду 5.**keyspace_hits/misses**- эффективность кэша
+1. **used_memory** - memory usage
+2. **connected_clients** - number of clients
+3. **total_commands_processed** - total commands
+4. **instantaneous_ops_per_sec** - operations per second
+5. **keyspace_hits/misses** - cache effectiveness
 
-### Алерты и пороговые значения
+### Alerts and Thresholds
 
-- Memory usage > 80% от available
+- Memory usage > 80% of available
 - Connected clients > 100
 - Hit ratio < 90%
 - Response time > 1ms
 
-## Устранение неполадок
+## Troubleshooting
 
-### Проблемы подключения
+### Connection Issues
 
 ```bash
-# Проверка статуса Redis
+# Check Redis status
 docker-compose ps redis
 
-# Проверка подключения
+# Check connection
 docker-compose exec redis redis-cli -a $REDIS_PASSWORD ping
 
-# Проверка логов Grafana
+# Check Grafana logs
 docker-compose logs grafana --tail=20
 ```
 
-## Переустановка плагина
+## Plugin Reinstallation
 
 ```bash
-# Переустановка Redis Data Source plugin
+# Reinstall Redis Data Source plugin
 docker-compose exec grafana grafana-cli plugins uninstall redis-datasource
 docker-compose exec grafana grafana-cli plugins install redis-datasource
 docker-compose restart grafana
 ```
 
-## Дополнительные ресурсы
+## Additional Resources
 
-### Официальная документация
+### Official Documentation
 
 - [Redis Data Source Plugin](https://grafana.com/grafana/plugins/redis-datasource/)
 - [Redis INFO Command](https://redis.io/commands/info/)
 - [Grafana Provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)
 
-### Альтернативные решения
+### Alternative Solutions
 
-1.**Redis Insight**для детального анализа 2.**Custom scripts**с отправкой метрик
-в InfluxDB 3.**Прямые Redis команды**через CLI для диагностики
+1. **Redis Insight** for detailed analysis
+2. **Custom scripts** with metrics sent to InfluxDB
+3. **Direct Redis commands** via CLI for diagnostics
 
-**Примечание**: Redis-exporter был удален из системы ERNI-KI из-за проблем
-совместимости с Redis 7.4.5 Alpine. Grafana Redis Data Source Plugin является
-предпочтительным решением.
+**Note**: Redis-exporter was removed from ERNI-KI system due to compatibility
+issues with Redis 7.4.5 Alpine. Grafana Redis Data Source Plugin is the
+preferred solution.
 
-## Обновления и обслуживание
+## Updates and Maintenance
 
-### Регулярные задачи
+### Regular Tasks
 
-- Мониторинг дискового пространства для Grafana данных
-- Обновление дашбордов при изменении требований
-- Резервное копирование конфигураций Grafana
+- Monitor disk space for Grafana data
+- Update dashboards when requirements change
+- Backup Grafana configurations
 
-### Автоматические обновления
+### Automatic Updates
 
-Grafana настроена на автоматические обновления через Watchtower с меткой
-`monitoring-stack`.
+Grafana is configured for automatic updates via Watchtower with the
+`monitoring-stack` label.
 
 ---
 
-**Статус**: Активно**Последнее обновление**: 2025-09-19**Версия**: 1.0**Дата**:
+**Status**: Active **Last Updated**: 2025-09-19 **Version**: 1.0 **Date**:
 2025-11-18

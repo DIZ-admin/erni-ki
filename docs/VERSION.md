@@ -1,51 +1,34 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: partial
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-25'
 released: 2025-11-23
 system_status: current
+title: 'Documentation Versioning'
 ---
 
-# Версионирование документации ERNI-KI
+# Documentation Versioning
 
-Этот файл фиксирует**глобальную версию пользовательской и технической
-документации**и служит точкой контроля при синхронизации переводов.
+This file tracks the global version of ERNI-KI docs and sync between locales.
 
-## Политика
+- Canonical language: RU first.
+- Version scheme: `YYYY.MM` + release date; bump on significant
+  content/structure changes.
+- Status: `current` / `deprecated` / `archived`.
+- After localization, set `translation_status` appropriately in EN/DE pages.
 
--**Каноничный язык:**русский. Изменения сначала попадают в русские
-страницы. -**Номер версии:**`YYYY.MM` + дата выпуска; меняется при любых
-существенных правках контента или структуры. -**Состояние:**`current` /
-`deprecated` / `archived`. -**Переводы:**поле `translation_status` в
-локализованных файлах должно обновляться после синхронизации.
+## Release History
 
-## Как обновлять версию
+-**2025.11 (2025-11-23)**— Audit completed, components updated (OpenWebUI
+v0.6.36), install/integration guides refreshed. -**2025.02 (2025-02-15)**—
+Academy map, status page, global versioning introduced.
 
-1. Вносите изменения в русские материалы (канон).
-2. Обновите номер `doc_version` и `released` в этом файле, добавьте краткий
-   список изменений в раздел ниже.
-3. Проставьте актуальный `translation_status` в EN/DE страницах, когда
-   локализация завершена.
-4. Добавьте запись в changelog версии.
+## Translation Coverage (snapshot 2025-11-24)
 
-## История выпусков
+- RU: 88 files — 100% (canonical)
+- DE: 60 files (36 complete) ≈ 41%
+- EN: 16 files (5 complete) ≈ 6%
 
--**2025.11 (2025-11-23)**— проведен комплексный аудит документации, удалены
-временные файлы и дубликаты, обновлены версии компонентов (OpenWebUI v0.6.40),
-актуализирована информация в руководствах по установке и интеграции. -**2025.02
-(2025-02-15)**— добавлена карта Academy KI, статус-панель, введено глобальное
-версионирование документации.
-
-## Покрытие переводов (состояние на 2025-11-24)
-
-- RU: 88 файлов — 100% (канон)
-- DE: 60 файлов присутствуют (36 complete) ≈ 41% покрытия
-- EN: 16 файлов присутствуют (5 complete) ≈ 6% покрытия
-
-### Фокус переводов
-
-- DE: Основные операционные и архитектурные документы переведены. Monitoring,
-  maintenance, reference — в процессе (22 pending).
-- EN: Academy полностью переведена. Технические документы — выборочно, большая
-  часть reference/architecture отсутствует.
+Next steps: expand EN coverage starting with overview, status snippet,
+architecture/operations guides.

@@ -1,87 +1,87 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: original
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-28'
 ---
 
-# Настройка локального DNS для ERNI-KI системы
+# Local DNS Setup for ERNI-KI System (DNSMasq)
 
 [TOC]
 
-**Дата**: 2025-10-27**Статус**: ЗАВЕРШЕНО**Цель**: Настроить локальный DNS
-сервер для резолвинга ki.erni-gruppe.ch в корпоративной сети
+**Date**: 2025-10-27**Status**: COMPLETED**Goal**: Configure local DNS server
+for resolving ki.erni-gruppe.ch in corporate network
 
 ---
 
-## РЕЗЮМЕ
+## SUMMARY
 
-**Проблема**: После изменения IP сервера с 192.168.62.140 на 192.168.62.153,
-система ERNI-KI стала недоступна по адресу `ki.erni-gruppe.ch` с других
-компьютеров в локальной сети.
+**Problem**: After changing server IP from 192.168.62.140 to 192.168.62.153,
+ERNI-KI system became inaccessible at `ki.erni-gruppe.ch` from other computers
+in local network.
 
-**Решение**: Установлен и настроен DNSMasq на сервере ERNI-KI для резолвинга
-`ki.erni-gruppe.ch → 192.168.62.153` в локальной сети.
+**Solution**: Installed and configured DNSMasq on ERNI-KI server to resolve
+`ki.erni-gruppe.ch → 192.168.62.153` in local network.
 
-**Результат**:
+**Result**:
 
-- DNS сервер работает на 192.168.62.153:53
-- Резолвинг ki.erni-gruppe.ch → 192.168.62.153 работает
-- Форвардинг других доменов на корпоративные DNS работает
-- HTTPS доступ к системе работает
+- DNS server running on 192.168.62.153:53
+- Resolving ki.erni-gruppe.ch → 192.168.62.153 works
+- Forwarding other domains to corporate DNS works
+- HTTPS access to system works
 
 ---
 
-## ЧТО БЫЛО СДЕЛАНО
+## WHAT WAS DONE
 
-### 1. Отключен DNS stub listener в systemd-resolved
+### 1. Disabled DNS stub listener in systemd-resolved
 
-Создан конфигурационный файл `/etc/systemd/resolved.conf.d/dnsmasq.conf`:
+Created configuration file `/etc/systemd/resolved.conf.d/dnsmasq.conf`:
 
 ```ini
 [Resolve]
-# Отключить DNS stub listener (освободить порт 53)
+# Disable DNS stub listener (free up port 53)
 DNSStubListener=no
 
-# Использовать dnsmasq как локальный DNS
+# Use dnsmasq as local DNS
 DNS=192.168.62.153
 
-# Fallback DNS серверы
+# Fallback DNS servers
 FallbackDNS=192.168.62.32 185.242.202.231
 ```
 
-## 2. Установлен DNSMasq на хост
+## 2. Installed DNSMasq on host
 
 ```bash
 sudo apt-get update
 sudo apt-get install -y dnsmasq
 ```
 
-### 3. Настроен DNSMasq
+### 3. Configured DNSMasq
 
-Конфигурация скопирована из `conf/dnsmasq/dnsmasq.conf` в `/etc/dnsmasq.conf`:
+Configuration copied from `conf/dnsmasq/dnsmasq.conf` to `/etc/dnsmasq.conf`:
 
-**Ключевые настройки**:
+**Key Settings**:
 
-- Слушает только на интерфейсе eno1 (192.168.62.153)
-- Локальная запись: `ki.erni-gruppe.ch → 192.168.62.153`
+- Listen only on interface eno1 (192.168.62.153)
+- Local record: `ki.erni-gruppe.ch → 192.168.62.153`
 - Upstream DNS: 192.168.62.32, 185.242.202.231, 8.8.8.8
-- Кэш: 1000 записей
-- Логирование запросов включено
+- Cache: 1000 records
+- Query logging enabled
 
-### 4. Проверена работа
+### 4. Verified Operation
 
 ```bash
-# Порт 53 слушает dnsmasq
+# Port 53 listened by dnsmasq
 $ sudo netstat -tulnp | grep :53
 tcp 0 0 192.168.62.153:53 0.0.0.0:* LISTEN 729392/dnsmasq
 
-# DNS резолвинг работает
+# DNS resolving works
 $ nslookup ki.erni-gruppe.ch 192.168.62.153
 Name: ki.erni-gruppe.ch
 Address: 192.168.62.153
 
-# HTTPS доступ работает
+# HTTPS access works
 $ curl -I https://ki.erni-gruppe.ch/
 HTTP/2 200
 server: nginx/1.28.0
@@ -89,131 +89,128 @@ server: nginx/1.28.0
 
 ---
 
-## СЛЕДУЮЩИЕ ШАГИ - НАСТРОЙКА КЛИЕНТОВ
+## NEXT STEPS - CLIENT CONFIGURATION
 
-**ВАЖНО**: Сейчас DNS сервер работает на 192.168.62.153, но клиенты в сети ещё
-не знают о нём. Нужно настроить клиентские компьютеры или DHCP сервер для
-использования нового DNS.
+**IMPORTANT**: DNS server is now running on 192.168.62.153, but network clients
+don't know about it yet. Need to configure client computers or DHCP server to
+use new DNS.
 
-### Вариант A: Настроить DHCP на роутере LANCOM (РЕКОМЕНДУЕТСЯ)
+### Option A: Configure DHCP on LANCOM Router (RECOMMENDED)
 
-**Преимущества**: Автоматическая настройка всех клиентов, централизованное
-управление
+**Pros**: Automatic configuration for all clients, centralized management
 
-**Шаги**:
+**Steps**:
 
-1. Войти в WEBconfig роутера: `https://192.168.62.1/`
-2. Найти настройки DHCP сервера
-3. Изменить Primary DNS с `192.168.62.32` на `192.168.62.153`
-4. Сохранить изменения
-5. Клиенты автоматически получат новый DNS при следующем DHCP lease (обычно 24
-   часа)
+1. Log in to Router WEBconfig: `https://192.168.62.1/`
+2. Find DHCP server settings
+3. Change Primary DNS from `192.168.62.32` to `192.168.62.153`
+4. Save changes
+5. Clients will automatically receive new DNS on next DHCP lease (usually 24
+   hours)
 
-**Для немедленного применения на клиентах**:
+**For immediate application on clients**:
 
 - Linux: `sudo dhclient -r && sudo dhclient`
 - Windows: `ipconfig /release && ipconfig /renew`
-- macOS: Системные настройки → Сеть → Продлить аренду DHCP
+- macOS: System Preferences → Network → Renew DHCP Lease
 
-### Вариант B: Ручная настройка на клиентских компьютерах
+### Option B: Manual Configuration on Client Computers
 
-**Преимущества**: Быстрое тестирование, не требует доступа к роутеру
+**Pros**: Quick testing, no router access required
 
 **Linux (NetworkManager)**:
 
 ```bash
-# Узнать имя подключения
+# Get connection name
 nmcli connection show
 
-# Настроить DNS
+# Configure DNS
 sudo nmcli connection modify <connection-name> ipv4.dns "192.168.62.153 192.168.62.32"
 sudo nmcli connection up <connection-name>
 
-# Проверить
+# Verify
 nslookup ki.erni-gruppe.ch
 ```
 
 **Windows**:
 
-1. Панель управления → Сеть и Интернет → Сетевые подключения
-2. Правой кнопкой на адаптере → Свойства
-3. IPv4 → Свойства → Использовать следующие адреса DNS-серверов
-4. Предпочитаемый DNS: `192.168.62.153`
-5. Альтернативный DNS: `192.168.62.32`
+1. Control Panel → Network and Internet → Network Connections
+2. Right click adapter → Properties
+3. IPv4 → Properties → Use the following DNS server addresses
+4. Preferred DNS: `192.168.62.153`
+5. Alternate DNS: `192.168.62.32`
 6. OK → OK
 
 **macOS**:
 
-1. Системные настройки → Сеть
-2. Выбрать активное подключение → Дополнительно
-3. DNS → Добавить `192.168.62.153`
-4. Применить
+1. System Preferences → Network
+2. Select active connection → Advanced
+3. DNS → Add `192.168.62.153`
+4. Apply
 
-## Вариант C: Настроить корпоративный DNS сервер (192.168.62.32)
+## Option C: Configure Corporate DNS Server (192.168.62.32)
 
-**Преимущества**: Профессиональное решение, интеграция с существующей
-инфраструктурой
+**Pros**: Professional solution, integration with existing infrastructure
 
-**Требуется**: Доступ к корпоративному DNS серверу (вероятно Windows Server)
+**Required**: Access to corporate DNS server (likely Windows Server)
 
-**Шаги**:
+**Steps**:
 
-1. Подключиться к DNS серверу 192.168.62.32
-2. Открыть DNS Manager
-3. Создать новую зону прямого просмотра для `erni-gruppe.ch` (если не
-   существует)
-4. Добавить A-запись: `ki.erni-gruppe.ch → 192.168.62.153`
-5. Обновить кэш DNS на клиентах: `ipconfig /flushdns` (Windows) или
+1. Connect to DNS server 192.168.62.32
+2. Open DNS Manager
+3. Create new Forward Lookup Zone for `erni-gruppe.ch` (if not exists)
+4. Add A-record: `ki.erni-gruppe.ch → 192.168.62.153`
+5. Flush DNS cache on clients: `ipconfig /flushdns` (Windows) or
    `sudo systemd-resolve --flush-caches` (Linux)
 
 ---
 
-## ПРОВЕРКА РАБОТЫ НА КЛИЕНТАХ
+## VERIFYING OPERATION ON CLIENTS
 
-После настройки DNS на клиентах, проверить доступ:
+After configuring DNS on clients, verify access:
 
 ```bash
-# 1. Проверить DNS резолвинг
+# 1. Check DNS resolving
 nslookup ki.erni-gruppe.ch
-# Ожидается: Address: 192.168.62.153
+# Expected: Address: 192.168.62.153
 
-# 2. Проверить HTTPS доступ
+# 2. Check HTTPS access
 curl -I https://ki.erni-gruppe.ch/
-# Ожидается: HTTP/2 200
+# Expected: HTTP/2 200
 
-# 3. Открыть в браузере
+# 3. Open in browser
 # https://ki.erni-gruppe.ch/
-# Ожидается: Интерфейс OpenWebUI
+# Expected: OpenWebUI interface
 ```
 
 ---
 
-## ТЕХНИЧЕСКАЯ ДОКУМЕНТАЦИЯ
+## TECHNICAL DOCUMENTATION
 
-### Архитектура DNS
+### DNS Architecture
 
 ```
-Клиент в сети 192.168.62.0/24
+Client in network 192.168.62.0/24
  ↓
- DNS запрос ki.erni-gruppe.ch
+ DNS query ki.erni-gruppe.ch
  ↓
-DNSMasq на 192.168.62.153:53
+DNSMasq on 192.168.62.153:53
  ↓
- Локальная запись: ki.erni-gruppe.ch → 192.168.62.153
+ Local record: ki.erni-gruppe.ch → 192.168.62.153
  ↓
-Nginx на 192.168.62.153:443
+Nginx on 192.168.62.153:443
  ↓
 OpenWebUI
 ```
 
-### Конфигурация DNSMasq
+### DNSMasq Configuration
 
-**Файл**: `/etc/dnsmasq.conf`
+**File**: `/etc/dnsmasq.conf`
 
-**Ключевые параметры**:
+**Key Parameters**:
 
 ```conf
-# Интерфейс
+# Interface
 interface=eno1
 bind-interfaces
 except-interface=lo
@@ -223,16 +220,16 @@ server=192.168.62.32
 server=185.242.202.231
 server=8.8.8.8
 
-# Локальная запись
+# Local record
 address=/ki.erni-gruppe.ch/192.168.62.153
 
-# Кэш
+# Cache
 cache-size=1000
 ```
 
-## Конфигурация systemd-resolved
+## systemd-resolved Configuration
 
-**Файл**: `/etc/systemd/resolved.conf.d/dnsmasq.conf`
+**File**: `/etc/systemd/resolved.conf.d/dnsmasq.conf`
 
 ```ini
 [Resolve]
@@ -243,136 +240,136 @@ FallbackDNS=192.168.62.32 185.242.202.231
 
 ---
 
-## МОНИТОРИНГ И ОБСЛУЖИВАНИЕ
+## MONITORING AND MAINTENANCE
 
-### Проверка статуса DNSMasq
+### Check DNSMasq Status
 
 ```bash
-# Статус сервиса
+# Service status
 sudo systemctl status dnsmasq
 
-# Логи
+# Logs
 sudo journalctl -u dnsmasq -f
 
-# Статистика запросов
+# Query statistics
 sudo kill -USR1 $(pidof dnsmasq)
 sudo journalctl -u dnsmasq | tail -20
 ```
 
-## Перезапуск после изменений
+## Restart After Changes
 
 ```bash
-# Проверить конфигурацию
+# Check configuration
 sudo dnsmasq --test
 
-# Перезапустить сервис
+# Restart service
 sudo systemctl restart dnsmasq
 
-# Проверить работу
+# Verify operation
 nslookup ki.erni-gruppe.ch 192.168.62.153
 ```
 
-## Откат изменений
+## Rollback
 
-Если что-то пошло не так:
+If something goes wrong:
 
 ```bash
-# 1. Остановить dnsmasq
+# 1. Stop dnsmasq
 sudo systemctl stop dnsmasq
 sudo systemctl disable dnsmasq
 
-# 2. Восстановить systemd-resolved
+# 2. Restore systemd-resolved
 sudo rm /etc/systemd/resolved.conf.d/dnsmasq.conf
 sudo systemctl restart systemd-resolved
 
-# 3. Восстановить оригинальную конфигурацию dnsmasq
+# 3. Restore original dnsmasq configuration
 sudo cp /etc/dnsmasq.conf.backup /etc/dnsmasq.conf
 ```
 
 ---
 
-## ПРИЛОЖЕНИЕ: ПОЛНАЯ ПРОЦЕДУРА НАСТРОЙКИ
+## APPENDIX: FULL SETUP PROCEDURE
 
-Для справки, полная процедура настройки DNSMasq на сервере ERNI-KI:
+For reference, full procedure for setting up DNSMasq on ERNI-KI server:
 
-### Шаг 1: Отключить systemd-resolved DNS stub listener
+### Step 1: Disable systemd-resolved DNS stub listener
 
 ```bash
-# Создать конфигурационный файл
+# Create configuration file
 sudo mkdir -p /etc/systemd/resolved.conf.d/
 sudo tee /etc/systemd/resolved.conf.d/dnsmasq.conf << 'EOF'
 [Resolve]
-# Отключить DNS stub listener (освободить порт 53)
+# Disable DNS stub listener (free up port 53)
 DNSStubListener=no
 
-# Использовать dnsmasq как локальный DNS
+# Use dnsmasq as local DNS
 DNS=192.168.62.153
 
-# Fallback DNS серверы
+# Fallback DNS servers
 FallbackDNS=192.168.62.32 185.242.202.231
 EOF
 
-# Перезапустить systemd-resolved
+# Restart systemd-resolved
 sudo systemctl restart systemd-resolved
 
-# Проверить статус
+# Check status
 sudo systemctl status systemd-resolved
 resolvectl status
 ```
 
-## Шаг 2: Обновить /etc/resolv.conf
+## Step 2: Update /etc/resolv.conf
 
 ```bash
-# Создать новый resolv.conf
+# Create new resolv.conf
 sudo rm /etc/resolv.conf
 sudo tee /etc/resolv.conf << 'EOF'
-# DNS конфигурация для ERNI-KI с локальным DNSMasq
+# DNS configuration for ERNI-KI with local DNSMasq
 nameserver 192.168.62.153
 nameserver 192.168.62.32
 nameserver 185.242.202.231
 search intern
 EOF
 
-# Сделать файл неизменяемым (чтобы systemd не перезаписал)
+# Make file immutable (so systemd doesn't overwrite)
 sudo chattr +i /etc/resolv.conf
 ```
 
-## Шаг 3: Перезапустить DNSMasq контейнер
+## Step 3: Restart DNSMasq Container
 
 ```bash
 cd /home/konstantin/Documents/augment-projects/erni-ki
 
-# Перезапустить контейнер
+# Restart container
 docker restart erni-ki-dnsmasq
 
-# Проверить статус
+# Check status
 docker ps --filter name=dnsmasq
 
-# Проверить логи
+# Check logs
 docker logs --tail 20 erni-ki-dnsmasq
 ```
 
-## Шаг 4: Проверить работу DNS
+## Step 4: Verify DNS Operation
 
 ```bash
-# Проверить что порт 53 слушает dnsmasq
+# Check that port 53 is listened by dnsmasq
 sudo netstat -tulnp | grep :53
 
-# Проверить резолвинг ki.erni-gruppe.ch
+# Verify resolving ki.erni-gruppe.ch
 nslookup ki.erni-gruppe.ch 192.168.62.153
 
-# Проверить резолвинг других доменов
+# Verify resolving other domains
 nslookup google.com 192.168.62.153
 
-# Проверить доступ к ERNI-KI
+# Verify access to ERNI-KI
 curl -I https://ki.erni-gruppe.ch/
 ```
 
 ---
 
-## ОЖИДАЕМЫЕ РЕЗУЛЬТАТЫ
+## EXPECTED RESULTS
 
-### Порт 53
+### Port 53
 
 ```bash
 $ sudo netstat -tulnp | grep :53
@@ -380,7 +377,7 @@ udp 0 0 192.168.62.153:53 0.0.0.0:* <pid>/dnsmasq
 tcp 0 0 192.168.62.153:53 0.0.0.0:* <pid>/dnsmasq
 ```
 
-### DNS резолвинг
+### DNS Resolving
 
 ```bash
 $ nslookup ki.erni-gruppe.ch 192.168.62.153
@@ -391,7 +388,7 @@ Name: ki.erni-gruppe.ch
 Address: 192.168.62.153
 ```
 
-### HTTPS доступ
+### HTTPS Access
 
 ```bash
 $ curl -I https://ki.erni-gruppe.ch/
@@ -401,35 +398,35 @@ server: nginx/1.28.0
 
 ---
 
-## ОТКАТ ИЗМЕНЕНИЙ (если что-то пошло не так)
+## ROLLBACK (if something goes wrong)
 
 ```bash
-# Удалить конфигурацию systemd-resolved
+# Remove systemd-resolved configuration
 sudo rm /etc/systemd/resolved.conf.d/dnsmasq.conf
 sudo systemctl restart systemd-resolved
 
-# Восстановить resolv.conf
+# Restore resolv.conf
 sudo chattr -i /etc/resolv.conf
 sudo rm /etc/resolv.conf
 sudo ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
-# Остановить dnsmasq
+# Stop dnsmasq
 docker stop erni-ki-dnsmasq
 ```
 
 ---
 
-## СЛЕДУЮЩИЕ ШАГИ
+## NEXT STEPS
 
-После успешной настройки DNSMasq на сервере:
+After successful DNSMasq setup on server:
 
-### Вариант A: Настроить DHCP на роутере LANCOM (РЕКОМЕНДУЕТСЯ)
+### Option A: Configure DHCP on LANCOM Router (RECOMMENDED)
 
-1. Войти в WEBconfig роутера: <https://192.168.62.1/>
-2. Изменить Primary DNS с 192.168.62.32 на 192.168.62.153
-3. Клиенты автоматически получат новый DNS при следующем DHCP lease
+1. Log in to Router WEBconfig: <https://192.168.62.1/`>
+2. Change Primary DNS from 192.168.62.32 to 192.168.62.153
+3. Clients automatically receive new DNS on next DHCP lease
 
-### Вариант B: Ручная настройка на клиентах
+### Option B: Manual Configuration on Clients
 
 **Linux**:
 
@@ -440,18 +437,18 @@ sudo nmcli connection up <connection-name>
 
 **Windows**:
 
-1. Панель управления → Сеть и Интернет → Сетевые подключения
-2. Правой кнопкой на адаптере → Свойства
-3. IPv4 → Свойства → Использовать следующие адреса DNS-серверов
-4. Предпочитаемый DNS: 192.168.62.153
-5. Альтернативный DNS: 192.168.62.32
+1. Control Panel → Network and Internet → Network Connections
+2. Right click adapter → Properties
+3. IPv4 → Properties → Use the following DNS server addresses
+4. Preferred DNS: 192.168.62.153
+5. Alternate DNS: 192.168.62.32
 
 **macOS**:
 
-1. Системные настройки → Сеть
-2. Выбрать активное подключение → Дополнительно
-3. DNS → Добавить 192.168.62.153
+1. System Preferences → Network
+2. Select active connection → Advanced
+3. DNS → Add 192.168.62.153
 
 ---
 
-**Автор**: Augment Agent**Дата**: 2025-10-27
+**Author**: Augment Agent**Date**: 2025-10-27

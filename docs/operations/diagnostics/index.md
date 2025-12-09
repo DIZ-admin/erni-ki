@@ -1,140 +1,140 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# ДИАГНОСТИКА СИСТЕМЫ ERNI-KI
+# ERNI-KI SYSTEM DIAGNOSTICS
 
 [TOC]
 
-## Обзор
+## Overview
 
-Данный раздел содержит комплексную методологию диагностики системы ERNI-KI,
-разработанную на основе опыта исправления критических ошибок в тестировании,
-которые приводили к занижению реальной оценки системы.
+This section contains comprehensive ERNI-KI system diagnostic methodology,
+developed based on experience fixing critical testing errors that led to
+underestimation of actual system performance.
 
-## Документация
+## Documentation
 
-### Основные документы
+### Main documents
 
-1.**[erni-ki-diagnostic-methodology.md](./erni-ki-diagnostic-methodology.md)**
+1. **[erni-ki-diagnostic-methodology.md](./erni-ki-diagnostic-methodology.md)**
 
-- Комплексная инструкция по диагностике
-- Правильная методология тестирования компонентов
-- Избежание типичных ошибок диагностики
-- Структура диагностического отчета
-- Критерии оценки здоровья системы
+- Comprehensive diagnostic instructions
+- Correct component testing methodology
+- Avoiding typical diagnostic errors
+- Diagnostic report structure
+- System health evaluation criteria
 
-### Инструменты
+### Tools
 
-1.**`../scripts/erni-ki-health-check.sh`**
+1. **`../scripts/erni-ki-health-check.sh`**
 
-- Автоматизированный скрипт диагностики
-- Полная проверка всех компонентов системы
-- Цветной вывод и детальная отчетность
-- Расчет общей оценки здоровья системы
+- Automated diagnostic script
+- Full check of all system components
+- Color output and detailed reporting
+- Overall system health score calculation
 
-## Быстрый старт
+## Quick start
 
-### Запуск полной диагностики
+### Run full diagnostics
 
 ```bash
-# Перейти в корневую директорию ERNI-KI
+# Navigate to ERNI-KI root directory
 cd /path/to/erni-ki
 
-# Запустить автоматизированную диагностику
+# Run automated diagnostics
 ./scripts/erni-ki-health-check.sh
 ```
 
-## Ручная диагностика ключевых компонентов
+## Manual diagnostics of key components
 
 {% raw %}
 
 ```bash
-# 1. Проверка Docker контейнеров
+# 1. Check Docker containers
 docker ps --filter "name=erni-ki" --format "table {{.Names}}\t{{.Status}}" | grep -c "healthy"
 
-# 2. Тестирование LiteLLM API
+# 2. Test LiteLLM API
 curl -H "Authorization: Bearer sk-7b788d5ee69638c94477f639c91f128911bdf0e024978d4ba1dbdf678eba38bb" \
  http://localhost:4000/v1/models
 
-# 3. Тестирование SearXNG
+# 3. Test SearXNG
 curl -s "http://localhost:8080/search?q=test&format=json" | jq -r '.results | length'
 
-# 4. Тестирование Redis
+# 4. Test Redis
 docker exec erni-ki-redis-1 redis-cli -a "$REDIS_PASSWORD" ping
 
-# 5. Тестирование внешнего доступа
+# 5. Test external access
 curl -I "https://ki.erni-gruppe.ch"
 ```
 
 {% endraw %}
 
-## Интерпретация результатов
+## Interpreting results
 
-### Шкала оценки здоровья системы
+### System health rating scale
 
-| Диапазон | Статус               | Описание                                             |
-| -------- | -------------------- | ---------------------------------------------------- |
-| 90-100%  | [OK] ОТЛИЧНО         | Система работает идеально                            |
-| 70-89%   | [WARNING] ХОРОШО     | Минорные проблемы, система функциональна             |
-| 50-69%   | 🟠 УДОВЛЕТВОРИТЕЛЬНО | Значительные проблемы, ограниченная функциональность |
-| <50%     | КРИТИЧНО             | Система требует немедленного вмешательства           |
+| Range   | Status          | Description                               |
+| ------- | --------------- | ----------------------------------------- |
+| 90-100% | [OK] EXCELLENT  | System working perfectly                  |
+| 70-89%  | [WARNING] GOOD  | Minor issues, system functional           |
+| 50-69%  | 🟠 SATISFACTORY | Significant issues, limited functionality |
+| <50%    | CRITICAL        | System requires immediate intervention    |
 
-### Ключевые индикаторы
+### Key indicators
 
--**Healthy Containers**: Количество контейнеров в статусе "healthy" -**API
-Response Time**: Время отклика критических API endpoints -**External Access**:
-Доступность через HTTPS домены -**Integration Status**: Работоспособность
-интеграций между сервисами
+- **Healthy Containers**: Number of containers in "healthy" status
+- **API Response Time**: Response time of critical API endpoints
+- **External Access**: HTTPS domain accessibility
+- **Integration Status**: Functionality of service integrations
 
-## Типичные проблемы и решения
+## Typical problems and solutions
 
-### Частые ошибки диагностики
+### Common diagnostic errors
 
-1.**Тестирование без аутентификации**
+1. **Testing without authentication**
 
 - `curl http://localhost:4000/v1/models`
 - `curl -H "Authorization: Bearer TOKEN" http://localhost:4000/v1/models`
 
-  2.**Неправильные endpoints**
+2. **Incorrect endpoints**
 
 - `curl http://localhost:8080/search?q=test`
 - `curl http://localhost:8080/search?q=test&format=json`
 
-  3.**Игнорирование паролей Redis**
+3. **Ignoring Redis passwords**
 
 - `docker exec redis redis-cli ping`
 - `docker exec redis redis-cli -a "PASSWORD" ping`
 
-### Быстрые исправления
+### Quick fixes
 
 ```bash
-# Перезапуск проблемного контейнера
+# Restart problematic container
 docker restart erni-ki-[service-name]
 
-# Проверка логов
+# Check logs
 docker logs erni-ki-[service-name] --since=1h
 
-# Проверка использования ресурсов
+# Check resource usage
 docker stats --no-stream
 ```
 
-## Мониторинг и автоматизация
+## Monitoring and automation
 
-### Регулярная диагностика
+### Regular diagnostics
 
 ```bash
-# Добавить в crontab для ежедневной проверки в 06:00
+# Add to crontab for daily check at 06:00
 0 6 * * * /path/to/erni-ki/scripts/erni-ki-health-check.sh >> /var/log/erni-ki-health.log 2>&1
 ```
 
-## Настройка алертов
+## Configure alerts
 
 ```bash
-# Пример скрипта для отправки уведомлений при проблемах
+# Example script for sending notifications on issues
 # !/bin/bash
 HEALTH_SCORE=$(./scripts/erni-ki-health-check.sh | grep "System Health Score" | grep -o '[0-9]*')
 
@@ -143,40 +143,38 @@ if [[ $HEALTH_SCORE -lt 80 ]]; then
 fi
 ```
 
-## Лучшие практики
+## Best practices
 
-### Рекомендации
+### Recommendations
 
-1.**Регулярность**: Проводите диагностику минимум раз в
-день 2.**Документирование**: Ведите журнал изменений и
-проблем 3.**Автоматизация**: Используйте скрипты для повторяющихся
-проверок 4.**Мониторинг**: Настройте алерты для критических
-метрик 5.**Обучение**: Изучайте документацию каждого компонента
+1. **Regularity**: Conduct diagnostics at least once per day 2.
+   **Documentation**: Keep log of changes and issues 3. **Automation**: Use
+   scripts for repetitive checks 4. **Monitoring**: Set up alerts for critical
+   metrics 5. **Training**: Study documentation of each component
 
-### Процесс диагностики
+### Diagnostic process
 
-1.**Подготовка**: Убедитесь, что система стабильна 2.**Выполнение**: Запустите
-полную диагностику 3.**Анализ**: Изучите результаты и выявите
-проблемы 4.**Действия**: Примите меры по устранению проблем 5.**Верификация**:
-Повторите диагностику для подтверждения исправлений
+1. **Preparation**: Ensure system is stable 2. **Execution**: Run full
+   diagnostics 3. **Analysis**: Review results and identify issues 4.
+   **Actions**: Take measures to fix issues 5. **Verification**: Repeat
+   diagnostics to confirm fixes
 
-## Поддержка
+## Support
 
-При возникновении проблем с диагностикой:
+When diagnostic issues arise:
 
-1. Проверьте актуальность конфигурационных файлов
-2. Убедитесь в правильности команд тестирования
-3. Изучите логи проблемных компонентов
-4. Обратитесь к документации конкретного сервиса
+1. Check configuration files are up to date
+2. Ensure testing commands are correct
+3. Review logs of problematic components
+4. Refer to specific service documentation
 
-## История изменений
+## Change history
 
--**v2.0**(2025-09-25): Комплексная переработка методологии на основе опыта
-исправления ошибок диагностики -**v1.0**(2025-09-01): Первоначальная версия
-базовой диагностики
+- **v2.0** (2025-09-25): Comprehensive methodology revision based on experience
+  fixing diagnostic errors
+- **v1.0** (2025-09-01): Initial version of basic diagnostics
 
 ---
 
-**Помните**: Правильная диагностика - основа стабильной работы системы ERNI-KI.
-Не позволяйте неправильному тестированию занижать реальную оценку
-производительности системы!
+**Remember**: Correct diagnostics is the foundation of stable ERNI-KI operation.
+Don't let incorrect testing underestimate actual system performance!

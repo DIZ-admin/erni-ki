@@ -1,180 +1,175 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
-title: 'Справочник сервисов ERNI-KI'
+title: 'ERNI-KI Service Inventory'
 ---
 
-# Справочник сервисов ERNI-KI
+# ERNI-KI Service Inventory
 
-Документ агрегирует сведения из `compose.yml` и `env/*.env` о каждом сервисе,
-чтобы инженеры могли быстро понять назначение контейнеров, точки входа,
-зависимости и требования к безопасности. Для обновлений образов используйте
+This document aggregates information from `compose.yml` and `env/*.env` about
+each service, so engineers can quickly understand container purposes, entry
+points, dependencies, and security requirements. For image updates, use the
 [checklist](../operations/maintenance/image-upgrade-checklist.md).
 
-## Базовая инфраструктура и хранение
+## Base Infrastructure and Storage
 
-| Сервис       | Назначение                                         | Порты                                                 | Зависимости и конфигурация                                                                         | Обновления и замечания                                                                                                                           |
-| ------------ | -------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `watchtower` | Автообновление контейнеров, чистка старых образов. | `127.0.0.1:8091->8080` (HTTP API только с localhost). | `env/watchtower.env`, монтирует `/var/run/docker.sock`, секрет `watchtower_api_token`.             | API требует токен из Docker secret, порт привязан к localhost; лимиты `mem_limit=256M`, `mem_reservation=128M`, `cpus=0.2`, `oom_score_adj=500`. |
-| `db`         | PostgreSQL 17 + pgvector, основное хранилище.      | Только внутренняя сеть.                               | `env/db.env`, секрет `postgres_password`, кастомный `postgresql.conf`, данные в `./data/postgres`. | Автообновление запрещено; healthcheck `pg_isready`.                                                                                              |
-| `redis`      | Кэш, очереди и rate limiting.                      | Только внутренняя сеть.                               | `env/redis.env`, конфиг `./conf/redis/redis.conf`, данные `./data/redis`.                          | Разрешён watchtower (`cache-services`); pinned `redis:7.0.15-alpine` из-за несовместимости RDB v12.                                              |
-| `backrest`   | Резервное копирование данных/конфигов.             | `9898:9898`.                                          | `env/backrest.env`, множественные volume, доступ к Docker socket.                                  | Автообновление включено; требует контроля прав на бэкап каталоги.                                                                                |
+| Service      | Purpose                                     | Ports                                             | Dependencies and Configuration                                                                 | Updates and Notes                                                                                                                                 |
+| ------------ | ------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `watchtower` | Auto-update containers, cleanup old images. | `127.0.0.1:8091->8080` (HTTP API localhost only). | `env/watchtower.env`, mounts `/var/run/docker.sock`, secret `watchtower_api_token`.            | API requires token from Docker secret, port bound to localhost; limits `mem_limit=256M`, `mem_reservation=128M`, `cpus=0.2`, `oom_score_adj=500`. |
+| `db`         | PostgreSQL 17 + pgvector, main storage.     | Internal network only.                            | `env/db.env`, secret `postgres_password`, custom `postgresql.conf`, data in `./data/postgres`. | Auto-update disabled; healthcheck `pg_isready`.                                                                                                   |
+| `redis`      | Cache, queues and rate limiting.            | Internal network only.                            | `env/redis.env`, config `./conf/redis/redis.conf`, data `./data/redis`.                        | Watchtower allowed (`cache-services`); pinned `redis:7.0.15-alpine` due to RDB v12 incompatibility.                                               |
+| `backrest`   | Backup data/configs.                        | `9898:9898`.                                      | `env/backrest.env`, multiple volumes, Docker socket access.                                    | Auto-update enabled; requires permission control on backup directories.                                                                           |
 
-## Сервисы доступа и периферия
+## Access and Edge Services
 
-| Сервис        | Назначение                                                                                                                                      | Порты                            | Зависимости и конфигурация                                                                                                                                                                                                                                                             | Обновления и замечания                                                                                                                                                    |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `nginx`       | Реверс‑прокси, TLS терминация.                                                                                                                  | `80`, `443`, `8080`.             | Конфиги из `./conf/nginx`, SSL в `./conf/nginx/ssl`.                                                                                                                                                                                                                                   | Watchtower выключен (критический прокси); healthcheck `/etc/nginx/healthcheck.sh`.                                                                                        |
-| `cloudflared` | Публикация Nginx наружу через Cloudflare Tunnel.                                                                                                | Нет внешних портов.              | `env/cloudflared.env`, конфиг `./conf/cloudflare/config`.                                                                                                                                                                                                                              | Watchtower включён; требует валидного токена Cloudflare.                                                                                                                  |
-| `auth`        | Сервис JWT-аутентификации для внутренних API.                                                                                                   | `9092:9090`.                     | `env/auth.env`, image собирается из `./auth`.                                                                                                                                                                                                                                          | Автообновление разрешено (`auth-services`).                                                                                                                               |
-| `mcposerver`  | MCP сервер OpenWebUI (git-91e8f94). 7 инструментов: Time, Context7 Docs, PostgreSQL, Filesystem, Memory, SearXNG Web Search, Desktop Commander. | `127.0.0.1:8000->8000`.          | `env/mcposerver.env`, конфиг `./conf/mcposerver`, данные `./data`, Desktop Commander HOME `./data/desktop-commander`, рабочая FS для MCP `/app/data/mcpo-desktop`.                                                                                                                     | Автообновление включено; зависит от `db`. Binding только на localhost; Desktop Commander ограничен каталогами (`allowedDirectories`) и отключённой телеметрией.           |
-| `searxng`     | Метапоиск, источник веб‑результатов.                                                                                                            | Нет публичного порта (internal). | `env/searxng.env`, конфиги `./conf/searxng/*.yml`.                                                                                                                                                                                                                                     | Watchtower включён; образ закреплён на digest `searxng/searxng@sha256:aaa855e8...` (linux/amd64).                                                                         |
-| `edgetts`     | Синтез речи (Edge TTS).                                                                                                                         | `5050:5050`.                     | `env/edgetts.env`. Healthcheck через Python socket.                                                                                                                                                                                                                                    | Watchtower включён; используется digest `travisvn/openai-edge-tts@sha256:4e7e2773...` (schema2 совместим).                                                                |
-| `tika`        | Экстракция контента/метаданных из файлов.                                                                                                       | `9998:9998`.                     | `env/tika.env`.                                                                                                                                                                                                                                                                        | Watchtower включён; образ закреплён на `apache/tika@sha256:3fafa194...` (linux/amd64).                                                                                    |
-| `litellm`     | Прокси LiteLLM с thinking tokens.                                                                                                               | `4000:4000`.                     | `env/litellm.env`, `./conf/litellm/config.yaml`, данные `./data/litellm`, entrypoint `scripts/entrypoints/litellm.sh`, secrets `litellm_db_password`, `litellm_master_key`, `litellm_salt_key`, `litellm_ui_password`, `litellm_api_key`, `openai_api_key`. Зависит от `db`, `ollama`. | Auto-update включён (`ai-services`); лимиты `mem_limit=12G`, `mem_reservation=6G`, `cpus=1.0`, `oom_score_adj=-300` защищают от OOM.                                      |
-| `ollama`      | GPU LLM сервер, хранит модели в `./data/ollama`.                                                                                                | `11434:11434`.                   | `env/ollama.env`, GPU определяется через `.env` (`OLLAMA_GPU_VISIBLE_DEVICES`, `OLLAMA_GPU_DEVICE_IDS`).                                                                                                                                                                               | Watchtower выключен; `mem_limit=16G`, `mem_reservation=8G`, `cpus=12`, `oom_score_adj=-900`; GPU закрепляется через `.env`.                                               |
-| `openwebui`   | Основной UI (Next.js) с GPU поддержкой.                                                                                                         | Через Nginx (`8080` внутри).     | `env/openwebui.env`, shared данные `./data/openwebui`, `./data/docling/shared`, entrypoint `scripts/entrypoints/openwebui.sh`, secrets `postgres_password`, `litellm_api_key`, `openwebui_secret_key`, GPU через `.env` (`OPENWEBUI_GPU_*`).                                           | Watchtower включён; лимиты `mem_limit=8G`, `mem_reservation=4G`, `cpus=4`, `oom_score_adj=-600`, общий volume синхронизирован с Docling.                                  |
-| `docling`     | OCR/Doc ingestion pipeline (Docling Serve).                                                                                                     | Внутренняя сеть (`5001`).        | `env/docling.env`, образы `./data/docling/*`, артефакты `./data/docling/docling-models` (монтируются как `/docling-artifacts` и как кэш Docling), shared volume `./data/docling/shared`, GPU через `.env` (`DOCLING_GPU_*`).                                                           | Автообновление включено (`document-processing`); лимиты `mem_limit=12G`, `mem_reservation=8G`, `cpus=8`, `oom_score_adj=-500`, shared volume синхронизирован с OpenWebUI. |
+| Service       | Purpose                                                                                                                                      | Ports                        | Dependencies and Configuration                                                                                                                                                                                                                                                       | Updates and Notes                                                                                                                                                     |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nginx`       | Reverse proxy, TLS termination.                                                                                                              | `80`, `443`, `8080`.         | Configs from `./conf/nginx`, SSL in `./conf/nginx/ssl`.                                                                                                                                                                                                                              | Watchtower disabled (critical proxy); healthcheck `/etc/nginx/healthcheck.sh`.                                                                                        |
+| `cloudflared` | Expose Nginx externally via Cloudflare Tunnel.                                                                                               | No external ports.           | `env/cloudflared.env`, config `./conf/cloudflare/config`.                                                                                                                                                                                                                            | Watchtower enabled; requires valid Cloudflare token.                                                                                                                  |
+| `auth`        | JWT authentication service for internal APIs.                                                                                                | `9092:9090`.                 | `env/auth.env`, image built from `./auth`.                                                                                                                                                                                                                                           | Auto-update allowed (`auth-services`).                                                                                                                                |
+| `mcposerver`  | MCP server for OpenWebUI (git-91e8f94). 7 tools: Time, Context7 Docs, PostgreSQL, Filesystem, Memory, SearXNG Web Search, Desktop Commander. | `127.0.0.1:8000->8000`.      | `env/mcposerver.env`, config `./conf/mcposerver`, data `./data`, Desktop Commander HOME `./data/desktop-commander`, working FS for MCP `/app/data/mcpo-desktop`.                                                                                                                     | Auto-update enabled; depends on `db`. Binding localhost only; Desktop Commander restricted to directories (`allowedDirectories`) with telemetry disabled.             |
+| `searxng`     | Metasearch, web results source.                                                                                                              | No public port (internal).   | `env/searxng.env`, configs `./conf/searxng/*.yml`.                                                                                                                                                                                                                                   | Watchtower enabled; image pinned to digest `searxng/searxng@sha256:aaa855e8...` (linux/amd64).                                                                        |
+| `edgetts`     | Speech synthesis (Edge TTS).                                                                                                                 | `5050:5050`.                 | `env/edgetts.env`. Healthcheck via Python socket.                                                                                                                                                                                                                                    | Watchtower enabled; uses digest `travisvn/openai-edge-tts@sha256:4e7e2773...` (schema2 compatible).                                                                   |
+| `tika`        | Extract content/metadata from files.                                                                                                         | `9998:9998`.                 | `env/tika.env`.                                                                                                                                                                                                                                                                      | Watchtower enabled; image pinned to `apache/tika@sha256:3fafa194...` (linux/amd64).                                                                                   |
+| `litellm`     | LiteLLM proxy with thinking tokens.                                                                                                          | `4000:4000`.                 | `env/litellm.env`, `./conf/litellm/config.yaml`, data `./data/litellm`, entrypoint `scripts/entrypoints/litellm.sh`, secrets `litellm_db_password`, `litellm_master_key`, `litellm_salt_key`, `litellm_ui_password`, `litellm_api_key`, `openai_api_key`. Depends on `db`, `ollama`. | Auto-update enabled (`ai-services`); limits `mem_limit=12G`, `mem_reservation=6G`, `cpus=1.0`, `oom_score_adj=-300` protect from OOM.                                 |
+| `ollama`      | GPU LLM server, stores models in `./data/ollama`.                                                                                            | `11434:11434`.               | `env/ollama.env`, GPU defined via `.env` (`OLLAMA_GPU_VISIBLE_DEVICES`, `OLLAMA_GPU_DEVICE_IDS`).                                                                                                                                                                                    | Watchtower disabled; `mem_limit=16G`, `mem_reservation=8G`, `cpus=12`, `oom_score_adj=-900`; GPU assigned via `.env`.                                                 |
+| `openwebui`   | Main UI (Next.js) with GPU support.                                                                                                          | Via Nginx (`8080` internal). | `env/openwebui.env`, shared data `./data/openwebui`, `./data/docling/shared`, entrypoint `scripts/entrypoints/openwebui.sh`, secrets `postgres_password`, `litellm_api_key`, `openwebui_secret_key`, GPU via `.env` (`OPENWEBUI_GPU_*`).                                             | Watchtower enabled; limits `mem_limit=8G`, `mem_reservation=4G`, `cpus=4`, `oom_score_adj=-600`, shared volume synchronized with Docling.                             |
+| `docling`     | OCR/Doc ingestion pipeline (Docling Serve).                                                                                                  | Internal network (`5001`).   | `env/docling.env`, images `./data/docling/*`, artifacts `./data/docling/docling-models` (mounted as `/docling-artifacts` and as Docling cache), shared volume `./data/docling/shared`, GPU via `.env` (`DOCLING_GPU_*`).                                                             | Auto-update enabled (`document-processing`); limits `mem_limit=12G`, `mem_reservation=8G`, `cpus=8`, `oom_score_adj=-500`, shared volume synchronized with OpenWebUI. |
 
-## Мониторинг и логирование
+## Monitoring and Logging
 
-| Сервис                    | Назначение                                            | Порты                             | Зависимости и конфигурация                                                                | Обновления и замечания                                                                                                       |
-| ------------------------- | ----------------------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `prometheus`              | Сбор метрик.                                          | `127.0.0.1:9091->9090`.           | Конфиги в `./conf/prometheus`, данные `./data/prometheus`.                                | Доступен только локально; внешний доступ через Nginx/SSH-туннель.                                                            |
-| `grafana`                 | Дашборды и алерты.                                    | `127.0.0.1:3000->3000`.           | Данные `./data/grafana`, provisioning `./conf/grafana`, secret `grafana_admin_password`.  | Порт доступен только локально; админ-пароль берётся из Docker secret, внешний доступ через Nginx/VPN.                        |
-| `loki`                    | Хранилище логов (заголовок `X-Scope-OrgID: erni-ki`). | `127.0.0.1:3100->3100`.           | Конфиг `./conf/loki/loki-config.yaml`, данные `./data/loki`.                              | Watchtower включён; порт теперь доступен только локально.                                                                    |
-| `alertmanager`            | Управление алертами Prometheus.                       | `127.0.0.1:9093/9094`.            | Конфиг `./conf/alertmanager`, данные `./data/alertmanager`.                               | Теперь только localhost; проксируйте через Nginx при необходимости.                                                          |
-| `node-exporter`           | Метрики узла.                                         | `127.0.0.1:9101->9100`.           | Монтирует `/proc`, `/sys`, `/rootfs`, `pid: host`.                                        | Слушает только localhost, утечки наружу исключены.                                                                           |
-| `postgres-exporter`       | Метрики PostgreSQL.                                   | `127.0.0.1:9188->9188`.           | DSN читается из Docker secret `postgres_exporter_dsn` (shell wrapper), зависит от `db`.   | Доступ локальный; подключение извне через туннель.                                                                           |
-| `postgres-exporter-proxy` | Socat-прокси IPv4→IPv6.                               | Делит сеть с `postgres-exporter`. | Без env/volumes, работает на `alpine/socat@sha256:86b69d2e...`.                           | Следим за ресурсами, автообновление разрешено.                                                                               |
-| `redis-exporter`          | Метрики Redis.                                        | `127.0.0.1:9121->9121`.           | Авторизация через `REDIS_PASSWORD_FILE` (`redis_exporter_url` содержит JSON host→пароль). | Теперь виден только с локального хоста.                                                                                      |
-| `nvidia-exporter`         | Метрики GPU.                                          | `127.0.0.1:9445->9445`.           | Требует GPU (`runtime: nvidia`).                                                          | Healthcheck отсутствует, но порт локальный.                                                                                  |
-| `blackbox-exporter`       | HTTP/TCP проверки доступности.                        | `127.0.0.1:9115->9115`.           | Конфиг `./conf/blackbox-exporter/blackbox.yml`.                                           | Используйте Nginx/SSH для удалённого доступа.                                                                                |
-| `nginx-exporter`          | Метрики Nginx.                                        | `127.0.0.1:9113->9113`.           | Команда `--nginx.scrape-uri=http://nginx:80/nginx_status`.                                | Порт доступен только локально.                                                                                               |
-| `ollama-exporter`         | Метрики Ollama.                                       | `127.0.0.1:9778->9778`.           | Dockerfile в `./monitoring/Dockerfile.ollama-exporter`.                                   | Нет healthcheck; порт не публикуется наружу.                                                                                 |
-| `cadvisor`                | Метрики контейнеров.                                  | `127.0.0.1:8081->8080`.           | Монтирует корневые FS.                                                                    | Порт ограничен localhost; внешний доступ через прокси.                                                                       |
-| `fluent-bit`              | Централизованный сбор логов → Loki.                   | `127.0.0.1:2020/2021/24224`.      | Конфиги `./conf/fluent-bit`, volume `erni-ki-logs`.                                       | Доступ к HTTP/metrics/forward только через localhost.                                                                        |
-| `rag-exporter`            | SLA-мониторинг RAG.                                   | `127.0.0.1:9808->9808`.           | Переменные `RAG_TEST_URL`, зависит от `openwebui`.                                        | Endpoint виден только локально.                                                                                              |
-| `webhook-receiver`        | Приём уведомлений Alertmanager и кастомные скрипты.   | `127.0.0.1:9095->9093`.           | Скрипты `./conf/webhook-receiver`, логи `./data/webhook-logs`.                            | Endpoint доступен через локальный прокси; лимиты `mem_limit=256M`, `mem_reservation=128M`, `cpus=0.25`, `oom_score_adj=250`. |
+| Service                   | Purpose                                                | Ports                                    | Dependencies and Configuration                                                              | Updates and Notes                                                                                                       |
+| ------------------------- | ------------------------------------------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `prometheus`              | Metrics collection.                                    | `127.0.0.1:9091->9090`.                  | Configs in `./conf/prometheus`, data `./data/prometheus`.                                   | Accessible locally only; external access via Nginx/SSH tunnel.                                                          |
+| `grafana`                 | Dashboards and alerts.                                 | `127.0.0.1:3000->3000`.                  | Data `./data/grafana`, provisioning `./conf/grafana`, secret `grafana_admin_password`.      | Port accessible locally only; admin password from Docker secret, external access via Nginx/VPN.                         |
+| `loki`                    | Log storage (header `X-Scope-OrgID: erni-ki`).         | `127.0.0.1:3100->3100`.                  | Config `./conf/loki/loki-config.yaml`, data `./data/loki`.                                  | Watchtower enabled; port now accessible locally only.                                                                   |
+| `alertmanager`            | Prometheus alert management.                           | `127.0.0.1:9093/9094`.                   | Config `./conf/alertmanager`, data `./data/alertmanager`.                                   | Now localhost only; proxy via Nginx if needed.                                                                          |
+| `node-exporter`           | Node metrics.                                          | `127.0.0.1:9101->9100`.                  | Mounts `/proc`, `/sys`, `/rootfs`, `pid: host`.                                             | Listens localhost only, external leaks excluded.                                                                        |
+| `postgres-exporter`       | PostgreSQL metrics.                                    | `127.0.0.1:9188->9188`.                  | DSN read from Docker secret `postgres_exporter_dsn` (shell wrapper), depends on `db`.       | Local access; external connection via tunnel.                                                                           |
+| `postgres-exporter-proxy` | Socat proxy IPv4→IPv6.                                 | Shares network with `postgres-exporter`. | No env/volumes, runs on `alpine/socat@sha256:86b69d2e...`.                                  | Monitor resources, auto-update allowed.                                                                                 |
+| `redis-exporter`          | Redis metrics.                                         | `127.0.0.1:9121->9121`.                  | Authorization via `REDIS_PASSWORD_FILE` (`redis_exporter_url` contains JSON host→password). | Now visible only from localhost.                                                                                        |
+| `nvidia-exporter`         | GPU metrics.                                           | `127.0.0.1:9445->9445`.                  | Requires GPU (`runtime: nvidia`).                                                           | No healthcheck, but port is local.                                                                                      |
+| `blackbox-exporter`       | HTTP/TCP availability checks.                          | `127.0.0.1:9115->9115`.                  | Config `./conf/blackbox-exporter/blackbox.yml`.                                             | Use Nginx/SSH for remote access.                                                                                        |
+| `nginx-exporter`          | Nginx metrics.                                         | `127.0.0.1:9113->9113`.                  | Command `--nginx.scrape-uri=http://nginx:80/nginx_status`.                                  | Port accessible locally only.                                                                                           |
+| `ollama-exporter`         | Ollama metrics.                                        | `127.0.0.1:9778->9778`.                  | Dockerfile in `./monitoring/Dockerfile.ollama-exporter`.                                    | No healthcheck; port not published externally.                                                                          |
+| `cadvisor`                | Container metrics.                                     | `127.0.0.1:8081->8080`.                  | Mounts root FS.                                                                             | Port limited to localhost; external access via proxy.                                                                   |
+| `fluent-bit`              | Centralized log collection → Loki.                     | `127.0.0.1:2020/2021/24224`.             | Configs `./conf/fluent-bit`, volume `erni-ki-logs`.                                         | Access to HTTP/metrics/forward via localhost only.                                                                      |
+| `rag-exporter`            | RAG SLA monitoring.                                    | `127.0.0.1:9808->9808`.                  | Variables `RAG_TEST_URL`, depends on `openwebui`.                                           | Endpoint visible locally only.                                                                                          |
+| `webhook-receiver`        | Receive Alertmanager notifications and custom scripts. | `127.0.0.1:9095->9093`.                  | Scripts `./conf/webhook-receiver`, logs `./data/webhook-logs`.                              | Endpoint accessible via local proxy; limits `mem_limit=256M`, `mem_reservation=128M`, `cpus=0.25`, `oom_score_adj=250`. |
 
-> **Примечание:**Docling восстановлен в основном `compose.yml`; shared volume
-> `./data/docling/shared` используется совместно с OpenWebUI.
+> **Note:** Docling restored in main `compose.yml`; shared volume
+> `./data/docling/shared` used jointly with OpenWebUI.
 >
-> **Доступ к метрикам:**все мониторинговые сервисы проброшены только на
-> `127.0.0.1`. Для удалённого просмотра используйте Nginx (с auth/TLS), VPN или
-> SSH-туннель; внутри docker-сети сервисы продолжают работать без изменений.
+> **Metrics Access:** all monitoring services bound to `127.0.0.1` only. For
+> remote viewing use Nginx (with auth/TLS), VPN or SSH tunnel; inside docker
+> network services continue to work unchanged.
 
-## Политика лимитов ресурсов (обновлено 2025-11-12)
+## Resource Limits Policy (updated 2025-11-12)
 
-- Watchtower и webhook-receiver теперь используют нативные поля `mem_limit`,
-  `mem_reservation`, `cpus` и `oom_score_adj`, поэтому ограничения работают в
-  `docker compose` без Swarm.
-- LiteLLM, Ollama, OpenWebUI и Docling фиксируют лимиты памяти/CPU и
-  отрицательные `oom_score_adj`, что уменьшает вероятность убийства критичных
-  процессов (Ollama: -900, OpenWebUI: -600, Docling: -500, LiteLLM: -300).
-- GPU-привязка осуществляется через переменные `.env` (`*_GPU_VISIBLE_DEVICES`,
-  `*_CUDA_VISIBLE_DEVICES`, `*_GPU_DEVICE_IDS`) и `nvidia-container-runtime`;
-  чтобы развести сервисы по разным девайсам или MIG-слайсам, достаточно обновить
-  `.env` и перезапустить сервисы.
+- Watchtower and webhook-receiver now use native fields `mem_limit`,
+  `mem_reservation`, `cpus` and `oom_score_adj`, so limits work in
+  `docker compose` without Swarm.
+- LiteLLM, Ollama, OpenWebUI and Docling fix memory/CPU limits and negative
+  `oom_score_adj`, which reduces the probability of killing critical processes
+  (Ollama: -900, OpenWebUI: -600, Docling: -500, LiteLLM: -300).
+- GPU binding is done via `.env` variables (`*_GPU_VISIBLE_DEVICES`,
+  `*_CUDA_VISIBLE_DEVICES`, `*_GPU_DEVICE_IDS`) and `nvidia-container-runtime`;
+  to separate services across different devices or MIG slices, just update
+  `.env` and restart services.
 
-## Политика Docling shared volume
+## Docling Shared Volume Policy
 
-- Структура тома: `uploads/` (сырьё, 2 дня), `processed/` (промежуточные
-  артефакты, 14 дней), `exports/` (результаты, 30 дней), `quarantine/`
-  (инциденты, 60 дней), `tmp/` (1 день). Детали —
+- Volume structure: `uploads/` (raw, 2 days), `processed/` (intermediate
+  artifacts, 14 days), `exports/` (results, 30 days), `quarantine/` (incidents,
+  60 days), `tmp/` (1 day). Details —
   `docs/operations/runbooks/docling-shared-volume.md`.
-- Права доступа: владелец — пользователь docker host; группа `docling-data`
-  имеет `rwx`; аудиторы добавляются через ACL `docling-readonly` с `rx` на
-  `exports/`.
-- Очистка и квоты: `scripts/maintenance/docling-shared-cleanup.sh` (dry-run по
-  умолчанию, `--apply` для удаления). Скрипт предупреждает при превышении
-  `DOC_SHARED_MAX_SIZE_GB` (20 ГБ).
-- Рекомендуемый cron:
+- Access rights: owner — docker host user; group `docling-data` has `rwx`;
+  auditors added via ACL `docling-readonly` with `rx` on `exports/`.
+- Cleanup and quotas: `scripts/maintenance/docling-shared-cleanup.sh` (dry-run
+  by default, `--apply` to delete). Script warns when exceeding
+  `DOC_SHARED_MAX_SIZE_GB` (20 GB).
+- Recommended cron:
   `10 2 * * * cd /home/konstantin/Documents/augment-projects/erni-ki && ./scripts/maintenance/docling-shared-cleanup.sh --apply >> logs/docling-shared-cleanup.log 2>&1`.
 
-## Обновление digest для образов без версионных тегов
+## Updating Digest for Images Without Version Tags
 
-Некоторые сервисы (SearXNG, EdgeTTS, Apache Tika) публикуют только `latest`,
-поэтому мы фиксируем sha256-digest, чтобы Watchtower не подтягивал неожиданные
-релизы.
+Some services (SearXNG, EdgeTTS, Apache Tika) only publish `latest`, so we pin
+sha256-digest to prevent Watchtower from pulling unexpected releases.
 
-1. Получите свежий digest для amd64:
+1. Get fresh digest for amd64:
 
    ```bash
    docker manifest inspect <image>:latest | jq -r '.manifests[] | select(.platform.architecture=="amd64") | .digest' | head -n1
-   # EdgeTTS использует однoарх. образ → можно .config.digest
+   # EdgeTTS uses single-arch image → can use .config.digest
    ```
 
-2. Обновите `compose.yml`, заменив строку вида `image: <img>@sha256:...`.
-3. Зафиксируйте новый digest в таблице выше и в Archon документе (раздел
+2. Update `compose.yml`, replacing line like `image: <img>@sha256:...`.
+3. Record new digest in table above and in Archon document (section
    «recent_updates»).
-4. После пуша выполните
-   `docker compose pull <service> && docker compose up -d <service>` и
-   проконтролируйте healthchecks.
+4. After push execute
+   `docker compose pull <service> && docker compose up -d <service>` and monitor
+   healthchecks.
 
-Актуальные digests на 2025‑11‑12:
+Current digests as of 2025-11-12:
 
 - `travisvn/openai-edge-tts@sha256:4e7e2773350a3296f301b5f66e361daad243bdc4b799eec32613fddcee849040`
 - `apache/tika@sha256:3fafa194474c5f3a8cff25a0eefd07e7c0513b7f552074ad455e1af58a06bbea`
 - `searxng/searxng@sha256:aaa855e878bd4f6e61c7c471f03f0c9dd42d223914729382b34b875c57339b98`
 
-## Операционные заметки (из Context7 /docker/compose)
+## Operational Notes (from Context7 /docker/compose)
 
-- Для быстрой диагностики состояния контейнеров используйте
-  `docker compose ps --status=running` или `--filter status=running`, а для
-  завершившихся сервисов — `--status=exited`. Это удобнее, чем просматривать
-  полный список длинного стека.
-- `docker compose top` показывает процессы внутри сервисов с PID/UID — полезно
-  при отладке зависаний LiteLLM/Ollama без захода в контейнер.
-- Рекомендуется регулярно прогонять линтеры/тесты Compose-проекта (см.
-  официальные рекомендации `golint`, `go test`), если меняются инструменты
-  управления стеком.
-- Watchtower теперь факультативен: все сервисы запускаются без `depends_on` от
-  него, поэтому при сбоях Watchtower остальная инфраструктура поднимается
-  автономно.
-- GPU для Ollama/OpenWebUI/Docling назначаются через `.env` (`OLLAMA_GPU_*`,
-  `OPENWEBUI_GPU_*`, `DOCLING_GPU_*`). Рекомендуемый шаблон в `.env.example`:
-  GPU0 → Ollama, GPU1 → OpenWebUI/Docling. Для одно-GPU систем укажите
-  одинаковые значения или используйте MIG-слайсы.
-- Kibana/Elasticsearch исключены; для просмотра логов используйте Grafana →
-  Explore (Loki), а для обслуживания хранилища —
-  `scripts/maintenance/docling-shared-cleanup.sh` + Fluent Bit ↔ Loki пайплайн.
+- For quick container status diagnostics use
+  `docker compose ps --status=running` or `--filter status=running`, and for
+  exited services — `--status=exited`. This is more convenient than viewing the
+  full long stack list.
+- `docker compose top` shows processes inside services with PID/UID — useful
+  when debugging LiteLLM/Ollama hangs without entering container.
+- It's recommended to regularly run linters/tests for Compose project (see
+  official recommendations `golint`, `go test`), if stack management tools
+  change.
+- Watchtower is now optional: all services start without `depends_on` on it, so
+  when Watchtower fails the rest of infrastructure starts autonomously.
+- GPU for Ollama/OpenWebUI/Docling assigned via `.env` (`OLLAMA_GPU_*`,
+  `OPENWEBUI_GPU_*`, `DOCLING_GPU_*`). Recommended template in `.env.example`:
+  GPU0 → Ollama, GPU1 → OpenWebUI/Docling. For single-GPU systems specify same
+  values or use MIG slices.
+- Kibana/Elasticsearch excluded; for log viewing use Grafana → Explore (Loki),
+  and for storage maintenance —
+  `scripts/maintenance/docling-shared-cleanup.sh` + Fluent Bit ↔ Loki pipeline.
 
-## Наблюдаемость и безопасность
+## Observability and Security
 
--**LLM & Model Context**: LiteLLM v1.80.0.rc.1, MCP Server 8000 и RAG API
-(`/api/mcp/*`, `/api/search`) используют PostgreSQL + Redis для context storage;
-`docs/reference/api-reference.md` и `docs/operations/operations-handbook.md`
-содержат маршруты, SLA и список инструментов. -**Docling/EdgeTTS**: работают
-через internal ports, используют CPU, обеспечивают многоязычный RAG pipeline и
-служат источником для `docs/operations/monitoring-guide.md`.
-
-- Журналы высылаются во Fluent Bit (24224 forward, 2020 HTTP) и передаются в
-  Loki, а критические сервисы (OpenWebUI, Ollama, PostgreSQL, Nginx) также пишут
-  в `json-file` с tag `critical.*` по настройке `compose.yml`.
-- Прометей 3.0.1 опрашивает 32 target’а и содержит 27 активных правил в
+- **LLM & Model Context**: LiteLLM v1.80.0.rc.1, MCP Server 8000 and RAG API
+  (`/api/mcp/*`, `/api/search`) use PostgreSQL + Redis for context storage;
+  `docs/reference/api-reference.md` and `docs/operations/operations-handbook.md`
+  contain routes, SLA and tool list.
+- **Docling/EdgeTTS**: operate via internal ports, use CPU, provide multilingual
+  RAG pipeline and serve as source for `docs/operations/monitoring-guide.md`.
+- Logs sent to Fluent Bit (24224 forward, 2020 HTTP) and forwarded to Loki, and
+  critical services (OpenWebUI, Ollama, PostgreSQL, Nginx) also write to
+  `json-file` with tag `critical.*` per `compose.yml` configuration.
+- Prometheus 3.0.1 polls 32 targets and contains 27 active rules in
   `conf/prometheus/alerts.yml` (Critical, Performance, Database, GPU, Nginx).
-  Alertmanager v0.28.0 отправляет оповещения по предопределённому каналу
-  (Slack/Teams через Watchtower metrics API).
-- Grafana v11.6.6 содержит 18 дашбордов, включая GPU/LLM, PostgreSQL, Redis,
-  Docker-хост. Каждое обновление дашборда фиксируется в
+  Alertmanager v0.28.0 sends alerts via predefined channel (Slack/Teams via
+  Watchtower metrics API).
+- Grafana v11.6.6 contains 18 dashboards, including GPU/LLM, PostgreSQL, Redis,
+  Docker host. Each dashboard update recorded in
   `docs/operations/grafana-dashboards-guide.md`.
-- Безопасность базируется на Nginx WAF, Cloudflare Zero Trust (5 туннелей), JWT
-  Go-сервисе и секретах в `secrets/`. Подробнее см.
-  `security/security-policy.md`.
+- Security based on Nginx WAF, Cloudflare Zero Trust (5 tunnels), JWT Go service
+  and secrets in `secrets/`. Details see `security/security-policy.md`.
 
-## Источники и ссылки
+## Sources and References
 
 - Docker Compose: `compose.yml` (logging tiers, healthchecks, restart policies,
   GPU labels).
-- Конфигурации: `env/*.env`, `conf/nginx`, `conf/redis/redis.conf`,
+- Configurations: `env/*.env`, `conf/nginx`, `conf/redis/redis.conf`,
   `conf/litellm`, `conf/prometheus`.
-- Мониторинг и runbooks: `docs/operations/monitoring-guide.md`,
+- Monitoring and runbooks: `docs/operations/monitoring-guide.md`,
   `docs/operations/automated-maintenance-guide.md`, `docs/operations/runbooks/`.
-- Архитектура: `docs/architecture/architecture.md` (GPU allocation, Cloudflare
-  tunnels, 30 сервисов).
-- Безопасность: `security/security-policy.md`,
-  `docs/archive/reports/documentation-audit-2025-10-24.md` (указаны риски и
-  необходимые актуализации).
+- Architecture: `docs/architecture/architecture.md` (GPU allocation, Cloudflare
+  tunnels, 30 services).
+- Security: `security/security-policy.md`,
+  `docs/archive/reports/documentation-audit-2025-10-24.md` (risks indicated and
+  required updates).
