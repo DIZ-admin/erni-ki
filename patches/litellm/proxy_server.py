@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from litellm.integrations.opentelemetry import OpenTelemetry
     from opentelemetry.trace import Span as _Span
 
-    Span = Union[_Span, Any]
+    Span = _Span | Any  # noqa: UP007
 else:
     Span = Any
     OpenTelemetry = Any
@@ -72,15 +72,15 @@ sys.path.insert(
 )  # Adds the parent directory to the system path - for litellm local dev
 
 try:
-    import logging
+    import logging  # noqa: F401 - used for dependency check
 
-    import backoff
+    import backoff  # noqa: F401 - used for dependency check
     import fastapi
     import orjson
     import yaml  # type: ignore
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
 except ImportError as e:
-    raise ImportError(f"Missing dependency {e}. Run `pip install 'litellm[proxy]'`")
+    raise ImportError(f"Missing dependency {e}. Run `pip install 'litellm[proxy]'`") from e
 
 list_of_messages = [
     "'The thing I wish you improved is...'",

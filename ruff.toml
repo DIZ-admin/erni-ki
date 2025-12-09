@@ -46,3 +46,26 @@ ignore = [
 "scripts/**/*.py" = ["S603", "S607"]
 "conf/**/*.py" = ["S603", "S607"]
 "ops/**/*.py" = ["S603", "S607"]
+# LiteLLM patches - upstream code with intentional patterns that we shouldn't change
+# These are from the official LiteLLM repository and should not be modified
+"patches/litellm/*.py" = [
+  "E402",   # import ordering after try-except blocks
+  "E501",   # long lines in docstrings/comments
+  "S108",   # /tmp usage (deliberate for non-root mode)
+  "S110",   # try-except-pass (upstream deliberate pattern)
+  "S311",   # pseudo-random for non-crypto use
+  "S603",   # subprocess calls (validated inputs)
+  "F403",   # star imports from _types module
+  "F405",   # names from star imports
+  "F811",   # redefinition of Union (upstream pattern)
+  "B006",   # mutable default args (upstream FastAPI pattern)
+  "B007",   # unused loop variables
+  "B008",   # Depends() in FastAPI signatures (standard pattern)
+  "B904",   # raise from in exception handlers (FastAPI pattern)
+  "C408",   # dict() calls (style preference)
+  "SIM102", # nested if statements (readability in complex logic)
+  "SIM105", # contextlib.suppress alternative
+  "SIM108", # ternary operator preference
+  "SIM113", # enumerate preference
+  "SIM210", # True if else False simplification
+]

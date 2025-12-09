@@ -60,7 +60,8 @@ detect_os() {
 }
 
 # Get current OS
-readonly CURRENT_OS=$(detect_os)
+CURRENT_OS=$(detect_os)
+readonly CURRENT_OS
 
 # ============================================================================
 # Platform Validation
