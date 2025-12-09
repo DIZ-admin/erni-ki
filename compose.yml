@@ -581,7 +581,7 @@ services:
     cap_drop:
       - ALL
     cap_add:
-      - NET_BIND_SERVICE  # Required for ports 80/443
+      - NET_BIND_SERVICE # Required for ports 80/443
       - CHOWN
       - SETUID
       - SETGID
