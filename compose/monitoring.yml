@@ -32,7 +32,7 @@ services:
   prometheus:
     image: prom/prometheus:v3.7.3 # Updated from v3.0.0
     container_name: erni-ki-prometheus
-    user: "0:0"  # Run as root for Docker secrets and data directory access
+    user: "0:0" # Run as root for Docker secrets and data directory access
     depends_on:
       postgres-exporter:
         condition: service_healthy
