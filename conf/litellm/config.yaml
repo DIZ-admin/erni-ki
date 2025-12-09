@@ -193,7 +193,6 @@ litellm_settings:
     pool_recycle: 3600 # Connection lifetime (1 hour)
 
 # === OPENAI ASSISTANT API CONFIGURATION ===
-# Settings for OpenAI Assistant API integration (updated 2025-10-07)
 assistant_settings:
   custom_llm_provider: openai
   litellm_params:
