@@ -9,9 +9,7 @@ link_token = false
 [botdetection.ip_lists]
 # Allow all requests without logging
 pass_searxng_org = true
-pass_ip = [
-    "0.0.0.0/0"
-]
+pass_ip = []
 
 [real_ip]
 # Real IP settings via proxy

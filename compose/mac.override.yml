@@ -1,0 +1,133 @@
+# ============================================================================
+# ERNI-KI macOS Override (CPU / Apple Silicon)
+# ============================================================================
+# - Removes NVIDIA runtime requirements
+# - Switches Docling to CPU image
+# - Keeps ports bound to localhost
+# ============================================================================
+
+services:
+  nginx:
+    ports:
+      - "127.0.0.1:8088:8080"
+
+  ollama:
+    runtime: ""
+    cpus: "4.0"
+    mem_limit: 12g
+    mem_reservation: 6g
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=
+      - NVIDIA_DRIVER_CAPABILITIES=
+      - CUDA_VISIBLE_DEVICES=
+      - OLLAMA_FLASH_ATTENTION=0
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_LOADED_MODELS=1
+    deploy: null
+
+  openwebui:
+    runtime: ""
+    cpus: "3.0"
+    mem_limit: 6g
+    mem_reservation: 3g
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=
+      - NVIDIA_DRIVER_CAPABILITIES=
+      - CUDA_VISIBLE_DEVICES=
+      - DATABASE_URL=postgresql://postgres:1a75506a124c2c1c5cd5902d1ca4fcbc@db:5432/openwebui
+      - PGVECTOR_DB_URL=postgresql://postgres:1a75506a124c2c1c5cd5902d1ca4fcbc@db:5432/openwebui
+      - WEBUI_SECRET_KEY=dummy-secret-key
+      - OLLAMA_BASE_URLS=http://ollama:11434
+    deploy: null
+
+  docling:
+    runtime: ""
+    cpus: "4.0"
+    mem_limit: 8g
+    mem_reservation: 4g
+    # CPU image; override DOCLING_IMAGE if you have another pinned digest
+    image: ${DOCLING_IMAGE:-ghcr.io/docling-project/docling-serve:latest}
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=
+      - NVIDIA_DRIVER_CAPABILITIES=
+      - CUDA_VISIBLE_DEVICES=
+      - DOCLING_DEVICE=cpu
+      - EASYOCR_GPU=false
+      - EASYOCR_FORCE_CPU=true
+      - DOCLING_DEFAULT_OCR_ENGINE=easyocr
+      - DOCLING_OCR_ENGINE=easyocr
+      - DOCLING_SERVE_ENG_KIND=local
+      - DOCLING_SERVE_LOAD_MODELS_AT_BOOT=false
+    deploy: null
+
+  # EdgeTTS: run under amd64 on mac (via emulation)
+  edgetts:
+    platform: linux/amd64
+    runtime: ""
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=
+      - NVIDIA_DRIVER_CAPABILITIES=
+      - CUDA_VISIBLE_DEVICES=
+
+  # Simplify Postgres secret handling on macOS (use env instead of secret file)
+  db:
+    env_file: []
+    environment:
+      - POSTGRES_PASSWORD=1a75506a124c2c1c5cd5902d1ca4fcbc
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=
+    secrets: []
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    command: [] # use default config (disable custom postgresql.conf/SSL on mac)
+
+  # Disable watchtower in local macOS runs
+  watchtower:
+    profiles: ["disabled"]
+
+  # Redis: ensure password substitution works on mac
+  redis:
+    environment:
+      - REDIS_PASSWORD=f6a7b1684e0dde68df41218ca6688af7
+
+  cloudflared:
+    depends_on:
+      openwebui:
+        condition: service_healthy
+      nginx:
+        condition: service_started
+    volumes:
+      - ../conf/cloudflare:/home/nonroot/.cloudflared
+
+  searxng:
+    volumes:
+      - ../scripts/entrypoints/searxng.sh:/opt/erni/bin/searxng-entrypoint.sh:ro
+
+  # LiteLLM: use local env with disabled DB storage
+  litellm:
+    env_file:
+      - ../env/litellm.local
+      - ../env/litellm.prisma.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:1a75506a124c2c1c5cd5902d1ca4fcbc@db:5432/postgres
+      - LITELLM_DB_USER=postgres
+      - LITELLM_DB_NAME=postgres
+      - LITELLM_DB_HOST=db
+      - LITELLM_DB_PORT=5432
+      - LITELLM_DB_SSL_MODE=disable
+      - DISABLE_PRISMA_HEALTH_CHECK_ON_STARTUP=true
+    volumes:
+      - ../patches/litellm/proxy_server.py:/app/litellm/proxy/proxy_server.py:ro
+      - ../patches/litellm/prisma_migration.py:/app/litellm/proxy/prisma_migration.py:ro
+      - ../patches/litellm/litellm_proxy_extras_utils.py:/usr/lib/python3.13/site-packages/litellm_proxy_extras/utils.py:ro
+
+  # Fix postgres exporter port/health for mac
+  postgres-exporter:
+    ports:
+      - "127.0.0.1:9187:9187"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O-", "http://localhost:9187/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

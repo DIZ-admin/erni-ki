@@ -29,6 +29,24 @@ readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[1;33m'
 readonly NC='\033[0m' # No Color
 
+# Detect operating system
+detect_os() {
+  case "$(uname -s)" in
+    Darwin)
+      echo "macos"
+      ;;
+    Linux)
+      echo "linux"
+      ;;
+    *)
+      echo "unknown"
+      ;;
+  esac
+}
+
+# Get current OS
+readonly CURRENT_OS=$(detect_os)
+
 # Compose files in dependency order
 COMPOSE_FILES=(
   "compose/base.yml"
@@ -37,6 +55,16 @@ COMPOSE_FILES=(
   "compose/gateway.yml"
   "compose/monitoring.yml"
 )
+
+# Add macOS override if on Darwin
+if [ "$CURRENT_OS" = "macos" ] && [ -f "compose/mac.override.yml" ]; then
+  COMPOSE_FILES+=("compose/mac.override.yml")
+fi
+
+# Support for compose.override.yml (local customizations)
+if [ -f "compose.override.yml" ]; then
+  COMPOSE_FILES+=("compose.override.yml")
+fi
 
 # Build docker compose command
 build_compose_cmd() {
@@ -82,6 +110,8 @@ main() {
 if [ $# -eq 0 ]; then
   echo "ERNI-KI Docker Compose Wrapper"
   echo
+  echo -e "Detected OS: ${GREEN}${CURRENT_OS}${NC}"
+  echo
   echo "Usage: $0 <docker-compose-command> [options]"
   echo
   echo "Examples:"
@@ -95,8 +125,18 @@ if [ $# -eq 0 ]; then
   echo
   echo "Modules loaded (in order):"
   for file in "${COMPOSE_FILES[@]}"; do
-    echo "  - $file"
+    if [[ "$file" == *"mac.override"* ]]; then
+      echo -e "  - $file ${YELLOW}(macOS override)${NC}"
+    elif [[ "$file" == *"override"* ]]; then
+      echo -e "  - $file ${YELLOW}(local override)${NC}"
+    else
+      echo "  - $file"
+    fi
   done
+  echo
+  if [ "$CURRENT_OS" = "macos" ]; then
+    echo -e "${YELLOW}Note: macOS mode enabled - NVIDIA/GPU features disabled${NC}"
+  fi
   echo
   exit 0
 fi
