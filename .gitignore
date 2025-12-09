@@ -9,7 +9,10 @@
 .env
 .env.local
 secrets/letsencrypt/
+secrets/linux/
+secrets/mac/
 compose/secrets/
+compose/secrets
 
 # Legacy placements of ACME state (kept ignored to prevent re-introducing sensitive data)
 conf/nginx/ssl/live/
