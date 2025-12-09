@@ -49,7 +49,7 @@ services:
     logging: *critical-logging
     restart: unless-stopped
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - ../data/postgres:/var/lib/postgresql/data
       - ./conf/postgres-enhanced/postgresql.conf:/etc/postgresql/postgresql.conf:ro
       - ./secrets/postgres-ssl/server.crt:/etc/ssl/postgres/server.crt:ro
       - ./secrets/postgres-ssl/server.key:/etc/ssl/postgres/server.key:ro
@@ -105,7 +105,7 @@ services:
     logging: *important-logging
     restart: unless-stopped
     volumes:
-      - ./data/redis:/data
+      - ../data/redis:/data
       - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
       - ./conf/redis/users.acl:/usr/local/etc/redis/users.acl.template:ro
     secrets:

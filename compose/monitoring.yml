@@ -32,6 +32,7 @@ services:
   prometheus:
     image: prom/prometheus:v3.7.3 # Updated from v3.0.0
     container_name: erni-ki-prometheus
+    user: "0:0" # Run as root for Docker secrets and data directory access
     depends_on:
       postgres-exporter:
         condition: service_healthy
@@ -49,7 +50,7 @@ services:
       - ./conf/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
       - ./conf/prometheus/rules:/etc/prometheus/rules:ro
       - ./conf/prometheus/alerts:/etc/prometheus/alerts:ro
-      - ./data/prometheus:/prometheus
+      - ../data/prometheus:/prometheus
     ports:
       - "127.0.0.1:9091:9090"
     restart: unless-stopped
@@ -95,7 +96,7 @@ services:
       GF_ANALYTICS_REPORTING_ENABLED: false
       GF_ANALYTICS_CHECK_FOR_UPDATES: false
     volumes:
-      - ./data/grafana:/var/lib/grafana
+      - ../data/grafana:/var/lib/grafana
       - ./conf/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./conf/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
@@ -134,7 +135,7 @@ services:
     ports:
       - "127.0.0.1:3001:3001" # Localhost-only
     volumes:
-      - ./data/uptime-kuma:/app/data
+      - ../data/uptime-kuma:/app/data
     healthcheck:
       test: ["CMD", "node", "/app/extra/healthcheck.js"]
       interval: 30s
@@ -171,7 +172,7 @@ services:
     cpus: "1.0"
     volumes:
       - ./conf/loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
-      - ./data/loki:/loki
+      - ../data/loki:/loki
       - ./conf/loki/tls:/etc/loki/tls:ro
     command:
       - -config.file=/etc/loki/local-config.yaml
@@ -208,7 +209,7 @@ services:
       - "--cluster.probe-interval=2s" # Cluster node check interval
     volumes:
       - ./conf/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
-      - ./data/alertmanager:/alertmanager
+      - ../data/alertmanager:/alertmanager
     ports:
       - "127.0.0.1:9093:9093"
       - "127.0.0.1:9094:9094"
@@ -266,7 +267,7 @@ services:
       - /:/rootfs:ro
       - /run/udev/data:/host/run/udev/data:ro # Mount udev data for diskstats
       - /run/systemd/private:/run/systemd/private:ro
-      - ./data/node-exporter-textfile:/var/lib/node_exporter/textfile_collector:ro
+      - ../data/node-exporter-textfile:/var/lib/node_exporter/textfile_collector:ro
     ports:
       - "127.0.0.1:9101:9100"
     pid: host
@@ -321,6 +322,7 @@ services:
       - --exclude-databases=template0,template1
       - --auto-discover-databases
       - --log.level=error
+      - --web.listen-address=:9188
     logging: *monitoring-logging
     healthcheck:
       test: ["CMD", "wget", "-q", "-O-", "http://localhost:9188/metrics"]

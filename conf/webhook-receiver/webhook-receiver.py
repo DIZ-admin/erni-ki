@@ -189,7 +189,7 @@ def run_recovery_script(service: str) -> None:
         return
 
     try:
-        result = run(  # nosec B603
+        result = run(  # noqa: S603 # nosec B603 - script path validated above
             [str(script_path)],
             check=True,
             capture_output=True,

@@ -60,7 +60,8 @@ detect_os() {
 }
 
 # Get current OS
-readonly CURRENT_OS=$(detect_os)
+CURRENT_OS=$(detect_os)
+readonly CURRENT_OS
 
 # ============================================================================
 # Platform Validation
@@ -86,10 +87,11 @@ validate_linux_environment() {
     errors=$((errors + 1))
   fi
 
-  # Check secrets directory
-  if [ ! -d "secrets" ]; then
-    echo -e "${RED}Error: secrets/ directory not found${NC}" >&2
-    echo -e "${YELLOW}  Run: cp -r secrets.example secrets && edit secrets/*${NC}" >&2
+  # Check OS-specific secrets directory
+  local secrets_dir="secrets/linux"
+  if [ ! -d "$secrets_dir" ]; then
+    echo -e "${RED}Error: $secrets_dir/ directory not found${NC}" >&2
+    echo -e "${YELLOW}  Create it and add required secret files${NC}" >&2
     return 1
   fi
 
@@ -102,8 +104,8 @@ validate_linux_environment() {
   )
 
   for secret in "${required_secrets[@]}"; do
-    if [ ! -f "secrets/$secret" ]; then
-      echo -e "${RED}Error: Required secret secrets/$secret not found${NC}" >&2
+    if [ ! -f "$secrets_dir/$secret" ]; then
+      echo -e "${RED}Error: Required secret $secrets_dir/$secret not found${NC}" >&2
       errors=$((errors + 1))
     fi
   done
@@ -132,6 +134,29 @@ validate_macos_environment() {
     return 1
   fi
 
+  # Check OS-specific secrets directory
+  local secrets_dir="secrets/mac"
+  if [ ! -d "$secrets_dir" ]; then
+    echo -e "${RED}Error: $secrets_dir/ directory not found${NC}" >&2
+    echo -e "${YELLOW}  Create it and add required secret files for macOS${NC}" >&2
+    return 1
+  fi
+
+  # Check critical secrets exist
+  local required_secrets=(
+    "postgres_password.txt"
+    "redis_password.txt"
+    "litellm_db_password.txt"
+    "openwebui_secret_key.txt"
+  )
+
+  for secret in "${required_secrets[@]}"; do
+    if [ ! -f "$secrets_dir/$secret" ]; then
+      echo -e "${RED}Error: Required secret $secrets_dir/$secret not found${NC}" >&2
+      errors=$((errors + 1))
+    fi
+  done
+
   # Check local env files
   if [ ! -f "env/litellm.local" ]; then
     echo -e "${YELLOW}Warning: env/litellm.local not found - using defaults${NC}" >&2
@@ -139,6 +164,10 @@ validate_macos_environment() {
 
   # Warn about GPU limitations
   echo -e "${BLUE}Info: Running in macOS CPU mode (no NVIDIA GPU)${NC}" >&2
+
+  if [ $errors -gt 0 ]; then
+    echo -e "${YELLOW}Found $errors warning(s). System may not function correctly.${NC}" >&2
+  fi
 
   return 0
 }
@@ -221,10 +250,12 @@ show_config() {
     linux)
       echo -e "Platform:    ${GREEN}Linux (Production)${NC}"
       echo -e "GPU:         ${GREEN}NVIDIA enabled${NC}"
+      echo -e "Secrets:     ${GREEN}secrets/linux/${NC}"
       ;;
     macos)
       echo -e "Platform:    ${YELLOW}macOS (Development)${NC}"
       echo -e "GPU:         ${YELLOW}CPU-only mode${NC}"
+      echo -e "Secrets:     ${YELLOW}secrets/mac/${NC}"
       ;;
     *)
       echo -e "Platform:    ${RED}Unknown ($CURRENT_OS)${NC}"
@@ -292,6 +323,54 @@ show_help() {
 }
 
 # ============================================================================
+# OS-Specific Secrets Setup
+# ============================================================================
+setup_secrets_symlink() {
+  local secrets_link="compose/secrets"
+  local target_dir
+
+  case "$CURRENT_OS" in
+    linux)
+      target_dir="../secrets/linux"
+      ;;
+    macos)
+      target_dir="../secrets/mac"
+      ;;
+    *)
+      echo -e "${RED}Error: Unknown OS for secrets setup${NC}" >&2
+      return 1
+      ;;
+  esac
+
+  # Check if target directory exists
+  if [ ! -d "secrets/${CURRENT_OS}" ]; then
+    echo -e "${RED}Error: Secrets directory 'secrets/${CURRENT_OS}' not found${NC}" >&2
+    echo -e "${YELLOW}  Create it and add required secret files${NC}" >&2
+    return 1
+  fi
+
+  # Create or update symlink
+  if [ -L "$secrets_link" ]; then
+    local current_target
+    current_target=$(readlink "$secrets_link")
+    if [ "$current_target" != "$target_dir" ]; then
+      echo -e "${BLUE}Updating secrets symlink: $current_target -> $target_dir${NC}"
+      rm "$secrets_link"
+      ln -sf "$target_dir" "$secrets_link"
+    fi
+  elif [ -d "$secrets_link" ]; then
+    echo -e "${RED}Error: $secrets_link is a directory, not a symlink${NC}" >&2
+    echo -e "${YELLOW}  Remove it and re-run: rm -rf $secrets_link${NC}" >&2
+    return 1
+  else
+    echo -e "${BLUE}Creating secrets symlink: $secrets_link -> $target_dir${NC}"
+    ln -sf "$target_dir" "$secrets_link"
+  fi
+
+  return 0
+}
+
+# ============================================================================
 # Main Execution
 # ============================================================================
 main() {
@@ -306,6 +385,9 @@ main() {
     echo -e "${YELLOW}Install: https://docs.docker.com/compose/install/${NC}" >&2
     exit 1
   fi
+
+  # Setup OS-specific secrets symlink
+  setup_secrets_symlink || exit 1
 
   # Validate environment for startup commands
   if [[ "${1:-}" == "up" ]] || [[ "${1:-}" == "start" ]]; then

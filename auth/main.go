@@ -312,7 +312,7 @@ func getEnvOrFile(key string) string {
 		return ""
 	}
 
-	data, err := os.Open(filePath)
+	data, err := os.Open(filePath) // #nosec G304 - path from admin-controlled env var for Docker secrets
 	if err != nil {
 		return ""
 	}

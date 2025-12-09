@@ -59,8 +59,8 @@ services:
       - ./conf/nginx/ssl:/etc/nginx/ssl
       - ./conf/nginx/includes:/etc/nginx/includes
       - ./conf/nginx/healthcheck.sh:/etc/nginx/healthcheck.sh:ro
-      - ./data/nginx/webroot:/var/www/html
-      - ./data/nginx/logs:/var/log/nginx
+      - ../data/nginx/webroot:/var/www/html
+      - ../data/nginx/logs:/var/log/nginx
     networks:
       - frontend
       - backend
@@ -143,13 +143,13 @@ services:
     mem_reservation: 256m
     cpus: "0.5"
     volumes:
-      - ./data/backrest:/data
+      - ../data/backrest:/data
       - ./conf/backrest:/config
       - ./cache/backrest:/cache
       - ./tmp/backrest:/tmp
-      - ./data:/backup-sources/data:ro
+      - ../data:/backup-sources/data:ro
       - ./conf:/backup-sources/conf:ro
-      - ./env:/backup-sources/env:ro
+      - ../env:/backup-sources/env:ro
       - ./.config-backup:/backup-sources/.config-backup
       - /var/run/docker.sock:/var/run/docker.sock:ro
     secrets:
