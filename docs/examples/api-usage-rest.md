@@ -1,6 +1,6 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-30'
 ---
@@ -595,5 +595,5 @@ print(f"Assistant: {response}")
 ## Related Documentation
 
 - [API Reference](../reference/api-reference.md)
-- [Webhook Examples](./webhook-client-python.py)
+- [Webhook Examples](../../examples/webhook-client-python.py)
 - [OpenWebUI Documentation](https://docs.openwebui.com)

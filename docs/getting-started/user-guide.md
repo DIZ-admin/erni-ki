@@ -1,237 +1,234 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: original
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-28'
 ---
 
-# ERNI-KI Руководство пользователя
+# ERNI-KI User Guide
 
-> **Версия документа:**8.0**Дата обновления:**2025-08-29**Целевая
-> аудитория:**Конечные пользователи [TOC]
+> **Document Version:**8.0**Updated:**2025-08-29**Target Audience:**End Users
+> [TOC]
 
-## Введение
+## Introduction
 
-ERNI-KI — это современная AI-платформа на базе OpenWebUI v0.6.40,
-предоставляющая удобный веб-интерфейс для работы с языковыми моделями. Система
-поддерживает AI-чат, поиск в интернете, обработку документов и голосовое
-взаимодействие с GPU ускорением и enterprise-grade производительностью.
+ERNI-KI is a modern AI platform based on OpenWebUI v0.6.40, providing a
+user-friendly web interface for working with language models. The system
+supports AI chat, internet search, document processing, and voice interaction
+with GPU acceleration and enterprise-grade performance.
 
-### Актуальный статус системы (v8.0 - 29.08.2025)
+### Current System Status (v8.0 - 2025-08-29)
 
--**Полная функциональность**: 33/33 контейнера в статусе Healthy -**Внешний
-доступ**: Все 5 доменов активны (Cloudflare туннели
-восстановлены) -**Производительность**: Время отклика системы <0.01
-секунды -**AI возможности**: 9 моделей Ollama с GPU ускорением (25%
-утилизация) -**RAG поиск**: SearXNG интеграция с 6+ источниками (<2с ответ)
+-**Full Functionality**: 33/33 containers Healthy -**External Access**: All 5
+domains active (Cloudflare tunnels restored) -**Performance**: System response
+time <0.01 seconds -**AI Capabilities**: 9 Ollama models with GPU acceleration
+(25% utilization) -**RAG Search**: SearXNG integration with 6+ sources (<2s
+response)
 
-## Первые шаги
+## First Steps
 
-### Доступ к системе
+### Accessing the System
 
-1. Откройте браузер и перейдите по адресу вашей системы ERNI-KI
-2. При первом доступе создайте учетную запись администратора
-3. Войдите в систему с созданными учетными данными
+1. Open your browser and navigate to your ERNI-KI system address
+2. Create an administrator account upon first access
+3. Log in with your credentials
 
-### Интерфейс системы
+### System Interface
 
-Основной интерфейс состоит из:
+The main interface consists of:
 
--**Боковая панель**- список чатов и настройки -**Центральная область**- окно
-чата с AI -**Поле ввода**- поле для сообщений и кнопки действий -**Верхняя
-панель**- выбор модели и дополнительные настройки
+-**Sidebar**- chat list and settings -**Central Area**- chat window with
+AI -**Input Field**- message field and action buttons -**Top Bar**- model
+selection and additional settings
 
-## Работа с чатами
+## Working with Chats
 
-### Создание нового чата
+### Creating a New Chat
 
-1. Нажмите**"+ Новый чат"**в боковой панели
-2. Выберите языковую модель из выпадающего списка
-3. Введите ваш первый вопрос или запрос
-4. Нажмите**Enter**или кнопку отправки
+1. Click**"+ New Chat"**in the sidebar
+2. Select a language model from the dropdown list
+3. Enter your first question or prompt
+4. Press**Enter**or the send button
 
-### Управление чатами
+### Managing Chats
 
--**Переименование**: Нажмите на название чата → "Переименовать" -**Удаление**:
-Нажмите на значок корзины рядом с чатом -**Архивирование**: Переместите старые
-чаты в архив -**Поиск**: Используйте поиск для быстрого нахождения чатов
+-**Rename**: Click on chat title → "Rename" -**Delete**: Click the trash icon
+next to the chat -**Archive**: Move old chats to archive -**Search**: Use search
+to quickly find chats
 
-### Типы сообщений
+### Message Types
 
--**Текстовые сообщения**- обычное общение с AI -**Системные промпты**-
-специальные инструкции для AI -**Файлы и документы**- загрузка для анализа (до
-100MB) -**Изображения**- анализ и описание изображений
+-**Text Messages**- standard communication with AI -**System Prompts**- special
+instructions for AI -**Files and Documents**- upload for analysis (up to
+100MB) -**Images**- image analysis and description
 
-## Поиск и RAG
+## Search and RAG
 
-### Веб-поиск (SearXNG)
+### Web Search (SearXNG)
 
-1. В чате введите запрос, требующий актуальной информации
-2. AI автоматически выполнит поиск в интернете
-3. Результаты будут интегрированы в ответ 4.**Производительность**: <2s время
-   ответа, кэширование результатов
+1. Enter a query in chat that requires up-to-date information
+2. AI will automatically perform an internet search
+3. Results will be integrated into the response 4.**Performance**: <2s response
+   time, result caching
 
-### Поиск по документам
+### Document Search
 
-1. Загрузите документы через интерфейс
-2. Задавайте вопросы по содержимому документов
-3. AI найдет релевантную информацию и предоставит ответы
-4. Поддерживаются форматы: PDF, DOCX, TXT, MD
+1. Upload documents via the interface
+2. Ask questions about document content
+3. AI will find relevant information and provide answers
+4. Supported formats: PDF, DOCX, TXT, MD
 
-## Работа с документами
+## Working with Documents
 
-### Загрузка документов
+### Uploading Documents
 
-1. Нажмите на значок скрепки в поле ввода
-2. Выберите файлы с компьютера (до 100MB)
-3. Дождитесь завершения обработки
-4. Документы будут доступны для поиска и анализа
+1. Click the paperclip icon in the input field
+2. Select files from your computer (up to 100MB)
+3. Wait for processing to complete
+4. Documents will be available for search and analysis
 
-### Поддерживаемые форматы
+### Supported Formats
 
--**Текстовые**: PDF, DOCX, TXT, MD, RTF -**Изображения**: PNG, JPG, JPEG, GIF (с
-OCR) -**Презентации**: PPTX, ODP -**Таблицы**: XLSX, CSV, ODS
+-**Text**: PDF, DOCX, TXT, MD, RTF -**Images**: PNG, JPG, JPEG, GIF (with
+OCR) -**Presentations**: PPTX, ODP -**Spreadsheets**: XLSX, CSV, ODS
 
-### OCR и многоязычность
+### OCR and Multilingual Support
 
--**Поддерживаемые языки**: Английский, Немецкий, Французский,
-Итальянский -**Автоматическое определение языка**: Включено -**Качественное
-распознавание**: EasyOCR технология
+-**Supported Languages**: English, German, French, Italian -**Automatic Language
+Detection**: Enabled -**High-Quality Recognition**: EasyOCR technology
 
-## Голосовые функции
+## Voice Functions
 
-### Голосовой ввод
+### Voice Input
 
-1. Нажмите на значок микрофона в поле ввода
-2. Разрешите доступ к микрофону в браузере
-3. Говорите четко и ясно
-4. Нажмите стоп для завершения записи
+1. Click the microphone icon in the input field
+2. Allow microphone access in browser
+3. Speak clearly
+4. Click stop to finish recording
 
-### Голосовой вывод (EdgeTTS)
+### Voice Output (EdgeTTS)
 
-1. В настройках включите голосовой вывод
-2. Выберите предпочитаемый голос и язык
-3. AI будет озвучивать свои ответы
-4. Поддержка множественных языков и голосов
+1. Enable voice output in settings
+2. Select preferred voice and language
+3. AI will vocalize its responses
+4. Multiple languages and voices supported
 
-## Настройки и персонализация
+## Settings and Personalization
 
-### Настройки модели
+### Model Settings
 
--**Температура**: Контролирует креативность ответов (0.1-2.0) -**Максимальная
-длина**: Ограничение длины ответа -**Top-p**: Контролирует разнообразие
-ответов -**Системный промпт**: Базовые инструкции для AI
+-**Temperature**: Controls response creativity (0.1-2.0) -**Max Length**:
+Response length limit -**Top-p**: Controls response diversity -**System
+Prompt**: Base instructions for AI
 
-### Настройки интерфейса
+### Interface Settings
 
--**Тема**: Светлая/темная тема интерфейса -**Язык**: Выбор языка
-интерфейса -**Уведомления**: Настройка push-уведомлений -**Автосохранение**:
-Автоматическое сохранение чатов
+-**Theme**: Light/Dark interface theme -**Language**: Interface language
+selection -**Notifications**: Push notification settings -**Auto-save**:
+Automatic chat saving
 
-### Настройки производительности
+### Performance Settings
 
--**Кэширование**: Включение кэширования поисковых запросов -**Предзагрузка**:
-Предварительная загрузка моделей -**Оптимизация**: Настройки для медленных
-соединений
+-**Caching**: Enable search query caching -**Preloading**: Model
+preloading -**Optimization**: Settings for slow connections
 
-## Мониторинг и статистика
+## Monitoring and Statistics
 
-### Личная статистика
+### Personal Statistics
 
--**Количество чатов**: Общее количество созданных чатов -**Сообщения**:
-Количество отправленных сообщений -**Время использования**: Общее время работы с
-системой -**Любимые модели**: Наиболее используемые модели
+-**Chat Count**: Total number of created chats -**Messages**: Number of sent
+messages -**Usage Time**: Total system usage time -**Favorite Models**: Most
+used models
 
-### Системная информация
+### System Information
 
--**Статус сервисов**: Доступность всех компонентов
-системы -**Производительность**: Время ответа и загрузка системы -**Доступные
-модели**: Список активных языковых моделей -**Версия системы**: Текущая версия
-ERNI-KI
+-**Service Status**: Availability of all system components -**Performance**:
+Response time and system load -**Available Models**: List of active language
+models -**System Version**: Current ERNI-KI version
 
-### RAG панели (Grafana)
+### RAG Panels (Grafana)
 
-- Дашборд OpenWebUI содержит панели:
-- RAG p95 Latency (SLA: <2 сек — красный порог на 2s)
-- RAG Sources Count (количество источников в ответе)
-- Для корректных метрик укажите реальный RAG endpoint в переменной
-  `RAG_TEST_URL` (сервис `rag-exporter`).
+- OpenWebUI dashboard contains panels:
+- RAG p95 Latency (SLA: <2 sec — red threshold at 2s)
+- RAG Sources Count (number of sources in response)
+- For correct metrics, specify real RAG endpoint in variable `RAG_TEST_URL`
+  (service `rag-exporter`).
 
-## Безопасность и конфиденциальность
+## Security and Privacy
 
-### Защита данных
+### Data Protection
 
--**Локальное хранение**: Все данные хранятся локально -**Шифрование**: SSL/TLS
-шифрование всего трафика -**Резервные копии**: Автоматические backup каждые 24
-часа -**Контроль доступа**: JWT аутентификация
+-**Local Storage**: All data stored locally -**Encryption**: SSL/TLS encryption
+for all traffic -**Backups**: Automatic backups every 24 hours -**Access
+Control**: JWT authentication
 
-### Рекомендации по безопасности
+### Security Recommendations
 
-- Используйте сложные пароли
-- Регулярно обновляйте систему
-- Не передавайте конфиденциальную информацию
-- Следите за логами безопасности
+- Use strong passwords
+- Update system regularly
+- Do not share confidential information
+- Monitor security logs
 
-## Устранение неполадок
+## Troubleshooting
 
-### Частые проблемы
+### Common Issues
 
-**Медленная работа системы:**
+**Slow System Performance:**
 
-- Проверьте подключение к интернету
-- Очистите кэш браузера
-- Перезагрузите страницу
+- Check internet connection
+- Clear browser cache
+- Refresh page
 
-**Ошибки загрузки файлов:**
+**File Upload Errors:**
 
-- Проверьте размер файла (<100MB)
-- Убедитесь в поддерживаемом формате
-- Попробуйте другой браузер
+- Check file size (<100MB)
+- Ensure supported format
+- Try another browser
 
-**Файл загрузился, но источники не отображаются:**
+**File Uploaded but Sources Not Showing:**
 
-- Убедитесь, что включён адаптивный порог RAG
+- Ensure adaptive RAG threshold is enabled
   (`RAG_ENABLE_RELEVANCE_FALLBACK=true`)
-- При необходимости снизьте `RAG_FALLBACK_RELEVANCE_THRESHOLD` (0 отключает
-  фильтрацию результатов)
-- После изменения переменных перезапустите сервис OpenWebUI
+- If necessary, lower `RAG_FALLBACK_RELEVANCE_THRESHOLD` (0 disables result
+  filtering)
+- Restart OpenWebUI service after changing variables
 
-**Проблемы с голосом:**
+**Voice Issues:**
 
-- Проверьте разрешения микрофона
-- Убедитесь в качестве интернет-соединения
-- Попробуйте другой браузер
+- Check microphone permissions
+- Ensure internet connection quality
+- Try another browser
 
-### Получение помощи
+### Getting Help
 
--**Документация**: Полная документация в разделе Help -**FAQ**: Часто задаваемые
-вопросы -**Техническая поддержка**: Обратитесь к администратору
-системы -**Сообщество**: Форум пользователей ERNI-KI
+-**Documentation**: Full documentation in Help section -**FAQ**: Frequently
+Asked Questions -**Technical Support**: Contact system
+administrator -**Community**: ERNI-KI user forum
 
-## Советы по эффективному использованию
+## Tips for Effective Use
 
-### Оптимизация запросов
+### Query Optimization
 
-- Формулируйте четкие и конкретные вопросы
-- Используйте контекст из предыдущих сообщений
-- Экспериментируйте с различными моделями
-- Используйте системные промпты для специализированных задач
+- Formulate clear and specific questions
+- Use context from previous messages
+- Experiment with different models
+- Use system prompts for specialized tasks
 
-### Работа с большими документами
+### Working with Large Documents
 
-- Разбивайте большие документы на части
-- Используйте конкретные вопросы по разделам
-- Применяйте поиск по ключевым словам
-- Сохраняйте важные результаты
+- Split large documents into parts
+- Use specific questions for sections
+- Apply keyword search
+- Save important results
 
-### Максимальная производительность
+### Maximum Performance
 
-- Используйте кэширование для повторяющихся запросов
-- Оптимизируйте размер загружаемых файлов
-- Закрывайте неиспользуемые чаты
-- Регулярно очищайте историю
+- Use caching for repetitive queries
+- Optimize uploaded file size
+- Close unused chats
+- Regularly clear history
 
 ---
 
-_Документ обновлен для ERNI-KI v8.0 с учетом восстановления системы, исправления
-Cloudflare туннелей и актуализации всех компонентов._
+_Document updated for ERNI-KI v8.0 reflecting system restoration, Cloudflare
+tunnel fixes, and component updates._

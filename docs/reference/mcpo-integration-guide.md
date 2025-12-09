@@ -1,33 +1,35 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-24'
-title: 'Руководство по интеграции MCP в ERNI-KI'
+last_updated: '2025-12-01'
+title: 'MCP Integration Guide for ERNI-KI'
 ---
 
-# Руководство по интеграции MCP в ERNI-KI
+# MCP Integration Guide for ERNI-KI
 
-> **Версия документа:**9.1**Дата обновления:**2025-11-21**Статус:**Healthy (порт
-> 8000 на 127.0.0.1, интеграция с LiteLLM/Context7 подтверждена) [TOC]
+> **Document version:** 9.1  
+> **Last updated:** 2025-12-01  
+> **Status:** Healthy (localhost:8000, integrated with LiteLLM/Context7)
 
-## Обзор MCP (Model Context Protocol)
+## MCP overview
 
-MCP Server в ERNI-KI предоставляет стандартизированный интерфейс для интеграции
-AI-инструментов с OpenWebUI v0.6.36 через Model Context Protocol. Система
-включает 7 активных MCP инструментов:
+The MCP server provides a standard interface for tools used by OpenWebUI
+(v0.6.36) via Model Context Protocol. Active MCP tools:
 
--**Time Server**— работа с временем и часовыми поясами -**Context7 Docs**—
-доступ к документации Context7 -**PostgreSQL Server**— SQL к openwebui БД
-(PostgreSQL 17 + pgvector) -**Filesystem Server**— операции с файловой системой
-(`/app/data`, `/app/conf` readonly) -**Memory Server**— граф знаний -**SearXNG
-Web Search**— веб‑поиск -**Desktop Commander**— терминал/редактор с
-ограниченными каталогами (`/app/data/mcpo-desktop`, `/app/conf`) и включённым
-блок-листом команд
+- **Time Server** — timezones and conversions
+- **Context7 Docs** — documentation search
+- **PostgreSQL Server** — SQL to OpenWebUI DB (PostgreSQL 17 + pgvector)
+- **Filesystem Server** — read-only ops in `/app/data`, `/app/conf`
+- **Memory Server** — knowledge graph
+- **SearXNG Web Search** — web search
+- **Desktop Commander** — terminal/editor with command blocklist and confined
+  paths (`/app/data/mcpo-desktop`, `/app/conf`)
 
-**Текущий статус:**Healthy, порт 8000 (локальный bind)
+**Current status:** Healthy, bound to 127.0.0.1:8000; tested with LiteLLM and
+Context7.
 
-## Архитектура системы
+## System architecture
 
 ```mermaid
 graph TB
@@ -46,38 +48,39 @@ graph TB
  F --> K[File System]
 ```
 
-### Связь с LiteLLM Context7
+### LiteLLM / Context7 path
 
-- LiteLLM gateway (порт 4000) запрашивает MCP инструменты через nginx
-  (`/api/mcp/*`), добавляя Thinking Tokens и контекст перед отправкой в Ollama.
-- Health сценарии: `curl -s http://localhost:4000/health/liveliness` и
+- LiteLLM gateway (port 4000) calls MCP tools via nginx (`/api/mcp/*`), appends
+  reasoning/context, then forwards to Ollama.
+- Health checks: `curl -s http://localhost:4000/health/liveliness` and
   `curl -s http://localhost:8080/api/mcp/time/docs`.
-- Мониторинг: `scripts/monitor-litellm-memory.sh` и
-  `scripts/infrastructure/monitoring/test-network-performance.sh` фиксируют
-  задержки между LiteLLM ↔ MCP ↔ Ollama/PostgreSQL/Redis.
-- При диагностике используйте Archon tasks + LiteLLM логи (`logs/litellm.log`) и
-  убеждайтесь, что Context responses включают блоки `sources[]` и
-  `reasoning_trace`.
+- Monitoring: `scripts/monitor-litellm-memory.sh`,
+  `scripts/infrastructure/monitoring/test-network-performance.sh` capture
+  latency for LiteLLM ↔ MCP ↔ Ollama/PostgreSQL/Redis.
+- For diagnostics use Archon tasks + LiteLLM logs (`logs/litellm.log`); ensure
+  Context responses include `sources[]` and `reasoning_trace`.
 
-## Текущий статус интеграции
+## Integration status
 
-### Что работает
+### Working
 
-1.**MCPO Server**- здоров и доступен на порту 8000 (127.0.0.1
-биндинг) 2.**Swagger UI**- http://localhost:8000/docs 3.**OpenAPI
-спецификация**- http://localhost:8000/openapi.json 4.**Все MCP серверы**-
-инициализированы: time, context7, postgres, filesystem, memory, searxng,
-desktop-commander 5.**OpenWebUI конфигурация**- TOOL_SERVER_CONNECTIONS содержит
-Time, Context7, PostgreSQL, Desktop Commander 6.**Nginx proxy**- корректно
-проксирует запросы к MCP серверам
+1. **MCPO Server** — healthy on 127.0.0.1:8000
+2. **Swagger UI** — http://localhost:8000/docs
+3. **OpenAPI** — http://localhost:8000/openapi.json
+4. **All MCP servers** — time, context7, postgres, filesystem, memory, searxng,
+   desktop-commander
+5. **OpenWebUI config** — `TOOL_SERVER_CONNECTIONS` includes Time, Context7,
+   PostgreSQL, Desktop Commander
+6. **Nginx proxy** — routes `/api/mcp/*` when external access is required
 
-### Производительность
+### Performance (observed)
 
--**Время отклика API**: < 50ms для большинства операций -**Time Server**: ~11ms
-для получения текущего времени -**PostgreSQL Server**: ~22ms для простых
-запросов -**Доступность**: 99.9% (все health checks проходят)
+- **API latency:** <50 ms for most calls
+- **Time Server:** ~11 ms to fetch current time
+- **PostgreSQL Server:** ~22 ms for simple queries
+- **Availability:** 99.9% (all health checks passing)
 
-## Доступные MCP инструменты
+## MCP tools
 
 ### 1. Time Server (`/time`)
 
@@ -199,9 +202,9 @@ location ~ ^/api/mcp/(.*)$ {
 }
 ```
 
-## Диагностика и мониторинг
+## Diagnostics and monitoring
 
-### Проверка статуса MCPO сервера
+### Check MCPO server status
 
 ```bash
 # Проверка статуса контейнера
@@ -231,9 +234,9 @@ curl -X POST "http://localhost:8000/postgres/query" \
 curl -s "http://localhost:8080/api/mcp/time/docs" | grep -q "swagger" && echo " Proxy OK"
 ```
 
-## Автоматическая диагностика
+## Automated diagnostics
 
-Используйте скрипт для комплексной диагностики:
+Use the helper script:
 
 ```bash
 ./scripts/mcp/test-mcp-integration.sh
@@ -280,6 +283,8 @@ AI: Использует Filesystem Server для поиска файлов с �
 
 Файл `conf/mcposerver/config.json`:
 
+<!-- pragma: allowlist secret -->
+
 ```json
 {
   "mcpServers": {
@@ -292,7 +297,7 @@ AI: Использует Filesystem Server для поиска файлов с �
       "args": [
         "-y",
         "@modelcontextprotocol/server-postgres",
-        "postgresql://postgres:postgres@db/openwebui"
+        "postgresql://USER@db/openwebui"
       ]
     }
   }

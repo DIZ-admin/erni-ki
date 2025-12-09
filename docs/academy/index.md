@@ -1,32 +1,42 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: partial
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
 # Academy KI
 
-Academy KI — это обучающий портал для сотрудников ERNI, которые работают с Open
-WebUI и сервисами ERNI KI.
+Learning portal for ERNI colleagues who use Open WebUI and related KI services.
+Russian pages stay canonical; this version mirrors the structure so users can
+navigate in English.
 
-- **Для кого:** продуктовые владельцы, бизнес-аналитики, инженеры поддержки и
-  все, кто взаимодействует с Open WebUI.
-- **Что внутри:**
-  - **Open WebUI Basics** — где найти сервис, как выбрать модель, как отправить
-    первый запрос и использовать готовые шаблоны.
-  - **Промптинг 101** — базовые шаблоны (роль → задача → контекст → формат →
-    ограничения), чек-листы и примеры под офисные сценарии.
-  - **Context Engineering 101** — как собирать и управлять контекстом (system
-    prompt + RAG + история + инструменты) на стеке LiteLLM, Context7 и Docling.
-  - **HowTo** — детальные инструкции для писем, итогов встреч, тикетов, с
-    хорошими/плохими примерами промптов и готовыми шаблонами.
-  - **Новости** — лента изменений, влияния на пользователей и рекомендации, что
-    делать после обновлений.
-  - **Система → Статус** — ссылка на статус-панель Uptime Kuma, чтобы сначала
-    проверить доступность сервисов.
-- **Правила актуальности:** русский контент — источник правды; изменения в RU
-  фиксируются сразу, а статусы перевода в DE/EN отмечаются как draft/outdated.
+-**Audience:**product owners, business analysts, support engineers, and anyone
+using Open WebUI. -**Modules:**-**Open WebUI basics**— where to find the
+service, how to pick a model, how to send the first request, how to use
+templates. -**Prompting 101**— role → task → context → format, checklists, and
+office scenarios. -**HowTo**— step-by-step guides for emails, meeting summaries,
+Jira tickets, with good/bad prompt examples. -**News**— product changes, impact
+on users, and what to do after updates. -**System → Status**— link to the Uptime
+Kuma dashboard to verify service health first. -**Freshness:**Russian content is
+the source of truth; translation status is tracked per page as
+`translation_status`.
 
-> Перед началом работы проверьте доступность сервисов:
-> **[Проверить статус системы](https://status.erni-ki.ch)**.
+## Recommended learning path
+
+1.**Week 1 – Interface**: finish Open WebUI basics, submit two prompts using the
+template gallery, and test MCP tool calls. 2.**Week 2 – Prompt craft**: apply
+the Prompting 101 checklist to an existing customer communication; compare AI
+vs. human draft. 3.**Week 3 – Automation**: run through each HowTo and
+contribute feedback or new prompts.
+
+## Contribution guidelines
+
+- Keep the Russian version authoritative; submit English/German updates only
+  after RU content is merged.
+- Add screenshots (PNG, max 1920×1080) to `docs/images/academy/` and reference
+  them using Markdown with alt text.
+- For new modules, create an index file with learning objectives and expected
+  duration.
+
+> Always start with the health check:**[System status](../system/status.md)**.

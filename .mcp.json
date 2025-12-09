@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "archon": {
+      "command": "node",
+      "args": [
+        "/home/konstantin/.nvm/versions/node/v20.19.5/lib/node_modules/mcp-remote/dist/proxy.js",
+        "http://localhost:8051/mcp"
+      ],
+      "env": {}
+    }
+  }
+}

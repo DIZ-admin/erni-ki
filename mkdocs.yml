@@ -24,7 +24,7 @@ exclude_docs: |
 # Theme
 theme:
   name: "material"
-  language: "ru"
+  language: "en"
 
   # Color scheme
   palette:
@@ -76,9 +76,9 @@ theme:
 plugins:
   - search:
       lang:
+        - en
         - ru
         - de
-        - en
   - awesome-pages
   - blog:
       blog_dir: news
@@ -90,8 +90,10 @@ plugins:
   - i18n:
       docs_structure: folder
       languages:
-        - locale: ru
+        - locale: en
           default: true
+          name: "English"
+        - locale: ru
           name: "Russian"
           site_name: "ERNI Academy KI"
           nav_translations:
@@ -364,15 +366,16 @@ extra:
     - icon: fontawesome/brands/docker
       link: https://github.com/DIZ-admin/erni-ki/pkgs/container/erni-ki%2Fauth
   alternate:
-    - name: "Russian"
+    - name: "English"
       link: /
+      lang: en
+    - name: "Russian"
+      link: /ru/
       lang: ru
     - name: "Deutsch"
       link: /de/
       lang: de
-    - name: "English"
-      link: /en/
-      lang: en
+
   analytics:
     provider: google
     property: G-XXXXXXXXXX

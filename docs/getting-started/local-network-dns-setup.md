@@ -1,33 +1,33 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: original
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-28'
 ---
 
-# Настройка локального DNS для ERNI-KI в корпоративной сети
+# Local Network DNS Setup for ERNI-KI
 
 [TOC]
 
-**Дата**: 2025-10-27**Цель**: Настроить доступ к `ki.erni-gruppe.ch` для всех
-компьютеров в локальной сети 192.168.62.0/24**Статус**: ТРЕБУЕТСЯ ДЕЙСТВИЕ
+**Date**: 2025-10-27**Goal**: Configure access to `ki.erni-gruppe.ch` for all
+computers in local network 192.168.62.0/24**Status**: ACTION REQUIRED
 
 ---
 
-## ТЕКУЩАЯ СИТУАЦИЯ
+## CURRENT SITUATION
 
-### Сетевая инфраструктура
+### Network Infrastructure
 
-| Компонент      | IP адрес        | Статус   | Роль                                    |
-| -------------- | --------------- | -------- | --------------------------------------- |
-| ERNI-KI сервер | 192.168.62.153  | Работает | Веб-сервер (nginx 80/443)               |
-| Роутер LANCOM  | 192.168.62.1    | Доступен | Шлюз, DNS форвардер                     |
-| DNS сервер     | 192.168.62.32   | Работает | Основной DNS (недоступен для настройки) |
-| Резервный DNS  | 185.242.202.231 | Работает | Внешний DNS                             |
+| Component      | IP Address      | Status    | Role                                    |
+| -------------- | --------------- | --------- | --------------------------------------- |
+| ERNI-KI Server | 192.168.62.153  | Working   | Web server (nginx 80/443)               |
+| LANCOM Router  | 192.168.62.1    | Available | Gateway, DNS forwarder                  |
+| DNS Server     | 192.168.62.32   | Working   | Primary DNS (not accessible for config) |
+| Backup DNS     | 185.242.202.231 | Working   | External DNS                            |
 
-### DNS конфигурация
+### DNS Configuration
 
-**Текущие DNS серверы**(из DHCP):
+**Current DNS Servers**(from DHCP):
 
 ```
 Primary DNS: 192.168.62.32
@@ -35,13 +35,13 @@ Secondary DNS: 185.242.202.231
 Search domain: intern
 ```
 
-**Проблема**:
+**Problem**:
 
-- DNS сервер 192.168.62.32 НЕ содержит запись для `ki.erni-gruppe.ch`
-- SSH доступ к 192.168.62.32 недоступен (Connection refused)
-- Тип DNS сервера: вероятно Windows Server DNS (TTL=128)
+- DNS server 192.168.62.32 does NOT contain record for `ki.erni-gruppe.ch`
+- SSH access to 192.168.62.32 unavailable (Connection refused)
+- DNS Server Type: likely Windows Server DNS (TTL=128)
 
-**Результат**:
+**Result**:
 
 ```bash
 $ nslookup ki.erni-gruppe.ch 192.168.62.32
@@ -50,70 +50,70 @@ $ nslookup ki.erni-gruppe.ch 192.168.62.32
 
 ---
 
-## РЕШЕНИЯ
+## SOLUTIONS
 
-### ВАРИАНТ 1: Запрос к IT отделу (РЕКОМЕНДУЕТСЯ)
+### OPTION 1: Request to IT Department (RECOMMENDED)
 
-**Описание**: Попросить IT отдел добавить A запись на корпоративный DNS сервер
+**Description**: Request IT department to add A record to corporate DNS server
 192.168.62.32
 
-**Преимущества**:
+**Pros**:
 
-- Централизованное управление DNS
-- Работает для всей корпоративной сети автоматически
-- Не требует дополнительных сервисов на ERNI-KI
-- Стандартный подход для корпоративной среды
+- Centralized DNS management
+- Works for entire corporate network automatically
+- No additional services required on ERNI-KI
+- Standard approach for corporate environment
 
-**Недостатки**:
+**Cons**:
 
-- Требует согласования с IT отделом
-- Время ожидания: от нескольких часов до нескольких дней
+- Requires IT department approval
+- Waiting time: from hours to days
 
-**Действия**:
+**Actions**:
 
-#### 1.1 Подготовить запрос для IT отдела
+#### 1.1 Prepare Request for IT Department
 
-**Тема**: Добавление DNS записи для ERNI-KI системы
+**Subject**: DNS Record Addition for ERNI-KI System
 
-**Текст запроса**:
+**Request Text**:
 
 ```
-Добрый день!
+Hello!
 
-Прошу добавить следующую DNS запись на корпоративный DNS сервер (192.168.62.32):
+Please add the following DNS record to the corporate DNS server (192.168.62.32):
 
-Тип записи: A
-Имя: ki.erni-gruppe.ch
-IP адрес: 192.168.62.153
-TTL: 3600 (или стандартный для локальной зоны)
+Record Type: A
+Name: ki.erni-gruppe.ch
+IP Address: 192.168.62.153
+TTL: 3600 (or standard for local zone)
 
-Назначение: Доступ к системе ERNI-KI (Knowledge Intelligence) для сотрудников компании
+Purpose: Access to ERNI-KI (Knowledge Intelligence) system for company employees
 
-Дополнительная информация:
-- Сервер: 192.168.62.153 (Ubuntu 24.04, nginx)
-- Порты: 80 (HTTP), 443 (HTTPS)
-- SSL сертификат: Let's Encrypt (уже настроен)
-- Доступ: только внутри корпоративной сети 192.168.62.0/24
+Additional Info:
+- Server: 192.168.62.153 (Ubuntu 24.04, nginx)
+- Ports: 80 (HTTP), 443 (HTTPS)
+- SSL Certificate: Let's Encrypt (already configured)
+- Access: only within corporate network 192.168.62.0/24
 
-Контакт для вопросов: [ВАШ EMAIL/ТЕЛЕФОН]
+Contact: [YOUR EMAIL/PHONE]
 
-Спасибо!
+Thank you!
 ```
 
-#### 1.2 Проверка после добавления записи
+#### 1.2 Verification After Record Addition
 
 ```bash
-# Очистить DNS кэш (если требуется)
+# Flush DNS cache (if required)
 sudo systemd-resolve --flush-caches
 
-# Проверить резолвинг
+# Check resolving
 nslookup ki.erni-gruppe.ch
 
-# Проверить доступ
+# Check access
 curl -I https://ki.erni-gruppe.ch/
 ```
 
-**Ожидаемый результат**:
+**Expected Result**:
 
 ```
 Server: 192.168.62.32
@@ -125,52 +125,52 @@ Address: 192.168.62.153
 
 ---
 
-## ВАРИАНТ 2: Настройка DNS на роутере LANCOM
+## OPTION 2: DNS Configuration on LANCOM Router
 
-**Описание**: Добавить локальную DNS запись на роутере LANCOM (192.168.62.1)
+**Description**: Add local DNS record on LANCOM router (192.168.62.1)
 
-**Преимущества**:
+**Pros**:
 
-- Работает для всей сети автоматически
-- Не требует дополнительных сервисов
-- Быстрая настройка (5-10 минут)
+- Works for entire network automatically
+- No additional services required
+- Fast setup (5-10 minutes)
 
-**Недостатки**:
+**Cons**:
 
-- Требует доступа к роутеру LANCOM
-- Может потребоваться согласование с IT отделом
+- Requires LANCOM router access
+- May require IT department approval
 
-**Действия**:
+**Actions**:
 
-### 2.1 Доступ к WEBconfig роутера
+### 2.1 Access Router WEBconfig
 
-1. Открыть браузер: `https://192.168.62.1/`
-2. Ввести учетные данные администратора
-3. Принять SSL сертификат роутера
+1. Open browser: `https://192.168.62.1/`
+2. Enter admin credentials
+3. Accept router SSL certificate
 
-#### 2.2 Добавление локальной DNS записи
+#### 2.2 Add Local DNS Record
 
-**Возможные пути в меню LANCOM**:
+**Possible Paths in LANCOM Menu**:
 
-**Вариант A**:
+**Variant A**:
 
 ```
 Configuration → IPv4 → DNS → Static Host Table
 ```
 
-**Вариант B**:
+**Variant B**:
 
 ```
 Setup → TCP-IP → DNS → Static Hosts
 ```
 
-**Вариант C**:
+**Variant C**:
 
 ```
 Advanced Settings → DNS → Local DNS Records
 ```
 
-#### 2.3 Добавить запись
+#### 2.3 Add Record
 
 ```
 Hostname: ki.erni-gruppe.ch
@@ -178,68 +178,68 @@ IP Address: 192.168.62.153
 Enabled: Yes
 ```
 
-#### 2.4 Применить изменения
+#### 2.4 Apply Changes
 
-1. Нажать "Apply" или "Save & Activate"
-2. Подождать 10-30 секунд
-3. Проверить доступ
+1. Click "Apply" or "Save & Activate"
+2. Wait 10-30 seconds
+3. Check access
 
 ---
 
-### ВАРИАНТ 3: Локальный DNS сервер на ERNI-KI (БЫСТРОЕ РЕШЕНИЕ)
+### OPTION 3: Local DNS Server on ERNI-KI (QUICK SOLUTION)
 
-**Описание**: Поднять dnsmasq на сервере ERNI-KI для локального DNS
+**Description**: Run dnsmasq on ERNI-KI server for local DNS
 
-**Преимущества**:
+**Pros**:
 
-- Можно настроить СЕЙЧАС (не требует доступа к другим системам)
-- Полный контроль над DNS
-- Быстрая настройка (10-15 минут)
+- Can be configured NOW (no access to other systems required)
+- Full DNS control
+- Fast setup (10-15 minutes)
 
-**Недостатки**:
+**Cons**:
 
-- Требует изменения DNS настроек на клиентских компьютерах
-- Или изменения DHCP настроек на роутере
-- Дополнительный сервис на ERNI-KI
+- Requires changing DNS settings on client computers
+- Or changing DHCP settings on router
+- Additional service on ERNI-KI
 
-**Действия**:
+**Actions**:
 
-#### 3.1 Установка и настройка dnsmasq
+#### 3.1 Install and Configure dnsmasq
 
-Создам Docker контейнер с dnsmasq для локального DNS.
+Create Docker container with dnsmasq for local DNS.
 
-**Файл**: `conf/dnsmasq/dnsmasq.conf`
+**File**: `conf/dnsmasq/dnsmasq.conf`
 
 ```conf
-# Слушать только на локальном интерфейсе
+# Listen only on local interface
 interface=eno1
 bind-interfaces
 
-# Не читать /etc/resolv.conf
+# Do not read /etc/resolv.conf
 no-resolv
 
-# Upstream DNS серверы
+# Upstream DNS servers
 server=192.168.62.32
 server=185.242.202.231
 
-# Локальная зона
+# Local zone
 domain=intern
 local=/intern/
 
-# Локальные записи
+# Local records
 address=/ki.erni-gruppe.ch/192.168.62.153
 
-# Кэширование
+# Caching
 cache-size=1000
 
-# Логирование
+# Logging
 log-queries
 log-facility=/var/log/dnsmasq.log
 ```
 
-## 3.2 Docker Compose конфигурация
+## 3.2 Docker Compose Configuration
 
-Добавить в `compose.yml`:
+Add to `compose.yml`:
 
 ```yaml
 dnsmasq:
@@ -263,33 +263,33 @@ dnsmasq:
   max-file: '3'
 ```
 
-### 3.3 Запуск
+### 3.3 Start
 
 ```bash
-# Создать директории
+# Create directories
 mkdir -p conf/dnsmasq logs/dnsmasq
 
-# Создать конфигурацию (см. выше)
+# Create configuration (see above)
 
-# Запустить контейнер
+# Start container
 docker compose up -d dnsmasq
 
-# Проверить статус
+# Check status
 docker ps --filter name=dnsmasq
 
-# Проверить логи
+# Check logs
 docker logs erni-ki-dnsmasq
 ```
 
-## 3.4 Настройка клиентов
+## 3.4 Client Configuration
 
-**Вариант A: Изменить DHCP на роутере**(рекомендуется)
+**Variant A: Change DHCP on Router**(Recommended)
 
-1. Войти в LANCOM WEBconfig
-2. Изменить Primary DNS с 192.168.62.32 на 192.168.62.153
-3. Клиенты получат новый DNS при следующем DHCP lease
+1. Log in to LANCOM WEBconfig
+2. Change Primary DNS from 192.168.62.32 to 192.168.62.153
+3. Clients will get new DNS on next DHCP lease
 
-**Вариант B: Ручная настройка на клиентах**
+**Variant B: Manual Configuration on Clients**
 
 ```bash
 # Linux
@@ -297,140 +297,141 @@ sudo nmcli connection modify <connection-name> ipv4.dns "192.168.62.153"
 sudo nmcli connection up <connection-name>
 
 # Windows
-# Панель управления → Сеть → Свойства адаптера → IPv4 → DNS: 192.168.62.153
+# Control Panel → Network → Adapter Properties → IPv4 → DNS: 192.168.62.153
 
 # macOS
-# Системные настройки → Сеть → Дополнительно → DNS → 192.168.62.153
+# System Preferences → Network → Advanced → DNS → 192.168.62.153
 ```
 
 ---
 
-## ВАРИАНТ 4: Временное решение через /etc/hosts
+## OPTION 4: Temporary Solution via /etc/hosts
 
-**Описание**: Обновить /etc/hosts на каждом компьютере вручную
+**Description**: Update /etc/hosts on each computer manually
 
-**Преимущества**:
+**Pros**:
 
-- Работает немедленно
-- Не требует доступа к серверам
+- Works immediately
+- No server access required
 
-**Недостатки**:
+**Cons**:
 
-- Не масштабируется (нужно обновлять каждый компьютер)
-- Требует прав администратора на каждом компьютере
-- Сложно поддерживать
+- Not scalable (need to update every computer)
+- Requires admin rights on every computer
+- Hard to maintain
 
-**Действия**:
+**Actions**:
 
-На каждом компьютере добавить в `/etc/hosts` (Linux/macOS) или
+On each computer add to `/etc/hosts` (Linux/macOS) or
 `C:\Windows\System32\drivers\etc\hosts` (Windows):
 
 ```
 192.168.62.153 ki.erni-gruppe.ch
 ```
 
-**Только для тестирования или очень малого количества компьютеров!**
+**Only for testing or very small number of computers!**
 
 ---
 
-## РЕКОМЕНДАЦИЯ
+## RECOMMENDATION
 
-**Для корпоративной среды ERNI рекомендуется ВАРИАНТ 1 (запрос к IT отделу)**
+**For ERNI corporate environment, OPTION 1 (Request to IT Department) is
+RECOMMENDED**
 
-**Обоснование**:
+**Justification**:
 
-1. Стандартный подход для корпоративной сети
-2. Централизованное управление DNS
-3. Не требует дополнительных сервисов
-4. Работает автоматически для всех компьютеров
-5. Соответствует политикам безопасности
+1. Standard approach for corporate network
+2. Centralized DNS management
+3. No additional services required
+4. Works automatically for all computers
+5. Compliant with security policies
 
-**Если требуется СРОЧНОЕ решение**(пока ждём IT отдел):
+**If URGENT solution required**(while waiting for IT):
 
-- Использовать**ВАРИАНТ 3**(локальный DNS на ERNI-KI)
-- После получения доступа от IT отдела - переключиться на ВАРИАНТ 1
+- Use**OPTION 3**(local DNS on ERNI-KI)
+- After getting access from IT - switch to OPTION 1
 
 ---
 
-## ПРОВЕРКА РЕШЕНИЯ
+## SOLUTION VERIFICATION
 
-### Тест 1: DNS резолвинг
+### Test 1: DNS Resolving
 
 ```bash
-# Очистить кэш
+# Flush cache
 sudo systemd-resolve --flush-caches
 
-# Проверить резолвинг
+# Check resolving
 nslookup ki.erni-gruppe.ch
 
-# Ожидаемый результат:
+# Expected Result:
 # Name: ki.erni-gruppe.ch
 # Address: 192.168.62.153
 ```
 
-## Тест 2: HTTP доступ
+## Test 2: HTTP Access
 
 ```bash
 curl -I http://ki.erni-gruppe.ch/
 
-# Ожидаемый результат:
+# Expected Result:
 # HTTP/1.1 301 Moved Permanently
 # Location: https://ki.erni-gruppe.ch/
 ```
 
-## Тест 3: HTTPS доступ
+## Test 3: HTTPS Access
 
 ```bash
 curl -I https://ki.erni-gruppe.ch/
 
-# Ожидаемый результат:
+# Expected Result:
 # HTTP/2 200
 # server: nginx/1.28.0
 ```
 
-## Тест 4: SSL сертификат
+## Test 4: SSL Certificate
 
 ```bash
 openssl s_client -connect ki.erni-gruppe.ch:443 -servername ki.erni-gruppe.ch 2>&1 | grep -E "subject=|issuer=|Verify"
 
-# Ожидаемый результат:
+# Expected Result:
 # subject=CN = ki.erni-gruppe.ch
 # issuer=C = US, O = Let's Encrypt, CN = E5
 # Verify return code: 0 (ok)
 ```
 
-## Тест 5: Веб-интерфейс
+## Test 5: Web Interface
 
-Открыть в браузере: `https://ki.erni-gruppe.ch/`
+Open in browser: `https://ki.erni-gruppe.ch/`
 
-**Ожидаемый результат**:
+**Expected Result**:
 
-- Страница загружается
-- SSL сертификат валиден (зелёный замок)
-- OpenWebUI интерфейс доступен
-
----
-
-## КРИТЕРИИ УСПЕХА
-
-После применения решения:
-
-- DNS запись `ki.erni-gruppe.ch` резолвится в 192.168.62.153
-- Доступ работает с любого компьютера в сети 192.168.62.0/24
-- HTTPS работает с валидным SSL сертификатом
-- OpenWebUI интерфейс загружается корректно
-- Решение задокументировано
+- Page loads
+- SSL certificate valid (green lock)
+- OpenWebUI interface accessible
 
 ---
 
-## КОНТАКТЫ
+## SUCCESS CRITERIA
 
-**IT Отдел ERNI**: [ТРЕБУЕТСЯ УТОЧНИТЬ]
+After applying solution:
 
-**Ответственный за DNS**: [ТРЕБУЕТСЯ УТОЧНИТЬ]
-
-**Ответственный за ERNI-KI**: [ТРЕБУЕТСЯ УТОЧНИТЬ]
+- DNS record `ki.erni-gruppe.ch` resolves to 192.168.62.153
+- Access works from any computer in network 192.168.62.0/24
+- HTTPS works with valid SSL certificate
+- OpenWebUI interface loads correctly
+- Solution documented
 
 ---
 
-**Автор**: Augment Agent**Дата**: 2025-10-27**Версия**: 1.0
+## CONTACTS
+
+**ERNI IT Department**: [TO BE CONFIRMED]
+
+**DNS Responsible**: [TO BE CONFIRMED]
+
+**ERNI-KI Responsible**: [TO BE CONFIRMED]
+
+---
+
+**Author**: Augment Agent**Date**: 2025-10-27**Version**: 1.0

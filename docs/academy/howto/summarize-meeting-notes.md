@@ -1,55 +1,44 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-24'
 ---
 
-# Суммировать заметки встречи
+# Summarize meeting notes
 
-## Когда использовать
+## Introduction
 
-- Нужно быстро оформить конспект после митинга или звонка.
-- Требуется выделить решения, риски и дальнейшие шаги.
+This guide explains how to efficiently summarize meeting notes using AI tools,
+providing a template and best practices for quick and accurate documentation.
 
-## Что подготовить
+## Preparation
 
-- Сырые заметки (bullet points или транскрипт).
-- Участников, дату, цель встречи.
-- Решения/next steps, дедлайны, ответственных.
+1. Collect raw notes or transcript (clean obvious typos if possible).
+2. Highlight decisions, owners, and due dates.
+3. Determine audience (internal core team vs. customer-friendly recap).
 
-## Шаги
-
-1. Соберите заметки (текст, bullet points или транскрипт) и вставьте в промпт.
-2. Укажите продолжительность встречи, участников и ключевые темы.
-3. Попросите выделить блоки: Итоги, Решения, Риски, Следующие шаги (с
-   ответственными и датами).
-4. Проверьте, чтобы рекомендации были конкретными и реалистичными; удалите
-   внутренние ссылки, которые нельзя рассылать вовне.
-5. Согласуйте язык (RU/DE/EN) и формат (markdown/email) перед рассылкой.
-6. Сохраните конспект в корпоративное хранилище.
-
-### Готовый промпт
+## Prompt template
 
 ```
-Ты — бизнес-аналитик. Суммируй встречу.
-Вход: <вставь заметки>. Аудитория: <команда/клиент>. Язык: <RU/DE/EN>.
-Собери блоки: Итоги (до 5 пунктов), Решения, Риски, Следующие шаги (кто/дедлайн).
-Формат: буллеты + короткое intro с датой. Не добавляй новых фактов.
+Summarize the following meeting transcript for <audience>.
+
+- Group decisions separately from open risks.
+- Output a table of action items: owner, task, deadline.
+- Keep the summary under 8 bullet points.
+
+Transcript:
+<paste transcript>
 ```
 
-## Примеры промптов
+## Output checklist
 
--**Хороший:**
+- Decisions vs. follow-ups are clearly separated.
+- Every action item has an explicit owner and date.
+- Sensitive information is redacted before sharing externally.
 
-- "Ты — бизнес-аналитик. Задача: сделать конспект 30-минутной встречи. Контекст:
-  обсуждали запуск пилота, приняли решения по датам и ответственным. Формат:
-  Итоги (3 пункта), Решения, Риски, Следующие шаги (с датами). Вот заметки:
-  <вставьте текст>." -**Плохой:**
-- "Сделай кратко" (не указано, что выделять и какой формат нужен)
+## Troubleshooting
 
-## Чек-лист перед отправкой
-
-- В блоке «Следующие шаги» есть ответственный и срок.
-- Риски выписаны отдельно.
-- Нет внутренних данных, которых нет в исходных заметках.
+- If the transcript is noisy, run a “clean-up” prompt first to remove filler
+  sentences.
+- For multilingual meetings, remind the model to respond in the target language.

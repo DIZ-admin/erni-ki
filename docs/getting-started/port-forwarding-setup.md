@@ -1,40 +1,39 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: original
 doc_version: '2025.11'
-last_updated: '2025-11-24'
+last_updated: '2025-11-28'
 ---
 
-# Port Forwarding Setup для ERNI-KI
+# Port Forwarding Setup for ERNI-KI
 
 [TOC]
 
-**Дата**: 2025-10-27  
-**Роутер**: LANCOM (192.168.62.1)  
-**Назначение**: Настройка внешнего доступа к ERNI-KI через прямое подключение
+**Date**: 2025-10-27**Router**: LANCOM (192.168.62.1)**Purpose**: Configure
+external access to ERNI-KI via direct connection
 
 ---
 
-## ТРЕБУЕМАЯ КОНФИГУРАЦИЯ
+## REQUIRED CONFIGURATION
 
-### Сетевые параметры
+### Network Parameters
 
-| Параметр              | Значение              |
-| --------------------- | --------------------- |
-| Внешний IP            | 185.242.201.210       |
-| Внутренний IP сервера | 192.168.62.153        |
-| Роутер/Шлюз           | 192.168.62.1 (LANCOM) |
-| Домен                 | ki.erni-gruppe.ch     |
+| Parameter          | Value                 |
+| ------------------ | --------------------- |
+| External IP        | 185.242.201.210       |
+| Internal Server IP | 192.168.62.153        |
+| Router/Gateway     | 192.168.62.1 (LANCOM) |
+| Domain             | ki.erni-gruppe.ch     |
 
 ### Port Forwarding Rules
 
-#### Rule 1: HTTP (порт 80)
+#### Rule 1: HTTP (port 80)
 
 ```
 Name: ERNI-KI-HTTP
 Description: ERNI-KI Web Interface HTTP
 External Interface: WAN
-External IP: 185.242.201.210 (или Any)
+External IP: 185.242.201.210 (or Any)
 External Port: 80
 Protocol: TCP
 Internal IP: 192.168.62.153
@@ -42,13 +41,13 @@ Internal Port: 80
 Enabled: Yes
 ```
 
-#### Rule 2: HTTPS (порт 443)
+#### Rule 2: HTTPS (port 443)
 
 ```
 Name: ERNI-KI-HTTPS
 Description: ERNI-KI Web Interface HTTPS
 External Interface: WAN
-External IP: 185.242.201.210 (или Any)
+External IP: 185.242.201.210 (or Any)
 External Port: 443
 Protocol: TCP
 Internal IP: 192.168.62.153
@@ -58,117 +57,124 @@ Enabled: Yes
 
 ---
 
-## ИНСТРУКЦИЯ ПО НАСТРОЙКЕ LANCOM ROUTER
+## LANCOM ROUTER CONFIGURATION INSTRUCTIONS
 
-### Шаг 1: Доступ к WEBconfig
+### Step 1: Access WEBconfig
 
-1. Открыть браузер и перейти по адресу: `https://192.168.62.1/`
-2. Ввести учетные данные администратора
-3. Принять SSL сертификат роутера (если требуется)
+1. Open browser and go to: `https://192.168.62.1/`
+2. Enter admin credentials
+3. Accept router SSL certificate (if required)
 
-### Шаг 2: Навигация к Port Forwarding
+### Step 2: Navigate to Port Forwarding
 
-**Возможные пути в меню**(зависит от версии LANCOM):
+**Possible menu paths**(depends on LANCOM version):
 
-**Вариант A**:
+**Variant A**:
 
 ```
 Configuration → Firewall/QoS → Port Forwarding
 ```
 
-**Вариант B**:
+**Variant B**:
 
 ```
 IPv4 → Firewall → Port Forwarding Rules
 ```
 
-**Вариант C**:
+**Variant C**:
 
 ```
 Advanced Settings → NAT → Port Forwarding
 ```
 
-### Шаг 3: Добавление правил
+### Step 3: Add Rules
 
-#### Для HTTP (порт 80)
+#### For HTTP (port 80)
 
-1. Нажать "Add" или "New Rule"
-2. Заполнить поля: -**Rule Name**: `ERNI-KI-HTTP` -**External Interface**: `WAN`
-   или `Internet` -**Protocol**: `TCP` -**External Port**: `80` -**Internal IP
-   Address**: `192.168.62.153` -**Internal Port**: `80` -**Enabled**: `Yes` или
-   `On`
-3. Нажать "Save" или "Apply"
+1. Click "Add" or "New Rule"
+2. Fill fields:
 
-#### Для HTTPS (порт 443)
+-**Rule Name**: `ERNI-KI-HTTP` -**External Interface**: `WAN` or
+`Internet` -**Protocol**: `TCP` -**External Port**: `80` -**Internal IP
+Address**: `192.168.62.153` -**Internal Port**: `80` -**Enabled**: `Yes` or `On`
 
-1. Нажать "Add" или "New Rule"
-2. Заполнить поля: -**Rule Name**: `ERNI-KI-HTTPS` -**External Interface**:
-   `WAN` или `Internet` -**Protocol**: `TCP` -**External Port**:
-   `443` -**Internal IP Address**: `192.168.62.153` -**Internal Port**:
-   `443` -**Enabled**: `Yes` или `On`
-3. Нажать "Save" или "Apply"
+3. Click "Save" or "Apply"
 
-### Шаг 4: Применение изменений
+#### For HTTPS (port 443)
 
-1. Нажать "Apply Changes" или "Save & Activate"
-2. Подождать 10-30 секунд для применения правил
-3. Проверить статус правил (должны быть Active/Enabled)
+1. Click "Add" or "New Rule"
+2. Fill fields:
 
-### Шаг 5: Проверка Firewall
+-**Rule Name**: `ERNI-KI-HTTPS` -**External Interface**: `WAN` or
+`Internet` -**Protocol**: `TCP` -**External Port**: `443` -**Internal IP
+Address**: `192.168.62.153` -**Internal Port**: `443` -**Enabled**: `Yes` or
+`On`
 
-**Важно**: Убедиться, что firewall роутера НЕ блокирует порты 80/443
+3. Click "Save" or "Apply"
 
-1. Перейти в раздел Firewall Rules
-2. Проверить, что НЕТ правил, блокирующих:
-   - Входящие подключения на порт 80 TCP
-   - Входящие подключения на порт 443 TCP
-3. Если есть блокирующие правила - создать исключения для IP 192.168.62.153
+### Step 4: Apply Changes
+
+1. Click "Apply Changes" or "Save & Activate"
+2. Wait 10-30 seconds for rules to apply
+3. Check rule status (should be Active/Enabled)
+
+### Step 5: Check Firewall
+
+**Important**: Ensure router firewall does NOT block ports 80/443
+
+1. Go to Firewall Rules section
+2. Check that NO rules block:
+
+- Incoming connections on port 80 TCP
+- Incoming connections on port 443 TCP
+
+3. If blocking rules exist - create exceptions for IP 192.168.62.153
 
 ---
 
-## ПРОВЕРКА НАСТРОЕК
+## VERIFYING SETTINGS
 
-### Тест 1: Проверка с сервера
+### Test 1: Check from Server
 
 ```bash
-# Проверить, что порты слушают на всех интерфейсах
+# Check that ports are listening on all interfaces
 netstat -tlnp | grep -E ":80 |:443 "
 
-# Ожидаемый результат:
-# tcp6  0  0 :::80   :::*  LISTEN  <pid>/docker-proxy
-# tcp6  0  0 :::443  :::*  LISTEN  <pid>/docker-proxy
+# Expected Result:
+# tcp6 0 0 :::80 :::* LISTEN <pid>/docker-proxy
+# tcp6 0 0 :::443 :::* LISTEN <pid>/docker-proxy
 ```
 
-## Тест 2: Проверка с другого компьютера в локальной сети
+## Test 2: Check from Another Computer in Local Network
 
 ```bash
-# С компьютера в той же подсети (192.168.62.x)
+# From computer in same subnet (192.168.62.x)
 curl -I -k https://192.168.62.153/
 
-# Ожидаемый результат:
+# Expected Result:
 # HTTP/2 200
 # server: nginx/1.28.0
 ```
 
-## Тест 3: Проверка внешнего доступа
+## Test 3: Check External Access
 
 ```bash
-# С компьютера вне локальной сети или через мобильный интернет
+# From computer outside local network or via mobile internet
 curl -I https://ki.erni-gruppe.ch/
 
-# Ожидаемый результат:
+# Expected Result:
 # HTTP/2 200
 # server: nginx/1.28.0
 ```
 
-## Тест 4: Проверка портов извне
+## Test 4: Check Ports Externally
 
 ```bash
-# С внешнего компьютера
+# From external computer
 nc -zv 185.242.201.210 80
 nc -zv 185.242.201.210 443
 
-# Ожидаемый результат:
+# Expected Result:
 # Connection to 185.242.201.210 80 port [tcp/http] succeeded!
 # Connection to 185.242.201.210 443 port [tcp/https] succeeded!
 ```
@@ -177,113 +183,113 @@ nc -zv 185.242.201.210 443
 
 ## TROUBLESHOOTING
 
-### Проблема 1: Connection Refused
+### Problem 1: Connection Refused
 
-**Симптомы**:
+**Symptoms**:
 
 ```bash
 $ nc -zv 185.242.201.210 80
 nc: connect to 185.242.201.210 port 80 (tcp) failed: Connection refused
 ```
 
-**Возможные причины**:
+**Possible Causes**:
 
-1. Port forwarding не настроен
-2. Firewall блокирует порты
-3. Nginx не слушает на порту
+1. Port forwarding not configured
+2. Firewall blocks ports
+3. Nginx not listening on port
 
-**Решение**:
+**Solution**:
 
-1. Проверить правила port forwarding в роутере
-2. Проверить firewall rules
-3. Проверить статус nginx: `docker ps --filter name=nginx`
+1. Check port forwarding rules in router
+2. Check firewall rules
+3. Check nginx status: `docker ps --filter name=nginx`
 
-### Проблема 2: Connection Timeout
+### Problem 2: Connection Timeout
 
-**Симптомы**:
+**Symptoms**:
 
 ```bash
 $ curl -I https://ki.erni-gruppe.ch/
 curl: (28) Connection timed out after 30000 milliseconds
 ```
 
-**Возможные причины**:
+**Possible Causes**:
 
-1. Firewall блокирует подключения
-2. ISP блокирует порты 80/443
-3. DNS не резолвится
+1. Firewall blocks connections
+2. ISP blocks ports 80/443
+3. DNS not resolving
 
-**Решение**:
+**Solution**:
 
-1. Проверить firewall на роутере
-2. Связаться с ISP для проверки блокировок
-3. Проверить DNS: `nslookup ki.erni-gruppe.ch`
+1. Check firewall on router
+2. Contact ISP to check blocks
+3. Check DNS: `nslookup ki.erni-gruppe.ch`
 
-### Проблема 3: SSL Certificate Error
+### Problem 3: SSL Certificate Error
 
-**Симптомы**:
+**Symptoms**:
 
 ```
 SSL certificate problem: unable to get local issuer certificate
 ```
 
-**Возможные причины**:
+**Possible Causes**:
 
-1. SSL сертификат не валиден для домена
-2. Сертификат самоподписанный
+1. SSL certificate not valid for domain
+2. Certificate is self-signed
 
-**Решение**:
+**Solution**:
 
-1. Проверить сертификат: `openssl s_client -connect ki.erni-gruppe.ch:443`
-2. Обновить сертификат Let's Encrypt (если истёк)
-3. Использовать `-k` флаг для curl (только для тестирования)
+1. Check certificate: `openssl s_client -connect ki.erni-gruppe.ch:443`
+2. Update Let's Encrypt certificate (if expired)
+3. Use `-k` flag for curl (testing only)
 
 ---
 
-## DNS НАСТРОЙКИ
+## DNS SETTINGS
 
-После настройки port forwarding необходимо настроить DNS.
+After configuring port forwarding, DNS must be configured.
 
-### Вариант A: Через регистратора домена
+### Option A: Via Domain Registrar
 
-1. Войти в панель управления регистратора `erni-gruppe.ch`
-2. Перейти в раздел DNS Management
-3. Добавить A запись:
+1. Log in to `erni-gruppe.ch` registrar control panel
+2. Go to DNS Management section
+3. Add A record:
 
-   ```
-   Type: A
-   Name: ki
-   Value: 185.242.201.210
-   TTL: 3600
-   ```
+```
+Type: A
+Name: ki
+Value: 185.242.201.210
+TTL: 3600
+```
 
-4. Сохранить изменения
-5. Подождать 5-60 минут для распространения DNS
+4. Save changes
+5. Wait 5-60 minutes for DNS propagation
 
-### Вариант B: Через Cloudflare (без Tunnel)
+### Option B: Via Cloudflare (without Tunnel)
 
-1. Добавить домен `erni-gruppe.ch` в Cloudflare
-2. Обновить NS записи у регистратора на Cloudflare NS
-3. В Cloudflare Dashboard → DNS → Records:
+1. Add `erni-gruppe.ch` domain to Cloudflare
+2. Update NS records at registrar to Cloudflare NS
+3. In Cloudflare Dashboard → DNS → Records:
 
-   ```
-   Type: A
-   Name: ki
-   IPv4 address: 185.242.201.210
-   Proxy status: DNS only (серое облако)
-   TTL: Auto
-   ```
+```
+Type: A
+Name: ki
+IPv4 address: 185.242.201.210
+Proxy status: DNS only (grey cloud)
+TTL: Auto
+```
 
-4. Сохранить
+4. Save
 
-### Проверка DNS
+### DNS Verification
 
 ```bash
-# Проверить с публичного DNS
+# Check from public DNS
 nslookup ki.erni-gruppe.ch 8.8.8.8
 
-# Ожидаемый результат:
-# Server:  8.8.8.8
+# Expected Result:
+# Server: 8.8.8.8
 # Address: 8.8.8.8#53
 #
 # Non-authoritative answer:
@@ -293,51 +299,48 @@ nslookup ki.erni-gruppe.ch 8.8.8.8
 
 ---
 
-## БЕЗОПАСНОСТЬ
+## SECURITY
 
-### Рекомендации
+### Recommendations
 
-1.**Ограничить доступ по IP**(если возможно):
+1.**Restrict IP Access**(if possible):
 
-- Разрешить доступ только с IP адресов ERNI офисов
-- Использовать whitelist в firewall роутера
+- Allow access only from ERNI office IPs
+- Use whitelist in router firewall
 
-  2.**Включить rate limiting**:
+  2.**Enable Rate Limiting**:
 
-- Ограничить количество подключений с одного IP
-- Защита от DDoS атак
+- Limit number of connections from single IP
+- DDoS protection
 
-  3.**Мониторинг**:
+  3.**Monitoring**:
 
-- Настроить логирование подключений на роутере
-- Регулярно проверять логи на подозрительную активность
+- Configure connection logging on router
+- Regularly check logs for suspicious activity
 
-  4.**Обновления**:
+  4.**Updates**:
 
-- Регулярно обновлять firmware роутера LANCOM
-- Обновлять SSL сертификаты
+- Regularly update LANCOM router firmware
+- Update SSL certificates
 
-### Альтернатива: VPN
+### Alternative: VPN
 
-Для повышенной безопасности рассмотреть использование VPN вместо прямого
-доступа:
+For increased security consider using VPN instead of direct access:
 
-- Настроить VPN сервер на роутере LANCOM
-- Пользователи подключаются через VPN
-- Доступ к ERNI-KI только через VPN туннель
-
----
-
-## КОНТАКТЫ
-
-**IT Отдел ERNI**: [ТРЕБУЕТСЯ УТОЧНИТЬ]
-
-**Ответственный за ERNI-KI**: [ТРЕБУЕТСЯ УТОЧНИТЬ]
-
-**Документация LANCOM**: <https://www.lancom-systems.com/support/>
+- Configure VPN server on LANCOM router
+- Users connect via VPN
+- Access to ERNI-KI only via VPN tunnel
 
 ---
 
-**Автор**: Augment Agent  
-**Дата**: 2025-10-27  
-**Версия**: 1.0
+## CONTACTS
+
+**ERNI IT Department**: [TO BE CONFIRMED]
+
+**ERNI-KI Responsible**: [TO BE CONFIRMED]
+
+**LANCOM Documentation**: <https://www.lancom-systems.com/support/>
+
+---
+
+**Author**: Augment Agent**Date**: 2025-10-27**Version**: 1.0

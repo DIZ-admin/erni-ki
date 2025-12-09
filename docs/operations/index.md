@@ -1,58 +1,65 @@
 ---
-language: ru
+language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-28'
+last_updated: '2025-11-24'
 ---
 
-# Документация по эксплуатации
+# Operations Documentation
 
-Этот каталог содержит операционные руководства, ранбуки и процедуры для
-управления платформой ERNI-KI.
+This directory contains operational guides, runbooks, and procedures for
+managing the ERNI-KI platform.
 
-## Содержание
+## Contents
 
-### Основные руководства
+### Core Guides
 
--**[admin-guide.md](core/admin-guide.md)**- Справочник системного администратора
+-**[admin-guide.md](../../operations/core/admin-guide.md)**- System
+administration handbook (RU)
 
-- Управление пользователями
-- Конфигурация сервисов
-- Процедуры резервного копирования и восстановления
-- Управление безопасностью
+- User management
+- Service configuration
+- Backup and restore procedures
+- Security management
 
--**[monitoring-guide.md](monitoring/monitoring-guide.md)**- Полная документация
-по мониторингу
+-**[monitoring-guide.md](../../operations/monitoring/monitoring-guide.md)**-
+Comprehensive monitoring documentation (RU)
 
-- Метрики Prometheus и алерты
-- Дашборды Grafana (5 настроенных)
-- Агрегация логов Loki
-- Отслеживание SLO (Service Level Objective)
+- Prometheus metrics and alerts
+- Grafana dashboards (5 provisioned)
+- Loki log aggregation
+- SLO (Service Level Objective) tracking
 
-### Устранение неполадок и Ранбуки
+### Troubleshooting & Runbooks
 
--**[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md)**-
-Процедуры диагностики и частые проблемы -**Обслуживание:**
-[Перезапуск сервисов](maintenance/service-restart-procedures.md),
-[Резервное копирование и восстановление](maintenance/backup-restore-procedures.md)
+-**[troubleshooting-guide.md](../../operations/troubleshooting/troubleshooting-guide.md)**-
+Diagnostic procedures and common issues (RU) -**Maintenance:**
+[Service restarts](../../operations/maintenance/service-restart-procedures.md)
+(RU),
+[Backup & Restore](../../operations/maintenance/backup-restore-procedures.md)
+(RU)
 
-### Специализированные руководства
+### Specialized Guides
 
--**Автоматизация:**
-[Автоматизированное обслуживание](automation/automated-maintenance-guide.md) -**Базы
-данных:**[Обзор операций](database/index.md) -**Мониторинг:**[Руководство по мониторингу](monitoring/monitoring-guide.md)
+-**Automation:**
+[Automated maintenance](../../operations/automation/automated-maintenance-guide.md)
+(RU) -**Database:**[Operations overview](../../operations/database/index.md)
+(RU) -**Monitoring:**
+[Monitoring guide](../../operations/monitoring/monitoring-guide.md) (RU)
 
-### Диагностика
+### Diagnostics
 
--**[diagnostics/index.md](diagnostics/index.md)**- Диагностические отчеты и
-методологии
+-**[diagnostics/index.md](../../operations/diagnostics/index.md)**- Diagnostic
+reports and methodologies (RU)
 
-## Быстрый старт
+## Quick Start
 
-**Для операторов:**Начните с [admin-guide.md](core/admin-guide.md).**Для
-мониторинга:**См. [monitoring-guide.md](monitoring/monitoring-guide.md).**Для
-инцидентов:**Проверьте
-[troubleshooting-guide.md](troubleshooting/troubleshooting-guide.md).
+**For Operators:**Start with the
+[admin-guide.md](../../operations/core/admin-guide.md) (RU).**For Monitoring:**
+See [monitoring-guide.md](../../operations/monitoring/monitoring-guide.md) (RU).
+**For Incidents:**Check
+[troubleshooting-guide.md](../../operations/troubleshooting/troubleshooting-guide.md)
+(RU).
 
 ## Операционный ритм
 
@@ -63,10 +70,10 @@ last_updated: '2025-11-28'
 
 ## Связанная документация
 
-- [Обзор архитектуры](../architecture/index.md)
-- [Начало работы](../getting-started/index.md)
-- [Безопасность](../security/index.md)
+- [Architecture Overview](../architecture/index.md)
+- [Getting Started](../getting-started/index.md)
+- [Security Guide](../../security/index.md) (RU)
 
-## Версия
+## Version
 
-Версия документации:**12.1**Последнее обновление:**2025-11-24**
+Documentation version:**12.1**Last updated:**2025-11-24**

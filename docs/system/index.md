@@ -1,37 +1,19 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: partial
 doc_version: '2025.11'
 last_updated: '2025-11-27'
 ---
 
-# Системная документация
+# System
 
-Документация системного уровня для ERNI-KI инфраструктуры и операционных
-процессов.
+System status and information for ERNI-KI.
 
-## Содержание
+## Available Documentation
 
-### Мониторинг и статус
+- [System Status](status.md)
 
-- [Статус системы](status.md) - текущий статус сервисов и мониторинга через
-  Uptime Kuma
+## Note
 
-## Связанные разделы
-
-- [Operations](../operations/index.md) - операционные руководства и runbooks
-- [Architecture](../architecture/index.md) - архитектурная документация
-- [Reports](../reports/index.md) - отчеты и аудиты системы
-
-## Онлайн-ресурсы
-
--**Status Page:**<https://status.ki.erni-gruppe.ch> (Uptime
-Kuma) -**Grafana:**<https://grafana.ki.erni-gruppe.ch> -**Prometheus:**<https://prometheus.ki.erni-gruppe.ch>
-
-## Для администраторов
-
-Если вы администратор системы, обратитесь к:
-
-- [Operations Handbook](../operations/core/operations-handbook.md)
-- [Admin Guide](../operations/core/admin-guide.md)
-- [Troubleshooting Guide](../operations/troubleshooting/troubleshooting-guide.md)
+The Russian version is the primary source. For discrepancies, refer to the
+[Russian version](../../system/status.md).

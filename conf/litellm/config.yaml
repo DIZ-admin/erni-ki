@@ -12,7 +12,7 @@
 # - litellm_params:
 #     model: "meta-llama/Llama-3.1-8B-Instruct"
 #     api_base: "http://vllm:8000/v1"
-#     api_key: "erni-ki-vllm-secure-key-2024"
+#     api_key: "your-vllm-api-key"
 #     custom_llm_provider: "openai"
 #     max_tokens: 4096
 #     temperature: 0.7
@@ -76,7 +76,6 @@ general_settings:
   disable_health_check_logs: true
 
 # === OPENAI PASSTHROUGH CONFIGURATION ===
-# Passthrough for OpenAI Assistant API (updated 2025-10-07)
 openai_route_config:
   # Enable OpenAI passthrough
   enable_openai_passthrough: true
@@ -128,8 +127,7 @@ litellm_settings:
   # callbacks: ["prometheus"]  # Enable Prometheus metrics export
   # service_callback: ["prometheus_system"]  # Monitor system services (Redis, PostgreSQL)
   # === CACHE CONFIGURATION ===
-  # Enabled: 2025-10-02 after Redis config fix
-  cache: true  # Enable caching
+  cache: true
   # === DETAILED LOG SETTINGS ===
   # Disable health check logging to reduce noise
   disable_health_check_logs: true
@@ -178,8 +176,6 @@ litellm_settings:
     tpm_limit: 10000 # Tokens per minute limit
     rpm_limit: 100 # Requests per minute limit
   # === PERFORMANCE OPTIMIZATION ===
-  # Caching settings for production
-  # Enabled: 2025-10-02 using in-memory caching
   cache_params:
     type: "local" # Use in-memory caching
     ttl: 1800 # Cache TTL in seconds (30 minutes)
