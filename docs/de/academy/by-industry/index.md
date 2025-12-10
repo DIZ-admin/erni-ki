@@ -16,15 +16,15 @@ Spezialisierte KI-Anwendungen für verschiedene Branchen und Fachbereiche.
 
 ## Baubranche & Holzbau
 
-### [Holzbau-spezifische Szenarien →](../../academy/by-industry/holzbau/index.md)
+### [Holzbau-spezifische Szenarien →](../ru/academy/by-industry/holzbau/index.md)
 
 Für Mitarbeiter in Holzbau, Planung, Bauleitung und verwandten Bereichen.
 
 **Verfügbare Szenarien:**
 
-- [Bautagebuch erstellen](../../academy/by-industry/holzbau/bautagebuch-erstellen.md)
+- [Bautagebuch erstellen](../ru/academy/by-industry/holzbau/bautagebuch-erstellen.md)
   — 10 min
-- [Angebot erstellen](../../academy/by-industry/holzbau/angebot-erstellen.md) —
+- [Angebot erstellen](../ru/academy/by-industry/holzbau/angebot-erstellen.md) —
   15 min
 - Mängelliste dokumentieren — 10 min (geplant)
 - SIA-Normen recherchieren — 15 min (geplant)
@@ -40,7 +40,7 @@ Für Mitarbeiter in Holzbau, Planung, Bauleitung und verwandten Bereichen.
 - Mehrsprachig (DE/FR/IT)
 - Praxisnah für Baustelle
 
-[→ Zu den Holzbau-Szenarien](../../academy/by-industry/holzbau/index.md)
+[→ Zu den Holzbau-Szenarien](../ru/academy/by-industry/holzbau/index.md)
 
 ---
 
@@ -52,9 +52,9 @@ Für Mitarbeiter in Holzbau, Planung, Bauleitung und verwandten Bereichen.
 
 Verfügbar in Universal Academy:
 
-- [Code Review](../../academy/by-role/developers/code-review-with-ai.md)
-- [Debug Code](../../academy/by-role/developers/debug-code.md)
-- [Unit Tests schreiben](../../academy/by-role/developers/write-unit-tests.md)
+- [Code Review](../ru/academy/by-role/developers/code-review-with-ai.md)
+- [Debug Code](../ru/academy/by-role/developers/debug-code.md)
+- [Unit Tests schreiben](../ru/academy/by-role/developers/write-unit-tests.md)
 
 ### Projektmanagement
 
@@ -62,8 +62,8 @@ Verfügbar in Universal Academy:
 
 Verfügbar in Universal Academy:
 
-- [Projektberichte erstellen](../../academy/by-role/managers/create-project-report.md)
-- [Metriken analysieren](../../academy/by-role/managers/analyze-metrics.md)
+- [Projektberichte erstellen](../ru/academy/by-role/managers/create-project-report.md)
+- [Metriken analysieren](../ru/academy/by-role/managers/analyze-metrics.md)
 
 ### Support & Service
 
@@ -71,8 +71,8 @@ Verfügbar in Universal Academy:
 
 Verfügbar in Universal Academy:
 
-- [Probleme diagnostizieren](../../academy/by-role/support/troubleshoot-user-issue.md)
-- [KB-Artikel erstellen](../../academy/by-role/support/create-knowledge-base-article.md)
+- [Probleme diagnostizieren](../ru/academy/by-role/support/troubleshoot-user-issue.md)
+- [KB-Artikel erstellen](../ru/academy/by-role/support/create-knowledge-base-article.md)
 
 ---
 

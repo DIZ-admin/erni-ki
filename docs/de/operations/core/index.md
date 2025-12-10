@@ -19,4 +19,4 @@ Zentrale Betriebsdokumentation und Runbooks für ERNI-KI.
 ## Hinweis
 
 Die russische Version ist die Hauptquelle. Bei Unstimmigkeiten siehe
-[russische Version](../../../operations/core/index.md).
+[russische Version](../../../ru/operations/core/index.md).

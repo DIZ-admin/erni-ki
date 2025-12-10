@@ -380,5 +380,5 @@ Nach der Fehlerbehebung überprüfen:
 
 - [Admin-Leitfaden](../core/admin-guide.md) - Systemverwaltung
 - [Architektur](../../architecture/architecture.md) - Systemarchitektur
-- [Installationsanleitung](../../getting-started/installation.md) -
+- [Installationsanleitung](../../ru/getting-started/installation.md) -
   Setup-Anweisungen
