@@ -144,7 +144,9 @@ flowchart TD
 
 ## 5. Related documentation
 
-- [Admin Guide](../core/admin-guide.md) - System administration
+- [Admin Guide](../../../ru/operations/core/admin-guide.md) - System
+  administration (RU)
 - [Monitoring Guide](../monitoring/monitoring-guide.md) - Monitoring and alerts
-- [Docker Cleanup Guide](docker-cleanup-guide.md) - Detailed cleanup procedures
+- [Docker Cleanup Guide](../../../ru/operations/automation/docker-cleanup-guide.md) -
+  Detailed cleanup procedures (RU)
 - [Docker Log Rotation](docker-log-rotation.md) - Log management
