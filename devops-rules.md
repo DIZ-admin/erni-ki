@@ -156,19 +156,19 @@ for f in env/*.example; do cp "$f" "${f%.example}.env"; done
 ### Pipeline Stages
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                        CI Pipeline                               │
-├─────────┬─────────┬─────────┬─────────┬─────────┬──────────────┤
-│  Lint   │  Test   │ Security│  Build  │  Deploy │ Notification │
-│         │         │         │         │         │              │
-│ • Pre-  │ • Go    │ • CodeQL│ • Multi-│ • Env-  │ • Summary    │
-│   commit│   (80%) │ • Trivy │   plat- │   spec- │ • Codecov    │
-│ • Pret- │ • Python│ • Bandit│   form  │   ific  │              │
-│   tier  │   (341) │ • Git-  │   Docker│         │              │
-│ • Ruff  │ • TS/JS │   leaks │         │         │              │
-│ • Edit- │ • E2E   │         │         │         │              │
-│   orCfg │ • k6    │         │         │         │              │
-└─────────┴─────────┴─────────┴─────────┴─────────┴──────────────┘
+
+ CI Pipeline
+
+ Lint Test Security Build Deploy Notification
+
+ • Pre- • Go • CodeQL • Multi- • Env- • Summary
+ commit (80%) • Trivy plat- spec- • Codecov
+ • Pret- • Python • Bandit form ific
+ tier (341) • Git- Docker
+ • Ruff • TS/JS leaks
+ • Edit- • E2E
+ orCfg • k6
+
 ```
 
 ### Required Checks Before Merge
@@ -444,38 +444,38 @@ http://localhost:3001
 
 ```text
 env/
-├── db.env.example         # PostgreSQL configuration
-├── redis.env.example      # Redis configuration
-├── litellm.env.example    # LiteLLM API keys
-├── openwebui.env.example  # OpenWebUI settings
-├── auth.env.example       # JWT auth configuration
-├── cloudflare.env.example # Cloudflare tunnel
-└── ...
+ db.env.example # PostgreSQL configuration
+ redis.env.example # Redis configuration
+ litellm.env.example # LiteLLM API keys
+ openwebui.env.example # OpenWebUI settings
+ auth.env.example # JWT auth configuration
+ cloudflare.env.example # Cloudflare tunnel
+ ...
 ```
 
 ### Secrets Directory
 
 ```text
 secrets/
-├── db_password            # PostgreSQL password
-├── redis_password         # Redis password
-├── jwt_secret             # JWT signing key
-├── litellm_master_key     # LiteLLM API key
-└── ...
+ db_password # PostgreSQL password
+ redis_password # Redis password
+ jwt_secret # JWT signing key
+ litellm_master_key # LiteLLM API key
+ ...
 ```
 
 ### Service Configurations
 
 ```text
 conf/
-├── nginx/                 # Reverse proxy config
-├── prometheus/            # Metrics rules & targets
-├── grafana/               # Dashboards & provisioning
-├── loki/                  # Log aggregation config
-├── alertmanager/          # Alert routing
-├── postgres-enhanced/     # PostgreSQL tuning
-├── redis/                 # Redis config
-└── ...
+ nginx/ # Reverse proxy config
+ prometheus/ # Metrics rules & targets
+ grafana/ # Dashboards & provisioning
+ loki/ # Log aggregation config
+ alertmanager/ # Alert routing
+ postgres-enhanced/ # PostgreSQL tuning
+ redis/ # Redis config
+ ...
 ```
 
 ---

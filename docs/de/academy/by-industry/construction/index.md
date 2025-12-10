@@ -12,4 +12,5 @@ KI-Anwendungsfälle und Leitfäden für die Bauindustrie.
 
 ## Inhalt
 
-- [Angebot erstellen](angebot-erstellen.md)
+- [Bautagebuch Erstellen](bautagebuch-erstellen.md) — Bautagebuch erstellen
+- [Maengelliste](maengelliste.md) — Mängellisten-Management
