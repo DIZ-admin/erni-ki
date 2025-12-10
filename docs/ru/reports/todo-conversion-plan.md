@@ -3,7 +3,8 @@ title: TODO/FIXME to GitHub Issues Conversion Plan
 language: ru
 page_id: todo-conversion-plan-2025-12-06
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
+last_updated: '2025-12-06'
 ---
 
 # TODO/FIXME to GitHub Issues Conversion Plan

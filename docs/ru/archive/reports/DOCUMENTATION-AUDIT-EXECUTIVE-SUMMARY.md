@@ -207,7 +207,7 @@ doc_status: completed
 Существующие аудиты для контекста:
 
 - [Comprehensive Code Audit](COMPREHENSIVE-AUDIT-SUMMARY.txt)
-- [Previous Documentation Audit](archive/audits/documentation-audit.md)
+- [Previous Documentation Audit](../audits/documentation-audit.md)
 
 ---
 

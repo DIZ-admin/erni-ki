@@ -3,7 +3,8 @@ title: Task Marker Analysis Report
 language: ru
 page_id: todo-analysis-2025-12-06
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
+last_updated: '2025-12-06'
 ---
 
 # Task Marker Analysis Report

@@ -1,7 +1,8 @@
 ---
-language: en
+language: ru
 translation_status: complete
 doc_version: '2025.11'
+last_updated: '2025-12-10'
 title: 'Installation Guide'
 system_status: 'Production Ready'
 ---

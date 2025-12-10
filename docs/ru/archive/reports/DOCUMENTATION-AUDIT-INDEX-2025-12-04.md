@@ -339,11 +339,11 @@ docs/
 - [docs/academy/](academy/) — текущая Academy
 - [docs/VERSION.md](VERSION.md) — версионирование
 - [docs/GLOSSARY.md](GLOSSARY.md) — терминология
-- [mkdocs.yml](../mkdocs.yml) — конфигурация сайта
+- mkdocs.yml — конфигурация сайта (в корне проекта)
 
 ### Предыдущие аудиты
 
-- [documentation-audit.md](archive/audits/documentation-audit.md) — ноябрь 2025
+- [documentation-audit.md](../audits/documentation-audit.md) — ноябрь 2025
 - [COMPREHENSIVE-AUDIT-SUMMARY.txt](COMPREHENSIVE-AUDIT-SUMMARY.txt) — code
   audit
 

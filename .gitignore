@@ -241,6 +241,9 @@ playwright-report/
 tests/fixtures/
 docs/**/sitemap.xml
 
+# Auto-generated audit reports
+audit-report-*.txt
+
 # ===================================================================
 # MISCELLANEOUS
 # ===================================================================

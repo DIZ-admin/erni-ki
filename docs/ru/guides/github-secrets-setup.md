@@ -3,7 +3,8 @@ title: GitHub Secrets Configuration Guide
 language: ru
 page_id: github-secrets-setup
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
+last_updated: '2025-12-07'
 ---
 
 # GitHub Secrets Configuration Guide

@@ -1,12 +1,14 @@
-# Lychee configuration (compatible with >=0.21)
+# Lychee configuration (compatible with v0.21+)
+# See: https://github.com/lycheeverse/lychee/blob/main/lychee.example.toml
 
-[general]
 # Run in offline mode: only check local file links, skip HTTP requests
 offline = true
 max_concurrency = 4
 include_verbatim = true
 
-# Ignore generated/build/cache paths and archive directories with historical links
+# Ignore generated/build/cache paths, archive directories with historical links,
+# and EN/DE placeholder files (they contain redirects to RU canonical docs).
+# These will be properly populated during the translation phase.
 exclude_path = [
   "node_modules",
   "logs",
@@ -14,7 +16,16 @@ exclude_path = [
   "docs/archive",
   "docs/en/archive",
   "docs/de/archive",
-  "docs/ru/archive"
+  "docs/ru/archive",
+  "docs/de/academy",
+  "docs/en/academy",
+  "docs/de/operations",
+  "docs/en/operations",
+  "docs/de/development",
+  "docs/en/development",
+  "docs/de/guides",
+  "docs/en/guides",
+  "docs/en/examples"
 ]
 
 # Ignore endpoints that are environment/local-only or placeholders

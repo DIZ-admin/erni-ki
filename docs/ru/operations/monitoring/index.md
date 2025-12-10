@@ -23,9 +23,7 @@ last_updated: '2025-11-24'
 - [legacy-monitoring-scripts-migration.md](legacy-monitoring-scripts-migration.md)
   — быстрый план перехода на `health-monitor-v2.sh` и другие обновлённые
   утилиты.
-- [rag-monitoring.md](rag-monitoring.md) и
-  [searxng-redis-issue-analysis.md](searxng-redis-issue-analysis.md) — узкие
-  случаи и playbooks.
+- [rag-monitoring.md](rag-monitoring.md) — мониторинг RAG pipeline и playbooks.
 - [access-log-sync-and-fluentbit.md](access-log-sync-and-fluentbit.md) — сбор и
   доставка логов Nginx/Fluent Bit.
 - [alertmanager-noise-reduction.md](alertmanager-noise-reduction.md) — борьба с

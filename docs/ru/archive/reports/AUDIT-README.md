@@ -255,15 +255,14 @@ Ongoing: Phase 4 Maintenance (CRITICAL)
 ### Существующая документация:
 
 - [docs/academy/](academy/) - текущая структура Academy
-- [docs/archive/audits/documentation-audit.md](archive/audits/documentation-audit.md) -
-  предыдущий аудит
-- [mkdocs.yml](../mkdocs.yml) - конфигурация сайта
+- [documentation-audit.md](../audits/documentation-audit.md) - предыдущий аудит
+- mkdocs.yml - конфигурация сайта (в корне проекта)
 
 ### Технические аудиты:
 
 - [COMPREHENSIVE-AUDIT-SUMMARY.txt](COMPREHENSIVE-AUDIT-SUMMARY.txt) - code
   audit
-- [docs/security/secrets-audit-2025-11-27.md](security/secrets-audit-2025-11-27.md) -
+- [docs/security/secrets-audit-2025-11-27.md](../security/secrets-audit-2025-11-27.md) -
   security audit
 
 ### Reference:

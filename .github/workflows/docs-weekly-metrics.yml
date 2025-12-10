@@ -1,0 +1,263 @@
+name: 📊 Weekly Documentation Metrics
+
+on:
+  schedule:
+    - cron: "0 3 * * 0" # Run at 3 AM UTC every Sunday
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: read
+  issues: write # Need to create issues for alerts
+
+# Prevent concurrent runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  collect-metrics:
+    name: 📈 Collect Documentation Metrics
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements-docs.txt
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-docs.txt
+
+      - name: 🔗 Check links (Lychee)
+        id: lychee
+        uses: lycheeverse/lychee-action@a8c4c7cb88f0c7386610c35eb25108e448569cb0 # v2
+        continue-on-error: true # Don't fail workflow if links are broken
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --max-redirects 5
+            --exclude-link-local
+            --exclude 'localhost'
+            --exclude '127\.0\.0\.1'
+            --exclude 'example\.com'
+            --exclude 'your-domain'
+            --exclude 'ki\.erni-gruppe\.ch'
+            --exclude 'status\.ki\.erni-gruppe\.ch'
+            --exclude 'status\.erni-ki\.ch'
+            --exclude 'grafana\.ki\.erni-gruppe\.ch'
+            --exclude 'prometheus\.ki\.erni-gruppe\.ch'
+            --exclude 'docs\.erni-ki\.ch'
+            --exclude '192\.168\.\d+\.\d+'
+            --exclude 'nginx:8080'
+            --exclude 'openwebui:8080'
+            --exclude 'searxng:8080'
+            --exclude 'dash\.cloudflare\.com'
+            --exclude 'docs\.openwebui\.com'
+            --exclude 'github\.com/nginx/nginx/issues'
+            --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
+            --exclude 'docs\.litellm\.ai'
+            --exclude 'commitlint\.js\.org'
+            'docs/**/*.md'
+            'README.md'
+          output: lychee-output.txt
+          fail: false
+
+      - name: 📊 Collect metrics
+        id: metrics
+        run: |
+          # Run metrics collection
+          python scripts/docs/docs_metrics.py \
+            --output metrics.json \
+            --lychee-output lychee-output.txt
+
+          # Read metrics for GitHub Actions outputs
+          echo "metrics_collected=true" >> $GITHUB_OUTPUT
+
+          # Extract key metrics for summary
+          total_docs=$(jq -r '.total_docs' metrics.json)
+          stale_count=$(jq -r '.stale_docs_count' metrics.json)
+          broken_pct=$(jq -r '.broken_links_percentage' metrics.json)
+          fm_coverage=$(jq -r '.frontmatter_coverage' metrics.json)
+          quality_score=$(jq -r '.quality_score' metrics.json)
+          threshold_exceeded=$(jq -r '.thresholds_exceeded' metrics.json)
+
+          echo "total_docs=$total_docs" >> $GITHUB_OUTPUT
+          echo "stale_count=$stale_count" >> $GITHUB_OUTPUT
+          echo "broken_pct=$broken_pct" >> $GITHUB_OUTPUT
+          echo "fm_coverage=$fm_coverage" >> $GITHUB_OUTPUT
+          echo "quality_score=$quality_score" >> $GITHUB_OUTPUT
+          echo "threshold_exceeded=$threshold_exceeded" >> $GITHUB_OUTPUT
+
+      - name: 📤 Upload metrics artifact
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.6.0
+        with:
+          name: docs-metrics-${{ github.run_number }}
+          path: |
+            metrics.json
+            lychee-output.txt
+          retention-days: 90
+
+      - name: 📝 Generate summary
+        run: |
+          echo "## 📊 Documentation Metrics Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Collection Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Key Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value | Threshold | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          # Total docs
+          echo "| Total Documents | ${{ steps.metrics.outputs.total_docs }} | - | ℹ️ |" >> $GITHUB_STEP_SUMMARY
+
+          # Stale docs
+          stale_status="✅"
+          if [ "${{ steps.metrics.outputs.stale_count }}" -gt 20 ]; then
+            stale_status="⚠️"
+          fi
+          echo "| Stale Documents (90+ days) | ${{ steps.metrics.outputs.stale_count }} | ≤ 20 | $stale_status |" >> $GITHUB_STEP_SUMMARY
+
+          # Broken links
+          broken_status="✅"
+          if (( $(echo "${{ steps.metrics.outputs.broken_pct }} > 5.0" | bc -l) )); then
+            broken_status="⚠️"
+          fi
+          echo "| Broken Links | ${{ steps.metrics.outputs.broken_pct }}% | ≤ 5% | $broken_status |" >> $GITHUB_STEP_SUMMARY
+
+          # Frontmatter coverage
+          fm_status="✅"
+          if (( $(echo "${{ steps.metrics.outputs.fm_coverage }} < 95.0" | bc -l) )); then
+            fm_status="⚠️"
+          fi
+          echo "| Frontmatter Coverage | ${{ steps.metrics.outputs.fm_coverage }}% | ≥ 95% | $fm_status |" >> $GITHUB_STEP_SUMMARY
+
+          # Quality score
+          quality_status="✅"
+          if (( $(echo "${{ steps.metrics.outputs.quality_score }} < 80.0" | bc -l) )); then
+            quality_status="⚠️"
+          fi
+          echo "| Overall Quality Score | ${{ steps.metrics.outputs.quality_score }}/100 | ≥ 80 | $quality_status |" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Translation Sync" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Parse translation metrics
+          de_complete=$(jq -r '.translation_sync.de.complete' metrics.json)
+          de_partial=$(jq -r '.translation_sync.de.partial' metrics.json)
+          de_missing=$(jq -r '.translation_sync.de.missing' metrics.json)
+          en_complete=$(jq -r '.translation_sync.en.complete' metrics.json)
+          en_partial=$(jq -r '.translation_sync.en.partial' metrics.json)
+          en_missing=$(jq -r '.translation_sync.en.missing' metrics.json)
+
+          echo "**German (DE):**" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Complete: $de_complete" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔄 Partial: $de_partial" >> $GITHUB_STEP_SUMMARY
+          echo "- ❌ Missing: $de_missing" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**English (EN):**" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Complete: $en_complete" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔄 Partial: $en_partial" >> $GITHUB_STEP_SUMMARY
+          echo "- ❌ Missing: $en_missing" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Full metrics available in workflow artifacts" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🚨 Create issue if thresholds exceeded
+        if: steps.metrics.outputs.threshold_exceeded == 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const metrics = JSON.parse(fs.readFileSync('metrics.json', 'utf8'));
+
+            // Check if there's already an open issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'documentation,metrics,automated'
+            });
+
+            const existingIssue = issues.data.find(issue =>
+              issue.title.includes('Documentation Metrics Alert')
+            );
+
+            // Build issue body
+            let body = `## 🚨 Documentation Quality Metrics Alert\n\n`;
+            body += `**Generated:** ${new Date().toISOString()}\n`;
+            body += `**Workflow Run:** [${context.runNumber}](${context.payload.repository.html_url}/actions/runs/${context.runId})\n\n`;
+
+            body += `### Threshold Violations\n\n`;
+            metrics.threshold_violations.forEach(violation => {
+              body += `- ⚠️ ${violation}\n`;
+            });
+
+            body += `\n### Current Metrics\n\n`;
+            body += `| Metric | Value | Threshold | Status |\n`;
+            body += `|--------|-------|-----------|--------|\n`;
+            body += `| Total Documents | ${metrics.total_docs} | - | ℹ️ |\n`;
+            body += `| Stale Documents | ${metrics.stale_docs_count} | ≤ 20 | ${metrics.stale_docs_count > 20 ? '⚠️' : '✅'} |\n`;
+            body += `| Broken Links | ${metrics.broken_links_percentage}% | ≤ 5% | ${metrics.broken_links_percentage > 5 ? '⚠️' : '✅'} |\n`;
+            body += `| Frontmatter Coverage | ${metrics.frontmatter_coverage}% | ≥ 95% | ${metrics.frontmatter_coverage < 95 ? '⚠️' : '✅'} |\n`;
+            body += `| Quality Score | ${metrics.quality_score}/100 | ≥ 80 | ${metrics.quality_score < 80 ? '⚠️' : '✅'} |\n`;
+
+            if (metrics.stale_docs.length > 0) {
+              body += `\n### Sample Stale Documents\n\n`;
+              metrics.stale_docs.slice(0, 5).forEach(doc => {
+                body += `- \`${doc.path}\` - Last updated: ${doc.last_updated} (${doc.days_old} days ago)\n`;
+              });
+              if (metrics.stale_docs_count > 5) {
+                body += `\n_... and ${metrics.stale_docs_count - 5} more stale documents_\n`;
+              }
+            }
+
+            body += `\n### Translation Status\n\n`;
+            body += `**German (DE):**\n`;
+            body += `- ✅ Complete: ${metrics.translation_sync.de.complete}\n`;
+            body += `- 🔄 Partial: ${metrics.translation_sync.de.partial}\n`;
+            body += `- ❌ Missing: ${metrics.translation_sync.de.missing}\n\n`;
+            body += `**English (EN):**\n`;
+            body += `- ✅ Complete: ${metrics.translation_sync.en.complete}\n`;
+            body += `- 🔄 Partial: ${metrics.translation_sync.en.partial}\n`;
+            body += `- ❌ Missing: ${metrics.translation_sync.en.missing}\n`;
+
+            body += `\n### Action Items\n\n`;
+            body += `- [ ] Review and update stale documentation\n`;
+            body += `- [ ] Fix broken links\n`;
+            body += `- [ ] Add frontmatter to files missing metadata\n`;
+            body += `- [ ] Update translation coverage\n`;
+            body += `- [ ] Review quality score components\n\n`;
+            body += `---\n`;
+            body += `_This issue was automatically generated by the [Weekly Documentation Metrics](.github/workflows/docs-weekly-metrics.yml) workflow._`;
+
+            if (existingIssue) {
+              // Update existing issue
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: `## 📊 Updated Metrics Report\n\n${body}`
+              });
+              console.log(`Updated existing issue #${existingIssue.number}`);
+            } else {
+              // Create new issue
+              const issue = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `📊 Documentation Metrics Alert - ${new Date().toISOString().split('T')[0]}`,
+                body: body,
+                labels: ['documentation', 'metrics', 'automated']
+              });
+              console.log(`Created new issue #${issue.data.number}`);
+            }

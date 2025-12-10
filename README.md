@@ -1,23 +1,20 @@
 # ERNI-KI — Production AI Platform
 
-**ERNI-KI** — A stack of 30 services built around OpenWebUI v0.6.36 and Ollama
-0.12.11, Go 1.24.10 in CI, with GPU acceleration, Context7/LiteLLM gateway, and
+**ERNI-KI** — A stack of 30 services built around OpenWebUI v0.6.40 and Ollama
+0.13.0, Go 1.24.10 in CI, with GPU acceleration, Context7/LiteLLM gateway, and
 full observability.
 
 <!-- STATUS_SNIPPET_START -->
 
-> **System Status (2025-11-23) — Production Ready v0.61.3**
+> **Статус системы (n/a) — **
 >
-> - Containers: 34/34 services healthy
-> - Grafana: 5/5 Grafana dashboards (provisioned)
-> - Alerts: 20 Prometheus alert rules active
-> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
-> - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
-> - Monitoring: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
->   v3.1.0, Alertmanager v0.27.0
-> - Automation: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
->   01:30, Watchtower selective updates
-> - Note: Versions and dashboard/alert counts synced with compose.yml
+> - Контейнеры:
+> - Графана:
+> - Алерты:
+> - AI/GPU:
+> - Context & RAG:
+> - Мониторинг:
+> - Автоматизация:
 
 <!-- STATUS_SNIPPET_END -->
 
@@ -68,12 +65,12 @@ Access: Locally at <http://localhost:8080>, production —
 - Locally run: `pip install -r requirements-dev.txt` (for Ruff/pre-commit),
   `npm run lint`, `npm run test`, `go test ./auth/...`.
 - Governance, CODEOWNERS, and Dependabot — see
-  [`docs/operations/core/github-governance.md`](docs/operations/core/github-governance.md).
+  [`docs/en/operations/core/github-governance.md`](docs/en/operations/core/github-governance.md).
 - GitHub Environments (development/staging/production), secrets, and audit logs
   are described in
-  [`docs/reference/github-environments-setup.md`](docs/reference/github-environments-setup.md).
+  [`docs/en/reference/github-environments-setup.md`](docs/en/reference/github-environments-setup.md).
 - CI/GitHub Actions incidents are recorded in
-  [`docs/archive/audits/ci-health.md`](docs/archive/audits/ci-health.md).
+  [`docs/ru/archive/audits/ci-health.md`](docs/ru/archive/audits/ci-health.md).
 
 ## Architecture (Brief)
 
@@ -94,8 +91,7 @@ Access: Locally at <http://localhost:8080>, production —
 
 ## Documentation
 
-> **Documentation Version:** See [docs/VERSION.md](docs/VERSION.md) for the
-> current version number, date, and update rules.
+> **Documentation Version:** 2025.12 - Last updated: December 2025
 
 | Topic                   | Where to find                                                                                                          |
 | :---------------------- | :--------------------------------------------------------------------------------------------------------------------- |

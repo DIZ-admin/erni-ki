@@ -15,8 +15,8 @@ title: 'ERNI-KI — Профессиональная сводка проекта
 > - Контейнеры: 34/34 services healthy
 > - Графана: 5/5 Grafana dashboards (provisioned)
 > - Алерты: 20 Prometheus alert rules active
-> - AI/GPU: Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)
-> - Context & RAG: LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS
+> - AI/GPU: Ollama 0.13.0 + OpenWebUI v0.6.40 (GPU)
+> - Context & RAG: LiteLLM v1.80.0-stable.1 + Context7, Docling, Tika, EdgeTTS
 > - Мониторинг: Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit
 >   v3.1.0, Alertmanager v0.27.0
 > - Автоматизация: Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest
@@ -47,10 +47,10 @@ flowchart LR
 ```
 
 -**Единую точку доступа к LLM**с GPU-ускорением и Context Engineering (LiteLLM
-v1.80.0.rc.1, MCP Server). -**Надёжную поддержку документных и мультимедийных
-сценариев**(Docling OCR, Apache Tika, EdgeTTS). -**Enterprise-grade
-эксплуатацию**: централизованный мониторинг, бэкапы, автоматизированное
-обслуживание и Zero Trust доступ.
+v1.80.0-stable.1, MCP Server). -**Надёжную поддержку документных и
+мультимедийных сценариев**(Docling OCR, Apache Tika,
+EdgeTTS). -**Enterprise-grade эксплуатацию**: централизованный мониторинг,
+бэкапы, автоматизированное обслуживание и Zero Trust доступ.
 
 Платформа применяется как внутри ERNI, так и в партнёрских командах для
 прототипирования и продакшн-нагрузок без аутсорсинга чувствительных данных.
@@ -73,9 +73,9 @@ v1.80.0.rc.1, MCP Server). -**Надёжную поддержку докумен
 
 ### 3.1 AI & ML слой
 
--**OpenWebUI v0.6.36**— основной UI, CUDA runtime, интеграция с MCP. -**Ollama
-0.12.11**— LLM-сервер с ограничением 4GB VRAM (GPU активен). -**LiteLLM
-v1.80.0.rc.1**— Context Engineering gateway (`conf/litellm/config.yaml`),
+-**OpenWebUI v0.6.40**— основной UI, CUDA runtime, интеграция с MCP. -**Ollama
+0.13.0**— LLM-сервер с ограничением 4GB VRAM (GPU активен). -**LiteLLM
+v1.80.0-stable.1**— Context Engineering gateway (`conf/litellm/config.yaml`),
 поддержка thinking tokens и Context7. -**MCP Server**— 7 активных инструментов
 (Time, Context7 Docs, PostgreSQL, Filesystem, Memory, SearXNG Web Search,
 Desktop Commander) на порту 8000 (binding 127.0.0.1). -**Docling + Apache Tika +
@@ -163,8 +163,7 @@ Loki. -**Контакты**: <security@erni-ki.local>, emergency hotline, PGP ke
 и troubleshooting:**
 [`Troubleshooting`](operations/troubleshooting/index.md) -**Безопасность:**
 [`security/security-policy.md`](security/security-policy.md),
-[`log-audit.md`](security/log-audit.md) -**Data &
-Storage:**[`data/index.md`](data/index.md) -**API и
+[`log-audit.md`](security/log-audit.md) -**API и
 интеграции:**[`api-reference.md`](reference/api-reference.md),
 [`mcpo-integration-guide.md`](reference/mcpo-integration-guide.md)
 

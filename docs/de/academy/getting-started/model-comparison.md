@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/getting-started/model-comparison.md](../../../academy/getting-started/model-comparison.md).
+[academy/getting-started/model-comparison.md](../../ru/academy/getting-started/model-comparison.md).

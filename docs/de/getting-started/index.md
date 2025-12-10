@@ -24,4 +24,4 @@ Nutzung von ERNI-KI.
 
 Die russische Version ist die Hauptquelle. Diese Übersetzung kann unvollständig
 sein. Bei Unstimmigkeiten siehe
-[russische Version](../../getting-started/index.md).
+[russische Version](../../ru/getting-started/index.md).
