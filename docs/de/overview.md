@@ -57,12 +57,12 @@ Kennzahlen, Skripte und
 Alerts -**[Runbooks](operations/core/runbooks-summary.md)**- Deutsche
 Zusammenfassungen der wichtigsten Abläufe (englische Originale в
 `operations/maintenance/` und
-`operations/troubleshooting/`) -**[API-Referenz](../reference/api-reference.md)**-
+`operations/troubleshooting/`) -**[API-Referenz](reference/api-reference.md)**-
 API-Dokumentation (Englisch)
 
 ### Entwicklung
 
--**[Entwicklerhandbuch](../reference/development.md)**- Entwicklungsumgebung
+-**[Entwicklerhandbuch](reference/development.md)**- Entwicklungsumgebung
 einrichten (Englisch)
 
 ## Zielgruppen
@@ -90,8 +90,8 @@ Wenn Sie ERNI-KI installieren und verwalten:
 Wenn Sie ERNI-KI erweitern oder anpassen möchten:
 
 1. Verstehen Sie die**[Systemarchitektur](architecture/architecture.md)**
-2. Lesen Sie das**[Entwicklerhandbuch](../reference/development.md)**
-3. Nutzen Sie die**[API-Referenz](../reference/api-reference.md)**
+2. Lesen Sie das**[Entwicklerhandbuch](reference/development.md)**
+3. Nutzen Sie die**[API-Referenz](reference/api-reference.md)**
 
 ## Schnellstart-Pfade
 
@@ -237,7 +237,7 @@ Diese Dokumentation ist Open Source und Beiträge sind willkommen:
 Anleitungen**- Zusätzliche Use Cases dokumentieren 3.**Screenshots hinzufügen**-
 Visuelle Hilfen für Benutzer 4.**FAQ erweitern**- Häufige Fragen beantworten
 
-→**Beitragen:**[Entwicklerhandbuch](../reference/development.md)
+→**Beitragen:**[Entwicklerhandbuch](reference/development.md)
 
 ## Versionshinweise
 
