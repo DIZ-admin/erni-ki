@@ -103,6 +103,26 @@ def is_real_todo(  # pragma: allowlist todo
     """Determine if this is a real TODO/FIXME or just a mention."""  # pragma: allowlist todo
     line_lower = line.lower()
 
+    # Skip words that contain "todo" as substring (e.g., "mastodon")
+    # Check if TODO/FIXME is actually a standalone word  # pragma: allowlist todo
+    if not re.search(r"\bTODO\b|\bFIXME\b", line, re.IGNORECASE):  # pragma: allowlist todo
+        return False
+
+    # Skip third-party/vendor directories
+    vendor_paths = [
+        "compose/data/grafana/plugins/",
+        "node_modules/",
+        ".venv/",
+        "vendor/",
+        "third_party/",
+    ]
+    if any(vendor in file_path for vendor in vendor_paths):
+        return False
+
+    # Skip checklist items that mention TODO as example content to avoid  # pragma: allowlist todo
+    if re.match(r"^\s*-\s*\[\s*[xX ]?\s*\].*TODO", line, re.IGNORECASE):  # pragma: allowlist todo
+        return False
+
     # Skip documentation about TODO/FIXME  # pragma: allowlist todo
     false_positive_patterns = [  # pragma: allowlist todo
         # Meta-documentation about TODOs  # pragma: allowlist todo
@@ -150,11 +170,26 @@ def is_real_todo(  # pragma: allowlist todo
         "avoid todo",  # pragma: allowlist todo
         "github issue",  # Recommendation to use issues  # pragma: allowlist todo
         "create.*issue",  # pragma: allowlist todo
+        # Documentation examples showing wrong patterns
+        "incorrect",
+        "bad example",
+        "don't do this",
+        "lorem ipsum",  # Placeholder text examples
     ]
 
     for pattern in false_positive_patterns:
         if pattern in line_lower:
             return False
+
+    # Check surrounding context for "incorrect example" indicators
+    if all_lines and line_num > 0:
+        # Check previous 3 lines for "incorrect" markers (EN/RU/DE)
+        context_indicators = ["incorrect", "bad example", "don't do", "wrong way"]
+        start_check = max(0, line_num - 4)
+        for i in range(start_check, line_num - 1):
+            context_line = all_lines[i].lower()
+            if any(indicator in context_line for indicator in context_indicators):
+                return False
 
     # Skip if it's in an audit/report/analysis file
     skip_file_patterns = [

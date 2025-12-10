@@ -1,24 +1,25 @@
 # MkDocs configuration for Academy KI (GitHub Pages)
 # Public-facing AI training documentation
+# Source: English (EN) as single source of truth
 
 site_name: Academy KI
-site_description: "KI-Training und Best Practices für ERNI Gruppe"
-site_author: "ERNI Gruppe"
+site_description: "AI Training and Best Practices for ERNI Group"
+site_author: "ERNI Group"
 site_url: "https://diz-admin.github.io/erni-ki/"
 
 # Repository
 repo_name: "DIZ-admin/erni-ki"
 repo_url: "https://github.com/DIZ-admin/erni-ki"
-edit_uri: "edit/main/docs/ru/academy/"
+edit_uri: "edit/main/docs/en/academy/"
 
-# Configuration
-docs_dir: "docs/ru/academy"
+# Configuration - Changed from docs/ru/academy to docs/en/academy
+docs_dir: "docs/en/academy"
 site_dir: "site-academy"
 
 # Theme
 theme:
   name: "material"
-  language: "de"
+  language: "en"
 
   palette:
     - scheme: default
@@ -26,13 +27,13 @@ theme:
       accent: "amber"
       toggle:
         icon: material/brightness-7
-        name: Dunkelmodus aktivieren
+        name: Switch to dark mode
     - scheme: slate
       primary: "indigo"
       accent: "amber"
       toggle:
         icon: material/brightness-4
-        name: Hellmodus aktivieren
+        name: Switch to light mode
 
   font:
     text: "Inter"
@@ -47,7 +48,7 @@ theme:
     - navigation.tracking
     - navigation.tabs
     - navigation.sections
-    - navigation.expand
+    # - navigation.expand  # Disabled: causes excessive expansion
     - navigation.top
     - search.suggest
     - search.highlight
