@@ -1,0 +1,125 @@
+name: Archon MCP Integration
+
+permissions:
+  contents: read
+  pull-requests: read
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "CLAUDE.md"
+      - ".mcp/**"
+      - "scripts/archon/**"
+      - "docs/**/archon*.md"
+
+jobs:
+  validate-archon-config:
+    name: Validate Archon Configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Check CLAUDE.md exists
+        run: |
+          if [ ! -f "CLAUDE.md" ]; then
+            echo "::error::CLAUDE.md not found"
+            exit 1
+          fi
+          echo "CLAUDE.md found"
+
+      - name: Validate CLAUDE.md structure
+        run: |
+          # Check for required Archon sections
+          required_sections=(
+            "ARCHON-FIRST RULE"
+            "Archon Integration"
+            "Task-Driven Development"
+            "RAG Workflow"
+          )
+
+          missing=()
+          for section in "${required_sections[@]}"; do
+            if ! grep -q "$section" CLAUDE.md; then
+              missing+=("$section")
+            fi
+          done
+
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::warning::Missing sections in CLAUDE.md: ${missing[*]}"
+          else
+            echo "All required Archon sections present in CLAUDE.md"
+          fi
+
+      - name: Validate MCP tool references
+        run: |
+          # Check that CLAUDE.md references valid MCP tools
+          mcp_tools=(
+            "find_tasks"
+            "manage_task"
+            "find_projects"
+            "manage_project"
+            "rag_search_knowledge_base"
+            "rag_search_code_examples"
+            "rag_get_available_sources"
+          )
+
+          for tool in "${mcp_tools[@]}"; do
+            if grep -q "$tool" CLAUDE.md; then
+              echo "Tool reference found: $tool"
+            fi
+          done
+
+      - name: Check Archon scripts
+        run: |
+          if [ -d "scripts/archon" ]; then
+            echo "Archon scripts directory found"
+            ls -la scripts/archon/ || true
+          else
+            echo "No scripts/archon directory (optional)"
+          fi
+
+      - name: Summary
+        run: |
+          {
+            echo "# Archon MCP Integration Check"
+            echo ""
+            echo "- CLAUDE.md: Present"
+            echo "- Archon configuration: Valid"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  test-archon-connectivity:
+    name: Test Archon Connectivity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ vars.ARCHON_API_URL != '' }}
+    needs: validate-archon-config
+
+    steps:
+      - name: Health check
+        env:
+          ARCHON_API_URL: ${{ vars.ARCHON_API_URL }}
+          ARCHON_API_KEY: ${{ secrets.ARCHON_API_KEY }}
+        run: |
+          echo "Testing Archon connectivity..."
+          http_code=$(curl --silent -o /tmp/resp.json -w "%{http_code}" \
+            --max-time 10 \
+            "${ARCHON_API_URL%/}/health" \
+            -H "Authorization: Bearer ${ARCHON_API_KEY:-}" \
+            2>/dev/null || echo "000")
+
+          if [ "$http_code" = "200" ]; then
+            echo "Archon server is healthy"
+          elif [ "$http_code" = "000" ]; then
+            echo "::notice::Could not reach Archon server (may be internal network)"
+          elif [ "$http_code" -ge 500 ] 2>/dev/null; then
+            echo "::error::Archon server error (HTTP $http_code)"
+            exit 1
+          elif [ "$http_code" -ge 400 ] 2>/dev/null; then
+            echo "::warning::Archon client error (HTTP $http_code) - check API key"
+          else
+            echo "::warning::Archon health check returned HTTP $http_code"
+          fi

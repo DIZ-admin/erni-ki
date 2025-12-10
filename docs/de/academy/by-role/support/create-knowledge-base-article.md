@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/by-role/support/create-knowledge-base-article.md](../../../academy/by-role/support/create-knowledge-base-article.md).
+[academy/by-role/support/create-knowledge-base-article.md](../../ru/academy/by-role/support/create-knowledge-base-article.md).

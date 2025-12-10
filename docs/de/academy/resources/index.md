@@ -1,23 +1,20 @@
 ---
-title: 'Academy Ressourcen'
-category: resources
+title: 'Ressourcen'
 language: de
-translation_status: draft
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-12-10'
 ---
 
-# Academy Ressourcen
+# Ressourcen
 
-Sammlung von Hilfsmaterialien: Glossar, Vorlagen, Prompt-Bibliotheken und Cheat
-Sheets.
+Zusätzliche Ressourcen, Vorlagen und Referenzmaterialien.
 
-## Verfugbare Ressourcen
+## Inhalt
 
-- [Cheat Sheets](cheat-sheets/index.md) - Kurzreferenzen
-- [Prompt-Bibliothek](prompt-bibliothek/index.md) - Wiederverwendbare Prompts
-- [Vorlagen](templates/index.md) - Dokumentvorlagen
-
----
-
-[Zuruck zur Academy](../index.md)
+- [Cheat Sheets](cheat-sheets/index.md)
+- [Glossar](glossar.md)
+- [Holzbau-Glossar](glossar-holzbau.md)
+- [Prompt-Bibliothek](prompt-bibliothek/index.md)
+- [SIA Normen Übersicht](sia-normen-uebersicht.md)
+- [Vorlagen](templates/index.md)

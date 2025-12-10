@@ -8,8 +8,7 @@ last_updated: '2025-12-03'
 # Security Action Plan - ERNI-KI
 
 **Дата создания:**2025-12-03**Статус:**ACTIVE**Приоритет:**CRITICAL
-**Основание:**
-[ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+**Основание:** ERNI-KI Comprehensive Analysis 2025-12-02 (archived)
 
 ---
 
@@ -708,7 +707,7 @@ slos:
 
 ## Ссылки
 
-- [ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+- ERNI-KI Comprehensive Analysis 2025-12-02 (archived)
 - [Security Policy](../security/security-policy.md)
 - [Runbooks](core/runbooks-summary.md)
 

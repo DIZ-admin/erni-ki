@@ -9,10 +9,10 @@ site_url: "https://diz-admin.github.io/erni-ki/"
 # Repository
 repo_name: "DIZ-admin/erni-ki"
 repo_url: "https://github.com/DIZ-admin/erni-ki"
-edit_uri: "edit/main/docs/academy/"
+edit_uri: "edit/main/docs/ru/academy/"
 
 # Configuration
-docs_dir: "docs/academy"
+docs_dir: "docs/ru/academy"
 site_dir: "site-academy"
 
 # Theme

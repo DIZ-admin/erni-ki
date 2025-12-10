@@ -1,92 +1,118 @@
 ---
-title: 'Grundlagen der KI-Nutzung'
+title: 'Fundamentals — KI-Grundlagen'
 level: intermediate
 language: de
-translation_status: draft
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-12-10'
 ---
 
-# Grundlagen der KI-Nutzung
+# Fundamentals — KI-Grundlagen
 
 Nach Abschluss von [Getting Started](../getting-started/index.md) ist es Zeit,
-die wichtigsten Fahigkeiten im Umgang mit KI zu vertiefen. Dieser Bereich
-vermittelt, wie Sie das Beste aus der kunstlichen Intelligenz herausholen.
+tiefer in die wichtigsten KI-Fähigkeiten einzutauchen. Dieser Abschnitt zeigt
+Ihnen, wie Sie das Beste aus künstlicher Intelligenz herausholen.
 
 ## Was Sie lernen werden
 
-In diesem Bereich erlernen Sie:
+In diesem Abschnitt werden Sie meistern:
 
-- **Prompting** - wie Sie Anfragen richtig formulieren
-- **Kontext** - wie Sie das KI-Gedachtnis verwalten
-- **RAG** - wie Sie mit Dokumenten arbeiten
-- **Modelle** - wie Sie das passende Modell auswahlen
-- **Best Practices** - bewahrte Techniken
+- **Prompting** — wie man Anfragen richtig formuliert
+- **Kontext** — wie man KI-Speicher verwaltet
+- **RAG** — wie man mit Dokumenten arbeitet
+- **Modelle** — wie man das richtige Modell auswählt
+- **Best Practices** — bewährte Techniken
 
-## Materialien
+## Abschnittsmaterialien
 
-### 1. Prompting Grundlagen
+### 1. Prompting-Grundlagen
 
-**[Prompting Fundamentals](prompting-fundamentals.md)** - 25 Min
+**[Prompting Fundamentals](prompting-fundamentals.md)** — 25 Min.
 
 - Was ist ein Prompt und wie funktioniert er
 - Struktur eines effektiven Prompts
 - Grundlegende Prompting-Techniken
-- Typische Fehler und wie man sie vermeidet
+- Häufige Fehler und wie man sie vermeidet
+
+**Level:** Intermediate **Erforderlich für:** Alle Benutzer
+
+---
 
 ### 2. Effektive Prompts schreiben
 
-**[Effective Prompts](effective-prompts.md)** - 20 Min
+**[Effective Prompts](effective-prompts.md)** — 20 Min.
 
-- Formeln fur erfolgreiche Prompts
+- Formeln für erfolgreiche Prompts
 - Vorher/Nachher-Beispiele
 - Spezialisierte Techniken
+- Prompt-Debugging
 
-### 3. Kontextmanagement
+**Level:** Intermediate **Erforderlich für:** Power-User
 
-**[Context Management](context-management.md)** - 20 Min
+---
+
+### 3. Kontextverwaltung
+
+**[Context Management](context-management.md)** — 20 Min.
 
 - Wie das Kontextfenster funktioniert
-- Techniken zur Speicherung wichtiger Informationen
-- Wann einen neuen Chat beginnen
+- Techniken zur Erhaltung wichtiger Informationen
+- Wann einen neuen Chat starten
+- Multi-Turn-Konversationen
 
-### 4. RAG Grundlagen
+**Level:** Intermediate **Nützlich für:** Lange Dialoge, komplexe Aufgaben
 
-**[RAG Basics](rag-basics.md)** - 20 Min
+---
+
+### 4. RAG-Grundlagen
+
+**[RAG Basics](rag-basics.md)** — 20 Min.
 
 - Was ist RAG (Retrieval-Augmented Generation)
-- Dokumente hochladen und nutzen
-- Best Practices fur die Arbeit mit Knowledge Base
+- Wie man Dokumente hochlädt und verwendet
+- Best Practices für die Arbeit mit der Wissensdatenbank
+- Fehlerbehebung bei RAG-Abfragen
+
+**Level:** Intermediate **Erforderlich für:** Arbeiten mit Dokumenten
+
+---
 
 ### 5. Modellauswahl-Leitfaden
 
-**[Model Selection Guide](model-selection-guide.md)** - 15 Min
+**[Model Selection Guide](model-selection-guide.md)** — 15 Min.
 
-- Entscheidungsbaum fur die Modellauswahl
-- Wann das Modell wechseln
+- Entscheidungsbaum für die Modellauswahl
+- Wann Modelle wechseln
 - Modelle kombinieren
+- Erweiterte Modelleinstellungen
+
+**Level:** Intermediate **Nützlich für:** Optimierung, Sonderfälle
 
 ---
 
-## Nachste Schritte
+## Was kommt als Nächstes?
 
-Nach dem Abschluss der Grundlagen haben Sie mehrere Wege:
+Nach der Beherrschung der Fundamentals haben Sie mehrere Wege:
 
-### Weg 1: Spezialisierung nach Rolle
+### Weg 1: Rollenbasierte Spezialisierung
 
-- [Entwickler Hub](../by-role/developers/index.md) - fur Programmierer
-- [Manager Hub](../by-role/managers/index.md) - fur Manager
-- [Support Hub](../by-role/support/index.md) - fur Support
+- [Developers Hub](../by-role/developers/index.md) — für Entwickler
+- [Managers Hub](../by-role/managers/index.md) — für Manager
+- [Support Hub](../by-role/support/index.md) — für Support
 
 ### Weg 2: Fortgeschrittene Techniken
 
-- [Advanced Techniques](../advanced/index.md) - Expert-Level Prompting
+- [Advanced Techniques](../advanced/index.md) — Experten-Level-Prompting
+- [Custom Workflows](../advanced/custom-workflows.md) — Automatisierung
+- [API Integration](../advanced/api-integration.md) — Programmgesteuerte
+  KI-Arbeit
 
 ### Weg 3: Praktische Szenarien
 
-- [HowTo Collection](../howto/index.md) - fertige Losungen
-- [Templates Library](../resources/templates/index.md) - Prompt-Vorlagen
+- [HowTo Collection](../howto/index.md) — fertige Lösungen
+- [Templates Library](../resources/templates/index.md) — Prompt-Vorlagen
+- [Cheat Sheets](../resources/cheat-sheets/index.md) — Schnellreferenz
 
 ---
 
-[Zuruck zur Academy](../index.md)
+**Beginnen Sie mit:** [Prompting Fundamentals →](prompting-fundamentals.md)

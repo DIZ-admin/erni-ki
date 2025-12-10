@@ -5,7 +5,7 @@ doc_version: '2025.12'
 last_updated: '2025-12-10'
 ---
 
-> **Systemstatus (n/a) — **
+> **Systemstatus (n/a)**
 >
 > - Container:
 > - Grafana:

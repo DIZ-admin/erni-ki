@@ -6,13 +6,13 @@ on:
   push:
     branches: [main]
     paths:
-      - "docs/academy/**"
+      - "docs/ru/academy/**"
       - "mkdocs-academy.yml"
       - ".github/workflows/deploy-academy.yml"
   pull_request:
     branches: [main, develop]
     paths:
-      - "docs/academy/**"
+      - "docs/ru/academy/**"
       - "mkdocs-academy.yml"
       - ".github/workflows/deploy-academy.yml"
   workflow_dispatch:
@@ -59,13 +59,13 @@ jobs:
 
       - name: Validate metadata
         run: |
-          python scripts/docs/validate_metadata.py --path docs/academy
+          python scripts/docs/validate_metadata.py --path docs/ru/academy
 
       - name: Check for broken internal links
         run: |
           echo "Checking for common broken link patterns..."
           # Check for broken anchor patterns
-          if grep -rE '\(#[a-z-]+\)' docs/academy/*.md docs/academy/**/*.md 2>/dev/null | grep -v '(#[a-z-]*-[a-z])' | head -20; then
+          if grep -rE '\(#[a-z-]+\)' docs/ru/academy/*.md docs/ru/academy/**/*.md 2>/dev/null | grep -v '(#[a-z-]*-[a-z])' | head -20; then
             echo "::warning::Found potential broken anchors (review manually)"
           fi
 
@@ -91,7 +91,7 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: site-academy
-          key: mkdocs-academy-${{ hashFiles('mkdocs-academy.yml', 'docs/academy/**') }}
+          key: mkdocs-academy-${{ hashFiles('mkdocs-academy.yml', 'docs/ru/academy/**') }}
           restore-keys: |
             mkdocs-academy-
 
