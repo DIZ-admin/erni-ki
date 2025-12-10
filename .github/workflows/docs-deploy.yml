@@ -47,9 +47,12 @@ jobs:
           # Override site_url for GitHub Pages deployment
           # Production uses docs.erni-gruppe.ch (set in mkdocs.yml)
           SITE_URL: "https://diz-admin.github.io/erni-ki/"
+          BASE_PATH: "/erni-ki"
         run: |
-          # Use sed to temporarily override site_url for GH Pages build
+          # Override site_url for GH Pages build
           sed -i 's|site_url:.*|site_url: "'"$SITE_URL"'"|' mkdocs.yml
+          # Fix language switcher links to include base path
+          sed -i 's|link: /|link: '"$BASE_PATH"'/|g' mkdocs.yml
           mkdocs build --site-dir site
 
       - name: 🤖 Generate llms.txt for AI/RAG
