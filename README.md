@@ -1,8 +1,8 @@
 # ERNI-KI — Production AI Platform
 
-**ERNI-KI** — A stack of 30 services built around OpenWebUI v0.6.40 and Ollama
-0.13.0, Go 1.24.10 in CI, with GPU acceleration, Context7/LiteLLM gateway, and
-full observability.
+**ERNI-KI** — Enterprise AI platform with 23+ services: OpenWebUI v0.6.40,
+Ollama 0.13.0, LiteLLM v1.80.0, GPU acceleration, and full observability stack
+(Prometheus, Grafana, Loki). Built with Go 1.24.11 auth service.
 
 <!-- STATUS_SNIPPET_START -->
 
@@ -74,48 +74,42 @@ Access: Locally at <http://localhost:8080>, production —
 
 ## Architecture (Brief)
 
-- **Modular Docker Compose:** Infrastructure organized into 5 layered compose
-  files (base → data → ai → gateway → monitoring). See `compose/README.md` for
-  details. Use `./docker-compose.sh` wrapper for all operations. Partial stacks
-  still require base+data+ai+gateway together; monitoring is optional on top.
-- **AI Layer:** OpenWebUI + Ollama (GPU), LiteLLM gateway, MCP Server, Docling,
-  Tika, EdgeTTS, RAG via SearXNG. Details — `docs/ai/` and
-  `docs/reference/api-reference.md`.
-- **Data:** PostgreSQL 17 + pgvector, Redis 7, Backrest, persistent volumes.
-  Guides — `docs/data/`.
-- **Observability:** Prometheus, Grafana, Alertmanager, Loki, Fluent Bit, 8
-  exporters. Schemas/alarms — `docs/operations/monitoring/monitoring-guide.md`.
-- **Security & Networking:** Cloudflare Zero Trust, Nginx WAF, TLS 1.2/1.3,
-  Docker Secrets, JWT-auth service. Instructions —
-  `scripts/infrastructure/security` and `docs/security/`.
+- **Modular Docker Compose:** 5 layered compose files (base → data → ai →
+  gateway → monitoring). See `compose/README.md` for details. Use
+  `./docker-compose.sh` wrapper for all operations.
+- **AI Layer (9 services):** OpenWebUI v0.6.40, Ollama 0.13.0 (GPU), LiteLLM
+  v1.80.0 gateway, MCP Server, Docling, Tika 3.2.3, SearXNG, EdgeTTS, Auth.
+- **Data (2 services):** PostgreSQL 17 + pgvector, Redis 7.0.15, Backrest v1.10.
+- **Gateway (3 services):** Nginx 1.29.3, Cloudflared 2025.11.1, Backrest.
+- **Monitoring (7 services):** Prometheus v3.7.3, Grafana 12.3.0, Alertmanager
+  v0.29.0, Loki 3.6.2, Uptime Kuma 2.0.2, Node Exporter, Postgres Exporter.
+- **Security:** Cloudflare Zero Trust, Nginx WAF, TLS 1.2/1.3, Docker Secrets,
+  JWT-auth service (Go 1.24.11).
 
 ## Documentation
 
-> **Documentation Version:** 2025.12 - Last updated: December 2025
+> **Documentation Version:** 2025.11 - Last updated: December 2025
 
-| Topic                   | Where to find                                                                                                          |
-| :---------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| Architecture & Overview | `docs/architecture/`, `docs/overview.md`                                                                               |
-| Monitoring/Operations   | `docs/operations/monitoring/monitoring-guide.md`, `docs/archive/audits/monitoring-audit.md`                            |
-| GitHub/CI Governance    | `docs/operations/core/github-governance.md`, `.github/`                                                                |
-| Environments & Secrets  | `docs/reference/github-environments-setup.md` + `scripts/infrastructure/security/`                                     |
-| Incidents/Audits        | `docs/archive/incidents/`, `docs/archive/audits/`                                                                      |
-| Academy / Users         | `docs/academy/README.md`, `docs/index.md`, `docs/en/index.md`, `docs/de/index.md`                                      |
-| HowTo / Scenarios       | `docs/howto/`, `docs/en/academy/howto/`                                                                                |
-| System Status           | `docs/operations/core/status-page.md`, `docs/system/status.md`, `docs/en/system/status.md`, `docs/de/system/status.md` |
-| Documentation Audit     | `docs/archive/audits/documentation-audit.md`                                                                           |
+| Topic                   | Where to find                                                    |
+| :---------------------- | :--------------------------------------------------------------- |
+| Architecture & Overview | `docs/ru/architecture/`, `docs/ru/overview.md`                   |
+| Monitoring/Operations   | `docs/ru/operations/monitoring/monitoring-guide.md`              |
+| GitHub/CI Governance    | `docs/en/operations/core/github-governance.md`, `.github/`       |
+| Environments & Secrets  | `docs/en/reference/github-environments-setup.md`                 |
+| Incidents/Audits        | `docs/ru/archive/incidents/`, `docs/ru/archive/audits/`          |
+| Academy / Users         | `docs/ru/academy/`, `docs/en/academy/`, `docs/de/academy/`       |
+| System Status           | `docs/ru/system/status.md`, `docs/en/system/`, `docs/de/system/` |
+| API Reference           | `docs/ru/api/index.md`, `docs/api/index.md`                      |
 
 ## Academy KI and User Scenarios
 
-- **User Portal:** Visit `docs/index.md` (canonical Russian portal) or
+- **User Portal:** Visit `docs/ru/index.md` (canonical Russian portal) or
   localizations `docs/en/index.md` / `docs/de/index.md`.
-- **Quick Start:** Use `docs/training/openwebui-basics.md` and checklists
-  `docs/training/prompting-101.md`.
-- **Practice:** Ready-made templates and scenarios — in `docs/howto/` and
-  translations in `docs/en/academy/howto/`.
-- **Service Status:** Before reporting issues, check
-  `docs/operations/core/status-page.md` or localized status pages
-  (`docs/*/system/status.md`).
+- **Quick Start:** Use `docs/ru/academy/getting-started/` for onboarding.
+- **By Role:** Guides for developers, managers, support in
+  `docs/ru/academy/by-role/`.
+- **Service Status:** Check `docs/ru/system/status.md` or localized status
+  pages.
 
 ## Contribution
 
