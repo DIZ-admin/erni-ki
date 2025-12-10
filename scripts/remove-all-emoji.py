@@ -73,12 +73,10 @@ def clean_emoji_from_text(text: str) -> tuple[str, int]:
     cleaned, unicode_count = EMOJI_PATTERN.subn("", text)
     emoji_count += unicode_count
 
-    # Replace text emoji
+    # Replace text emoji - use subn() for efficiency (single pass per pattern)
     for pattern, replacement in TEXT_EMOJI_REPLACEMENTS:
-        matches = re.findall(pattern, cleaned)
-        if matches:
-            emoji_count += len(matches)
-            cleaned = re.sub(pattern, replacement, cleaned)
+        cleaned, count = re.subn(pattern, replacement, cleaned)
+        emoji_count += count
 
     # Clean up multiple spaces and empty lines
     cleaned = re.sub(r" +", " ", cleaned)

@@ -54,5 +54,4 @@ contact the status-page owners listed in `operations/core/status-page.md`.
   [operations/core/status-page.md](../operations/core/status-page.md)
 - User basics for Open WebUI:
   [academy/openwebui-basics.md](../academy/openwebui-basics.md)
-- Prompting checklist:
-  [academy/prompting-101.md](../academy/prompting-101.md)
+- Prompting checklist: [academy/prompting-101.md](../academy/prompting-101.md)
