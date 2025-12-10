@@ -2,7 +2,7 @@
 title: 'Academy KI für Erni Gruppe'
 language: de
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 last_updated: '2025-12-04'
 company: erni-gruppe
 industry: construction
