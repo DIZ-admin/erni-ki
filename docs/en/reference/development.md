@@ -87,8 +87,7 @@ descriptions and links to tasks/tickets.
 - After changing `docs/reference/status.yml` make sure to run
   `scripts/docs/update_status_snippet.py` — the script will update
   `docs/reference/status-snippet.md` and the insert in `README.md`.
-- For MkDocs pages use the snippet insert, for example:
-  `{% raw %}{% include-markdown "reference/status-snippet.md" %}{% endraw %}`
-  (see `docs/index.md`, `docs/overview.md`).
+- For MkDocs pages use the snippet insert. See `docs/overview.md` for example
+  usage of the `include-markdown` directive.
 - In your PR attach the result of `git status` confirming that README and
   snippet are synchronized.

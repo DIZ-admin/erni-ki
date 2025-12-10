@@ -80,12 +80,15 @@ plugins:
         - ru
         - de
   - awesome-pages
-  - blog:
-      blog_dir: news
-      post_dir: news
-      categories: true
-      blog_toc: true
-      archive: false
+  # Blog plugin disabled - incompatible with i18n folder structure (docs_structure: folder)
+  # The blog plugin creates conflicts with localized content in en/, ru/, de/ directories
+  # TODO(blog): Re-evaluate when mkdocs-material blog plugin adds i18n support
+  # - blog:
+  #     blog_dir: news
+  #     post_dir: news
+  #     categories: true
+  #     blog_toc: true
+  #     archive: false
   - include-markdown
   - i18n:
       docs_structure: folder
