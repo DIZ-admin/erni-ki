@@ -595,5 +595,5 @@ print(f"Assistant: {response}")
 ## Related Documentation
 
 - [API Reference](../reference/api-reference.md)
-- [Webhook Examples](./webhook-client-python.py)
+- [Webhook Examples](index.md) <!-- Webhook client examples -->
 - [OpenWebUI Documentation](https://docs.openwebui.com)
