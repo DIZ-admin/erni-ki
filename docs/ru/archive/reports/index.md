@@ -14,7 +14,7 @@ last_updated: '2025-12-10'
 
 ### Аудиты системы
 
-- [ERNI-KI Comprehensive Analysis 2025-12-02](erni-ki-comprehensive-analysis-2025-12-02.md)
+- ERNI-KI Comprehensive Analysis 2025-12-02 (archived)
 - [Redis Comprehensive Analysis 2025-12-02](redis-comprehensive-analysis-2025-12-02.md)
 - [TODO/FIXME Triage 2025-12-03](todo-fixme-triage-2025-12-03.md)
 

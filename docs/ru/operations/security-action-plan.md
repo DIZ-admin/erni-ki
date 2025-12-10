@@ -707,7 +707,7 @@ slos:
 
 ## Ссылки
 
-- [ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+- ERNI-KI Comprehensive Analysis 2025-12-02 (archived)
 - [Security Policy](../security/security-policy.md)
 - [Runbooks](core/runbooks-summary.md)
 

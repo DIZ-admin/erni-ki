@@ -234,9 +234,8 @@ generate_secret "litellm_master_key" 48
 
 ### Ошибка в Comprehensive System Audit
 
-**Проблема 18 (CVSS 10.0)**из
-[ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
-указывала:
+**Проблема 18 (CVSS 10.0)**из ERNI-KI Comprehensive Analysis 2025-12-02
+(archived) указывала:
 
 > "Секреты коммитятся в репозиторий"
 
@@ -279,7 +278,7 @@ generate_secret "litellm_master_key" 48
 ## Ссылки
 
 - [Security Action Plan](../operations/security-action-plan.md)
-- [ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+- ERNI-KI Comprehensive Analysis 2025-12-02 (archived)
 - `.gitignore`
 - `detect-secrets baseline` (.secrets.baseline)
 
