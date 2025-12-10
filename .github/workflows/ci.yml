@@ -821,6 +821,10 @@ jobs:
             --exclude 'github\.com/DIZ-admin/erni-ki/discussions'
             --exclude 'docs\.litellm\.ai'
             --exclude 'commitlint\.js\.org'
+            --exclude-path 'docs/archive/**'
+            --exclude-path 'docs/ru/archive/**'
+            --exclude-path 'docs/de/archive/**'
+            --exclude-path 'docs/en/archive/**'
             'docs/**/*.md'
             'README.md'
           fail: true
