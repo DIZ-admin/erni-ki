@@ -6,7 +6,8 @@ offline = true
 max_concurrency = 4
 include_verbatim = true
 
-# Ignore generated/build/cache paths and archive directories with historical links
+# Ignore generated/build/cache paths, archive directories with historical links,
+# and DE academy placeholder files (they contain redirects to RU canonical docs)
 exclude_path = [
   "node_modules",
   "logs",
@@ -14,7 +15,8 @@ exclude_path = [
   "docs/archive",
   "docs/en/archive",
   "docs/de/archive",
-  "docs/ru/archive"
+  "docs/ru/archive",
+  "docs/de/academy"
 ]
 
 # Ignore endpoints that are environment/local-only or placeholders
