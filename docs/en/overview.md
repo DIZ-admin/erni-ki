@@ -1,6 +1,6 @@
 ---
 language: en
-translation_status: partial
+translation_status: draft
 doc_version: '2025.11'
 last_updated: '2025-11-25'
 title: 'ERNI-KI Overview'

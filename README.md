@@ -6,7 +6,7 @@ Ollama 0.13.0, LiteLLM v1.80.0, GPU acceleration, and full observability stack
 
 <!-- STATUS_SNIPPET_START -->
 
-> **Статус системы (n/a) — **
+> **Статус системы (n/a)**
 >
 > - Контейнеры:
 > - Графана:

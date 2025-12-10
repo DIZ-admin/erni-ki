@@ -110,7 +110,7 @@ send_generic_alert() {
 # Send test alert for verification
 test_webhook() {
     local endpoint="${1:-generic}"
-    echo "🧪 Testing webhook endpoint: $endpoint"
+    echo "[TEST] Testing webhook endpoint: $endpoint"
 
     local url="$WEBHOOK_URL/webhook"
     if [ "$endpoint" != "generic" ]; then
@@ -204,19 +204,19 @@ EOF
 
 # Trigger Ollama recovery
 trigger_ollama_recovery() {
-    echo "🔧 Triggering Ollama auto-recovery..."
+    echo "[FIX] Triggering Ollama auto-recovery..."
     send_critical_alert "OllamaServiceDown" "Ollama service is down" "ollama" "true"
 }
 
 # Trigger OpenWebUI recovery
 trigger_webui_recovery() {
-    echo "🔧 Triggering OpenWebUI auto-recovery..."
+    echo "[FIX] Triggering OpenWebUI auto-recovery..."
     send_critical_alert "OpenWebUIDown" "OpenWebUI service is down" "openwebui" "true"
 }
 
 # Trigger SearXNG recovery
 trigger_searxng_recovery() {
-    echo "🔧 Triggering SearXNG auto-recovery..."
+    echo "[FIX] Triggering SearXNG auto-recovery..."
     send_critical_alert "SearXNGDown" "SearXNG service is down" "searxng" "true"
 }
 
@@ -229,7 +229,7 @@ send_warning_alert() {
     local alertname="$1"
     local summary="${2:-$alertname}"
 
-    echo "⚠️  Sending warning alert: $alertname"
+    echo "[WARN] Sending warning alert: $alertname"
 
     local payload=$(create_alert_payload "$alertname" "warning" "$summary")
     local body=$(echo "$payload" | jq -c .)
@@ -352,7 +352,7 @@ send_database_alert() {
     local database="${2:-openwebui}"
     local summary="${3:-$alertname}"
 
-    echo "🗄️  Sending database alert: $alertname"
+    echo "[DB] Sending database alert: $alertname"
 
     local payload=$(cat <<EOF
 {

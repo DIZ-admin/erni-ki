@@ -1,7 +1,7 @@
 ---
 title: 'Holzbau Übersicht (DE Redirect)'
 language: de
-translation_status: placeholder
+translation_status: redirect
 last_updated: '2025-12-05'
 doc_version: '2025.11'
 ---

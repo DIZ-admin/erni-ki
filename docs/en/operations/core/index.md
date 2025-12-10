@@ -1,6 +1,6 @@
 ---
 language: en
-translation_status: partial
+translation_status: draft
 doc_version: '2025.11'
 last_updated: '2025-11-27'
 ---
@@ -18,5 +18,4 @@ Core operational documentation and runbooks for ERNI-KI.
 ## Note
 
 This is a partial English translation. The Russian version is the primary source
-with complete documentation. For missing sections, refer to the
-[Russian version](../../ru/operations/core/index.md).
+with complete documentation.
