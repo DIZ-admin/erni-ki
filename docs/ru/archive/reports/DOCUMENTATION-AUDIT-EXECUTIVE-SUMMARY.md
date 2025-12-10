@@ -1,7 +1,7 @@
 ---
 language: ru
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 last_updated: '2025-12-04'
 audit_type: executive_summary
 doc_status: completed

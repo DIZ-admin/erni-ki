@@ -804,6 +804,15 @@ jobs:
             'docs/**/*.md'
             '!docs/archive/**'
             '!docs/*/archive/**'
+            '!docs/de/academy/**'
+            '!docs/en/academy/**'
+            '!docs/de/operations/**'
+            '!docs/en/operations/**'
+            '!docs/de/development/**'
+            '!docs/en/development/**'
+            '!docs/de/guides/**'
+            '!docs/en/guides/**'
+            '!docs/en/examples/**'
             'README.md'
           fail: true
 

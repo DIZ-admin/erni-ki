@@ -1,7 +1,7 @@
 ---
 language: ru
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 last_updated: '2025-12-04'
 audit_type: index
 doc_status: completed
@@ -502,7 +502,7 @@ file: DOCUMENTATION-AUDIT-INDEX-2025-12-04.md
 type: index
 language: ru
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 audit_date: 2025-12-04
 doc_status: completed
 scope: comprehensive

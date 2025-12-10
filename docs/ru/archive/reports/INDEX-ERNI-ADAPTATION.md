@@ -2,7 +2,7 @@
 title: 'Academy KI — Навигация по адаптации для Erni Gruppe'
 language: ru
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 last_updated: '2025-12-04'
 doc_status: completed
 ---

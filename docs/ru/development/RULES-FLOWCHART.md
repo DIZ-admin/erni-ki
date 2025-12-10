@@ -1,7 +1,7 @@
 ---
 title: 'ERNI-KI Rules & Workflow Flowchart'
 language: ru
-translation_status: original
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-12-03'
 ---

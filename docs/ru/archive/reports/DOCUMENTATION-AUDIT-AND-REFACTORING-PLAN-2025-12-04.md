@@ -1,7 +1,7 @@
 ---
 language: ru
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 last_updated: '2025-12-04'
 audit_type: comprehensive
 doc_status: completed
@@ -362,7 +362,7 @@ prerequisites: ['другой-урок']
 language: ru|en|de
 translation_status: complete|partial|pending
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 last_updated: 'YYYY-MM-DD'
 ---
 

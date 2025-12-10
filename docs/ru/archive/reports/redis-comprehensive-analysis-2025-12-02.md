@@ -3,7 +3,7 @@ title: Комплексный анализ Redis в ERNI-KI
 date: 2025-12-02
 language: ru
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 description: Комплексный аудит Redis 7.0.15-alpine в ERNI-KI
 tags:
   - redis

@@ -5,7 +5,7 @@ difficulty: medium
 duration: '15 min'
 roles: ['kalkulation', 'planer', 'verkauf']
 language: de
-translation_status: original
+translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-12-04'
 industry: construction

@@ -3,7 +3,7 @@ title: Comprehensive Audit Report ERNI-KI Project
 date: 2025-12-02
 language: ru
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
 description: Комплексный аудит ERNI-KI Project
 tags:
   - audit
