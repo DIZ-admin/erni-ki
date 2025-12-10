@@ -4,7 +4,7 @@
 site_name: ERNI-KI Documentation
 site_description: "ERNI-KI Project Documentation - AI platform with Open WebUI"
 site_author: "ERNI-KI Team"
-site_url: "https://docs.erni-gruppe.ch"
+site_url: "https://diz-admin.github.io/erni-ki/"
 
 # Repository
 repo_name: "DIZ-admin/erni-ki"
@@ -367,13 +367,13 @@ extra:
       link: https://github.com/DIZ-admin/erni-ki/pkgs/container/erni-ki%2Fauth
   alternate:
     - name: "English"
-      link: /
+      link: /erni-ki/
       lang: en
     - name: "Russian"
-      link: /ru/
+      link: /erni-ki/ru/
       lang: ru
     - name: "Deutsch"
-      link: /de/
+      link: /erni-ki/de/
       lang: de
 
   analytics:
@@ -385,62 +385,75 @@ extra:
       We use cookies to improve documentation and analytics.
       With your consent, this helps us improve the documentation.
 
-# Navigation Structure
+# Navigation Structure (Consolidated: 7 groups for Material theme tabs)
 nav:
+  # ==========================================================================
+  # Group 1: Home (Landing page)
+  # ==========================================================================
   - Home: index.md
-  - "Platform Overview": overview.md
-  - Glossary: GLOSSARY.md
-  - "Quick Start":
+
+  # ==========================================================================
+  # Group 2: Getting Started (Installation, Configuration, Deployment)
+  # ==========================================================================
+  - "Getting Started":
       - "Overview": getting-started/index.md
       - "Installation": getting-started/installation.md
       - "Configuration": getting-started/configuration-guide.md
-      - "Users": getting-started/user-guide.md
+      - "Users Guide": getting-started/user-guide.md
       - "External Access": getting-started/external-access-setup.md
       - "Local DNS": getting-started/local-network-dns-setup.md
       - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
       - "Port Forwarding": getting-started/port-forwarding-setup.md
-  - Deployment:
       - "Production Checklist": deployment/production-checklist.md
-  - Architecture:
-      - "Overview (README)": architecture/index.md
-      - Overview: architecture/architecture.md
-      - "Services": architecture/services-overview.md
-      - "Inventory": architecture/service-inventory.md
-      - "Nginx configuration": architecture/nginx-configuration.md
-  - "Development Guides":
-      - "Setup Guide": development/setup-guide.md
-      - "Testing Guide": development/testing-guide.md
-  - Examples:
-      - "Overview": examples/index.md
-      - "API Usage (REST)": examples/api-usage-rest.md
-      - "Nginx Examples": examples/nginx-examples.md
-      - "Academy KI":
-          - Overview: academy/index.md
-          - "Open WebUI Basics": academy/openwebui-basics.md
-          - "Prompting 101": academy/prompting-101.md
-          - "Context Engineering 101": academy/context-engineering-101.md
-          - "HowTo":
-              - Overview: academy/howto/index.md
-              - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
-              - "Write Customer Email": academy/howto/write-customer-email.md
-              - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
-              - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
+
+  # ==========================================================================
+  # Group 3: Academy (Training, HowTo, News)
+  # ==========================================================================
+  - Academy:
+      - "Overview": academy/index.md
+      - "Open WebUI Basics": academy/openwebui-basics.md
+      - "Prompting 101": academy/prompting-101.md
+      - "Context Engineering 101": academy/context-engineering-101.md
+      - "HowTo Guides":
+          - "Overview": academy/howto/index.md
+          - "Create JIRA Ticket (manual)": academy/howto/create-jira-ticket.md
+          - "Write Customer Email": academy/howto/write-customer-email.md
+          - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
+          - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
       - "News":
-          - Feed: academy/news/index.md
+          - "Feed": academy/news/index.md
           - "2025-01-release-x": academy/news/2025-01-release-x.md
-  - System:
       - "System Status": system/status.md
-  - "News (Archive)":
-      - Overview: archive/news-overview.md
-      - Feed: news/index.md
-      - "News Archive 2025": archive/news/2025.md
-  - "HowTo (Archive)":
-      - "Create JIRA Description": archive/howto/create-jira-description-with-ai.md
-      - "Summarize Meeting (Archive)": archive/howto/summarize-meeting-notes.md
-      - "Customer Email in OpenWebUI": archive/howto/write-customer-email-with-openwebui.md
-  - "Trainings (Archive)":
-      - "Open WebUI Basics": archive/training/openwebui-basics.md
-      - "Prompting 101": archive/training/prompting-101.md
+
+  # ==========================================================================
+  # Group 4: Technical (Architecture, Development, Examples)
+  # ==========================================================================
+  - Technical:
+      - "Platform Overview": overview.md
+      - "Glossary": GLOSSARY.md
+      - Architecture:
+          - "Overview": architecture/index.md
+          - "Architecture": architecture/architecture.md
+          - "Services": architecture/services-overview.md
+          - "Inventory": architecture/service-inventory.md
+          - "Nginx Configuration": architecture/nginx-configuration.md
+          - "Diagrams":
+              - "Index": architecture/diagrams/index.md
+              - "Overview": architecture/diagrams/architecture-overview.md
+              - "Data Flow": architecture/diagrams/data-flow.md
+              - "Deployment": architecture/diagrams/deployment-diagram.md
+              - "Network Topology": architecture/diagrams/network-topology.md
+      - Development:
+          - "Setup Guide": development/setup-guide.md
+          - "Testing Guide": development/testing-guide.md
+      - Examples:
+          - "Overview": examples/index.md
+          - "API Usage (REST)": examples/api-usage-rest.md
+          - "Nginx Examples": examples/nginx-examples.md
+
+  # ==========================================================================
+  # Group 5: Operations (Core, Monitoring, Maintenance, Database)
+  # ==========================================================================
   - Operations:
       - "Overview": operations/index.md
       - Core:
@@ -478,6 +491,7 @@ nav:
       - Troubleshooting:
           - "Overview": operations/troubleshooting/index.md
           - "Troubleshooting Guide": operations/troubleshooting/troubleshooting-guide.md
+          - "Common Issues": troubleshooting/common-issues.md
       - Database:
           - "Overview": operations/database/index.md
           - "Monitoring Plan": operations/database/database-monitoring-plan.md
@@ -487,109 +501,117 @@ nav:
           - "Redis Operations": operations/database/redis-operations-guide.md
           - "VLLM Optimization": operations/database/vllm-resource-optimization.md
       - Diagnostics:
-          - "Diagnostics Overview": operations/diagnostics/index.md
-      - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
-  - "Data & Storage": data/index.md
-  - Security:
-      - "Overview": security/index.md
-      - "Security Policy": security/security-policy.md
-      - "Authentication": security/authentication.md
-      - "Security Best Practices": security/security-best-practices.md
-      - "SSL/TLS Setup": security/ssl-tls-setup.md
-      - "Log Audit": security/log-audit.md
+          - "Overview": operations/diagnostics/index.md
+          - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
+      - "Security Action Plan": operations/security-action-plan.md
+
+  # ==========================================================================
+  # Group 6: Reference (API, Security, Standards, Data)
+  # ==========================================================================
   - Reference:
       - "Overview": reference/index.md
-      - "API Overview": api/index.md
-      - "API Reference": reference/api-reference.md
-      - "Webhook API": reference/webhook-api.md
-      - Development: reference/development.md
-      - "GitHub Environments": reference/github-environments-setup.md
-      - "MCPO Integration": reference/mcpo-integration-guide.md
-      - "Pre-commit Hooks": reference/pre-commit-hooks.md
-      - "Metadata Standards": reference/metadata-standards.md
-      - "Style Guide": reference/style-guide.md
-      - "Code Standards": quality/code-standards.md
-      - "No Emoji Policy": reference/NO-EMOJI-POLICY.md
-      - "Emoji Style Guide": reference/emoji-style-guide.md
-      - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
-      - "Documentation Maintenance": reference/documentation-maintenance-strategy.md
-      - "Non-root Containers Plan": reference/non-root-containers-plan.md
-      - "Service Versions": reference/service-versions.md
-      - "Status Snippet": reference/status-snippet.md
-      - "Language Policy": reference/language-policy.md
-      - VERSION: VERSION.md
-      - CHANGELOG: reference/CHANGELOG.md
-  - Troubleshooting:
-      - "Common Issues": troubleshooting/common-issues.md
-
-  - "Reports & Archive":
-      - "Archive Overview": archive/index.md
-      - "Archive READMEs":
-          - archive/audits/index.md
-          - archive/diagnostics/index.md
-          - archive/incidents/index.md
-          - archive/diagnostics/system-diagnostics-2025-11-18.md
-      - Audits:
-          - "documentation-audit (2025-10-24)": archive/audits/documentation-audit-2025-10-24.md
-          - "documentation-cleanup-audit (2025-10-24)": archive/audits/documentation-cleanup-audit-2025-10-24.md
-          - "documentation-cleanup-summary (2025-10-24)": archive/audits/documentation-cleanup-summary-2025-10-24.md
-          - "best-practices-audit (2025-10-20)": archive/audits/best-practices-audit-2025-10-20.md
-          - "comprehensive-audit (2025-10-14)": archive/audits/comprehensive-audit-2025-10-14.md
-          - "comprehensive-project-audit (2025-10-17)": archive/audits/comprehensive-project-audit-2025-10-17.md
-
-          - "code-audit (2025-11-24)": archive/audits/code-audit-2025-11-24.md
-          - "documentation-refactoring (2025-11-24)": archive/audits/documentation-refactoring-audit-2025-11-24.md
-          - "comprehensive-documentation (2025-11-24)": archive/audits/comprehensive-documentation-audit-2025-11-24.md
-          - "comprehensive-documentation (2025-11-25)": archive/audits/comprehensive-documentation-audit-2025-11-25.md
-          - "configuration-audit-report (2025-11-25)": archive/audits/configuration-audit-report-2025-11-25.md
-          - "legacy index": archive/legacy-index.md
-          - "legacy academy index": archive/legacy-academy-index.md
-          - "CI Health": archive/audits/ci-health.md
-          - "Monitoring Audit": archive/audits/monitoring-audit.md
-          - "Documentation Audit": archive/audits/documentation-audit.md
-          - "Documentation Update Plan (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-update-plan-2025-11-24.md
-          - "Documentation Refactoring Plan (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md
-          - "Documentation Refactoring Plan v2 (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-v2-2025-11-24.md
-          - "Code Audit Summary (2025-11-24)": archive/migrations/documentation-refactoring-plans/code-audit-summary-2025-11-24.md
+      - API:
+          - "Overview": api/index.md
+          - "API Reference": reference/api-reference.md
+          - "Webhook API": reference/webhook-api.md
+      - Security:
+          - "Overview": security/index.md
+          - "Security Policy": security/security-policy.md
+          - "Authentication": security/authentication.md
+          - "Security Best Practices": security/security-best-practices.md
+          - "SSL/TLS Setup": security/ssl-tls-setup.md
+          - "Log Audit": security/log-audit.md
+      - "Data & Storage": data/index.md
+      - Standards:
+          - "Development": reference/development.md
+          - "GitHub Environments": reference/github-environments-setup.md
+          - "MCPO Integration": reference/mcpo-integration-guide.md
+          - "Pre-commit Hooks": reference/pre-commit-hooks.md
+          - "Metadata Standards": reference/metadata-standards.md
+          - "Style Guide": reference/style-guide.md
+          - "Code Standards": quality/code-standards.md
+          - "No Emoji Policy": reference/NO-EMOJI-POLICY.md
+          - "Emoji Style Guide": reference/emoji-style-guide.md
+          - "Language Policy": reference/language-policy.md
+      - Documentation:
+          - "Refactoring Plan": reference/documentation-refactoring-plan.md
+          - "Maintenance Strategy": reference/documentation-maintenance-strategy.md
+      - Infrastructure:
+          - "Non-root Containers Plan": reference/non-root-containers-plan.md
+          - "Service Versions": reference/service-versions.md
+          - "Status Snippet": reference/status-snippet.md
+      - "VERSION": VERSION.md
+      - "CHANGELOG": reference/CHANGELOG.md
       - "Budget Analysis": budget-analysis.md
-      - Diagnostics:
-          - "Full server diagnostics (2025-11-04)": archive/diagnostics/full-server-diagnostics-2025-11-04.md
-          - "RAG system diagnostic (2025-10-30)": archive/diagnostics/rag-system-diagnostic-report-20251030.md
-          - "RAG vector search test (2025-10-30)": archive/diagnostics/rag-vector-search-test-report-20251030.md
-          - "Log analysis correction (2025-11-04)": archive/diagnostics/log-analysis-correction-2025-11-04.md
-      - "Incidents & Remediation":
-          - "Phase 1 critical fixes (2025-10-30)": archive/incidents/phase1-critical-fixes-report-20251030.md
-          - "Project audit remediation (2025-10-30)": archive/incidents/project-audit-report-20251030.md
-          - "Docx upload fix (2025-10-30)": archive/incidents/docx-upload-fix-20251030.md
-          - "Phase 2 completion (2025-11-04)": archive/incidents/phase-2-completion-2025-11-04.md
-          - "System repair (2025-10-16)": archive/incidents/system-repair-2025-10-16.md
-      - "Archive":
-          - "Audits":
-              - "Comprehensive Code Audit (2025-12-04)": archive/audits/comprehensive-code-audit-2025-12-04.md
-              - "Comprehensive Investor Audit (2025-12-03)": archive/audits/comprehensive-investor-audit-2025-12-03.md
-              - "Pre-commit Refactoring Audit (2025-12-03)": archive/audits/pre-commit-refactoring-audit-2025-12-03.md
-              - "CI Health": archive/audits/ci-health.md
-              - "Documentation Audit": archive/audits/documentation-audit.md
-              - "Monitoring Audit": archive/audits/monitoring-audit.md
-              - "Service Version Matrix (2025-11-28)": archive/audits/service-version-matrix-2025-11-28.md
-          - "Migrations":
-              - "Index": archive/migrations/index.md
-              - "Documentation Refactoring Plans": archive/migrations/documentation-refactoring-plans/index.md
-          - "News":
-              - "Index": archive/news/index.md
-          - "Training": archive/training/index.md
-          - "HowTo": archive/howto/index.md
-      - "Reports":
-          - "Index": reports/index.md
-      - "Security Audit": security/secrets-audit-2025-11-27.md
-      - "Architecture Diagrams":
-          - "Index": architecture/diagrams/index.md
-          - "Overview": architecture/diagrams/architecture-overview.md
-          - "Data Flow": architecture/diagrams/data-flow.md
-          - "Deployment": architecture/diagrams/deployment-diagram.md
-          - "Network Topology": architecture/diagrams/network-topology.md
+
+  # ==========================================================================
+  # Group 7: Archive (Reports, Audits, Incidents, Historical)
+  # ==========================================================================
+  - Archive:
+      - "Overview": archive/index.md
+      - "Reports": reports/index.md
       - "System": system/index.md
-      - "Security Action Plan": operations/security-action-plan.md
+      - Audits:
+          - "Index": archive/audits/index.md
+          - "Comprehensive Code Audit (2025-12-04)": archive/audits/comprehensive-code-audit-2025-12-04.md
+          - "Comprehensive Investor Audit (2025-12-03)": archive/audits/comprehensive-investor-audit-2025-12-03.md
+          - "Pre-commit Refactoring Audit (2025-12-03)": archive/audits/pre-commit-refactoring-audit-2025-12-03.md
+          - "Service Version Matrix (2025-11-28)": archive/audits/service-version-matrix-2025-11-28.md
+          - "Configuration Audit (2025-11-25)": archive/audits/configuration-audit-report-2025-11-25.md
+          - "Comprehensive Documentation (2025-11-25)": archive/audits/comprehensive-documentation-audit-2025-11-25.md
+          - "Comprehensive Documentation (2025-11-24)": archive/audits/comprehensive-documentation-audit-2025-11-24.md
+          - "Documentation Refactoring (2025-11-24)": archive/audits/documentation-refactoring-audit-2025-11-24.md
+          - "Code Audit (2025-11-24)": archive/audits/code-audit-2025-11-24.md
+          - "Documentation Audit (2025-10-24)": archive/audits/documentation-audit-2025-10-24.md
+          - "Documentation Cleanup Audit (2025-10-24)": archive/audits/documentation-cleanup-audit-2025-10-24.md
+          - "Documentation Cleanup Summary (2025-10-24)": archive/audits/documentation-cleanup-summary-2025-10-24.md
+          - "Best Practices Audit (2025-10-20)": archive/audits/best-practices-audit-2025-10-20.md
+          - "Comprehensive Project Audit (2025-10-17)": archive/audits/comprehensive-project-audit-2025-10-17.md
+          - "Comprehensive Audit (2025-10-14)": archive/audits/comprehensive-audit-2025-10-14.md
+          - "CI Health": archive/audits/ci-health.md
+          - "Documentation Audit": archive/audits/documentation-audit.md
+          - "Monitoring Audit": archive/audits/monitoring-audit.md
+      - Diagnostics:
+          - "Index": archive/diagnostics/index.md
+          - "System Diagnostics (2025-11-18)": archive/diagnostics/system-diagnostics-2025-11-18.md
+          - "Full Server Diagnostics (2025-11-04)": archive/diagnostics/full-server-diagnostics-2025-11-04.md
+          - "Log Analysis Correction (2025-11-04)": archive/diagnostics/log-analysis-correction-2025-11-04.md
+          - "RAG System Diagnostic (2025-10-30)": archive/diagnostics/rag-system-diagnostic-report-20251030.md
+          - "RAG Vector Search Test (2025-10-30)": archive/diagnostics/rag-vector-search-test-report-20251030.md
+      - Incidents:
+          - "Index": archive/incidents/index.md
+          - "Phase 2 Completion (2025-11-04)": archive/incidents/phase-2-completion-2025-11-04.md
+          - "Phase 1 Critical Fixes (2025-10-30)": archive/incidents/phase1-critical-fixes-report-20251030.md
+          - "Project Audit Remediation (2025-10-30)": archive/incidents/project-audit-report-20251030.md
+          - "Docx Upload Fix (2025-10-30)": archive/incidents/docx-upload-fix-20251030.md
+          - "System Repair (2025-10-16)": archive/incidents/system-repair-2025-10-16.md
+      - Migrations:
+          - "Index": archive/migrations/index.md
+          - "Documentation Refactoring Plans":
+              - "Index": archive/migrations/documentation-refactoring-plans/index.md
+              - "Documentation Update Plan (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-update-plan-2025-11-24.md
+              - "Documentation Refactoring Plan (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-2025-11-24.md
+              - "Documentation Refactoring Plan v2 (2025-11-24)": archive/migrations/documentation-refactoring-plans/documentation-refactoring-plan-v2-2025-11-24.md
+              - "Code Audit Summary (2025-11-24)": archive/migrations/documentation-refactoring-plans/code-audit-summary-2025-11-24.md
+      - News:
+          - "Overview": archive/news-overview.md
+          - "Feed": news/index.md
+          - "News Archive 2025": archive/news/2025.md
+          - "Archive Index": archive/news/index.md
+      - HowTo:
+          - "Index": archive/howto/index.md
+          - "Create JIRA Description": archive/howto/create-jira-description-with-ai.md
+          - "Summarize Meeting": archive/howto/summarize-meeting-notes.md
+          - "Customer Email in OpenWebUI": archive/howto/write-customer-email-with-openwebui.md
+      - Training:
+          - "Index": archive/training/index.md
+          - "Open WebUI Basics": archive/training/openwebui-basics.md
+          - "Prompting 101": archive/training/prompting-101.md
+      - Security:
+          - "Secrets Audit (2025-11-27)": security/secrets-audit-2025-11-27.md
+      - Legacy:
+          - "Legacy Index": archive/legacy-index.md
+          - "Legacy Academy Index": archive/legacy-academy-index.md
 
 # Validation Settings
 validation:
