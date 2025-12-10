@@ -29,7 +29,7 @@ flowchart TD
 ## 1. Goal
 
 - Keep 32 production services Healthy (see `README.md`).
-- Align versions (OpenWebUI v0.6.36, Prometheus v3.0.0, Grafana v11.3.0).
+- Align versions (OpenWebUI v0.6.40, Prometheus v3.0.0, Grafana v11.3.0).
 - Meet response targets for 20 active alert rules and daily cron scripts.
 
 ## 2. Alerts & Monitoring
@@ -120,8 +120,8 @@ resources:**`docs/operations/database/vllm-resource-optimization.md` + scripts
 
 ## 9. LiteLLM Context & RAG Control
 
-- LiteLLM v1.80.0.rc.1 serves Context Engineering and Context7 (Thinking tokens,
-  `/lite/api/v1/think`). Ensure gateway at
+- LiteLLM v1.80.0-stable.1 serves Context Engineering and Context7 (Thinking
+  tokens, `/lite/api/v1/think`). Ensure gateway at
   `http://localhost:4000/health/liveliness`.
 - `scripts/monitor-litellm-memory.sh` — cron/ad-hoc check of LiteLLM memory with
   webhooks/Slack when threshold (80% default) is exceeded.

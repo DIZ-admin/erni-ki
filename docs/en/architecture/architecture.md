@@ -13,15 +13,15 @@ system_status: 'Production Ready'
 
 > **Doc version:**12.1 ·**Updated:**2025-11-23 ·**Status:**Production Ready 32
 > services in `compose.yml`; 5/5 Grafana dashboards provisioned; 20 active alert
-> rules. LiteLLM v1.80.0.rc.1, Docling, MCP Server, Apache Tika, Watchtower
+> rules. LiteLLM v1.80.0-stable.1, Docling, MCP Server, Apache Tika, Watchtower
 > monitor-only. Monitoring: Prometheus v3.0.0, Loki v3.0.0, Fluent Bit v3.1.0,
 > Alertmanager v0.27.0.**Prometheus targets: 32/32 UP (100%)**[TOC]
 
 ## Architecture Overview
 
 ERNI-KI is a modern microservice AI platform built for containerization,
-security, and scalability. The stack includes**32 services**: OpenWebUI v0.6.36,
-Ollama 0.12.11 (GPU), LiteLLM v1.80.0.rc.1 (Context Engineering), SearXNG,
+security, and scalability. The stack includes**32 services**: OpenWebUI v0.6.40,
+Ollama 0.13.0 (GPU), LiteLLM v1.80.0-stable.1 (Context Engineering), SearXNG,
 Docling, Tika, EdgeTTS, MCP Server, Watchtower (monitor-only), and a full
 observability stack (Prometheus v3.0.0, Grafana v11.3.0, Alertmanager v0.27.0,
 Loki v3.0.0, Fluent Bit v3.1.0, 8 exporters + RAG Exporter). External access is
@@ -37,9 +37,9 @@ graph TB
  end
 
  subgraph " AI & ML Services"
- WEBUI[OpenWebUI v0.6.36<br/>:8080 GPU<br/> Healthy]
- OLLAMA[Ollama 0.12.11<br/>:11434 GPU<br/>4GB VRAM limit<br/> Healthy]
- LITELLM[LiteLLM v1.80.0.rc.1<br/>:4000<br/>12GB memory<br/> Healthy]
+ WEBUI[OpenWebUI v0.6.40<br/>:8080 GPU<br/> Healthy]
+ OLLAMA[Ollama 0.13.0<br/>:11434 GPU<br/>4GB VRAM limit<br/> Healthy]
+ LITELLM[LiteLLM v1.80.0-stable.1<br/>:4000<br/>12GB memory<br/> Healthy]
  MCP[MCP Server<br/>:8000<br/>7 tools<br/> Healthy]
  end
 
@@ -164,8 +164,8 @@ graph TB
 
 - Prometheus v2.47.2 → v3.0.0, Loki v2.9.2 → v3.0.0, Fluent Bit v2.2.0 → v3.1.0,
   Alertmanager v0.26.0 → v0.27.0, Grafana v10.2.0 → v11.3.0.
-- 32/32 services healthy; OpenWebUI v0.6.36 (GPU), Ollama 0.12.11 (VRAM 4GB),
-  LiteLLM v1.80.0.rc.1 (12GB), Watchtower 1.7.1 monitor-only.
+- 32/32 services healthy; OpenWebUI v0.6.40 (GPU), Ollama 0.13.0 (VRAM 4GB),
+  LiteLLM v1.80.0-stable.1 (12GB), Watchtower 1.7.1 monitor-only.
 
 #### Monitoring optimized (19 Sep 2025)
 
@@ -186,8 +186,8 @@ response <2s.
 
 **AI & ML Services**
 
-- OpenWebUI v0.6.36 (GPU), Ollama 0.12.11 (GPU 4GB limit)
-- LiteLLM v1.80.0.rc.1 (Context Engineering Gateway, 12GB)
+- OpenWebUI v0.6.40 (GPU), Ollama 0.13.0 (GPU 4GB limit)
+- LiteLLM v1.80.0-stable.1 (Context Engineering Gateway, 12GB)
 - MCP Server, Docling (multilingual OCR), Apache Tika, EdgeTTS
 
 **Data Layer**

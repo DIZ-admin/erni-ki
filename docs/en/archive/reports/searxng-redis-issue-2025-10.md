@@ -3,6 +3,9 @@ language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-11-24'
+archived: true
+archived_date: '2025-12-10'
+archived_reason: 'Resolved issue from October 2025'
 ---
 
 # SearXNG Redis/Valkey Connection Issue - Analysis and Solution

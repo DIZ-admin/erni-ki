@@ -3,6 +3,9 @@ language: en
 translation_status: complete
 doc_version: '2025.11'
 last_updated: '2025-12-01'
+archived: true
+archived_date: '2025-12-10'
+archived_reason: 'Completed migration from November 2025'
 ---
 
 # Legacy Monitoring Scripts Migration

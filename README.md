@@ -1,7 +1,7 @@
 # ERNI-KI — Production AI Platform
 
-**ERNI-KI** — A stack of 30 services built around OpenWebUI v0.6.36 and Ollama
-0.12.11, Go 1.24.10 in CI, with GPU acceleration, Context7/LiteLLM gateway, and
+**ERNI-KI** — A stack of 30 services built around OpenWebUI v0.6.40 and Ollama
+0.13.0, Go 1.24.10 in CI, with GPU acceleration, Context7/LiteLLM gateway, and
 full observability.
 
 <!-- STATUS_SNIPPET_START -->
