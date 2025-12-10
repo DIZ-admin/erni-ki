@@ -16,4 +16,4 @@ System status and information for ERNI-KI.
 ## Note
 
 The Russian version is the primary source. For discrepancies, refer to the
-[Russian version](../../system/status.md).
+[Russian version](../ru/system/status.md).
