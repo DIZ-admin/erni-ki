@@ -1,3 +1,11 @@
+---
+title: 'Security Fixes - December 6, 2025'
+language: en
+translation_status: original
+doc_version: '2025.11'
+last_updated: '2025-12-06'
+---
+
 # Security Fixes - December 6, 2025
 
 ## Summary

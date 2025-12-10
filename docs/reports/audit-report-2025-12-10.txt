@@ -1,0 +1,70 @@
+================================================================================
+COMPREHENSIVE DOCUMENTATION AUDIT
+Date: 2025-12-10 03:30:57
+================================================================================
+
+## OVERALL STATISTICS
+
+Total markdown files: 621
+Files with frontmatter: 619 (99.7%)
+Files without frontmatter: 2 (0.3%)
+Files with metadata issues: 2
+
+## LANGUAGE DISTRIBUTION
+
+  RU  : 387 files ( 62.3%)
+  DE  : 118 files ( 19.0%)
+  EN  : 114 files ( 18.4%)
+
+## CATEGORY DISTRIBUTION
+
+  ru                            : 249 files
+  de                            : 118 files
+  archive                       :  67 files
+  academy                       :  59 files
+  operations                    :  42 files
+  reference                     :  18 files
+  development                   :  14 files
+  architecture                  :  10 files
+  getting-started               :   8 files
+  security                      :   6 files
+  guides                        :   4 files
+  reports                       :   4 files
+  examples                      :   3 files
+  quality                       :   2 files
+  troubleshooting               :   2 files
+  system                        :   2 files
+  news                          :   2 files
+  deployment                    :   2 files
+  data                          :   2 files
+  api                           :   1 files
+  en                            :   1 files
+
+## METADATA ISSUES
+
+Found 2 files with metadata issues:
+
+  docs/ru/archive/refactoring/phase-2.1-modular-compose-summary.md
+    - No frontmatter
+  docs/ru/archive/security/security-fixes-2025-12-06.md
+    - No frontmatter
+
+## DIRECTORIES WITHOUT index.md OR README.md
+
+Found 7 directories:
+  - archive/refactoring/
+  - archive/reports/
+  - archive/security/
+  - de/archive/migrations/documentation-refactoring-plans/
+  - ru/archive/refactoring/
+  - ru/archive/reports/
+  - ru/archive/security/
+
+## OVERALL ASSESSMENT
+
+  - Frontmatter coverage: -0.0 points
+  - Missing index files: -0.2 points
+
+FINAL SCORE: 9.8/10.0
+
+================================================================================

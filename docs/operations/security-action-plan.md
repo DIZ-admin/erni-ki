@@ -8,7 +8,7 @@ last_updated: '2025-12-03'
 # Security Action Plan - ERNI-KI
 
 **Created:**2025-12-03**Status:**ACTIVE**Priority:**CRITICAL **Basis:**
-[ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+[ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 
 ---
 
@@ -707,7 +707,7 @@ months)**3.**Staging migration (1 month)**4.**Production migration (2 months)**
 
 ## Links
 
-- [ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+- [ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 - [Security Policy](../security/security-policy.md)
 - [Runbooks](core/runbooks-summary.md)
 

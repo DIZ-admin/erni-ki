@@ -3,7 +3,8 @@ title: YAML Style Guide
 language: ru
 page_id: yaml-style-guide
 doc_version: '2025.11'
-translation_status: original
+translation_status: complete
+last_updated: '2025-12-06'
 ---
 
 # YAML Style Guide

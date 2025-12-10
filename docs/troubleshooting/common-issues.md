@@ -977,7 +977,7 @@ docker-compose restart ollama
 # 1. Stop everything
 docker-compose down
 
-# 2. Remove volumes (⚠ DELETES DATA)
+# 2. Remove volumes (WARNING: DELETES DATA)
 docker-compose down -v
 
 # 3. Remove images

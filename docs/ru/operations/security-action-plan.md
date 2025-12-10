@@ -9,7 +9,7 @@ last_updated: '2025-12-03'
 
 **Дата создания:**2025-12-03**Статус:**ACTIVE**Приоритет:**CRITICAL
 **Основание:**
-[ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+[ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 
 ---
 
@@ -708,7 +708,7 @@ slos:
 
 ## Ссылки
 
-- [ERNI-KI Comprehensive Analysis 2025-12-02](../reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+- [ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
 - [Security Policy](../security/security-policy.md)
 - [Runbooks](core/runbooks-summary.md)
 

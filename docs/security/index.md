@@ -2,6 +2,7 @@
 language: en
 doc_version: '2025.11'
 translation_status: pending
+last_updated: '2025-12-10'
 ---
 
 # Security Guide

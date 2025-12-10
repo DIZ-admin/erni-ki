@@ -7,6 +7,7 @@
         "http://localhost:8051/mcp"
       ],
       "env": {}
-    }
+    },
+    "MCP_DOCKER": { "command": "docker", "args": ["mcp", "gateway", "run"], "type": "stdio" }
   }
 }

@@ -262,7 +262,7 @@ Ongoing: Phase 4 Maintenance (CRITICAL)
 
 - [COMPREHENSIVE-AUDIT-SUMMARY.txt](COMPREHENSIVE-AUDIT-SUMMARY.txt) - code
   audit
-- [docs/security/secrets-audit-2025-11-27.md](security/secrets-audit-2025-11-27.md) -
+- [docs/security/secrets-audit-2025-11-27.md](../security/secrets-audit-2025-11-27.md) -
   security audit
 
 ### Reference:

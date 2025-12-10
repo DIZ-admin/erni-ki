@@ -340,7 +340,7 @@ Pre-commit Documentation:
 Previous Audits:
   PRE-COMMIT-AUDIT-SUMMARY.txt
   docs/archive/audits/pre-commit-refactoring-audit-2025-12-03.md
-  docs/security/secrets-audit-2025-11-27.md
+  docs/archive/security/secrets-audit-2025-11-27.md
 
 Support:
   GitHub Issues: https://github.com/DIZ-admin/erni-ki/issues

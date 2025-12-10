@@ -14,11 +14,11 @@ ERNI-KI.
 
 ### Системные/продуктовые отчёты
 
-- [ERNI-KI Comprehensive Analysis 2025-12-02](erni-ki-comprehensive-analysis-2025-12-02.md)
-- [Redis Comprehensive Analysis 2025-12-02](redis-comprehensive-analysis-2025-12-02.md)
+- [ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
+- [Redis Comprehensive Analysis 2025-12-02](../archive/reports/redis-comprehensive-analysis-2025-12-02.md)
 - [Security Action Plan](../operations/security-action-plan.md) — план
   устранения критических уязвимостей
-- [TODO/FIXME Triage 2025-12-03](todo-fixme-triage-2025-12-03.md)
+- [TODO/FIXME Triage 2025-12-03](../archive/reports/todo-fixme-triage-2025-12-03.md)
 
 ### Архивные аудиты
 
