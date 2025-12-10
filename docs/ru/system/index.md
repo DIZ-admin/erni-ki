@@ -21,7 +21,7 @@ last_updated: '2025-11-27'
 
 - [Operations](../operations/index.md) - операционные руководства и runbooks
 - [Architecture](../architecture/index.md) - архитектурная документация
-- [Reports](../reports/index.md) - отчеты и аудиты системы
+- [Archive Reports](../archive/reports/index.md) - исторические отчеты и аудиты
 
 ## Онлайн-ресурсы
 

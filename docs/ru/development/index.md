@@ -13,14 +13,11 @@ ERNI KI.
 
 ## Содержание
 
-- [Миграция Bun](bun-migration.md)
-- [Руководство по Phase 1 Quick Wins](PHASE1-QUICK-WINS.md)
-- [Руководство по pre-commit](pre-commit-guide.md)
-- [Индекс pre-commit](PRE-COMMIT-INDEX.md)
-- [План рефакторинга pre-commit](PRE-COMMIT-REFACTORING-PLAN.md)
-- [Сводка правил проекта](PROJECT-RULES-SUMMARY.md)
-- [Сводка рефакторинга](REFACTORING-SUMMARY.md)
-- [Блок-схема правил](RULES-FLOWCHART.md)
 - [Руководство по настройке](setup-guide.md)
 - [Руководство по тестированию](testing-guide.md)
-- [Рабочие процессы](workflows.md)
+- [Руководство по стилю написания](writing-style-guide.md)
+
+## Архив
+
+Исторические документы разработки (pre-commit планы, рефакторинг) были
+перемещены в [архив](../archive/refactoring/index.md).

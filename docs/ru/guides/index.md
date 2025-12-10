@@ -12,6 +12,7 @@ title: 'Руководства'
 
 ## Содержание
 
-- [Настройка секретов GitHub](github-secrets-setup.md)
-- [Краткий справочник секретов](SECRETS-QUICK-REFERENCE.md)
-- [Руководство по стилю YAML](yaml-style-guide.md)
+Руководства по секретам и безопасности перенесены в раздел
+[operations/core](../operations/core/index.md).
+
+Для YAML и стилей см. [Development](../development/index.md).
