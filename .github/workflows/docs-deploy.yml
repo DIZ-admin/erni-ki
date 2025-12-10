@@ -43,7 +43,14 @@ jobs:
           pip install -r requirements-docs.txt
 
       - name: 🧱 Build documentation
-        run: mkdocs build --site-dir site
+        env:
+          # Override site_url for GitHub Pages deployment
+          # Production uses docs.erni-gruppe.ch (set in mkdocs.yml)
+          SITE_URL: "https://diz-admin.github.io/erni-ki/"
+        run: |
+          # Use sed to temporarily override site_url for GH Pages build
+          sed -i 's|site_url:.*|site_url: "'"$SITE_URL"'"|' mkdocs.yml
+          mkdocs build --site-dir site
 
       - name: 🤖 Generate llms.txt for AI/RAG
         timeout-minutes: 5
