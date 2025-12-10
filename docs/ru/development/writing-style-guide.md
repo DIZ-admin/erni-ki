@@ -907,7 +907,7 @@ sudo systemctl status postgresql
 
 ## Конфигурация
 
-См. [руководство по настройке PostgreSQL](./postgresql-configuration.md).
+См. [руководство по настройке PostgreSQL](../operations/core/admin-guide.md).
 
 ## Устранение неполадок
 
@@ -926,13 +926,13 @@ sudo journalctl -u postgresql -n 50
 - Поврежденные файлы данных
 
 См.
-[руководство по устранению неполадок](../operations/database/database-troubleshooting.md).
+[руководство по устранению неполадок](../operations/troubleshooting/troubleshooting-guide.md).
 
 ## Связанные документы
 
-- [Мониторинг базы данных](../operations/database/database-monitoring-plan.md)
-- [Резервное копирование и восстановление](../operations/database/backup-restore-guide.md)
-- [Оптимизация производительности](../operations/database/database-production-optimizations.md)
+- [Мониторинг базы данных](../operations/monitoring/monitoring-guide.md)
+- [Руководство администратора](../operations/core/admin-guide.md)
+- [Резервное копирование](../../en/operations/backup-guide.md)
 
 ````
 
@@ -1016,8 +1016,8 @@ POSTGRES_PASSWORD="$(openssl rand -base64 32)"
 
 ## См. также
 
-- [Руководство по конфигурации](../operations/configuration-guide.md)
-- [Безопасность](../operations/security/security-best-practices.md)
+- [Руководство администратора](../operations/core/admin-guide.md)
+- [Мониторинг](../operations/monitoring/monitoring-guide.md)
 
 ````
 
@@ -1124,8 +1124,8 @@ Docling обрабатывает загруженные документы:
 ## См. также
 
 - [Мониторинг RAG](../operations/monitoring/rag-monitoring.md)
-- [Оптимизация производительности](../operations/performance/rag-optimization.md)
-- [Настройка pgvector](../operations/database/pgvector-tuning.md)
+- [Руководство по мониторингу](../operations/monitoring/monitoring-guide.md)
+- [Архитектура](../../en/architecture/architecture.md)
 
 ````
 

@@ -28,9 +28,9 @@ class TestLycheeConfig:
         with open(config_path, "rb") as f:
             config = tomli.load(f)
 
-        assert "general" in config
-        assert config["general"]["offline"] is True
-        assert config["general"]["max_concurrency"] == 4
+        # lychee.toml uses flat structure (not [general] section)
+        assert config["offline"] is True
+        assert config["max_concurrency"] == 4
 
     def test_lychee_config_has_required_fields(self):
         """Test that lychee config has all required fields."""
@@ -40,9 +40,10 @@ class TestLycheeConfig:
         with open(config_path, "rb") as f:
             config = tomli.load(f)
 
+        # lychee.toml uses flat structure (not [general] section)
         required_fields = ["offline", "max_concurrency", "include_verbatim", "exclude_path"]
         for field in required_fields:
-            assert field in config["general"], f"Missing required field: {field}"
+            assert field in config, f"Missing required field: {field}"
 
 
 class TestRuntimeConfig:

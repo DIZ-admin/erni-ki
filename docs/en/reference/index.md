@@ -38,8 +38,8 @@ GitHub CI/CD setup
 
 ### Status & Version
 
--**[status.yml](status.yml)**- System status YAML (single source of
-truth) -**[status-snippet.md](status-snippet.md)**- Status template for docs
+Status files are maintained in the Russian documentation (canonical source). See
+[System Status](../../ru/system/status.md).
 
 ## For Developers
 

@@ -11,8 +11,9 @@ Collection of guides for incident analysis and service recovery.
 
 ## Sections
 
-- [troubleshooting-guide.md](troubleshooting-guide.md) — general methodology for
-  finding root causes, checklists for network, GPU and service issues.
+- [Troubleshooting Guide](../../../ru/operations/troubleshooting/troubleshooting-guide.md)
+  — general methodology for finding root causes, checklists for network, GPU and
+  service issues (RU).
 - Supplement README with links to thematic runbooks from `operations/core` and
   `operations/diagnostics` if new scenarios appear.
 

@@ -65,12 +65,12 @@ Access: Locally at <http://localhost:8080>, production —
 - Locally run: `pip install -r requirements-dev.txt` (for Ruff/pre-commit),
   `npm run lint`, `npm run test`, `go test ./auth/...`.
 - Governance, CODEOWNERS, and Dependabot — see
-  [`docs/operations/core/github-governance.md`](docs/operations/core/github-governance.md).
+  [`docs/en/operations/core/github-governance.md`](docs/en/operations/core/github-governance.md).
 - GitHub Environments (development/staging/production), secrets, and audit logs
   are described in
-  [`docs/reference/github-environments-setup.md`](docs/reference/github-environments-setup.md).
+  [`docs/en/reference/github-environments-setup.md`](docs/en/reference/github-environments-setup.md).
 - CI/GitHub Actions incidents are recorded in
-  [`docs/archive/audits/ci-health.md`](docs/archive/audits/ci-health.md).
+  [`docs/ru/archive/audits/ci-health.md`](docs/ru/archive/audits/ci-health.md).
 
 ## Architecture (Brief)
 
@@ -91,8 +91,7 @@ Access: Locally at <http://localhost:8080>, production —
 
 ## Documentation
 
-> **Documentation Version:** See [docs/VERSION.md](docs/VERSION.md) for the
-> current version number, date, and update rules.
+> **Documentation Version:** 2025.12 - Last updated: December 2025
 
 | Topic                   | Where to find                                                                                                          |
 | :---------------------- | :--------------------------------------------------------------------------------------------------------------------- |

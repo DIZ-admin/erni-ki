@@ -14,21 +14,19 @@ analyses, and ongoing documentation maintenance.
 
 ### Configuration and Planning
 
-- [Configuration Consistency Audit](./configuration-consistency-audit.md) -
+Reports are maintained in the Russian documentation (canonical source):
+
+- [Configuration Consistency Audit](../../ru/reports/configuration-consistency-audit.md) -
   Comprehensive audit of project configuration files
-- [TODO Analysis](./todo-analysis.md) - Analysis of TODO/FIXME comments in
-  codebase
-- [TODO Conversion Plan](./todo-conversion-plan.md) - Plan for managing and
-  converting TODO items
+- [TODO Analysis](../../ru/reports/todo-analysis.md) - Analysis of TODO/FIXME
+  comments in codebase
+- [TODO Conversion Plan](../../ru/reports/todo-conversion-plan.md) - Plan for
+  managing and converting TODO items
 
 ## Historical Reports
 
-All dated analysis reports and one-time audits have been moved to the
-[archive](../archive/reports/index.md):
-
-- [ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
-- [Redis Comprehensive Analysis 2025-12-02](../archive/reports/redis-comprehensive-analysis-2025-12-02.md)
-- [TODO/FIXME Triage 2025-12-03](../archive/reports/todo-fixme-triage-2025-12-03.md)
+All dated analysis reports and one-time audits are in the
+[archive](../../ru/archive/reports/index.md) (RU).
 
 For security-related reports, see
 [Security Action Plan](../operations/security-action-plan.md).
