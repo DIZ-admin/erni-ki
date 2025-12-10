@@ -104,6 +104,11 @@ for (const file of stagedFiles) {
   if (!fs.existsSync(file)) {
     continue;
   }
+  // Skip directories - only process files
+  const stat = fs.statSync(file);
+  if (stat.isDirectory()) {
+    continue;
+  }
   const content = fs.readFileSync(file, 'utf8');
   const normalizedPath = normalizePath(file);
 

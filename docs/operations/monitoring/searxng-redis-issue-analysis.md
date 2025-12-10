@@ -256,10 +256,10 @@ docker restart erni-ki-searxng-1
 
 | Metric                | Value    | Target  | Status |
 | --------------------- | -------- | ------- | ------ |
-| SearXNG response time | 840ms    | <2s     | ✅     |
-| Nginx cache speedup   | 127x     | >10x    | ✅     |
-| Nginx rate limiting   | 60 req/s | working | ✅     |
-| HTTP status           | 200 OK   | 200     | ✅     |
+| SearXNG response time | 840ms    | <2s     | OK     |
+| Nginx cache speedup   | 127x     | >10x    | OK     |
+| Nginx rate limiting   | 60 req/s | working | OK     |
+| HTTP status           | 200 OK   | 200     | OK     |
 
 ### Caching
 
