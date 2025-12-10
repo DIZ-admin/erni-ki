@@ -6,17 +6,25 @@ offline = true
 max_concurrency = 4
 include_verbatim = true
 
-# Ignore generated/build/cache paths, archive directories with historical links,
-# and EN/DE placeholder files (they contain redirects to RU canonical docs).
-# These will be properly populated during the translation phase.
+# Ignore generated/build/cache paths and archive directories with historical links.
+#
+# IMPORTANT: EN/DE locale directories are excluded because they contain
+# incomplete translations with known broken links (85+ errors as of 2025-12-10).
+# These are tracked in Archon project "PR #163 CodeRabbit Review Tasks":
+# - Task: "Verify docs/academy deletions were intentional"
+# - Status: Translations in progress, RU is canonical source
+#
+# TODO: Remove exclusions as translations are completed and links fixed
 exclude_path = [
   "node_modules",
   "logs",
   ".git",
+  # Archive directories - contain historical snapshots with outdated links
   "docs/archive",
   "docs/en/archive",
   "docs/de/archive",
   "docs/ru/archive",
+  # EN/DE incomplete translations (85+ broken links - see note above)
   "docs/de/academy",
   "docs/en/academy",
   "docs/de/operations",

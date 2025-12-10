@@ -148,13 +148,14 @@ def collect_file_metrics(docs_dir: Path) -> dict[str, Any]:
 
 
 def collect_ru_canonical_files(docs_dir: Path) -> list[Path]:
-    """Collect all RU canonical files (not in de/ or en/ subdirs, not archived)."""
+    """Collect all RU canonical files from docs/ru/ subdirectory."""
     ru_files = []
-    for md_file in docs_dir.rglob("*.md"):
+    ru_dir = docs_dir / "ru"
+    if not ru_dir.exists():
+        return ru_files
+    for md_file in ru_dir.rglob("*.md"):
         parts = set(md_file.parts)
         if "archive" in parts:
-            continue
-        if "de" in parts or "en" in parts:
             continue
         ru_files.append(md_file)
     return ru_files
@@ -164,6 +165,7 @@ def collect_translation_metrics(docs_dir: Path) -> dict[str, dict[str, int]]:
     """Collect translation sync status for DE and EN vs RU canonical."""
     ru_files = collect_ru_canonical_files(docs_dir)
     ru_count = len(ru_files)
+    ru_dir = docs_dir / "ru"
 
     translation_sync = {}
 
@@ -172,7 +174,8 @@ def collect_translation_metrics(docs_dir: Path) -> dict[str, dict[str, int]]:
         missing_count = 0
 
         for ru_file in ru_files:
-            rel_path = ru_file.relative_to(docs_dir)
+            # Get path relative to docs/ru/, then look in docs/{locale}/
+            rel_path = ru_file.relative_to(ru_dir)
             locale_path = docs_dir / locale / rel_path
 
             if not locale_path.exists():

@@ -84,10 +84,12 @@ jobs:
 
       - name: Summary
         run: |
-          echo "# Archon MCP Integration Check" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- CLAUDE.md: Present" >> $GITHUB_STEP_SUMMARY
-          echo "- Archon configuration: Valid" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "# Archon MCP Integration Check"
+            echo ""
+            echo "- CLAUDE.md: Present"
+            echo "- Archon configuration: Valid"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   test-archon-connectivity:
     name: Test Archon Connectivity
@@ -112,7 +114,12 @@ jobs:
           if [ "$http_code" = "200" ]; then
             echo "Archon server is healthy"
           elif [ "$http_code" = "000" ]; then
-            echo "::notice::Could not reach Archon server (may be internal)"
+            echo "::notice::Could not reach Archon server (may be internal network)"
+          elif [ "$http_code" -ge 500 ] 2>/dev/null; then
+            echo "::error::Archon server error (HTTP $http_code)"
+            exit 1
+          elif [ "$http_code" -ge 400 ] 2>/dev/null; then
+            echo "::warning::Archon client error (HTTP $http_code) - check API key"
           else
             echo "::warning::Archon health check returned HTTP $http_code"
           fi

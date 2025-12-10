@@ -1,9 +1,30 @@
 #!/bin/bash
 
 # Clean up remaining archive files and create landing page
+# Usage: ./cleanup_remaining.sh [--dry-run]
 
 set -e
-cd "/Users/kostas/Documents/Projects/erni-ki-1"
+
+# Get script directory and change to project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Parse arguments
+DRY_RUN=false
+if [ "$1" = "--dry-run" ] || [ "$1" = "-n" ]; then
+    DRY_RUN=true
+    echo "=== DRY RUN MODE (no changes will be made) ==="
+    echo ""
+fi
+
+# Helper function for git commands
+git_cmd() {
+    if [ "$DRY_RUN" = true ]; then
+        echo "[DRY-RUN] git $*"
+    else
+        git "$@"
+    fi
+}
 
 echo "=== Cleaning up remaining files ==="
 echo ""
@@ -11,16 +32,18 @@ echo ""
 # Remove duplicate audit file
 if [ -f "docs/archive/audits/comprehensive-investor-audit-2025-12-03.md" ]; then
     echo "Removing duplicate audit file..."
-    git rm docs/archive/audits/comprehensive-investor-audit-2025-12-03.md
+    git_cmd rm docs/archive/audits/comprehensive-investor-audit-2025-12-03.md
 fi
 
 # Move .txt files to en/archive/reports (they're English summaries)
 echo "Moving .txt files to en/archive/reports..."
-mkdir -p docs/en/archive/reports
+if [ "$DRY_RUN" = false ]; then
+    mkdir -p docs/en/archive/reports
+fi
 for txtfile in docs/archive/reports/*.txt; do
     if [ -f "$txtfile" ]; then
         echo "  Moving: $txtfile"
-        git mv "$txtfile" docs/en/archive/reports/
+        git_cmd mv "$txtfile" docs/en/archive/reports/
     fi
 done
 
@@ -35,8 +58,12 @@ if [ -d "docs/archive" ]; then
     REMAINING=$(find docs/archive -type f | wc -l | tr -d ' ')
     echo "Remaining files in archive: $REMAINING"
     if [ "$REMAINING" -eq 0 ]; then
-        rm -rf docs/archive
-        echo "✓ Removed empty docs/archive directory"
+        if [ "$DRY_RUN" = true ]; then
+            echo "[DRY-RUN] Would remove empty docs/archive directory"
+        else
+            rm -rf docs/archive
+            echo "✓ Removed empty docs/archive directory"
+        fi
     else
         echo "⚠ Archive still contains files (likely conflicts)"
         find docs/archive -type f
@@ -49,11 +76,18 @@ echo "=== Creating new landing page ==="
 # Backup existing index if it exists
 if [ -f "docs/index.md" ]; then
     echo "Backing up existing index.md..."
-    cp docs/index.md docs/index.md.backup
+    if [ "$DRY_RUN" = false ]; then
+        cp docs/index.md docs/index.md.backup
+    else
+        echo "[DRY-RUN] Would backup docs/index.md"
+    fi
 fi
 
 # Create new landing page
-cat > docs/index.md << 'EOF'
+if [ "$DRY_RUN" = true ]; then
+    echo "[DRY-RUN] Would create new docs/index.md with language selector"
+else
+    cat > docs/index.md << 'EOF'
 ---
 language: en
 translation_status: original
@@ -92,8 +126,8 @@ For real-time system status, visit the [Status Page](en/system/status.md).
 
 For information on contributing to this documentation, see the [Development Guide](en/development/index.md).
 EOF
-
-echo "✓ Created new docs/index.md with language selector"
+    echo "✓ Created new docs/index.md with language selector"
+fi
 echo ""
 
 echo "=== Final Status ==="

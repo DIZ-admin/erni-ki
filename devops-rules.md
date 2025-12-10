@@ -393,13 +393,13 @@ pre-commit run --all-files
 
 | Service          | Version | Purpose            | Port |
 | ---------------- | ------- | ------------------ | ---- |
-| **Prometheus**   | v3.0.0  | Metrics collection | 9090 |
-| **Grafana**      | v11.3.0 | Dashboards         | 3000 |
-| **Loki**         | v3.0.0  | Log aggregation    | 3100 |
-| **Alertmanager** | v0.27.0 | Alert routing      | 9093 |
+| **Prometheus**   | v3.7.3  | Metrics collection | 9090 |
+| **Grafana**      | v12.3.0 | Dashboards         | 3000 |
+| **Loki**         | v3.6.2  | Log aggregation    | 3100 |
+| **Alertmanager** | v0.29.0 | Alert routing      | 9093 |
 | **Promtail**     | v3.0.0  | Log shipping       | -    |
 | **Fluent Bit**   | v3.1.0  | Log collection     | -    |
-| **Uptime Kuma**  | latest  | Uptime monitoring  | 3001 |
+| **Uptime Kuma**  | v2.0.2  | Uptime monitoring  | 3001 |
 
 ### Exporters
 

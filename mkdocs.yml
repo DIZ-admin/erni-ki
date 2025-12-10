@@ -443,7 +443,7 @@ nav:
           - "Monitoring Guide": operations/monitoring/monitoring-guide.md
           - "Grafana Dashboards": operations/monitoring/grafana-dashboards-guide.md
           - "Prometheus Queries Reference": operations/monitoring/prometheus-queries-reference.md
-          - "SearXNG Redis Troubleshooting": operations/monitoring/searxng-redis-issue-analysis.md
+          # SearXNG Redis Troubleshooting moved to archive/reports/searxng-redis-issue-2025-10.md
           - "Alertmanager Noise Reduction": operations/monitoring/alertmanager-noise-reduction.md
           - "Access Log Sync": operations/monitoring/access-log-sync-and-fluentbit.md
       - Automation:
@@ -507,7 +507,7 @@ nav:
   - "Reports & Archive":
       - "Archive READMEs":
           - "Audits": archive/audits/index.md
-      - "Budget Analysis": budget-analysis.md
+      - "Budget Analysis": archive/reports/budget-analysis-2025-11.md
       - "Reports":
           - "Index": reports/index.md
       - "Architecture Diagrams":
