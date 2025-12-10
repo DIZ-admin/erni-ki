@@ -15,7 +15,6 @@ managing the ERNI-KI platform.
 ### Core Guides
 
 - **[admin-guide.md](./core/admin-guide.md)** - System administration handbook
-
   - User management
   - Service configuration
   - Backup and restore procedures
@@ -23,7 +22,6 @@ managing the ERNI-KI platform.
 
 - **[monitoring-guide.md](./monitoring/monitoring-guide.md)** - Comprehensive
   monitoring documentation
-
   - Prometheus metrics and alerts
   - Grafana dashboards (5 provisioned)
   - Loki log aggregation
@@ -51,18 +49,17 @@ managing the ERNI-KI platform.
 
 ## Quick Start
 
-**For Operators:** Start with the [admin-guide.md](./core/admin-guide.md).
-**For Monitoring:** See
-[monitoring-guide.md](./monitoring/monitoring-guide.md). **For Incidents:**
-Check [troubleshooting-guide.md](./troubleshooting/troubleshooting-guide.md).
+**For Operators:** Start with the [admin-guide.md](./core/admin-guide.md). **For
+Monitoring:** See [monitoring-guide.md](./monitoring/monitoring-guide.md). **For
+Incidents:** Check
+[troubleshooting-guide.md](./troubleshooting/troubleshooting-guide.md).
 
 ## Operational Rhythm
 
 - **Daily:** check status page, `CronJobFailed`, backup monitoring.
-- **Weekly:** configuration change audit per
-  `configuration-change-process.md` and maintenance log updates.
-- **Monthly:** practice restores per
-  `maintenance/backup-restore-procedures.md`.
+- **Weekly:** configuration change audit per `configuration-change-process.md`
+  and maintenance log updates.
+- **Monthly:** practice restores per `maintenance/backup-restore-procedures.md`.
 
 ## Related Documentation
 
