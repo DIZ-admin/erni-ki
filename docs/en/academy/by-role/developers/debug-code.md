@@ -1,10 +1,10 @@
 ---
-title: 'Debugging mit KI (DE Redirect)'
-language: de
+title: 'Debug Code with AI (EN Redirect)'
+language: en
 translation_status: redirect
-last_updated: '2025-12-05'
+last_updated: '2025-12-10'
 doc_version: '2025.11'
 ---
 
-Dieser Inhalt befindet sich in der aktuellen Version unter  
+This content is available in the current version at
 [academy/by-role/developers/debug-code.md](../../../../ru/academy/by-role/developers/debug-code.md).
