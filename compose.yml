@@ -392,6 +392,32 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=document-processing"
 
+  ragflow-adapter:
+    build:
+      context: ./services/ragflow-adapter
+      dockerfile: Dockerfile
+    environment:
+      - RAGFLOW_BASE_URL=http://192.168.62.153:19090
+      - RAGFLOW_DATASET_ID=3ade126ccb7811f0b6bca21184c8b456
+      - POLL_INTERVAL=5
+      - MAX_POLL_ATTEMPTS=120
+    env_file: env/ragflow-adapter.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging: *auxiliary-logging
+    networks:
+      - backend
+    restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: "0.25"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
   mcposerver:
     entrypoint: ["/opt/erni/bin/mcposerver-with-secrets.sh"]
     command:
@@ -465,6 +491,8 @@ services:
     image: searxng/searxng:2025.11.21-b876d0bed # pinned to avoid surprises from :latest
     logging: *important-logging
     restart: unless-stopped
+    user: "1000:1000"
+    read_only: true
     volumes:
       - ./conf/searxng/settings.yml:/etc/searxng/settings.yml:ro
       - ./conf/searxng/uwsgi.ini:/etc/searxng/uwsgi.ini:ro
@@ -555,6 +583,7 @@ services:
       - "443:443"
       - "8080:8080"
     restart: unless-stopped
+    user: "33:33"
     mem_reservation: 384m
     volumes:
       - ./conf/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
@@ -598,6 +627,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    # Run as host user to align permissions with mounted data volume
+    user: "1000:1000"
     image: ghcr.io/open-webui/open-webui:v0.6.40 # Updated: 2025-11-28 to v0.6.40 (latest stable patch)
     runtime: nvidia
     mem_limit: 8g
@@ -977,6 +1008,8 @@ services:
       - "127.0.0.1:9101:9100"
     pid: host
     restart: unless-stopped
+    user: "65534:65534"
+    read_only: true
     mem_limit: 256m
     mem_reservation: 128m
     cpus: "0.2"
@@ -1014,6 +1047,7 @@ services:
     ports:
       - "127.0.0.1:9188:9188"
     restart: unless-stopped
+    read_only: true
     mem_limit: 256m
     mem_reservation: 128m
     cpus: "0.2"
@@ -1084,6 +1118,8 @@ services:
     ports:
       - "127.0.0.1:9445:9445"
     restart: unless-stopped
+    user: "65534:65534"
+    read_only: true
     mem_limit: 256m
     mem_reservation: 128m
     cpus: "0.2"
@@ -1113,6 +1149,8 @@ services:
     ports:
       - "127.0.0.1:9115:9115"
     restart: unless-stopped
+    user: "65534:65534"
+    read_only: true
     mem_limit: 256m
     mem_reservation: 128m
     cpus: "0.2"
@@ -1153,6 +1191,7 @@ services:
     ports:
       - "127.0.0.1:9121:9121"
     restart: unless-stopped
+    read_only: true
     mem_limit: 256m
     mem_reservation: 128m
     cpus: "0.2"
@@ -1201,6 +1240,8 @@ services:
     ports:
       - "127.0.0.1:9778:9778"
     restart: unless-stopped
+    user: "65534:65534"
+    read_only: true
     mem_limit: 512m
     mem_reservation: 256m
     cpus: "0.5"
@@ -1235,6 +1276,8 @@ services:
     ports:
       - "127.0.0.1:9113:9113"
     restart: unless-stopped
+    user: "65534:65534"
+    read_only: true
     mem_limit: 256m
     mem_reservation: 128m
     cpus: "0.2"
@@ -1398,6 +1441,8 @@ services:
     ports:
       - "127.0.0.1:9808:9808"
     restart: unless-stopped
+    user: "65534:65534"
+    read_only: true
     mem_limit: 512m
     mem_reservation: 256m
     cpus: "0.5"
