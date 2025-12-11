@@ -7,7 +7,8 @@ locale: en
 
 # Diagnostics Archive
 
-This directory contains archived diagnostic reports and system health assessments.
+This directory contains archived diagnostic reports and system health
+assessments.
 
 ## Contents
 
