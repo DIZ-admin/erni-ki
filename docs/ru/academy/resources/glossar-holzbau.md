@@ -49,7 +49,7 @@ Dieses Glossar hilft bei:
 
 ---
 
-## 🪵 Holzbau-Spezifisch
+## Holzbau-Spezifisch
 
 | Deutsch                  | Français                     | Italiano                       | Anmerkungen                  |
 | ------------------------ | ---------------------------- | ------------------------------ | ---------------------------- |

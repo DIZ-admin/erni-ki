@@ -12,6 +12,8 @@
     "docs/academy/by-industry/construction/bautagebuch-erstellen.md",
     "docs/academy/by-industry/holzbau/index.md",
     "docs/de/academy/by-industry/index.md",
-    "docs/academy/resources/glossar-holzbau.md"
+    "docs/academy/resources/glossar-holzbau.md",
+    "cleanup_remaining.sh",
+    "migrate_to_i18n.sh"
   ]
 }
