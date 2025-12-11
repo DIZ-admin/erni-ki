@@ -106,7 +106,6 @@ nav:
       - "Modellauswahl": fundamentals/model-selection-guide.md
   - "HowTo Anleitungen":
       - "Uebersicht": howto/index.md
-      - "JIRA Ticket erstellen": howto/create-jira-ticket.md
       - "JIRA mit KI": howto/create-jira-ticket-with-ai.md
       - "Kunden-E-Mail schreiben": howto/write-customer-email.md
       - "Meeting zusammenfassen": howto/summarize-meeting-notes.md
@@ -154,7 +153,6 @@ nav:
       - "Cheat Sheets": resources/cheat-sheets/index.md
       - "Prompt Bibliothek": resources/prompt-bibliothek/index.md
       - "Templates": resources/templates/index.md
-      - "ERNI Implementation": ERNI-GRUPPE-IMPLEMENTATION-SUMMARY.md
   - "News":
       - "Feed": news/index.md
       - "2025-01 Release": news/2025-01-release-x.md
