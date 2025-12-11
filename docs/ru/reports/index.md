@@ -24,11 +24,7 @@ last_updated: '2025-12-10'
 ## Исторические отчеты
 
 Все датированные отчеты и разовые аудиты перенесены в
-[архив](../archive/reports/index.md):
-
-- [ERNI-KI Comprehensive Analysis 2025-12-02](../archive/reports/erni-ki-comprehensive-analysis-2025-12-02.md)
-- [Redis Comprehensive Analysis 2025-12-02](../archive/reports/redis-comprehensive-analysis-2025-12-02.md)
-- [TODO/FIXME Triage 2025-12-03](../archive/reports/todo-fixme-triage-2025-12-03.md)
+[архив](../archive/reports/index.md).
 
 Отчеты по безопасности см. в
 [Плане действий по безопасности](../operations/security-action-plan.md).
