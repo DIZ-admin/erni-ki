@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/by-role/developers/debug-code.md](../../ru/academy/by-role/developers/debug-code.md).
+[academy/by-role/developers/debug-code.md](../../../../ru/academy/by-role/developers/debug-code.md).

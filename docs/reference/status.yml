@@ -1,2 +1,11 @@
-status: maintained
-note: Placeholder file to satisfy link checks. Authoritative status lives in docs/reference/status-snippet.md.
+# Shared ERNI-KI status block used in README and MkDocs (Wave 1)
+date: "2025-11-23"
+release: "Production Ready v0.61.3"
+containers: "34/34 services healthy"
+grafana_dashboards: "5/5 Grafana dashboards (provisioned)"
+prometheus_alerts: "20 Prometheus alert rules active"
+gpu_stack: "Ollama 0.12.11 + OpenWebUI v0.6.36 (GPU)"
+ai_stack: "LiteLLM v1.80.0.rc.1 + Context7, Docling, Tika, EdgeTTS"
+monitoring_stack: "Prometheus v3.0.0, Grafana v11.3.0, Loki v3.0.0, Fluent Bit v3.1.0, Alertmanager v0.27.0"
+automation: "Cron: PostgreSQL VACUUM 03:00, Docker cleanup 04:00, Backrest 01:30, Watchtower selective updates"
+notes: "Versions and dashboard/alert counts synced with compose.yml"

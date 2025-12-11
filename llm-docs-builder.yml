@@ -48,8 +48,8 @@ exclude:
   - "**/site-academy/**"
   - "**/*.min.js"
   - "**/*.min.css"
-  - "**/de/**" # Exclude German translations (use source Russian)
-  - "**/en/**" # Exclude English translations (use source Russian)
+  - "**/de/**" # Exclude German translations (use source English)
+  - "**/ru/**" # Exclude Russian translations (use source English)
 
 # Priority sections (higher priority = more important for RAG)
 priorities:

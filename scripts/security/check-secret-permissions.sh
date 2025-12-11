@@ -21,7 +21,8 @@ check_permissions() {
 
   while IFS= read -r -d '' file; do
     if [[ -f "$file" ]]; then
-      current_perms=$(stat -c "%a" "$file" 2>/dev/null || stat -f "%OLp" "$file" 2>/dev/null)
+      # Use -L to follow symlinks and check actual file permissions
+      current_perms=$(stat -L -c "%a" "$file" 2>/dev/null || stat -L -f "%OLp" "$file" 2>/dev/null)
       if [[ "$current_perms" != "600" ]]; then
         log_info "❌ INSECURE: $file has permissions $current_perms (should be 600)"
         ((issues++))

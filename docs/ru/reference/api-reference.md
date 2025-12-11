@@ -166,10 +166,10 @@ Authorization: Bearer your-jwt-token
 
 **Запрос:**
 
-```json
+```jsonc
 {
   "email": "user@example.com",
-  "password": "your-password"
+  "password": "your-password", // pragma: allowlist secret
 }
 ```
 
@@ -193,11 +193,11 @@ Authorization: Bearer your-jwt-token
 
 **Запрос:**
 
-```json
+```jsonc
 {
   "name": "New User",
   "email": "newuser@example.com",
-  "password": "secure-password"
+  "password": "secure-password", // pragma: allowlist secret
 }
 ```
 

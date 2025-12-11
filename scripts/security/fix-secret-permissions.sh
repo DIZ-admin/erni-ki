@@ -19,13 +19,18 @@ main() {
   # Fix secrets/ directory
   while IFS= read -r -d '' file; do
     if [[ -f "$file" ]]; then
-      current_perms=$(stat -c "%a" "$file" 2>/dev/null || stat -f "%OLp" "$file" 2>/dev/null)
+      # Use -L to follow symlinks and check actual file permissions
+      current_perms=$(stat -L -c "%a" "$file" 2>/dev/null || stat -L -f "%OLp" "$file" 2>/dev/null)
       if [[ "$current_perms" != "600" ]]; then
-        chmod 600 "$file"
-        log_info "✅ Fixed: $file ($current_perms → 600)"
-        ((fixed++))
+        # For symlinks, resolve to actual file; chmod follows symlinks by default
+        if chmod 600 "$file" 2>/dev/null; then
+          log_info "✅ Fixed: $file ($current_perms → 600)"
+          ((fixed++)) || true
+        else
+          log_info "⚠️  Cannot fix: $file (run with sudo)"
+        fi
       else
-        ((skipped++))
+        ((skipped++)) || true
       fi
     fi
   done < <(find secrets -name "*.txt" ! -name "*.example" -print0)
@@ -33,13 +38,17 @@ main() {
   # Fix env/ directory
   while IFS= read -r -d '' file; do
     if [[ -f "$file" ]]; then
-      current_perms=$(stat -c "%a" "$file" 2>/dev/null || stat -f "%OLp" "$file" 2>/dev/null)
+      # Use -L to follow symlinks and check actual file permissions
+      current_perms=$(stat -L -c "%a" "$file" 2>/dev/null || stat -L -f "%OLp" "$file" 2>/dev/null)
       if [[ "$current_perms" != "600" ]]; then
-        chmod 600 "$file"
-        log_info "✅ Fixed: $file ($current_perms → 600)"
-        ((fixed++))
+        if chmod 600 "$file" 2>/dev/null; then
+          log_info "✅ Fixed: $file ($current_perms → 600)"
+          ((fixed++)) || true
+        else
+          log_info "⚠️  Cannot fix: $file (run with sudo)"
+        fi
       else
-        ((skipped++))
+        ((skipped++)) || true
       fi
     fi
   done < <(find env -name "*.env" ! -name "*.example" -print0 2>/dev/null || true)

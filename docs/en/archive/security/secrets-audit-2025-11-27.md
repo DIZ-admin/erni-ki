@@ -1,6 +1,6 @@
 ---
-language: ru
-translation_status: complete
+language: en
+translation_status: pending
 doc_version: '2025.11'
 last_updated: '2025-11-27'
 audit_type: secrets-security

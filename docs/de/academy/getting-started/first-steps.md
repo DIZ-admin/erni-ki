@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/getting-started/first-steps.md](../../ru/academy/getting-started/first-steps.md).
+[academy/getting-started/first-steps.md](../../../ru/academy/getting-started/first-steps.md).

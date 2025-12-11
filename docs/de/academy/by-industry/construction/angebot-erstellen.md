@@ -582,9 +582,9 @@ Aktives Nachhaken wichtig!"
 
 ## Weiterführend
 
-- [Bautagebuch erstellen](../../../ru/academy/by-industry/construction/bautagebuch-erstellen.md)
-- [Mängelliste dokumentieren](../../../ru/academy/by-industry/construction/maengelliste.md)
-- [E-Mail-Kommunikation](../../../ru/academy/by-role/general-users/write-professional-email.md)
+- [Bautagebuch erstellen](../../../../ru/academy/by-industry/construction/bautagebuch-erstellen.md)
+- [Mängelliste dokumentieren](../../../../ru/academy/by-industry/construction/maengelliste.md)
+- [E-Mail-Kommunikation](../../../../ru/academy/by-role/general-users/write-professional-email.md)
 
 ---
 
@@ -600,6 +600,6 @@ Aktives Nachhaken wichtig!"
 ---
 
 **Nächstes Szenario:**
-[Mängelliste dokumentieren →](../../../ru/academy/by-industry/construction/maengelliste.md)
+[Mängelliste dokumentieren →](../../../../ru/academy/by-industry/construction/maengelliste.md)
 
 **Fragen?** Kontakt: kalkulation@erni-gruppe.ch

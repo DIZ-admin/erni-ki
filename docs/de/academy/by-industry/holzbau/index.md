@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/by-industry/holzbau/index.md](../../ru/academy/by-industry/holzbau/index.md).
+[academy/by-industry/holzbau/index.md](../../../../ru/academy/by-industry/holzbau/index.md).

@@ -1,24 +1,25 @@
 # MkDocs configuration for Academy KI (GitHub Pages)
 # Public-facing AI training documentation
+# Source: English (EN) as single source of truth
 
 site_name: Academy KI
-site_description: "KI-Training und Best Practices für ERNI Gruppe"
-site_author: "ERNI Gruppe"
+site_description: "AI Training and Best Practices for ERNI Group"
+site_author: "ERNI Group"
 site_url: "https://diz-admin.github.io/erni-ki/"
 
 # Repository
 repo_name: "DIZ-admin/erni-ki"
 repo_url: "https://github.com/DIZ-admin/erni-ki"
-edit_uri: "edit/main/docs/ru/academy/"
+edit_uri: "edit/main/docs/en/academy/"
 
-# Configuration
-docs_dir: "docs/ru/academy"
+# Configuration - Changed from docs/ru/academy to docs/en/academy
+docs_dir: "docs/en/academy"
 site_dir: "site-academy"
 
 # Theme
 theme:
   name: "material"
-  language: "de"
+  language: "en"
 
   palette:
     - scheme: default
@@ -26,13 +27,13 @@ theme:
       accent: "amber"
       toggle:
         icon: material/brightness-7
-        name: Dunkelmodus aktivieren
+        name: Switch to dark mode
     - scheme: slate
       primary: "indigo"
       accent: "amber"
       toggle:
         icon: material/brightness-4
-        name: Hellmodus aktivieren
+        name: Switch to light mode
 
   font:
     text: "Inter"
@@ -47,7 +48,7 @@ theme:
     - navigation.tracking
     - navigation.tabs
     - navigation.sections
-    - navigation.expand
+    # - navigation.expand  # Disabled: causes excessive expansion
     - navigation.top
     - search.suggest
     - search.highlight
@@ -105,7 +106,6 @@ nav:
       - "Modellauswahl": fundamentals/model-selection-guide.md
   - "HowTo Anleitungen":
       - "Uebersicht": howto/index.md
-      - "JIRA Ticket erstellen": howto/create-jira-ticket.md
       - "JIRA mit KI": howto/create-jira-ticket-with-ai.md
       - "Kunden-E-Mail schreiben": howto/write-customer-email.md
       - "Meeting zusammenfassen": howto/summarize-meeting-notes.md
@@ -153,7 +153,6 @@ nav:
       - "Cheat Sheets": resources/cheat-sheets/index.md
       - "Prompt Bibliothek": resources/prompt-bibliothek/index.md
       - "Templates": resources/templates/index.md
-      - "ERNI Implementation": ERNI-GRUPPE-IMPLEMENTATION-SUMMARY.md
   - "News":
       - "Feed": news/index.md
       - "2025-01 Release": news/2025-01-release-x.md

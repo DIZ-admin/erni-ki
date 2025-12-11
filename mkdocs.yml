@@ -56,7 +56,7 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
+    # - navigation.expand  # Disabled: causes excessive expansion with simplified nav structure
     - navigation.path
     - navigation.indexes
     - toc.follow
@@ -82,7 +82,7 @@ plugins:
   - awesome-pages
   # Blog plugin disabled - incompatible with i18n folder structure (docs_structure: folder)
   # The blog plugin creates conflicts with localized content in en/, ru/, de/ directories
-  # TODO(blog): Re-evaluate when mkdocs-material blog plugin adds i18n support
+  # Re-evaluate when mkdocs-material blog plugin adds i18n support
   # - blog:
   #     blog_dir: news
   #     post_dir: news
@@ -100,203 +100,159 @@ plugins:
           name: "Russian"
           site_name: "ERNI Academy KI"
           nav_translations:
-            Home: Home
-            "Platform Overview": "Platform Overview"
-            "Quick Start": "Quick Start"
-            "Installation": "Installation"
-            "Configuration": "Configuration"
-            "Users": "Users"
-            "External Access": "External Access"
-            "Local DNS": "Local DNS"
-            "DNSMasq": "DNSMasq"
-            "Port Forwarding": "Port Forwarding"
-            Architecture: Architecture
-            Overview: Overview
-            "Services": "Services"
-            "Inventory": "Inventory"
-            "Nginx configuration": "Nginx configuration"
-            Glossary: Glossary
+            # Top-level sections (Diataxis framework)
+            Home: "Главная"
+            "Platform Overview": "Обзор платформы"
+            Tutorials: "Обучение"
+            Guides: "Руководства"
+            Reference: "Справочник"
+            Concepts: "Концепции"
             "Academy KI": "Academy KI"
-            "Open WebUI Basics": "Open WebUI Basics"
-            "Prompting 101": "Prompting 101"
-            "Context Engineering 101": "Context Engineering 101"
-            "HowTo": "HowTo"
-            "Create JIRA Ticket": "Create JIRA Ticket"
-            "Write Customer Email": "Write Customer Email"
-            "Summarize Meeting": "Summarize Meeting"
-            "News": "News"
-            "Feed": "Feed"
-            System: System
-            "System Status": "System Status"
-            "News (Archive)": "News (Archive)"
-            "HowTo (Archive)": "HowTo (Archive)"
-            "Create JIRA Description": "Create JIRA Description"
-            "Summarize Meeting (Archive)": "Summarize Meeting (Archive)"
-            "Customer Email in OpenWebUI": "Customer Email in OpenWebUI"
-            "Trainings (Archive)": "Trainings (Archive)"
-            Operations: Operations
-            "Operations Handbook": "Operations Handbook"
-            "Admin Guide": "Admin Guide"
-            "Status Page": "Status page"
-            Monitoring: Monitoring
-            "Monitoring Guide": "Monitoring Guide"
-            "Monitoring Troubleshooting": "Monitoring Troubleshooting"
-            "Grafana Dashboards": "Grafana dashboards"
-            "Prometheus Alerts Guide": "Prometheus alerts guide"
-            "Prometheus Queries Reference": "Prometheus queries reference"
-            Automation: Automation
-            "Automated Maintenance": "Automated maintenance"
-            "Docker Cleanup": "Docker cleanup"
-            "Docker Log Rotation": "Docker log rotation"
-            Maintenance: Maintenance
-            "Image Upgrade Checklist": "Image upgrade checklist"
-            "RAG & Search": "RAG & Search"
-            "RAG Monitoring": "RAG monitoring"
-            "SearXNG Redis Troubleshooting": "SearXNG Redis troubleshooting"
-            Runbooks: Runbooks
-            "Backup & Restore": "Backup & Restore"
-            "Configuration Changes": "Configuration changes"
-            "Docling Shared Volume": "Docling Shared Volume"
-            "Access Log Sync & Fluent Bit": "Access log sync & Fluent Bit"
-            "Service Restart": "Service Restart"
-            "Alertmanager Noise Reduction": "Alertmanager noise reduction"
-            "Troubleshooting": "Troubleshooting"
-            "Runbooks (DE Summary)": "Runbooks (DE Summary)"
-            Diagnostics: Diagnostics
-            "Diagnostics Overview": "Diagnostics Overview"
-            "Diagnostic Methodology": "Diagnostic methodology"
-            "Troubleshooting Guide": "Troubleshooting guide"
-            "Data & Storage": "Data & Storage"
-            "Database Monitoring Plan": "Database monitoring plan"
-            "Database Optimizations": "Database optimizations"
-            "Database Troubleshooting": "Database troubleshooting"
-            "Redis Monitoring": "Redis monitoring"
-            "Redis Operations": "Redis operations"
-            "VLLM Resource Optimization": "VLLM resource optimization"
-            Security: Security
-            "Security Policy": "Security policy"
-            "Log Audit": "Log audit"
-            "Reference": "Reference"
-            "API Reference": "API reference"
-            Development: Development
-            "GitHub Environments": "GitHub environments"
-            "MCPO Integration": "MCPO integration"
-            "Pre-commit Hooks": "Pre-commit hooks"
-            "Code Standards": "Code standards"
-            "Documentation Refactoring Plan": "Documentation refactoring plan"
-            "Status Snippet": "Status snippet"
-            VERSION: VERSION
-            CHANGELOG: CHANGELOG
-            "Reports & Archive": "Reports & Archive"
-            "Archive Overview": "Archive Overview"
-            "Archive READMEs": "Archive READMEs"
-            Audits: Audits
-            "Legacy Index": "Legacy index"
-            "Legacy Academy Index": "Legacy academy index"
-            "Incidents & Remediation": "Incidents & Remediation"
-            "Config Archives": "Config Archives"
-            Other: Other
-            "Remote Branch Cleanup": "Remote branch cleanup"
+            Archive: "Архив"
+            Changelog: "Изменения"
+            # Tutorials section
+            "Quick Start": "Быстрый старт"
+            "Installation": "Установка"
+            "Configuration": "Конфигурация"
+            "User Guide": "Руководство пользователя"
+            # Guides section
+            "User Guides": "Для пользователей"
+            "Admin Guides": "Для администраторов"
+            "Industry Guides": "По отраслям"
+            "Write Email": "Написать email"
+            "Create JIRA": "Создать JIRA"
+            "Summarize Meeting": "Резюме встречи"
+            "Operations Handbook": "Руководство по операциям"
+            "Backup Guide": "Резервное копирование"
+            Maintenance: "Обслуживание"
+            Construction: "Строительство"
+            Timber: "Деревообработка"
+            # Reference section
+            Overview: "Обзор"
+            Architecture: "Архитектура"
+            Services: "Сервисы"
+            Diagrams: "Диаграммы"
+            Operations: "Операции"
+            Database: "База данных"
+            Monitoring: "Мониторинг"
+            Automation: "Автоматизация"
+            API: "API"
+            Standards: "Стандарты"
+            "Style Guide": "Руководство по стилю"
+            "Code Standards": "Стандарты кода"
+            "Security Policy": "Политика безопасности"
+            # Concepts section
+            "AI Basics": "Основы ИИ"
+            "Prompting 101": "Промпты 101"
+            "Context Engineering": "Контекстная инженерия"
+            "OpenWebUI Basics": "Основы OpenWebUI"
+            # Academy section
+            "By Role": "По ролям"
+            Developers: "Разработчики"
+            Managers: "Менеджеры"
+            Support: "Поддержка"
+            Users: "Пользователи"
+            Resources: "Ресурсы"
+            Glossary: "Глоссарий"
+            Templates: "Шаблоны"
+            "Cheat Sheets": "Шпаргалки"
+            News: "Новости"
+            # Archive section
+            Reports: "Отчёты"
+            Audits: "Аудиты"
+            Incidents: "Инциденты"
+            # Legacy translations (keep for backward compatibility)
+            "External Access": "Внешний доступ"
+            "Local DNS": "Локальный DNS"
+            "DNSMasq": "DNSMasq"
+            "Port Forwarding": "Проброс портов"
+            "Inventory": "Инвентарь"
+            "Nginx configuration": "Конфигурация Nginx"
+            System: "Система"
+            "System Status": "Статус системы"
+            "HowTo": "Инструкции"
+            Security: "Безопасность"
+            Development: "Разработка"
+            VERSION: "ВЕРСИЯ"
+            CHANGELOG: "ИЗМЕНЕНИЯ"
         - locale: de
           name: "Deutsch"
           nav_translations:
-            Home: Startseite
+            # Top-level sections (Diataxis framework)
+            Home: "Startseite"
             "Platform Overview": "Plattformübersicht"
+            Tutorials: "Tutorials"
+            Guides: "Anleitungen"
+            Reference: "Referenz"
+            Concepts: "Konzepte"
+            "Academy KI": "Academy KI"
+            Archive: "Archiv"
+            Changelog: "Änderungen"
+            # Tutorials section
             "Quick Start": "Schnellstart"
             "Installation": "Installation"
             "Configuration": "Konfiguration"
-            "Users": "Benutzer"
+            "User Guide": "Benutzerhandbuch"
+            # Guides section
+            "User Guides": "Für Benutzer"
+            "Admin Guides": "Für Administratoren"
+            "Industry Guides": "Nach Branche"
+            "Write Email": "E-Mail schreiben"
+            "Create JIRA": "JIRA erstellen"
+            "Summarize Meeting": "Meeting zusammenfassen"
+            "Operations Handbook": "Betriebshandbuch"
+            "Backup Guide": "Backup-Anleitung"
+            Maintenance: "Wartung"
+            Construction: "Bauwesen"
+            Timber: "Holzbau"
+            # Reference section
+            Overview: "Übersicht"
+            Architecture: "Architektur"
+            Services: "Dienste"
+            Diagrams: "Diagramme"
+            Operations: "Betrieb"
+            Database: "Datenbank"
+            Monitoring: "Monitoring"
+            Automation: "Automatisierung"
+            API: "API"
+            Standards: "Standards"
+            "Style Guide": "Stil-Leitfaden"
+            "Code Standards": "Code-Standards"
+            "Security Policy": "Sicherheitsrichtlinie"
+            # Concepts section
+            "AI Basics": "KI-Grundlagen"
+            "Prompting 101": "Prompting 101"
+            "Context Engineering": "Context Engineering"
+            "OpenWebUI Basics": "OpenWebUI-Grundlagen"
+            # Academy section
+            "By Role": "Nach Rolle"
+            Developers: "Entwickler"
+            Managers: "Manager"
+            Support: "Support"
+            Users: "Benutzer"
+            Resources: "Ressourcen"
+            Glossary: "Glossar"
+            Templates: "Vorlagen"
+            "Cheat Sheets": "Spickzettel"
+            News: "News"
+            # Archive section
+            Reports: "Berichte"
+            Audits: "Audits"
+            Incidents: "Vorfälle"
+            # Legacy translations (keep for backward compatibility)
             "External Access": "Externer Zugriff"
             "Local DNS": "Lokales DNS"
             "DNSMasq": "DNSMasq"
             "Port Forwarding": "Portweiterleitung"
-            Architecture: Architektur
-            Overview: Übersicht
-            "Services": "Dienste"
             "Inventory": "Inventar"
             "Nginx configuration": "Nginx-Konfiguration"
-            Glossary: Glossar
-            "Academy KI": "Academy KI"
-            "Open WebUI Basics": "Open WebUI Grundlagen"
-            "Prompting 101": "Prompting 101"
-            "Context Engineering 101": "Context Engineering 101"
-            "HowTo": "HowTo"
-            "Create JIRA Ticket": "JIRA-Ticket erstellen"
-            "Write Customer Email": "Kunden-E-Mail schreiben"
-            "Summarize Meeting": "Meeting zusammenfassen"
-            "News": "News"
-            "Feed": "Feed"
-            System: System
+            System: "System"
             "System Status": "Systemstatus"
-            "News (Archive)": "News (Archiv)"
-            "HowTo (Archive)": "HowTo (Archiv)"
-            "Create JIRA Description": "JIRA-Beschreibung erstellen"
-            "Summarize Meeting (Archive)": "Meeting zusammenfassen (Archiv)"
-            "Customer Email in OpenWebUI": "Kunden-E-Mail in OpenWebUI"
-            "Trainings (Archive)": "Schulungen (Archiv)"
-            Operations: Betrieb
-            "Operations Handbook": "Betriebshandbuch"
-            "Admin Guide": "Admin-Handbuch"
-            "Status Page": "Statusseite"
-            Monitoring: Monitoring
-            "Monitoring Guide": "Monitoring-Leitfaden"
-            "Monitoring Troubleshooting": "Monitoring-Fehlerbehebung"
-            "Grafana Dashboards": "Grafana-Dashboards"
-            "Prometheus Alerts Guide": "Prometheus-Alarm-Leitfaden"
-            "Prometheus Queries Reference": "Prometheus-Abfrage-Referenz"
-            Automation: Automatisierung
-            "Automated Maintenance": "Automatisierte Wartung"
-            "Docker Cleanup": "Docker-Bereinigung"
-            "Docker Log Rotation": "Docker-Log-Rotation"
-            Maintenance: Wartung
-            "Image Upgrade Checklist": "Image-Upgrade-Checkliste"
-            "RAG & Search": "RAG & Suche"
-            "RAG Monitoring": "RAG-Monitoring"
-            "SearXNG Redis Troubleshooting": "SearXNG Redis Fehlerbehebung"
-            Runbooks: Runbooks
-            "Backup & Restore": "Backup & Wiederherstellung"
-            "Configuration Changes": "Konfigurationsänderungen"
-            "Docling Shared Volume": "Docling Shared Volume"
-            "Access Log Sync & Fluent Bit": "Access Log Sync & Fluent Bit"
-            "Service Restart": "Dienst-Neustart"
-            "Alertmanager Noise Reduction": "Alertmanager-Rauschunterdrückung"
-            "Troubleshooting": "Fehlerbehebung"
-            "Runbooks (DE Summary)": "Runbooks (DE Kurzübersicht)"
-            Diagnostics: Diagnose
-            "Diagnostics Overview": "Diagnose-Übersicht"
-            "Diagnostic Methodology": "Diagnose-Methodik"
-            "Troubleshooting Guide": "Fehlerbehebungs-Leitfaden"
-            "Data & Storage": "Daten & Speicher"
-            "Database Monitoring Plan": "Datenbank-Monitoring-Plan"
-            "Database Optimizations": "Datenbank-Optimierungen"
-            "Database Troubleshooting": "Datenbank-Fehlerbehebung"
-            "Redis Monitoring": "Redis-Monitoring"
-            "Redis Operations": "Redis-Betrieb"
-            "VLLM Resource Optimization": "VLLM-Ressourcenoptimierung"
-            Security: Sicherheit
-            "Security Policy": "Sicherheitsrichtlinie"
-            "Log Audit": "Log-Audit"
-            "Reference": "Referenz"
-            "API Reference": "API-Referenz"
-            Development: Entwicklung
-            "GitHub Environments": "GitHub-Umgebungen"
-            "MCPO Integration": "MCPO-Integration"
-            "Pre-commit Hooks": "Pre-commit-Hooks"
-            "Code Standards": "Code-Standards"
-            "Documentation Refactoring Plan": "Dokumentations-Refactoring-Plan"
-            "Status Snippet": "Status-Snippet"
-            VERSION: VERSION
-            CHANGELOG: CHANGELOG
-            "Reports & Archive": "Berichte & Archiv"
-            "Archive Overview": "Archiv-Übersicht"
-            "Archive READMEs": "Archiv-READMEs"
-            Audits: Audits
-            "Legacy Index": "Legacy-Index"
-            "Legacy Academy Index": "Legacy-Academy-Index"
-            "Incidents & Remediation": "Vorfälle & Behebung"
-            "Config Archives": "Konfigurationsarchive"
-            Other: Sonstiges
-            "Remote Branch Cleanup": "Remote-Branch-Bereinigung"
+            "HowTo": "HowTo"
+            Security: "Sicherheit"
+            Development: "Entwicklung"
+            VERSION: "VERSION"
+            CHANGELOG: "CHANGELOG"
   - minify:
       minify_html: true
   - git-revision-date-localized:
@@ -386,138 +342,122 @@ extra:
       We use cookies to improve documentation and analytics.
       With your consent, this helps us improve the documentation.
 
-# Navigation Structure
+# Navigation Structure - Optimized using Diataxis Framework
+# See: https://diataxis.fr/
+# Reduced from 35+ sections to 8 top-level sections
 nav:
   - Home: index.md
   - "Platform Overview": overview.md
-  - Glossary: GLOSSARY.md
-  - "Quick Start":
-      - "Overview": getting-started/index.md
-      - "Installation": getting-started/installation.md
-      - "Configuration": getting-started/configuration-guide.md
-      - "Users": getting-started/user-guide.md
-      - "External Access": getting-started/external-access-setup.md
-      - "Local DNS": getting-started/local-network-dns-setup.md
-      - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
-      - "Port Forwarding": getting-started/port-forwarding-setup.md
-  - Deployment:
-      - "Overview": deployment/index.md
-      - "Production Checklist": deployment/production-checklist.md
-  - Architecture:
-      - "Overview (README)": architecture/index.md
-      - Overview: architecture/architecture.md
-      - "Services": architecture/services-overview.md
-      - "Inventory": architecture/service-inventory.md
-      - "Nginx configuration": architecture/nginx-configuration.md
-  - "Development Guides":
-      - "Overview": development/index.md
-      - "Setup Guide": development/setup-guide.md
-  - Examples:
-      - "Overview": examples/index.md
-      - "API Usage (REST)": examples/api-usage-rest.md
-      - "Nginx Examples": examples/nginx-examples.md
-      - "Academy KI":
-          - Overview: academy/index.md
-          - "Open WebUI Basics": academy/openwebui-basics.md
-          - "Prompting 101": academy/prompting-101.md
-          - "Context Engineering 101": academy/context-engineering-101.md
-          - "HowTo":
-              - Overview: academy/howto/index.md
-              - "Create JIRA Ticket (AI-assisted)": academy/howto/create-jira-ticket-with-ai.md
-              - "Write Customer Email": academy/howto/write-customer-email.md
-              - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
-      - "News":
-          - Feed: academy/news/index.md
-          - "2025-01-release-x": academy/news/2025-01-release-x.md
-  - System:
-      - "System Status": system/status.md
-  - Operations:
-      - "Overview": operations/index.md
-      - Core:
-          - "Overview": operations/core/index.md
-          - "Operations Handbook": operations/core/operations-handbook.md
-          - "Runbooks Summary": operations/core/runbooks-summary.md
-          - "GitHub Governance": operations/core/github-governance.md
-      - Monitoring:
-          - "Overview": operations/monitoring/index.md
-          - "Monitoring Guide": operations/monitoring/monitoring-guide.md
-          - "Grafana Dashboards": operations/monitoring/grafana-dashboards-guide.md
-          - "Prometheus Queries Reference": operations/monitoring/prometheus-queries-reference.md
-          # SearXNG Redis Troubleshooting moved to archive/reports/searxng-redis-issue-2025-10.md
-          - "Alertmanager Noise Reduction": operations/monitoring/alertmanager-noise-reduction.md
-          - "Access Log Sync": operations/monitoring/access-log-sync-and-fluentbit.md
-      - Automation:
-          - "Overview": operations/automation/index.md
-          - "Automated Maintenance": operations/automation/automated-maintenance-guide.md
-          - "Docker Log Rotation": operations/automation/docker-log-rotation.md
-      - AI:
-          - "Overview": operations/ai/index.md
-          - "LiteLLM Redis Caching": operations/ai/litellm-redis-caching.md
-      - Maintenance:
-          - "Overview": operations/maintenance/index.md
-          - "Backup Guide": operations/backup-guide.md
-          - "Image Upgrade Checklist": operations/maintenance/image-upgrade-checklist.md
-          - "Service Restart": operations/maintenance/service-restart-procedures.md
-          - "Docling Shared Volume": operations/maintenance/docling-shared-volume.md
-      - Troubleshooting:
-          - "Overview": operations/troubleshooting/index.md
-          - "Troubleshooting Guide": operations/troubleshooting/troubleshooting-guide.md
-      - Database:
-          - "Overview": operations/database/index.md
-          - "Monitoring Plan": operations/database/database-monitoring-plan.md
-          - "Optimizations": operations/database/database-production-optimizations.md
-          - "Troubleshooting": operations/database/database-troubleshooting.md
-          - "Redis Monitoring": operations/database/redis-monitoring-grafana.md
-          - "Redis Operations": operations/database/redis-operations-guide.md
-          - "VLLM Optimization": operations/database/vllm-resource-optimization.md
-      - Diagnostics:
-          - "Diagnostics Overview": operations/diagnostics/index.md
-      - "Diagnostic Methodology": operations/diagnostics/erni-ki-diagnostic-methodology.md
-  - "Data & Storage": data/index.md
-  - Security:
-      - "Overview": security/index.md
-      - "Security Policy": security/security-policy.md
-      - "Authentication": security/authentication.md
-      - "Security Best Practices": security/security-best-practices.md
-      - "SSL/TLS Setup": security/ssl-tls-setup.md
-      - "Log Audit": security/log-audit.md
-  - Reference:
-      - "Overview": reference/index.md
-      - "API Reference": reference/api-reference.md
-      - "Webhook API": reference/webhook-api.md
-      - Development: reference/development.md
-      - "GitHub Environments": reference/github-environments-setup.md
-      - "MCPO Integration": reference/mcpo-integration-guide.md
-      - "Pre-commit Hooks": reference/pre-commit-hooks.md
-      - "Metadata Standards": reference/metadata-standards.md
-      - "Style Guide": reference/style-guide.md
-      - "Code Standards": quality/code-standards.md
-      - "No Emoji Policy": reference/NO-EMOJI-POLICY.md
-      - "Emoji Style Guide": reference/emoji-style-guide.md
-      - "Documentation Refactoring Plan": reference/documentation-refactoring-plan.md
-      - "Documentation Maintenance": reference/documentation-maintenance-strategy.md
-      - "Non-root Containers Plan": reference/non-root-containers-plan.md
-      - "Service Versions": reference/service-versions.md
-      - "Language Policy": reference/language-policy.md
-      - VERSION: VERSION.md
-      - CHANGELOG: reference/CHANGELOG.md
-  - Troubleshooting:
-      - "Common Issues": troubleshooting/common-issues.md
 
-  - "Reports & Archive":
-      - "Archive READMEs":
-          - "Audits": archive/audits/index.md
-      - "Budget Analysis": archive/reports/budget-analysis-2025-11.md
-      - "Reports":
-          - "Index": reports/index.md
-      - "Architecture Diagrams":
-          - "Index": architecture/diagrams/index.md
-          - "Overview": architecture/diagrams/architecture-overview.md
+  # TUTORIALS - Learning-oriented (for newcomers)
+  - Tutorials:
+      - Overview: getting-started/index.md
+      - "Quick Start": getting-started/installation.md
+      - Configuration: getting-started/configuration-guide.md
+      - "User Guide": getting-started/user-guide.md
+      - "External Access": getting-started/external-access-setup.md
+      - "Network Setup":
+          - "Local DNS": getting-started/local-network-dns-setup.md
+          - "DNSMasq": getting-started/dnsmasq-setup-instructions.md
+          - "Port Forwarding": getting-started/port-forwarding-setup.md
+
+  # GUIDES - Task-oriented (how to solve specific problems)
+  - Guides:
+      - Overview: guides/index.md
+      - "User Guides":
+          - "Write Email": academy/howto/write-customer-email.md
+          - "Create JIRA": academy/howto/create-jira-ticket-with-ai.md
+          - "Summarize Meeting": academy/howto/summarize-meeting-notes.md
+      - "Admin Guides":
+          - "Operations Handbook": operations/core/operations-handbook.md
+          - "Backup Guide": operations/backup-guide.md
+          - Maintenance: operations/maintenance/index.md
+          - "Service Restart": operations/maintenance/service-restart-procedures.md
+          - "Image Upgrade": operations/maintenance/image-upgrade-checklist.md
+      - "Industry Guides":
+          - Construction: academy/by-industry/construction/index.md
+          - Timber: academy/by-industry/holzbau/index.md
+
+  # REFERENCE - Information-oriented (technical descriptions)
+  - Reference:
+      - Overview: reference/index.md
+      - Architecture:
+          - Overview: architecture/index.md
+          - Services: architecture/services-overview.md
+          - Inventory: architecture/service-inventory.md
+          - "Nginx Config": architecture/nginx-configuration.md
+          - Diagrams: architecture/diagrams/index.md
+      - Operations:
+          - Overview: operations/index.md
+          - Database: operations/database/index.md
+          - Monitoring: operations/monitoring/index.md
+          - Automation: operations/automation/index.md
+          - Diagnostics: operations/diagnostics/index.md
+      - API:
+          - "REST API": reference/api-reference.md
+          - "Webhook API": reference/webhook-api.md
+          - "MCPO Integration": reference/mcpo-integration-guide.md
+      - Security:
+          - Overview: security/index.md
+          - "Security Policy": security/security-policy.md
+      - Standards:
+          - "Style Guide": reference/style-guide.md
+          - "Code Standards": quality/code-standards.md
+          - "Metadata Standards": reference/metadata-standards.md
+          - "Language Policy": reference/language-policy.md
+          - "No Emoji Policy": reference/NO-EMOJI-POLICY.md
+      - Development:
+          - Overview: development/index.md
+          - "GitHub Environments": reference/github-environments-setup.md
+          - "Pre-commit Hooks": reference/pre-commit-hooks.md
+      - System:
+          - Status: system/status.md
+          - "Service Versions": reference/service-versions.md
+          - VERSION: VERSION.md
+          - CHANGELOG: reference/CHANGELOG.md
+
+  # CONCEPTS - Understanding-oriented (explanations)
+  - Concepts:
+      - "AI Basics": academy/fundamentals/index.md
+      - "Prompting 101": academy/prompting-101.md
+      - "Context Engineering": academy/context-engineering-101.md
+      - "OpenWebUI Basics": academy/openwebui-basics.md
+
+  # ACADEMY KI - Separate learning product
+  - "Academy KI":
+      - Overview: academy/index.md
+      - "By Role":
+          - Developers: academy/by-role/developers/index.md
+          - Managers: academy/by-role/managers/index.md
+          - Support: academy/by-role/support/index.md
+          - Users: academy/by-role/general-users/index.md
+      - Resources:
+          - Glossary: GLOSSARY.md
+          - Templates: academy/resources/templates/index.md
+          - "Cheat Sheets": academy/resources/cheat-sheets/index.md
+          - "Prompt Library": academy/resources/prompt-bibliothek/index.md
+      - News: academy/news/index.md
+      - Advanced: academy/advanced/index.md
+
+  # ARCHIVE - Historical documents, reports, audits
+  - Archive:
+      - Overview: archive/README.md
+      - Reports:
+          - "Budget Analysis": archive/reports/budget-analysis-2025-11.md
+          - "SearXNG Redis Issue": archive/reports/searxng-redis-issue-2025-10.md
+      - Audits: archive/audits/index.md
+      - Security: archive/security/index.md
+      - Diagrams:
+          - "Architecture Overview": architecture/diagrams/architecture-overview.md
           - "Data Flow": architecture/diagrams/data-flow.md
           - "Deployment": architecture/diagrams/deployment-diagram.md
           - "Network Topology": architecture/diagrams/network-topology.md
-      - "System": system/index.md
-      - "Security Action Plan": operations/security-action-plan.md
+
+  # TROUBLESHOOTING - Quick access to common issues
+  - Troubleshooting:
+      - "Common Issues": troubleshooting/common-issues.md
+      - "Database Issues": operations/database/database-troubleshooting.md
+      - "Monitoring Issues": operations/monitoring/monitoring-guide.md
 
 # Validation Settings
 validation:

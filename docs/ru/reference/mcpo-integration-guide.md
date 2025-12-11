@@ -292,7 +292,7 @@ AI: Использует Filesystem Server для поиска файлов с �
       "args": [
         "-y",
         "@modelcontextprotocol/server-postgres",
-        "postgresql://postgres:postgres@db/openwebui"
+        "postgresql://${DB_USER}:${DB_PASS}@db/openwebui"
       ]
     }
   }
