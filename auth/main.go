@@ -287,7 +287,7 @@ func validateAudience(claims *jwt.RegisteredClaims, expectedAud string) error {
 	return fmt.Errorf("audience mismatch")
 }
 
-// validateSecrets ensures WEBUI_SECRET_KEY is present and sufficiently long.
+// validateSecrets ensures WEBUI_SECRET_KEY is present, non-whitespace, and sufficiently long.
 // Minimum length chosen to discourage weak secrets used for JWT signing.
 func validateSecrets() error {
 	secret := getEnvOrFile("WEBUI_SECRET_KEY")
@@ -295,8 +295,13 @@ func validateSecrets() error {
 		return fmt.Errorf("CRITICAL: WEBUI_SECRET_KEY environment variable not set")
 	}
 
-	if len(secret) < 32 {
-		return fmt.Errorf("WEBUI_SECRET_KEY too short: %d chars, 32 characters required", len(secret))
+	trimmed := strings.TrimSpace(secret)
+	if trimmed == "" {
+		return fmt.Errorf("WEBUI_SECRET_KEY contains only whitespace")
+	}
+
+	if len(trimmed) < 32 {
+		return fmt.Errorf("WEBUI_SECRET_KEY too short: %d chars, 32 characters required", len(trimmed))
 	}
 
 	return nil

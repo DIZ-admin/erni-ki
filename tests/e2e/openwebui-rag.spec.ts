@@ -937,6 +937,9 @@ if (!isPlaywrightRunner) {
     expect(hasStructure).toBeTruthy();
     expect(hasSources).toBeTruthy();
     expect(hasAnalysis).toBeTruthy();
+    // Web info is optional - depends on whether web search was invoked
+    // This query explicitly asks for web comparison, so we expect web info
+    expect(hasWebInfo).toBeTruthy();
 
     await page.screenshot({ path: 'playwright-artifacts/12-comprehensive.png' });
 

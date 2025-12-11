@@ -50,10 +50,44 @@ configure_redis_url() {
   export SEARXNG_VALKEY_URL="${SEARXNG_VALKEY_URL:-redis://${host}:${port}/${db}}" # pragma: allowlist secret
 }
 
+validate_secret() {
+  secret="$1"
+  name="$2"
+
+  # Check for empty or whitespace-only
+  trimmed=$(printf '%s' "$secret" | tr -d '[:space:]')
+  if [ -z "$trimmed" ]; then
+    log "CRITICAL: ${name} is empty or contains only whitespace"
+    return 1
+  fi
+
+  # Check minimum length (32 characters for cryptographic operations)
+  if [ ${#trimmed} -lt 32 ]; then
+    log "CRITICAL: ${name} is too short (${#trimmed} chars, minimum 32 required)"
+    return 1
+  fi
+
+  # Check for common placeholder values
+  case "$secret" in
+    "CHANGE_BEFORE_GOING_LIVE"|"changeme"|"placeholder"|"your-"*|"example"*|"test"*|"secret"*|"password"*)
+      log "CRITICAL: ${name} appears to be a placeholder value - please set a real secret"
+      return 1
+      ;;
+  esac
+
+  return 0
+}
+
 configure_searxng_secret() {
+  # pragma: allowlist secret
   if secret="$(read_secret "searxng_secret_key")"; then
-    export SEARXNG_SECRET="${secret}"
-    log "Applied SEARXNG_SECRET from docker secret (value not logged)"
+    if validate_secret "$secret" "SEARXNG_SECRET"; then  # pragma: allowlist secret
+      export SEARXNG_SECRET="${secret}"
+      log "Applied SEARXNG_SECRET from docker secret (value not logged)"
+    else
+      log "CRITICAL: Invalid SEARXNG_SECRET - container will exit"
+      exit 1
+    fi
   else
     log "warning: searxng_secret_key secret missing; SEARXNG_SECRET not set"
   fi

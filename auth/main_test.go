@@ -114,7 +114,7 @@ func TestValidateSecrets(t *testing.T) {
 		{
 			name:        "Secret with only whitespace",
 			secret:      "                                ",
-			shouldError: false, // Length check passes, but should consider adding content validation
+			shouldError: true, // Whitespace-only secrets are now rejected
 			setupEnv: func() {
 				os.Setenv("WEBUI_SECRET_KEY", "                                ")
 			},
@@ -150,29 +150,13 @@ func TestValidateSecrets(t *testing.T) {
 					}
 				} else if tt.secret != "" && len(tt.secret) < 32 {
 					expectedSubstring := "too short"
-					if !contains(errMsg, expectedSubstring) {
+					if !strings.Contains(errMsg, expectedSubstring) {
 						t.Errorf("Expected error message to contain '%s', got: %s", expectedSubstring, errMsg)
 					}
 				}
 			}
 		})
 	}
-}
-
-// Helper function to check if string contains substring.
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || substr == "" ||
-		(len(s) > len(substr) && (s[:len(substr)] == substr || s[len(s)-len(substr):] == substr ||
-			len(s) > len(substr) && containsMiddle(s, substr))))
-}
-
-func containsMiddle(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }
 
 func TestValidateSecretsIntegration(t *testing.T) {
@@ -646,6 +630,11 @@ func TestValidateSecretsErrorMessages(t *testing.T) {
 			secret:          "tooshort",
 			expectedContain: "32 characters required",
 		},
+		{
+			name:            "Whitespace-only secret error message",
+			secret:          "                                ",
+			expectedContain: "only whitespace",
+		},
 	}
 
 	for _, tt := range tests {
@@ -663,7 +652,7 @@ func TestValidateSecretsErrorMessages(t *testing.T) {
 				return
 			}
 
-			if !contains(err.Error(), tt.expectedContain) {
+			if !strings.Contains(err.Error(), tt.expectedContain) {
 				t.Errorf("Expected error message to contain '%s', got: %s",
 					tt.expectedContain, err.Error())
 			}

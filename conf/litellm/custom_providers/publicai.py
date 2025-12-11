@@ -16,9 +16,12 @@ import os
 import tempfile
 import threading
 import time
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncIterator, Callable, Iterator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import tiktoken
 
 import httpx
 from litellm import CustomLLM, ModelResponse
@@ -133,21 +136,21 @@ class PublicAICustomLLM(CustomLLM):
     def completion(
         self,
         model: str,
-        messages: list,
+        messages: list[dict[str, Any]],
         api_base: str,
         custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
-        print_verbose,
-        encoding,
-        api_key,
-        logging_obj,
+        print_verbose: Callable[..., None],
+        encoding: tiktoken.Encoding,
+        api_key: str | None,
+        logging_obj: Any,
         optional_params: dict[str, Any],
-        acompletion=None,
-        litellm_params=None,
-        logger_fn=None,
-        headers=None,
+        acompletion: bool | None = None,
+        litellm_params: dict[str, Any] | None = None,
+        logger_fn: Callable[..., None] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
-        client=None,
+        client: httpx.Client | None = None,
     ) -> ModelResponse:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
             model=model,
@@ -171,21 +174,21 @@ class PublicAICustomLLM(CustomLLM):
     async def acompletion(
         self,
         model: str,
-        messages: list,
+        messages: list[dict[str, Any]],
         api_base: str,
         custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
-        print_verbose,
-        encoding,
-        api_key,
-        logging_obj,
+        print_verbose: Callable[..., None],
+        encoding: tiktoken.Encoding,
+        api_key: str | None,
+        logging_obj: Any,
         optional_params: dict[str, Any],
-        acompletion=None,
-        litellm_params=None,
-        logger_fn=None,
-        headers=None,
+        acompletion: bool | None = None,
+        litellm_params: dict[str, Any] | None = None,
+        logger_fn: Callable[..., None] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
-        client=None,
+        client: httpx.AsyncClient | None = None,
     ) -> ModelResponse:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
             model=model,
@@ -209,21 +212,21 @@ class PublicAICustomLLM(CustomLLM):
     def streaming(
         self,
         model: str,
-        messages: list,
+        messages: list[dict[str, Any]],
         api_base: str,
         custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
-        print_verbose,
-        encoding,
-        api_key,
-        logging_obj,
+        print_verbose: Callable[..., None],
+        encoding: tiktoken.Encoding,
+        api_key: str | None,
+        logging_obj: Any,
         optional_params: dict[str, Any],
-        acompletion=None,
-        litellm_params=None,
-        logger_fn=None,
-        headers=None,
+        acompletion: bool | None = None,
+        litellm_params: dict[str, Any] | None = None,
+        logger_fn: Callable[..., None] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
-        client=None,
+        client: httpx.Client | None = None,
     ) -> Iterator[GenericStreamingChunk]:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
             model=model,
@@ -246,21 +249,21 @@ class PublicAICustomLLM(CustomLLM):
     async def astreaming(
         self,
         model: str,
-        messages: list,
+        messages: list[dict[str, Any]],
         api_base: str,
         custom_prompt_dict: dict[str, Any],
         model_response: ModelResponse,
-        print_verbose,
-        encoding,
-        api_key,
-        logging_obj,
+        print_verbose: Callable[..., None],
+        encoding: tiktoken.Encoding,
+        api_key: str | None,
+        logging_obj: Any,
         optional_params: dict[str, Any],
-        acompletion=None,
-        litellm_params=None,
-        logger_fn=None,
-        headers=None,
+        acompletion: bool | None = None,
+        litellm_params: dict[str, Any] | None = None,
+        logger_fn: Callable[..., None] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float | httpx.Timeout | None = None,  # noqa: ASYNC109
-        client=None,
+        client: httpx.AsyncClient | None = None,
     ) -> AsyncIterator[GenericStreamingChunk]:
         payload, request_headers, url, resolved_timeout = self._prepare_payload(
             model=model,
