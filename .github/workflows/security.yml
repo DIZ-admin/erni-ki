@@ -402,6 +402,9 @@ jobs:
     name: 📊 Security Report (temp disabled)
     runs-on: ubuntu-latest
     if: false
+    steps:
+      - name: Skip security summary
+        run: echo "security-report disabled for release branch workflows"
 
   sarif-aggregate:
     name: 🗂️ Aggregate SARIF
