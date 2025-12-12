@@ -564,6 +564,10 @@ jobs:
                 cp "$f" "$target"
               fi
             done
+            # Ensure new services don't fail compose lint if their env files are missing
+            if [ -f "env/ragflow-adapter.example" ] && [ ! -f "env/ragflow-adapter.env" ]; then
+              cp "env/ragflow-adapter.example" "env/ragflow-adapter.env"
+            fi
             # Fail early if placeholders remain on protected branches
             if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/develop" ]]; then
               bad=$(grep -RIl "CHANGE_ME\\|CHANGEME\\|changeme" env || true)
