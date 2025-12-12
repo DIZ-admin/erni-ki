@@ -2,7 +2,10 @@ name: 📚 Deploy Docs to GitHub Pages
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
+      - release/*
     paths:
       - "docs/**"
       - "mkdocs.yml"
