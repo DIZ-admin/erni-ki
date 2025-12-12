@@ -14,10 +14,14 @@ analyses, and ongoing documentation maintenance.
 
 ### Configuration and Planning
 
-Reports are maintained in the archive:
+Reports are maintained in the Russian documentation (canonical source):
 
-- Configuration audits and TODO analyses are archived in
-  [Archive Reports](../../ru/archive/reports/index.md) (RU)
+- [Configuration Consistency Audit](../../ru/reports/configuration-consistency-audit.md) -
+  Comprehensive audit of project configuration files
+- [TODO Analysis](../../ru/reports/todo-analysis.md) - Analysis of TODO/FIXME
+  comments in codebase
+- [TODO Conversion Plan](../../ru/reports/todo-conversion-plan.md) - Plan for
+  managing and converting TODO items
 
 ## Historical Reports
 

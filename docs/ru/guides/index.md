@@ -1,6 +1,6 @@
 ---
 language: ru
-translation_status: complete
+translation_status: original
 doc_version: '2025.11'
 last_updated: '2025-12-10'
 title: 'Руководства'
@@ -12,7 +12,6 @@ title: 'Руководства'
 
 ## Содержание
 
-Руководства по секретам и безопасности перенесены в раздел
-[operations/core](../operations/core/index.md).
-
-Для YAML и стилей см. [Development](../development/index.md).
+- [Настройка секретов GitHub](github-secrets-setup.md)
+- [Краткий справочник секретов](SECRETS-QUICK-REFERENCE.md)
+- [Руководство по стилю YAML](yaml-style-guide.md)

@@ -5,71 +5,17 @@
  * Goal: Verify end-to-end process of uploading and processing DOCX file through ERNI-KI RAG system
  */
 
-import { expect, test, type FileChooser, type Locator, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
 
+import { BASE_URL, isPlaywrightRunner, log, tryLogin, uploadFile } from './helpers';
+
 // Skip when Playwright runner is not orchestrating the tests (e.g., `bun test`)
-const isPlaywrightRunner =
-  Boolean(process.env.PLAYWRIGHT_TEST) || Boolean(process.env.PLAYWRIGHT_WORKER_INDEX);
 if (!isPlaywrightRunner) {
   console.warn('Skipping Playwright aktennotiz specs outside Playwright runner');
 } else {
-  const BASE = process.env.PW_BASE_URL || 'http://localhost:8080';
+  const BASE = BASE_URL;
   const DOCX_FILE = 'tests/fixtures/Aktennotiz_Andre Arnold 10.10.2025.docx';
-
-  // Logging with timestamps
-  function log(message: string): void {
-    const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] ${message}`);
-  }
-
-  // Attempt login
-  async function tryLogin(page: Page): Promise<boolean> {
-    log('🔍 Checking for login form...');
-
-    const emailSel = 'input[type="email"], input[name="email"], input#email';
-    const passSel = 'input[type="password"], input[name="password"], input#password';
-    const submitSel = 'button:has-text("Sign In"), button[type="submit"]';
-
-    let hasLogin = await page
-      .locator(emailSel)
-      .first()
-      .isVisible()
-      .catch(() => false);
-
-    if (!hasLogin) {
-      await page.goto(`${BASE}/login`).catch(() => {});
-      hasLogin = await page
-        .locator(emailSel)
-        .first()
-        .isVisible()
-        .catch(() => false);
-      if (!hasLogin) return false;
-    }
-
-    const EMAIL: string = process.env.E2E_OPENWEBUI_EMAIL || '';
-    const PASS: string = process.env.E2E_OPENWEBUI_PASSWORD || '';
-    if (!EMAIL || !PASS) {
-      log('⚠️ Login form detected but E2E_OPENWEBUI_EMAIL/PASSWORD are not set.');
-      return false;
-    }
-
-    log(`🔑 Attempting login with email: ${EMAIL}`);
-    await page.fill(emailSel, EMAIL);
-    await page.fill(passSel, PASS);
-    await page.click(submitSel).catch(() => page.press(passSel, 'Enter'));
-
-    const chatInput =
-      'textarea[placeholder*="Message"], [role="textbox"], div[contenteditable="true"]';
-    try {
-      await page.waitForSelector(chatInput, { timeout: 10_000 });
-      log('✅ Login successful - chat input found');
-      return true;
-    } catch (e: unknown) {
-      log('❌ Login may have failed - chat input not found');
-      return false;
-    }
-  }
 
   test('Upload and process Aktennotiz DOCX file', async ({ page }) => {
     const startTime = Date.now();
@@ -119,129 +65,23 @@ if (!isPlaywrightRunner) {
       fullPage: true,
     });
 
-    // Close modal windows
-    const modals = await page.locator('[role="dialog"], .modal').count();
-    if (modals > 0) {
-      log(`🔍 Found ${modals} modal(s), closing...`);
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(500);
-    }
-
-    // Step 3: Find and click file upload button
-    log('📁 Step 3: Looking for file upload button...');
+    // Step 3: Upload file using shared helper
+    log('📁 Step 3: Uploading file...');
     const uploadStartTime = Date.now();
 
-    let uploadSuccess = false;
-    let uploadMethod = '';
-
-    // Method 1: Search for button with paperclip or plus icon
-    const iconButtons: Locator[] = await page
-      .locator('button:has(svg), button:has([class*="icon"])')
-      .all();
-    log(`🔍 Found ${iconButtons.length} buttons with icons`);
-
-    for (let i = 0; i < iconButtons.length; i++) {
-      const button = iconButtons[i];
-      if (!button) continue;
-
-      const isVisible = await button.isVisible().catch(() => false);
-      if (!isVisible) continue;
-
-      try {
-        // Get aria-label or title for identification
-        const ariaLabel = await button.getAttribute('aria-label').catch(() => '');
-        const title = await button.getAttribute('title').catch(() => '');
-
-        // Search for buttons related to file upload
-        if (
-          ariaLabel?.toLowerCase().includes('upload') ||
-          ariaLabel?.toLowerCase().includes('file') ||
-          ariaLabel?.toLowerCase().includes('attach') ||
-          title?.toLowerCase().includes('upload') ||
-          title?.toLowerCase().includes('file')
-        ) {
-          log(`🎯 Found potential upload button: ${ariaLabel || title}`);
-
-          // Try to click and open file chooser
-          const fileChooser = await page
-            .waitForEvent('filechooser', { timeout: 2000 })
-            .catch(() => null as FileChooser | null);
-          await button.click();
-
-          if (fileChooser) {
-            log(`✅ File chooser opened!`);
-            await fileChooser.setFiles(DOCX_FILE);
-            uploadSuccess = true;
-            uploadMethod = `Icon button with ${ariaLabel || title}`;
-            break;
-          }
-        }
-      } catch (e: unknown) {
-        // Continue searching when a button is not interactable
-      }
-    }
-
-    // Method 2: Direct input[type="file"] search
-    if (!uploadSuccess) {
-      log('🔍 Trying direct file input method...');
-      const fileInput = await page.locator('input[type="file"]').first();
-      const fileInputVisible = await fileInput.isVisible().catch(() => false);
-
-      if (fileInputVisible) {
-        await fileInput.setInputFiles(DOCX_FILE);
-        uploadSuccess = true;
-        uploadMethod = 'Direct file input';
-        log('✅ File uploaded via direct input');
-      }
-    }
-
-    // Method 3: Search via button text
-    if (!uploadSuccess) {
-      log('🔍 Trying text-based button search...');
-      const uploadButtons = await page.locator('button:has-text("Upload")').all();
-
-      for (const button of uploadButtons) {
-        try {
-          const [fileChooser] = await Promise.all([
-            page.waitForEvent('filechooser', { timeout: 2000 }).catch(() => null),
-            button.click(),
-          ]);
-
-          if (fileChooser) {
-            await fileChooser.setFiles(DOCX_FILE);
-            uploadSuccess = true;
-            uploadMethod = 'Text-based upload button';
-            log('✅ File uploaded via text button');
-            break;
-          }
-        } catch (e) {
-          continue;
-        }
-      }
-    }
-
+    const uploadSuccess = await uploadFile(page, DOCX_FILE);
     const uploadEndTime = Date.now();
 
     if (!uploadSuccess) {
       log('❌ Could not find upload mechanism');
-
-      // Detailed page analysis
-      const allButtons = await page.locator('button').count();
-      const buttonTexts = await page.locator('button').allTextContents();
-      log(`📊 Page has ${allButtons} buttons`);
-      log(`📝 Button texts (first 20): ${buttonTexts.slice(0, 20).join(', ')}`);
-
       await page.screenshot({
         path: 'test-results/03-upload-failed.png',
         fullPage: true,
       });
-
       throw new Error('Could not find file upload mechanism');
     }
 
-    log(
-      `✅ File uploaded successfully via: ${uploadMethod} (${uploadEndTime - uploadStartTime}ms)`,
-    );
+    log(`✅ File uploaded successfully (${uploadEndTime - uploadStartTime}ms)`);
 
     // Screenshot after upload
     await page.screenshot({
@@ -291,7 +131,6 @@ if (!isPlaywrightRunner) {
     log(`✅ Total test time: ${totalTime}ms`);
     log(`✅ File upload time: ${uploadEndTime - uploadStartTime}ms`);
     log(`✅ Processing time: ${processingTime}ms`);
-    log(`✅ Upload method: ${uploadMethod}`);
     log(`✅ File size: ${(fileStats.size / 1024).toFixed(2)} KB`);
     log(
       `${processingTime < 10000 ? '✅' : '⚠️'} Processing time ${processingTime < 10000 ? 'meets' : 'exceeds'} target (<10s)`,
