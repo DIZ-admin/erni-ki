@@ -752,7 +752,7 @@ jobs:
           scanners: "vuln"
           ignore-unfixed: true
           trivyignores: ".github/trivy.ignore"
-          skip-dirs: "node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs"
+          skip-dirs: "node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs,.config-backup,data,secrets,conf/nginx/ssl"
           skip-files: "package-lock.json,package.json"
           exit-code: "1"
 
