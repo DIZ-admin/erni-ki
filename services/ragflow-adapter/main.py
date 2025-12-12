@@ -13,6 +13,7 @@ import tempfile
 import time
 from urllib.parse import unquote
 
+import aiofiles
 import httpx
 from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse
@@ -256,13 +257,16 @@ async def _process_with_ragflow(
 
         logger.info(f"[{request_id}] ragflow_upload: url={upload_url}")
 
-        with open(tmp_path, "rb") as f:
-            files = {"file": (filename, f, mime_type)}
-            resp = await client.post(
-                upload_url,
-                files=files,
-                headers=get_ragflow_headers(),
-            )
+        # Avoid blocking the event loop on file I/O
+        async with aiofiles.open(tmp_path, "rb") as f:
+            file_bytes = await f.read()
+
+        files = {"file": (filename, file_bytes, mime_type)}
+        resp = await client.post(
+            upload_url,
+            files=files,
+            headers=get_ragflow_headers(),
+        )
 
         if resp.status_code != 200:
             logger.error(

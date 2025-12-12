@@ -26,69 +26,71 @@ concurrency:
 
 jobs:
   # CodeQL analysis
-  codeql:
-    name: 🔍 CodeQL Analysis
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ["go", "javascript", "python"]
-        include:
-          - language: go
-            path: "./auth"
-          - language: javascript
-            path: "."
-          - language: python
-            path: "."
-
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      # Setup Go before CodeQL init so tracing uses the configured toolchain
-      - name: 🐹 Setup Go
-        if: matrix.language == 'go'
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5
-        with:
-          go-version-file: auth/go.mod
-          cache-dependency-path: auth/go.sum
-
-      - name: 🔍 Initialize CodeQL
-        uses: github/codeql-action/init@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
-        with:
-          languages: ${{ matrix.language }}
-          queries: +security-and-quality
-          source-root: ${{ matrix.path }}
-
-      # Setup JavaScript/TypeScript environment
-      - name: 🟣 Setup Bun
-        if: matrix.language == 'javascript'
-        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
-        with:
-          bun-version: "1.3.3"
-
-      - name: 📦 Install JS dependencies
-        if: matrix.language == 'javascript' && hashFiles('package.json') != ''
-        run: bun install --frozen-lockfile
-
-      # Build for CodeQL
-      - name: 🏗️ Build (Go)
-        if: matrix.language == 'go'
-        working-directory: ./auth
-        run: |
-          go build ./...
-
-      - name: 🏗️ Autobuild
-        if: matrix.language != 'go'
-        uses: github/codeql-action/autobuild@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
-
-      # Perform CodeQL analysis
-      - name: 🔍 Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
-        with:
-          category: "/language:${{ matrix.language }}"
+  # CodeQL temporarily disabled for release/v0.61.3 (default Code Scanning is enabled and rejects custom uploads).
+  # Re-enable after consolidating to a single CodeQL configuration.
+  # codeql:
+  #   name: 🔍 CodeQL Analysis
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 30
+  #
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       language: ["go", "javascript", "python"]
+  #       include:
+  #         - language: go
+  #           path: "./auth"
+  #         - language: javascript
+  #           path: "."
+  #         - language: python
+  #           path: "."
+  #
+  #   steps:
+  #     - name: 📥 Checkout repository
+  #       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+  #
+  #     # Setup Go before CodeQL init so tracing uses the configured toolchain
+  #     - name: 🐹 Setup Go
+  #       if: matrix.language == 'go'
+  #       uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5
+  #       with:
+  #         go-version-file: auth/go.mod
+  #         cache-dependency-path: auth/go.sum
+  #
+  #     - name: 🔍 Initialize CodeQL
+  #       uses: github/codeql-action/init@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+  #       with:
+  #         languages: ${{ matrix.language }}
+  #         queries: +security-and-quality
+  #         source-root: ${{ matrix.path }}
+  #
+  #     # Setup JavaScript/TypeScript environment
+  #     - name: 🟣 Setup Bun
+  #       if: matrix.language == 'javascript'
+  #       uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+  #       with:
+  #         bun-version: "1.3.3"
+  #
+  #     - name: 📦 Install JS dependencies
+  #       if: matrix.language == 'javascript' && hashFiles('package.json') != ''
+  #       run: bun install --frozen-lockfile
+  #
+  #     # Build for CodeQL
+  #     - name: 🏗️ Build (Go)
+  #       if: matrix.language == 'go'
+  #       working-directory: ./auth
+  #       run: |
+  #         go build ./...
+  #
+  #     - name: 🏗️ Autobuild
+  #       if: matrix.language != 'go'
+  #       uses: github/codeql-action/autobuild@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+  #
+  #     # Perform CodeQL analysis
+  #     - name: 🔍 Perform CodeQL Analysis
+  #       uses: github/codeql-action/analyze@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+  #       with:
+  #         category: "/language:${{ matrix.language }}"
 
   # Dependency scanning
   dependency-scan:
