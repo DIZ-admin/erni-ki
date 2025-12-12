@@ -451,13 +451,13 @@ sudo systemctl restart docker
 
 Nach erfolgreicher Installation wird empfohlen:
 
-1.**[Benutzerhandbuch](user-guide.md) studieren**- Grundlagen der
-Interface-Bedienung 2.**[Monitoring](../../en/operations/core/admin-guide.md#monitoring)
-konfigurieren**- Systemzustand
-überwachen 3.**[API-Dokumentation](../../en/reference/api-reference.md)
-studieren**- Integration mit externen
-Systemen 4.**[Backup](../../en/operations/core/admin-guide.md#backup)
-einrichten**- Datenschutz
+1. **[Benutzerhandbuch](user-guide.md)** – Grundlagen der Interface-Bedienung
+2. **[Monitoring konfigurieren](../../en/operations/monitoring/monitoring-guide.md)**
+   – Systemzustand überwachen
+3. **[API-Dokumentation](../../en/reference/api-reference.md)** studieren –
+   Integration mit externen Systemen
+4. **[Backup einrichten](../../en/operations/backup-guide.md)** – Datenschutz
+   sicherstellen
 
 ---
 

@@ -22,13 +22,15 @@ managing the ERNI-KI platform.
 ### Troubleshooting & Runbooks
 
 - **Troubleshooting index:** [Common scenarios](./troubleshooting/index.md)
-- **Maintenance:** [Service restarts](./maintenance/service-restart-procedures.md),
+- **Maintenance:**
+  [Service restarts](./maintenance/service-restart-procedures.md),
   [Docling volume](./maintenance/docling-shared-volume.md),
   [Image upgrades](./maintenance/image-upgrade-checklist.md)
 
 ### Specialized Guides
 
-- **Automation:** [Automated maintenance](./automation/automated-maintenance-guide.md),
+- **Automation:**
+  [Automated maintenance](./automation/automated-maintenance-guide.md),
   [Docker log rotation](./automation/docker-log-rotation.md)
 - **Database:** [Operations overview](./database/index.md)
 - **Monitoring:** [Monitoring guide](./monitoring/monitoring-guide.md)
@@ -39,9 +41,10 @@ managing the ERNI-KI platform.
 
 ## Quick Start
 
-**For Operators:** Start with the [Operations Handbook](./core/operations-handbook.md).
-**For Monitoring:** See [monitoring-guide.md](./monitoring/monitoring-guide.md).
-**For Incidents:** Check [Troubleshooting](./troubleshooting/index.md).
+**For Operators:** Start with the
+[Operations Handbook](./core/operations-handbook.md). **For Monitoring:** See
+[monitoring-guide.md](./monitoring/monitoring-guide.md). **For Incidents:**
+Check [Troubleshooting](./troubleshooting/index.md).
 
 ## Operational Rhythm
 

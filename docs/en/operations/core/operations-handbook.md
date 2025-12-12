@@ -63,8 +63,8 @@ flowchart TD
 - Validate results with: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
 - On script failures — follow the [Backup Guide](../backup-guide.md) for
-  recovery and record any config migrations in change logs. -**New
-  November tasks:**
+  recovery and record any config migrations in change logs. -**New November
+  tasks:**
   - `scripts/maintenance/docling-shared-cleanup.sh` — cleans Docling shared
     volume and restores permissions (cron job**docling_shared_cleanup**).
   - `scripts/maintenance/redis-fragmentation-watchdog.sh` — watches

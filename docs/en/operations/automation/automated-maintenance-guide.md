@@ -144,7 +144,6 @@ flowchart TD
 
 ## 5. Related documentation
 
-- [Operations Handbook](../core/operations-handbook.md) - System
-  administration
+- [Operations Handbook](../core/operations-handbook.md) - System administration
 - [Monitoring Guide](../monitoring/monitoring-guide.md) - Monitoring and alerts
 - [Docker Log Rotation](docker-log-rotation.md) - Log management

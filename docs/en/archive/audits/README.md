@@ -7,9 +7,9 @@ last_updated: '2025-12-10'
 
 # Audits Archive
 
-English translations of audit reports are not yet available. Please refer to
-the RU/DE originals under `docs/archive/audits/` (non-EN). This page will be
-updated when translations land.
+English translations of audit reports are not yet available. Please refer to the
+RU/DE originals under `docs/archive/audits/` (non-EN). This page will be updated
+when translations land.
 
 Current directory files (RU/DE):
 

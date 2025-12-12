@@ -21,7 +21,7 @@ Status-Dashboard:**<https://status.ki.erni-gruppe.ch>**(Uptime Kuma).
 ## Verknüpfte Dokumentation
 
 - Runbook & Eskalation:
-  [`docs/operations/core/status-page.md`](../../en/operations/core/status-page.md)
+  [`operations/core/operations-handbook.md`](../../en/operations/core/operations-handbook.md)
 - Open WebUI Grundlagen:
   [`docs/de/academy/openwebui-basics.md`](../academy/openwebui-basics.md)
 - Prompting-Checkliste:
