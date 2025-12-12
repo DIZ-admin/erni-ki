@@ -127,6 +127,7 @@ auth/erni-ki-auth
 auth/auth
 auth/dist/
 auth/build/
+auth/.gocache/
 
 # ===================================================================
 # DOCKER
@@ -187,6 +188,7 @@ tmp/
 # SERVICE DATA AND CONFIGURATIONS
 # ===================================================================
 data/
+compose/data/
 !docs/data/
 conf/**/*.conf
 conf/**/*.ini

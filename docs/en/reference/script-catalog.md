@@ -122,6 +122,12 @@ The following 9 files were identified as orphan/legacy and have been removed:
 | `scripts/docs/audit-documentation.py`      | ACTIVE | Doc audit              |
 | ...                                        | ...    | ...                    |
 
+### Git Hygiene Scripts (1)
+
+| Script                                   | Status | Purpose                                                                |
+| ---------------------------------------- | ------ | ---------------------------------------------------------------------- |
+| `scripts/git-hygiene/check-artifacts.sh` | ACTIVE | Reports size of generated artefacts and warns when they remain tracked |
+
 ## Top Scripts with Shellcheck Warnings
 
 | Script                              | Warnings | Primary Issues |
