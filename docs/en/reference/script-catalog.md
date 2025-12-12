@@ -4,7 +4,7 @@ description: Comprehensive inventory of all scripts in the ERNI-KI project
 language: en
 status: complete
 translation_status: source
-doc_version: '2025.11'
+doc_version: '2025.12'
 ---
 
 # Script Catalog
