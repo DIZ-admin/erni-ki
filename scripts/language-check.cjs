@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console, security/detect-non-literal-fs-filename */
 
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -29,9 +29,11 @@ const CONFIG_PATH = path.join(process.cwd(), 'language-policy.config.json');
 
 const args = process.argv.slice(2);
 const runAll = args.includes('--all');
+const fileArgs = args.filter(arg => !arg.startsWith('-'));
 
 function normalizePath(filename) {
-  return filename.replace(/\\/g, '/');
+  const rel = path.isAbsolute(filename) ? path.relative(process.cwd(), filename) : filename;
+  return rel.replace(/\\/g, '/');
 }
 
 function loadConfig() {
@@ -52,17 +54,21 @@ const baselineFiles = new Set((config.baseline || []).map(normalizePath));
 const baselineHits = new Set();
 
 function gitFiles(all) {
-  const cmd = all ? 'git ls-files' : 'git diff --cached --name-only --diff-filter=ACMR';
-  try {
-    const output = execSync(cmd, { encoding: 'utf8' });
-    return output
-      .split('\n')
-      .map(f => f.trim())
-      .filter(f => f.length > 0);
-  } catch (error) {
-    console.error('Failed to list files:', error.message);
+  const args = all
+    ? ['ls-files']
+    : ['diff', '--cached', '--name-only', '--diff-filter=ACMR'];
+  const result = spawnSync('git', args, { encoding: 'utf8' });
+
+  if (result.status !== 0) {
+    const reason = result.stderr?.trim() || result.error?.message || `exit code ${result.status}`;
+    console.error('Failed to list files:', reason);
     process.exit(2);
   }
+
+  return result.stdout
+    .split('\n')
+    .map(f => f.trim())
+    .filter(f => f.length > 0);
 }
 
 function localeFromPath(filename) {
@@ -91,15 +97,16 @@ function extractFrontMatter(content) {
   return parts[1];
 }
 
-const stagedFiles = gitFiles(runAll);
-if (!stagedFiles.length) {
+const targetFiles = fileArgs.length ? fileArgs : gitFiles(runAll);
+if (!targetFiles.length) {
   process.exit(0);
 }
 
 const errors = [];
 const warnings = [];
+const logLines = [];
 
-for (const file of stagedFiles) {
+for (const file of targetFiles) {
   const ext = path.extname(file).toLowerCase();
   if (!fs.existsSync(file)) {
     continue;
@@ -149,24 +156,31 @@ for (const file of stagedFiles) {
 }
 
 if (warnings.length) {
-  console.log('\nLanguage check warnings:');
+  logLines.push('', 'Language check warnings:');
   for (const warning of warnings) {
-    console.log('  ⚠️  ' + warning);
+    logLines.push('  ⚠️  ' + warning);
   }
 }
 
 if (baselineHits.size) {
-  console.log('\nLanguage policy baseline (pending translation):');
+  logLines.push('', 'Language policy baseline (pending translation):');
   for (const file of Array.from(baselineHits).sort()) {
-    console.log('  • ' + file);
+    logLines.push('  • ' + file);
   }
 }
 
 if (errors.length) {
-  console.log('\nLanguage check failed:');
+  logLines.push('', 'Language check failed:');
   for (const error of errors) {
-    console.log('  ❌ ' + error);
+    logLines.push('  ❌ ' + error);
   }
+}
+
+if (logLines.length) {
+  process.stdout.write(logLines.join('\n') + '\n');
+}
+
+if (errors.length) {
   process.exit(1);
 }
 
