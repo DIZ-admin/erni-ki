@@ -760,6 +760,8 @@ jobs:
           skip-dirs: ".cache,node_modules,tests/node_modules,playwright-artifacts,playwright-report,coverage,site,docs,.config-backup,data,secrets,conf/nginx/ssl"
           skip-files: "package-lock.json,package.json"
           exit-code: "0"
+        env:
+          TRIVY_SKIP_VERSION_CHECK: "true"
 
       - name: 📤 Upload Trivy results
         uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
@@ -976,8 +978,9 @@ jobs:
           scanners: "vuln"
           ignore-unfixed: true
           trivyignores: ".github/trivy.ignore"
-          skip-version-check: true
           exit-code: "0"
+        env:
+          TRIVY_SKIP_VERSION_CHECK: "true"
 
       - name: 📤 Upload Docker Trivy results
         uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
