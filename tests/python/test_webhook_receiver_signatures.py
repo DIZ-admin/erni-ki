@@ -11,6 +11,13 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
+try:
+    import flask  # noqa: F401
+except ImportError:  # pragma: no cover
+    pytest.skip("flask not installed", allow_module_level=True)
+
 ROOT = Path(__file__).resolve().parents[2]
 
 

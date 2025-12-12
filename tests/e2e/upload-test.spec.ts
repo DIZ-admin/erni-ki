@@ -8,9 +8,10 @@ const BASE = process.env.PW_BASE_URL || 'https://localhost';
 // Skip when Playwright runner is not orchestrating the tests (e.g., `bun test`)
 const isPlaywrightRunner =
   Boolean(process.env.PLAYWRIGHT_TEST) || Boolean(process.env.PLAYWRIGHT_WORKER_INDEX);
-if (!isPlaywrightRunner) {
-  console.warn('Skipping Playwright upload specs outside Playwright runner');
-} else {
+const runUploadSuite = isPlaywrightRunner && process.env.E2E_UPLOAD_FULL === 'true';
+const describeUpload = runUploadSuite ? test.describe : test.describe.skip;
+
+describeUpload('File upload shortcuts', () => {
   // Attempt login
   async function tryLogin(page: any) {
     console.log('🔍 Checking for login form...');
@@ -218,4 +219,4 @@ if (!isPlaywrightRunner) {
       fullPage: true,
     });
   });
-}
+});

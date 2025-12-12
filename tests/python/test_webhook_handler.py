@@ -17,6 +17,11 @@ try:
 except ImportError:  # pragma: no cover
     pytest.skip("requests not installed", allow_module_level=True)
 
+try:
+    import flask  # noqa: F401
+except ImportError:  # pragma: no cover
+    pytest.skip("flask not installed", allow_module_level=True)
+
 from pydantic import ValidationError
 
 ROOT = Path(__file__).resolve().parents[2]

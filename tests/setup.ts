@@ -19,8 +19,8 @@ const originalConsoleError = console.error;
 beforeAll(() => {
   // Set test environment variables (test-only dummy values)
   process.env.NODE_ENV = 'test';
-  process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only'; // pragma: allowlist secret
-  process.env.WEBUI_SECRET_KEY = 'test-webui-secret-key-for-testing-only'; // pragma: allowlist secret
+  process.env.JWT_SECRET = 'test-jwt-secret-key'; // pragma: allowlist secret
+  process.env.WEBUI_SECRET_KEY = 'test-webui-secret-key'; // pragma: allowlist secret
   process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db'; // pragma: allowlist secret
   process.env.REDIS_URL = 'redis://localhost:6379/1';
 

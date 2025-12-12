@@ -1,12 +1,12 @@
 import { expect, Page, Request, Response, test } from '@playwright/test';
 import fs from 'node:fs';
 
-// Skip when Playwright runner is not orchestrating the tests (e.g., `bun test`)
 const isPlaywrightRunner =
   Boolean(process.env.PLAYWRIGHT_TEST) || Boolean(process.env.PLAYWRIGHT_WORKER_INDEX);
-if (!isPlaywrightRunner) {
-  console.warn('Skipping Playwright openwebui-rag specs outside Playwright runner');
-} else {
+const runRagSuite = isPlaywrightRunner && process.env.E2E_RAG_FULL === 'true';
+const describeRag = runRagSuite ? test.describe : test.describe.skip;
+
+describeRag('OpenWebUI RAG E2E', () => {
   /**
    * ERNI-KI OpenWebUI RAG E2E via Playwright
    * - Network request logging (Docling, SearXNG, Ollama)
@@ -18,7 +18,7 @@ if (!isPlaywrightRunner) {
   const ART_DIR = 'playwright-artifacts';
   const NET_LOG = `${ART_DIR}/network.log`;
   try {
-    require('node:fs').mkdirSync(ART_DIR, { recursive: true });
+    fs.mkdirSync(ART_DIR, { recursive: true });
   } catch (e: unknown) {
     console.warn('Failed to create directory:', e);
   }
@@ -945,4 +945,4 @@ if (!isPlaywrightRunner) {
 
     finalize();
   });
-}
+});

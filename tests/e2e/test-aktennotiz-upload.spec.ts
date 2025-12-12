@@ -8,14 +8,15 @@
 import { expect, test, type FileChooser, type Locator, type Page } from '@playwright/test';
 import fs from 'node:fs';
 
-// Skip when Playwright runner is not orchestrating the tests (e.g., `bun test`)
 const isPlaywrightRunner =
   Boolean(process.env.PLAYWRIGHT_TEST) || Boolean(process.env.PLAYWRIGHT_WORKER_INDEX);
-if (!isPlaywrightRunner) {
-  console.warn('Skipping Playwright aktennotiz specs outside Playwright runner');
-} else {
+const DOCX_FILE = 'tests/fixtures/Aktennotiz_Andre Arnold 10.10.2025.docx';
+const runAktenSuite =
+  isPlaywrightRunner && process.env.E2E_UPLOAD_FULL === 'true' && fs.existsSync(DOCX_FILE);
+const describeAkten = runAktenSuite ? test.describe : test.describe.skip;
+
+describeAkten('Aktennotiz upload flow', () => {
   const BASE = process.env.PW_BASE_URL || 'http://localhost:8080';
-  const DOCX_FILE = 'tests/fixtures/Aktennotiz_Andre Arnold 10.10.2025.docx';
 
   // Logging with timestamps
   function log(message: string): void {
@@ -309,4 +310,4 @@ if (!isPlaywrightRunner) {
     expect(processingTime).toBeLessThan(10000); // Target: <10 seconds
     expect(errors.length).toBe(0);
   });
-}
+});

@@ -5,6 +5,13 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+try:
+    import flask  # noqa: F401
+except ImportError:  # pragma: no cover
+    pytest.skip("flask not installed", allow_module_level=True)
+
 
 @patch("conf.rag_exporter.requests.get")
 def test_probe_success_sets_metrics(mock_get):
