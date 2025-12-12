@@ -54,9 +54,7 @@ const baselineFiles = new Set((config.baseline || []).map(normalizePath));
 const baselineHits = new Set();
 
 function gitFiles(all) {
-  const args = all
-    ? ['ls-files']
-    : ['diff', '--cached', '--name-only', '--diff-filter=ACMR'];
+  const args = all ? ['ls-files'] : ['diff', '--cached', '--name-only', '--diff-filter=ACMR'];
   const result = spawnSync('git', args, { encoding: 'utf8' });
 
   if (result.status !== 0) {
