@@ -438,6 +438,10 @@ args: >
   'github\.com/DIZ-admin/erni-ki/discussions' --exclude 'docs\.litellm\.ai'
 ```
 
+> В CI оставляем стандартные аргументы выше; в офлайн/airgapped окружениях
+> добавляйте `--exclude 'github.com/ollama'`, чтобы не блокироваться на
+> недоступном хосте.
+
 ---
 
 ## Troubleshooting Guide

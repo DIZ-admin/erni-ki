@@ -1,5 +1,36 @@
 # CHANGELOG - ERNI-KI System Updates
 
+# [2025-12-12] - Release 0.61.3 (service refresh & hardening)
+
+## Summary
+
+- OpenWebUI обновлена до `v0.6.40`, Ollama до `0.13.0` (GPU), LiteLLM до
+  `v1.80.0-stable.1`.
+- Мониторинг/логирование: Prometheus `v3.7.3`, Grafana `v12.3.0`, Loki `v3.6.2`,
+  Alertmanager `v0.29.0`, Fluent Bit `v4.2.0` (без изменений).
+- Обновлён SearXNG (2025.11.21) и Tika (3.2.3.0-full), cloudflared 2025.11.1.
+- Compose hardening: `read_only`/`tmpfs`/`no-new-privileges`/`cap_drop ALL` для
+  cloudflared, EdgeTTS, Tika; watchtower ограничен по сервисам.
+
+## Реализация
+
+1. **Compose** — подтянуты новые теги контейнеров (OpenWebUI, Ollama, LiteLLM),
+   обновлён SearXNG и Tika, добавлены security_opts/cap_drop для внешних
+   сервисов.
+2. **Статус** — `docs/reference/status.yml` синхронизирован с актуальными
+   версиями compose (стек AI/мониторинга, cloudflared/searxng/Tika).
+
+## Проверки
+
+- `bunx eslint .`
+- `bun run format:check`
+- `ruff check .` / `ruff format --check .`
+- `mypy --config-file mypy.ini`
+- `bunx vitest run`
+- `pytest`
+- `cd auth && go test ./...`
+- `mkdocs build --strict`
+
 # CHANGELOG - ERNI-KI System Updates
 
 ## [2025-12-01] - Legacy monitoring scripts cleanup
