@@ -520,9 +520,9 @@ echo -e "\n Prüfung abgeschlossen"
 
 ## VERWANDTE DOKUMENTE
 
-- [Service Restart Procedures](../../../ru/operations/maintenance/service-restart-procedures.md)
-- [Troubleshooting Guide](../../ru/operations/troubleshooting/troubleshooting-guide.md)
-- [Configuration Change Process](../../ru/operations/core/configuration-change-process.md)
+- [Service Restart Procedures](../../../en/operations/maintenance/service-restart-procedures.md)
+- [Troubleshooting Guide](../../../en/operations/troubleshooting/index.md)
+- [Operations Handbook](../../../en/operations/core/operations-handbook.md)
 - [System Architecture](../../../architecture/architecture.md)
 
 ---

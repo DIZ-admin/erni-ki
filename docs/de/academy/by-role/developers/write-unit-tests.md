@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/by-role/developers/write-unit-tests.md](../../../../ru/academy/by-role/developers/write-unit-tests.md).
+[academy/by-role/developers/write-unit-tests.md](../../../../en/academy/by-role/developers/write-unit-tests.md).

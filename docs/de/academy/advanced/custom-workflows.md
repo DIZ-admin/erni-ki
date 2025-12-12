@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter
-[academy/advanced/custom-workflows.md](../../../ru/academy/advanced/custom-workflows.md).
+[academy/advanced/custom-workflows.md](../../../en/academy/advanced/custom-workflows.md).

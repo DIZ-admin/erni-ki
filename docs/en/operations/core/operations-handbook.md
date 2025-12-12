@@ -62,8 +62,8 @@ flowchart TD
   VACUUM 03:00, cleanup 04:00, log rotation daily, Backrest backups 01:30.
 - Validate results with: `pg_isready`, `docker image prune`,
   `docker builder prune`, `docker volume prune`.
-- On script failures — see `../maintenance/backup-restore-procedures.md` for
-  recovery, `configuration-change-process.md` for config migrations. -**New
+- On script failures — follow the [Backup Guide](../backup-guide.md) for
+  recovery and record any config migrations in change logs. -**New
   November tasks:**
   - `scripts/maintenance/docling-shared-cleanup.sh` — cleans Docling shared
     volume and restores permissions (cron job**docling_shared_cleanup**).

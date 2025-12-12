@@ -301,7 +301,7 @@ python scripts/docs/translation_report.py --root docs/
 
 Metrics are stored as GitHub Actions artifacts for 90 days:
 
-1. Go to [Actions](../../actions) → "Weekly Documentation Metrics"
+1. Go to [Actions](https://github.com/DIZ-admin/erni-ki/actions) → "Weekly Documentation Metrics"
 2. Select a workflow run
 3. Download `docs-metrics-{run_number}` artifact
 4. Extract and view `metrics.json`
@@ -419,14 +419,13 @@ Potential improvements to the monitoring system:
 
 For issues or questions:
 
-1. Check [GitHub Issues](../../issues) for existing reports
-2. Review workflow run logs in [Actions](../../actions)
+1. Check [GitHub Issues](https://github.com/DIZ-admin/erni-ki/issues) for existing reports
+2. Review workflow run logs in [Actions](https://github.com/DIZ-admin/erni-ki/actions)
 3. Test locally using scripts in `scripts/docs/`
-4. Create new issue with `documentation` label
+4. Create a new issue with `documentation` label
 
 ## References
 
-- [Pre-commit Guide](./pre-commit-guide.md) - Development workflow
-- [Workflows Guide](./workflows.md) - CI/CD pipelines
 - [MkDocs Documentation](https://www.mkdocs.org/) - Site generator
 - [Lychee Link Checker](https://github.com/lycheeverse/lychee) - Link validation
+- [Setup Guide](./setup-guide.md) - Local environment setup

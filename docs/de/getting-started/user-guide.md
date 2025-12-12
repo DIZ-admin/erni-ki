@@ -254,7 +254,7 @@ Issues für Fragen und Vorschläge
 
 - [Administrator-Handbuch](../operations/core/admin-guide.md) - für
   Systemkonfiguration
-- [API-Dokumentation](../../ru/reference/api-reference.md) - für Integrationen
+- [API-Dokumentation](../../en/reference/api-reference.md) - für Integrationen
 - [Systemarchitektur](../architecture/architecture.md) - technische
   Informationen
 

@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter
-[academy/fundamentals/effective-prompts.md](../../../ru/academy/fundamentals/effective-prompts.md).
+[academy/fundamentals/effective-prompts.md](../../../en/academy/fundamentals/effective-prompts.md).

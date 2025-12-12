@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter
-[academy/by-industry/construction/maengelliste.md](../../../../ru/academy/by-industry/construction/maengelliste.md).
+[academy/by-industry/construction/maengelliste.md](../../../../en/academy/by-industry/construction/maengelliste.md).

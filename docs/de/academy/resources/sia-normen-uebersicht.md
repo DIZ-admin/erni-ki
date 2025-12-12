@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter
-[academy/resources/sia-normen-uebersicht.md](../../../ru/academy/resources/sia-normen-uebersicht.md).
+[academy/resources/sia-normen-uebersicht.md](../../../en/academy/resources/sia-normen-uebersicht.md).

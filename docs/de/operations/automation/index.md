@@ -19,7 +19,7 @@ finden.
   für den Autostart von Cron/systemd-Timern.
 - [Docker Cleanup](docker-cleanup-guide.md) — Automatische Bereinigung von
   Docker-Images/-Volumes, Rotation hängender Container, Ressourcenempfehlungen.
-- [Docker Log Rotation](../../../ru/operations/automation/docker-log-rotation.md)
+- [Docker Log Rotation](../../../en/operations/automation/docker-log-rotation.md)
   — Konfiguration von logrotate und Fluent Bit für Container-Logs,
   Speicherparameter und Überwachung von Überläufen.
 
@@ -54,4 +54,4 @@ Aktualisieren Sie die README beim Hinzufügen neuer Automatisierungsszenarien.
 ## Hinweis
 
 Die russische Version ist die Hauptquelle. Bei Unstimmigkeiten siehe
-[russische Version](../../../ru/operations/automation/index.md).
+[russische Version](../../../en/operations/automation/index.md).

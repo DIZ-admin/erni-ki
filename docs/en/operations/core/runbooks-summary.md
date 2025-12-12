@@ -14,12 +14,10 @@ directory.
 
 ## Key Runbooks
 
-- [General troubleshooting](../troubleshooting/troubleshooting-guide.md)
+- [General troubleshooting](../troubleshooting/index.md)
 - [Service restart procedures](../maintenance/service-restart-procedures.md)
-- [Backup restore procedures](../maintenance/backup-restore-procedures.md)
 - [Alertmanager noise reduction](../monitoring/alertmanager-noise-reduction.md)
 - [Access log sync and Fluent Bit](../monitoring/access-log-sync-and-fluentbit.md)
-- [Configuration changes](configuration-change-process.md)
 - [Docling shared volume](../maintenance/docling-shared-volume.md)
 
 > If new runbooks are added, update this list so lychee doesn't find outdated

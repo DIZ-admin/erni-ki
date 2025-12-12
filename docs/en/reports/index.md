@@ -16,13 +16,13 @@ analyses, and ongoing documentation maintenance.
 
 Reports are maintained in the archive:
 
-- Configuration audits and TODO analyses are archived in
-  [Archive Reports](../../ru/archive/reports/index.md) (RU)
+- [Budget Analysis 2025-11](../archive/reports/budget-analysis-2025-11.md)
+- [SearXNG Redis Issue 2025-10](../archive/reports/searxng-redis-issue-2025-10.md)
 
 ## Historical Reports
 
-All dated analysis reports and one-time audits are in the
-[archive](../../ru/archive/reports/index.md) (RU).
+All dated analysis reports and one-time audits are in the archive under
+`archive/reports/`.
 
 For security-related reports, see
 [Security Action Plan](../operations/security-action-plan.md).

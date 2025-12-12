@@ -309,9 +309,7 @@ docker compose logs --tail=100 | grep -i error | tail -5
 
 ## RELATED DOCUMENTS
 
-- [Troubleshooting Guide](../troubleshooting/troubleshooting-guide.md)
-- [Configuration Change Process](../core/configuration-change-process.md)
-- [Backup Restore Procedures](backup-restore-procedures.md)
+- [Troubleshooting](../troubleshooting/index.md)
 - [System Architecture](../../architecture/architecture.md)
 
 ---

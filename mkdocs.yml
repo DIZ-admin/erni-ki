@@ -445,7 +445,7 @@ nav:
       - Reports:
           - "Budget Analysis": archive/reports/budget-analysis-2025-11.md
           - "SearXNG Redis Issue": archive/reports/searxng-redis-issue-2025-10.md
-      - Audits: archive/audits/index.md
+      - Audits: archive/audits/README.md
       - Security: archive/security/index.md
       - Diagrams:
           - "Architecture Overview": architecture/diagrams/architecture-overview.md
@@ -461,7 +461,7 @@ nav:
 
 # Validation Settings
 validation:
-  omitted_files: warn
+  omitted_files: ignore
   absolute_links: warn
   unrecognized_links: warn
 

@@ -13,15 +13,15 @@ Vorschriften für Backup, Image-Updates und Bereinigung gemeinsamer Speicher.
 
 ## Dokumente
 
-- [Backup & Wiederherstellung](../../../ru/operations/maintenance/backup-restore-procedures.md)
+- [Backup & Wiederherstellung](../../../en/operations/maintenance/backup-restore-procedures.md)
   — Vorschrift zur Erstellung von Backups und Wiederherstellung.
-- [Docling Shared Volume](../../../ru/operations/maintenance/docling-shared-volume.md)
+- [Docling Shared Volume](../../../en/operations/maintenance/docling-shared-volume.md)
   — Speicherrichtlinie, Sicherheit und Bereinigung des gemeinsamen
   Docling-Volumes.
-- [Image-Upgrade-Checkliste](../../../ru/operations/maintenance/image-upgrade-checklist.md)
+- [Image-Upgrade-Checkliste](../../../en/operations/maintenance/image-upgrade-checklist.md)
   — Schritt-für-Schritt-Anleitung zur Aktualisierung von Containern und
   Überprüfung von Digests.
-- [Service-Neustart](../../../ru/operations/maintenance/service-restart-procedures.md)
+- [Service-Neustart](../../../en/operations/maintenance/service-restart-procedures.md)
   — Matrix für den sicheren Neustart kritischer Dienste.
 
 ## Verwendung
@@ -57,4 +57,4 @@ dokumentieren Sie die Ergebnisse in Jira/Archon.
 ## Hinweis
 
 Die russische Version ist die Hauptquelle. Bei Unstimmigkeiten siehe
-[russische Version](../../../ru/operations/maintenance/index.md).
+[russische Version](../../../en/operations/maintenance/index.md).

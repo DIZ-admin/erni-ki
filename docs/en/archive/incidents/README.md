@@ -7,7 +7,7 @@ last_updated: '2025-12-09'
 
 # Incidents (Archive)
 
-Historical incident reports are listed in `docs/archive/incidents/index.md`.
+Historical incident reports are listed below.
 
 Directory contents:
 

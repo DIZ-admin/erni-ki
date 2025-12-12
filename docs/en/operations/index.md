@@ -14,52 +14,40 @@ managing the ERNI-KI platform.
 
 ### Core Guides
 
-- **[admin-guide.md](./core/admin-guide.md)** - System administration handbook
-  - User management
-  - Service configuration
-  - Backup and restore procedures
-  - Security management
-
-- **[monitoring-guide.md](./monitoring/monitoring-guide.md)** - Comprehensive
-  monitoring documentation
-  - Prometheus metrics and alerts
-  - Grafana dashboards (5 provisioned)
-  - Loki log aggregation
-  - SLO (Service Level Objective) tracking
+- **[Operations Handbook](./core/operations-handbook.md)** - System
+  administration playbooks and escalation paths.
+- **[Monitoring Guide](./monitoring/monitoring-guide.md)** - Monitoring
+  architecture, exporters, dashboards, and alerting.
 
 ### Troubleshooting & Runbooks
 
-- **[troubleshooting-guide.md](./troubleshooting/troubleshooting-guide.md)** -
-  Diagnostic procedures and common issues
-- **Maintenance:**
-  [Service restarts](./maintenance/service-restart-procedures.md),
-  [Backup & Restore](./maintenance/backup-restore-procedures.md)
+- **Troubleshooting index:** [Common scenarios](./troubleshooting/index.md)
+- **Maintenance:** [Service restarts](./maintenance/service-restart-procedures.md),
+  [Docling volume](./maintenance/docling-shared-volume.md),
+  [Image upgrades](./maintenance/image-upgrade-checklist.md)
 
 ### Specialized Guides
 
-- **Automation:**
-  [Automated maintenance](./automation/automated-maintenance-guide.md)
+- **Automation:** [Automated maintenance](./automation/automated-maintenance-guide.md),
+  [Docker log rotation](./automation/docker-log-rotation.md)
 - **Database:** [Operations overview](./database/index.md)
 - **Monitoring:** [Monitoring guide](./monitoring/monitoring-guide.md)
 
 ### Diagnostics
 
-- **[diagnostics/index.md](./diagnostics/index.md)** - Diagnostic reports and
-  methodologies
+- **Diagnostics:** [Reports and methodology](./diagnostics/index.md)
 
 ## Quick Start
 
-**For Operators:** Start with the [admin-guide.md](./core/admin-guide.md). **For
-Monitoring:** See [monitoring-guide.md](./monitoring/monitoring-guide.md). **For
-Incidents:** Check
-[troubleshooting-guide.md](./troubleshooting/troubleshooting-guide.md).
+**For Operators:** Start with the [Operations Handbook](./core/operations-handbook.md).
+**For Monitoring:** See [monitoring-guide.md](./monitoring/monitoring-guide.md).
+**For Incidents:** Check [Troubleshooting](./troubleshooting/index.md).
 
 ## Operational Rhythm
 
 - **Daily:** check status page, `CronJobFailed`, backup monitoring.
-- **Weekly:** configuration change audit per `configuration-change-process.md`
-  and maintenance log updates.
-- **Monthly:** practice restores per `maintenance/backup-restore-procedures.md`.
+- **Weekly:** review automation logs and maintenance records.
+- **Monthly:** practice restores and verify backup integrity.
 
 ## Related Documentation
 

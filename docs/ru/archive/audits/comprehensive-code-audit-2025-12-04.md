@@ -982,7 +982,7 @@ incrementally.
   performance improvements
 - [PROJECT-RULES-SUMMARY.md](../../development/PROJECT-RULES-SUMMARY.md) -
   Critical project rules
-- [PRE-COMMIT-AUDIT-SUMMARY.txt](../../PRE-COMMIT-AUDIT-SUMMARY.txt) - Previous
+- PRE-COMMIT-AUDIT-SUMMARY.txt (archived locally) - Previous
   audit results
 
 ### 12.2 Audit Checklist

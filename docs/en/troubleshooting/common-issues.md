@@ -1066,6 +1066,5 @@ tar -czf debug-bundle.tar.gz \
 
 ---
 
-See
-[Troubleshooting Guide](../../ru/operations/troubleshooting/troubleshooting-guide.md)
-(RU) for more help.
+See [Operations Troubleshooting](../operations/troubleshooting/index.md) for
+more help.

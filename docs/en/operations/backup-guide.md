@@ -41,8 +41,8 @@ Quick guide to ERNI-KI backup procedures and links to detailed documentation.
 -**Routine backups and vacuum/maintenance:**see
 `operations/automation/automated-maintenance-guide.md`
 
--**Complete step-by-step backup/restore procedures:**see
-`operations/maintenance/backup-restore-procedures.md`
+-**Complete step-by-step backup/restore procedures:** use Backrest docs +
+service restart runbook until a dedicated restore guide is published.
 
 -**Service restart after restore:**see
 `operations/maintenance/service-restart-procedures.md`

@@ -19,13 +19,7 @@ underestimation of actual system performance.
 
 ### Main documents
 
-1. **[erni-ki-diagnostic-methodology.md](./erni-ki-diagnostic-methodology.md)**
-
-- Comprehensive diagnostic instructions
-- Correct component testing methodology
-- Avoiding typical diagnostic errors
-- Diagnostic report structure
-- System health evaluation criteria
+- Comprehensive diagnostic instructions (to be added)
 
 ### Tools
 

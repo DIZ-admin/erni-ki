@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/getting-started/safety-and-ethics.md](../../../ru/academy/getting-started/safety-and-ethics.md).
+[academy/getting-started/safety-and-ethics.md](../../../en/academy/getting-started/safety-and-ethics.md).

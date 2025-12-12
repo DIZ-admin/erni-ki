@@ -219,11 +219,11 @@ Entwürfe schreiben, Texte verbessern, Code-Hilfe, Informationszusammenfassung, 
 
 Jetzt, da Sie die KI-Grundlagen verstehen, gehen Sie weiter zu:
 
-- [Erste Schritte in Open WebUI](../../../ru/academy/getting-started/first-steps.md)
+- [Erste Schritte in Open WebUI](../../../en/academy/getting-started/first-steps.md)
   — beginnen Sie mit dem System zu arbeiten
-- [Modellvergleich](../../../ru/academy/getting-started/model-comparison.md) —
+- [Modellvergleich](../../../en/academy/getting-started/model-comparison.md) —
   wählen Sie das passende Modell
-- [Sicherheit und Ethik](../../../ru/academy/getting-started/safety-and-ethics.md)
+- [Sicherheit und Ethik](../../../en/academy/getting-started/safety-and-ethics.md)
   — verwenden Sie KI verantwortungsvoll
 
 ---
@@ -245,4 +245,4 @@ Textverarbeitung
 ---
 
 **Nächster Schritt:**
-[Erste Schritte in Open WebUI →](../../../ru/academy/getting-started/first-steps.md)
+[Erste Schritte in Open WebUI →](../../../en/academy/getting-started/first-steps.md)

@@ -7,7 +7,7 @@ last_updated: '2025-12-09'
 
 # Diagnostics (Archive)
 
-For the list of historical diagnostics see `docs/archive/diagnostics/index.md`.
+This directory stores historical diagnostics for reference runbooks.
 
 Directory contents:
 

@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter
-[academy/resources/glossar-holzbau.md](../../../ru/academy/resources/glossar-holzbau.md).
+[academy/resources/glossar-holzbau.md](../../../en/academy/resources/glossar-holzbau.md).

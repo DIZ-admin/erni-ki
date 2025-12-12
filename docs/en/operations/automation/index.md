@@ -16,8 +16,6 @@ or regular check procedures.
 - [automated-maintenance-guide.md](automated-maintenance-guide.md) — schedule of
   daily/weekly tasks, watchdog script control, policy for auto-start
   Cron/systemd timers.
-- [docker-cleanup-guide.md](docker-cleanup-guide.md) — automatic cleanup of
-  Docker images/volumes, rotation of stuck containers, resource recommendations.
 - [docker-log-rotation.md](docker-log-rotation.md) — logrotate and Fluent Bit
   configuration for container logs, storage parameters and monitoring overflows.
 

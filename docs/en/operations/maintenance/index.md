@@ -13,8 +13,8 @@ updates and shared storage cleanup.
 
 ## Documents
 
-- [backup-restore-procedures.md](backup-restore-procedures.md) — regulations for
-  creating backups and restoration.
+- [backup-restore-procedures.md](backup-restore-procedures.md) — placeholder
+  until the full English runbook is ready.
 - [docling-shared-volume.md](docling-shared-volume.md) — storage policy,
   security and cleanup of Docling shared volume.
 - [image-upgrade-checklist.md](image-upgrade-checklist.md) — step-by-step guide

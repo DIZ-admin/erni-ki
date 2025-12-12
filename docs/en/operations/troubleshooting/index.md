@@ -11,11 +11,12 @@ Collection of guides for incident analysis and service recovery.
 
 ## Sections
 
-- [Troubleshooting Guide](../../../ru/operations/troubleshooting/troubleshooting-guide.md)
-  — general methodology for finding root causes, checklists for network, GPU and
-  service issues (RU).
-- Supplement README with links to thematic runbooks from `operations/core` and
-  `operations/diagnostics` if new scenarios appear.
+- [Common issues](../../troubleshooting/common-issues.md) — quick fixes and
+  checklists.
+- [Operations Handbook](../core/operations-handbook.md) — escalation and
+  runbooks catalog.
+- Supplement this index with links to new runbooks from `operations/core` and
+  `operations/diagnostics` when scenarios appear.
 
 ## Standard Approach
 

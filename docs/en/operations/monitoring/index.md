@@ -16,16 +16,8 @@ guide, runbooks for alerts, dashboards and investigations.
   architecture, exporters, health checks and procedures.
 - [grafana-dashboards-guide.md](grafana-dashboards-guide.md) — description of
   key dashboards, metrics and best practices.
-- [prometheus-alerts-guide.md](prometheus-alerts-guide.md) — alerting rules
-  configuration and Alertmanager integration.
 - [prometheus-queries-reference.md](prometheus-queries-reference.md) — reference
   for useful Prometheus queries.
-- [legacy-monitoring-scripts-migration.md](legacy-monitoring-scripts-migration.md)
-  — quick plan for migrating to `health-monitor-v2.sh` and other updated
-  utilities.
-- [rag-monitoring.md](rag-monitoring.md) and
-  [searxng-redis-issue-analysis.md](searxng-redis-issue-analysis.md) — specific
-  cases and playbooks.
 - [access-log-sync-and-fluentbit.md](access-log-sync-and-fluentbit.md) —
   Nginx/Fluent Bit log collection and delivery.
 - [alertmanager-noise-reduction.md](alertmanager-noise-reduction.md) — dealing

@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter
-[academy/advanced/api-integration.md](../../../ru/academy/advanced/api-integration.md).
+[academy/advanced/api-integration.md](../../../en/academy/advanced/api-integration.md).

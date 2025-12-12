@@ -1383,7 +1383,8 @@ title: "Guide Title" language: en translation_status: complete source_version:
   эмоджи
 - [style-guide.md](../reference/style-guide.md) - Краткое руководство по стилю
 - [GLOSSARY.md](../GLOSSARY.md) - Глоссарий терминов
-- [CONTRIBUTING.md](../../../CONTRIBUTING.md) - Руководство для контрибьюторов
+- [CONTRIBUTING.md](https://github.com/DIZ-admin/erni-ki/blob/main/CONTRIBUTING.md)
+  - Руководство для контрибьюторов
 
 ## 11. Контрольный список
 

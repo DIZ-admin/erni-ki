@@ -12,6 +12,7 @@ Step-by-step guides for common tasks and configurations.
 
 ## Contents
 
-- [GitHub Secrets Setup](github-secrets-setup.md)
-- [Secrets Quick Reference](SECRETS-QUICK-REFERENCE.md)
-- [YAML Style Guide](yaml-style-guide.md)
+- Guides are being consolidated. Use the security and operations sections for
+  current procedures:
+  - [Security Action Plan](../operations/security-action-plan.md)
+  - [Operations Handbook](../operations/core/operations-handbook.md)

@@ -206,7 +206,7 @@ generate_secret "litellm_master_key" 48
 5.**Внедрить SOPS encryption**
 
 См. подробности в
-[Security Action Plan Task 3.1](../operations/security-action-plan.md#task-31-sops-для-секретов-p2)
+[Security Action Plan Task 3.1](../../operations/security-action-plan.md)
 
 6.**Automated rotation**
 
@@ -277,7 +277,7 @@ generate_secret "litellm_master_key" 48
 
 ## Ссылки
 
-- [Security Action Plan](../operations/security-action-plan.md)
+- [Security Action Plan](../../operations/security-action-plan.md)
 - ERNI-KI Comprehensive Analysis 2025-12-02 (archived)
 - `.gitignore`
 - `detect-secrets baseline` (.secrets.baseline)

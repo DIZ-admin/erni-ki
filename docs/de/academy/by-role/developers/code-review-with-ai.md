@@ -7,4 +7,4 @@ doc_version: '2025.11'
 ---
 
 Dieser Inhalt befindet sich in der aktuellen Version unter  
-[academy/by-role/developers/code-review-with-ai.md](../../../../ru/academy/by-role/developers/code-review-with-ai.md).
+[academy/by-role/developers/code-review-with-ai.md](../../../../en/academy/by-role/developers/code-review-with-ai.md).

@@ -147,13 +147,13 @@ Lehrling-Onboarding, Weiterbildung
 - Qualitätsmängel dokumentieren
 - Lösungen dokumentieren
 
-2. [Wissensdatenbank-Artikel](../../ru/academy/by-role/support/create-knowledge-base-article.md)
+2. [Wissensdatenbank-Artikel](../../en/academy/by-role/support/create-knowledge-base-article.md)
 
 - Fertigungsanleitungen
 - Best Practices
 - Fehlerbehandlung
 
-3. [Dokumente übersetzen](../../ru/academy/by-role/general-users/translate-document.md)
+3. [Dokumente übersetzen](../../en/academy/by-role/general-users/translate-document.md)
 
 - Technische Datenblätter
 - Lieferanteninfos (oft auf Deutsch/Französisch/Italienisch)
@@ -166,17 +166,17 @@ Lehrling-Onboarding, Weiterbildung
 
 **Spezieller Lernpfad:**
 
-1. [Erste Schritte](../../ru/academy/getting-started/first-steps.md)
+1. [Erste Schritte](../../en/academy/getting-started/first-steps.md)
 
 - Grundlagen verstehen
 - Open WebUI nutzen
 
-2. [Professionelle E-Mails](../../ru/academy/by-role/general-users/write-professional-email.md)
+2. [Professionelle E-Mails](../../en/academy/by-role/general-users/write-professional-email.md)
 
 - Geschäftskorrespondenz lernen
 - Ton und Stil
 
-3. [Wissensdatenbank nutzen](../../ru/academy/fundamentals/rag-basics.md)
+3. [Wissensdatenbank nutzen](../../en/academy/fundamentals/rag-basics.md)
 
 - Technische Infos finden
 - Lernen effizienter
@@ -190,19 +190,19 @@ professionellere Kommunikation
 
 **Prioritäts-Szenarien:**
 
-1. [E-Mail-Kommunikation](../../ru/academy/by-role/general-users/write-professional-email.md)
+1. [E-Mail-Kommunikation](../../en/academy/by-role/general-users/write-professional-email.md)
 
 - Kundenanfragen
 - Angebotsbegleitung
 - Allgemeine Korrespondenz
 
-2. [Dokumente übersetzen](../../ru/academy/by-role/general-users/translate-document.md)
+2. [Dokumente übersetzen](../../en/academy/by-role/general-users/translate-document.md)
 
 - DE ↔ FR ↔ IT (wichtig in der Schweiz!)
 - Kundeninfos
 - Marketing-Material
 
-3. [Präsentationen](../../ru/academy/by-role/general-users/prepare-presentation.md)
+3. [Präsentationen](../../en/academy/by-role/general-users/prepare-presentation.md)
 
 - Firmenpräsentationen
 - Lehrlingsveranstaltungen

@@ -38,8 +38,8 @@ GitHub CI/CD setup
 
 ### Status & Version
 
-Status files are maintained in the Russian documentation (canonical source). See
-[System Status](../../ru/system/status.md).
+Status files are maintained in the system section. See
+[System Status](../system/status.md).
 
 ## For Developers
 

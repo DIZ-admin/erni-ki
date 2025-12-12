@@ -19,7 +19,7 @@ last_updated: '2025-12-10'
 
 ### Архивные аудиты
 
-Детальные аудиты системы находятся в [archive/audits](../audits/index.md).
+Детальные аудиты системы находятся в [archive/audits](../audits/README.md).
 
 ## Примечание
 

@@ -164,7 +164,7 @@ Komponentenbeschreibung -**[Administrator-Handbuch](../operations/core/admin-gui
 Detaillierte
 Verwaltungsanweisungen -**[Monitoring und Alerts](../operations/monitoring/monitoring-guide.md)**-
 Prometheus/Grafana
-Konfiguration -**[Backup-Handbuch](../../ru/operations/backup-guide.md)**-
+Konfiguration -**[Backup-Handbuch](../../en/operations/backup-guide.md)**-
 Backrest
 Konfiguration -**[Fehlerbehebung](../operations/troubleshooting/troubleshooting-guide.md)**-
 Lösung typischer Probleme
