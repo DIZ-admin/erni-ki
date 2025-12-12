@@ -1,0 +1,21 @@
+# RAGFlow Adapter Configuration (template)
+
+# RAGFlow API Key (required) - set to your secret token
+RAGFLOW_API_KEY=changeme
+
+# Optional: API key for this adapter (leave empty for internal network only)
+ADAPTER_API_KEY=
+
+# RAGFlow connection (set to internal or external URL)
+RAGFLOW_BASE_URL=http://ragflow:19090
+RAGFLOW_DATASET_ID=changeme
+
+# Polling configuration for document parsing
+POLL_INTERVAL=5
+MAX_POLL_ATTEMPTS=60
+
+# Absolute timeout for entire processing (seconds)
+PROCESS_TIMEOUT=300
+
+# Maximum file size (bytes) - default 100MB
+MAX_FILE_SIZE=104857600

@@ -60,12 +60,6 @@ DEPRECATED_FIELDS = [
     "status",  # use system_status or doc_status
 ]
 
-# Directories excluded from validation (not locale-specific content)
-EXCLUDED_DIRS = [
-    "docs/data",
-    "docs/archive",
-]
-
 TARGET_DOC_VERSION = "2025.11"
 
 
@@ -157,9 +151,6 @@ def main() -> int:
     doc_version_mismatch = 0
 
     for md_file in docs_dir.rglob("*.md"):
-        # Skip excluded directories
-        if any(str(md_file).startswith(excl) for excl in EXCLUDED_DIRS):
-            continue
         errs, metadata, info = validate_file(md_file)
         if errs:
             print(f"\n{md_file}:")

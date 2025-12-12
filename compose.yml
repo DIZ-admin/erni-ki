@@ -426,11 +426,6 @@ services:
     build:
       context: ./services/ragflow-adapter
       dockerfile: Dockerfile
-    environment:
-      - RAGFLOW_BASE_URL=http://192.168.62.153:19090
-      - RAGFLOW_DATASET_ID=3ade126ccb7811f0b6bca21184c8b456
-      - POLL_INTERVAL=5
-      - MAX_POLL_ATTEMPTS=120
     env_file: env/ragflow-adapter.env
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
