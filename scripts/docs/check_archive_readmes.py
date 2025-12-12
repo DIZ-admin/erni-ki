@@ -8,11 +8,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCHIVE_CHECKS = {
-    ROOT / "docs/archive/audits": ROOT / "docs/archive/audits/README.md",
-    ROOT / "docs/archive/diagnostics": ROOT / "docs/archive/diagnostics/README.md",
-    ROOT / "docs/archive/incidents": ROOT / "docs/archive/incidents/README.md",
+    ROOT / "docs/en/archive/audits": ROOT / "docs/en/archive/audits/README.md",
+    ROOT / "docs/en/archive/diagnostics": ROOT / "docs/en/archive/diagnostics/README.md",
+    ROOT / "docs/en/archive/incidents": ROOT / "docs/en/archive/incidents/README.md",
 }
-DATA_DIR = ROOT / "docs/data"
+DATA_DIR = ROOT / "docs/en/data"
 DATA_README = DATA_DIR / "README.md"
 
 
