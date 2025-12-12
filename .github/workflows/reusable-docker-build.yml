@@ -193,6 +193,8 @@ jobs:
           scanners: "vuln"
           ignore-unfixed: true
           exit-code: ${{ inputs.trivy-exit-code }}
+        env:
+          TRIVY_SKIP_VERSION_CHECK: "true"
 
       - name: 📤 Upload Trivy SARIF results
         if: inputs.trivy-scan && inputs.push && always()

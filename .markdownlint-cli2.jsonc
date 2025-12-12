@@ -19,7 +19,7 @@
     "MD060": false
   },
   "globs": ["**/*.md"],
-  "ignores": ["node_modules", "tests/node_modules", "tests/fixtures", "compose/data"],
+  "ignores": ["node_modules", "tests/node_modules", "tests/fixtures", "compose/data", "data/**", "logs/**", "site-academy/**", ".cache/**", ".config-backup/**", ".venv/**"],
   "customRules": [],
   "overrides": [
     {
