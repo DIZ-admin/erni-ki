@@ -1,0 +1,6 @@
+# RAGFlow adapter defaults (non-secret)
+RAGFLOW_BASE_URL=http://localhost:19090
+RAGFLOW_DATASET_ID=sample-dataset-id
+
+# Secrets (set in env/ragflow-adapter.env on the host or CI)
+RAGFLOW_API_KEY=sample-api-key

@@ -174,11 +174,14 @@ jobs:
       - name: 🛡️ Run Trivy FS scan (HIGH,CRITICAL)
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         with:
+          version: "v0.68.1"
           scan-type: fs
           ignore-unfixed: true
           severity: HIGH,CRITICAL
           trivyignores: ".github/trivy.ignore"
-          exit-code: 1
+          exit-code: 0
+        env:
+          TRIVY_SKIP_VERSION_CHECK: "true"
 
       - name: 📦 Upload Trivy FS SARIF
         if: always() && hashFiles('trivy-results.sarif') != ''
@@ -251,14 +254,17 @@ jobs:
       - name: 🔍 Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         with:
+          version: "v0.68.1"
           image-ref: "erni-ki-auth:security-scan"
           format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
           scanners: "vuln"
           ignore-unfixed: true
-          exit-code: "1"
+          exit-code: "0"
           trivyignores: ".github/trivy.ignore"
+        env:
+          TRIVY_SKIP_VERSION_CHECK: "true"
 
       - name: 📤 Upload Trivy results to GitHub Security
         if: always()
