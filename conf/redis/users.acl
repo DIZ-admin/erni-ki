@@ -1,5 +1,5 @@
 user default on >${REDIS_PASSWORD} ~* &* +@all -@dangerous +INFO
-user searxng on >${REDIS_PASSWORD} ~* &* +@read +@write +@pubsub +@connection +@string +@hash +@list +@set +@sortedset -@dangerous -@admin
+user searxng on >${REDIS_PASSWORD} ~* &* +@read +@write +@pubsub +@connection +@string +@hash +@list +@set +@sortedset +@scripting -@dangerous -@admin
 user openwebui on >${REDIS_PASSWORD} ~* &* +@read +@write +@pubsub +@connection +@string +@hash +@transaction -@dangerous -@admin
 user litellm on >${REDIS_PASSWORD} ~litellm:* &* +@read +@write +@connection +@string +@hash -@dangerous -@admin
 user exporter on >${REDIS_PASSWORD} ~* &* -@all -@dangerous -@write +@read +PING +INFO +CLIENT|LIST +CLIENT|SETNAME +CONFIG|GET +SLOWLOG|LEN +SLOWLOG|GET +LATENCY|LATEST +LATENCY|HISTOGRAM +ROLE
