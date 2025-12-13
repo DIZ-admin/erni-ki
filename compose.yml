@@ -568,12 +568,16 @@ services:
       - NVIDIA_VISIBLE_DEVICES=${OLLAMA_GPU_VISIBLE_DEVICES:-0}
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       - CUDA_VISIBLE_DEVICES=${OLLAMA_CUDA_VISIBLE_DEVICES:-0}
-      - OLLAMA_NUM_PARALLEL=1
-      - OLLAMA_MAX_LOADED_MODELS=1
-      - OLLAMA_NUM_CTX=2048
-      # Flash attention occasionally breaks some models; disable for stability
-      - OLLAMA_FLASH_ATTENTION=0
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
+      # Core settings (override env file for critical params)
+      # 2 parallel requests - optimal for RTX 5000 with large models
+      - OLLAMA_NUM_PARALLEL=2
+      # 3 models: LLM + embedding + fallback/vision
+      - OLLAMA_MAX_LOADED_MODELS=3
+      # 4096 context - good balance for 16GB VRAM
+      - OLLAMA_NUM_CTX=4096
+      # Flash attention disabled for compatibility
+      - OLLAMA_FLASH_ATTENTION=0
     env_file: env/ollama.env
     # GPU memory limits optimized for RTX 5000 (16GB VRAM)
     # Ollama gets GPU priority (VRAM management via OLLAMA_MAX_VRAM=0.75)
@@ -701,6 +705,7 @@ services:
     volumes:
       - ./data/openwebui:/app/backend/data
       - ./data/docling/shared:/app/backend/data/docling-shared
+      - ./data/openwebui/static:/app/backend/open_webui/static
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
     secrets:
       - postgres_password
@@ -1533,6 +1538,8 @@ services:
       - ALL
     cap_add:
       - DAC_READ_SEARCH # Required for reading container logs
+      - DAC_OVERRIDE # Required for writing positions file
+      - CHOWN # Required for file ownership operations
     command: ["-config.file=/etc/promtail/config.yaml"]
     volumes:
       - ./conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro
