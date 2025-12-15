@@ -358,7 +358,7 @@ jobs:
           echo "Services started for DAST testing"
 
       - name: 🎯 Run ZAP Baseline Scan
-        uses: zaproxy/action-baseline@cebf6b3640f9d7f87a5a2af49091f32c9d374e82 # v0.14.0
+        uses: zaproxy/action-baseline@6c5a007541891231cd9e0ddec25d4f25c59c9874 # v0.15.0
         with:
           target: "http://localhost:8080"
           rules_file_name: ".github/zap-rules.tsv"
