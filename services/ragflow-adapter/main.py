@@ -13,6 +13,7 @@ import tempfile
 import time
 from urllib.parse import unquote
 
+import aiofiles
 import httpx
 from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse
@@ -256,8 +257,9 @@ async def _process_with_ragflow(
 
         logger.info(f"[{request_id}] ragflow_upload: url={upload_url}")
 
-        with open(tmp_path, "rb") as f:
-            files = {"file": (filename, f, mime_type)}
+        async with aiofiles.open(tmp_path, "rb") as f:
+            content = await f.read()
+            files = {"file": (filename, content, mime_type)}
             resp = await client.post(
                 upload_url,
                 files=files,

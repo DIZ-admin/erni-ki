@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir fastapi uvicorn httpx python-multipart
+    && pip install --no-cache-dir fastapi uvicorn httpx python-multipart aiofiles
 
 COPY main.py .
 
