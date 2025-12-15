@@ -2,6 +2,8 @@ name: Update Status Snippets
 
 on:
   push:
+    branches:
+      - main
     paths:
       - docs/reference/status.yml
       - docs/VERSION.yaml
@@ -9,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   actions: read
 
 # Prevent concurrent status updates
@@ -20,9 +23,13 @@ jobs:
   update-snippets:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Skip if commit is from this workflow (prevent loops)
+    if: "!contains(github.event.head_commit.message, 'auto-update status snippets')"
     steps:
       - name: Checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
@@ -36,7 +43,26 @@ jobs:
       - name: Update status snippets
         run: python scripts/docs/update_status_snippet.py
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
-          commit_message: "docs: auto-update status snippets"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: auto-update status snippets"
+          title: "docs: auto-update status snippets"
+          body: |
+            Automated update of status snippets from `docs/reference/status.yml`.
+
+            This PR was created automatically by the Update Status Snippets workflow.
+          branch: auto/update-status-snippets
+          delete-branch: true
+          labels: documentation,automated
