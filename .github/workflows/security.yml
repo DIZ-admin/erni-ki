@@ -76,7 +76,7 @@ jobs:
 
       - name: 📤 Upload bun audit results
         if: hashFiles('package.json') != ''
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: bun-audit-results
           path: bun-audit-results.json
@@ -133,7 +133,7 @@ jobs:
 
       - name: 📦 Upload Trivy FS SARIF
         if: always() && hashFiles('trivy-results.sarif') != ''
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: sarif-trivy-fs
           path: trivy-results.sarif
@@ -171,7 +171,7 @@ jobs:
 
       - name: 📦 Upload Gitleaks SARIF
         if: always() && hashFiles('gitleaks-results.sarif') != ''
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: sarif-gitleaks
           path: gitleaks-results.sarif
@@ -216,7 +216,7 @@ jobs:
 
       - name: 📤 Upload Trivy results to GitHub Security
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: sarif-trivy-image
           path: trivy-results.sarif
@@ -232,7 +232,7 @@ jobs:
 
       - name: 📤 Upload Grype results
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: sarif-grype
           path: ${{ steps['grype-scan'].outputs.sarif }}
@@ -260,7 +260,7 @@ jobs:
 
       - name: 📤 Upload Checkov results
         if: always() && hashFiles('checkov-results.sarif') != ''
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: sarif-checkov
           path: checkov-results.sarif
@@ -368,7 +368,7 @@ jobs:
 
       - name: 📤 Upload ZAP Report
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: zap-report
           path: report_html.html
@@ -385,7 +385,7 @@ jobs:
 
       - name: 📤 Upload Nuclei Results
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
         with:
           name: nuclei-report
           path: |

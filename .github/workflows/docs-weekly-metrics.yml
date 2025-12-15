@@ -98,7 +98,7 @@ jobs:
           echo "threshold_exceeded=$threshold_exceeded" >> $GITHUB_OUTPUT
 
       - name: 📤 Upload metrics artifact
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.6.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v4.6.0
         with:
           name: docs-metrics-${{ github.run_number }}
           path: |
