@@ -176,11 +176,8 @@ services:
           exec redis-server "$${CONF_OUT}";
         fi
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pw=$(tr -d '\r\n' < /run/secrets/redis_password); redis-cli -a \"$$pw\" ping | grep PONG",
-        ]
+      # Use redis-cli with AUTH from environment (set by command entrypoint)
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 30s
       timeout: 3s
       retries: 5
@@ -193,7 +190,8 @@ services:
       - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
       - ./conf/redis/users.acl:/usr/local/etc/redis/users.acl.template:ro
     secrets:
-      - redis_password
+      - source: redis_password
+        mode: 0444 # Allow read for healthcheck (runs as redis user)
     networks:
       - data
     labels:
@@ -1017,6 +1015,8 @@ services:
   alertmanager:
     image: prom/alertmanager:v0.29.0 # updated from v0.27.0
     container_name: erni-ki-alertmanager
+    # Run as root to read Docker secrets (like Grafana)
+    user: "0:0"
     # Security hardening
     security_opt:
       - no-new-privileges:true
@@ -1061,10 +1061,10 @@ services:
     secrets:
       - source: slack_alert_webhook
         target: slack_alert_webhook
-        mode: 0444
+      - source: alertmanager_webhook_secret
+        target: alertmanager_webhook_secret
       - source: pagerduty_routing_key
         target: pagerduty_routing_key
-        mode: 0444
     networks:
       - monitoring
 
@@ -1130,8 +1130,8 @@ services:
     environment:
       - PG_EXPORTER_DISABLE_DEFAULT_METRICS=false
       - PG_EXPORTER_DISABLE_SETTINGS_METRICS=true
-      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
-      - PG_EXPORTER_EXCLUDE_DATABASES=template0,template1,postgres
+      # Auto-discovery deprecated in v0.16+, databases specified in DSN
+      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=false
     volumes:
       - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
       - ./conf/postgres-exporter/config.yml:/etc/postgres_exporter.yml:ro
@@ -1629,6 +1629,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    env_file:
+      - ./env/webhook-receiver.env
     environment:
       # Port for webhook endpoints
       - WEBHOOK_PORT=9093
@@ -1798,6 +1800,10 @@ secrets:
   # Docling picture description API config (optional)
   docling_picture_api:
     file: ./secrets/docling_picture_api.txt
+
+  # Alertmanager webhook secret (used by: webhook-receiver)
+  alertmanager_webhook_secret:
+    file: ./secrets/alertmanager_webhook_secret.txt
 
 # ============================================================================
 # NETWORKS - INFRA-3a Segmentation
