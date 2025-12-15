@@ -13,7 +13,7 @@ import tempfile
 import time
 from urllib.parse import unquote
 
-import aiofiles
+import aiofiles  # type: ignore[import-untyped]
 import httpx
 from fastapi import FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse
