@@ -1,24 +1,32 @@
 # CHANGELOG - ERNI-KI System Updates
 
-# [2025-12-12] - Release 0.61.3 (service refresh & hardening)
+# [2025-12-15] - Release 0.61.3 (service refresh & hardening)
 
 ## Summary
 
 - OpenWebUI обновлена до `v0.6.40`, Ollama до `0.13.0` (GPU), LiteLLM до
   `v1.80.0-stable.1`.
 - Мониторинг/логирование: Prometheus `v3.7.3`, Grafana `v12.3.0`, Loki `v3.6.2`,
-  Alertmanager `v0.29.0`, Fluent Bit `v4.2.0` (без изменений).
+  Alertmanager `v0.29.0`, Fluent Bit `v4.2.0`.
 - Обновлён SearXNG (2025.11.21) и Tika (3.2.3.0-full), cloudflared 2025.11.1.
 - Compose hardening: `read_only`/`tmpfs`/`no-new-privileges`/`cap_drop ALL` для
   cloudflared, EdgeTTS, Tika; watchtower ограничен по сервисам.
+- **Infrastructure fixes (24h log analysis):**
+  - Ollama optimized for RTX 5000: `NUM_PARALLEL=2`, `MAX_LOADED_MODELS=3`, `NUM_CTX=4096`
+  - Promtail: added `DAC_OVERRIDE`, `CHOWN` capabilities for positions file
+  - OpenWebUI: added static files volume mount
+  - SearXNG: added `@scripting` to Redis ACL for EVALSHA, Docker network whitelist in limiter.toml
+  - Fixed 3 broken documentation links (lychee 0 errors)
 
 ## Реализация
 
 1. **Compose** — подтянуты новые теги контейнеров (OpenWebUI, Ollama, LiteLLM),
    обновлён SearXNG и Tika, добавлены security_opts/cap_drop для внешних
-   сервисов.
+   сервисов, оптимизированы настройки Ollama для RTX 5000.
 2. **Статус** — `docs/reference/status.yml` синхронизирован с актуальными
    версиями compose (стек AI/мониторинга, cloudflared/searxng/Tika).
+3. **Инфраструктура** — исправлены permission denied для Promtail и static files,
+   Redis ACL для SearXNG, rate limiting whitelist.
 
 ## Проверки
 
@@ -30,6 +38,8 @@
 - `pytest`
 - `cd auth && go test ./...`
 - `mkdocs build --strict`
+- `lychee --offline docs/ README.md` — 0 errors
+- `trivy fs --severity HIGH,CRITICAL .` — только pre-commit cache (ignored)
 
 # CHANGELOG - ERNI-KI System Updates
 

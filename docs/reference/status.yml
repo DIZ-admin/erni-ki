@@ -1,5 +1,5 @@
 # Shared ERNI-KI status block used in README and MkDocs (Wave 1)
-date: "2025-12-12"
+date: "2025-12-15"
 release: "Production Ready v0.61.3"
 containers: "34/34 services healthy"
 grafana_dashboards: "5/5 Grafana dashboards (provisioned)"
