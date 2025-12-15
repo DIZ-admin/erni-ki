@@ -430,9 +430,7 @@ scrape_configs:
   - job_name: "loki"
     static_configs:
       - targets: ["loki:3100"]
-    scheme: https
-    tls_config:
-      insecure_skip_verify: true
+    scheme: http
     scrape_interval: 30s
     metrics_path: /metrics
     scrape_timeout: 10s

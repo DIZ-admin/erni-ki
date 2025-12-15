@@ -1,0 +1,7 @@
+# Webhook Receiver Service Configuration
+# Used for Alertmanager webhook authentication
+
+# HMAC secret for validating Alertmanager webhook signatures
+# Generate with: openssl rand -base64 32
+# This should match the secret configured in alertmanager.yml
+ALERTMANAGER_WEBHOOK_SECRET=

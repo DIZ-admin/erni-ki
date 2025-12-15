@@ -154,6 +154,20 @@ def verify_signature(body: bytes, signature: str | None) -> bool:
     return hmac.compare_digest(signature, expected)
 
 
+def verify_bearer_token(auth_header: str | None) -> bool:
+    """Verify Bearer token authentication (for Alertmanager compatibility)."""
+    secret = _get_webhook_secret()
+    if not secret:
+        logger.error("WEBHOOK_SECRET not configured; rejecting request")
+        return False
+    if not auth_header:
+        return False
+    if not auth_header.startswith("Bearer "):
+        return False
+    token = auth_header[7:]  # Remove "Bearer " prefix
+    return hmac.compare_digest(token, secret)
+
+
 def save_alert_to_file(alert_data: dict[str, Any], alert_type: str = "general") -> None:
     """Persist alert payload to ALERTS_DIR."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S%f")
@@ -273,8 +287,12 @@ def health_check():
 def _create_webhook_handler(alert_type: str, description: str):
     def handler():
         try:
+            # Support both X-Signature (HMAC) and Bearer token authentication
             signature = request.headers.get("X-Signature")
-            if not verify_signature(request.get_data(), signature):
+            auth_header = request.headers.get("Authorization")
+            if not verify_signature(request.get_data(), signature) and not verify_bearer_token(
+                auth_header
+            ):
                 return jsonify({"error": "Unauthorized"}), 401
             try:
                 raw_json = request.get_json(force=True)

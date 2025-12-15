@@ -37,16 +37,16 @@ configure_redis_url() {
   log "Reading redis_password secret..."
   if password="$(read_secret "redis_password")"; then
     # URL format with username for ACL: redis://username:password@host:port/db  # pragma: allowlist secret
-    redis_url="redis://${username}:${password}@${host}:${port}/${db}" # pragma: allowlist secret
-    export SEARXNG_REDIS_URL="${redis_url}"
-    export SEARXNG_VALKEY_URL="${redis_url}"
-    log "Redis URL configured for user ${username} on ${host}:${port}/${db} (value not logged)"
-    # Note: settings.yml already has correct URL with username
+    valkey_url="redis://${username}:${password}@${host}:${port}/${db}" # pragma: allowlist secret
+    # Only export SEARXNG_VALKEY_URL to avoid deprecation warning
+    # (SearXNG warns if SEARXNG_REDIS_URL is set)
+    export SEARXNG_VALKEY_URL="${valkey_url}"
+    log "Valkey URL configured for user ${username} on ${host}:${port}/${db} (value not logged)"
     return
   fi
 
   log "warning: redis_password secret missing; using host=${host} port=${port} db=${db} (URL value not logged; will fail if requirepass is enabled)"
-  export SEARXNG_REDIS_URL="${SEARXNG_REDIS_URL:-redis://${host}:${port}/${db}}" # pragma: allowlist secret
+  # Only export SEARXNG_VALKEY_URL to avoid deprecation warning
   export SEARXNG_VALKEY_URL="${SEARXNG_VALKEY_URL:-redis://${host}:${port}/${db}}" # pragma: allowlist secret
 }
 
@@ -64,7 +64,7 @@ main() {
   configure_searxng_secret
   configure_redis_url
 
-  log "Configured SEARXNG_REDIS_URL and SEARXNG_VALKEY_URL environment variables (values not logged)"
+  log "Configured SEARXNG_VALKEY_URL environment variable (value not logged)"
 
   if [ $# -gt 0 ]; then
     log "Executing: $*"
