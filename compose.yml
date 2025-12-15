@@ -176,11 +176,8 @@ services:
           exec redis-server "$${CONF_OUT}";
         fi
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pw=$(tr -d '\r\n' < /run/secrets/redis_password); redis-cli -a \"$$pw\" ping | grep PONG",
-        ]
+      # Use redis-cli with AUTH from environment (set by command entrypoint)
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 30s
       timeout: 3s
       retries: 5
@@ -193,7 +190,8 @@ services:
       - ./conf/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
       - ./conf/redis/users.acl:/usr/local/etc/redis/users.acl.template:ro
     secrets:
-      - redis_password
+      - source: redis_password
+        mode: 0444 # Allow read for healthcheck (runs as redis user)
     networks:
       - data
     labels:
@@ -485,8 +483,8 @@ services:
       - backend
       - data
     restart: unless-stopped
-    mem_limit: 1g
-    mem_reservation: 512m
+    mem_limit: 1536m
+    mem_reservation: 768m
     cpus: "1.0"
     volumes:
       - ./conf/mcposerver:/app/conf:ro
@@ -924,6 +922,8 @@ services:
       - CHOWN
       - SETUID
       - SETGID
+      - FOWNER # Required for chmod on grafana.db
+      - DAC_OVERRIDE # Required for file operations
 
   uptime-kuma:
     depends_on:
@@ -946,8 +946,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    mem_limit: 512m
-    mem_reservation: 256m
+    mem_limit: 768m
+    mem_reservation: 384m
     cpus: "0.5"
     # Security hardening
     security_opt:
@@ -1017,11 +1017,16 @@ services:
   alertmanager:
     image: prom/alertmanager:v0.29.0 # updated from v0.27.0
     container_name: erni-ki-alertmanager
+    # Run as root to read Docker secrets (like Grafana)
+    user: "0:0"
     # Security hardening
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    cap_add:
+      - DAC_OVERRIDE # Required for writing to /alertmanager directory
+      - CHOWN # Required for file ownership operations
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager"
@@ -1061,10 +1066,10 @@ services:
     secrets:
       - source: slack_alert_webhook
         target: slack_alert_webhook
-        mode: 0444
+      - source: alertmanager_webhook_secret
+        target: alertmanager_webhook_secret
       - source: pagerduty_routing_key
         target: pagerduty_routing_key
-        mode: 0444
     networks:
       - monitoring
 
@@ -1130,8 +1135,8 @@ services:
     environment:
       - PG_EXPORTER_DISABLE_DEFAULT_METRICS=false
       - PG_EXPORTER_DISABLE_SETTINGS_METRICS=true
-      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=true
-      - PG_EXPORTER_EXCLUDE_DATABASES=template0,template1,postgres
+      # Auto-discovery deprecated in v0.16+, databases specified in DSN
+      - PG_EXPORTER_AUTO_DISCOVER_DATABASES=false
     volumes:
       - ./scripts/infrastructure/postgres-exporter-entrypoint.sh:/entrypoint/postgres-exporter.sh:ro
       - ./conf/postgres-exporter/config.yml:/etc/postgres_exporter.yml:ro
@@ -1291,8 +1296,8 @@ services:
     environment:
       - REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
       - REDIS_EXPORTER_LOG_FORMAT=txt
-      - REDIS_EXPORTER_DEBUG=true
-      - REDIS_USER=default
+      - REDIS_EXPORTER_DEBUG=false
+      - REDIS_USER=exporter
       - REDIS_ADDR=redis://redis:6379
     ports:
       - "127.0.0.1:9121:9121"
@@ -1526,44 +1531,45 @@ services:
         aliases:
           - fluent-bit
 
-  promtail:
-    depends_on:
-      loki:
-        condition: service_healthy
-    image: grafana/promtail:3.0.0
-    container_name: erni-ki-promtail
-    # Security hardening
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    cap_add:
-      - DAC_READ_SEARCH # Required for reading container logs
-      - DAC_OVERRIDE # Required for writing positions file
-      - CHOWN # Required for file ownership operations
-    command: ["-config.file=/etc/promtail/config.yaml"]
-    volumes:
-      - ./conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro
-      - ./data/promtail:/var/log/promtail
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-    networks:
-      monitoring:
-        aliases:
-          - promtail
-    logging: *monitoring-logging
-    restart: unless-stopped
-    mem_limit: 256m
-    mem_reservation: 128m
-    cpus: "0.3"
-    healthcheck:
-      test: ["CMD", "/usr/bin/promtail", "-version"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
-      - "com.centurylinklabs.watchtower.scope=logging-stack"
+  # DISABLED: Promtail duplicates Fluent Bit functionality - using Fluent Bit only
+  # To re-enable: uncomment and run `docker compose up -d promtail`
+  # promtail:
+  #   depends_on:
+  #     loki:
+  #       condition: service_healthy
+  #   image: grafana/promtail:3.0.0
+  #   container_name: erni-ki-promtail
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   cap_drop:
+  #     - ALL
+  #   cap_add:
+  #     - DAC_READ_SEARCH
+  #     - DAC_OVERRIDE
+  #     - CHOWN
+  #   command: ["-config.file=/etc/promtail/config.yaml"]
+  #   volumes:
+  #     - ./conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro
+  #     - ./data/promtail:/var/log/promtail
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #   networks:
+  #     monitoring:
+  #       aliases:
+  #         - promtail
+  #   logging: *monitoring-logging
+  #   restart: unless-stopped
+  #   mem_limit: 256m
+  #   mem_reservation: 128m
+  #   cpus: "0.3"
+  #   healthcheck:
+  #     test: ["CMD", "/usr/bin/promtail", "-version"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
+  #     start_period: 10s
+  #   labels:
+  #     - "com.centurylinklabs.watchtower.enable=true"
+  #     - "com.centurylinklabs.watchtower.scope=logging-stack"
 
   # RAG Exporter - RAG SLA metrics (latency, sources)
   rag-exporter:
@@ -1629,6 +1635,8 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    env_file:
+      - ./env/webhook-receiver.env
     environment:
       # Port for webhook endpoints
       - WEBHOOK_PORT=9093
@@ -1798,6 +1806,10 @@ secrets:
   # Docling picture description API config (optional)
   docling_picture_api:
     file: ./secrets/docling_picture_api.txt
+
+  # Alertmanager webhook secret (used by: webhook-receiver)
+  alertmanager_webhook_secret:
+    file: ./secrets/alertmanager_webhook_secret.txt
 
 # ============================================================================
 # NETWORKS - INFRA-3a Segmentation
