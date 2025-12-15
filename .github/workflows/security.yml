@@ -50,7 +50,7 @@ jobs:
 
       # Scan Go dependencies
       - name: 🐹 Setup Go
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v5
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
@@ -159,7 +159,7 @@ jobs:
           extra_args: --only-verified
 
       - name: 🐹 Setup Go
-        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v5
         with:
           go-version-file: auth/go.mod
           cache-dependency-path: auth/go.sum
