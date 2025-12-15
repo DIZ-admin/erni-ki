@@ -109,5 +109,27 @@ def main() -> None:
     app.run(host="0.0.0.0", port=port)  # noqa: S104  # nosec B104
 
 
+# Start probe loop when module is loaded (for gunicorn)
+def _start_probe_thread() -> None:
+    """Start probe loop in background thread."""
+    import signal
+    from typing import Any
+
+    def _handle_signal(signum: int, _frame: Any) -> None:
+        logger.info("Received signal %s, shutting down probe loop", signum)
+        _shutdown_event.set()
+
+    signal.signal(signal.SIGTERM, _handle_signal)
+    signal.signal(signal.SIGINT, _handle_signal)
+
+    t = threading.Thread(target=probe_loop, daemon=True)
+    t.start()
+    logger.info("RAG exporter probe thread started")
+
+
+# Start probe on module import (gunicorn loads the module)
+_start_probe_thread()
+
+
 if __name__ == "__main__":
     main()

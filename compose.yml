@@ -267,6 +267,7 @@ services:
     networks:
       - backend
       - data
+      - monitoring
     labels:
       - "com.erni-ki.service=litellm"
       - "com.erni-ki.version=main-stable"
@@ -484,9 +485,9 @@ services:
       - backend
       - data
     restart: unless-stopped
-    mem_limit: 512m
-    mem_reservation: 256m
-    cpus: "0.5"
+    mem_limit: 1g
+    mem_reservation: 512m
+    cpus: "1.0"
     volumes:
       - ./conf/mcposerver:/app/conf:ro
       - ./data:/app/data
@@ -1584,6 +1585,9 @@ services:
     restart: unless-stopped
     user: "65534:65534"
     read_only: true
+    # tmpfs for gunicorn worker temp files
+    tmpfs:
+      - /tmp:mode=1777,size=10m
     mem_limit: 512m
     mem_reservation: 256m
     cpus: "0.5"

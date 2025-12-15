@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application
 COPY webhook-receiver.py .
+COPY models.py .
 COPY scripts/ ./scripts/
 
 # Create directories
@@ -48,5 +49,5 @@ EXPOSE 9093
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:9093/health || exit 1
 
-# Run
-CMD ["python", "webhook-receiver.py"]
+# Run with gunicorn (production WSGI server)
+CMD ["gunicorn", "--bind", "0.0.0.0:9093", "--workers", "2", "--threads", "4", "--access-logfile", "-", "--error-logfile", "-", "webhook-receiver:app"]

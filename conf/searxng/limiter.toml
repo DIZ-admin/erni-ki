@@ -17,6 +17,11 @@ pass_ip = [
 ]
 pass_searxng_org = true
 
-[real_ip]
-# Trust X-Forwarded-For from internal proxies
-x_for = 1
+# Trusted proxies configuration (replaces deprecated real_ip section)
+[botdetection]
+trusted_proxies = [
+    '127.0.0.0/8',
+    '10.0.0.0/8',
+    '172.16.0.0/12',
+    '192.168.0.0/16',
+]
