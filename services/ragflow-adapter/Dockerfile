@@ -1,8 +1,10 @@
 FROM python:3.12-slim
 
-# Create non-root user for security
-RUN groupadd --gid 1000 appuser \
-    && useradd --uid 1000 --gid 1000 --create-home appuser
+# Create non-root user for security (CKV_DOCKER_3)
+ENV APP_USER=appuser APP_UID=1000 APP_GID=1000
+
+RUN groupadd --gid "$APP_GID" "$APP_USER" \
+    && useradd --uid "$APP_UID" --gid "$APP_GID" --create-home --shell /bin/bash "$APP_USER"
 
 WORKDIR /app
 
@@ -12,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 
 COPY --chown=appuser:appuser main.py .
 
-USER appuser
+USER $APP_UID:$APP_GID
 
 EXPOSE 8090
 

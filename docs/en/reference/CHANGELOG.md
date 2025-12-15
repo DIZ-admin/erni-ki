@@ -2,12 +2,38 @@
 language: en
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-28'
+last_updated: '2025-12-12'
 ---
 
 # CHANGELOG - ERNI-KI Documentation
 
 [TOC]
+
+## [0.61.3] - 2025-12-12
+
+### Service Refresh & Hardening
+
+- OpenWebUI bumped to `v0.6.40`; Ollama to `0.13.0` (GPU); LiteLLM to
+  `v1.80.0-stable.1`.
+- Monitoring stack unchanged at Prometheus `v3.7.3`, Grafana `v12.3.0`, Loki
+  `v3.6.2`, Alertmanager `v0.29.0`, Fluent Bit `v4.2.0`.
+- SearXNG refreshed to `2025.11.21-b876d0bed`; Tika pinned to
+  `apache/tika:3.2.3.0-full`; cloudflared at `2025.11.1`.
+- Compose hardening: added `read_only`/`tmpfs`/`no-new-privileges`/`cap_drop ALL`
+  to cloudflared/EdgeTTS/Tika; watchtower scope limited.
+- Status snippet `docs/reference/status.yml` updated to reflect current
+  versions.
+
+### Validation
+
+- `bunx eslint .`
+- `bun run format:check`
+- `ruff check .` / `ruff format --check .`
+- `mypy --config-file mypy.ini`
+- `bunx vitest run`
+- `pytest`
+- `cd auth && go test ./...`
+- `mkdocs build --strict`
 
 ## [5.3.0] - 2025-11-28
 

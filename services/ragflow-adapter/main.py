@@ -257,14 +257,16 @@ async def _process_with_ragflow(
 
         logger.info(f"[{request_id}] ragflow_upload: url={upload_url}")
 
+        # Avoid blocking the event loop on file I/O
         async with aiofiles.open(tmp_path, "rb") as f:
-            content = await f.read()
-            files = {"file": (filename, content, mime_type)}
-            resp = await client.post(
-                upload_url,
-                files=files,
-                headers=get_ragflow_headers(),
-            )
+            file_bytes = await f.read()
+
+        files = {"file": (filename, file_bytes, mime_type)}
+        resp = await client.post(
+            upload_url,
+            files=files,
+            headers=get_ragflow_headers(),
+        )
 
         if resp.status_code != 200:
             logger.error(

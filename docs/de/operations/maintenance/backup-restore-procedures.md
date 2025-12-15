@@ -523,7 +523,7 @@ echo -e "\n Prüfung abgeschlossen"
 - [Service Restart Procedures](../../../en/operations/maintenance/service-restart-procedures.md)
 - [Troubleshooting Guide](../../../en/operations/troubleshooting/index.md)
 - [Operations Handbook](../../../en/operations/core/operations-handbook.md)
-- [System Architecture](../../../architecture/architecture.md)
+- [System Architecture](../../../en/architecture/architecture.md)
 
 ---
 
