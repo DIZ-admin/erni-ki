@@ -1,0 +1,191 @@
+# SLA and Network Alert Rules
+# Covers: Nginx, Security, Cloudflare, Optimization, Cron watchdog
+
+groups:
+  # Nginx rules
+  - name: nginx.rules
+    rules:
+      - alert: NginxDown
+        expr: up{job="nginx"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: nginx
+          category: proxy
+        annotations:
+          summary: "Nginx is down"
+          description: "Nginx reverse proxy has been down for more than 30 seconds."
+
+      - alert: NginxHighErrorRate
+        expr: rate(nginx_http_requests_total{status=~"5.."}[5m]) / rate(nginx_http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: nginx
+          category: proxy
+        annotations:
+          summary: "High Nginx error rate"
+          description: "Nginx 5xx error rate is above 5% for more than 5 minutes."
+
+  # Security rules
+  - name: security.rules
+    rules:
+      - alert: SuspiciousTraffic
+        expr: rate(nginx_http_requests_total[1m]) > 1000
+        for: 1m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "Suspicious traffic detected"
+          description: "High request rate detected. Possible DDoS attack."
+
+      - alert: HighForbiddenRate
+        expr: rate(nginx_http_requests_total{status="403"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          category: security
+        annotations:
+          summary: "High rate of forbidden requests"
+          description: "High rate of 403 errors detected. Possible scanning or attack attempt."
+
+  # Cloudflare rules
+  - name: cloudflare.rules
+    rules:
+      - alert: CloudflaredTunnelDown
+        expr: up{job="cloudflared"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: cloudflared
+          category: network
+        annotations:
+          summary: "Cloudflare tunnel is down"
+          description: "Cloudflare tunnel has been down for more than 2 minutes. External access may be unavailable."
+
+      - alert: CloudflareHighLatency
+        expr: probe_duration_seconds{job="blackbox-cloudflare"} > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: cloudflared
+          category: network
+        annotations:
+          summary: "High latency through Cloudflare tunnel"
+          description: "Cloudflare tunnel latency is above 5 seconds for more than 5 minutes."
+
+  # Optimization rules
+  - name: optimization.rules
+    rules:
+      - alert: LiteLLMHighMemoryUsage
+        expr: (container_memory_usage_bytes{name="erni-ki-litellm"} / container_spec_memory_limit_bytes{name="erni-ki-litellm"}) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: litellm
+          category: resource-optimization
+        annotations:
+          summary: "LiteLLM high memory usage"
+          description: "LiteLLM memory usage is above 80% for more than 2 minutes. Current value: {{ $value | humanizePercentage }}."
+
+      - alert: LiteLLMCriticalMemoryUsage
+        expr: (container_memory_usage_bytes{name="erni-ki-litellm"} / container_spec_memory_limit_bytes{name="erni-ki-litellm"}) * 100 > 90
+        for: 1m
+        labels:
+          severity: critical
+          service: litellm
+          category: resource-optimization
+        annotations:
+          summary: "LiteLLM critical memory usage"
+          description: "LiteLLM memory usage is above 90% for more than 1 minute. Immediate action required!"
+
+      - alert: AlertmanagerQueueHigh
+        expr: alertmanager_cluster_messages_queued > 3500
+        for: 2m
+        labels:
+          severity: warning
+          service: alertmanager
+          category: cluster-optimization
+        annotations:
+          summary: "Alertmanager queue size high"
+          description: "Alertmanager cluster queue size is above 3500 messages. Queue overflow risk."
+
+      - alert: AlertmanagerQueueCritical
+        expr: alertmanager_cluster_messages_queued > 4000
+        for: 1m
+        labels:
+          severity: critical
+          service: alertmanager
+          category: cluster-optimization
+        annotations:
+          summary: "Alertmanager queue size critical"
+          description: "Alertmanager cluster queue size is above 4000 messages. Queue overflow imminent!"
+
+      - alert: AlertmanagerClusterGossipFailures
+        expr: rate(alertmanager_cluster_messages_dropped_total[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          service: alertmanager
+          category: cluster-optimization
+        annotations:
+          summary: "Alertmanager cluster gossip failures"
+          description: "Alertmanager cluster is dropping messages at rate {{ $value | humanize }} messages/sec."
+
+      - alert: AlertmanagerClusterHealthLow
+        expr: alertmanager_cluster_health_score > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service: alertmanager
+          category: cluster-optimization
+        annotations:
+          summary: "Alertmanager cluster health score low"
+          description: "Alertmanager cluster health score (0 is healthy) is above 0.8. Current value: {{ $value }}."
+
+  # Cron watchdog rules
+  - name: cron-watchdog.rules
+    rules:
+      - alert: CronJobStale
+        expr: erni_cron_job_age_seconds > on(job) group_left max by (job) (erni_cron_job_sla_seconds)
+        for: 10m
+        labels:
+          severity: warning
+          service: cron-watchdog
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Cron job {{ $labels.job }} stale"
+          description: "Job {{ $labels.job }} has not reported success within its SLA (age={{ $value }}s)."
+          runbook: "docs/operations/monitoring-guide.md#cron-evidence"
+
+      - alert: CronJobFailures
+        expr: erni_cron_job_success == 0
+        for: 15m
+        labels:
+          severity: warning
+          service: cron-watchdog
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Cron job {{ $labels.job }} reporting failures"
+          description: "Job {{ $labels.job }} most recent execution ended in failure. Investigate logs and rerun."
+          runbook: "docs/operations/monitoring-guide.md#cron-evidence"
+
+  # Prometheus self-monitoring rules
+  - name: prometheus-self.rules
+    rules:
+      - alert: PrometheusTSDBCompactionsFailing
+        expr: rate(prometheus_tsdb_compactions_failed_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          service: prometheus
+          category: observability
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Prometheus TSDB compaction failures"
+          description: "Prometheus TSDB is experiencing compaction failures. Check disk space and Prometheus logs."
+          runbook: "docs/operations/monitoring-guide.md#prometheus"

@@ -2,7 +2,7 @@
 language: ru
 translation_status: complete
 doc_version: '2025.11'
-last_updated: '2025-11-27'
+last_updated: '2025-12-16'
 ---
 
 # Системная документация
@@ -25,8 +25,9 @@ last_updated: '2025-11-27'
 
 ## Онлайн-ресурсы
 
--**Status Page:**<https://status.ki.erni-gruppe.ch> (Uptime
-Kuma) -**Grafana:**<https://grafana.ki.erni-gruppe.ch> -**Prometheus:**<https://prometheus.ki.erni-gruppe.ch>
+- **Status Page:** <https://status.ki.erni-gruppe.ch> (Uptime Kuma)
+- **Grafana:** <https://grafana.ki.erni-gruppe.ch>
+- **Prometheus:** <https://prometheus.ki.erni-gruppe.ch>
 
 ## Для администраторов
 

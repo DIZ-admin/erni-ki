@@ -1,0 +1,60 @@
+# GPU Monitoring Alert Rules
+# Covers: NVIDIA GPU metrics, temperature, utilization
+
+groups:
+  - name: gpu-monitoring.rules
+    rules:
+      - alert: GPUUnavailable
+        expr: up{job="nvidia-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: nvidia
+          category: ai
+        annotations:
+          summary: "GPU monitoring unavailable"
+          description: "NVIDIA GPU exporter has been down for more than 1 minute."
+
+      - alert: CriticalGPUUsage
+        expr: nvidia_gpu_utilization > 98
+        for: 15m
+        labels:
+          severity: critical
+          service: ollama
+          category: ai
+        annotations:
+          summary: "Critical GPU usage"
+          description: "GPU utilization is above 98% for more than 15 minutes. Performance may be severely degraded."
+
+      - alert: HighGPUMemoryUsage
+        expr: (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) * 100 > 90
+        for: 10m
+        labels:
+          severity: warning
+          service: ollama
+          category: ai
+        annotations:
+          summary: "High GPU memory usage"
+          description: "GPU memory usage is above 90% for more than 10 minutes."
+
+      - alert: CriticalGPUTemperature
+        expr: nvidia_gpu_temperature > 90
+        for: 2m
+        labels:
+          severity: critical
+          service: ollama
+          category: ai
+        annotations:
+          summary: "Critical GPU temperature"
+          description: "GPU temperature is above 90C for more than 2 minutes. Risk of hardware damage."
+
+      - alert: LowGPUPerformance
+        expr: nvidia_gpu_power_draw < 50
+        for: 30m
+        labels:
+          severity: warning
+          service: ollama
+          category: ai
+        annotations:
+          summary: "Low GPU performance"
+          description: "GPU power draw is below 50W for more than 30 minutes. GPU may be throttling."

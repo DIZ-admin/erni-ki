@@ -52,7 +52,7 @@ services:
       - CUDA_VISIBLE_DEVICES=${OLLAMA_CUDA_VISIBLE_DEVICES:-0}
       - OLLAMA_NUM_PARALLEL=1
       - OLLAMA_MAX_LOADED_MODELS=1
-      - OLLAMA_NUM_CTX=2048
+      - OLLAMA_NUM_CTX=8192
       # Flash attention occasionally breaks some models; disable for stability
       - OLLAMA_FLASH_ATTENTION=0
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
@@ -65,7 +65,7 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
-    image: ollama/ollama:0.13.0 # Updated to 0.13.0 (GPU/Vulkan improvements)
+    image: ollama/ollama:0.13.4 # Updated 2025-12-16 to 0.13.4
     logging: *critical-logging
     networks:
       - backend
@@ -408,6 +408,7 @@ services:
       - backend
       - data
     restart: unless-stopped
+    # Resources increased to handle MCP protocol with multiple concurrent tool calls
     mem_limit: 1536m
     mem_reservation: 768m
     cpus: "1.0"

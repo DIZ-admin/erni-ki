@@ -1,0 +1,82 @@
+# Logging Stack Alert Rules
+# Covers: Elasticsearch, Fluent Bit, log ingestion
+
+groups:
+  - name: logging.rules
+    rules:
+      - alert: ElasticsearchDiskUsageHigh
+        expr: (elasticsearch_filesystem_data_used_bytes / elasticsearch_filesystem_data_size_bytes) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: elasticsearch
+          category: logging-optimization
+        annotations:
+          summary: "Elasticsearch disk usage high"
+          description: "Elasticsearch disk usage is above 80% for more than 5 minutes. Current value: {{ $value | humanizePercentage }}."
+
+      - alert: ElasticsearchDiskUsageCritical
+        expr: (elasticsearch_filesystem_data_used_bytes / elasticsearch_filesystem_data_size_bytes) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+          service: elasticsearch
+          category: logging-optimization
+        annotations:
+          summary: "Elasticsearch disk usage critical"
+          description: "Elasticsearch disk usage is above 90% for more than 2 minutes. Immediate action required!"
+
+      - alert: ElasticsearchClusterNotGreen
+        expr: elasticsearch_cluster_health_status < 2
+        for: 3m
+        labels:
+          severity: warning
+          service: elasticsearch
+          category: logging-optimization
+        annotations:
+          summary: "Elasticsearch cluster status not green"
+          description: "Elasticsearch cluster status is not green for more than 3 minutes."
+
+      - alert: FluentBitBufferUsageHigh
+        expr: (fluentbit_input_buffer_usage_bytes / fluentbit_input_buffer_limit_bytes) * 100 > 80
+        for: 3m
+        labels:
+          severity: warning
+          service: fluent-bit
+          category: logging-optimization
+        annotations:
+          summary: "Fluent Bit buffer usage high"
+          description: "Fluent Bit buffer usage is above 80%. Risk of log loss."
+
+      - alert: FluentBitOutputErrors
+        expr: rate(fluentbit_output_errors_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: fluent-bit
+          category: logging-optimization
+        annotations:
+          summary: "Fluent Bit output errors detected"
+          description: "Fluent Bit is experiencing output errors at rate {{ $value | humanize }} errors/sec."
+
+      - alert: LogIngestionRateHigh
+        expr: rate(fluentbit_input_records_total[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: fluent-bit
+          category: logging-optimization
+        annotations:
+          summary: "Log ingestion rate unusually high"
+          description: "Log ingestion rate is above 1000 logs/sec. Possible log flood."
+
+      - alert: CriticalServiceLogsMissing
+        expr: increase(fluentbit_input_record_total{name="tail."}[10m]) == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: logging
+          category: logging-optimization
+        annotations:
+          summary: "Critical service logs missing"
+          description: "Fluent Bit tail input has not ingested any records for more than 10 minutes."

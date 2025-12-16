@@ -1,0 +1,187 @@
+# Infrastructure Alert Rules
+# Covers: node metrics, containers, disk, CPU, memory
+
+groups:
+  # General infrastructure rules
+  - name: infrastructure.rules
+    rules:
+      # Service is down
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: infrastructure
+          service: "{{ $labels.job }}"
+          owner: ops
+          escalation: pagerduty
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "Service {{ $labels.job }} on {{ $labels.instance }} has been down for more than 1 minute."
+          runbook: "docs/operations/monitoring-guide.md#alert-response"
+
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+          service: "system"
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for more than 5 minutes on {{ $labels.instance }}."
+          runbook: "docs/operations/monitoring-guide.md#infrastructure"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+          service: "system"
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% for more than 5 minutes on {{ $labels.instance }}."
+          runbook: "docs/operations/monitoring-guide.md#infrastructure"
+
+      # Low disk space
+      - alert: LowDiskSpace
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+          service: "system"
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk usage is above 80% on {{ $labels.instance }} ({{ $labels.mountpoint }}). Current usage: {{ $value | humanizePercentage }}."
+          runbook: "docs/operations/monitoring-guide.md#low-disk"
+
+      # Critical low disk space
+      - alert: CriticalLowDiskSpace
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+          category: infrastructure
+          service: "system"
+          owner: ops
+          escalation: pagerduty
+        annotations:
+          summary: "Critical low disk space on {{ $labels.instance }}"
+          description: "Disk usage is above 90% on {{ $labels.instance }} ({{ $labels.mountpoint }}). Current usage: {{ $value | humanizePercentage }}. Immediate action required!"
+          runbook: "docs/operations/monitoring-guide.md#low-disk"
+
+      - alert: DoclingCleanupPermissionDenied
+        expr: erni_docling_cleanup_permission_denied > 0
+        for: 5m
+        labels:
+          severity: warning
+          category: observability
+          service: docling
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Docling cleanup cannot access shared volume"
+          description: "Docling cleanup log still reports Permission denied. Check sudoers, ownership and ACLs for data/docling/shared."
+          runbook: "docs/operations/runbooks/docling-shared-volume.md"
+
+  # Docker container rules
+  - name: container.rules
+    rules:
+      # Critical container memory usage
+      - alert: ContainerHighMemoryUsage
+        expr: ((container_memory_usage_bytes{name=~"erni-ki-.*"} / container_spec_memory_limit_bytes{name=~"erni-ki-.*"}) * 100 > 90) and on(name) (container_spec_memory_limit_bytes{name=~"erni-ki-.*"} > 0)
+        for: 5m
+        labels:
+          severity: critical
+          category: container
+          service: '{{ reReplaceAll "^erni-ki-([^-]+).*" "$1" $labels.name }}'
+          owner: ops
+          escalation: pagerduty
+        annotations:
+          summary: "Container {{ $labels.name }} high memory usage"
+          description: 'Container {{ $labels.name }} is using {{ $value | humanizePercentage }} of its memory limit for more than 5 minutes.'
+          runbook: "docs/operations/monitoring-guide.md#container-alerts"
+
+      # Warning container memory usage
+      - alert: ContainerWarningMemoryUsage
+        expr: ((container_memory_usage_bytes{name=~"erni-ki-.*"} / container_spec_memory_limit_bytes{name=~"erni-ki-.*"}) * 100 > 85) and on(name) (container_spec_memory_limit_bytes{name=~"erni-ki-.*"} > 0)
+        for: 10m
+        labels:
+          severity: warning
+          category: container
+          service: '{{ reReplaceAll "^erni-ki-([^-]+).*" "$1" $labels.name }}'
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Container {{ $labels.name }} warning memory usage"
+          description: 'Container {{ $labels.name }} is using {{ $value | humanizePercentage }} of its memory limit for more than 10 minutes.'
+          runbook: "docs/operations/monitoring-guide.md#container-alerts"
+
+      # Elasticsearch critical memory
+      - alert: ElasticsearchCriticalMemory
+        expr: (container_memory_usage_bytes{name=~".*elasticsearch.*"} / container_spec_memory_limit_bytes{name=~".*elasticsearch.*"}) * 100 > 95
+        for: 1m
+        labels:
+          severity: critical
+          category: elasticsearch
+          service: elasticsearch
+          owner: ops
+          escalation: pagerduty
+        annotations:
+          summary: "Elasticsearch critical memory usage"
+          description: "Elasticsearch container is using {{ $value | humanizePercentage }} of memory limit. Risk of OOM kill!"
+          runbook: "docs/operations/monitoring-guide.md#elasticsearch"
+
+      - alert: LiteLLMCriticalMemory
+        expr: (container_memory_usage_bytes{name=~".*litellm.*"} / container_spec_memory_limit_bytes{name=~".*litellm.*"}) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+          category: litellm
+          service: litellm
+          owner: ml-ops
+          escalation: pagerduty
+        annotations:
+          summary: "LiteLLM critical memory usage"
+          description: "LiteLLM container is using {{ $value | humanizePercentage }} of memory limit. Risk of OOM kill!"
+          runbook: "docs/operations/monitoring-guide.md#litellm"
+
+      # Container restarting too often
+      - alert: ContainerRestartingTooOften
+        expr: increase(container_start_time_seconds[1h]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          category: container
+          service: '{{ reReplaceAll "^erni-ki-([^-]+).*" "$1" $labels.name }}'
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Container {{ $labels.name }} restarting too often"
+          description: 'Container {{ $labels.name }} has restarted {{ $value }} times in the last hour.'
+          runbook: "docs/operations/monitoring-guide.md#container-alerts"
+
+      # Docker storage pool almost full
+      - alert: DockerStoragePoolAlmostFull
+        expr: (docker_data_space_used / docker_data_space_total) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          category: container
+          service: docker
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Docker storage pool almost full"
+          description: "Docker storage pool is {{ $value | humanizePercentage }} full. Run docker system prune to free space."
+          runbook: "docs/operations/monitoring-guide.md#docker-storage"

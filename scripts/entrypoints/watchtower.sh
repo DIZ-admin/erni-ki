@@ -1,20 +1,34 @@
-#!/usr/bin/env sh
+#!/bin/sh
+# =============================================================================
+# Watchtower entrypoint - loads HTTP API token from Docker secret
+# =============================================================================
 set -eu
 
-# Load HTTP API token from Docker secret and execute Watchtower with the
-# original arguments passed via compose `command`.
-BUSYBOX=${BUSYBOX:-/opt/erni/bin/busybox}
-
-if [ -f /run/secrets/watchtower_api_token ]; then
-  token="$($BUSYBOX tr -d '\r\n' < /run/secrets/watchtower_api_token)"
-  if [ -z "$token" ]; then
-    echo "watchtower: watchtower_api_token secret is empty" >&2
-    exit 1
-  fi
-  export WATCHTOWER_HTTP_API_TOKEN="$token"
+# Load shared library (will be mounted by compose)
+# shellcheck source=../lib/secrets-sh.sh
+if [ -f /opt/erni/lib/secrets-sh.sh ]; then
+  . /opt/erni/lib/secrets-sh.sh
 else
-  echo "watchtower: watchtower_api_token secret missing" >&2
-  exit 1
+  # Fallback minimal implementation for standalone use
+  BUSYBOX="${BUSYBOX:-/opt/erni/bin/busybox}"
+  log() { echo "[watchtower] $*" >&2; }
+  log_error() { echo "[watchtower] ERROR: $*" >&2; exit 1; }
+  read_secret() {
+    secret_file="/run/secrets/$1"
+    [ -f "$secret_file" ] && $BUSYBOX tr -d '\r\n' < "$secret_file" && return 0
+    return 1
+  }
+  require_secret() {
+    value=$(read_secret "$1") || log_error "Required secret not found: $1"
+    [ -z "$value" ] && log_error "Required secret is empty: $1"
+    echo "$value"
+  }
 fi
+
+__SCRIPT_NAME="watchtower"
+
+# Load HTTP API token (required)
+WATCHTOWER_HTTP_API_TOKEN=$(require_secret "watchtower_api_token")
+export WATCHTOWER_HTTP_API_TOKEN
 
 exec /watchtower "$@"

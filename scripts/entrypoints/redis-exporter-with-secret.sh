@@ -1,21 +1,31 @@
 #!/bin/sh
-# Redis Exporter entrypoint with secret loading
-# Reads Redis password from Docker secret file
+# =============================================================================
+# Redis Exporter entrypoint - loads Redis password from Docker secret
+# =============================================================================
+set -eu
 
-set -e
-
-# Load Redis password from secret file using busybox
-if [ -f /run/secrets/redis_password ]; then
-    REDIS_PASSWORD=$(/opt/erni/bin/busybox cat /run/secrets/redis_password)
-    export REDIS_PASSWORD
+# Load shared library (will be mounted by compose)
+# shellcheck source=../lib/secrets-sh.sh
+if [ -f /opt/erni/lib/secrets-sh.sh ]; then
+  . /opt/erni/lib/secrets-sh.sh
+else
+  # Fallback minimal implementation for standalone use
+  log() { echo "[redis-exporter] $*" >&2; }
+  read_secret() {
+    secret_file="/run/secrets/$1"
+    [ -f "$secret_file" ] && tr -d '\r\n' < "$secret_file" && return 0
+    return 1
+  }
 fi
 
-# Build Redis URL with authentication
-# Use REDIS_USER env var if set, otherwise default to 'exporter'
-REDIS_USER="${REDIS_USER:-exporter}"
-if [ -n "$REDIS_PASSWORD" ]; then
-    export REDIS_ADDR="redis://${REDIS_USER}:${REDIS_PASSWORD}@redis:6379"
+__SCRIPT_NAME="redis-exporter"
+
+# Load Redis password
+if REDIS_PASSWORD=$(read_secret "redis_password"); then
+  export REDIS_PASSWORD
+  # Build Redis URL with authentication
+  REDIS_USER="${REDIS_USER:-exporter}"
+  export REDIS_ADDR="redis://${REDIS_USER}:${REDIS_PASSWORD}@redis:6379"
 fi
 
-# Execute redis_exporter
 exec /redis_exporter "$@"

@@ -29,14 +29,39 @@ concurrency:
 
 jobs:
   # CodeQL analysis
-  # CodeQL temporarily disabled for release/v0.61.3 (default Code Scanning is enabled and rejects custom uploads).
-  # Re-enable after consolidating to a single CodeQL configuration.
   codeql:
-    name: 🔍 CodeQL Analysis (disabled)
-    if: false
+    name: 🔍 CodeQL Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [go, javascript-typescript, python]
+
     steps:
-      - run: echo "CodeQL temporarily disabled (default scanning enabled separately)."
+      - name: 📥 Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: 🔧 Initialize CodeQL
+        uses: github/codeql-action/init@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: 🐹 Setup Go
+        if: matrix.language == 'go'
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v5
+        with:
+          go-version-file: auth/go.mod
+          cache-dependency-path: auth/go.sum
+
+      - name: 🏗️ Autobuild
+        uses: github/codeql-action/autobuild@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+
+      - name: 🔍 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+        with:
+          category: "/language:${{ matrix.language }}"
 
   # Dependency scanning
   dependency-scan:
@@ -124,6 +149,8 @@ jobs:
         with:
           version: "v0.68.1"
           scan-type: fs
+          format: sarif
+          output: trivy-fs-results.sarif
           ignore-unfixed: true
           severity: HIGH,CRITICAL
           trivyignores: ".github/trivy.ignore"
@@ -131,12 +158,12 @@ jobs:
         env:
           TRIVY_SKIP_VERSION_CHECK: "true"
 
-      - name: 📦 Upload Trivy FS SARIF
-        if: always() && hashFiles('trivy-results.sarif') != ''
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+      - name: 📤 Upload Trivy FS SARIF to Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-trivy-fs
-          path: trivy-results.sarif
+          sarif_file: trivy-fs-results.sarif
+          category: trivy-fs
 
   # Secret scanning
   secret-scan:
@@ -169,12 +196,12 @@ jobs:
           go install github.com/zricethezav/gitleaks/v8@v8.29.1
           gitleaks detect --redact --source=. -c .gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
 
-      - name: 📦 Upload Gitleaks SARIF
-        if: always() && hashFiles('gitleaks-results.sarif') != ''
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+      - name: 📤 Upload Gitleaks SARIF to Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-gitleaks
-          path: gitleaks-results.sarif
+          sarif_file: gitleaks-results.sarif
+          category: gitleaks
 
   # Docker image scanning
   container-scan:
@@ -214,12 +241,12 @@ jobs:
         env:
           TRIVY_SKIP_VERSION_CHECK: "true"
 
-      - name: 📤 Upload Trivy results to GitHub Security
+      - name: 📤 Upload Trivy Image SARIF to Security
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-trivy-image
-          path: trivy-results.sarif
+          sarif_file: trivy-results.sarif
+          category: trivy-image
 
       - name: 🔍 Run Grype vulnerability scanner
         uses: anchore/scan-action@64a33b277ea7a1215a3c142735a1091341939ff5 # v4
@@ -230,12 +257,12 @@ jobs:
           severity-cutoff: high
           output-format: sarif
 
-      - name: 📤 Upload Grype results
+      - name: 📤 Upload Grype SARIF to Security
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-grype
-          path: ${{ steps['grype-scan'].outputs.sarif }}
+          sarif_file: ${{ steps.grype-scan.outputs.sarif }}
+          category: grype
 
   # Configuration analysis
   config-scan:
@@ -258,12 +285,12 @@ jobs:
           quiet: true
           soft_fail: false
 
-      - name: 📤 Upload Checkov results
-        if: always() && hashFiles('checkov-results.sarif') != ''
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+      - name: 📤 Upload Checkov SARIF to Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-checkov
-          path: checkov-results.sarif
+          sarif_file: checkov-results.sarif
+          category: checkov
 
       # Validate Docker Compose configuration
       - name: 🐳 Validate Docker Compose
@@ -339,12 +366,12 @@ jobs:
           echo "✅ Environment secrets structure validated"
 
   # DAST - Dynamic Application Security Testing
+  # Note: Runs only on schedule and manual trigger (not on PRs - requires running services)
   dast-scan:
     name: 🎯 DAST Scan (ZAP Baseline)
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Temporarily disabled for release/v0.61.3 (pinned ZAP action unavailable)
-    if: false
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: 📥 Checkout repository
@@ -397,33 +424,27 @@ jobs:
         if: always()
         run: docker compose down || true
 
-  # Security report
+  # Security report summary
   security-report:
-    name: 📊 Security Report (temp disabled)
+    name: 📊 Security Report
     runs-on: ubuntu-latest
-    if: false
-    steps:
-      - name: Skip security summary
-        run: echo "security-report disabled for release branch workflows"
-
-  sarif-aggregate:
-    name: 🗂️ Aggregate SARIF
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [trivy, secret-scan, container-scan, config-scan]
+    timeout-minutes: 5
+    needs: [codeql, dependency-scan, bandit, trivy, secret-scan, container-scan, config-scan]
     if: always()
 
     steps:
-      - name: 📥 Download SARIF artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          path: sarif
-
-      - name: 🧹 List SARIF files
+      - name: 📊 Generate Security Summary
         run: |
-          find sarif -name '*.sarif' -maxdepth 3 -type f || true
-
-      - name: 📤 Upload merged SARIF to Security
-        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
-        with:
-          sarif_file: sarif
+          echo "## 🔒 Security Analysis Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| CodeQL Analysis | ${{ needs.codeql.result == 'success' && '✅ Passed' || needs.codeql.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Scan | ${{ needs.dependency-scan.result == 'success' && '✅ Passed' || needs.dependency-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bandit + Ruff | ${{ needs.bandit.result == 'success' && '✅ Passed' || needs.bandit.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trivy Scan | ${{ needs.trivy.result == 'success' && '✅ Passed' || needs.trivy.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Secret Scan | ${{ needs.secret-scan.result == 'success' && '✅ Passed' || needs.secret-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Container Scan | ${{ needs.container-scan.result == 'success' && '✅ Passed' || needs.container-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Config Security | ${{ needs.config-scan.result == 'success' && '✅ Passed' || needs.config-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📅 Run: ${{ github.run_id }} | 🔗 [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
