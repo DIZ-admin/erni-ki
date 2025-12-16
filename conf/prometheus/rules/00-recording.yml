@@ -25,7 +25,7 @@ groups:
       # System load average normalized by CPU count
       - record: instance:node_load1:ratio
         expr: |
-          node_load1 / count by(instance) (node_cpu_seconds_total{mode="idle"})
+          node_load1 / clamp_min(count by(instance) (node_cpu_seconds_total{mode="idle"}), 1)
 
   # Container-level recording rules
   - name: container.recording.rules
@@ -101,7 +101,7 @@ groups:
       # GPU memory usage percentage
       - record: gpu:memory_usage:percent
         expr: |
-          (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) * 100
+          (nvidia_gpu_memory_used_bytes / clamp_min(nvidia_gpu_memory_total_bytes, 1)) * 100
 
       # GPU temperature (celsius from nvidia-exporter)
       - record: gpu:temperature:max

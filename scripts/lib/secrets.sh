@@ -139,7 +139,7 @@ export_secret() {
 dump_env() {
   if [[ "${DEBUG:-0}" != "0" ]]; then
     log_debug "Environment variables (excluding sensitive):"
-    env | grep -vE '(PASSWORD|SECRET|KEY|TOKEN|CREDENTIAL)' | sort | while read -r line; do
+    env | grep -vE '(PASSWORD|SECRET|KEY|TOKEN|CREDENTIAL|API_KEY|AUTH|BEARER)' | sort | while read -r line; do
       log_debug "  ${line}"
     done
   fi

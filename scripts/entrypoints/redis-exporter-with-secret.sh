@@ -18,8 +18,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="redis-exporter"
-
 # Load Redis password
 if REDIS_PASSWORD=$(read_secret "redis_password"); then
   export REDIS_PASSWORD

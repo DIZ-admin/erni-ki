@@ -24,8 +24,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="cloudflared"
-
 # Load tunnel token
 TUNNEL_TOKEN=$(require_secret "cloudflared_tunnel_token")
 export TUNNEL_TOKEN

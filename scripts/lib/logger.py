@@ -195,8 +195,8 @@ class ColoredFormatter(logging.Formatter):
         color = self.COLORS.get(record.levelname, "")
         reset = self.RESET if color else ""
 
-        # Format timestamp
-        timestamp = datetime.utcnow().isoformat() + "Z"
+        # Format timestamp (using timezone-aware UTC)
+        timestamp = datetime.now(tz=__import__("datetime").timezone.utc).isoformat()
 
         # Build colored output
         level = f"{color}{record.levelname}{reset}"
@@ -214,9 +214,9 @@ class JSONFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """Format log record as JSON with correlation context."""
-        # Base log data
+        # Base log data (using timezone-aware UTC)
         log_data: dict[str, Any] = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(tz=__import__("datetime").timezone.utc).isoformat(),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),

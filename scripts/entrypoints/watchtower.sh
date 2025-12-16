@@ -25,8 +25,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="watchtower"
-
 # Load HTTP API token (required)
 WATCHTOWER_HTTP_API_TOKEN=$(require_secret "watchtower_api_token")
 export WATCHTOWER_HTTP_API_TOKEN

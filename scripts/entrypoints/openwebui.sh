@@ -19,8 +19,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="openwebui"
-
 configure_postgres_urls() {
   local password
   if ! password="$(read_secret "postgres_password")"; then

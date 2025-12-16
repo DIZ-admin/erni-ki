@@ -18,8 +18,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="webhook-receiver"
-
 # Read ALERTMANAGER_WEBHOOK_SECRET from secret if not already set
 if [[ -z "${ALERTMANAGER_WEBHOOK_SECRET:-}" ]]; then
   if secret=$(read_secret "alertmanager_webhook_secret"); then

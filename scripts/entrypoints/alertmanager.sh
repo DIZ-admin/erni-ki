@@ -24,8 +24,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="alertmanager"
-
 CONFIG_TEMPLATE="/etc/alertmanager/alertmanager.yml"
 CONFIG_RUNTIME="/tmp/alertmanager.yml"
 
