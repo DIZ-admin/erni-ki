@@ -1,77 +1,72 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# =============================================================================
+# SearXNG entrypoint - loads secrets and configures Redis/Valkey URL
+# =============================================================================
 set -euo pipefail
 
-# Debug: write to a file to verify script runs
-echo "Script started at $(date)" > /tmp/searxng-entrypoint.log
+# Load shared library (will be mounted by compose)
+# shellcheck source=../lib/secrets.sh
+if [[ -f /opt/erni/lib/secrets.sh ]]; then
+  source /opt/erni/lib/secrets.sh
+else
+  # Fallback minimal implementation for standalone use
+  log() { echo "[searxng] $*" >&2; }
+  log_warn() { echo "[searxng] WARNING: $*" >&2; }
+  read_secret() {
+    local secret_file="/run/secrets/$1"
+    [[ -f "$secret_file" ]] && tr -d '\r\n' < "$secret_file" && return 0
+    return 1
+  }
+fi
 
-log() {
-  echo "[searxng-entrypoint] $*" >&2
-  echo "[searxng-entrypoint] $*" >> /tmp/searxng-entrypoint.log
-}
-
-read_secret() {
-  secret_name="$1"
-  secret_file="/run/secrets/${secret_name}"
-
-  if [ -f "${secret_file}" ]; then
-    tr -d '\r' <"${secret_file}" | tr -d '\n'
-    return 0
-  fi
-
-  return 1
-}
+__SCRIPT_NAME="searxng"
 
 configure_redis_url() {
-  log "Configuring Redis URL..."
-  host="${SEARXNG_REDIS_HOST:-redis}"
-  port="${SEARXNG_REDIS_PORT:-6379}"
+  local host="${SEARXNG_REDIS_HOST:-redis}"
+  local port="${SEARXNG_REDIS_PORT:-6379}"
   # Redis Database Allocation (2025-12-02):
   # DB 0: SearXNG (cache, limiter, bot detection)
   # DB 1: Reserved for future use
   # DB 2: LiteLLM (model caching - when enabled)
   # DB 3-15: Available
-  db="${SEARXNG_REDIS_DB:-0}"
-  username="${SEARXNG_REDIS_USER:-searxng}"
-  password=""
+  local db="${SEARXNG_REDIS_DB:-0}"
+  local username="${SEARXNG_REDIS_USER:-searxng}"
+  local password
 
-  log "Reading redis_password secret..."
   if password="$(read_secret "redis_password")"; then
     # URL format with username for ACL: redis://username:password@host:port/db  # pragma: allowlist secret
-    valkey_url="redis://${username}:${password}@${host}:${port}/${db}" # pragma: allowlist secret
+    local valkey_url="redis://${username}:${password}@${host}:${port}/${db}"  # pragma: allowlist secret
     # Only export SEARXNG_VALKEY_URL to avoid deprecation warning
     # (SearXNG warns if SEARXNG_REDIS_URL is set)
     export SEARXNG_VALKEY_URL="${valkey_url}"
-    log "Valkey URL configured for user ${username} on ${host}:${port}/${db} (value not logged)"
+    log "Valkey URL configured for user ${username} on ${host}:${port}/${db}"
     return
   fi
 
-  log "warning: redis_password secret missing; using host=${host} port=${port} db=${db} (URL value not logged; will fail if requirepass is enabled)"
-  # Only export SEARXNG_VALKEY_URL to avoid deprecation warning
-  export SEARXNG_VALKEY_URL="${SEARXNG_VALKEY_URL:-redis://${host}:${port}/${db}}" # pragma: allowlist secret
+  log_warn "redis_password secret missing; using host=${host} port=${port} db=${db} (will fail if requirepass is enabled)"
+  export SEARXNG_VALKEY_URL="${SEARXNG_VALKEY_URL:-redis://${host}:${port}/${db}}"  # pragma: allowlist secret
 }
 
 configure_searxng_secret() {
+  local secret
   if secret="$(read_secret "searxng_secret_key")"; then
     export SEARXNG_SECRET="${secret}"
-    log "Applied SEARXNG_SECRET from docker secret (value not logged)"
+    log "Applied SEARXNG_SECRET from docker secret"
   else
-    log "warning: searxng_secret_key secret missing; SEARXNG_SECRET not set"
+    log_warn "searxng_secret_key secret missing; SEARXNG_SECRET not set"
   fi
 }
 
 main() {
-  log "Main function started with $# arguments"
   configure_searxng_secret
   configure_redis_url
 
-  log "Configured SEARXNG_VALKEY_URL environment variable (value not logged)"
-
-  if [ $# -gt 0 ]; then
+  if [[ $# -gt 0 ]]; then
     log "Executing: $*"
     exec "$@"
   fi
 
-  if [ -x "/usr/local/searxng/entrypoint.sh" ]; then
+  if [[ -x "/usr/local/searxng/entrypoint.sh" ]]; then
     log "Calling original SearXNG entrypoint"
     exec /usr/local/searxng/entrypoint.sh "$@"
   fi

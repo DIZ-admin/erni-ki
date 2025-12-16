@@ -1,26 +1,38 @@
 #!/bin/sh
+# =============================================================================
+# Cloudflared entrypoint - loads tunnel token from Docker secret
+# =============================================================================
 set -eu
 
-TOKEN_PATH="/run/secrets/cloudflared_tunnel_token"
-
-if [ -f "$TOKEN_PATH" ]; then
-  if ! token="$(/opt/erni/bin/busybox cat "$TOKEN_PATH" 2>/dev/null)"; then
-    echo "cloudflared: unable to read tunnel token from $TOKEN_PATH" >&2
-    exit 1
-  fi
-  if [ -z "$token" ]; then
-    echo "cloudflared: tunnel token is empty in $TOKEN_PATH" >&2
-    exit 1
-  fi
-  export TUNNEL_TOKEN="$token"
+# Load shared library (will be mounted by compose)
+# shellcheck source=../lib/secrets-sh.sh
+if [ -f /opt/erni/lib/secrets-sh.sh ]; then
+  . /opt/erni/lib/secrets-sh.sh
 else
-  echo "cloudflared: tunnel token secret missing at $TOKEN_PATH" >&2
-  exit 1
+  # Fallback minimal implementation for standalone use
+  log() { echo "[cloudflared] $*" >&2; }
+  log_error() { echo "[cloudflared] ERROR: $*" >&2; exit 1; }
+  read_secret() {
+    secret_file="/run/secrets/$1"
+    [ -f "$secret_file" ] && tr -d '\r\n' < "$secret_file" && return 0
+    return 1
+  }
+  require_secret() {
+    value=$(read_secret "$1") || log_error "Required secret not found: $1"
+    [ -z "$value" ] && log_error "Required secret is empty: $1"
+    echo "$value"
+  }
 fi
 
-# optional debug: dump env and exit
+__SCRIPT_NAME="cloudflared"
+
+# Load tunnel token
+TUNNEL_TOKEN=$(require_secret "cloudflared_tunnel_token")
+export TUNNEL_TOKEN
+
+# Debug mode
 if [ "${ENV_DUMP:-0}" != "0" ]; then
-  /opt/erni/bin/busybox env
+  env
   exit 0
 fi
 

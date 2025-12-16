@@ -99,6 +99,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./scripts/entrypoints/watchtower.sh:/watchtower-entrypoint.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
+      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
     secrets:
       - watchtower_api_token
     networks:
@@ -246,6 +247,7 @@ services:
       - ./conf/litellm/config.yaml:/app/config.yaml:ro
       - ./data/litellm:/app/data
       - ./scripts/entrypoints/litellm.sh:/opt/erni/bin/litellm-entrypoint.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
       - ./conf/litellm/custom_providers:/app/custom_providers:ro
     command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
     extra_hosts:
@@ -350,6 +352,7 @@ services:
       - ./conf/cloudflare/config:/home/nonroot/.cloudflared
       - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
+      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
     secrets:
       - source: cloudflared_tunnel_token
         uid: "65532"
@@ -427,13 +430,14 @@ services:
       dockerfile: Dockerfile
     entrypoint: ["/opt/erni/bin/ragflow-adapter.sh"]
     environment:
-      - RAGFLOW_BASE_URL=http://192.168.62.153:19090
-      - RAGFLOW_DATASET_ID=3ade126ccb7811f0b6bca21184c8b456
+      - RAGFLOW_BASE_URL=http://host.docker.internal:19090
+      - RAGFLOW_DATASET_ID=62c4cab2da5c11f082266eb30ec8e041
       - POLL_INTERVAL=5
       - MAX_POLL_ATTEMPTS=120
     env_file: env/ragflow-adapter.env
     volumes:
       - ./scripts/entrypoints/ragflow-adapter.sh:/opt/erni/bin/ragflow-adapter.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - ragflow_api_key
     healthcheck:
@@ -442,6 +446,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     logging: *auxiliary-logging
     networks:
       - backend
@@ -496,6 +502,7 @@ services:
       - ./data:/app/data
       - ./scripts/entrypoints/mcposerver-with-secrets.sh:/opt/erni/bin/mcposerver-with-secrets.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
+      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
     secrets:
       - postgres_password
       - context7_api_key
@@ -540,6 +547,7 @@ services:
       - ./conf/searxng/limiter.toml:/etc/searxng/limiter.toml:ro
       - ./conf/searxng/favicons.toml:/etc/searxng/favicons.toml:ro
       - ./scripts/entrypoints/searxng.sh:/opt/erni/bin/searxng-entrypoint.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - redis_password
       - searxng_secret_key
@@ -714,6 +722,7 @@ services:
       - ./data/docling/shared:/app/backend/data/docling-shared
       - ./data/openwebui/static:/app/backend/open_webui/static
       - ./scripts/entrypoints/openwebui.sh:/opt/erni/bin/openwebui-entrypoint.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - postgres_password
       - litellm_api_key
@@ -845,10 +854,7 @@ services:
       - "--web.external-url=http://prometheus.erni-ki.local"
     volumes:
       - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./conf/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
-      - ./conf/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
       - ./conf/prometheus/rules:/etc/prometheus/rules:ro
-      - ./conf/prometheus/alerts:/etc/prometheus/alerts:ro
       - ./data/prometheus:/prometheus
     ports:
       - "127.0.0.1:9091:9090"
@@ -1036,8 +1042,8 @@ services:
     cap_add:
       - DAC_OVERRIDE # Required for writing to /alertmanager directory
       - CHOWN # Required for file ownership operations
+    entrypoint: ["/opt/erni/bin/alertmanager-entrypoint.sh"]
     command:
-      - "--config.file=/etc/alertmanager/alertmanager.yml"
       - "--storage.path=/alertmanager"
       - "--web.external-url=http://alertmanager.erni-ki.local"
       - "--cluster.listen-address=0.0.0.0:9094"
@@ -1050,6 +1056,8 @@ services:
     volumes:
       - ./conf/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - ./data/alertmanager:/alertmanager
+      - ./scripts/entrypoints/alertmanager.sh:/opt/erni/bin/alertmanager-entrypoint.sh:ro
+      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
     ports:
       - "127.0.0.1:9093:9093"
       - "127.0.0.1:9094:9094"
@@ -1345,6 +1353,7 @@ services:
     volumes:
       - ./scripts/entrypoints/redis-exporter-with-secret.sh:/opt/erni/bin/redis-exporter-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
+      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
 
   ollama-exporter:
     depends_on:
@@ -1657,6 +1666,7 @@ services:
     volumes:
       # Entrypoint script
       - ./scripts/entrypoints/webhook-receiver.sh:/opt/erni/bin/webhook-receiver.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
       # Webhook receiver logs
       - ./data/webhook-logs:/app/logs
       # Alert processing scripts

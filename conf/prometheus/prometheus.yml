@@ -15,16 +15,16 @@ global:
   # Size: 50GB maximum for optimal disk usage
   # Downsampling: 5m aggregation after 24h
 
-# Alerting rules (optimized for USE/RED + SLA)
+# Alerting rules - Modular structure (refactored 2025-12-16)
+# All rules consolidated into categorized files in rules/ directory:
+#   10-infrastructure.yml - ServiceDown, CPU, Memory, Disk, Container alerts
+#   20-databases.yml      - PostgreSQL, Redis, Redis backup alerts
+#   30-ai-services.yml    - Auth, Ollama, OpenWebUI, LiteLLM, RAG, SearXNG alerts
+#   40-logging.yml        - Elasticsearch, Fluent Bit alerts
+#   50-gpu.yml            - NVIDIA GPU monitoring alerts
+#   60-sla.yml            - Nginx, Security, Cloudflare, Cron, Prometheus alerts
 rule_files:
-  - "alert_rules.yml"
-  - "rules/erni-ki-alerts.yml"
-  - "rules/logging-system-alerts.yml"
-  - "rules/sla-alerts.yml"
-  - "rules/production-sla-alerts.yml"  # Added: Production SLA alerts
-  - "rules/redis-alerts.yml"  # Added: 2025-10-02 Redis monitoring
-  - "alerts/litellm-memory.yml"  # Restored: 2025-10-02 after adding volume mount
-  - "alerts.yml"  # ADDED 2025-10-24: Main system alerts (disk, memory, CPU, containers)
+  - "rules/*.yml"
 
 # Alertmanager configuration
 alerting:

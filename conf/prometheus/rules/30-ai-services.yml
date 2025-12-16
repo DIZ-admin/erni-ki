@@ -1,0 +1,277 @@
+# AI Services Alert Rules
+# Covers: Auth, Ollama, OpenWebUI, RAG, SearXNG
+
+groups:
+  # Auth service rules
+  - name: auth-service.rules
+    rules:
+      - alert: AuthServiceDown
+        expr: up{job="auth-service"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: auth
+          category: security
+          owner: security
+          escalation: pagerduty
+        annotations:
+          summary: "Auth service is down"
+          description: "Authentication service has been down for more than 30 seconds."
+          runbook: "docs/operations/monitoring-guide.md#auth-service"
+
+      - alert: HighAuthErrorRate
+        expr: rate(auth_requests_total{status=~"4.."}[5m]) / rate(auth_requests_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: auth
+          category: security
+          owner: security
+          escalation: slack
+        annotations:
+          summary: "High authentication error rate"
+          description: "Authentication error rate is above 10% for more than 2 minutes."
+          runbook: "docs/operations/monitoring-guide.md#auth-service"
+
+      - alert: SuspiciousAuthActivity
+        expr: rate(auth_requests_total{status="401"}[1m]) > 10
+        for: 1m
+        labels:
+          severity: critical
+          service: auth
+          category: security
+          owner: security
+          escalation: pagerduty
+        annotations:
+          summary: "Suspicious authentication activity detected"
+          description: "High rate of failed authentication attempts detected. Possible brute force attack."
+          runbook: "docs/operations/monitoring-guide.md#auth-service"
+
+  # Ollama rules
+  - name: ollama.rules
+    rules:
+      - alert: OllamaDown
+        expr: up{job="ollama"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: ollama
+          category: ai
+        annotations:
+          summary: "Ollama service is down"
+          description: "Ollama LLM service has been down for more than 1 minute."
+
+      - alert: HighGPUUsage
+        expr: nvidia_gpu_utilization_gpu > 95
+        for: 10m
+        labels:
+          severity: warning
+          service: ollama
+          category: ai
+        annotations:
+          summary: "High GPU usage"
+          description: "GPU utilization is above 95% for more than 10 minutes."
+
+      - alert: GPUHighTemperature
+        expr: nvidia_gpu_temperature_celsius > 85
+        for: 3m
+        labels:
+          severity: critical
+          service: ollama
+          category: hardware
+        annotations:
+          summary: "GPU temperature is critical"
+          description: "GPU temperature is {{ $value }}C, which is above the safe threshold."
+
+      - alert: GPUHighMemoryUsage
+        expr: (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: ollama
+          category: hardware
+        annotations:
+          summary: "GPU memory usage is high"
+          description: "GPU memory usage is {{ $value }}%."
+
+  # LiteLLM rules
+  - name: litellm.rules
+    rules:
+      - alert: LiteLLMGatewayDown
+        expr: probe_success{job="blackbox", instance=~".*litellm.*"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: litellm
+          category: ai
+        annotations:
+          summary: "LiteLLM Gateway is down"
+          description: "LiteLLM gateway has not responded to health checks for 2 minutes."
+
+      - alert: LiteLLMHighLatency
+        expr: histogram_quantile(0.95, rate(litellm_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: litellm
+          category: performance
+        annotations:
+          summary: "High LiteLLM request latency"
+          description: "95th percentile latency > 5 seconds ({{ $value | humanize }}s)"
+
+      - alert: LiteLLMBudgetExhausted
+        expr: litellm_budget_remaining < 1
+        for: 1m
+        labels:
+          severity: warning
+          service: litellm
+          category: budget
+        annotations:
+          summary: "LiteLLM budget nearly exhausted"
+          description: "Less than $1 remaining in budget."
+
+      - alert: LiteLLMPublicAIHighErrorRate
+        expr: |
+          sum(rate(litellm_publicai_requests_total{status=~"4..|5.."}[5m]))
+          /
+          clamp_min(sum(rate(litellm_publicai_requests_total[5m])), 1)
+          > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: litellm
+          category: ai
+        annotations:
+          summary: "PublicAI error rate > 10%"
+          description: "PublicAI 4xx/5xx response rate exceeded 10% in the last 5 minutes."
+
+      - alert: LiteLLMPublicAIRepeated404
+        expr: rate(litellm_publicai_requests_total{status="404"}[5m]) > 0.05
+        for: 1m
+        labels:
+          severity: warning
+          service: litellm
+          category: ai
+        annotations:
+          summary: "PublicAI model missing"
+          description: "LiteLLM is receiving continuous 404 from PublicAI."
+
+  # Open WebUI rules
+  - name: openwebui.rules
+    rules:
+      - alert: OpenWebUIDown
+        expr: up{job="openwebui"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: openwebui
+          category: ai
+        annotations:
+          summary: "Open WebUI is down"
+          description: "Open WebUI service has been down for more than 1 minute."
+
+      - alert: HighResponseLatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="openwebui"}[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: openwebui
+          category: performance
+        annotations:
+          summary: "High response latency in Open WebUI"
+          description: "95th percentile latency is above 5 seconds for more than 5 minutes."
+
+  # RAG performance rules
+  - name: rag-performance.rules
+    rules:
+      - alert: SlowRAGQueries
+        expr: histogram_quantile(0.95, rate(openwebui_rag_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: openwebui
+          category: performance
+        annotations:
+          summary: "Slow RAG queries detected"
+          description: "95th percentile RAG query time is above 2 seconds for more than 5 minutes."
+
+      - alert: CriticalSlowRAGQueries
+        expr: histogram_quantile(0.95, rate(openwebui_rag_duration_seconds_bucket[5m])) > 10
+        for: 2m
+        labels:
+          severity: critical
+          service: openwebui
+          category: performance
+        annotations:
+          summary: "Critical slow RAG queries"
+          description: "95th percentile RAG query time is above 10 seconds for more than 2 minutes."
+
+      - alert: HighRAGFailureRate
+        expr: rate(openwebui_rag_requests_total{status="error"}[5m]) / rate(openwebui_rag_requests_total[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          service: openwebui
+          category: performance
+        annotations:
+          summary: "High RAG failure rate"
+          description: "RAG failure rate is above 10% for more than 3 minutes."
+
+  # SearXNG rules
+  - name: searxng-performance.rules
+    rules:
+      - alert: SearXNGDown
+        expr: up{job="searxng"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: searxng
+          category: search
+        annotations:
+          summary: "SearXNG is down"
+          description: "SearXNG search service has been down for more than 1 minute."
+
+      - alert: SearXNGSlowResponse
+        expr: histogram_quantile(0.95, rate(searxng_request_duration_seconds_bucket[5m])) > 2
+        for: 2m
+        labels:
+          severity: warning
+          service: searxng
+          category: performance
+        annotations:
+          summary: "SearXNG response time above 2 seconds"
+          description: "95th percentile SearXNG query time is above 2 seconds. Current value: {{ $value }}s"
+
+      - alert: SearXNGCriticallySlowQueries
+        expr: histogram_quantile(0.95, rate(searxng_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: critical
+          service: searxng
+          category: performance
+        annotations:
+          summary: "SearXNG critically slow queries"
+          description: "95th percentile SearXNG query time is above 5 seconds. Current value: {{ $value }}s"
+
+      - alert: HighSearXNGFailureRate
+        expr: rate(searxng_requests_total{status=~"4..|5.."}[5m]) / rate(searxng_requests_total[5m]) > 0.2
+        for: 3m
+        labels:
+          severity: warning
+          service: searxng
+          category: search
+        annotations:
+          summary: "High SearXNG failure rate"
+          description: "SearXNG failure rate is above 20% for more than 3 minutes."
+
+      - alert: SearXNGAPISlowResponse
+        expr: probe_duration_seconds{job="blackbox-searxng-api"} > 2
+        for: 1m
+        labels:
+          severity: warning
+          service: searxng
+          category: api-performance
+          endpoint: "/api/searxng/search"
+        annotations:
+          summary: "SearXNG API endpoint slow response"
+          description: "SearXNG API endpoint response time is above 2 seconds. Current value: {{ $value }}s"

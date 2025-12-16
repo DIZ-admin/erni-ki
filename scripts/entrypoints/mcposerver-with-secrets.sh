@@ -1,30 +1,51 @@
 #!/bin/sh
+# =============================================================================
+# MCPOServer entrypoint - loads secrets from Docker secrets
+# =============================================================================
 set -eu
 
-# populate sensitive envs from docker secrets if present (trim CR/LF)
-trim() { /opt/erni/bin/busybox tr -d '\r\n' < "$1"; }
+# Load shared library (will be mounted by compose)
+# shellcheck source=../lib/secrets-sh.sh
+if [ -f /opt/erni/lib/secrets-sh.sh ]; then
+  . /opt/erni/lib/secrets-sh.sh
+else
+  # Fallback minimal implementation for standalone use
+  log() { echo "[mcposerver] $*" >&2; }
+  log_error() { echo "[mcposerver] ERROR: $*" >&2; exit 1; }
+  read_secret() {
+    secret_file="/run/secrets/$1"
+    [ -f "$secret_file" ] && tr -d '\r\n' < "$secret_file" && return 0
+    return 1
+  }
+  require_secret() {
+    value=$(read_secret "$1") || log_error "Required secret not found: $1"
+    [ -z "$value" ] && log_error "Required secret is empty: $1"
+    echo "$value"
+  }
+fi
 
-if [ -f /run/secrets/postgres_password ]; then
-  POSTGRES_PASSWORD="$(trim /run/secrets/postgres_password)"
-  [ -z "$POSTGRES_PASSWORD" ] && { echo "mcposerver: postgres_password secret is empty" >&2; exit 1; }
-  export POSTGRES_PASSWORD
-fi
-if [ -f /run/secrets/context7_api_key ]; then
-  CONTEXT7_API_KEY="$(trim /run/secrets/context7_api_key)"
-  [ -z "$CONTEXT7_API_KEY" ] && { echo "mcposerver: context7_api_key secret is empty" >&2; exit 1; }
-  export CONTEXT7_API_KEY
-fi
-if [ -f /run/secrets/ragflow_api_key ]; then
-  RAGFLOW_API_KEY="$(trim /run/secrets/ragflow_api_key)"
-  [ -z "$RAGFLOW_API_KEY" ] && { echo "mcposerver: ragflow_api_key secret is empty" >&2; exit 1; }
-  export RAGFLOW_API_KEY
+__SCRIPT_NAME="mcposerver"
+
+# Load required secrets
+if value=$(read_secret "postgres_password"); then
+  [ -z "$value" ] && log_error "postgres_password secret is empty"
+  export POSTGRES_PASSWORD="$value"
 fi
 
-# optional debug: dump env and exit
+if value=$(read_secret "context7_api_key"); then
+  [ -z "$value" ] && log_error "context7_api_key secret is empty"
+  export CONTEXT7_API_KEY="$value"
+fi
+
+if value=$(read_secret "ragflow_api_key"); then
+  [ -z "$value" ] && log_error "ragflow_api_key secret is empty"
+  export RAGFLOW_API_KEY="$value"
+fi
+
+# Debug mode
 if [ "${ENV_DUMP:-0}" != "0" ]; then
   env
   exit 0
 fi
 
-# Run mcpo CLI directly (image Entrypoint defaults to mcpo)
 exec mcpo "$@"

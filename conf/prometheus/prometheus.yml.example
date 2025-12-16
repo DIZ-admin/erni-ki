@@ -1,0 +1,115 @@
+# Prometheus configuration example
+# Copy to prometheus.yml and customize for your environment
+
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+  scrape_timeout: 10s
+  external_labels:
+    cluster: "erni-ki"
+    environment: "production"
+    region: "eu-central"
+
+# Alert rules - modular structure from rules/ directory
+# See rules/ for categorized alert files:
+#   10-infrastructure.yml - ServiceDown, CPU, Memory, Disk, Container alerts
+#   20-databases.yml      - PostgreSQL, Redis alerts
+#   30-ai-services.yml    - Auth, Ollama, OpenWebUI, LiteLLM, RAG, SearXNG alerts
+#   40-logging.yml        - Elasticsearch, Fluent Bit alerts
+#   50-gpu.yml            - NVIDIA GPU monitoring alerts
+#   60-sla.yml            - Nginx, Security, Cloudflare, Cron, Prometheus alerts
+rule_files:
+  - "rules/*.yml"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Metrics collection configuration
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+    scrape_interval: 60s
+
+  # Node Exporter for system metrics
+  - job_name: "node-exporter"
+    static_configs:
+      - targets: ["node-exporter:9100"]
+    scrape_interval: 60s
+
+  # cAdvisor for container metrics
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"]
+    scrape_interval: 15s
+
+  # Nginx metrics
+  - job_name: "nginx"
+    static_configs:
+      - targets: ["nginx-exporter:9113"]
+    scrape_interval: 15s
+
+  # PostgreSQL metrics
+  - job_name: "postgres"
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+    scrape_interval: 30s
+
+  # Redis metrics
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+    scrape_interval: 15s
+
+  # Ollama metrics
+  - job_name: "ollama-exporter"
+    static_configs:
+      - targets: ["ollama-exporter:9778"]
+    scrape_interval: 15s
+
+  # NVIDIA GPU metrics
+  - job_name: "nvidia-exporter"
+    static_configs:
+      - targets: ["nvidia-exporter:9445"]
+    scrape_interval: 10s
+
+  # Blackbox HTTP probes for service availability
+  - job_name: "blackbox-http"
+    metrics_path: /probe
+    params:
+      module: [http_2xx_no_redirect]
+    static_configs:
+      - targets:
+          - http://openwebui:8080/health
+          - http://auth:9090/health
+          - http://ollama:11434/api/version
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+    scrape_interval: 30s
+
+  # Blackbox TCP probes for database connectivity
+  - job_name: "blackbox-tcp"
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets:
+          - db:5432
+          - redis:6379
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

@@ -1,26 +1,30 @@
 #!/usr/bin/env bash
+# =============================================================================
+# LiteLLM entrypoint - loads secrets and configures database/cache URLs
+# =============================================================================
 set -euo pipefail
 
-log() {
-  echo "[litellm-entrypoint] $*" >&2
-}
+# Load shared library (will be mounted by compose)
+# shellcheck source=../lib/secrets.sh
+if [[ -f /opt/erni/lib/secrets.sh ]]; then
+  source /opt/erni/lib/secrets.sh
+else
+  # Fallback minimal implementation for standalone use
+  log() { echo "[litellm] $*" >&2; }
+  log_warn() { echo "[litellm] WARNING: $*" >&2; }
+  read_secret() {
+    local secret_file="/run/secrets/$1"
+    [[ -f "$secret_file" ]] && tr -d '\r\n' < "$secret_file" && return 0
+    return 1
+  }
+fi
 
-read_secret() {
-  local secret_name="$1"
-  local secret_file="/run/secrets/${secret_name}"
-
-  if [[ -f "${secret_file}" ]]; then
-    tr -d '\r' <"${secret_file}" | tr -d '\n'
-    return 0
-  fi
-
-  return 1
-}
+__SCRIPT_NAME="litellm"
 
 configure_database_url() {
   local password
   if ! password="$(read_secret "litellm_db_password")"; then
-    log "warning: litellm_db_password secret missing; DATABASE_URL will stay unchanged"
+    log_warn "litellm_db_password secret missing; DATABASE_URL will stay unchanged"
     return
   fi
 
@@ -40,13 +44,13 @@ configure_master_and_salt_keys() {
   if master_key="$(read_secret "litellm_master_key")"; then
     export LITELLM_MASTER_KEY="${master_key}"
   else
-    log "warning: litellm_master_key secret missing; LITELLM_MASTER_KEY is not set"
+    log_warn "litellm_master_key secret missing; LITELLM_MASTER_KEY is not set"
   fi
 
   if salt_key="$(read_secret "litellm_salt_key")"; then
     export LITELLM_SALT_KEY="${salt_key}"
   else
-    log "warning: litellm_salt_key secret missing; LITELLM_SALT_KEY is not set"
+    log_warn "litellm_salt_key secret missing; LITELLM_SALT_KEY is not set"
   fi
 }
 
@@ -55,7 +59,7 @@ configure_ui_credentials() {
   if ui_password="$(read_secret "litellm_ui_password")"; then
     export UI_PASSWORD="${ui_password}"
   else
-    log "warning: litellm_ui_password secret missing; UI_PASSWORD is unchanged"
+    log_warn "litellm_ui_password secret missing; UI_PASSWORD is unchanged"
   fi
 }
 
@@ -64,7 +68,7 @@ configure_api_key() {
   if api_key="$(read_secret "litellm_api_key")"; then
     export LITELLM_API_KEY="${api_key}"
   else
-    log "warning: litellm_api_key secret missing; LITELLM_API_KEY remains unchanged"
+    log_warn "litellm_api_key secret missing; LITELLM_API_KEY remains unchanged"
   fi
 }
 
@@ -73,7 +77,7 @@ configure_openai_credentials() {
   if openai_key="$(read_secret "openai_api_key")"; then
     export OPENAI_API_KEY="${OPENAI_API_KEY:-$openai_key}"
   else
-    log "warning: openai_api_key secret missing; OPENAI_API_KEY is unchanged"
+    log_warn "openai_api_key secret missing; OPENAI_API_KEY is unchanged"
   fi
 }
 
@@ -82,7 +86,7 @@ configure_publicai_credentials() {
   if publicai_key="$(read_secret "publicai_api_key")"; then
     export PUBLICAI_API_KEY="${PUBLICAI_API_KEY:-$publicai_key}"
   else
-    log "warning: publicai_api_key secret missing; PUBLICAI_API_KEY is unchanged"
+    log_warn "publicai_api_key secret missing; PUBLICAI_API_KEY is unchanged"
   fi
 }
 
