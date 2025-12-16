@@ -1,10 +1,15 @@
 #!/bin/sh
 # Entrypoint for webhook-receiver - injects secrets into environment
+set -euo pipefail
+
+log() {
+  echo "[webhook-entrypoint] $*" >&2
+}
 
 # Read ALERTMANAGER_WEBHOOK_SECRET from secret if not already set
-if [ -z "$ALERTMANAGER_WEBHOOK_SECRET" ] && [ -f /run/secrets/alertmanager_webhook_secret ]; then
-    export ALERTMANAGER_WEBHOOK_SECRET="$(cat /run/secrets/alertmanager_webhook_secret)"
-    echo "[webhook-entrypoint] Loaded ALERTMANAGER_WEBHOOK_SECRET from secret"
+if [ -z "${ALERTMANAGER_WEBHOOK_SECRET:-}" ] && [ -f /run/secrets/alertmanager_webhook_secret ]; then
+    export ALERTMANAGER_WEBHOOK_SECRET="$(tr -d '\r\n' < /run/secrets/alertmanager_webhook_secret)"
+    log "Loaded ALERTMANAGER_WEBHOOK_SECRET from secret"
 fi
 
 # Execute the main application using gunicorn (production WSGI server)

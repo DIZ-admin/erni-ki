@@ -306,10 +306,23 @@ async def _process_with_ragflow(
             headers={**get_ragflow_headers(), "Content-Type": "application/json"},
             json={"document_ids": [doc_id]},
         )
-        if resp.status_code != 200 or resp.json().get("code") != 0:
-            logger.warning(
-                f"[{request_id}] ragflow_parse_start_warning: "
-                f"status={resp.status_code}, response={resp.text[:200]}"
+        if resp.status_code != 200:
+            logger.error(
+                f"[{request_id}] ragflow_parse_failed: "
+                f"status={resp.status_code}, response={resp.text[:500]}"
+            )
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"Failed to start RAGFlow parsing: {resp.status_code}",
+            )
+
+        parse_response = resp.json()
+        if parse_response.get("code") != 0:
+            error_msg = parse_response.get("message", "Unknown error")
+            logger.error(f"[{request_id}] ragflow_parse_error: {error_msg}")
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"RAGFlow parse start error: {error_msg}",
             )
         logger.info(f"[{request_id}] ragflow_parse_started: doc_id={doc_id}")
 
