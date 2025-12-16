@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Entrypoint for webhook-receiver - injects secrets into environment
 set -euo pipefail
 

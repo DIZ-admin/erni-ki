@@ -133,7 +133,7 @@ production readiness diagnostic **Status:** COMPLETED - READY FOR PRODUCTION
 ### Applied Fix:
 
 - **OLLAMA_NUM_CTX** increased 4096 → 8192
-- Files: `env/ollama.env`, `compose.yml:583`, `compose/ai.yml:55`
+- Files: `env/ollama.env`, `compose.yml:584`, `compose/ai.yml:55`
 
 ---
 
