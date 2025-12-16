@@ -1,6 +1,9 @@
 # LiteLLM Unified Configuration for ERNI-KI
 # Single proxy for all AI models with OpenAI API and local Ollama integration
-
+#
+# NOTE: Environment variable syntax "os.environ/VAR_NAME" is LiteLLM-specific.
+# See: https://docs.litellm.ai/docs/proxy/configs#environment-variables
+#
 # Models are managed via Database Models in the LiteLLM Admin UI
 # All models are migrated into the database for full control via the web UI
 #
@@ -55,8 +58,8 @@ general_settings:
   store_prompts_in_spend_logs: false
   # Persist all request data
   store_audit_logs_in_db: false
-  # Disable sensitive data filtering for debugging
-  redact_user_api_key_info: false
+  # Redact API key info in logs (enabled for production security)
+  redact_user_api_key_info: true
   # Additional prompt logging settings
   # Synced with DISABLE_SPEND_LOGS env variable (False = enabled)
   disable_spend_logs: false
@@ -76,27 +79,18 @@ general_settings:
   # Disable logging of health checks to reduce noise
   disable_health_check_logs: true
 
-# === OPENAI PASSTHROUGH CONFIGURATION ===
-openai_route_config:
-  # Enable OpenAI passthrough
-  enable_openai_passthrough: true
-  # OpenAI API settings
-  openai_api_key: os.environ/OPENAI_API_KEY
-  openai_api_base: os.environ/OPENAI_API_BASE
-  # Allowed endpoints for passthrough
-  allowed_routes:
-    - "/v1/assistants"
-    - "/v1/assistants/*"
-    - "/v1/threads"
-    - "/v1/threads/*"
-    - "/v1/threads/*/messages"
-    - "/v1/threads/*/messages/*"
-    - "/v1/threads/*/runs"
-    - "/v1/threads/*/runs/*"
-  # Security settings for passthrough
-  require_auth: true
-  budget_alerts: false
-  fallbacks: false
+# === OPENAI PASSTHROUGH CONFIGURATION (RESERVED) ===
+# Uncomment when OpenAI Assistant API passthrough is needed
+# openai_route_config:
+#   enable_openai_passthrough: true
+#   openai_api_key: os.environ/OPENAI_API_KEY
+#   openai_api_base: os.environ/OPENAI_API_BASE
+#   allowed_routes:
+#     - "/v1/assistants"
+#     - "/v1/assistants/*"
+#     - "/v1/threads"
+#     - "/v1/threads/*"
+#   require_auth: true
 
 litellm_settings:
   drop_params: false  # Keep params but avoid raw bodies

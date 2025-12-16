@@ -1,7 +1,7 @@
 {
   "uid": "erni-ki-litellm-monitoring",
   "title": "LiteLLM Context Engineering Gateway - ERNI-KI",
-  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. ОБНОВЛЕНО 2025-12-16: добавлены PublicAI метрики из custom provider",
+  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. PostgreSQL queries assume datname='openwebui' (from DATABASE_URL). ОБНОВЛЕНО 2025-12-16",
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
@@ -385,9 +385,10 @@
   "links": [
     {
       "title": "LiteLLM Admin UI",
-      "url": "http://localhost:4000",
+      "url": "/d/litellm-admin",
       "type": "link",
-      "icon": "external link"
+      "icon": "external link",
+      "tooltip": "Access via reverse proxy or configure LITELLM_URL variable"
     }
   ]
 }
