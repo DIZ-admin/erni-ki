@@ -53,8 +53,8 @@ services:
       - OLLAMA_NUM_PARALLEL=1
       - OLLAMA_MAX_LOADED_MODELS=1
       - OLLAMA_NUM_CTX=8192
-      # Flash attention occasionally breaks some models; disable for stability
-      - OLLAMA_FLASH_ATTENTION=0
+      # Flash attention enabled - Turing (SM 7.5) supported, reduces VRAM with large context
+      - OLLAMA_FLASH_ATTENTION=1
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
     env_file: ../env/ollama.env
     # GPU memory limits optimized for RTX 5000 (16GB VRAM)

@@ -1,15 +1,42 @@
 apiVersion: 1
 
+# Datasource provisioning for erni-ki monitoring stack
+# Best practices: All datasources defined as code, no manual configuration
+
 datasources:
+  # Primary metrics datasource
   - name: Prometheus
     type: prometheus
+    uid: prometheus
     access: proxy
     url: http://prometheus:9090
     isDefault: true
     editable: false
+    jsonData:
+      timeInterval: "15s"
+      httpMethod: POST
+      manageAlerts: true
+      prometheusType: Prometheus
+      prometheusVersion: "2.53.0"
 
+  # Log aggregation datasource
   - name: Loki
     type: loki
+    uid: loki
     access: proxy
     url: http://loki:3100
     editable: false
+    jsonData:
+      timeout: 60
+      maxLines: 1000
+
+  # Alertmanager datasource for alert management
+  - name: Alertmanager
+    type: alertmanager
+    uid: alertmanager
+    access: proxy
+    url: http://alertmanager:9093
+    editable: false
+    jsonData:
+      implementation: prometheus
+      handleGrafanaManagedAlerts: false

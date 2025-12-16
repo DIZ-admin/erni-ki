@@ -19,8 +19,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="litellm"
-
 configure_database_url() {
   local password
   if ! password="$(read_secret "litellm_db_password")"; then
@@ -108,7 +106,17 @@ configure_redis_url() {
 
 prepare_publicai_metrics_dir() {
   local metrics_dir="${LITELLM_PUBLICAI_METRICS_DIR:-/tmp/litellm-publicai-prom}"
-  rm -rf "${metrics_dir}"
+  # Validate path is within allowed directories to prevent directory traversal
+  case "${metrics_dir}" in
+    /tmp/*|/var/tmp/*)
+      rm -rf "${metrics_dir}"
+      ;;
+    *)
+      log_warn "Metrics directory must be under /tmp or /var/tmp: ${metrics_dir}"
+      metrics_dir="/tmp/litellm-publicai-prom"
+      rm -rf "${metrics_dir}"
+      ;;
+  esac
   mkdir -p "${metrics_dir}"
   chmod 700 "${metrics_dir}"
   export LITELLM_PUBLICAI_METRICS_DIR="${metrics_dir}"

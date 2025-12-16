@@ -18,8 +18,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="ragflow-adapter"
-
 # Read RAGFLOW_API_KEY from secret if not already set
 if [[ -z "${RAGFLOW_API_KEY:-}" ]]; then
   if api_key=$(read_secret "ragflow_api_key"); then

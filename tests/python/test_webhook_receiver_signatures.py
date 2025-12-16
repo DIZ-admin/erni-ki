@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def load_webhook_receiver():
     os.environ.setdefault("ALERTMANAGER_WEBHOOK_SECRET", "test-secret-1234567890")  # noqa: S105
-    module_path = ROOT / "conf" / "webhook-receiver" / "webhook-receiver.py"
+    module_path = ROOT / "conf" / "webhook-receiver" / "webhook_receiver.py"
     spec = importlib.util.spec_from_file_location("webhook_receiver_neg", module_path)
     if spec is None or spec.loader is None:
         raise ImportError(f"Cannot load webhook-receiver from {module_path}")

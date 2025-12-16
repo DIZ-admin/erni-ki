@@ -12,6 +12,8 @@ groups:
           severity: critical
           service: postgres
           category: database
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "PostgreSQL is down"
           description: "PostgreSQL database has been down for more than 30 seconds."
@@ -23,6 +25,8 @@ groups:
           severity: warning
           service: postgres
           category: database
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Too many PostgreSQL connections"
           description: "PostgreSQL has more than 80 active connections for more than 5 minutes."
@@ -34,6 +38,8 @@ groups:
           severity: warning
           service: postgres
           category: database
+          owner: ops
+          escalation: slack
         annotations:
           summary: "PostgreSQL slow queries detected"
           description: "PostgreSQL has queries running for more than 5 minutes."
@@ -48,6 +54,8 @@ groups:
           severity: critical
           service: redis
           category: cache
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "Redis is down"
           description: "Redis cache service has been down for more than 30 seconds."
@@ -59,6 +67,8 @@ groups:
           severity: warning
           service: redis
           category: cache
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Redis high memory usage"
           description: "Redis memory usage is above 90% of 512MB limit ({{ $value | humanize1024 }}B used)."
@@ -70,6 +80,8 @@ groups:
           severity: critical
           service: redis
           category: cache
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "Redis critical memory usage"
           description: "Redis memory usage is above 95% of 512MB limit ({{ $value | humanize1024 }}B used). Eviction may occur."
@@ -81,6 +93,8 @@ groups:
           severity: warning
           service: redis
           category: cache
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Redis high connection count"
           description: "Redis has {{ $value }} connected clients (>80% of typical load)."
@@ -92,6 +106,8 @@ groups:
           severity: warning
           service: redis
           category: cache
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Redis low cache hit ratio"
           description: "Redis cache hit ratio is {{ $value | humanizePercentage }} (below 80%) for more than 10 minutes."
@@ -103,6 +119,8 @@ groups:
           severity: warning
           service: redis
           category: cache
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Redis slow operations detected"
           description: "Redis has {{ $value }} slow operations in the last 5 minutes."
@@ -117,6 +135,8 @@ groups:
           severity: critical
           service: redis-backup
           category: backup
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "Redis backup failed"
           description: "Redis backup has not been successful for more than 1 hour."
@@ -128,6 +148,8 @@ groups:
           severity: warning
           service: redis-backup
           category: backup
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Redis backup is stale"
           description: "Redis backup is older than 24 hours ({{ $value | humanizeDuration }} ago)."
@@ -139,20 +161,24 @@ groups:
           severity: critical
           service: redis-backup
           category: backup
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "Redis backup integrity check failed"
           description: "Redis backup integrity check has been failing for more than 15 minutes."
 
       - alert: RedisBackupServiceDown
-        expr: redis_backup_backrest_up == 0
+        expr: redis_backup_service_up == 0
         for: 5m
         labels:
           severity: critical
           service: redis-backup
           category: backup
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "Redis backup service is down"
-          description: "Backrest service for Redis backup is not responding for more than 5 minutes."
+          description: "Redis backup service is not responding for more than 5 minutes."
 
       - alert: RedisRDBFileStale
         expr: redis_backup_rdb_age_seconds > 172800
@@ -161,6 +187,8 @@ groups:
           severity: warning
           service: redis-backup
           category: backup
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Redis RDB file is stale"
           description: "Redis RDB file is older than 48 hours ({{ $value | humanizeDuration }} old)."

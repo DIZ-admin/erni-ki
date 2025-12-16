@@ -24,8 +24,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="mcposerver"
-
 # Load required secrets
 if value=$(read_secret "postgres_password"); then
   [ -z "$value" ] && log_error "postgres_password secret is empty"
