@@ -65,7 +65,7 @@ services:
       timeout: 3s
       retries: 5
       start_period: 10s
-    image: ollama/ollama:0.13.4 # Updated 2024-12-16 to 0.13.4
+    image: ollama/ollama:0.13.4 # Updated 2025-12-16 to 0.13.4
     logging: *critical-logging
     networks:
       - backend

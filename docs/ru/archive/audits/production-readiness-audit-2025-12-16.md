@@ -61,7 +61,7 @@ production readiness diagnostic **Status:** COMPLETED - READY FOR PRODUCTION
 ### Applied Fix:
 
 - **RedisLowHitRatio** - добавлено условие минимального traffic (>0.1 req/s)
-- Files: `conf/prometheus/alert_rules.yml:410`, `conf/prometheus/alerts.yml:140`
+- Files: `conf/prometheus/alert_rules.yml:409`, `conf/prometheus/alerts.yml:139`
 
 ---
 
