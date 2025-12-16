@@ -137,14 +137,14 @@ groups:
           action: "Check status: docker compose ps redis"
 
       - alert: RedisLowHitRatio
-        expr: (redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total)) < 0.80
+        expr: (redis_keyspace_hits_total / (redis_keyspace_hits_total + redis_keyspace_misses_total)) < 0.80 and (redis_keyspace_hits_total + redis_keyspace_misses_total) > 100
         for: 15m
         labels:
           severity: warning
           component: redis
         annotations:
           summary: "Low Redis hit ratio"
-          description: "Hit ratio {{ $value | humanizePercentage }} (normal >90%)"
+          description: "Hit ratio {{ $value | humanizePercentage }} (normal >90%). Only triggers when total requests > 100."
           action: "Check key TTL and caching patterns"
 
       # === OLLAMA GPU ALERTS ===

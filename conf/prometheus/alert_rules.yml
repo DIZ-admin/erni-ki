@@ -405,9 +405,9 @@ groups:
           summary: "Redis high connection count"
           description: "Redis has {{ $value }} connected clients (>80% of typical load)."
 
-      # Low Redis hit ratio
+      # Low Redis hit ratio (with minimum traffic threshold to avoid false positives)
       - alert: RedisLowHitRatio
-        expr: (rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))) < 0.8
+        expr: (rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))) < 0.8 and (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) > 0.1
         for: 10m
         labels:
           severity: warning
@@ -415,7 +415,7 @@ groups:
           category: cache
         annotations:
           summary: "Redis low cache hit ratio"
-          description: "Redis cache hit ratio is {{ $value | humanizePercentage }} (below 80%) for more than 10 minutes."
+          description: "Redis cache hit ratio is {{ $value | humanizePercentage }} (below 80%) for more than 10 minutes. Only triggers when request rate > 0.1/s."
 
       # Slow Redis operations
       - alert: RedisSlowOperations
