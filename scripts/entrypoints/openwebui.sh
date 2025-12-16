@@ -82,6 +82,16 @@ configure_redis_url() {
   export REDIS_URL="${REDIS_URL:-redis://${host}:${port}/${db}}"
 }
 
+configure_ragflow_key() {
+  api_key=""
+  if api_key="$(read_secret "ragflow_api_key")"; then
+    export EXTERNAL_DOCUMENT_LOADER_API_KEY="${api_key}"
+    log "ragflow_api_key loaded for EXTERNAL_DOCUMENT_LOADER_API_KEY"
+  else
+    log "warning: ragflow_api_key secret missing; EXTERNAL_DOCUMENT_LOADER_API_KEY unchanged"
+  fi
+}
+
 apply_defaults() {
   # Enforce sane JWT expiry while allowing overrides from environment
   export JWT_EXPIRES_IN="${JWT_EXPIRES_IN:-86400}"
@@ -96,6 +106,7 @@ main() {
   configure_webui_secret
   configure_openai_keys
   configure_redis_url
+  configure_ragflow_key
   apply_defaults
 
   if [ $# -gt 0 ]; then

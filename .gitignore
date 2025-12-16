@@ -281,3 +281,6 @@ htmlcov/
 
 # Academy build output
 site-academy/
+
+# Compose secrets directory
+compose/secrets/
