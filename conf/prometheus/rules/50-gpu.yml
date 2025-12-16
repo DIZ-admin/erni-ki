@@ -11,6 +11,8 @@ groups:
           severity: critical
           service: nvidia
           category: ai
+          owner: ml-ops
+          escalation: pagerduty
         annotations:
           summary: "GPU monitoring unavailable"
           description: "NVIDIA GPU exporter has been down for more than 1 minute."
@@ -22,6 +24,8 @@ groups:
           severity: critical
           service: ollama
           category: ai
+          owner: ml-ops
+          escalation: pagerduty
         annotations:
           summary: "Critical GPU usage"
           description: "GPU utilization is above 98% for more than 15 minutes. Performance may be severely degraded."
@@ -33,6 +37,8 @@ groups:
           severity: warning
           service: ollama
           category: ai
+          owner: ml-ops
+          escalation: slack
         annotations:
           summary: "High GPU memory usage"
           description: "GPU memory usage is above 90% for more than 10 minutes."
@@ -43,7 +49,9 @@ groups:
         labels:
           severity: critical
           service: ollama
-          category: ai
+          category: hardware
+          owner: ml-ops
+          escalation: pagerduty
         annotations:
           summary: "Critical GPU temperature"
           description: "GPU temperature is above 90C for more than 2 minutes. Risk of hardware damage."
@@ -55,6 +63,8 @@ groups:
           severity: warning
           service: ollama
           category: ai
+          owner: ml-ops
+          escalation: slack
         annotations:
           summary: "Low GPU performance"
           description: "GPU power draw is below 50W for more than 30 minutes. GPU may be throttling."

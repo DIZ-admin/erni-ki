@@ -19,33 +19,36 @@ groups:
           description: "Authentication service has been down for more than 30 seconds."
           runbook: "docs/operations/monitoring-guide.md#auth-service"
 
-      - alert: HighAuthErrorRate
-        expr: rate(auth_requests_total{status=~"4.."}[5m]) / rate(auth_requests_total[5m]) > 0.1
-        for: 2m
-        labels:
-          severity: warning
-          service: auth
-          category: security
-          owner: security
-          escalation: slack
-        annotations:
-          summary: "High authentication error rate"
-          description: "Authentication error rate is above 10% for more than 2 minutes."
-          runbook: "docs/operations/monitoring-guide.md#auth-service"
+      # DISABLED: auth service does not expose /metrics endpoint
+      # Re-enable when auth service exposes auth_requests_total metric
+      # - alert: HighAuthErrorRate
+      #   expr: rate(auth_requests_total{status=~"4.."}[5m]) / rate(auth_requests_total[5m]) > 0.1
+      #   for: 2m
+      #   labels:
+      #     severity: warning
+      #     service: auth
+      #     category: security
+      #     owner: security
+      #     escalation: slack
+      #   annotations:
+      #     summary: "High authentication error rate"
+      #     description: "Authentication error rate is above 10% for more than 2 minutes."
+      #     runbook: "docs/operations/monitoring-guide.md#auth-service"
 
-      - alert: SuspiciousAuthActivity
-        expr: rate(auth_requests_total{status="401"}[1m]) > 10
-        for: 1m
-        labels:
-          severity: critical
-          service: auth
-          category: security
-          owner: security
-          escalation: pagerduty
-        annotations:
-          summary: "Suspicious authentication activity detected"
-          description: "High rate of failed authentication attempts detected. Possible brute force attack."
-          runbook: "docs/operations/monitoring-guide.md#auth-service"
+      # DISABLED: auth service does not expose /metrics endpoint
+      # - alert: SuspiciousAuthActivity
+      #   expr: rate(auth_requests_total{status="401"}[1m]) > 10
+      #   for: 1m
+      #   labels:
+      #     severity: critical
+      #     service: auth
+      #     category: security
+      #     owner: security
+      #     escalation: pagerduty
+      #   annotations:
+      #     summary: "Suspicious authentication activity detected"
+      #     description: "High rate of failed authentication attempts detected. Possible brute force attack."
+      #     runbook: "docs/operations/monitoring-guide.md#auth-service"
 
   # Ollama rules
   - name: ollama.rules
@@ -231,39 +234,41 @@ groups:
           summary: "SearXNG is down"
           description: "SearXNG search service has been down for more than 1 minute."
 
-      - alert: SearXNGSlowResponse
-        expr: histogram_quantile(0.95, rate(searxng_request_duration_seconds_bucket[5m])) > 2
-        for: 2m
-        labels:
-          severity: warning
-          service: searxng
-          category: performance
-        annotations:
-          summary: "SearXNG response time above 2 seconds"
-          description: "95th percentile SearXNG query time is above 2 seconds. Current value: {{ $value }}s"
+      # DISABLED: SearXNG does not expose Prometheus metrics
+      # Use blackbox probes (SearXNGAPISlowResponse) for availability monitoring
+      # - alert: SearXNGSlowResponse
+      #   expr: histogram_quantile(0.95, rate(searxng_request_duration_seconds_bucket[5m])) > 2
+      #   for: 2m
+      #   labels:
+      #     severity: warning
+      #     service: searxng
+      #     category: performance
+      #   annotations:
+      #     summary: "SearXNG response time above 2 seconds"
 
-      - alert: SearXNGCriticallySlowQueries
-        expr: histogram_quantile(0.95, rate(searxng_request_duration_seconds_bucket[5m])) > 5
-        for: 5m
-        labels:
-          severity: critical
-          service: searxng
-          category: performance
-        annotations:
-          summary: "SearXNG critically slow queries"
-          description: "95th percentile SearXNG query time is above 5 seconds. Current value: {{ $value }}s"
+      # DISABLED: SearXNG does not expose Prometheus metrics
+      # - alert: SearXNGCriticallySlowQueries
+      #   expr: histogram_quantile(0.95, rate(searxng_request_duration_seconds_bucket[5m])) > 5
+      #   for: 5m
+      #   labels:
+      #     severity: critical
+      #     service: searxng
+      #     category: performance
+      #   annotations:
+      #     summary: "SearXNG critically slow queries"
 
-      - alert: HighSearXNGFailureRate
-        expr: rate(searxng_requests_total{status=~"4..|5.."}[5m]) / rate(searxng_requests_total[5m]) > 0.2
-        for: 3m
-        labels:
-          severity: warning
-          service: searxng
-          category: search
-        annotations:
-          summary: "High SearXNG failure rate"
-          description: "SearXNG failure rate is above 20% for more than 3 minutes."
+      # DISABLED: SearXNG does not expose Prometheus metrics
+      # - alert: HighSearXNGFailureRate
+      #   expr: rate(searxng_requests_total{status=~"4..|5.."}[5m]) / rate(searxng_requests_total[5m]) > 0.2
+      #   for: 3m
+      #   labels:
+      #     severity: warning
+      #     service: searxng
+      #     category: search
+      #   annotations:
+      #     summary: "High SearXNG failure rate"
 
+      # Active: Blackbox probe monitoring for SearXNG API
       - alert: SearXNGAPISlowResponse
         expr: probe_duration_seconds{job="blackbox-searxng-api"} > 2
         for: 1m
