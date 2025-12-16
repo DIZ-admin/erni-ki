@@ -299,11 +299,31 @@ async def _process_with_ragflow(
         doc_id = docs[0].get("id")
         logger.info(f"[{request_id}] ragflow_uploaded: doc_id={doc_id}")
 
-        # 2. Start parsing
-        parse_url = (
-            f"{RAGFLOW_BASE_URL}/api/v1/datasets/{RAGFLOW_DATASET_ID}/documents/{doc_id}/run"
+        # 2. Start parsing (RAGFlow API v1.x uses /chunks endpoint)
+        parse_url = f"{RAGFLOW_BASE_URL}/api/v1/datasets/{RAGFLOW_DATASET_ID}/chunks"
+        resp = await client.post(
+            parse_url,
+            headers={**get_ragflow_headers(), "Content-Type": "application/json"},
+            json={"document_ids": [doc_id]},
         )
-        resp = await client.post(parse_url, headers=get_ragflow_headers())
+        if resp.status_code != 200:
+            logger.error(
+                f"[{request_id}] ragflow_parse_failed: "
+                f"status={resp.status_code}, response={resp.text[:500]}"
+            )
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"Failed to start RAGFlow parsing: {resp.status_code}",
+            )
+
+        parse_response = resp.json()
+        if parse_response.get("code") != 0:
+            error_msg = parse_response.get("message", "Unknown error")
+            logger.error(f"[{request_id}] ragflow_parse_error: {error_msg}")
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"RAGFlow parse start error: {error_msg}",
+            )
         logger.info(f"[{request_id}] ragflow_parse_started: doc_id={doc_id}")
 
         # 3. Wait for parsing to complete (non-blocking)

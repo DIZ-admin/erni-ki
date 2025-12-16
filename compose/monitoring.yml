@@ -142,8 +142,9 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    mem_limit: 512m
-    mem_reservation: 256m
+    # Memory increased from 512m to 768m due to expanded monitoring (30+ services)
+    mem_limit: 768m
+    mem_reservation: 384m
     cpus: "0.5"
     labels:
       # Allow auto-updates for Uptime Kuma

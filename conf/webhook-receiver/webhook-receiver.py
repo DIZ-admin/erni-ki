@@ -45,10 +45,20 @@ logger = logging.getLogger("webhook-receiver")
 class _SimpleLimiter:
     """Minimal in-process limiter for test environments."""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize rate limiter with empty limits dictionary."""
         self._limits: dict[str, tuple[int, datetime]] = {}
 
     def limit(self, rule: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+        """
+        Create rate limiting decorator.
+
+        Args:
+            rule: Rate limit rule string (e.g., "10 per minute").
+
+        Returns:
+            Decorator function that applies rate limiting.
+        """
         parts = rule.split()
         max_calls = int(parts[0])
         key_prefix = f"{max_calls}:{' '.join(parts[1:])}"
@@ -88,6 +98,16 @@ WEBHOOK_SECRET = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
 
 
 def _ensure_dir(path: Path, fallback: Path) -> Path:
+    """
+    Ensure directory exists, falling back to alternative path on failure.
+
+    Args:
+        path: Primary directory path to create.
+        fallback: Fallback directory if primary fails.
+
+    Returns:
+        Path that was successfully created.
+    """
     try:
         path.mkdir(parents=True, exist_ok=True)
         return path
@@ -138,6 +158,7 @@ def _validate_secrets(exit_on_error: bool = False) -> None:
 
 
 def _get_webhook_secret() -> str | None:
+    """Get webhook secret from environment or module-level config."""
     env_secret = os.getenv("ALERTMANAGER_WEBHOOK_SECRET")
     return env_secret if env_secret is not None else WEBHOOK_SECRET
 
@@ -225,6 +246,12 @@ def run_recovery_script(service: str) -> None:
 
 
 def handle_critical_alert(alert: dict[str, Any]) -> None:
+    """
+    Handle critical severity alerts with optional auto-recovery.
+
+    Args:
+        alert: Alert payload containing labels and annotations.
+    """
     labels = alert.get("labels", {})
     service = labels.get("service", "unknown")
     logger.critical("🚨 CRITICAL ALERT for service: %s", service)
@@ -238,6 +265,12 @@ def handle_critical_alert(alert: dict[str, Any]) -> None:
 
 
 def handle_gpu_alert(alert: dict[str, Any]) -> None:
+    """
+    Handle GPU-related alerts (temperature, memory, utilization).
+
+    Args:
+        alert: Alert payload containing GPU-specific labels.
+    """
     labels = alert.get("labels", {})
     gpu_id = labels.get("gpu_id", "unknown")
     component = labels.get("component", "unknown")
@@ -275,6 +308,7 @@ def process_alert(alert_data: dict[str, Any], alert_type: str = "general") -> No
 @app.route("/health", methods=["GET"])
 @limiter.limit("30 per minute")
 def health_check():
+    """Health check endpoint for container orchestration."""
     return jsonify(
         {
             "status": "healthy",
@@ -285,6 +319,17 @@ def health_check():
 
 
 def _create_webhook_handler(alert_type: str, description: str):
+    """
+    Factory function to create webhook handlers for different alert types.
+
+    Args:
+        alert_type: Type identifier for the alert (e.g., "critical", "gpu").
+        description: Human-readable description for logging.
+
+    Returns:
+        Flask route handler function.
+    """
+
     def handler():
         try:
             # Support both X-Signature (HMAC) and Bearer token authentication
