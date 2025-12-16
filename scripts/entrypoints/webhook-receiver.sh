@@ -31,4 +31,4 @@ fi
 # Execute the main application using gunicorn (production WSGI server)
 exec gunicorn --bind 0.0.0.0:9093 --workers 2 --threads 4 \
     --access-logfile - --error-logfile - \
-    "webhook-receiver:app"
+    "webhook_receiver:app"

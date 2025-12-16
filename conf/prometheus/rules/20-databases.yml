@@ -168,7 +168,7 @@ groups:
           description: "Redis backup integrity check has been failing for more than 15 minutes."
 
       - alert: RedisBackupServiceDown
-        expr: redis_backup_backrest_up == 0
+        expr: redis_backup_service_up == 0
         for: 5m
         labels:
           severity: critical
@@ -178,7 +178,7 @@ groups:
           escalation: pagerduty
         annotations:
           summary: "Redis backup service is down"
-          description: "Backrest service for Redis backup is not responding for more than 5 minutes."
+          description: "Redis backup service is not responding for more than 5 minutes."
 
       - alert: RedisRDBFileStale
         expr: redis_backup_rdb_age_seconds > 172800

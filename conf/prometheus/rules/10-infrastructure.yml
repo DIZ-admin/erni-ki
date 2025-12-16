@@ -142,19 +142,7 @@ groups:
           description: "Elasticsearch container is using {{ $value | humanizePercentage }} of memory limit. Risk of OOM kill!"
           runbook: "docs/operations/monitoring-guide.md#elasticsearch"
 
-      - alert: LiteLLMCriticalMemory
-        expr: (container_memory_usage_bytes{name=~".*litellm.*"} / container_spec_memory_limit_bytes{name=~".*litellm.*"}) * 100 > 90
-        for: 2m
-        labels:
-          severity: critical
-          category: litellm
-          service: litellm
-          owner: ml-ops
-          escalation: pagerduty
-        annotations:
-          summary: "LiteLLM critical memory usage"
-          description: "LiteLLM container is using {{ $value | humanizePercentage }} of memory limit. Risk of OOM kill!"
-          runbook: "docs/operations/monitoring-guide.md#litellm"
+      # NOTE: LiteLLM memory alerts are defined in 60-sla.yml (optimization.rules)
 
       # Container restarting too often
       - alert: ContainerRestartingTooOften
