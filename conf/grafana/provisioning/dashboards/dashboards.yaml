@@ -1,13 +1,60 @@
 apiVersion: 1
 
+# Dashboard provisioning for erni-ki monitoring stack
+# Best practices: Organized by folders, auto-updated from filesystem
+
 providers:
-  - name: 'default'
+  - name: 'System Overview'
     orgId: 1
-    folder: ''
-    folderUid: ''
+    folder: 'System Overview'
+    folderUid: 'system-overview'
     type: file
     disableDeletion: false
     updateIntervalSeconds: 30
     allowUiUpdates: true
     options:
-      path: /var/lib/grafana/dashboards
+      path: /var/lib/grafana/dashboards/system-overview
+
+  - name: 'Infrastructure'
+    orgId: 1
+    folder: 'Infrastructure'
+    folderUid: 'infrastructure'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/infrastructure
+
+  - name: 'AI Services'
+    orgId: 1
+    folder: 'AI Services'
+    folderUid: 'ai-services'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/ai-services
+
+  - name: 'Monitoring Stack'
+    orgId: 1
+    folder: 'Monitoring Stack'
+    folderUid: 'monitoring-stack'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/monitoring-stack
+
+  - name: 'Security & Performance'
+    orgId: 1
+    folder: 'Security & Performance'
+    folderUid: 'security-performance'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/security-performance
