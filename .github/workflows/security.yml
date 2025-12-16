@@ -29,14 +29,39 @@ concurrency:
 
 jobs:
   # CodeQL analysis
-  # CodeQL temporarily disabled for release/v0.61.3 (default Code Scanning is enabled and rejects custom uploads).
-  # Re-enable after consolidating to a single CodeQL configuration.
   codeql:
-    name: 🔍 CodeQL Analysis (disabled)
-    if: false
+    name: 🔍 CodeQL Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [go, javascript-typescript, python]
+
     steps:
-      - run: echo "CodeQL temporarily disabled (default scanning enabled separately)."
+      - name: 📥 Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: 🔧 Initialize CodeQL
+        uses: github/codeql-action/init@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended
+
+      - name: 🐹 Setup Go
+        if: matrix.language == 'go'
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v5
+        with:
+          go-version-file: auth/go.mod
+          cache-dependency-path: auth/go.sum
+
+      - name: 🏗️ Autobuild
+        uses: github/codeql-action/autobuild@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+
+      - name: 🔍 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
+        with:
+          category: "/language:${{ matrix.language }}"
 
   # Dependency scanning
   dependency-scan:
@@ -339,12 +364,12 @@ jobs:
           echo "✅ Environment secrets structure validated"
 
   # DAST - Dynamic Application Security Testing
+  # Note: Runs only on schedule and manual trigger (not on PRs - requires running services)
   dast-scan:
     name: 🎯 DAST Scan (ZAP Baseline)
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # Temporarily disabled for release/v0.61.3 (pinned ZAP action unavailable)
-    if: false
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: 📥 Checkout repository
@@ -397,14 +422,29 @@ jobs:
         if: always()
         run: docker compose down || true
 
-  # Security report
+  # Security report summary
   security-report:
-    name: 📊 Security Report (temp disabled)
+    name: 📊 Security Report
     runs-on: ubuntu-latest
-    if: false
+    needs: [codeql, dependency-scan, bandit, trivy, secret-scan, container-scan, config-scan]
+    if: always()
+
     steps:
-      - name: Skip security summary
-        run: echo "security-report disabled for release branch workflows"
+      - name: 📊 Generate Security Summary
+        run: |
+          echo "## 🔒 Security Analysis Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| CodeQL Analysis | ${{ needs.codeql.result == 'success' && '✅ Passed' || needs.codeql.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Scan | ${{ needs.dependency-scan.result == 'success' && '✅ Passed' || needs.dependency-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bandit + Ruff | ${{ needs.bandit.result == 'success' && '✅ Passed' || needs.bandit.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Trivy Scan | ${{ needs.trivy.result == 'success' && '✅ Passed' || needs.trivy.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Secret Scan | ${{ needs.secret-scan.result == 'success' && '✅ Passed' || needs.secret-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Container Scan | ${{ needs.container-scan.result == 'success' && '✅ Passed' || needs.container-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Config Security | ${{ needs.config-scan.result == 'success' && '✅ Passed' || needs.config-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📅 Run: ${{ github.run_id }} | 🔗 [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
 
   sarif-aggregate:
     name: 🗂️ Aggregate SARIF
