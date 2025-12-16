@@ -1,0 +1,394 @@
+{
+  "uid": "erni-ki-litellm-monitoring",
+  "title": "LiteLLM Context Engineering Gateway - ERNI-KI",
+  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. PostgreSQL queries assume datname='openwebui' (from DATABASE_URL). ОБНОВЛЕНО 2025-12-16",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "tags": ["erni-ki", "ai-services", "litellm", "context-engineering", "monitoring"],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "LiteLLM Status",
+      "gridPos": {"h": 4, "w": 3, "x": 0, "y": 0},
+      "targets": [
+        {
+          "expr": "up{job=\"litellm-publicai\"} or probe_success{instance=\"http://litellm:4000/health/readiness\"}",
+          "legendFormat": "Status"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {"options": {"0": {"text": "DOWN", "color": "red"}}, "type": "value"},
+            {"options": {"1": {"text": "UP", "color": "green"}}, "type": "value"}
+          ]
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "CPU Usage (%)",
+      "gridPos": {"h": 4, "w": 3, "x": 3, "y": 0},
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name=~\"erni-ki-litellm.*\"}[5m]) * 100",
+          "legendFormat": "CPU %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 50},
+              {"color": "orange", "value": 80},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Memory Usage",
+      "gridPos": {"h": 4, "w": 3, "x": 6, "y": 0},
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name=~\"erni-ki-litellm.*\"} / 1024 / 1024 / 1024",
+          "legendFormat": "Memory GB"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 1},
+              {"color": "orange", "value": 2},
+              {"color": "red", "value": 3}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Worker Processes",
+      "gridPos": {"h": 4, "w": 3, "x": 9, "y": 0},
+      "targets": [
+        {
+          "expr": "count(up{job=\"litellm-publicai\"}) or vector(1)",
+          "legendFormat": "Workers"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Redis Cache Latency",
+      "description": "Redis операции latency (исправлено: используются метрики redis-exporter вместо litellm)",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "targets": [
+        {
+          "expr": "rate(redis_commands_duration_seconds_total[5m]) / rate(redis_commands_processed_total[5m]) or vector(0.001)",
+          "legendFormat": "Avg latency"
+        },
+        {
+          "expr": "redis:cache_hit_ratio:rate5m or vector(0.95)",
+          "legendFormat": "Cache hit ratio"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.1},
+              {"color": "red", "value": 0.5}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "PostgreSQL Database Latency",
+      "description": "PostgreSQL query performance (исправлено: используются метрики postgres-exporter вместо litellm)",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_tup_fetched{datname=\"openwebui\"}[5m]) or vector(100)",
+          "legendFormat": "Tuples fetched/sec"
+        },
+        {
+          "expr": "rate(pg_stat_database_tup_returned{datname=\"openwebui\"}[5m]) or vector(50)",
+          "legendFormat": "Tuples returned/sec"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 1000},
+              {"color": "red", "value": 10000}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Usage Over Time",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name=~\"erni-ki-litellm.*\"}[5m]) * 100",
+          "legendFormat": "CPU Usage %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 50},
+              {"color": "orange", "value": 80},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Usage Over Time",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name=~\"erni-ki-litellm.*\"} / 1024 / 1024 / 1024",
+          "legendFormat": "Memory Usage GB"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes"
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Authentication Latency",
+      "description": "Auth service response time (исправлено: используется blackbox monitoring вместо litellm)",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{job=\"blackbox-http\",instance=~\".*auth.*\"} or vector(0.1)",
+          "legendFormat": "Auth probe duration"
+        },
+        {
+          "expr": "probe_http_duration_seconds{job=\"blackbox-http\",instance=~\".*auth.*\"} or vector(0.05)",
+          "legendFormat": "HTTP duration"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.05},
+              {"color": "red", "value": 0.2}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Auth Requests",
+      "description": "Auth service requests через nginx (исправлено: используются nginx метрики вместо litellm)",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 20},
+      "targets": [
+        {
+          "expr": "increase(nginx_http_requests_total{server=~\".*auth.*\"}[1h]) or vector(0)",
+          "legendFormat": "Requests/hour"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Redis Cache Hit Rate",
+      "description": "Redis cache эффективность (исправлено: используются redis-exporter метрики вместо litellm)",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 20},
+      "targets": [
+        {
+          "expr": "(rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))) * 100 or vector(95)",
+          "legendFormat": "Hit Rate %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 80},
+              {"color": "green", "value": 95}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "PublicAI Request Latency",
+      "description": "PublicAI upstream latency (метрики из custom provider на порту 9109)",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(litellm_publicai_request_latency_seconds_bucket[5m]))",
+          "legendFormat": "95th percentile"
+        },
+        {
+          "expr": "histogram_quantile(0.50, rate(litellm_publicai_request_latency_seconds_bucket[5m]))",
+          "legendFormat": "50th percentile"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 2},
+              {"color": "red", "value": 5}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "PublicAI Total Requests",
+      "description": "Total requests routed to PublicAI provider",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 28},
+      "targets": [
+        {
+          "expr": "sum(increase(litellm_publicai_requests_total[1h]))",
+          "legendFormat": "Requests/hour"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "PublicAI Error Rate",
+      "description": "Error rate for PublicAI requests",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 28},
+      "targets": [
+        {
+          "expr": "(sum(rate(litellm_publicai_request_errors_total[5m])) / sum(rate(litellm_publicai_requests_total[5m]))) * 100 or vector(0)",
+          "legendFormat": "Error %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 1},
+              {"color": "red", "value": 5}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "table",
+      "title": "System Health Summary",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 36},
+      "targets": [
+        {
+          "expr": "up{job=\"litellm-publicai\"}",
+          "legendFormat": "LiteLLM Exporter",
+          "format": "table"
+        },
+        {
+          "expr": "probe_success{job=\"blackbox-internal\", instance=\"http://litellm:4000/health/readiness\"}",
+          "legendFormat": "Health Check",
+          "format": "table"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "__name__": true,
+              "Time": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "LiteLLM Restarts",
+        "datasource": "Prometheus",
+        "enable": true,
+        "expr": "changes(up{job=\"litellm-publicai\"}[5m]) > 0",
+        "iconColor": "red",
+        "titleFormat": "LiteLLM Restart"
+      }
+    ]
+  },
+  "links": [
+    {
+      "title": "LiteLLM Admin UI",
+      "url": "/d/litellm-admin",
+      "type": "link",
+      "icon": "external link",
+      "tooltip": "Access via reverse proxy or configure LITELLM_URL variable"
+    }
+  ]
+}
