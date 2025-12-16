@@ -35,11 +35,11 @@ router_settings:
   # === CONTEXT WINDOW FALLBACK CONFIGURATION ===
   # Auto-switch to larger context models when exceeding limits
   context_window_fallbacks: []
-  # Redis settings for router are temporarily disabled due to incompatibility
-  # redis_host: "redis"
-  # redis_port: 6379
-  # redis_password: "${REDIS_PASSWORD}"
-  # redis_db: 1 # Use the same DB as caching
+  # Redis settings for distributed routing (enabled in v1.80.0-stable.1)
+  redis_host: "redis"
+  redis_port: 6379
+  redis_password: os.environ/REDIS_PASSWORD
+  redis_db: 1
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
@@ -48,8 +48,9 @@ general_settings:
   ui_password: os.environ/UI_PASSWORD
   max_budget: 100
   # === DATABASE STORAGE SETTINGS ===
-  # Disabled for local dev (no Prisma/Postgres dependency). Override via env in prod.
-  store_model_in_db: false
+  # Models stored in database for persistence and Admin UI management
+  # Synced with STORE_MODEL_IN_DB env variable
+  store_model_in_db: true
   # Store prompts and responses in spend logs (detailed logging)
   store_prompts_in_spend_logs: false
   # Persist all request data
@@ -57,12 +58,12 @@ general_settings:
   # Disable sensitive data filtering for debugging
   redact_user_api_key_info: false
   # Additional prompt logging settings
-  disable_spend_logs: true
+  # Synced with DISABLE_SPEND_LOGS env variable (False = enabled)
+  disable_spend_logs: false
   disable_error_logs: false
   # === DETAILED LOGGING SETTINGS (hardened for prod) ===
+  # Note: log_raw_request/log_raw_response moved to litellm_settings section
   detailed_debug: false
-  log_raw_request: false
-  log_raw_response: false
   # === SECURITY SETTINGS ===
   # Enforce auth for all /v1/* endpoints (disabled for OpenWebUI compatibility)
   enforce_user_param: false
@@ -129,12 +130,11 @@ litellm_settings:
   # === CACHE CONFIGURATION ===
   cache: true
   # === DETAILED LOG SETTINGS ===
-  # Disable health check logging to reduce noise
-  disable_health_check_logs: true
+  # Note: disable_health_check_logs is in general_settings section
   # Log all requests for detailed debugging
   log_only_errors: false
-  # Detailed logging level
-  log_level: "DEBUG"
+  # Detailed logging level - synced with LITELLM_LOG env (INFO for production)
+  log_level: "INFO"
   # === OLLAMA THINKING TOKENS COMPATIBILITY ===
   # Settings for correct handling of thinking tokens
   ignore_unknown_fields: true
@@ -147,19 +147,18 @@ litellm_settings:
   ollama_thinking_mode: "stream"
   # Allow unknown fields in chunk responses
   allow_unknown_chunk_fields: true
-  # === vLLM INTEGRATION SETTINGS ===
-  # vLLM server integration settings
-  vllm_compatibility_mode: true
-  # Support vLLM-specific parameters
-  vllm_enable_prefix_caching: true
-  # Timeout for vLLM requests (higher for large models)
-  vllm_request_timeout: 600
-  # Streaming support for vLLM
-  vllm_enable_streaming: true
-  # === MCP INTEGRATION SETTINGS ===
-  # MCP Aliases for simpler server access
-  mcp_aliases:
-    "deepwiki": "deepwiki_mcp"
+  # === vLLM INTEGRATION SETTINGS (RESERVED) ===
+  # Uncomment when vLLM server is deployed
+  # See docs/examples/litellm-config.yaml for vLLM model configuration via Admin UI
+  # vllm_compatibility_mode: true
+  # vllm_enable_prefix_caching: true
+  # vllm_request_timeout: 600
+  # vllm_enable_streaming: true
+  # === MCP INTEGRATION SETTINGS (RESERVED) ===
+  # MCP server integration for future use
+  # Requires LiteLLM Enterprise or compatible setup
+  # mcp_aliases:
+  #   "deepwiki": "deepwiki_mcp"
   # === KEY GENERATION SETTINGS ===
   # Default key generation settings
   default_key_generate_params:
@@ -176,15 +175,19 @@ litellm_settings:
     tpm_limit: 10000 # Tokens per minute limit
     rpm_limit: 100 # Requests per minute limit
   # === PERFORMANCE OPTIMIZATION ===
+  # Redis caching enabled (v1.80.0-stable.1 fixes socket_timeout bug)
+  # Password is taken from REDIS_URL env (set by entrypoint from docker secret)
   cache_params:
-    type: "local" # Use in-memory caching
+    type: "redis"
+    url: os.environ/REDIS_URL
     ttl: 1800 # Cache TTL in seconds (30 minutes)
     supported_call_types: ["acompletion", "atext_completion", "aembedding", "atranscription"]
-  #   socket_connect_timeout: 10 # Connection timeout
-  #   socket_timeout: 10 # Operation timeout
-  #   connection_pool_timeout: 5 # Connection pool timeout
-  #   retry_on_timeout: true # Retry on timeout
-  #   health_check_interval: 30 # Health check interval
+    # Timeout settings (increased for stability)
+    socket_connect_timeout: 10
+    socket_timeout: 30
+    connection_pool_timeout: 5
+    retry_on_timeout: true
+    health_check_interval: 30
   # Connection pooling
   connection_pool:
     max_connections: 100 # Max DB connections
@@ -192,44 +195,22 @@ litellm_settings:
     pool_timeout: 30 # Connection acquire timeout
     pool_recycle: 3600 # Connection lifetime (1 hour)
 
-# === OPENAI ASSISTANT API CONFIGURATION ===
-assistant_settings:
-  custom_llm_provider: openai
-  litellm_params:
-    api_key: os.environ/OPENAI_API_KEY
-    api_base: os.environ/OPENAI_API_BASE
-  # Specific Assistant settings
-  default_assistant_id: "asst_C8dUl6EKuR41O9sddVVuhTGn"
-  # Enable passthrough for Assistant API endpoints
-  enable_assistant_passthrough: true
-  # Supported Assistant API operations
-  supported_operations:
-    - "create_assistant"
-    - "get_assistant"
-    - "update_assistant"
-    - "delete_assistant"
-    - "create_thread"
-    - "get_thread"
-    - "update_thread"
-    - "delete_thread"
-    - "create_message"
-    - "get_message"
-    - "list_messages"
-    - "create_run"
-    - "get_run"
-    - "list_runs"
-    - "cancel_run"
+# === OPENAI ASSISTANT API CONFIGURATION (RESERVED) ===
+# Uncomment when OpenAI Assistant API passthrough is needed
+# assistant_settings:
+#   custom_llm_provider: openai
+#   litellm_params:
+#     api_key: os.environ/OPENAI_API_KEY
+#     api_base: os.environ/OPENAI_API_BASE
+#   default_assistant_id: "asst_YOUR_ASSISTANT_ID"
+#   enable_assistant_passthrough: true
 
-# === MCP SERVERS CONFIGURATION ===
-# Integration with external MCP servers (documentation examples)
-mcp_servers:
-  # Example external MCP server - DeepWiki
-  deepwiki_mcp:
-    url: "https://mcp.deepwiki.com/mcp"
-    transport: "http"
-    description: "DeepWiki MCP Server for search"
-    auth_type: "none"
-    spec_version: "2025-03-26"
-    mcp_info:
-      mcp_server_cost_info:
-        default_cost_per_query: 0.001 # $0.001 per query
+# === MCP SERVERS CONFIGURATION (RESERVED) ===
+# Example configuration for external MCP servers
+# Uncomment when MCP integration is required
+# mcp_servers:
+#   deepwiki_mcp:
+#     url: "https://mcp.deepwiki.com/mcp"
+#     transport: "http"
+#     description: "DeepWiki MCP Server"
+#     auth_type: "none"
