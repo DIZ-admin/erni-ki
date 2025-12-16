@@ -590,9 +590,9 @@ services:
       - OLLAMA_MAX_LOADED_MODELS=3
       # 8192 context for larger inputs (validated: ~4GB VRAM with 3 models on RTX 5000)
       - OLLAMA_NUM_CTX=8192
-      # Flash attention disabled for Quadro RTX 5000 compatibility
-      # Note: f16 KV cache works within 16GB VRAM budget at current load
-      - OLLAMA_FLASH_ATTENTION=0
+      # Flash attention enabled - Turing (SM 7.5) supported in Ollama (requires >= 7.0, excludes 7.2)
+      # Reduces VRAM usage with large context (8192 tokens)
+      - OLLAMA_FLASH_ATTENTION=1
     env_file: env/ollama.env
     # GPU memory limits optimized for RTX 5000 (16GB VRAM)
     # Ollama gets GPU priority (VRAM management via OLLAMA_MAX_VRAM=0.75)
