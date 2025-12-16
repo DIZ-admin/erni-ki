@@ -142,6 +142,7 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    # Memory increased from 512m to 768m due to expanded monitoring (30+ services)
     mem_limit: 768m
     mem_reservation: 384m
     cpus: "0.5"
