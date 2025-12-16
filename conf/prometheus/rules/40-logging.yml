@@ -46,6 +46,8 @@ groups:
           severity: warning
           service: fluent-bit
           category: logging-optimization
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Fluent Bit buffer usage high"
           description: "Fluent Bit buffer usage is above 80%. Risk of log loss."
@@ -57,6 +59,8 @@ groups:
           severity: warning
           service: fluent-bit
           category: logging-optimization
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Fluent Bit output errors detected"
           description: "Fluent Bit is experiencing output errors at rate {{ $value | humanize }} errors/sec."
@@ -68,17 +72,22 @@ groups:
           severity: warning
           service: fluent-bit
           category: logging-optimization
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Log ingestion rate unusually high"
           description: "Log ingestion rate is above 1000 logs/sec. Possible log flood."
 
       - alert: CriticalServiceLogsMissing
-        expr: increase(fluentbit_input_record_total{name="tail."}[10m]) == 0
+        # Fixed: fluentbit_input_records_total (plural) instead of fluentbit_input_record_total
+        expr: increase(fluentbit_input_records_total{name="tail."}[10m]) == 0
         for: 5m
         labels:
           severity: critical
           service: logging
           category: logging-optimization
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "Critical service logs missing"
           description: "Fluent Bit tail input has not ingested any records for more than 10 minutes."

@@ -60,17 +60,22 @@ groups:
           severity: critical
           service: ollama
           category: ai
+          owner: ml-ops
+          escalation: pagerduty
         annotations:
           summary: "Ollama service is down"
           description: "Ollama LLM service has been down for more than 1 minute."
 
       - alert: HighGPUUsage
-        expr: nvidia_gpu_utilization_gpu > 95
+        # Fixed: nvidia_gpu_duty_cycle instead of nvidia_gpu_utilization_gpu
+        expr: nvidia_gpu_duty_cycle > 95
         for: 10m
         labels:
           severity: warning
           service: ollama
           category: ai
+          owner: ml-ops
+          escalation: slack
         annotations:
           summary: "High GPU usage"
           description: "GPU utilization is above 95% for more than 10 minutes."
@@ -82,6 +87,8 @@ groups:
           severity: critical
           service: ollama
           category: hardware
+          owner: ml-ops
+          escalation: pagerduty
         annotations:
           summary: "GPU temperature is critical"
           description: "GPU temperature is {{ $value }}C, which is above the safe threshold."
@@ -93,6 +100,8 @@ groups:
           severity: warning
           service: ollama
           category: hardware
+          owner: ml-ops
+          escalation: slack
         annotations:
           summary: "GPU memory usage is high"
           description: "GPU memory usage is {{ $value }}%."

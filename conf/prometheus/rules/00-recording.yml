@@ -44,9 +44,10 @@ groups:
           rate(container_cpu_usage_seconds_total{name=~"erni-ki-.*"}[1m]) * 100
 
       # Container restart count (1h window)
+      # Using changes() instead of increase() since container_start_time_seconds is a gauge
       - record: container:restart_count:1h
         expr: |
-          increase(container_start_time_seconds{name=~"erni-ki-.*"}[1h])
+          changes(container_start_time_seconds{name=~"erni-ki-.*"}[1h])
 
   # Redis recording rules
   - name: redis.recording.rules
@@ -92,20 +93,20 @@ groups:
   - name: gpu.recording.rules
     interval: 15s
     rules:
-      # GPU utilization average
+      # GPU utilization average (duty_cycle from nvidia-exporter)
       - record: gpu:utilization:avg
         expr: |
-          avg(nvidia_gpu_utilization)
+          avg(nvidia_gpu_duty_cycle)
 
       # GPU memory usage percentage
       - record: gpu:memory_usage:percent
         expr: |
           (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) * 100
 
-      # GPU temperature
+      # GPU temperature (celsius from nvidia-exporter)
       - record: gpu:temperature:max
         expr: |
-          max(nvidia_gpu_temperature)
+          max(nvidia_gpu_temperature_celsius)
 
   # Service availability recording rules
   - name: availability.recording.rules
