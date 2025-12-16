@@ -1,7 +1,7 @@
 {
   "uid": "erni-ki-litellm-monitoring",
   "title": "LiteLLM Context Engineering Gateway - ERNI-KI",
-  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. PostgreSQL queries assume datname='openwebui' (from DATABASE_URL). ОБНОВЛЕНО 2025-12-16",
+  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. ОБНОВЛЕНО 2025-12-16: job litellm -> litellm-publicai, исправлены blackbox и redis запросы",
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,

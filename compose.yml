@@ -1297,6 +1297,8 @@ services:
     networks:
       - monitoring
       - frontend
+      - backend # Added for AI services probing (ollama, openwebui, etc.)
+      - data # Added for database probing (postgres, redis)
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
