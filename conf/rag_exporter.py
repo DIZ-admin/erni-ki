@@ -1,3 +1,15 @@
+"""
+RAG Exporter for ERNI-KI.
+
+Prometheus exporter that monitors RAG (Retrieval Augmented Generation) endpoint
+health and latency metrics. Probes the OpenWebUI health endpoint at regular
+intervals and exposes metrics for Prometheus scraping.
+
+Metrics exported:
+- erni_ki_rag_response_latency_seconds: Histogram of RAG response latency
+- erni_ki_rag_sources_count: Number of sources in last RAG response
+"""
+
 import logging
 import os
 import signal
@@ -89,6 +101,7 @@ def probe_loop() -> None:
 
 @app.route("/metrics")
 def metrics() -> Response:
+    """Prometheus metrics endpoint returning all collected metrics."""
     return Response(generate_latest(registry), mimetype=CONTENT_TYPE_LATEST)
 
 
