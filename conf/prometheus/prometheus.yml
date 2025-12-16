@@ -337,13 +337,8 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox-exporter:9115
 
-  # NVIDIA GPU metrics
-  - job_name: "nvidia-gpu"
-    static_configs:
-      - targets: ["nvidia-exporter:9445"]
-    scrape_interval: 30s
-    metrics_path: /metrics
-    scrape_timeout: 15s
+  # NVIDIA GPU metrics - REMOVED duplicate
+  # nvidia-gpu job removed - using nvidia-exporter job (line 264) instead
 
   # ============================================================================
   # MCP (Model Context Protocol) MONITORING

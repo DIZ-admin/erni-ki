@@ -1,41 +1,43 @@
 # Logging Stack Alert Rules
-# Covers: Elasticsearch, Fluent Bit, log ingestion
+# Covers: Loki, Fluent Bit, log ingestion
+# Note: Elasticsearch rules disabled - using Loki for log aggregation
 
 groups:
   - name: logging.rules
     rules:
-      - alert: ElasticsearchDiskUsageHigh
-        expr: (elasticsearch_filesystem_data_used_bytes / elasticsearch_filesystem_data_size_bytes) * 100 > 80
-        for: 5m
-        labels:
-          severity: warning
-          service: elasticsearch
-          category: logging-optimization
-        annotations:
-          summary: "Elasticsearch disk usage high"
-          description: "Elasticsearch disk usage is above 80% for more than 5 minutes. Current value: {{ $value | humanizePercentage }}."
+      # DISABLED: Elasticsearch exporter not deployed - using Loki instead
+      # Re-enable if elasticsearch_exporter is added
+      # - alert: ElasticsearchDiskUsageHigh
+      #   expr: (elasticsearch_filesystem_data_used_bytes / elasticsearch_filesystem_data_size_bytes) * 100 > 80
+      #   for: 5m
+      #   labels:
+      #     severity: warning
+      #     service: elasticsearch
+      #     category: logging-optimization
+      #   annotations:
+      #     summary: "Elasticsearch disk usage high"
 
-      - alert: ElasticsearchDiskUsageCritical
-        expr: (elasticsearch_filesystem_data_used_bytes / elasticsearch_filesystem_data_size_bytes) * 100 > 90
-        for: 2m
-        labels:
-          severity: critical
-          service: elasticsearch
-          category: logging-optimization
-        annotations:
-          summary: "Elasticsearch disk usage critical"
-          description: "Elasticsearch disk usage is above 90% for more than 2 minutes. Immediate action required!"
+      # DISABLED: Elasticsearch exporter not deployed
+      # - alert: ElasticsearchDiskUsageCritical
+      #   expr: (elasticsearch_filesystem_data_used_bytes / elasticsearch_filesystem_data_size_bytes) * 100 > 90
+      #   for: 2m
+      #   labels:
+      #     severity: critical
+      #     service: elasticsearch
+      #     category: logging-optimization
+      #   annotations:
+      #     summary: "Elasticsearch disk usage critical"
 
-      - alert: ElasticsearchClusterNotGreen
-        expr: elasticsearch_cluster_health_status < 2
-        for: 3m
-        labels:
-          severity: warning
-          service: elasticsearch
-          category: logging-optimization
-        annotations:
-          summary: "Elasticsearch cluster status not green"
-          description: "Elasticsearch cluster status is not green for more than 3 minutes."
+      # DISABLED: Elasticsearch exporter not deployed
+      # - alert: ElasticsearchClusterNotGreen
+      #   expr: elasticsearch_cluster_health_status < 2
+      #   for: 3m
+      #   labels:
+      #     severity: warning
+      #     service: elasticsearch
+      #     category: logging-optimization
+      #   annotations:
+      #     summary: "Elasticsearch cluster status not green"
 
       - alert: FluentBitBufferUsageHigh
         expr: (fluentbit_input_buffer_usage_bytes / fluentbit_input_buffer_limit_bytes) * 100 > 80
@@ -44,6 +46,8 @@ groups:
           severity: warning
           service: fluent-bit
           category: logging-optimization
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Fluent Bit buffer usage high"
           description: "Fluent Bit buffer usage is above 80%. Risk of log loss."
@@ -55,6 +59,8 @@ groups:
           severity: warning
           service: fluent-bit
           category: logging-optimization
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Fluent Bit output errors detected"
           description: "Fluent Bit is experiencing output errors at rate {{ $value | humanize }} errors/sec."
@@ -66,17 +72,22 @@ groups:
           severity: warning
           service: fluent-bit
           category: logging-optimization
+          owner: ops
+          escalation: slack
         annotations:
           summary: "Log ingestion rate unusually high"
           description: "Log ingestion rate is above 1000 logs/sec. Possible log flood."
 
       - alert: CriticalServiceLogsMissing
-        expr: increase(fluentbit_input_record_total{name="tail."}[10m]) == 0
+        # Fixed: fluentbit_input_records_total (plural) instead of fluentbit_input_record_total
+        expr: increase(fluentbit_input_records_total{name="tail."}[10m]) == 0
         for: 5m
         labels:
           severity: critical
           service: logging
           category: logging-optimization
+          owner: ops
+          escalation: pagerduty
         annotations:
           summary: "Critical service logs missing"
           description: "Fluent Bit tail input has not ingested any records for more than 10 minutes."

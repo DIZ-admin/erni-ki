@@ -45,6 +45,16 @@ limits_config:
   ingestion_burst_size_mb: 32
   max_streams_per_user: 10000
   max_line_size: 256000
+  # Retention policy: 30 days for all tenants
+  retention_period: 720h
 
 compactor:
   working_directory: /loki/boltdb-shipper-compactor
+  # Enable retention with compactor (Loki 3.x)
+  retention_enabled: true
+  retention_delete_delay: 2h
+  # Reduced from 150 to 50 to prevent I/O contention on single-node deployment
+  retention_delete_worker_count: 50
+  delete_request_store: filesystem
+  # Run compaction every 10 minutes
+  compaction_interval: 10m

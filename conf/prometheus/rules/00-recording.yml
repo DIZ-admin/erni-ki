@@ -1,0 +1,123 @@
+# Recording Rules for ERNI-KI
+# Pre-computed metrics for dashboard performance optimization
+# Loaded first (00-*) to ensure availability for other rules
+
+groups:
+  # Node-level recording rules (USE methodology)
+  - name: node.recording.rules
+    interval: 30s
+    rules:
+      # CPU utilization percentage
+      - record: instance:node_cpu_utilization:rate5m
+        expr: |
+          100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      # Memory utilization percentage
+      - record: instance:node_memory_utilization:percent
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+
+      # Disk utilization percentage by mountpoint
+      - record: instance:node_disk_utilization:percent
+        expr: |
+          (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100
+
+      # System load average normalized by CPU count
+      - record: instance:node_load1:ratio
+        expr: |
+          node_load1 / count by(instance) (node_cpu_seconds_total{mode="idle"})
+
+  # Container-level recording rules
+  - name: container.recording.rules
+    interval: 15s
+    rules:
+      # Container memory usage percentage (only for containers with limits)
+      - record: container:memory_usage:percent
+        expr: |
+          (container_memory_usage_bytes{name=~"erni-ki-.*"} /
+           container_spec_memory_limit_bytes{name=~"erni-ki-.*"}) * 100
+          and on(name) (container_spec_memory_limit_bytes{name=~"erni-ki-.*"} > 0)
+
+      # Container CPU usage rate
+      - record: container:cpu_usage:rate1m
+        expr: |
+          rate(container_cpu_usage_seconds_total{name=~"erni-ki-.*"}[1m]) * 100
+
+      # Container restart count (1h window)
+      # Using changes() instead of increase() since container_start_time_seconds is a gauge
+      - record: container:restart_count:1h
+        expr: |
+          changes(container_start_time_seconds{name=~"erni-ki-.*"}[1h])
+
+  # Redis recording rules
+  - name: redis.recording.rules
+    interval: 30s
+    rules:
+      # Redis cache hit ratio
+      - record: redis:cache_hit_ratio:rate5m
+        expr: |
+          rate(redis_keyspace_hits_total[5m]) /
+          clamp_min(rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]), 0.001)
+
+      # Redis memory usage percentage
+      - record: redis:memory_usage:percent
+        expr: |
+          redis_memory_used_bytes / (512 * 1024 * 1024) * 100
+
+      # Redis commands per second
+      - record: redis:commands:rate5m
+        expr: |
+          rate(redis_commands_processed_total[5m])
+
+  # Nginx recording rules (RED methodology)
+  - name: nginx.recording.rules
+    interval: 15s
+    rules:
+      # Request rate
+      - record: nginx:requests:rate5m
+        expr: |
+          sum(rate(nginx_http_requests_total[5m]))
+
+      # Error rate (5xx)
+      - record: nginx:errors:rate5m
+        expr: |
+          sum(rate(nginx_http_requests_total{status=~"5.."}[5m]))
+
+      # Error percentage
+      - record: nginx:error_rate:percent
+        expr: |
+          sum(rate(nginx_http_requests_total{status=~"5.."}[5m])) /
+          clamp_min(sum(rate(nginx_http_requests_total[5m])), 0.001) * 100
+
+  # GPU recording rules
+  - name: gpu.recording.rules
+    interval: 15s
+    rules:
+      # GPU utilization average (duty_cycle from nvidia-exporter)
+      - record: gpu:utilization:avg
+        expr: |
+          avg(nvidia_gpu_duty_cycle)
+
+      # GPU memory usage percentage
+      - record: gpu:memory_usage:percent
+        expr: |
+          (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) * 100
+
+      # GPU temperature (celsius from nvidia-exporter)
+      - record: gpu:temperature:max
+        expr: |
+          max(nvidia_gpu_temperature_celsius)
+
+  # Service availability recording rules
+  - name: availability.recording.rules
+    interval: 30s
+    rules:
+      # Service availability (probe success rate over 5m)
+      - record: service:availability:rate5m
+        expr: |
+          avg_over_time(probe_success[5m])
+
+      # Scrape target availability
+      - record: job:up:avg5m
+        expr: |
+          avg_over_time(up[5m])
