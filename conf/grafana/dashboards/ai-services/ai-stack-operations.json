@@ -82,7 +82,7 @@
       "id": 4,
       "gridPos": {"h": 3, "w": 3, "x": 9, "y": 1},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "probe_success{instance=\"http://nginx:8080/searxng/\"}", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "probe_success{instance=\"http://nginx:8080/searxng/\",job=\"blackbox-nginx-8080\"}", "refId": "A"}
       ],
       "fieldConfig": {
         "defaults": {
@@ -130,7 +130,7 @@
       "id": 7,
       "gridPos": {"h": 3, "w": 3, "x": 18, "y": 1},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "probe_success{instance=\"http://edgetts:5050/v1/models\"}", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "probe_success{instance=\"http://edgetts:5050/v1/models\",job=\"blackbox-internal\"}", "refId": "A"}
       ],
       "fieldConfig": {
         "defaults": {

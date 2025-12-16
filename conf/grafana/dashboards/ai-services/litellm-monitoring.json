@@ -1,7 +1,7 @@
 {
   "uid": "erni-ki-litellm-monitoring",
   "title": "LiteLLM Context Engineering Gateway - ERNI-KI",
-  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. ОБНОВЛЕНО 2025-12-16: job litellm -> litellm-publicai, исправлены blackbox и redis запросы",
+  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. ОБНОВЛЕНО 2025-12-16: исправлены unit (gbytes), Redis panel (убрана несуществующая метрика), PostgreSQL title (throughput), nginx query (убран несуществующий server label)",
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
@@ -68,7 +68,7 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "decbytes",
+          "unit": "gbytes",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -99,17 +99,13 @@
     },
     {
       "type": "timeseries",
-      "title": "Redis Cache Latency",
-      "description": "Redis операции latency (исправлено: используются метрики redis-exporter вместо litellm)",
+      "title": "Redis Command Latency",
+      "description": "Redis команды latency (используются метрики redis-exporter)",
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
       "targets": [
         {
-          "expr": "rate(redis_commands_duration_seconds_total[5m]) / rate(redis_commands_processed_total[5m]) or vector(0.001)",
-          "legendFormat": "Avg latency"
-        },
-        {
-          "expr": "redis:cache_hit_ratio:rate5m or vector(0.95)",
-          "legendFormat": "Cache hit ratio"
+          "expr": "rate(redis_commands_duration_seconds_total[5m]) / (rate(redis_commands_processed_total[5m]) > 0) or vector(0.001)",
+          "legendFormat": "Avg command latency"
         }
       ],
       "fieldConfig": {
@@ -119,8 +115,8 @@
             "mode": "absolute",
             "steps": [
               {"color": "green", "value": null},
-              {"color": "yellow", "value": 0.1},
-              {"color": "red", "value": 0.5}
+              {"color": "yellow", "value": 0.01},
+              {"color": "red", "value": 0.1}
             ]
           }
         }
@@ -128,8 +124,8 @@
     },
     {
       "type": "timeseries",
-      "title": "PostgreSQL Database Latency",
-      "description": "PostgreSQL query performance (исправлено: используются метрики postgres-exporter вместо litellm)",
+      "title": "PostgreSQL Query Throughput",
+      "description": "PostgreSQL tuples throughput (используются метрики postgres-exporter)",
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
       "targets": [
         {
@@ -192,7 +188,7 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "decbytes"
+          "unit": "gbytes"
         }
       }
     },
@@ -227,12 +223,12 @@
     },
     {
       "type": "stat",
-      "title": "Total Auth Requests",
-      "description": "Auth service requests через nginx (исправлено: используются nginx метрики вместо litellm)",
+      "title": "Total Nginx Requests",
+      "description": "Общее количество HTTP запросов через nginx (stub_status метрики)",
       "gridPos": {"h": 4, "w": 6, "x": 12, "y": 20},
       "targets": [
         {
-          "expr": "increase(nginx_http_requests_total{server=~\".*auth.*\"}[1h]) or vector(0)",
+          "expr": "increase(nginx_http_requests_total[1h]) or vector(0)",
           "legendFormat": "Requests/hour"
         }
       ],
