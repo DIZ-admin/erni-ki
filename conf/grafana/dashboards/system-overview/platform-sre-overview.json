@@ -369,6 +369,7 @@
     {"title": "Infrastructure", "url": "/d/core-infra-observability", "type": "link", "icon": "dashboard"},
     {"title": "AI Services", "url": "/d/ai-stack-ops", "type": "link", "icon": "dashboard"},
     {"title": "Monitoring Stack", "url": "/d/observability-control-plane", "type": "link", "icon": "dashboard"},
+    {"title": "SLA & Budgets", "url": "/d/sla-error-budgets", "type": "link", "icon": "dashboard"},
     {"title": "Alertmanager", "url": "/alerting/list", "type": "link", "icon": "bell"}
   ]
 }

@@ -376,6 +376,7 @@
   ],
   "links": [
     {"title": "SRE Overview", "url": "/d/platform-sre-overview", "type": "link", "icon": "dashboard"},
+    {"title": "SLA & Budgets", "url": "/d/sla-error-budgets", "type": "link", "icon": "dashboard"},
     {"title": "Alertmanager", "url": "/alerting/list", "type": "link", "icon": "bell"}
   ]
 }
