@@ -158,13 +158,12 @@ jobs:
         env:
           TRIVY_SKIP_VERSION_CHECK: "true"
 
-      - name: 📦 Upload Trivy FS SARIF
+      - name: 📤 Upload Trivy FS SARIF to Security
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-trivy-fs
-          path: trivy-fs-results.sarif
-          if-no-files-found: warn
+          sarif_file: trivy-fs-results.sarif
+          category: trivy-fs
 
   # Secret scanning
   secret-scan:
@@ -197,12 +196,12 @@ jobs:
           go install github.com/zricethezav/gitleaks/v8@v8.29.1
           gitleaks detect --redact --source=. -c .gitleaks.toml --report-format=sarif --report-path=gitleaks-results.sarif
 
-      - name: 📦 Upload Gitleaks SARIF
-        if: always() && hashFiles('gitleaks-results.sarif') != ''
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+      - name: 📤 Upload Gitleaks SARIF to Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-gitleaks
-          path: gitleaks-results.sarif
+          sarif_file: gitleaks-results.sarif
+          category: gitleaks
 
   # Docker image scanning
   container-scan:
@@ -242,12 +241,12 @@ jobs:
         env:
           TRIVY_SKIP_VERSION_CHECK: "true"
 
-      - name: 📤 Upload Trivy results to GitHub Security
+      - name: 📤 Upload Trivy Image SARIF to Security
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-trivy-image
-          path: trivy-results.sarif
+          sarif_file: trivy-results.sarif
+          category: trivy-image
 
       - name: 🔍 Run Grype vulnerability scanner
         uses: anchore/scan-action@64a33b277ea7a1215a3c142735a1091341939ff5 # v4
@@ -258,12 +257,12 @@ jobs:
           severity-cutoff: high
           output-format: sarif
 
-      - name: 📤 Upload Grype results
+      - name: 📤 Upload Grype SARIF to Security
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-grype
-          path: ${{ steps['grype-scan'].outputs.sarif }}
+          sarif_file: ${{ steps.grype-scan.outputs.sarif }}
+          category: grype
 
   # Configuration analysis
   config-scan:
@@ -286,12 +285,12 @@ jobs:
           quiet: true
           soft_fail: false
 
-      - name: 📤 Upload Checkov results
-        if: always() && hashFiles('checkov-results.sarif') != ''
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v5
+      - name: 📤 Upload Checkov SARIF to Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          name: sarif-checkov
-          path: checkov-results.sarif
+          sarif_file: checkov-results.sarif
+          category: checkov
 
       # Validate Docker Compose configuration
       - name: 🐳 Validate Docker Compose
@@ -449,28 +448,3 @@ jobs:
           echo "| Config Security | ${{ needs.config-scan.result == 'success' && '✅ Passed' || needs.config-scan.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "📅 Run: ${{ github.run_id }} | 🔗 [View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
-
-  sarif-aggregate:
-    name: 🗂️ Aggregate SARIF
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [trivy, secret-scan, container-scan, config-scan]
-    if: always()
-
-    steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-
-      - name: 📥 Download SARIF artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          path: sarif
-
-      - name: 🧹 List SARIF files
-        run: |
-          find sarif -name '*.sarif' -maxdepth 3 -type f || true
-
-      - name: 📤 Upload merged SARIF to Security
-        uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
-        with:
-          sarif_file: sarif
