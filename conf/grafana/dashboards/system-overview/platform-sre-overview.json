@@ -1,19 +1,23 @@
 {
   "uid": "platform-sre-overview",
   "title": "Platform SRE Overview",
+  "description": "Main dashboard with USE/RED methodology - System health at a glance",
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "30s",
-  "tags": ["erni-ki", "overview", "sre"],
+  "tags": ["erni-ki", "overview", "sre", "use", "red"],
   "time": {"from": "now-3h", "to": "now"},
   "annotations": {
     "list": [
       {
-        "name": "Deployments",
-        "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+        "name": "Alerts",
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
         "enable": true,
-        "iconColor": "rgba(0, 211, 255, 1)"
+        "expr": "ALERTS{alertstate=\"firing\"}",
+        "iconColor": "rgba(255, 96, 96, 1)",
+        "titleFormat": "{{alertname}}",
+        "textFormat": "{{instance}}"
       }
     ]
   },
@@ -28,99 +32,348 @@
         "includeAll": true,
         "multi": true,
         "current": {"text": "All", "value": ["$__all"]}
+      },
+      {
+        "name": "interval",
+        "type": "interval",
+        "query": "1m,5m,10m,30m,1h",
+        "current": {"text": "5m", "value": "5m"},
+        "auto": true,
+        "auto_min": "1m"
       }
     ]
   },
   "panels": [
     {
+      "type": "row",
+      "title": "Service Health Status",
+      "id": 100,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false
+    },
+    {
       "type": "stat",
       "title": "Overall Availability",
+      "description": "Average uptime of all monitored services",
       "id": 1,
-      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 0},
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 1},
       "targets": [
         {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg(up{job=~\"$service\"})", "refId": "A"}
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "percentunit",
-          "thresholds": {"mode": "percentage", "steps": [{"color": "red", "value": 0}, {"color": "yellow", "value": 0.95}, {"color": "green", "value": 0.995}]}
-        },
-        "overrides": []
-      },
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}, "orientation": "auto", "textMode": "value"}
-    },
-    {
-      "type": "timeseries",
-      "title": "Node CPU Utilization",
-      "id": 2,
-      "gridPos": {"h": 8, "w": 10, "x": 4, "y": 0},
-      "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg by (instance)(100 - (avg without(mode) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100))", "legendFormat": "{{instance}}", "refId": "A"}
-      ],
-      "fieldConfig": {"defaults": {"unit": "percent"}, "overrides": []},
-      "options": {"legend": {"showLegend": true, "calcs": ["lastNotNull"], "placement": "bottom"}}
-    },
-    {
-      "type": "timeseries",
-      "title": "Memory Pressure",
-      "id": 3,
-      "gridPos": {"h": 8, "w": 10, "x": 14, "y": 0},
-      "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg by (instance)((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes)", "legendFormat": "{{instance}}", "refId": "A"}
-      ],
-      "fieldConfig": {"defaults": {"unit": "percent", "thresholds": {"mode": "percentage", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.75}, {"color": "red", "value": 0.9}]}}, "overrides": []}
-    },
-    {
-      "type": "table",
-      "title": "Critical Service Health",
-      "id": 4,
-      "gridPos": {"h": 6, "w": 10, "x": 0, "y": 4},
-      "options": {"showHeader": true},
-      "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "up{job=~\"(prometheus|alertmanager|nginx|postgres|redis|ollama-exporter|node-exporter|cadvisor|loki)\"}",
-          "legendFormat": "{{job}}",
-          "refId": "A",
-          "format": "table"
+          "decimals": 2,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": 0}, {"color": "yellow", "value": 0.9}, {"color": "green", "value": 0.99}]}
         }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Active Alerts",
+      "description": "Number of currently firing alerts",
+      "id": 2,
+      "gridPos": {"h": 4, "w": 3, "x": 4, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "count(ALERTS{alertstate=\"firing\"}) or vector(0)", "refId": "A"}
       ],
-      "transformations": [
-        {"id": "labelsToFields", "options": {"keepLabels": true}},
-        {"id": "organize", "options": {"excludeByName": {"Time": true}, "indexByName": {"Value": 1}}}
-      ]
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Services Up",
+      "id": 3,
+      "gridPos": {"h": 4, "w": 3, "x": 7, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "count(up{job=~\"$service\"} == 1)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}]}}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Services Down",
+      "id": 4,
+      "gridPos": {"h": 4, "w": 3, "x": 10, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "count(up{job=~\"$service\"} == 0) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "short", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Request Rate",
+      "description": "HTTP requests per second",
+      "id": 5,
+      "gridPos": {"h": 4, "w": 3, "x": 13, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total[$interval]))", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 1}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "graphMode": "area"}
+    },
+    {
+      "type": "stat",
+      "title": "Error Rate (5xx)",
+      "description": "Server error percentage",
+      "id": 6,
+      "gridPos": {"h": 4, "w": 3, "x": 16, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[$interval])) / clamp_min(sum(rate(nginx_http_requests_total[$interval])), 0.001)) * 100 or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 2,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Containers Running",
+      "id": 7,
+      "gridPos": {"h": 4, "w": 5, "x": 19, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "count(container_last_seen{name=~\".+\"})", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "row",
+      "title": "USE Metrics - Utilization, Saturation, Errors",
+      "id": 101,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 5},
+      "collapsed": false
+    },
+    {
+      "type": "gauge",
+      "title": "CPU Utilization",
+      "id": 10,
+      "gridPos": {"h": 5, "w": 4, "x": 0, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[$interval])) * 100)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 70}, {"color": "red", "value": 90}]}
+        }
+      }
+    },
+    {
+      "type": "gauge",
+      "title": "Memory Utilization",
+      "id": 11,
+      "gridPos": {"h": 5, "w": 4, "x": 4, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes) * 100", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 75}, {"color": "red", "value": 90}]}
+        }
+      }
+    },
+    {
+      "type": "gauge",
+      "title": "Disk Utilization",
+      "id": 12,
+      "gridPos": {"h": 5, "w": 4, "x": 8, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "max((node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"} - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\"}) / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"}) * 100", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 70}, {"color": "red", "value": 85}]}
+        }
+      }
+    },
+    {
+      "type": "gauge",
+      "title": "GPU Utilization",
+      "id": 13,
+      "gridPos": {"h": 5, "w": 4, "x": 12, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "max(nvidia_gpu_duty_cycle) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 80}, {"color": "red", "value": 95}]}
+        }
+      }
+    },
+    {
+      "type": "gauge",
+      "title": "GPU Memory",
+      "id": 14,
+      "gridPos": {"h": 5, "w": 4, "x": 16, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(max(nvidia_gpu_memory_used_bytes) / clamp_min(max(nvidia_gpu_memory_total_bytes), 1)) * 100 or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 80}, {"color": "red", "value": 95}]}
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Load per CPU (1m)",
+      "description": "Load average normalized by CPU count (>1 = overloaded)",
+      "id": 15,
+      "gridPos": {"h": 5, "w": 4, "x": 20, "y": 6},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "node_load1 / count(count by (cpu) (node_cpu_seconds_total))", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 2,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.7}, {"color": "red", "value": 1}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
     },
     {
       "type": "timeseries",
-      "title": "Active Nginx Connections",
-      "id": 5,
-      "gridPos": {"h": 8, "w": 12, "x": 10, "y": 8},
+      "title": "CPU & Memory Over Time",
+      "id": 20,
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 11},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "nginx_connections_active", "legendFormat": "active", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[$interval])) * 100)", "legendFormat": "CPU %", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes) * 100", "legendFormat": "Memory %", "refId": "B"}
       ],
-      "fieldConfig": {"defaults": {"unit": "s"}},
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom", "calcs": ["mean", "max"]}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Network I/O",
+      "id": 21,
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 11},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(node_network_receive_bytes_total{device!~\"lo|veth.*|docker.*|br-.*\"}[$interval]))", "legendFormat": "Received", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "-sum(rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|docker.*|br-.*\"}[$interval]))", "legendFormat": "Transmitted", "refId": "B"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom", "calcs": ["mean", "max"]}}
+    },
+    {
+      "type": "row",
+      "title": "RED Metrics - Rate, Errors, Duration",
+      "id": 102,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 18},
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Request Rate by Status",
+      "id": 30,
+      "gridPos": {"h": 7, "w": 8, "x": 0, "y": 19},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum by (status) (rate(nginx_http_requests_total[$interval]))", "legendFormat": "{{status}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
       "options": {"legend": {"showLegend": true, "placement": "bottom"}}
     },
     {
       "type": "timeseries",
-      "title": "Error Rate",
-      "id": 6,
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 10},
+      "title": "Error Rate (4xx / 5xx)",
+      "id": 31,
+      "gridPos": {"h": 7, "w": 8, "x": 8, "y": 19},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(nginx_http_requests_total[5m])), 1)) or vector(0)", "legendFormat": "5xx ratio", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=~\"4..\"}[$interval]))", "legendFormat": "4xx", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=~\"5..\"}[$interval]))", "legendFormat": "5xx", "refId": "B"}
       ],
-      "fieldConfig": {"defaults": {"unit": "percent", "thresholds": {"mode": "percentage", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.01}, {"color": "red", "value": 0.02}]}}}
+      "fieldConfig": {
+        "defaults": {"unit": "reqps"},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "5xx"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]}
+        ]
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Nginx Connections",
+      "id": 32,
+      "gridPos": {"h": 7, "w": 8, "x": 16, "y": 19},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "nginx_connections_active", "legendFormat": "Active", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "nginx_connections_waiting", "legendFormat": "Waiting", "refId": "B"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "row",
+      "title": "Service Status & Logs",
+      "id": 103,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 26},
+      "collapsed": false
+    },
+    {
+      "type": "table",
+      "title": "Service Health Matrix",
+      "id": 40,
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 27},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "up{job=~\"$service\"}", "format": "table", "instant": true, "refId": "A"}
+      ],
+      "transformations": [
+        {"id": "organize", "options": {"excludeByName": {"Time": true, "__name__": true}, "renameByName": {"Value": "Status", "job": "Service", "instance": "Instance"}}},
+        {"id": "sortBy", "options": {"sort": [{"field": "Status", "desc": false}]}}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}],
+          "custom": {"align": "center"}
+        }
+      },
+      "options": {"showHeader": true}
     },
     {
       "type": "logs",
       "title": "Recent Critical Logs",
-      "id": 7,
-      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 16},
+      "description": "Error and critical level logs from all services",
+      "id": 50,
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 27},
       "datasource": {"type": "loki", "uid": "loki"},
-      "options": {"showLabels": true, "wrapLogMessage": true},
       "targets": [
-        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name!~\"prometheus|grafana\"} |= \"ERROR\"", "refId": "A"}
-      ]
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\".+\"} |~ \"(?i)(error|critical|fatal|panic)\" | __error__=\"\"", "refId": "A"}
+      ],
+      "options": {"showLabels": true, "showTime": true, "wrapLogMessage": true, "enableLogDetails": true, "sortOrder": "Descending"}
     }
+  ],
+  "links": [
+    {"title": "Infrastructure", "url": "/d/core-infra-observability", "type": "link", "icon": "dashboard"},
+    {"title": "AI Services", "url": "/d/ai-stack-ops", "type": "link", "icon": "dashboard"},
+    {"title": "Monitoring Stack", "url": "/d/observability-control-plane", "type": "link", "icon": "dashboard"},
+    {"title": "SLA & Budgets", "url": "/d/sla-error-budgets", "type": "link", "icon": "dashboard"},
+    {"title": "Alertmanager", "url": "/alerting/list", "type": "link", "icon": "bell"}
   ]
 }

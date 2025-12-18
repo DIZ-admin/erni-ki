@@ -1,104 +1,284 @@
 {
   "uid": "observability-control-plane",
   "title": "Observability Control Plane",
+  "description": "Monitoring stack health: Prometheus, Loki, Alertmanager, Fluent Bit, and Grafana",
+  "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "1m",
+  "tags": ["erni-ki", "monitoring", "prometheus", "loki", "alertmanager"],
   "time": {"from": "now-12h", "to": "now"},
+  "templating": {
+    "list": [
+      {
+        "name": "interval",
+        "type": "interval",
+        "query": "1m,5m,10m,30m",
+        "current": {"text": "5m", "value": "5m"},
+        "auto": true,
+        "auto_min": "1m"
+      }
+    ]
+  },
   "panels": [
     {
+      "type": "row",
+      "title": "Observability Stack Health",
+      "id": 100,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false
+    },
+    {
       "type": "stat",
-      "title": "Prometheus Scrape Success",
+      "title": "Prometheus",
       "id": 1,
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "gridPos": {"h": 3, "w": 4, "x": 0, "y": 1},
       "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "avg(prometheus_target_interval_length_seconds{job=\"prometheus\"})",
-          "refId": "A"
-        }
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "up{job=\"prometheus\"}", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "s"}}
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"}
     },
     {
-      "type": "timeseries",
-      "title": "Prometheus Targets",
+      "type": "stat",
+      "title": "Alertmanager",
       "id": 2,
-      "gridPos": {"h": 8, "w": 18, "x": 6, "y": 0},
+      "gridPos": {"h": 3, "w": 4, "x": 4, "y": 1},
       "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum by (job) (prometheus_target_scrape_pool_targets)",
-          "legendFormat": "{{job}}",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "type": "timeseries",
-      "title": "Loki Distributor Throughput",
-      "id": 3,
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
-      "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum(rate(loki_distributor_bytes_received_total[5m]))",
-          "legendFormat": "Bytes/s",
-          "refId": "A"
-        }
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "up{job=\"alertmanager\"}", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "Bps"}}
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"}
     },
     {
-      "type": "heatmap",
-      "title": "Alert Firing Duration",
-      "id": 4,
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "type": "stat",
+      "title": "Loki",
+      "id": 3,
+      "gridPos": {"h": 3, "w": 4, "x": 8, "y": 1},
       "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum by (alertname) (increase(ALERTS_FOR_STATE{state=\"firing\"}[6h])) or vector(0)",
-          "refId": "A"
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "up{job=\"loki\"}", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]
         }
-      ]
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"}
+    },
+    {
+      "type": "stat",
+      "title": "Fluent Bit",
+      "id": 4,
+      "gridPos": {"h": 3, "w": 4, "x": 12, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "up{job=\"fluent-bit\"}", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}],
+          "noValue": "N/A"
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"}
+    },
+    {
+      "type": "stat",
+      "title": "Firing Alerts",
+      "description": "Number of currently firing alerts",
+      "id": 5,
+      "gridPos": {"h": 3, "w": 4, "x": 16, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "count(ALERTS{alertstate=\"firing\"}) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Pending Alerts",
+      "id": 6,
+      "gridPos": {"h": 3, "w": 4, "x": 20, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "count(ALERTS{alertstate=\"pending\"}) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 3}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "row",
+      "title": "Prometheus Metrics",
+      "id": 101,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 4},
+      "collapsed": false
+    },
+    {
+      "type": "stat",
+      "title": "Scrape Interval",
+      "description": "Average scrape interval duration",
+      "id": 10,
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 5},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg(prometheus_target_interval_length_seconds{job=\"prometheus\"})", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "stat",
+      "title": "Total Series",
+      "description": "Number of active time series",
+      "id": 11,
+      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 5},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "prometheus_tsdb_head_series", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
     },
     {
       "type": "timeseries",
-      "title": "Fluent Bit Input Lag",
-      "id": 5,
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "title": "Prometheus Targets by Job",
+      "description": "Scrape targets grouped by job",
+      "id": 12,
+      "gridPos": {"h": 6, "w": 16, "x": 8, "y": 5},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_records_total[5m])) or vector(0)", "legendFormat": "Records/s", "refId": "A"}
-      ]
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum by (job) (prometheus_target_scrape_pool_targets)", "legendFormat": "{{job}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": true, "placement": "right"}}
+    },
+    {
+      "type": "row",
+      "title": "Loki Log Ingestion",
+      "id": 102,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 11},
+      "collapsed": false
+    },
+    {
+      "type": "stat",
+      "title": "Ingestion Rate",
+      "description": "Log bytes received per second",
+      "id": 20,
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 12},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_distributor_bytes_received_total[$interval])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "stat",
+      "title": "Active Streams",
+      "description": "Number of active log streams",
+      "id": 21,
+      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 12},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(loki_ingester_memory_streams) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Loki Ingestion Throughput",
+      "description": "Log ingestion bytes and lines per second",
+      "id": 22,
+      "gridPos": {"h": 6, "w": 16, "x": 8, "y": 12},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_distributor_bytes_received_total[$interval])) or vector(0)", "legendFormat": "Bytes/s", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_distributor_lines_received_total[$interval])) or vector(0)", "legendFormat": "Lines/s", "refId": "B"}
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "short"},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "Bytes/s"}, "properties": [{"id": "unit", "value": "Bps"}]}
+        ]
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "row",
+      "title": "Fluent Bit & Alertmanager",
+      "id": 103,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 18},
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "Fluent Bit Records",
+      "description": "Input and output records per second",
+      "id": 30,
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 19},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_records_total[$interval])) or vector(0)", "legendFormat": "Input Records/s", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_proc_records_total[$interval])) or vector(0)", "legendFormat": "Output Records/s", "refId": "B"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
     },
     {
       "type": "table",
-      "title": "Failed Alertmanager Notifications",
-      "id": 6,
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "title": "Alertmanager Notification Status",
+      "description": "Failed notifications in last 6 hours",
+      "id": 31,
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 19},
       "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "increase(alertmanager_notifications_failed_total[6h])",
-          "format": "table",
-          "refId": "A"
-        }
-      ]
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "increase(alertmanager_notifications_failed_total[6h])", "format": "table", "instant": true, "refId": "A"}
+      ],
+      "transformations": [
+        {"id": "organize", "options": {"excludeByName": {"Time": true, "__name__": true}, "renameByName": {"integration": "Integration", "Value": "Failures"}}}
+      ],
+      "fieldConfig": {
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "Failures"}, "properties": [
+            {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}
+          ]}
+        ]
+      },
+      "options": {"showHeader": true}
+    },
+    {
+      "type": "row",
+      "title": "Monitoring Stack Logs",
+      "id": 104,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 25},
+      "collapsed": false
     },
     {
       "type": "logs",
-      "title": "Grafana Errors",
-      "id": 7,
-      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 20},
+      "title": "Monitoring Stack Errors",
+      "description": "Error logs from Prometheus, Loki, Alertmanager, and Grafana",
+      "id": 40,
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 26},
       "datasource": {"type": "loki", "uid": "loki"},
       "targets": [
-        {
-          "datasource": {"type": "loki", "uid": "loki"},
-          "expr": "{container_name=\"grafana\"} |= \"level=error\"",
-          "refId": "A"
-        }
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\".*(prometheus|loki|alertmanager|grafana|fluent).*\"} |~ \"(?i)(error|warn|failed)\" | __error__=\"\"", "refId": "A"}
       ],
-      "options": {"showLabels": true}
+      "options": {"showLabels": true, "showTime": true, "wrapLogMessage": true, "enableLogDetails": true, "sortOrder": "Descending"}
     }
+  ],
+  "links": [
+    {"title": "Logging Pipeline", "url": "/d/logging-pipeline", "type": "link", "icon": "dashboard"},
+    {"title": "SRE Overview", "url": "/d/platform-sre-overview", "type": "link", "icon": "dashboard"},
+    {"title": "SLA & Budgets", "url": "/d/sla-error-budgets", "type": "link", "icon": "dashboard"},
+    {"title": "Alertmanager", "url": "/alerting/list", "type": "link", "icon": "bell"}
   ]
 }
