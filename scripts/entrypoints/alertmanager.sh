@@ -32,8 +32,11 @@ WEBHOOK_SECRET=$(require_secret "alertmanager_webhook_secret")
 
 # Replace credentials_file with direct credentials in config
 # This is necessary because Alertmanager runs as non-root and can't read secrets
-# Escape special characters in the secret for sed (/, &, \)
-ESCAPED_SECRET=$(printf '%s' "$WEBHOOK_SECRET" | sed 's/[&/\]/\\&/g')
+# Escape special characters for sed and YAML:
+# 1. Backslashes must be escaped first (\ -> \\)
+# 2. Double quotes must be escaped for YAML (" -> \")
+# 3. Ampersand and forward slash for sed (& -> \&, / -> \/)
+ESCAPED_SECRET=$(printf '%s' "$WEBHOOK_SECRET" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/[&/]/\\&/g')
 sed "s|credentials_file: /run/secrets/alertmanager_webhook_secret|credentials: \"$ESCAPED_SECRET\"|g" \
     "$CONFIG_TEMPLATE" > "$CONFIG_RUNTIME"
 
