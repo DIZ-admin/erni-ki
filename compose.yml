@@ -99,7 +99,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./scripts/entrypoints/watchtower.sh:/watchtower-entrypoint.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - watchtower_api_token
     networks:
@@ -352,7 +352,7 @@ services:
       - ./conf/cloudflare/config:/home/nonroot/.cloudflared
       - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - source: cloudflared_tunnel_token
         uid: "65532"
@@ -502,7 +502,7 @@ services:
       - ./data:/app/data
       - ./scripts/entrypoints/mcposerver-with-secrets.sh:/opt/erni/bin/mcposerver-with-secrets.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - postgres_password
       - context7_api_key
@@ -1057,7 +1057,7 @@ services:
       - ./conf/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - ./data/alertmanager:/alertmanager
       - ./scripts/entrypoints/alertmanager.sh:/opt/erni/bin/alertmanager-entrypoint.sh:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     ports:
       - "127.0.0.1:9093:9093"
       - "127.0.0.1:9094:9094"
@@ -1355,7 +1355,7 @@ services:
     volumes:
       - ./scripts/entrypoints/redis-exporter-with-secret.sh:/opt/erni/bin/redis-exporter-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
 
   ollama-exporter:
     depends_on:
