@@ -321,6 +321,8 @@ services:
   cloudflared:
     entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/cloudflared-with-secret.sh"]
     command: ["tunnel", "--no-autoupdate", "run"]
+    # Run as root to read Docker secrets (uid/gid/mode not supported in Compose v2)
+    user: "0:0"
     depends_on:
       nginx:
         condition: service_healthy
@@ -354,10 +356,7 @@ services:
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
       - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
-      - source: cloudflared_tunnel_token
-        uid: "65532"
-        gid: "65532"
-        mode: 0444 # allow read for healthcheck/entrypoint even if uid mapping differs
+      - cloudflared_tunnel_token
     networks:
       - frontend
       - backend
