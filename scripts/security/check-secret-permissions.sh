@@ -38,8 +38,15 @@ main() {
 
   log_info "Checking secret file permissions..."
 
-  # Check secrets/ directory
+  # Check secrets/ directory - .txt files (passwords, API keys)
   check_permissions "secrets" "*.txt" || total_issues=$((total_issues + $?))
+
+  # Check secrets/ directory - private keys
+  check_permissions "secrets" "*.key" || total_issues=$((total_issues + $?))
+
+  # Check secrets/ directory - sensitive configs
+  check_permissions "secrets" "*.ini" || total_issues=$((total_issues + $?))
+  check_permissions "secrets" "*.conf" || total_issues=$((total_issues + $?))
 
   # Check env/ directory
   check_permissions "env" "*.env" || total_issues=$((total_issues + $?))

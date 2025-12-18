@@ -11,7 +11,9 @@
 secrets/letsencrypt/
 secrets/linux/
 secrets/mac/
+# Ignore both directory and symlink
 compose/secrets/
+compose/secrets
 
 # Legacy placements of ACME state (kept ignored to prevent re-introducing sensitive data)
 conf/nginx/ssl/live/
@@ -283,4 +285,3 @@ htmlcov/
 
 # Academy build output
 site-academy/
-compose/secrets
