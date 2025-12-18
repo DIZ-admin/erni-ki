@@ -159,7 +159,7 @@ docker compose logs --since="1h" --until="30m"
 ./scripts/maintenance/log-rotation-manager.sh
 
 # Настройка ротации логов
-./scripts/setup/setup-log-rotation.sh
+./scripts/core/deployment/setup-log-rotation.sh
 
 # Очистка старых логов
 ./scripts/security/rotate-logs.sh

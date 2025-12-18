@@ -166,7 +166,7 @@ Cache/WebSocket manager. See:
 ### Backrest
 
 Local backups (daily + weekly) stored in `.config-backup/`. Integration script:
-`scripts/setup/setup-backrest-integration.sh`.
+`scripts/core/deployment/setup-backrest-integration.sh`.
 
 ## Security
 
