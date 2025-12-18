@@ -281,7 +281,11 @@ snyk-*.html
 ErniKiRedisSecurePassword2024
 .coverage
 coverage.json
+coverage-summary.txt
 htmlcov/
+
+# Legacy monitoring directory (moved to conf/)
+monitoring/
 
 # Academy build output
 site-academy/
