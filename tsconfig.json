@@ -50,6 +50,7 @@
     "data",
     "logs",
     "auth",
+    "tests/bun",
     "**/*.min.js",
     "**/*.js",
     "vendor"

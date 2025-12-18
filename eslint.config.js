@@ -55,7 +55,7 @@ export default [
       'playwright-artifacts/**',
       'test-results/**',
       'tests/e2e/**', // E2E tests use Playwright, not ESLint
-      'test-bun-*.ts',
+      'tests/bun/**', // Bun-specific tests (use Bun types, not in tsconfig)
     ],
   },
 
