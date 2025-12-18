@@ -230,7 +230,7 @@
       "id": 14,
       "gridPos": {"h": 5, "w": 4, "x": 16, "y": 6},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(max(nvidia_gpu_memory_used_bytes) / max(nvidia_gpu_memory_total_bytes)) * 100 or vector(0)", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(max(nvidia_gpu_memory_used_bytes) / clamp_min(max(nvidia_gpu_memory_total_bytes), 1)) * 100 or vector(0)", "refId": "A"}
       ],
       "fieldConfig": {
         "defaults": {

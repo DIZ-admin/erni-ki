@@ -213,7 +213,7 @@
       "id": 6,
       "gridPos": {"h": 4, "w": 4, "x": 4, "y": 23},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(container_start_time_seconds[1h])) or vector(0)", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(changes(container_start_time_seconds[1h])) or vector(0)", "refId": "A"}
       ],
       "fieldConfig": {
         "defaults": {

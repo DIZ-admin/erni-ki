@@ -242,8 +242,8 @@
     },
     {
       "type": "stat",
-      "title": "Chunk Flushes (1h)",
-      "description": "Successful chunk flushes to Loki",
+      "title": "Output Retries (1h)",
+      "description": "Total output retry attempts by Fluent Bit",
       "id": 15,
       "gridPos": {"h": 3, "w": 6, "x": 18, "y": 15},
       "targets": [
