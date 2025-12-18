@@ -6,15 +6,57 @@
   "schemaVersion": 39,
   "version": 3,
   "refresh": "1m",
-  "tags": ["erni-ki", "sla", "slo", "sre", "security"],
-  "time": {"from": "now-7d", "to": "now"},
+  "tags": [
+    "erni-ki",
+    "sla",
+    "slo",
+    "sre",
+    "security"
+  ],
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
   "templating": {
     "list": [
+      {
+        "name": "DS_PROMETHEUS",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {
+          "text": "Prometheus",
+          "value": "prometheus"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "options": [],
+        "refresh": 1,
+        "regex": ""
+      },
+      {
+        "name": "DS_LOKI",
+        "type": "datasource",
+        "query": "loki",
+        "current": {
+          "text": "Loki",
+          "value": "loki"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "options": [],
+        "refresh": 1,
+        "regex": ""
+      },
       {
         "name": "slo_target",
         "type": "custom",
         "query": "0.99,0.995,0.999",
-        "current": {"text": "0.995", "value": "0.995"},
+        "current": {
+          "text": "0.995",
+          "value": "0.995"
+        },
         "label": "SLO Target"
       }
     ]
@@ -24,235 +66,784 @@
       "type": "row",
       "title": "SLO Compliance Overview",
       "id": 100,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
       "collapsed": false
     },
     {
       "type": "gauge",
       "title": "Availability SLO (7d)",
       "id": 1,
-      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 1},
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(1 - (sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 0.001))) or vector(1)", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(1 - (sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 0.001))) or vector(1)",
+          "refId": "A"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "percentunit",
           "decimals": 3,
-          "min": 0.99, "max": 1,
-          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": 0.99}, {"color": "yellow", "value": 0.995}, {"color": "green", "value": 0.999}]}
+          "min": 0.99,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0.99
+              },
+              {
+                "color": "yellow",
+                "value": 0.995
+              },
+              {
+                "color": "green",
+                "value": 0.999
+              }
+            ]
+          }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "Error Budget Remaining",
       "id": 2,
-      "gridPos": {"h": 3, "w": 4, "x": 6, "y": 1},
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 6,
+        "y": 1
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "clamp_min((1 - $slo_target) - (sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 0.001)), 0) / (1 - $slo_target) * 100 or vector(100)", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "clamp_min((1 - $slo_target) - (sum(rate(nginx_http_requests_total{status=~\"5..\"}[7d])) / clamp_min(sum(rate(nginx_http_requests_total[7d])), 0.001)), 0) / (1 - $slo_target) * 100 or vector(100)",
+          "refId": "A"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
           "decimals": 1,
-          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": 0}, {"color": "yellow", "value": 25}, {"color": "green", "value": 50}]}
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 25
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          }
         }
       },
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "stat",
       "title": "Total Requests (7d)",
       "id": 3,
-      "gridPos": {"h": 3, "w": 4, "x": 10, "y": 1},
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 10,
+        "y": 1
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(nginx_http_requests_total[7d]))", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(increase(nginx_http_requests_total[7d]))",
+          "refId": "A"
+        }
       ],
-      "fieldConfig": {"defaults": {"unit": "short", "decimals": 0}},
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "stat",
       "title": "Total Errors (7d)",
       "id": 4,
-      "gridPos": {"h": 3, "w": 4, "x": 14, "y": 1},
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 14,
+        "y": 1
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(nginx_http_requests_total{status=~\"5..\"}[7d]))", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(increase(nginx_http_requests_total{status=~\"5..\"}[7d]))",
+          "refId": "A"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "decimals": 0,
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 100}, {"color": "red", "value": 1000}]}
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          }
         }
       },
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "stat",
       "title": "Burn Rate (1h)",
       "id": 5,
-      "gridPos": {"h": 3, "w": 3, "x": 18, "y": 1},
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 18,
+        "y": 1
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 0.001)) / (1 - $slo_target)) or vector(0)", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 0.001)) / (1 - $slo_target)) or vector(0)",
+          "refId": "A"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "decimals": 2,
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 14.4}]}
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 14.4
+              }
+            ]
+          }
         }
       },
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "stat",
       "title": "Burn Rate (6h)",
       "id": 6,
-      "gridPos": {"h": 3, "w": 3, "x": 21, "y": 1},
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 21,
+        "y": 1
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 0.001)) / (1 - $slo_target)) or vector(0)", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 0.001)) / (1 - $slo_target)) or vector(0)",
+          "refId": "A"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "decimals": 2,
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 6}]}
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 6
+              }
+            ]
+          }
         }
       },
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "timeseries",
       "title": "SLO Compliance Over Time",
       "id": 10,
-      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 7},
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 7
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(1 - (sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 0.001))) or vector(1)", "legendFormat": "Availability", "refId": "A"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "$slo_target", "legendFormat": "SLO Target", "refId": "B"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(1 - (sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 0.001))) or vector(1)",
+          "legendFormat": "Availability",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "$slo_target",
+          "legendFormat": "SLO Target",
+          "refId": "B"
+        }
       ],
       "fieldConfig": {
-        "defaults": {"unit": "percentunit", "min": 0.95, "max": 1, "decimals": 4},
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0.95,
+          "max": 1,
+          "decimals": 4
+        },
         "overrides": [
-          {"matcher": {"id": "byName", "options": "SLO Target"}, "properties": [{"id": "custom.lineStyle", "value": {"fill": "dash", "dash": [10, 10]}}, {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]}
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SLO Target"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    10
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
         ]
       },
-      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "timeseries",
       "title": "Burn Rate (Multi-Window)",
       "id": 11,
-      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 7},
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 7
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 0.001)) / (1 - $slo_target)) or vector(0)", "legendFormat": "1h", "refId": "A"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 0.001)) / (1 - $slo_target)) or vector(0)", "legendFormat": "6h", "refId": "B"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[24h])) / clamp_min(sum(rate(nginx_http_requests_total[24h])), 0.001)) / (1 - $slo_target)) or vector(0)", "legendFormat": "24h", "refId": "C"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[1h])) / clamp_min(sum(rate(nginx_http_requests_total[1h])), 0.001)) / (1 - $slo_target)) or vector(0)",
+          "legendFormat": "1h",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[6h])) / clamp_min(sum(rate(nginx_http_requests_total[6h])), 0.001)) / (1 - $slo_target)) or vector(0)",
+          "legendFormat": "6h",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "((sum(rate(nginx_http_requests_total{status=~\"5..\"}[24h])) / clamp_min(sum(rate(nginx_http_requests_total[24h])), 0.001)) / (1 - $slo_target)) or vector(0)",
+          "legendFormat": "24h",
+          "refId": "C"
+        }
       ],
-      "fieldConfig": {"defaults": {"unit": "short"}},
-      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "row",
       "title": "HTTP Error Analysis",
       "id": 101,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 14},
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
       "collapsed": false
     },
     {
       "type": "timeseries",
       "title": "HTTP Status Code Distribution",
       "id": 20,
-      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 15},
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum by (status) (rate(nginx_http_requests_total[5m]))", "legendFormat": "{{status}}", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (status) (rate(nginx_http_requests_total[5m]))",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        }
       ],
-      "fieldConfig": {"defaults": {"unit": "reqps"}},
-      "options": {"legend": {"showLegend": true, "placement": "right"}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "right"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "timeseries",
       "title": "Error Rate by Status",
       "id": 21,
-      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 15},
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m]))", "legendFormat": "401 Unauthorized", "refId": "A"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"403\"}[5m]))", "legendFormat": "403 Forbidden", "refId": "B"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"404\"}[5m]))", "legendFormat": "404 Not Found", "refId": "C"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"500\"}[5m]))", "legendFormat": "500 Internal Error", "refId": "D"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"502\"}[5m]))", "legendFormat": "502 Bad Gateway", "refId": "E"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"503\"}[5m]))", "legendFormat": "503 Unavailable", "refId": "F"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m]))",
+          "legendFormat": "401 Unauthorized",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"403\"}[5m]))",
+          "legendFormat": "403 Forbidden",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"404\"}[5m]))",
+          "legendFormat": "404 Not Found",
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"500\"}[5m]))",
+          "legendFormat": "500 Internal Error",
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"502\"}[5m]))",
+          "legendFormat": "502 Bad Gateway",
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"503\"}[5m]))",
+          "legendFormat": "503 Unavailable",
+          "refId": "F"
+        }
       ],
-      "fieldConfig": {"defaults": {"unit": "reqps"}},
-      "options": {"legend": {"showLegend": true, "placement": "right"}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "right"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "row",
       "title": "Security Monitoring",
       "id": 102,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 22},
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
       "collapsed": false
     },
     {
       "type": "stat",
       "title": "Auth Failures (1h)",
       "id": 30,
-      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 23},
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 23
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(nginx_http_requests_total{status=\"401\"}[1h]))", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(increase(nginx_http_requests_total{status=\"401\"}[1h]))",
+          "refId": "A"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 50}, {"color": "red", "value": 200}]}
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 200
+              }
+            ]
+          }
         }
       },
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "stat",
       "title": "Forbidden (1h)",
       "id": 31,
-      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 23},
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 23
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(nginx_http_requests_total{status=\"403\"}[1h]))", "refId": "A"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(increase(nginx_http_requests_total{status=\"403\"}[1h]))",
+          "refId": "A"
+        }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 100}, {"color": "red", "value": 500}]}
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 500
+              }
+            ]
+          }
         }
       },
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "timeseries",
       "title": "Authentication Events",
       "id": 35,
-      "gridPos": {"h": 7, "w": 16, "x": 8, "y": 23},
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 23
+      },
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m]))", "legendFormat": "401 Unauthorized", "refId": "A"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total{status=\"403\"}[5m]))", "legendFormat": "403 Forbidden", "refId": "B"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"401\"}[5m]))",
+          "legendFormat": "401 Unauthorized",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(nginx_http_requests_total{status=\"403\"}[5m]))",
+          "legendFormat": "403 Forbidden",
+          "refId": "B"
+        }
       ],
-      "fieldConfig": {"defaults": {"unit": "reqps"}},
-      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "placement": "bottom"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "row",
       "title": "Active Alerts",
       "id": 103,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 30},
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 30
+      },
       "collapsed": false
     },
     {
       "type": "table",
       "title": "Current Firing Alerts",
       "id": 40,
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 31},
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 31
+      },
       "targets": [
         {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "ALERTS{alertstate=\"firing\"}",
           "format": "table",
           "instant": true,
@@ -260,44 +851,145 @@
         }
       ],
       "transformations": [
-        {"id": "organize", "options": {"excludeByName": {"Time": true, "__name__": true, "alertstate": true}, "renameByName": {"alertname": "Alert", "severity": "Severity", "instance": "Instance", "job": "Job", "Value": "Active"}}}
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "alertstate": true
+            },
+            "renameByName": {
+              "alertname": "Alert",
+              "severity": "Severity",
+              "instance": "Instance",
+              "job": "Job",
+              "Value": "Active"
+            }
+          }
+        }
       ],
       "fieldConfig": {
-        "defaults": {"custom": {"align": "left"}},
+        "defaults": {
+          "custom": {
+            "align": "left"
+          }
+        },
         "overrides": [
-          {"matcher": {"id": "byName", "options": "Severity"}, "properties": [
-            {"id": "custom.width", "value": 100},
-            {"id": "mappings", "value": [
-              {"type": "value", "options": {"critical": {"color": "red", "text": "CRITICAL"}}},
-              {"type": "value", "options": {"warning": {"color": "yellow", "text": "WARNING"}}}
-            ]}
-          ]},
-          {"matcher": {"id": "byName", "options": "Active"}, "properties": [{"id": "custom.hidden", "value": true}]}
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "critical": {
+                        "color": "red",
+                        "text": "CRITICAL"
+                      }
+                    }
+                  },
+                  {
+                    "type": "value",
+                    "options": {
+                      "warning": {
+                        "color": "yellow",
+                        "text": "WARNING"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Active"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          }
         ]
       },
-      "options": {"showHeader": true}
+      "options": {
+        "showHeader": true
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     },
     {
       "type": "row",
       "title": "Security & Auth Logs",
       "id": 104,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 39},
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
       "collapsed": false
     },
     {
       "type": "logs",
       "title": "Auth Service & Security Logs",
       "id": 50,
-      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 40},
-      "datasource": {"type": "loki", "uid": "loki"},
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_LOKI}"
+      },
       "targets": [
-        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\".*(auth|nginx).*\"} |~ \"(?i)(unauthorized|forbidden|blocked|invalid|denied|failed)\" | __error__=\"\"", "refId": "A"}
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "expr": "{container_name=~\".*(auth|nginx).*\"} |~ \"(?i)(unauthorized|forbidden|blocked|invalid|denied|failed)\" | __error__=\"\"",
+          "refId": "A"
+        }
       ],
-      "options": {"showLabels": true, "showTime": true, "wrapLogMessage": true, "enableLogDetails": true, "sortOrder": "Descending"}
+      "options": {
+        "showLabels": true,
+        "showTime": true,
+        "wrapLogMessage": true,
+        "enableLogDetails": true,
+        "sortOrder": "Descending"
+      }
     }
   ],
   "links": [
-    {"title": "SRE Overview", "url": "/d/platform-sre-overview", "type": "link", "icon": "dashboard"},
-    {"title": "Alertmanager", "url": "/alerting/list", "type": "link", "icon": "bell"}
+    {
+      "title": "SRE Overview",
+      "url": "/d/platform-sre-overview",
+      "type": "link",
+      "icon": "dashboard"
+    },
+    {
+      "title": "Alertmanager",
+      "url": "/alerting/list",
+      "type": "link",
+      "icon": "bell"
+    }
   ]
 }

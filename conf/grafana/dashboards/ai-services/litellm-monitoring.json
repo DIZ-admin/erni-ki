@@ -1,7 +1,7 @@
 {
   "uid": "erni-ki-litellm-monitoring",
   "title": "LiteLLM Context Engineering Gateway - ERNI-KI",
-  "description": "Комплексный мониторинг LiteLLM proxy: производительность, здоровье системы, Redis кэш метрики, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. ОБНОВЛЕНО 2025-12-16: исправлены unit (gbytes), Redis panel (убрана несуществующая метрика), PostgreSQL title (throughput), nginx query (убран несуществующий server label)",
+  "description": "\u041a\u043e\u043c\u043f\u043b\u0435\u043a\u0441\u043d\u044b\u0439 \u043c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433 LiteLLM proxy: \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0441\u0442\u044c, \u0437\u0434\u043e\u0440\u043e\u0432\u044c\u0435 \u0441\u0438\u0441\u0442\u0435\u043c\u044b, Redis \u043a\u044d\u0448 \u043c\u0435\u0442\u0440\u0438\u043a\u0438, PublicAI provider. NOTE: Queries use 'or vector(X)' fallbacks when metrics unavailable. \u041e\u0411\u041d\u041e\u0412\u041b\u0415\u041d\u041e 2025-12-16: \u0438\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u044b unit (gbytes), Redis panel (\u0443\u0431\u0440\u0430\u043d\u0430 \u043d\u0435\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0449\u0430\u044f \u043c\u0435\u0442\u0440\u0438\u043a\u0430), PostgreSQL title (throughput), nginx query (\u0443\u0431\u0440\u0430\u043d \u043d\u0435\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u044e\u0449\u0438\u0439 server label)",
   "timezone": "browser",
   "schemaVersion": 39,
   "version": 1,
@@ -10,35 +10,79 @@
     "from": "now-1h",
     "to": "now"
   },
-  "tags": ["erni-ki", "ai-services", "litellm", "context-engineering", "monitoring"],
+  "tags": [
+    "erni-ki",
+    "ai-services",
+    "litellm",
+    "context-engineering",
+    "monitoring"
+  ],
   "panels": [
     {
       "type": "stat",
       "title": "LiteLLM Status",
-      "gridPos": {"h": 4, "w": 3, "x": 0, "y": 0},
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "up{job=\"litellm-publicai\"} or probe_success{instance=\"http://litellm:4000/health/readiness\"}",
-          "legendFormat": "Status"
+          "legendFormat": "Status",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            {"options": {"0": {"text": "DOWN", "color": "red"}}, "type": "value"},
-            {"options": {"1": {"text": "UP", "color": "green"}}, "type": "value"}
+            {
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                }
+              },
+              "type": "value"
+            }
           ]
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "CPU Usage (%)",
-      "gridPos": {"h": 4, "w": 3, "x": 3, "y": 0},
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "rate(container_cpu_usage_seconds_total{name=~\"erni-ki-litellm.*\"}[5m]) * 100",
-          "legendFormat": "CPU %"
+          "legendFormat": "CPU %",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -47,23 +91,48 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 50},
-              {"color": "orange", "value": 80},
-              {"color": "red", "value": 90}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "Memory Usage",
-      "gridPos": {"h": 4, "w": 3, "x": 6, "y": 0},
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "container_memory_usage_bytes{name=~\"erni-ki-litellm.*\"} / 1024 / 1024 / 1024",
-          "legendFormat": "Memory GB"
+          "legendFormat": "Memory GB",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -72,40 +141,78 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 1},
-              {"color": "orange", "value": 2},
-              {"color": "red", "value": 3}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "Worker Processes",
-      "gridPos": {"h": 4, "w": 3, "x": 9, "y": 0},
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 0
+      },
       "targets": [
         {
           "expr": "count(up{job=\"litellm-publicai\"}) or vector(1)",
-          "legendFormat": "Workers"
+          "legendFormat": "Workers",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short"
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "timeseries",
       "title": "Redis Command Latency",
-      "description": "Redis команды latency (используются метрики redis-exporter)",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "description": "Redis \u043a\u043e\u043c\u0430\u043d\u0434\u044b latency (\u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u044e\u0442\u0441\u044f \u043c\u0435\u0442\u0440\u0438\u043a\u0438 redis-exporter)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
       "targets": [
         {
           "expr": "rate(redis_commands_duration_seconds_total[5m]) / (rate(redis_commands_processed_total[5m]) > 0) or vector(0.001)",
-          "legendFormat": "Avg command latency"
+          "legendFormat": "Avg command latency",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -114,27 +221,53 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 0.01},
-              {"color": "red", "value": 0.1}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 0.1
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "timeseries",
       "title": "PostgreSQL Query Throughput",
-      "description": "PostgreSQL tuples throughput (используются метрики postgres-exporter)",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "description": "PostgreSQL tuples throughput (\u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u044e\u0442\u0441\u044f \u043c\u0435\u0442\u0440\u0438\u043a\u0438 postgres-exporter)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
       "targets": [
         {
           "expr": "rate(pg_stat_database_tup_fetched{datname=\"openwebui\"}[5m]) or vector(100)",
-          "legendFormat": "Tuples fetched/sec"
+          "legendFormat": "Tuples fetched/sec",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         },
         {
           "expr": "rate(pg_stat_database_tup_returned{datname=\"openwebui\"}[5m]) or vector(50)",
-          "legendFormat": "Tuples returned/sec"
+          "legendFormat": "Tuples returned/sec",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -143,22 +276,44 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 1000},
-              {"color": "red", "value": 10000}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1000
+              },
+              {
+                "color": "red",
+                "value": 10000
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "timeseries",
       "title": "CPU Usage Over Time",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
       "targets": [
         {
           "expr": "rate(container_cpu_usage_seconds_total{name=~\"erni-ki-litellm.*\"}[5m]) * 100",
-          "legendFormat": "CPU Usage %"
+          "legendFormat": "CPU Usage %",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -167,44 +322,86 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 50},
-              {"color": "orange", "value": 80},
-              {"color": "red", "value": 90}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "timeseries",
       "title": "Memory Usage Over Time",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
       "targets": [
         {
           "expr": "container_memory_usage_bytes{name=~\"erni-ki-litellm.*\"} / 1024 / 1024 / 1024",
-          "legendFormat": "Memory Usage GB"
+          "legendFormat": "Memory Usage GB",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "gbytes"
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "timeseries",
       "title": "Authentication Latency",
-      "description": "Auth service response time (исправлено: используется blackbox monitoring вместо litellm)",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "description": "Auth service response time (\u0438\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e: \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0435\u0442\u0441\u044f blackbox monitoring \u0432\u043c\u0435\u0441\u0442\u043e litellm)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
       "targets": [
         {
           "expr": "probe_duration_seconds{job=\"blackbox-http\",instance=~\".*auth.*\"} or vector(0.1)",
-          "legendFormat": "Auth probe duration"
+          "legendFormat": "Auth probe duration",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         },
         {
           "expr": "probe_http_duration_seconds{job=\"blackbox-http\",instance=~\".*auth.*\"} or vector(0.05)",
-          "legendFormat": "HTTP duration"
+          "legendFormat": "HTTP duration",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -213,40 +410,75 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 0.05},
-              {"color": "red", "value": 0.2}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.05
+              },
+              {
+                "color": "red",
+                "value": 0.2
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "Total Nginx Requests",
-      "description": "Общее количество HTTP запросов через nginx (stub_status метрики)",
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 20},
+      "description": "\u041e\u0431\u0449\u0435\u0435 \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e HTTP \u0437\u0430\u043f\u0440\u043e\u0441\u043e\u0432 \u0447\u0435\u0440\u0435\u0437 nginx (stub_status \u043c\u0435\u0442\u0440\u0438\u043a\u0438)",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 20
+      },
       "targets": [
         {
           "expr": "increase(nginx_http_requests_total[1h]) or vector(0)",
-          "legendFormat": "Requests/hour"
+          "legendFormat": "Requests/hour",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short"
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "Redis Cache Hit Rate",
-      "description": "Redis cache эффективность (исправлено: используются redis-exporter метрики вместо litellm)",
-      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 20},
+      "description": "Redis cache \u044d\u0444\u0444\u0435\u043a\u0442\u0438\u0432\u043d\u043e\u0441\u0442\u044c (\u0438\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u043e: \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u044e\u0442\u0441\u044f redis-exporter \u043c\u0435\u0442\u0440\u0438\u043a\u0438 \u0432\u043c\u0435\u0441\u0442\u043e litellm)",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 20
+      },
       "targets": [
         {
-          "expr": "(rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))) * 100 or vector(95)",
-          "legendFormat": "Hit Rate %"
+          "expr": "redis:cache_hit_ratio:rate5m * 100 or vector(95)",
+          "legendFormat": "Hit Rate %",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -255,27 +487,53 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "red", "value": null},
-              {"color": "yellow", "value": 80},
-              {"color": "green", "value": 95}
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "green",
+                "value": 95
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "timeseries",
       "title": "PublicAI Request Latency",
-      "description": "PublicAI upstream latency (метрики из custom provider на порту 9109)",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 28},
+      "description": "PublicAI upstream latency (\u043c\u0435\u0442\u0440\u0438\u043a\u0438 \u0438\u0437 custom provider \u043d\u0430 \u043f\u043e\u0440\u0442\u0443 9109)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "histogram_quantile(0.95, rate(litellm_publicai_request_latency_seconds_bucket[5m]))",
-          "legendFormat": "95th percentile"
+          "legendFormat": "95th percentile",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         },
         {
           "expr": "histogram_quantile(0.50, rate(litellm_publicai_request_latency_seconds_bucket[5m]))",
-          "legendFormat": "50th percentile"
+          "legendFormat": "50th percentile",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -284,40 +542,75 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 2},
-              {"color": "red", "value": 5}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 2
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "PublicAI Total Requests",
       "description": "Total requests routed to PublicAI provider",
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 28},
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "sum(increase(litellm_publicai_requests_total[1h]))",
-          "legendFormat": "Requests/hour"
+          "legendFormat": "Requests/hour",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short"
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "stat",
       "title": "PublicAI Error Rate",
       "description": "Error rate for PublicAI requests",
-      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 28},
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "(sum(rate(litellm_publicai_request_errors_total[5m])) / sum(rate(litellm_publicai_requests_total[5m]))) * 100 or vector(0)",
-          "legendFormat": "Error %"
+          "legendFormat": "Error %",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "fieldConfig": {
@@ -326,28 +619,54 @@
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              {"color": "green", "value": null},
-              {"color": "yellow", "value": 1},
-              {"color": "red", "value": 5}
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
             ]
           }
         }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
       }
     },
     {
       "type": "table",
       "title": "System Health Summary",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 36},
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 36
+      },
       "targets": [
         {
           "expr": "up{job=\"litellm-publicai\"}",
           "legendFormat": "LiteLLM Exporter",
-          "format": "table"
+          "format": "table",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         },
         {
           "expr": "probe_success{job=\"blackbox-internal\", instance=\"http://litellm:4000/health/readiness\"}",
           "legendFormat": "Health Check",
-          "format": "table"
+          "format": "table",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
         }
       ],
       "transformations": [
@@ -360,17 +679,40 @@
             }
           }
         }
-      ]
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     }
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "name": "DS_PROMETHEUS",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {
+          "text": "Prometheus",
+          "value": "prometheus"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "options": [],
+        "refresh": 1,
+        "regex": ""
+      }
+    ]
   },
   "annotations": {
     "list": [
       {
         "name": "LiteLLM Restarts",
-        "datasource": "Prometheus",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "enable": true,
         "expr": "changes(up{job=\"litellm-publicai\"}[5m]) > 0",
         "iconColor": "red",
