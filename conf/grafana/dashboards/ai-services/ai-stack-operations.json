@@ -1,135 +1,262 @@
 {
   "uid": "ai-stack-ops",
   "title": "AI Stack Operations",
+  "description": "Comprehensive AI services monitoring: Ollama, GPU, LiteLLM, Redis cache, and request analytics",
+  "timezone": "browser",
   "schemaVersion": 39,
-  "version": 2,
+  "version": 3,
   "refresh": "30s",
+  "tags": ["erni-ki", "ai-services", "ollama", "gpu", "litellm"],
   "time": {"from": "now-3h", "to": "now"},
+  "templating": {
+    "list": [
+      {
+        "name": "interval",
+        "type": "interval",
+        "query": "30s,1m,5m,10m",
+        "current": {"text": "1m", "value": "1m"},
+        "auto": true,
+        "auto_min": "30s"
+      }
+    ]
+  },
   "panels": [
+    {
+      "type": "row",
+      "title": "Traffic & Error Overview",
+      "id": 100,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false
+    },
     {
       "type": "timeseries",
       "title": "Frontend Request Rate",
+      "description": "HTTP requests per second through nginx",
       "id": 1,
-      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 0},
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 1},
       "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "sum(rate(nginx_http_requests_total[5m]))",
-          "legendFormat": "req/s",
-          "refId": "A"
-        }
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(nginx_http_requests_total[$interval]))", "legendFormat": "req/s", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "req/s"}}
+      "fieldConfig": {"defaults": {"unit": "reqps"}}
     },
     {
       "type": "timeseries",
-      "title": "HTTP 5xx Ratio",
+      "title": "HTTP 5xx Error Ratio",
+      "description": "Server error rate as percentage of total requests",
       "id": 2,
-      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 0},
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 1},
       "targets": [
-        {
-          "datasource": {"type": "prometheus", "uid": "prometheus"},
-          "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[5m])) / clamp_min(sum(rate(nginx_http_requests_total[5m])), 1)) or vector(0)",
-          "legendFormat": "5xx",
-          "refId": "A"
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(nginx_http_requests_total{status=~\"5..\"}[$interval])) / clamp_min(sum(rate(nginx_http_requests_total[$interval])), 0.001)) * 100 or vector(0)", "legendFormat": "5xx %", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}]}
         }
-      ],
-      "fieldConfig": {"defaults": {"unit": "percent", "thresholds": {"mode": "percentage", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.01}, {"color": "red", "value": 0.02}]}}}
+      }
+    },
+    {
+      "type": "row",
+      "title": "Ollama LLM Inference",
+      "id": 101,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 7},
+      "collapsed": false
     },
     {
       "type": "stat",
-      "title": "Ollama Request Latency",
+      "title": "Request Latency",
+      "description": "Current Ollama request latency",
       "id": 3,
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 6},
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 8},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "ollama_request_latency_seconds", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "ollama_request_latency_seconds or vector(0)", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "s", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 3}]}}},
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 3}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
     },
     {
       "type": "stat",
-      "title": "Ollama Installed Models",
+      "title": "Installed Models",
+      "description": "Number of models available in Ollama",
       "id": 4,
-      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 6},
+      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 8},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "ollama_installed_models", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "ollama_installed_models or vector(0)", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "short"}}
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
     },
     {
       "type": "timeseries",
       "title": "GPU Temperature",
+      "description": "NVIDIA GPU temperature over time",
       "id": 5,
-      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 6},
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 8},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg(nvidia_gpu_temperature_celsius)", "legendFormat": "GPU", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "avg(nvidia_gpu_temperature_celsius) or vector(0)", "legendFormat": "GPU", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "celsius"}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 70}, {"color": "red", "value": 85}]}
+        }
+      }
     },
     {
-      "type": "timeseries",
-      "title": "Redis Command Throughput",
-      "id": 6,
-      "gridPos": {"h": 6, "w": 9, "x": 18, "y": 6},
+      "type": "gauge",
+      "title": "GPU Utilization",
+      "description": "Current GPU compute utilization",
+      "id": 8,
+      "gridPos": {"h": 6, "w": 4, "x": 16, "y": 8},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(redis_commands_processed_total[5m]))", "legendFormat": "cmd/s", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "max(nvidia_gpu_duty_cycle) or vector(0)", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "req/s"}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 80}, {"color": "red", "value": 95}]}
+        }
+      }
     },
     {
-      "type": "timeseries",
-      "title": "Redis Cache Hit Ratio",
-      "id": 7,
-      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 10},
+      "type": "gauge",
+      "title": "GPU Memory",
+      "description": "VRAM utilization percentage",
+      "id": 9,
+      "gridPos": {"h": 6, "w": 4, "x": 20, "y": 8},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(redis_keyspace_hits_total[5m])) / clamp_min(sum(rate(redis_keyspace_hits_total[5m])) + sum(rate(redis_keyspace_misses_total[5m])), 1)) or vector(0)", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(max(nvidia_gpu_memory_used_bytes) / max(nvidia_gpu_memory_total_bytes)) * 100 or vector(0)", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "percent"}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 80}, {"color": "red", "value": 95}]}
+        }
+      }
+    },
+    {
+      "type": "row",
+      "title": "LiteLLM AI Gateway",
+      "id": 102,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 14},
+      "collapsed": false
     },
     {
       "type": "stat",
-      "title": "LiteLLM Gateway Status",
-      "id": 9,
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 10},
+      "title": "Gateway Status",
+      "description": "LiteLLM health check status",
+      "id": 10,
+      "gridPos": {"h": 4, "w": 4, "x": 0, "y": 15},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "probe_success{job=\"blackbox\", instance=~\".*litellm.*\"}", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "probe_success{instance=~\".*litellm.*\"} or vector(0)", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": 0}, {"color": "green", "value": 1}]}}},
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}}
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"}
+    },
+    {
+      "type": "stat",
+      "title": "Daily Spend",
+      "description": "LiteLLM API costs in last 24 hours",
+      "id": 11,
+      "gridPos": {"h": 4, "w": 4, "x": 4, "y": 15},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(litellm_spend_total[24h])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 5}, {"color": "red", "value": 10}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
     },
     {
       "type": "timeseries",
       "title": "LiteLLM Request Latency",
-      "id": 10,
-      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 10},
+      "description": "Request latency percentiles (p50, p95)",
+      "id": 12,
+      "gridPos": {"h": 6, "w": 16, "x": 8, "y": 15},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "histogram_quantile(0.95, rate(litellm_request_duration_seconds_bucket[5m]))", "legendFormat": "p95", "refId": "A"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "histogram_quantile(0.50, rate(litellm_request_duration_seconds_bucket[5m]))", "legendFormat": "p50", "refId": "B"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "histogram_quantile(0.95, rate(litellm_request_duration_seconds_bucket[$interval])) or vector(0)", "legendFormat": "p95", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "histogram_quantile(0.50, rate(litellm_request_duration_seconds_bucket[$interval])) or vector(0)", "legendFormat": "p50", "refId": "B"}
       ],
-      "fieldConfig": {"defaults": {"unit": "s", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 2}, {"color": "red", "value": 5}]}}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 2}, {"color": "red", "value": 5}]}
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
     },
     {
-      "type": "stat",
-      "title": "LiteLLM Daily Spend",
-      "id": 11,
-      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 10},
+      "type": "row",
+      "title": "Redis Cache",
+      "id": 103,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 21},
+      "collapsed": false
+    },
+    {
+      "type": "gauge",
+      "title": "Cache Hit Ratio",
+      "description": "Redis cache effectiveness",
+      "id": 6,
+      "gridPos": {"h": 5, "w": 4, "x": 0, "y": 22},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(litellm_spend_total[24h])) or vector(0)", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(rate(redis_keyspace_hits_total[$interval])) / clamp_min(sum(rate(redis_keyspace_hits_total[$interval])) + sum(rate(redis_keyspace_misses_total[$interval])), 0.001)) * 100 or vector(0)", "refId": "A"}
       ],
-      "fieldConfig": {"defaults": {"unit": "currencyUSD", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 5}, {"color": "red", "value": 10}]}}},
-      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "values": false}}
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": 0}, {"color": "yellow", "value": 80}, {"color": "green", "value": 95}]}
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Redis Command Throughput",
+      "description": "Commands processed per second",
+      "id": 7,
+      "gridPos": {"h": 5, "w": 20, "x": 4, "y": 22},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(redis_commands_processed_total[$interval]))", "legendFormat": "cmd/s", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "ops"}}
+    },
+    {
+      "type": "row",
+      "title": "Application Logs",
+      "id": 104,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 27},
+      "collapsed": false
     },
     {
       "type": "logs",
-      "title": "OpenWebUI & LiteLLM Logs",
-      "id": 8,
-      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 20},
+      "title": "AI Services Error Logs",
+      "description": "Error logs from OpenWebUI and LiteLLM services",
+      "id": 20,
+      "gridPos": {"h": 10, "w": 24, "x": 0, "y": 28},
       "datasource": {"type": "loki", "uid": "loki"},
       "targets": [
-        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\"openwebui|litellm\"} |= \"ERROR\"", "refId": "A"}
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\".*(openwebui|litellm|ollama).*\"} |~ \"(?i)(error|exception|failed)\" | __error__=\"\"", "refId": "A"}
       ],
-      "options": {"showLabels": true, "wrapLogMessage": true}
+      "options": {"showLabels": true, "showTime": true, "wrapLogMessage": true, "enableLogDetails": true, "sortOrder": "Descending"}
     }
+  ],
+  "links": [
+    {"title": "SRE Overview", "url": "/d/platform-sre-overview", "type": "link", "icon": "dashboard"},
+    {"title": "Infrastructure", "url": "/d/core-infra-observability", "type": "link", "icon": "dashboard"},
+    {"title": "SLA & Budgets", "url": "/d/sla-error-budgets", "type": "link", "icon": "dashboard"}
   ]
 }
