@@ -18,8 +18,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="webhook-receiver"
-
 # Read ALERTMANAGER_WEBHOOK_SECRET from secret if not already set
 if [[ -z "${ALERTMANAGER_WEBHOOK_SECRET:-}" ]]; then
   if secret=$(read_secret "alertmanager_webhook_secret"); then
@@ -31,4 +29,4 @@ fi
 # Execute the main application using gunicorn (production WSGI server)
 exec gunicorn --bind 0.0.0.0:9093 --workers 2 --threads 4 \
     --access-logfile - --error-logfile - \
-    "webhook-receiver:app"
+    "webhook_receiver:app"

@@ -5,9 +5,9 @@
 set -eu
 
 # Load shared library (will be mounted by compose)
-# shellcheck source=../lib/secrets-sh.sh
-if [ -f /opt/erni/lib/secrets-sh.sh ]; then
-  . /opt/erni/lib/secrets-sh.sh
+# shellcheck source=../lib/secrets.sh
+if [ -f /opt/erni/lib/secrets.sh ]; then
+  . /opt/erni/lib/secrets.sh
 else
   # Fallback minimal implementation for standalone use
   log() { echo "[cloudflared] $*" >&2; }
@@ -23,8 +23,6 @@ else
     echo "$value"
   }
 fi
-
-__SCRIPT_NAME="cloudflared"
 
 # Load tunnel token
 TUNNEL_TOKEN=$(require_secret "cloudflared_tunnel_token")

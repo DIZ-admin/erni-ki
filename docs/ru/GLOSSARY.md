@@ -169,7 +169,7 @@ Prometheus-экспортер для производительности RAG:
 
 Локальные резервные копии (ежедневные + еженедельные) хранятся в
 `.config-backup/`. Скрипт интеграции:
-`scripts/setup/setup-backrest-integration.sh`.
+`scripts/core/deployment/setup-backrest-integration.sh`.
 
 ## Безопасность
 

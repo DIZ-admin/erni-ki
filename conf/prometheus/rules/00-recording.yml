@@ -25,7 +25,7 @@ groups:
       # System load average normalized by CPU count
       - record: instance:node_load1:ratio
         expr: |
-          node_load1 / count by(instance) (node_cpu_seconds_total{mode="idle"})
+          node_load1 / clamp_min(count by(instance) (node_cpu_seconds_total{mode="idle"}), 1)
 
   # Container-level recording rules
   - name: container.recording.rules
@@ -59,10 +59,12 @@ groups:
           rate(redis_keyspace_hits_total[5m]) /
           clamp_min(rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]), 0.001)
 
-      # Redis memory usage percentage
+      # Redis memory usage percentage (uses actual maxmemory from exporter)
+      # Only calculates when maxmemory is configured (redis_memory_max_bytes > 0)
       - record: redis:memory_usage:percent
         expr: |
-          redis_memory_used_bytes / (512 * 1024 * 1024) * 100
+          (redis_memory_used_bytes / redis_memory_max_bytes) * 100
+          and redis_memory_max_bytes > 0
 
       # Redis commands per second
       - record: redis:commands:rate5m
@@ -101,7 +103,7 @@ groups:
       # GPU memory usage percentage
       - record: gpu:memory_usage:percent
         expr: |
-          (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) * 100
+          (nvidia_gpu_memory_used_bytes / clamp_min(nvidia_gpu_memory_total_bytes, 1)) * 100
 
       # GPU temperature (celsius from nvidia-exporter)
       - record: gpu:temperature:max

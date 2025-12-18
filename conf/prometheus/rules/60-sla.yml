@@ -17,7 +17,7 @@ groups:
           description: "Nginx reverse proxy has been down for more than 30 seconds."
 
       - alert: NginxHighErrorRate
-        expr: rate(nginx_http_requests_total{status=~"5.."}[5m]) / rate(nginx_http_requests_total[5m]) > 0.05
+        expr: rate(nginx_http_requests_total{status=~"5.."}[5m]) / rate(nginx_http_requests_total[5m]) > 0.05 and rate(nginx_http_requests_total[5m]) > 0
         for: 5m
         labels:
           severity: warning

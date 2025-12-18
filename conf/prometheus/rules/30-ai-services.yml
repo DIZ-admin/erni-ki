@@ -219,7 +219,11 @@ groups:
           description: "95th percentile RAG query time is above 10 seconds for more than 2 minutes."
 
       - alert: HighRAGFailureRate
-        expr: rate(openwebui_rag_requests_total{status="error"}[5m]) / rate(openwebui_rag_requests_total[5m]) > 0.1
+        expr: |
+          rate(openwebui_rag_requests_total{status="error"}[5m])
+          /
+          clamp_min(rate(openwebui_rag_requests_total[5m]), 1)
+          > 0.1
         for: 3m
         labels:
           severity: warning

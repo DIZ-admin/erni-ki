@@ -99,7 +99,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./scripts/entrypoints/watchtower.sh:/watchtower-entrypoint.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - watchtower_api_token
     networks:
@@ -321,6 +321,8 @@ services:
   cloudflared:
     entrypoint: ["/opt/erni/bin/busybox", "sh", "/opt/erni/bin/cloudflared-with-secret.sh"]
     command: ["tunnel", "--no-autoupdate", "run"]
+    # Run as root to read Docker secrets (uid/gid/mode not supported in Compose v2)
+    user: "0:0"
     depends_on:
       nginx:
         condition: service_healthy
@@ -352,12 +354,9 @@ services:
       - ./conf/cloudflare/config:/home/nonroot/.cloudflared
       - ./scripts/entrypoints/cloudflared-with-secret.sh:/opt/erni/bin/cloudflared-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
-      - source: cloudflared_tunnel_token
-        uid: "65532"
-        gid: "65532"
-        mode: 0444 # allow read for healthcheck/entrypoint even if uid mapping differs
+      - cloudflared_tunnel_token
     networks:
       - frontend
       - backend
@@ -502,7 +501,7 @@ services:
       - ./data:/app/data
       - ./scripts/entrypoints/mcposerver-with-secrets.sh:/opt/erni/bin/mcposerver-with-secrets.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     secrets:
       - postgres_password
       - context7_api_key
@@ -590,9 +589,9 @@ services:
       - OLLAMA_MAX_LOADED_MODELS=3
       # 8192 context for larger inputs (validated: ~4GB VRAM with 3 models on RTX 5000)
       - OLLAMA_NUM_CTX=8192
-      # Flash attention disabled for Quadro RTX 5000 compatibility
-      # Note: f16 KV cache works within 16GB VRAM budget at current load
-      - OLLAMA_FLASH_ATTENTION=0
+      # Flash attention enabled - Turing (SM 7.5) supported in Ollama (requires >= 7.0, excludes 7.2)
+      # Reduces VRAM usage with large context (8192 tokens)
+      - OLLAMA_FLASH_ATTENTION=1
     env_file: env/ollama.env
     # GPU memory limits optimized for RTX 5000 (16GB VRAM)
     # Ollama gets GPU priority (VRAM management via OLLAMA_MAX_VRAM=0.75)
@@ -1057,7 +1056,7 @@ services:
       - ./conf/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - ./data/alertmanager:/alertmanager
       - ./scripts/entrypoints/alertmanager.sh:/opt/erni/bin/alertmanager-entrypoint.sh:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
     ports:
       - "127.0.0.1:9093:9093"
       - "127.0.0.1:9094:9094"
@@ -1297,6 +1296,8 @@ services:
     networks:
       - monitoring
       - frontend
+      - backend # Added for AI services probing (ollama, openwebui, etc.)
+      - data # Added for database probing (postgres, redis)
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
       - "com.centurylinklabs.watchtower.scope=monitoring-stack"
@@ -1353,7 +1354,7 @@ services:
     volumes:
       - ./scripts/entrypoints/redis-exporter-with-secret.sh:/opt/erni/bin/redis-exporter-with-secret.sh:ro
       - ./scripts/entrypoints/busybox:/opt/erni/bin/busybox:ro
-      - ./scripts/lib/secrets-sh.sh:/opt/erni/lib/secrets-sh.sh:ro
+      - ./scripts/lib/secrets.sh:/opt/erni/lib/secrets.sh:ro
 
   ollama-exporter:
     depends_on:

@@ -242,23 +242,28 @@ scrape_configs:
     scrape_interval: 30s # SLA checks every 30 seconds
     scrape_timeout: 15s
 
-  # Blackbox exporter for TCP port checks
-  - job_name: "blackbox-tcp"
-    metrics_path: /probe
-    params:
-      module: [tcp_connect]
-    static_configs:
-      - targets:
-          - db:5432
-          - redis:6379
-          - ollama:11434
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: blackbox-exporter:9115
+  # Blackbox exporter for TCP port checks - DISABLED
+  # Reason: These services are already monitored via dedicated exporters:
+  # - db:5432 -> postgres-exporter (job: postgres)
+  # - redis:6379 -> redis-exporter (job: redis)
+  # - ollama:11434 -> blackbox-http + blackbox-internal (HTTP probes)
+  # TCP probes require authentication which blackbox cannot provide
+  # - job_name: "blackbox-tcp"
+  #   metrics_path: /probe
+  #   params:
+  #     module: [tcp_connect]
+  #   static_configs:
+  #     - targets:
+  #         - db:5432
+  #         - redis:6379
+  #         - ollama:11434
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: blackbox-exporter:9115
 
   # NVIDIA GPU Exporter for GPU monitoring (USE + AI-specific)
   - job_name: "nvidia-exporter"
@@ -327,7 +332,7 @@ scrape_configs:
           - http://auth:9090/health
           - http://tika:9998/
           - http://docling:5001/health
-          - http://edgetts:5050/health
+          - http://edgetts:5050/v1/models # Changed from /health (404) to /v1/models
           - http://litellm:4000/health/readiness
     relabel_configs:
       - source_labels: [__address__]
@@ -396,13 +401,14 @@ scrape_configs:
   #       replacement: blackbox-exporter:9115
 
   # SearXNG API performance (blackbox monitoring) - FIXED
+  # Using direct SearXNG endpoint (nginx proxy returns HTML, not JSON)
   - job_name: "blackbox-searxng-api"
     metrics_path: /probe
     params:
-      module: [searxng_api_json]  # Using fixed module with JSON validation
+      module: [http_2xx]
     static_configs:
       - targets:
-          - http://nginx:8080/api/searxng/search?q=monitoring-test&format=json
+          - http://searxng:8080/search?q=test&format=json  # Direct to SearXNG
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -410,8 +416,8 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: blackbox-exporter:9115
-    scrape_interval: 30s
-    scrape_timeout: 10s
+    scrape_interval: 60s  # Reduced frequency to avoid rate limiting
+    scrape_timeout: 15s   # Increased timeout for search queries
 
   # Fluent Bit (Prometheus exposition via Service HTTP)
   - job_name: "fluent-bit"

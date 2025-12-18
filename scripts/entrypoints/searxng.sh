@@ -19,8 +19,6 @@ else
   }
 fi
 
-__SCRIPT_NAME="searxng"
-
 configure_redis_url() {
   local host="${SEARXNG_REDIS_HOST:-redis}"
   local port="${SEARXNG_REDIS_PORT:-6379}"

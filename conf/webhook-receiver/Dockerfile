@@ -21,7 +21,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application
-COPY webhook-receiver.py .
+COPY webhook_receiver.py .
 COPY models.py .
 COPY scripts/ ./scripts/
 
@@ -29,7 +29,7 @@ COPY scripts/ ./scripts/
 RUN mkdir -p /app/logs /app/scripts && \
     useradd -r -s /bin/false webhook && \
     chown -R webhook:webhook /app && \
-    chmod +x webhook-receiver.py && \
+    chmod +x webhook_receiver.py && \
     chmod +x scripts/*.sh 2>/dev/null || true
 
 # Switch to non-root user
@@ -48,4 +48,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:9093/health || exit 1
 
 # Run with gunicorn (production WSGI server)
-CMD ["gunicorn", "--bind", "0.0.0.0:9093", "--workers", "2", "--threads", "4", "--access-logfile", "-", "--error-logfile", "-", "webhook-receiver:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:9093", "--workers", "2", "--threads", "4", "--access-logfile", "-", "--error-logfile", "-", "webhook_receiver:app"]

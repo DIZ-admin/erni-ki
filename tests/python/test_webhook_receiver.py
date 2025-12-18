@@ -47,7 +47,7 @@ class WebhookModule(Protocol):
 def load_webhook_receiver() -> WebhookModule:
     """Load webhook-receiver module from the dashed directory."""
     root = Path(__file__).resolve().parents[2]
-    module_path = root / "conf" / "webhook-receiver" / "webhook-receiver.py"
+    module_path = root / "conf" / "webhook-receiver" / "webhook_receiver.py"
     spec = importlib.util.spec_from_file_location("webhook_receiver", module_path)
     if spec is None or spec.loader is None:
         raise ImportError(f"Cannot load webhook-receiver from {module_path}")

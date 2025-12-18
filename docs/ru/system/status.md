@@ -7,7 +7,8 @@ last_updated: '2025-12-16'
 
 # Статус системы
 
-Онлайн-панель: **<https://status.ki.erni-gruppe.ch>** (Uptime Kuma).
+Онлайн-панель: **[Status Dashboard](https://status.ki.erni-gruppe.ch)** (Uptime
+Kuma).
 
 ## Текущее состояние
 

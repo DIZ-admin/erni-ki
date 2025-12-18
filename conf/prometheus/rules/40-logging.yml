@@ -39,6 +39,10 @@ groups:
       #   annotations:
       #     summary: "Elasticsearch cluster status not green"
 
+      # ========================================================================
+      # FLUENT BIT ALERTS - Log collection health
+      # ========================================================================
+
       - alert: FluentBitBufferUsageHigh
         expr: (fluentbit_input_buffer_usage_bytes / fluentbit_input_buffer_limit_bytes) * 100 > 80
         for: 3m
@@ -79,8 +83,8 @@ groups:
           description: "Log ingestion rate is above 1000 logs/sec. Possible log flood."
 
       - alert: CriticalServiceLogsMissing
-        # Fixed: fluentbit_input_records_total (plural) instead of fluentbit_input_record_total
-        expr: increase(fluentbit_input_records_total{name="tail."}[10m]) == 0
+        # Uses regex to match all tail inputs (tail.0, tail.1, etc.)
+        expr: increase(fluentbit_input_records_total{name=~"tail\\..*"}[10m]) == 0
         for: 5m
         labels:
           severity: critical
@@ -91,3 +95,91 @@ groups:
         annotations:
           summary: "Critical service logs missing"
           description: "Fluent Bit tail input has not ingested any records for more than 10 minutes."
+
+      # ========================================================================
+      # LOKI ALERTS - Log aggregation health
+      # ========================================================================
+
+      - alert: LokiIngestionLag
+        # Monitor distributor->ingester latency for slow log ingestion
+        expr: histogram_quantile(0.99, sum(rate(loki_distributor_ingester_append_latency_seconds_bucket[5m])) by (le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: loki
+          category: logging-optimization
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Loki ingestion latency high"
+          description: "Loki P99 ingestion latency is {{ $value | humanizeDuration }}. Logs may be delayed."
+
+      - alert: LokiRequestErrors
+        # Monitor HTTP request errors from Loki
+        expr: sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[5m])) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+          service: loki
+          category: logging-optimization
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Loki experiencing request errors"
+          description: "Loki is returning 5xx errors at rate {{ $value | humanize }}/sec."
+
+      - alert: LokiQueryLatencyHigh
+        # Monitor query latency for slow dashboard/alerts
+        expr: histogram_quantile(0.95, sum(rate(loki_request_duration_seconds_bucket{route="loki_api_v1_query_range"}[5m])) by (le)) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: loki
+          category: logging-optimization
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Loki query latency high"
+          description: "Loki query P95 latency is {{ $value | humanizeDuration }}. Dashboards may be slow."
+
+      - alert: LokiStreamsLimitApproaching
+        # Monitor active streams approaching limit (default 10000)
+        expr: sum(loki_ingester_memory_streams) > 8000
+        for: 10m
+        labels:
+          severity: warning
+          service: loki
+          category: logging-optimization
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Loki streams approaching limit"
+          description: "Loki has {{ $value }} active streams (limit: 10000). Consider increasing limit or reducing cardinality."
+
+      - alert: LokiIngesterNotReady
+        # Monitor ingester readiness
+        expr: loki_ingester_lifecycler_ring_tokens_owned == 0
+        for: 3m
+        labels:
+          severity: critical
+          service: loki
+          category: logging-optimization
+          owner: ops
+          escalation: pagerduty
+        annotations:
+          summary: "Loki ingester not ready"
+          description: "Loki ingester has no ring tokens. Log ingestion may be failing."
+
+      - alert: LokiCompactorNotRunning
+        # Monitor compactor for retention enforcement
+        expr: increase(loki_compactor_compaction_time_bucket{le="+Inf"}[30m]) == 0
+        for: 30m
+        labels:
+          severity: warning
+          service: loki
+          category: logging-optimization
+          owner: ops
+          escalation: slack
+        annotations:
+          summary: "Loki compactor not running"
+          description: "Loki compactor has not run for 30 minutes. Retention may not be enforced."
