@@ -403,7 +403,7 @@ jobs:
           retention-days: 30
 
       - name: 🔬 Run Nuclei Scan
-        uses: projectdiscovery/nuclei-action@6984771632a29ef7e8e8aa5c959ad3f4b04fab4c # v2.0.1
+        uses: projectdiscovery/nuclei-action@128f7284c2a836b485e292b9080dbc6175103758 # v2.0.2
         with:
           target: "http://localhost:8080"
           templates: "cves,vulnerabilities,misconfiguration"
