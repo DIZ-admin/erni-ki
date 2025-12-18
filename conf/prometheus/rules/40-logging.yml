@@ -83,8 +83,8 @@ groups:
           description: "Log ingestion rate is above 1000 logs/sec. Possible log flood."
 
       - alert: CriticalServiceLogsMissing
-        # Fixed: fluentbit_input_records_total (plural) instead of fluentbit_input_record_total
-        expr: increase(fluentbit_input_records_total{name="tail."}[10m]) == 0
+        # Uses regex to match all tail inputs (tail.0, tail.1, etc.)
+        expr: increase(fluentbit_input_records_total{name=~"tail\\..*"}[10m]) == 0
         for: 5m
         labels:
           severity: critical

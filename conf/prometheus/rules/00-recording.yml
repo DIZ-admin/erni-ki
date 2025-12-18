@@ -59,10 +59,10 @@ groups:
           rate(redis_keyspace_hits_total[5m]) /
           clamp_min(rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]), 0.001)
 
-      # Redis memory usage percentage
+      # Redis memory usage percentage (uses actual maxmemory from exporter)
       - record: redis:memory_usage:percent
         expr: |
-          redis_memory_used_bytes / (512 * 1024 * 1024) * 100
+          (redis_memory_used_bytes / clamp_min(redis_memory_max_bytes, 1)) * 100
 
       # Redis commands per second
       - record: redis:commands:rate5m

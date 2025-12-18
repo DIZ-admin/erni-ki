@@ -144,9 +144,9 @@ groups:
 
       # NOTE: LiteLLM memory alerts are defined in 60-sla.yml (optimization.rules)
 
-      # Container restarting too often
+      # Container restarting too often (uses changes() for timestamp gauge)
       - alert: ContainerRestartingTooOften
-        expr: increase(container_start_time_seconds[1h]) > 3
+        expr: changes(container_start_time_seconds{name=~"erni-ki-.*"}[1h]) > 3
         for: 0m
         labels:
           severity: warning
