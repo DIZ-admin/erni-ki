@@ -243,7 +243,8 @@
             {"id": "custom.width", "value": 100},
             {"id": "mappings", "value": [
               {"type": "value", "options": {"critical": {"color": "red", "text": "CRITICAL"}}},
-              {"type": "value", "options": {"warning": {"color": "yellow", "text": "WARNING"}}}
+              {"type": "value", "options": {"warning": {"color": "yellow", "text": "WARNING"}}},
+              {"type": "value", "options": {"info": {"color": "blue", "text": "INFO"}}}
             ]}
           ]},
           {"matcher": {"id": "byName", "options": "Active"}, "properties": [{"id": "custom.hidden", "value": true}]}
@@ -266,7 +267,7 @@
       "gridPos": {"h": 10, "w": 24, "x": 0, "y": 32},
       "datasource": {"type": "loki", "uid": "loki"},
       "targets": [
-        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\".*(auth|nginx).*\"} |~ \"(?i)(unauthorized|forbidden|blocked|invalid|denied|failed|401|403)\" | __error__=\"\"", "refId": "A"}
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\".*(auth|nginx).*\"} |~ \"(?i)(unauthorized|forbidden|blocked|invalid|denied|failed|\\\\b401\\\\b|\\\\b403\\\\b)\" | __error__=\"\"", "refId": "A"}
       ],
       "options": {"showLabels": true, "showTime": true, "wrapLogMessage": true, "enableLogDetails": true, "sortOrder": "Descending"}
     }

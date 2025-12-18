@@ -209,7 +209,7 @@
     {
       "type": "gauge",
       "title": "Buffer Usage",
-      "description": "Fluent Bit memory buffer utilization",
+      "description": "Fluent Bit memory buffer utilization (assumes 32MB default limit)",
       "id": 13,
       "gridPos": {"h": 6, "w": 6, "x": 12, "y": 12},
       "targets": [
@@ -342,7 +342,7 @@
       "gridPos": {"h": 8, "w": 8, "x": 0, "y": 33},
       "datasource": {"type": "loki", "uid": "loki"},
       "targets": [
-        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum by (container_name) (count_over_time({container_name=~\".+\"}[1h]))", "legendFormat": "{{container_name}}", "refId": "A"}
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum by (container_name) (count_over_time({container_name=~\".+\"}[$__range]))", "legendFormat": "{{container_name}}", "refId": "A"}
       ],
       "fieldConfig": {"defaults": {"unit": "short"}},
       "options": {"legend": {"showLegend": true, "placement": "right"}, "reduceOptions": {"calcs": ["lastNotNull"]}}
@@ -355,7 +355,7 @@
       "gridPos": {"h": 8, "w": 8, "x": 8, "y": 33},
       "datasource": {"type": "loki", "uid": "loki"},
       "targets": [
-        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "topk(10, sum by (container_name) (count_over_time({container_name=~\".+\"}[1h])))", "legendFormat": "{{container_name}}", "refId": "A"}
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "topk(10, sum by (container_name) (count_over_time({container_name=~\".+\"}[$__range])))", "legendFormat": "{{container_name}}", "refId": "A"}
       ],
       "fieldConfig": {"defaults": {"unit": "short"}},
       "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "orientation": "horizontal", "displayMode": "gradient"}

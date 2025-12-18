@@ -142,7 +142,12 @@
         {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(redis_commands_processed_total[$interval]))", "legendFormat": "Commands/s", "refId": "A"},
         {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(redis_keyspace_hits_total[$interval])) / clamp_min(sum(rate(redis_keyspace_hits_total[$interval])) + sum(rate(redis_keyspace_misses_total[$interval])), 0.001) * 100", "legendFormat": "Hit %", "refId": "B"}
       ],
-      "fieldConfig": {"defaults": {"unit": "short"}},
+      "fieldConfig": {
+        "defaults": {"unit": "short"},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "Hit %"}, "properties": [{"id": "custom.axisPlacement", "value": "right"}, {"id": "unit", "value": "percent"}]}
+        ]
+      },
       "options": {"legend": {"showLegend": true, "placement": "bottom"}}
     },
     {
