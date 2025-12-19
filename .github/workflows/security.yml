@@ -257,12 +257,13 @@ jobs:
           fail-build: false
           severity-cutoff: high
           output-format: sarif
+          output-file: grype-results.sarif
 
       - name: 📤 Upload Grype SARIF to Security
         if: always()
         uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          sarif_file: ${{ steps.grype-scan.outputs.sarif }}
+          sarif_file: grype-results.sarif
           category: grype
 
   # Configuration analysis
