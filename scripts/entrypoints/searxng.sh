@@ -1,39 +1,40 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # =============================================================================
 # SearXNG entrypoint - loads secrets and configures Redis/Valkey URL
 # =============================================================================
-set -euo pipefail
+set -eu
+set -o pipefail 2>/dev/null || true
 
 # Load shared library (will be mounted by compose)
 # shellcheck source=../lib/secrets.sh
-if [[ -f /opt/erni/lib/secrets.sh ]]; then
-  source /opt/erni/lib/secrets.sh
+if [ -f /opt/erni/lib/secrets.sh ]; then
+  . /opt/erni/lib/secrets.sh
 else
   # Fallback minimal implementation for standalone use
   log() { echo "[searxng] $*" >&2; }
   log_warn() { echo "[searxng] WARNING: $*" >&2; }
   read_secret() {
-    local secret_file="/run/secrets/$1"
-    [[ -f "$secret_file" ]] && tr -d '\r\n' < "$secret_file" && return 0
+    secret_file="/run/secrets/$1"
+    [ -f "$secret_file" ] && tr -d '\r\n' < "$secret_file" && return 0
     return 1
   }
 fi
 
 configure_redis_url() {
-  local host="${SEARXNG_REDIS_HOST:-redis}"
-  local port="${SEARXNG_REDIS_PORT:-6379}"
+  host="${SEARXNG_REDIS_HOST:-redis}"
+  port="${SEARXNG_REDIS_PORT:-6379}"
   # Redis Database Allocation (2025-12-02):
   # DB 0: SearXNG (cache, limiter, bot detection)
   # DB 1: Reserved for future use
   # DB 2: LiteLLM (model caching - when enabled)
   # DB 3-15: Available
-  local db="${SEARXNG_REDIS_DB:-0}"
-  local username="${SEARXNG_REDIS_USER:-searxng}"
-  local password
+  db="${SEARXNG_REDIS_DB:-0}"
+  username="${SEARXNG_REDIS_USER:-searxng}"
+  password=""
 
   if password="$(read_secret "redis_password")"; then
     # URL format with username for ACL: redis://username:password@host:port/db  # pragma: allowlist secret
-    local valkey_url="redis://${username}:${password}@${host}:${port}/${db}"  # pragma: allowlist secret
+    valkey_url="redis://${username}:${password}@${host}:${port}/${db}"  # pragma: allowlist secret
     # Only export SEARXNG_VALKEY_URL to avoid deprecation warning
     # (SearXNG warns if SEARXNG_REDIS_URL is set)
     export SEARXNG_VALKEY_URL="${valkey_url}"
@@ -46,7 +47,7 @@ configure_redis_url() {
 }
 
 configure_searxng_secret() {
-  local secret
+  secret=""
   if secret="$(read_secret "searxng_secret_key")"; then
     export SEARXNG_SECRET="${secret}"
     log "Applied SEARXNG_SECRET from docker secret"
@@ -59,12 +60,12 @@ main() {
   configure_searxng_secret
   configure_redis_url
 
-  if [[ $# -gt 0 ]]; then
+  if [ "$#" -gt 0 ]; then
     log "Executing: $*"
     exec "$@"
   fi
 
-  if [[ -x "/usr/local/searxng/entrypoint.sh" ]]; then
+  if [ -x "/usr/local/searxng/entrypoint.sh" ]; then
     log "Calling original SearXNG entrypoint"
     exec /usr/local/searxng/entrypoint.sh "$@"
   fi
