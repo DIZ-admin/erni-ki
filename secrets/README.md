@@ -46,7 +46,7 @@ cp secrets/litellm_ui_password.txt.example secrets/litellm_ui_password.txt
 
 # Set file permissions
 chmod 600 secrets/*.txt
-# Grafana admin password ownership: see "Grafana admin password" below.
+# Grafana admin password uses Docker secrets; see "Grafana admin password" below.
 ```
 
 ### 2. Populate secrets
