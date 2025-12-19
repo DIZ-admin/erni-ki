@@ -1,0 +1,494 @@
+{
+  "uid": "logging-pipeline",
+  "title": "Logging Pipeline",
+  "description": "Comprehensive logging system monitoring: Fluent Bit collection, Loki ingestion, per-service log volumes, and error analysis",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "tags": ["erni-ki", "logging", "fluent-bit", "loki", "observability"],
+  "time": {"from": "now-6h", "to": "now"},
+  "templating": {
+    "list": [
+      {
+        "name": "interval",
+        "type": "interval",
+        "query": "1m,5m,10m,30m",
+        "current": {"text": "5m", "value": "5m"},
+        "auto": true,
+        "auto_min": "1m"
+      },
+      {
+        "name": "service",
+        "type": "query",
+        "datasource": {"type": "loki", "uid": "loki"},
+        "query": "label_values(container_name)",
+        "refresh": 2,
+        "includeAll": true,
+        "multi": true,
+        "current": {"text": "All", "value": "$__all"}
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "Pipeline Health Overview",
+      "id": 100,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false
+    },
+    {
+      "type": "stat",
+      "title": "Fluent Bit",
+      "description": "Log collector status",
+      "id": 1,
+      "gridPos": {"h": 3, "w": 3, "x": 0, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "up{job=\"fluent-bit\"}", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}],
+          "noValue": "N/A"
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"}
+    },
+    {
+      "type": "stat",
+      "title": "Loki",
+      "description": "Log aggregator status",
+      "id": 2,
+      "gridPos": {"h": 3, "w": 3, "x": 3, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "up{job=\"loki\"}", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"}
+    },
+    {
+      "type": "stat",
+      "title": "Ingestion Rate",
+      "description": "Current log ingestion throughput",
+      "id": 3,
+      "gridPos": {"h": 3, "w": 3, "x": 6, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_distributor_bytes_received_total[$interval])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "stat",
+      "title": "Lines/s",
+      "description": "Log lines ingested per second",
+      "id": 4,
+      "gridPos": {"h": 3, "w": 3, "x": 9, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_distributor_lines_received_total[$interval])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "stat",
+      "title": "Active Streams",
+      "description": "Number of active log streams in Loki",
+      "id": 5,
+      "gridPos": {"h": 3, "w": 3, "x": 12, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(loki_ingester_memory_streams) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 8000}, {"color": "red", "value": 9500}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "FB Input Rate",
+      "description": "Fluent Bit input records per second",
+      "id": 6,
+      "gridPos": {"h": 3, "w": 3, "x": 15, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_records_total[$interval])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "stat",
+      "title": "FB Output Rate",
+      "description": "Fluent Bit output records per second",
+      "id": 7,
+      "gridPos": {"h": 3, "w": 3, "x": 18, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_proc_records_total[$interval])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "stat",
+      "title": "FB Errors",
+      "description": "Fluent Bit output errors (1h)",
+      "id": 8,
+      "gridPos": {"h": 3, "w": 3, "x": 21, "y": 1},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(fluentbit_output_errors_total[1h])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 10}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "row",
+      "title": "Fluent Bit Metrics",
+      "id": 101,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 4},
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "Fluent Bit Input/Output Records",
+      "description": "Records flowing through Fluent Bit pipeline",
+      "id": 10,
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 5},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_records_total[$interval])) or vector(0)", "legendFormat": "Input Records/s", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_proc_records_total[$interval])) or vector(0)", "legendFormat": "Output Records/s", "refId": "B"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_retries_total[$interval])) or vector(0)", "legendFormat": "Retries/s", "refId": "C"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Fluent Bit Bytes Throughput",
+      "description": "Data volume processed by Fluent Bit",
+      "id": 11,
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 5},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_input_bytes_total[$interval])) or vector(0)", "legendFormat": "Input Bytes/s", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_proc_bytes_total[$interval])) or vector(0)", "legendFormat": "Output Bytes/s", "refId": "B"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Fluent Bit Errors & Retries",
+      "description": "Pipeline errors and retry attempts",
+      "id": 12,
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 12},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_errors_total[$interval])) or vector(0)", "legendFormat": "Output Errors/s", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_retries_total[$interval])) or vector(0)", "legendFormat": "Retries/s", "refId": "B"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(fluentbit_output_retries_failed_total[$interval])) or vector(0)", "legendFormat": "Failed Retries/s", "refId": "C"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 0.1}]}
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "gauge",
+      "title": "Buffer Usage",
+      "description": "Fluent Bit memory buffer utilization (assumes 32MB default limit)",
+      "id": 13,
+      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 12},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(fluentbit_output_queue_bytes) / (32 * 1024 * 1024)) * 100 or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0, "max": 100,
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 70}, {"color": "red", "value": 90}]}
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Dropped Records (1h)",
+      "description": "Records dropped due to errors",
+      "id": 14,
+      "gridPos": {"h": 3, "w": 6, "x": 18, "y": 12},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(fluentbit_output_dropped_records_total[1h])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 100}, {"color": "red", "value": 1000}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Output Retries (1h)",
+      "description": "Total output retry attempts by Fluent Bit",
+      "id": 15,
+      "gridPos": {"h": 3, "w": 6, "x": 18, "y": 15},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(fluentbit_output_retries_total[1h])) or vector(0)", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "row",
+      "title": "Loki Metrics",
+      "id": 102,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 18},
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "Loki Ingestion Throughput",
+      "description": "Log data received by Loki",
+      "id": 20,
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 19},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_distributor_bytes_received_total[$interval])) or vector(0)", "legendFormat": "Bytes/s", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_distributor_lines_received_total[$interval])) or vector(0)", "legendFormat": "Lines/s", "refId": "B"}
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "short"},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "Bytes/s"}, "properties": [{"id": "unit", "value": "Bps"}]}
+        ]
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Loki Query Performance",
+      "description": "Query latency percentiles",
+      "id": 21,
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 19},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "histogram_quantile(0.50, sum(rate(loki_request_duration_seconds_bucket{route=~\".*query.*\"}[$interval])) by (le)) or vector(0)", "legendFormat": "p50", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "histogram_quantile(0.95, sum(rate(loki_request_duration_seconds_bucket{route=~\".*query.*\"}[$interval])) by (le)) or vector(0)", "legendFormat": "p95", "refId": "B"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket{route=~\".*query.*\"}[$interval])) by (le)) or vector(0)", "legendFormat": "p99", "refId": "C"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 5}, {"color": "red", "value": 10}]}
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Active Streams Over Time",
+      "description": "Number of active log streams in Loki (limit: 10000)",
+      "id": 22,
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 26},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(loki_ingester_memory_streams) or vector(0)", "legendFormat": "Active Streams", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "10000", "legendFormat": "Limit", "refId": "B"}
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "short"},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "Limit"}, "properties": [{"id": "custom.lineStyle", "value": {"fill": "dash", "dash": [10, 10]}}, {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]}
+        ]
+      },
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Loki Chunk Operations",
+      "description": "Chunk storage operations",
+      "id": 23,
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 26},
+      "targets": [
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_ingester_chunks_created_total[$interval])) or vector(0)", "legendFormat": "Chunks Created/s", "refId": "A"},
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(rate(loki_ingester_chunks_flushed_total[$interval])) or vector(0)", "legendFormat": "Chunks Flushed/s", "refId": "B"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": true, "placement": "bottom"}}
+    },
+    {
+      "type": "row",
+      "title": "Per-Service Log Volume",
+      "id": 103,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 32},
+      "collapsed": false
+    },
+    {
+      "type": "piechart",
+      "title": "Log Volume by Service",
+      "description": "Distribution of log volume across services",
+      "id": 30,
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 33},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum by (container_name) (count_over_time({container_name=~\".+\"}[$__range]))", "legendFormat": "{{container_name}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": true, "placement": "right"}, "reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "bargauge",
+      "title": "Top 10 Services by Log Volume",
+      "description": "Services generating the most logs (1h)",
+      "id": 31,
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 33},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "topk(10, sum by (container_name) (count_over_time({container_name=~\".+\"}[$__range])))", "legendFormat": "{{container_name}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "orientation": "horizontal", "displayMode": "gradient"}
+    },
+    {
+      "type": "timeseries",
+      "title": "Log Rate by Service",
+      "description": "Log lines per second by service",
+      "id": 32,
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 33},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum by (container_name) (rate({container_name=~\".+\"}[$__interval]))", "legendFormat": "{{container_name}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": true, "placement": "right"}}
+    },
+    {
+      "type": "row",
+      "title": "Error Analysis",
+      "id": 104,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 41},
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate by Service",
+      "description": "Error log lines per service over time",
+      "id": 40,
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 42},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum by (container_name) (rate({container_name=~\".+\"} |~ \"(?i)(error|exception|failed|fatal)\" | __error__=\"\"[$__interval]))", "legendFormat": "{{container_name}}", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.1}, {"color": "red", "value": 1}]}
+        }
+      },
+      "options": {"legend": {"showLegend": true, "placement": "right"}}
+    },
+    {
+      "type": "stat",
+      "title": "Total Errors (1h)",
+      "description": "Total error log entries in last hour",
+      "id": 41,
+      "gridPos": {"h": 3, "w": 4, "x": 12, "y": 42},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum(count_over_time({container_name=~\".+\"} |~ \"(?i)(error|exception|failed|fatal)\" | __error__=\"\"[1h]))", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 100}, {"color": "red", "value": 500}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "stat",
+      "title": "Warnings (1h)",
+      "description": "Warning log entries in last hour",
+      "id": 42,
+      "gridPos": {"h": 3, "w": 4, "x": 16, "y": 42},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum(count_over_time({container_name=~\".+\"} |~ \"(?i)(warn|warning)\" | __error__=\"\"[1h]))", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 500}]}
+        }
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value"}
+    },
+    {
+      "type": "piechart",
+      "title": "Error Distribution",
+      "description": "Error types breakdown",
+      "id": 43,
+      "gridPos": {"h": 4, "w": 4, "x": 20, "y": 42},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "sum by (container_name) (count_over_time({container_name=~\".+\"} |~ \"(?i)(error|exception|failed|fatal)\" | __error__=\"\"[1h]))", "legendFormat": "{{container_name}}", "refId": "A"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "options": {"legend": {"showLegend": false}, "reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "type": "table",
+      "title": "Top Error Messages",
+      "description": "Most frequent error patterns in logs",
+      "id": 44,
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 49},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "topk(20, sum by (container_name) (count_over_time({container_name=~\".+\"} |~ \"(?i)(error|exception|failed)\" | __error__=\"\"[1h])))", "refId": "A"}
+      ],
+      "fieldConfig": {
+        "defaults": {"custom": {"align": "left"}},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "container_name"}, "properties": [{"id": "displayName", "value": "Service"}]},
+          {"matcher": {"id": "byName", "options": "Value"}, "properties": [{"id": "displayName", "value": "Error Count"}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 50}, {"color": "red", "value": 100}]}}]}
+        ]
+      },
+      "options": {"showHeader": true, "sortBy": [{"displayName": "Error Count", "desc": true}]}
+    },
+    {
+      "type": "row",
+      "title": "Live Logs",
+      "id": 105,
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 57},
+      "collapsed": false
+    },
+    {
+      "type": "logs",
+      "title": "Error & Warning Logs",
+      "description": "Live stream of error and warning log entries",
+      "id": 50,
+      "gridPos": {"h": 12, "w": 24, "x": 0, "y": 58},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [
+        {"datasource": {"type": "loki", "uid": "loki"}, "expr": "{container_name=~\"$service\"} |~ \"(?i)(error|warn|exception|failed|fatal)\" | __error__=\"\"", "refId": "A"}
+      ],
+      "options": {"showLabels": true, "showTime": true, "wrapLogMessage": true, "enableLogDetails": true, "sortOrder": "Descending"}
+    }
+  ],
+  "links": [
+    {"title": "Observability Stack", "url": "/d/observability-control-plane", "type": "link", "icon": "dashboard"},
+    {"title": "SRE Overview", "url": "/d/platform-sre-overview", "type": "link", "icon": "dashboard"},
+    {"title": "Infrastructure", "url": "/d/core-infra-observability", "type": "link", "icon": "dashboard"}
+  ]
+}

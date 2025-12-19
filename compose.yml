@@ -890,10 +890,10 @@ services:
         condition: service_healthy
     image: grafana/grafana:12.3.0
     container_name: erni-ki-grafana
-    user: "0:0"
+    user: "472:472"
     env_file: env/grafana.env
     environment:
-      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /var/lib/grafana/secrets/grafana_admin_password.txt
       GF_PATHS_DATA: "/var/lib/grafana"
       GF_PATHS_LOGS: "/var/log/grafana"
       GF_PATHS_PLUGINS: "/var/lib/grafana/plugins"
@@ -904,6 +904,7 @@ services:
       GF_ANALYTICS_CHECK_FOR_UPDATES: false
     volumes:
       - ./data/grafana:/var/lib/grafana
+      - ./secrets/grafana_admin_password.txt:/var/lib/grafana/secrets/grafana_admin_password.txt:ro
       - ./conf/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./conf/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
@@ -932,12 +933,6 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    cap_add:
-      - CHOWN
-      - SETUID
-      - SETGID
-      - FOWNER # Required for chmod on grafana.db
-      - DAC_OVERRIDE # Required for file operations
 
   uptime-kuma:
     depends_on:
@@ -1549,45 +1544,7 @@ services:
         aliases:
           - fluent-bit
 
-  # DISABLED: Promtail duplicates Fluent Bit functionality - using Fluent Bit only
-  # To re-enable: uncomment and run `docker compose up -d promtail`
-  # promtail:
-  #   depends_on:
-  #     loki:
-  #       condition: service_healthy
-  #   image: grafana/promtail:3.0.0
-  #   container_name: erni-ki-promtail
-  #   security_opt:
-  #     - no-new-privileges:true
-  #   cap_drop:
-  #     - ALL
-  #   cap_add:
-  #     - DAC_READ_SEARCH
-  #     - DAC_OVERRIDE
-  #     - CHOWN
-  #   command: ["-config.file=/etc/promtail/config.yaml"]
-  #   volumes:
-  #     - ./conf/promtail/promtail-config.yaml:/etc/promtail/config.yaml:ro
-  #     - ./data/promtail:/var/log/promtail
-  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
-  #   networks:
-  #     monitoring:
-  #       aliases:
-  #         - promtail
-  #   logging: *monitoring-logging
-  #   restart: unless-stopped
-  #   mem_limit: 256m
-  #   mem_reservation: 128m
-  #   cpus: "0.3"
-  #   healthcheck:
-  #     test: ["CMD", "/usr/bin/promtail", "-version"]
-  #     interval: 30s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 10s
-  #   labels:
-  #     - "com.centurylinklabs.watchtower.enable=true"
-  #     - "com.centurylinklabs.watchtower.scope=logging-stack"
+  # Promtail disabled - using Fluent Bit only (see fluent-bit service above)
 
   # RAG Exporter - RAG SLA metrics (latency, sources)
   rag-exporter:
