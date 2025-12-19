@@ -419,12 +419,12 @@ scrape_configs:
     scrape_interval: 60s  # Reduced frequency to avoid rate limiting
     scrape_timeout: 15s   # Increased timeout for search queries
 
-  # Fluent Bit (Prometheus exposition via Service HTTP)
+  # Fluent Bit (Prometheus exporter output)
   - job_name: "fluent-bit"
     static_configs:
-      - targets: ["erni-ki-fluent-bit:2020"]
+      - targets: ["erni-ki-fluent-bit:2021"]
     scrape_interval: 30s
-    metrics_path: /api/v1/metrics/prometheus
+    metrics_path: /metrics
     scrape_timeout: 10s
 
   # Loki internal metrics for Grafana panels
