@@ -16,6 +16,7 @@ check_permissions() {
   local issues=0
 
   if [[ ! -d "$dir" ]]; then
+    printf '%s\n' 0
     return 0
   fi
 
@@ -24,13 +25,14 @@ check_permissions() {
       # Use -L to follow symlinks and check actual file permissions
       current_perms=$(stat -L -c "%a" "$file" 2>/dev/null || stat -L -f "%OLp" "$file" 2>/dev/null)
       if [[ "$current_perms" != "600" ]]; then
-        log_info "❌ INSECURE: $file has permissions $current_perms (should be 600)"
+        log_info "❌ INSECURE: $file has permissions $current_perms (should be 600)" >&2
         ((issues++))
       fi
     fi
   done < <(find "$dir" -name "$pattern" ! -name "*.example" -print0 2>/dev/null || true)
 
-  return $issues
+  printf '%s\n' "$issues"
+  return 0
 }
 
 main() {
@@ -39,17 +41,17 @@ main() {
   log_info "Checking secret file permissions..."
 
   # Check secrets/ directory - .txt files (passwords, API keys)
-  check_permissions "secrets" "*.txt" || total_issues=$((total_issues + $?))
+  total_issues=$((total_issues + $(check_permissions "secrets" "*.txt")))
 
   # Check secrets/ directory - private keys
-  check_permissions "secrets" "*.key" || total_issues=$((total_issues + $?))
+  total_issues=$((total_issues + $(check_permissions "secrets" "*.key")))
 
   # Check secrets/ directory - sensitive configs
-  check_permissions "secrets" "*.ini" || total_issues=$((total_issues + $?))
-  check_permissions "secrets" "*.conf" || total_issues=$((total_issues + $?))
+  total_issues=$((total_issues + $(check_permissions "secrets" "*.ini")))
+  total_issues=$((total_issues + $(check_permissions "secrets" "*.conf")))
 
   # Check env/ directory
-  check_permissions "env" "*.env" || total_issues=$((total_issues + $?))
+  total_issues=$((total_issues + $(check_permissions "env" "*.env")))
 
   if [[ $total_issues -gt 0 ]]; then
     log_info ""
