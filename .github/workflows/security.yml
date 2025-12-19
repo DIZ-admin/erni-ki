@@ -258,11 +258,22 @@ jobs:
           severity-cutoff: high
           output-format: sarif
 
-      - name: 📤 Upload Grype SARIF to Security
+      - name: 📄 Detect Grype SARIF
+        id: grype-sarif
         if: always()
+        run: |
+          sarif_path="${{ steps.grype-scan.outputs.sarif }}"
+          if [ -n "$sarif_path" ] && [ -s "$sarif_path" ]; then
+            echo "sarif_file=$sarif_path" >> "$GITHUB_OUTPUT"
+          else
+            echo "Grype SARIF not found or empty; skipping upload."
+          fi
+
+      - name: 📤 Upload Grype SARIF to Security
+        if: always() && steps.grype-sarif.outputs.sarif_file != ''
         uses: github/codeql-action/upload-sarif@cf1bb45a277cb3c205638b2cd5c984db1c46a412 # v4
         with:
-          sarif_file: ${{ steps.grype-scan.outputs.sarif }}
+          sarif_file: ${{ steps.grype-sarif.outputs.sarif_file }}
           category: grype
 
   # Configuration analysis

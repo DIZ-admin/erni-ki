@@ -46,8 +46,7 @@ cp secrets/litellm_ui_password.txt.example secrets/litellm_ui_password.txt
 
 # Set file permissions
 chmod 600 secrets/*.txt
-# Grafana admin password is read by the grafana user (uid 472):
-docker run --rm -v $(pwd)/secrets/grafana_admin_password.txt:/mnt/pw alpine sh -c "chown 472:472 /mnt/pw && chmod 640 /mnt/pw"
+# Grafana admin password uses Docker secrets; see "Grafana admin password" below.
 ```
 
 ### 2. Populate secrets
@@ -75,8 +74,6 @@ echo "long-random-token" > secrets/watchtower_api_token.txt
 
 # Grafana admin password
 echo "your-very-strong-password" > secrets/grafana_admin_password.txt
-# It is recommended to set owner to uid 472 (grafana) and permissions to 640:
-docker run --rm -v $(pwd)/secrets/grafana_admin_password.txt:/mnt/pw alpine sh -c "chown 472:472 /mnt/pw && chmod 640 /mnt/pw"
 
 # Postgres exporter DSN
 echo "postgresql://postgres:your-password@db:5432/openwebui?sslmode=disable" > secrets/postgres_exporter_dsn.txt
@@ -150,15 +147,14 @@ cat /run/secrets/postgres_password
 
 ### Grafana admin password
 
-- In `compose.yml`, Grafana runs as user `472:472` and reads the password from a
-  bind-mount:
-  - Host file: `secrets/grafana_admin_password.txt` (recommended:
-    `chown 472:472` and `chmod 640`)
-  - In container: `/var/lib/grafana/secrets/grafana_admin_password.txt`
+- Recommended: use Docker secrets (default in `compose.yml`).
+  - Host file: `secrets/grafana_admin_password.txt`
+  - In container: `/run/secrets/grafana_admin_password`
+  - Docker manages permissions; the Grafana user (`472:472`) can read the
+    secret.
 - Ensure the host data directory exists and is writable by Grafana:
   - `data/grafana` should exist and be owned by `472:472`
-- For rotation: update the file, set owner/permissions, then run
-  `docker compose up -d grafana`.
+- For rotation: update the file and run `docker compose up -d grafana`.
 
 ## Secret Rotation
 

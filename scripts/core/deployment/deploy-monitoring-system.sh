@@ -76,6 +76,12 @@ create_directories() {
     chmod 755 "$PROJECT_ROOT/data/prometheus"
     chmod 755 "$PROJECT_ROOT/data/grafana"
     chmod 755 "$PROJECT_ROOT/data/alertmanager"
+    # Grafana runs as UID 472 in compose.yml
+    chown -R 472:472 "$PROJECT_ROOT/data/grafana"
+
+    if [[ -f "$PROJECT_ROOT/secrets/grafana_admin_password.txt" ]]; then
+        chown 472:472 "$PROJECT_ROOT/secrets/grafana_admin_password.txt"
+    fi
 
     log_success "Directories created"
 }

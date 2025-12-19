@@ -209,17 +209,15 @@
     {
       "type": "gauge",
       "title": "Buffer Usage",
-      "description": "Fluent Bit memory buffer utilization (assumes 32MB default limit)",
+      "description": "Fluent Bit output queue size",
       "id": 13,
       "gridPos": {"h": 6, "w": 6, "x": 12, "y": 12},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "(sum(fluentbit_output_queue_bytes) / (32 * 1024 * 1024)) * 100 or vector(0)", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(fluentbit_output_queue_bytes) or vector(0)", "refId": "A"}
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
-          "min": 0, "max": 100,
-          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 70}, {"color": "red", "value": 90}]}
+          "unit": "bytes"
         }
       }
     },
@@ -230,7 +228,7 @@
       "id": 14,
       "gridPos": {"h": 3, "w": 6, "x": 18, "y": 12},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(fluentbit_output_dropped_records_total[1h])) or vector(0)", "refId": "A"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(increase(fluentbit_output_retries_failed_total[1h])) or vector(0)", "refId": "A"}
       ],
       "fieldConfig": {
         "defaults": {
@@ -299,18 +297,14 @@
     {
       "type": "timeseries",
       "title": "Active Streams Over Time",
-      "description": "Number of active log streams in Loki (limit: 10000)",
+      "description": "Number of active log streams in Loki",
       "id": 22,
       "gridPos": {"h": 6, "w": 12, "x": 0, "y": 26},
       "targets": [
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(loki_ingester_memory_streams) or vector(0)", "legendFormat": "Active Streams", "refId": "A"},
-        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "10000", "legendFormat": "Limit", "refId": "B"}
+        {"datasource": {"type": "prometheus", "uid": "prometheus"}, "expr": "sum(loki_ingester_memory_streams) or vector(0)", "legendFormat": "Active Streams", "refId": "A"}
       ],
       "fieldConfig": {
-        "defaults": {"unit": "short"},
-        "overrides": [
-          {"matcher": {"id": "byName", "options": "Limit"}, "properties": [{"id": "custom.lineStyle", "value": {"fill": "dash", "dash": [10, 10]}}, {"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]}
-        ]
+        "defaults": {"unit": "short"}
       },
       "options": {"legend": {"showLegend": true, "placement": "bottom"}}
     },

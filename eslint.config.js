@@ -51,11 +51,13 @@ export default [
       '.DS_Store',
       'Thumbs.db',
       '.config-backup/**',
+      '.git/**',
       'playwright-report/**',
       'playwright-artifacts/**',
       'test-results/**',
       'tests/e2e/**', // E2E tests use Playwright, not ESLint
       'tests/bun/**', // Bun-specific tests (use Bun types, not in tsconfig)
+      'auth/main', // Compiled Go binary
     ],
   },
 
@@ -163,26 +165,6 @@ export default [
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
     },
-  },
-
-  // Ignored files and directories
-  {
-    ignores: [
-      'node_modules/**',
-      'dist/**',
-      'build/**',
-      'data/**',
-      'logs/**',
-      '*.min.js',
-      '**/*.min.js',
-      'vendor/**',
-      '.git/**',
-      'coverage/**',
-      '*.config.js',
-      'site/**',
-      'site-academy/**',
-      'auth/main', // Compiled Go binary
-    ],
   },
 
   // Special rules for test files
