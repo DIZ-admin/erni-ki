@@ -1,0 +1,21 @@
+name: "Setup Go Environment"
+description: "Setup Go with module caching"
+
+inputs:
+  go-version-file:
+    description: "Path to go.mod file"
+    required: false
+    default: "auth/go.mod"
+  cache-dependency-path:
+    description: "Path to go.sum for cache key"
+    required: false
+    default: "auth/go.sum"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v5
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}

@@ -1,8 +1,9 @@
-name: 🌙 Nightly Audit
+name: 📅 Weekly Documentation Audit
 
 on:
   schedule:
-    - cron: "0 2 * * *" # Run at 2 AM UTC every day
+    # Weekly on Sunday at 2 AM UTC (was daily)
+    - cron: "0 2 * * 0"
   workflow_dispatch: # Allow manual trigger
 
 permissions:

@@ -1,0 +1,33 @@
+name: "Setup Bun Environment"
+description: "Setup Bun with caching and install dependencies"
+
+inputs:
+  bun-version:
+    description: "Bun version to install"
+    required: false
+    default: "1.3.3"
+  install-deps:
+    description: "Whether to install dependencies"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Cache bun
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      with:
+        path: ~/.cache/bun
+        key: bun-${{ runner.os }}-${{ inputs.bun-version }}-${{ hashFiles('bun.lock') }}
+        restore-keys: |
+          bun-${{ runner.os }}-${{ inputs.bun-version }}-
+
+    - name: Install dependencies
+      if: inputs.install-deps == 'true'
+      shell: bash
+      run: bun install --frozen-lockfile

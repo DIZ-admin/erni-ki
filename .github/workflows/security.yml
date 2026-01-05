@@ -9,12 +9,34 @@ on:
       - main
       - develop
       - release/*
+    paths:
+      - "auth/**"
+      - "services/**"
+      - "ops/**"
+      - "scripts/**"
+      - "package.json"
+      - "bun.lock"
+      - "go.mod"
+      - "go.sum"
+      - "requirements*.txt"
+      - "pyproject.toml"
+      - ".github/workflows/security.yml"
   pull_request:
-    # Run on all PRs for code scanning status checks
     types: [opened, synchronize, reopened]
+    paths:
+      - "auth/**"
+      - "services/**"
+      - "ops/**"
+      - "scripts/**"
+      - "package.json"
+      - "bun.lock"
+      - "go.mod"
+      - "go.sum"
+      - "requirements*.txt"
+      - "pyproject.toml"
   schedule:
-    # Default severity level2:00 UTC
-    - cron: "0 2 * * *"
+    # Weekly on Sunday at 2:00 UTC (was daily)
+    - cron: "0 2 * * 0"
   workflow_dispatch:
 
 # Permissions for security events

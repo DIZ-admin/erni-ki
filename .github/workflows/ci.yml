@@ -6,8 +6,20 @@ name: 🔄 Continuous Integration
 on:
   push:
     branches: [main, develop]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "LICENSE"
+      - ".github/workflows/docs-*.yml"
+      - ".github/workflows/deploy-academy.yml"
+      - ".github/workflows/archon-*.yml"
+      - ".github/workflows/update-status.yml"
   pull_request:
     branches: [main, develop]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "LICENSE"
   workflow_dispatch:
 
 # Permissions for GitHub token
@@ -842,6 +854,7 @@ jobs:
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.11"
+          cache: "pip"
 
       - name: 📦 Install dependencies
         run: pip install pyyaml
