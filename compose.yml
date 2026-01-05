@@ -955,8 +955,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    mem_limit: 768m
-    mem_reservation: 384m
+    mem_limit: 1g
+    mem_reservation: 512m
     cpus: "0.5"
     # Security hardening
     security_opt:
